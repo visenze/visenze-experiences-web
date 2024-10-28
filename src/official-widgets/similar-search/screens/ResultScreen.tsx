@@ -98,20 +98,20 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   const getProductCardCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (productCustomizations.borderRadius
+    if (productCustomizations?.borderRadius
       && productCustomizations.borderRadius !== 0) {
       cssConfig.borderRadius = `${productCustomizations.borderRadius}px`;
     }
-    if (productCustomizations.contentPadding
+    if (productCustomizations?.contentPadding
       && productCustomizations.contentPadding !== 0) {
       cssConfig.padding = `${productCustomizations.contentPadding}px`;
     }
-    if (productCustomizations.marginVertical
+    if (productCustomizations?.marginVertical
       && productCustomizations.marginVertical !== 0) {
       cssConfig.marginTop = `${productCustomizations.marginVertical}px`;
       cssConfig.marginBottom = `${productCustomizations.marginVertical}px`;
     }
-    if (productCustomizations.marginHorizontal
+    if (productCustomizations?.marginHorizontal
       && productCustomizations.marginHorizontal !== 0) {
       cssConfig.marginLeft = `${productCustomizations.marginHorizontal}px`;
       cssConfig.marginRight = `${productCustomizations.marginHorizontal}px`;
@@ -263,7 +263,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           <div ref={resultsRef} className='no-scrollbar flex size-full justify-center overflow-y-auto'>
             <div
               className={`mx-2 grid h-full pb-20
-              ${productCustomizations.display.mobile ? `grid-cols-${productCustomizations.display.mobile.slideToShow}` : 'grid-cols-2'}`}
+              ${productCustomizations?.display?.mobile ? `grid-cols-${productCustomizations.display.mobile.slideToShow}` : 'grid-cols-2'}`}
               data-pw='ss-product-result-grid'
             >
               {productResults.map((result: ProcessedProduct, index: number) => (

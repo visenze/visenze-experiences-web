@@ -172,10 +172,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
   };
   const getProductGridStyles = (): string => {
     let styleString = '';
-    if (productCustomizations.display.tablet) {
+    if (productCustomizations?.display?.tablet) {
       styleString += `grid-cols-${productCustomizations.display.tablet.slideToShow}`;
     }
-    if (productCustomizations.display.desktop) {
+    if (productCustomizations?.display?.desktop) {
       styleString += `lg:grid-cols-${productCustomizations.display.desktop.slideToShow}`;
     }
     return styleString;
@@ -248,7 +248,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           <div ref={resultsRef} className='no-scrollbar flex size-full justify-center overflow-y-auto md:hidden'>
             <div
               className={`mx-2 grid h-full pb-20 
-              ${productCustomizations.display.mobile ? `grid-cols-${productCustomizations.display.mobile.slideToShow}` : 'grid-cols-2'}`
+              ${productCustomizations?.display?.mobile ? `grid-cols-${productCustomizations.display.mobile.slideToShow}` : 'grid-cols-2'}`
               }
               data-pw='cs-product-result-grid'>
               {productResults.map((result: ProcessedProduct, index: number) => (
