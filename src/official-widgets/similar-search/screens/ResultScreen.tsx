@@ -134,7 +134,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {searchHistory?.map((searchImage, index) => (
               <img
                 key={`image-history-${index}`}
-                className='w-2/6'
+                className='w-1/6'
                 src={getFile(searchImage)}
                 onClick={() => onClickMoreLikeThisHandler(searchImage)}
                 data-pw={`ss-previous-views-image-${index + 1}`}
@@ -145,7 +145,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
         <div
           className={cn(
-            showFullResults ? 'top-1/5 bottom-14 left-0 right-0' : 'top-11/20 bottom-14 left-3 right-3',
+            showFullResults ? 'top-10 bottom-14 left-0 right-0' : 'top-60 bottom-14 left-3 right-3',
             'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8',
           )}
           {...minimizedDrawerHandler}>
