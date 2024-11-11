@@ -136,7 +136,7 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
 
         <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
           {/* Modal showing hotspots on selected image */}
-          <ViSenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint}
+          <ViSenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint} position='center'
                         placementId={`${config.appSettings.placementId}`}
                         className='left-[unset] top-[unset] h-[500px] w-[300px] rounded-xl'>
             <div className='flex size-full flex-col bg-primary pt-1/5' data-pw='sif-image-hotspot-modal'>

@@ -406,7 +406,7 @@ const ShoppingAssistant = memo((props: {
               }
             </>
         )}
-        <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
+        <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose} position='center'
                       placementId={`${config.appSettings.placementId}`}>
           {getScreen()}
         </ViSenzeModal>

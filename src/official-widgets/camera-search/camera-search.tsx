@@ -253,7 +253,7 @@ const CameraSearch = memo((props: {
           ? <img src={config.customizations.icons.cameraButton} onClick={onCameraButtonClick} className='size-7 cursor-pointer'></img>
           : <CameraIcon onClickHandler={onCameraButtonClick} />
         }
-        <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
+        <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose} position='center'
                       placementId={`${config.appSettings.placementId}`}>
           {getScreen()}
         </ViSenzeModal>

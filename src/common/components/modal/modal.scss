@@ -2,14 +2,21 @@
   width: 948px;
   height: 560px;
   max-width: 948px;
-  max-height: 560px;
   background: white;
   position: relative;
   outline: none;
-  border: '1px solid #ccc';
-  border-radius: 24px;
+  border: 1px solid #ccc;
   -webkit-overflow-scrolling: touch;
   overflow: hidden;
+
+  &.vi_modal_position_center {
+    max-height: 560px;
+    border-radius: 24px;
+  }
+
+  &.vi_modal_position_right {
+    height: 100%;
+  }
 }
 
 .vi_modal_mobile, .vi_modal_tablet {
@@ -45,6 +52,10 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.75);
+
+  &.vi_modal_position_right {
+    justify-content: end;
+  }
 }
 
 .ReactModalPortal {
@@ -59,6 +70,10 @@
   &.vi_modal_desktop {
     transform: translateY(-100px);
     transition: all 400ms ease-in-out;
+
+    &.vi_modal_position_right {
+      transform: translateX(100px);
+    }
   }
 
   &.vi_modal_mobile {
@@ -93,6 +108,10 @@
 
   &.vi_modal_desktop {
     transform: translateY(-100px);
+
+    &.vi_modal_position_right {
+      transform: translateX(100px);
+    }
   }
 
   &.vi_modal_mobile {
