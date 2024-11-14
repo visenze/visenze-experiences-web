@@ -92,6 +92,10 @@
 
   &.vi_modal_desktop {
     transform: translateY(0px);
+
+    &.vi_modal_position_right {
+      transform: translateX(0px);
+    }
   }
 
   &.vi_modal_mobile {
