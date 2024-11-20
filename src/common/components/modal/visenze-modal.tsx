@@ -12,9 +12,10 @@ interface ModalProps {
   layout: 'desktop' | 'tablet' | 'mobile' | 'nested_mobile';
   children: ReactElement | ReactElement[];
   className?: string;
+  position: 'center' | 'right';
 }
 
-const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className }) => {
+const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position }) => {
   const root = useContext(RootContext);
   let timeout;
   switch (layout) {
@@ -48,8 +49,8 @@ const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className }) =
       closeTimeoutMS={timeout}
       parentSelector={(): HTMLElement => root}
       isOpen={open}
-      className={cn(`vi_modal_${layout}`, className)}
-      overlayClassName='vi_modal_overlay'
+      className={cn(`vi_modal_${layout} vi_modal_position_${position}`, className)}
+      overlayClassName={`vi_modal_overlay vi_modal_position_${position}`}
       onRequestClose={onClose}
       appElement={document.body}>
       {children}
@@ -61,6 +62,7 @@ interface VisenzeModalProps {
   open: boolean;
   onClose: () => void;
   layout: 'desktop' | 'tablet' | 'mobile' | 'nested_mobile';
+  position: 'center' | 'right';
   children: ReactElement | ReactElement[];
   className?: string;
   placementId: string;
