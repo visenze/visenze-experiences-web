@@ -36,19 +36,23 @@ const HotspotContainer: FC<HotspotContainerProps> = ({
     const boxes: CroppedBox[] = productTypes.map((productType) => {
       const dataBox = productType.box;
       return {
-        x1: dataBox[0] * widthScale,
-        y1: dataBox[1] * heightScale,
-        x2: dataBox[2] * widthScale,
-        y2: dataBox[3] * heightScale,
+        x1: dataBox[0],
+        y1: dataBox[1],
+        x2: dataBox[2],
+        y2: dataBox[3],
       };
     });
     setCroppedBoxes(boxes);
-    if (noSelectedHotspot) return;
+    if (noSelectedHotspot) {
+      return;
+    }
 
     const croppedBox = boxData?.box;
     if (croppedBox) {
       const index = boxes.findIndex((box) => isSameBox(box, croppedBox));
-      if (index !== -1) setSelectedHotspot(index);
+      if (index !== -1) {
+        setSelectedHotspot(index);
+      }
     } else {
       setSelectedHotspot(0);
     }
@@ -63,7 +67,7 @@ const HotspotContainer: FC<HotspotContainerProps> = ({
     handleBoxClick?.();
   };
 
-  const onLoad = (): void => {
+  const rescaleImage = (): void => {
     const img = imageRef.current;
     if (!img) {
       return;
@@ -82,6 +86,10 @@ const HotspotContainer: FC<HotspotContainerProps> = ({
 
   useEffect(() => {
     setIsLoading(false);
+    window.addEventListener('resize', rescaleImage);
+    return (): void => {
+      window.removeEventListener('resize', rescaleImage);
+    };
   }, []);
 
   if (isLoading) {
@@ -97,7 +105,7 @@ const HotspotContainer: FC<HotspotContainerProps> = ({
               className={cn('object-cover size-full', referenceImageClassName)}
               ref={imageRef}
               src={referenceImage}
-              onLoad={() => setTimeout(() => onLoad(), 250)} // Delay needed to get correct image width and height for calculation in onLoad
+              onLoad={() => setTimeout(() => rescaleImage(), 250)} // Delay needed to get correct image width and height for calculation in onLoad
               data-pw='hotspot-reference-image'
             />
             <div
