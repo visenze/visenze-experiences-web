@@ -1,7 +1,6 @@
 import type { FC, ReactElement } from 'react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Button } from '@nextui-org/button';
-import { Chip } from '@nextui-org/chip';
 import { Input } from '@nextui-org/input';
 import { Listbox, ListboxItem } from '@nextui-org/listbox';
 import { useSwipeable } from 'react-swipeable';
@@ -56,7 +55,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
   setSearchHistory,
   selectedChip,
   setSelectedChip,
-  trendingKeywords,
 }) => {
   const { productSearch } = useContext(WidgetDataContext);
   const { productResults, autocompleteResults } = useContext(WidgetResultContext);
@@ -139,36 +137,14 @@ const ResultScreen: FC<ResultScreenProps> = ({
     onMoreLikeThis(queryImage);
   };
 
-  const getAutocompleteChips = (): ReactElement[] | null => {
-    if (trendingKeywords.length > 0) {
-      return trendingKeywords.slice(6, 10).map((keyword, index) => (
-        <Chip
-          key={`keyword-${index}`}
-          size='md'
-          variant='bordered'
-          className={cn('hover:bg-blue-200 cursor-pointer', {
-            'bg-blue-200': keyword === selectedChip,
-          })}
-          onClick={() => {
-            onKeywordSearch(search, keyword === selectedChip ? '' : keyword);
-            scrollToResultsTop();
-          }}>
-          <span className='calls-to-action-text leading-6 text-primary' data-pw={`cs-autocomplete-chip-${index + 1}`}>{keyword}</span>
-        </Chip>
-      ));
-    }
-
-    return null;
-  };
-
   const getMobileView = (): ReactElement => (
     <div className='flex h-full flex-col gap-8 bg-primary md:hidden'>
       <Header onCloseHandler={onModalClose} onBackHandler={onBackHandler} isResultScreen={true}/>
       <div className='relative h-screen grow overflow-hidden'>
-        <div
+        <div className='flex justify-center'
           {...minimizedDrawerHandler}
           {...mobileInputFocusHandler}>
-          <div className={cn('transition-all duration-500', showFullResults ? 'opacity-0' : 'w-full opacity-100')}>
+          <div className={cn('transition-all duration-500', showFullResults ? 'opacity-0' : 'opacity-100 max-h-[50vh]')}>
             <HotspotContainer referenceImage={getReferenceImage()}/>
           </div>
 
@@ -179,7 +155,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {searchHistory?.map((searchImage, index) => (
               <img
                 key={`image-history-${index}`}
-                className='w-2/5'
+                className='w-1/6'
                 src={getFile(searchImage)}
                 onClick={() => onClickMoreLikeThisHandler(searchImage)}
                 data-pw={`cs-previous-views-image-${index + 1}`}
@@ -190,7 +166,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
         <div
           className={cn(
-            showFullResults ? 'top-1/5 bottom-32 left-0 right-0' : 'top-11/20 bottom-14 left-3 right-3',
+            showFullResults ? 'top-10 bottom-14 left-0 right-0' : 'top-11/20 bottom-14 left-3 right-3',
             'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8',
           )}
           {...minimizedDrawerHandler}>
@@ -227,7 +203,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
       <div
         className={cn(
-          showFullResults ? 'opacity-100 h-24 z-20' : 'opacity-0',
+          showFullResults ? 'opacity-100 pb-2 z-20' : 'opacity-0',
           'absolute bottom-8 left-0 w-full pt-1 transition-all duration-700',
         )}>
         <div className='bg-primary px-3 pt-2'>
@@ -261,11 +237,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
             }}
             data-pw='cs-refinement-text-bar'
           />
-
-          {/* Autocomplete Chips */}
-          <div className='no-scrollbar mb-2 flex flex-row gap-1 overflow-scroll pt-2' data-pw='cs-autocomplete-chips'>
-            {getAutocompleteChips()}
-          </div>
         </div>
       </div>
     </div>
@@ -316,27 +287,12 @@ const ResultScreen: FC<ResultScreenProps> = ({
           </div>
 
           <div className='flex w-2/3 flex-col'>
-            <div className='h-4/5 overflow-y-auto'>
-              <div className='grid grid-cols-3 gap-x-2 gap-y-3 px-2 pb-3' data-pw='cs-product-result-grid'>
-                {productResults.map((result: ProcessedProduct, index: number) => (
-                  <div key={result.product_id} className={cn('bg-primary')}>
-                    <Result
-                      onMoreLikeThis={onMoreLikeThis}
-                      clearSearch={clearSearch}
-                      index={index}
-                      result={result}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className='z-10 col-span-2 h-1/5'>
+            <div className='z-10 col-span-2 pb-4'>
               <div className='relative'>
                 {/* Autocomplete Suggestions */}
                 <Listbox
                   style={autocompleteSuggestionsStyle}
-                  classNames={{ base: 'absolute w-full overflow-y-auto border-t-1 border-gray-200 bg-white transition-all' }}
+                  classNames={{ base: 'absolute w-full overflow-y-auto rounded-t-lg border-1 border-gray-200 bg-white transition-all' }}
                   aria-label='Actions'
                   onAction={(key): void => {
                     const newSearch = String(key);
@@ -348,13 +304,13 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   }}>
                   {inputSuggestions.map((keyword, index) => (
                     <ListboxItem key={keyword} className={cn(keyword === search ? 'bg-gray' : '', 'pl-8')}>
-                      <span className='text-base' data-pw={`cs-autocomplete-suggestion-${index + 1}`}>{keyword}</span>
+                      <span className='text-base' data-pw={`ss-autocomplete-suggestion-${index + 1}`}>{keyword}</span>
                     </ListboxItem>
                   ))}
                 </Listbox>
 
                 {/* Refinement Text Bar */}
-                <div className='relative z-20 border-t-1 border-gray-200 bg-primary px-5 pt-2'>
+                <div className='relative z-20 bg-primary px-2 pt-3'>
                   <Input
                     classNames={{
                       input: 'text-tablet-searchBarText lg:text-desktop-searchBarText font-tablet-searchBarText lg:font-desktop-searchBarText',
@@ -362,7 +318,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     isClearable
                     maxLength={QUERY_MAX_CHARACTER_LENGTH}
                     type='filters'
-                    placeholder={intl.formatMessage({ id: 'cameraSearch.searchBarPlaceholder' })}
+                    placeholder={intl.formatMessage({ id: 'similarSearch.searchBarPlaceholder' })}
                     value={search}
                     onClick={() => setShowInputSuggest(true)}
                     onBlur={() => setTimeout(() => setShowInputSuggest(false), 100)}
@@ -380,25 +336,23 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       setSearch('');
                       onKeywordSearch('', selectedChip || '');
                     }}
-                    data-pw='cs-refinement-text-bar'
+                    data-pw='ss-refinement-text-bar'
                   />
-                </div>
-
-                {/* Autocomplete Chips */}
-                <div className='relative z-20 flex min-h-10 items-center bg-primary px-5 pb-3 pt-2'>
-                  {
-                    trendingKeywords.length > 0
-                    && <p className='calls-to-action-text pr-2 text-primary'>
-                         {intl.formatMessage({ id: 'cameraSearch.trending' })}
-                       </p>
-                  }
-                  <div data-pw='cs-autocomplete-chips' className='flex gap-1'>
-                    {getAutocompleteChips()}
-                  </div>
                 </div>
               </div>
             </div>
 
+            <div className='overflow-y-auto'>
+              <div className={'grid grid-cols-3 gap-x-2 gap-y-3 px-2 pb-3'}
+                   data-pw='cs-product-result-grid'>
+                {productResults.map((result: ProcessedProduct, index: number) => (
+                  <div key={result.product_id} className={cn('bg-primary')}>
+                    <Result onMoreLikeThis={onMoreLikeThis} clearSearch={() => setSearch('')} index={index}
+                            result={result}/>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -102,8 +102,8 @@ const Result = memo(({
     <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)}
        onClick={debugMode ? undefined : onClick} data-pw={`cs-product-result-card-${index + 1}`}>
       <div className='relative'>
-        <div className='aspect-[2/3]'>
-          <img className='size-full object-cover' src={result.im_url} data-pw={`cs-product-result-card-image-${index + 1}`}/>
+        <div className='flex justify-center'>
+          <img style={{ maxHeight: 240 }} src={result.im_url} data-pw={`cs-product-result-card-image-${index + 1}`}/>
         </div>
         <Button
           isIconOnly
