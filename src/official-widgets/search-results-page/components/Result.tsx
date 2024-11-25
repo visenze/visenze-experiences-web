@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useEffect, useRef, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Button } from '@nextui-org/button';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import ResultLogicImpl from '../../../common/client/result-logic';
@@ -22,7 +22,7 @@ const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) 
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { onProductClick } = callbacks;
-  const targetRef = useRef<HTMLAnchorElement>(null);
+  const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
     productSearch,
@@ -56,8 +56,6 @@ const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) 
 
   // Send Product View tracking event when the product is in view
   useEffect(() => {
-    const target = targetRef.current;
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting && productTrackingMeta) {
@@ -70,18 +68,19 @@ const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) 
       threshold: 0.8,
     });
 
-    if (target) {
-      observer.observe(target);
+    if (targetRef) {
+      observer.observe(targetRef);
     }
 
     // Clean up observer when the component unmounts
     return (): void => {
       observer.disconnect();
     };
-  }, []);
+  }, [targetRef]);
 
   return (
-    <a className={`size-full ${debugMode ? '' : 'cursor-pointer'}`} ref={targetRef} onClick={debugMode ? undefined : onClick} data-pw={`srp-product-result-card-${index + 1}`}>
+    <a className={`size-full ${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)}
+       onClick={debugMode ? undefined : onClick} data-pw={`srp-product-result-card-${index + 1}`}>
       <div className='relative'>
         <div className='aspect-[2/3]'>
           <img className='object-fit size-full' src={result.im_url} data-pw={`srp-product-result-card-image-${index + 1}`}/>
