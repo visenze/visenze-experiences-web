@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import ResultLogicImpl from '../../../common/client/result-logic';
 import type { ProcessedProduct } from '../../../common/types/product';
@@ -23,8 +23,8 @@ const Result: FC<ResultProps> = ({ index, result }) => {
   const { languageSettings } = useContext(WidgetDataContext);
   const { onProductClick } = callbacks;
   const [isLoading, setIsLoading] = useState(true);
-  const targetRef = useRef<HTMLAnchorElement>(null);
   const isOpenInNewTab = customizations.productSlider?.isOpenInNewTab || false;
+  const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
     productSearch,
@@ -65,8 +65,6 @@ const Result: FC<ResultProps> = ({ index, result }) => {
 
   // Send Product View tracking event when the product is in view
   useEffect(() => {
-    const target = targetRef.current;
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting && productTrackingMeta) {
@@ -79,15 +77,15 @@ const Result: FC<ResultProps> = ({ index, result }) => {
       threshold: 0.8,
     });
 
-    if (target) {
-      observer.observe(target);
+    if (targetRef) {
+      observer.observe(targetRef);
     }
 
     // Clean up observer when the component unmounts
     return (): void => {
       observer.disconnect();
     };
-  }, []);
+  }, [targetRef]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -98,7 +96,8 @@ const Result: FC<ResultProps> = ({ index, result }) => {
   }
 
   return (
-    <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={targetRef} onClick={debugMode ? undefined : onClick}>
+    <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)}
+       onClick={debugMode ? undefined : onClick}>
       <div className='aspect-[2/3]'>
         <img className='size-full object-cover' src={result.im_url}/>
       </div>

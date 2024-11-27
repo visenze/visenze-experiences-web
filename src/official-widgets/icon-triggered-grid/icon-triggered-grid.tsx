@@ -139,6 +139,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
         open={dialogVisible}
         layout={breakpoint}
         onClose={onModalClose}
+        position='center'
         placementId={`${config.appSettings.placementId}`}>
         <div className='relative flex size-full flex-col bg-primary lg:flex-row lg:justify-between lg:divide-x-1'>
           {/* Close Button */}
@@ -248,6 +249,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
               open={!!screen}
               layout='nested_mobile'
               onClose={() => setScreen(null)}
+              position='center'
               placementId={`${config.appSettings.placementId}`}>
               <>
                 {screen === ScreenType.SORT && (

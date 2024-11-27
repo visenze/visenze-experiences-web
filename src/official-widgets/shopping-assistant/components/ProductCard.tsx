@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { Actions } from '../../../common/types/tracking-constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
@@ -23,12 +23,10 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product, index, queryId }) => {
   const breakpoint = useBreakpoint();
   const { productSearch, debugMode } = useContext(WidgetDataContext);
-  const targetRef = useRef<HTMLAnchorElement>(null);
+  const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
 
   // Send Product View tracking event when the product is in view
   useEffect(() => {
-    const target = targetRef.current;
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -47,18 +45,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index, queryId }) =>
       threshold: 0.8,
     });
 
-    if (target) {
-      observer.observe(target);
+    if (targetRef) {
+      observer.observe(targetRef);
     }
 
     // Clean up observer when the component unmounts
     return (): void => {
       observer.disconnect();
     };
-  }, []);
+  }, [targetRef]);
 
   return (
-      <a href={product.product_url} ref={targetRef} onClick={() => {
+      <a href={product.product_url} ref={(r) => r && setTargetRef(r)} onClick={() => {
         if (debugMode) {
           return;
         }

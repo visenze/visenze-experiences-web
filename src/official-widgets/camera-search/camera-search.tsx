@@ -29,7 +29,6 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
   const [selectedChip, setSelectedChip] = useState<string>('');
   const [boxData, setBoxData] = useState<BoxData | undefined>();
   const [searchHistory, setSearchHistory] = useState<SearchImage[]>([]);
-  const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]);
   const root = useContext(RootContext);
 
   const {
@@ -54,7 +53,6 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
     setImage(undefined);
     setResizedImage(undefined);
     setBoxData(undefined);
-    setTrendingKeywords([]);
     setSelectedChip('');
     setScreen(ScreenType.UPLOAD);
     resetSearch();
@@ -94,7 +92,6 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
       setTimeout(() => setScreen(ScreenType.RESULT), 300);
     } else {
       setScreen(ScreenType.LOADING);
-      setTrendingKeywords([]);
       setSelectedChip('');
       setBoxData(undefined);
       setImage(data);
@@ -159,7 +156,6 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
             setSearchHistory={setSearchHistory}
             selectedChip={selectedChip}
             setSelectedChip={setSelectedChip}
-            trendingKeywords={trendingKeywords}
             productCustomizations={config.customizations.productSlider || ({} as ProductDisplayConfig)}
           />
         );
@@ -208,12 +204,6 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
   }, [image]);
 
   useEffect(() => {
-    if (trendingKeywords.length === 0) {
-      setTrendingKeywords(autocompleteResults);
-    }
-  }, [autocompleteResults]);
-
-  useEffect(() => {
     if (productResults.length > 0) {
       setScreen(ScreenType.RESULT);
     }
@@ -260,6 +250,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
           open={dialogVisible}
           layout={breakpoint}
           onClose={onModalClose}
+          position='center'
           placementId={`${config.appSettings.placementId}`}>
           {getScreen()}
         </ViSenzeModal>

@@ -1,13 +1,12 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
-import { useMemo, useState, useEffect, useRef, useContext } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
-import { Chip } from '@nextui-org/chip';
 import { Listbox, ListboxItem } from '@nextui-org/listbox';
 import { cn } from '@nextui-org/theme';
 import { useIntl } from 'react-intl';
-import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
+import { WidgetResultContext } from '../../../common/types/contexts';
 import type { ProcessedProduct } from '../../../common/types/product';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
@@ -16,8 +15,6 @@ import ArrowDownIcon from '../../../common/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../common/icons/ArrowUpIcon';
 import Footer from '../../../common/components/Footer';
 import Header from '../components/Header';
-import PrevArrow from '../components/PrevArrow';
-import NextArrow from '../components/NextArrow';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import type { ProductDisplayConfig } from '../../../common/visenze-core';
@@ -38,7 +35,6 @@ interface ResultScreenProps {
   onKeywordUpdate: (q: string) => void;
   searchHistory: SearchImage[];
   selectedChip: string;
-  trendingKeywords: string[];
   productCustomizations: ProductDisplayConfig;
 }
 
@@ -49,11 +45,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
   onKeywordUpdate,
   searchHistory,
   selectedChip,
-  trendingKeywords,
   productCustomizations,
 }) => {
   const { productResults, image, autocompleteResults } = useContext(WidgetResultContext);
-  const { customizations } = useContext(WidgetDataContext);
   const [search, setSearch] = useState<string>('');
   const [showFullResults, setShowFullResults] = useState(false);
   const [showInputSuggest, setShowInputSuggest] = useState(false);
@@ -62,10 +56,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
   const resultsRef = useRef<HTMLDivElement>(null);
   const breakpoint = useBreakpoint();
   const intl = useIntl();
-
-  const carouselScrollOffset = 400;
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [carouselPos, setCarouselPos] = useState(0);
 
   const autocompleteSuggestionsStyle = {
     height: `${showInputSuggest ? autocompleteSuggestionsHeight : 0}px`,
@@ -123,44 +113,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
     onMoreLikeThis(queryImage);
   };
 
-  const maxCarouselPos = useMemo(() => {
-    if (carouselRef.current) {
-      return carouselRef.current.scrollWidth - carouselRef.current.clientWidth;
-    }
-    return 0;
-  }, [carouselRef.current]);
-
-  const onClickPrevArrow = (): void => {
-    let newCarouselPos;
-    if (carouselPos < carouselScrollOffset) {
-      newCarouselPos = 0;
-    } else {
-      newCarouselPos = carouselPos - carouselScrollOffset;
-    }
-
-    carouselRef?.current?.scrollTo({
-      left: newCarouselPos,
-      behavior: 'smooth',
-    });
-
-    setCarouselPos(newCarouselPos);
-  };
-
-  const onClickNextArrow = (): void => {
-    const newCarouselPos = Math.min(carouselPos + carouselScrollOffset, maxCarouselPos);
-
-    carouselRef?.current?.scrollTo({
-      left: newCarouselPos,
-      behavior: 'smooth',
-    });
-
-    setCarouselPos(newCarouselPos);
-  };
-
-  const handleScroll = (): void => {
-    setCarouselPos(carouselRef.current?.scrollLeft ? carouselRef.current?.scrollLeft : 0);
-  };
-
   const minimizedDrawerHandler = useSwipeable({
     onSwipedUp: () => setShowFullResults(true),
     ...swipeConfig,
@@ -190,37 +142,15 @@ const ResultScreen: FC<ResultScreenProps> = ({
     });
   };
 
-  const getAutocompleteChips = (): ReactElement[] | null => {
-    if (trendingKeywords.length > 0) {
-      return trendingKeywords.slice(6, 10).map((keyword, index) => (
-        <Chip
-          key={`keyword-${index}`}
-          size='md'
-          variant='bordered'
-          className={cn('hover:bg-blue-200 cursor-pointer', {
-            'bg-blue-200': keyword === selectedChip,
-          })}
-          onClick={() => {
-            onKeywordSearch(search, keyword === selectedChip ? '' : keyword);
-            scrollToResultsTop();
-          }}>
-          <span className='calls-to-action-text leading-6 text-primary' data-pw={`ss-autocomplete-chip-${index + 1}`}>{keyword}</span>
-        </Chip>
-      ));
-    }
-
-    return null;
-  };
-
   const getMobileView = (): ReactElement => (
     <div className='flex h-full flex-col gap-8 bg-primary md:hidden'>
       <Header onCloseHandler={onModalClose}/>
       <div className='relative h-screen grow overflow-hidden'>
-        <div
+        <div className='flex justify-center'
           {...minimizedDrawerHandler}
           {...mobileInputFocusHandler}>
           <img
-            className={cn(showFullResults ? 'opacity-0' : 'w-full opacity-100 max-h-[80vh]', 'transition-all duration-500')}
+            className={cn(showFullResults ? 'opacity-0' : 'opacity-100 max-h-[50vh]', 'transition-all duration-500')}
             alt='ViSenze Recommendations Reference Image'
             src={getReferenceImage()}
             data-pw='ss-reference-image'
@@ -233,7 +163,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {searchHistory?.map((searchImage, index) => (
               <img
                 key={`image-history-${index}`}
-                className='w-2/5'
+                className='w-1/6'
                 src={getFile(searchImage)}
                 onClick={() => onClickMoreLikeThisHandler(searchImage)}
                 data-pw={`ss-previous-views-image-${index + 1}`}
@@ -244,7 +174,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
         <div
           className={cn(
-            showFullResults ? 'top-1/5 bottom-32 left-0 right-0' : 'top-11/20 bottom-14 left-3 right-3',
+            showFullResults ? 'top-10 bottom-14 left-0 right-0' : 'top-60 bottom-14 left-3 right-3',
             'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8',
           )}
           {...minimizedDrawerHandler}>
@@ -287,7 +217,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
       <div
         className={cn(
-          showFullResults ? 'opacity-100 h-24 z-20' : 'opacity-0',
+          showFullResults ? 'opacity-100 pb-2 z-20' : 'opacity-0',
           'absolute bottom-8 left-0 w-full pt-1 transition-all duration-700',
         )}>
         <div className='bg-primary px-3 pt-2'>
@@ -321,11 +251,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
             }}
             data-pw='ss-refinement-text-bar'
           />
-
-          {/* Autocomplete Chips */}
-          <div className='no-scrollbar mb-2 flex flex-row gap-1 overflow-scroll pt-2' data-pw='ss-autocomplete-chips'>
-            {getAutocompleteChips()}
-          </div>
         </div>
       </div>
     </div>
@@ -334,12 +259,12 @@ const ResultScreen: FC<ResultScreenProps> = ({
   const getTabletAndDesktopView = (): ReactElement => (
     <div className='hidden md:block'>
       <Header onCloseHandler={onModalClose}/>
-      <div className='absolute left-0 top-14 w-full overflow-hidden bg-primary sm:py-8 lg:py-0'>
+      <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden bg-primary'>
         <div className='flex h-full flex-row'>
           <div className='relative left-0 row-span-1 h-full w-1/4 py-4'>
             <div className='flex h-full flex-col justify-between px-16 md:px-6'>
               <div
-                className='mt-4 flex flex-col items-center rounded-2xl border border-black text-center md:h-72 md:w-48'>
+                className='mt-4 flex flex-col items-center rounded-2xl border border-black text-center'>
                 <img src={getFile(image)} className='rounded-2xl object-cover object-center md:h-full' data-pw='ss-reference-image'/>
               </div>
 
@@ -364,33 +289,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
             </div>
           </div>
 
-          <div className='flex size-full flex-col pb-4 pt-8'>
-            {/* Product Result Carousel */}
-            <div className='relative w-3/4' data-pw='ss-product-result-carousel'>
-              <div className='absolute h-80 w-full rounded-xl'>
-                <PrevArrow isDisabled={carouselPos === 0} onClickHandler={onClickPrevArrow}
-                           iconColour={customizations?.colours.background.buttonSecondary}/>
-                <NextArrow isDisabled={carouselPos >= maxCarouselPos} onClickHandler={onClickNextArrow}
-                           iconColour={customizations?.colours.background.buttonSecondary}/>
-              </div>
-              <div className='no-scrollbar flex overflow-x-scroll pb-5' ref={carouselRef} onScroll={handleScroll}>
-                <div className='mx-2 flex flex-nowrap'>
-                  {productResults.map((result, index) => (
-                    <div className='flex h-80 w-48 items-center border-gray-300 px-2 pt-2' key={result.product_id}>
-                      <Result
-                        onMoreLikeThis={onMoreLikeThis}
-                        clearSearch={() => setSearch('')}
-                        index={index}
-                        result={result}
-                        carouselRef={carouselRef}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className='z-30 h-1/5 w-3/4'>
+          <div className='flex w-2/3 flex-col'>
+            <div className='z-10 col-span-2 pb-4'>
               <div className='relative'>
                 {/* Autocomplete Suggestions */}
                 <Listbox
@@ -413,7 +313,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 </Listbox>
 
                 {/* Refinement Text Bar */}
-                <div className='relative z-20 border-t-1 border-gray-200 bg-primary px-2 pt-3'>
+                <div className='relative z-20 bg-primary px-2 pt-3'>
                   <Input
                     classNames={{
                       input: 'text-tablet-searchBarText lg:text-desktop-searchBarText font-tablet-searchBarText lg:font-desktop-searchBarText',
@@ -442,17 +342,18 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     data-pw='ss-refinement-text-bar'
                   />
                 </div>
+              </div>
+            </div>
 
-                {/* Autocomplete Chips */}
-                <div className='relative z-20 flex min-h-10 items-center bg-primary px-3 pb-1 pt-2'>
-                  {
-                    trendingKeywords.length > 0
-                    && <p className='calls-to-action-text pr-2'>{intl.formatMessage({ id: 'similarSearch.trending' })}</p>
-                  }
-                  <div data-pw='ss-autocomplete-chips' className='flex gap-1'>
-                    {getAutocompleteChips()}
+            <div className='overflow-y-auto'>
+              <div className={'grid grid-cols-3 gap-x-2 gap-y-3 px-2 pb-3'}
+                   data-pw='cs-product-result-grid'>
+                {productResults.map((result: ProcessedProduct, index: number) => (
+                  <div key={result.product_id} className={cn('bg-primary')}>
+                    <Result onMoreLikeThis={onMoreLikeThis} clearSearch={() => setSearch('')} index={index}
+                            result={result}/>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
 

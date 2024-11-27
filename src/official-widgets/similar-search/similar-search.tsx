@@ -33,7 +33,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
   const [selectedChip, setSelectedChip] = useState<string>('');
   const [boxData, setBoxData] = useState<BoxData | undefined>();
   const [searchHistory, setSearchHistory] = useState<SearchImage[]>([]);
-  const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]);
   const root = useContext(RootContext);
 
   const {
@@ -58,7 +57,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     setImage(undefined);
     setResizedImage(undefined);
     setBoxData(undefined);
-    setTrendingKeywords([]);
     setSelectedChip('');
     resetSearch();
   };
@@ -90,7 +88,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
       setTimeout(() => setScreen(ScreenType.RESULT), 300);
     } else {
       setScreen(ScreenType.LOADING);
-      setTrendingKeywords([]);
       setSelectedChip('');
       setBoxData(undefined);
       setImage(data);
@@ -150,7 +147,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
             selectedChip={selectedChip}
-            trendingKeywords={trendingKeywords}
             productCustomizations={config.customizations.productSlider || ({} as ProductDisplayConfig)}
           />
         );
@@ -169,7 +165,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
             selectedChip={selectedChip}
-            trendingKeywords={trendingKeywords}
             productCustomizations={config.customizations.productSlider || ({} as ProductDisplayConfig)}
           />
         );
@@ -198,12 +193,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
       setScreen(ScreenType.RESULT);
     }
   }, [productResults]);
-
-  useEffect(() => {
-    if (trendingKeywords.length === 0) {
-      setTrendingKeywords(autocompleteResults);
-    }
-  }, [autocompleteResults]);
 
   useEffect(() => {
     if (error) {
@@ -237,7 +226,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
         </SimilarSearchIcon>
       </Button>
 
-      <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
+      <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose} position='right'
                     placementId={`${config.appSettings.placementId}`}>
         {getScreen()}
       </ViSenzeModal>

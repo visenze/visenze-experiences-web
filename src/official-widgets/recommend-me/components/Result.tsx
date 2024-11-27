@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { memo, useEffect, useRef, useContext } from 'react';
+import { memo, useState, useEffect, useContext } from 'react';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import ResultLogicImpl from '../../../common/client/result-logic';
 import type { ProcessedProduct } from '../../../common/types/product';
@@ -23,7 +23,7 @@ const Result: FC<ResultProps> = ({ index, result }) => {
   const { languageSettings } = useContext(WidgetDataContext);
   const { onProductClick } = callbacks;
   const isOpenInNewTab = customizations.productSlider?.isOpenInNewTab || false;
-  const targetRef = useRef<HTMLAnchorElement>(null);
+  const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
     productSearch,
@@ -64,8 +64,6 @@ const Result: FC<ResultProps> = ({ index, result }) => {
 
   // Send Product View tracking event when the product is in view
   useEffect(() => {
-    const target = targetRef.current;
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting && productTrackingMeta) {
@@ -78,18 +76,19 @@ const Result: FC<ResultProps> = ({ index, result }) => {
       threshold: 0.8,
     });
 
-    if (target) {
-      observer.observe(target);
+    if (targetRef) {
+      observer.observe(targetRef);
     }
 
     // Clean up observer when the component unmounts
     return (): void => {
       observer.disconnect();
     };
-  }, []);
+  }, [targetRef]);
 
   return (
-    <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={targetRef} onClick={debugMode ? undefined : onClick} data-pw={`rm-product-result-card-${index + 1}`}>
+    <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)}
+       onClick={debugMode ? undefined : onClick} data-pw={`rm-product-result-card-${index + 1}`}>
       <div className='h-52 w-36 md:h-72 md:w-48 lg:h-96 lg:w-64'>
         <img className='size-full object-cover' src={result.im_url}/>
       </div>

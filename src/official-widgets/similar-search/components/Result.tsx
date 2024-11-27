@@ -1,4 +1,4 @@
-import { useContext, memo, useRef, useEffect, useState } from 'react';
+import { useContext, memo, useEffect, useState } from 'react';
 import { Button } from '@nextui-org/button';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import type { ProcessedProduct } from '../../../common/types/product';
@@ -31,7 +31,7 @@ const Result = memo(({
   const { onProductClick } = callbacks;
   const [isLoading, setIsLoading] = useState(true);
   const isOpenInNewTab = customizations.productSlider?.isOpenInNewTab || false;
-  const targetRef = useRef<HTMLAnchorElement>(null);
+  const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
     productSearch,
@@ -72,8 +72,6 @@ const Result = memo(({
 
   // Send Product View tracking event when the product is in view
   useEffect(() => {
-    const target = targetRef.current;
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting && productTrackingMeta) {
@@ -86,15 +84,15 @@ const Result = memo(({
       threshold: 0.8,
     });
 
-    if (target) {
-      observer.observe(target);
+    if (targetRef) {
+      observer.observe(targetRef);
     }
 
     // Clean up observer when the component unmounts
     return (): void => {
       observer.disconnect();
     };
-  }, []);
+  }, [targetRef]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -105,10 +103,11 @@ const Result = memo(({
   }
 
   return (
-    <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={targetRef} onClick={debugMode ? undefined : onClick} data-pw={`ss-product-result-card-${index + 1}`}>
+    <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)}
+       onClick={debugMode ? undefined : onClick} data-pw={`ss-product-result-card-${index + 1}`}>
       <div className='relative'>
-        <div className='aspect-[2/3]'>
-          <img className='size-full object-cover' src={result.im_url} data-pw={`ss-product-result-card-image-${index + 1}`}/>
+        <div className='flex justify-center'>
+          <img style={{ maxHeight: 240 }} src={result.im_url} data-pw={`ss-product-result-card-image-${index + 1}`}/>
         </div>
         <Button
           isIconOnly
