@@ -204,29 +204,19 @@ export const devInitWidget = async (
     renderer: WidgetRenderer,
     isMultiRender: boolean,
     devConfigs: RecursivePartial<WidgetConfig>,
-    fieldMappingsParam: Record<string, string>,
-    customCssParam: string,
-    shouldUseOnlineWidgetConfig: { widgetConfig: boolean, fieldMappings: boolean, customCss: boolean },
+    fieldsMappingParam: Record<string, string>,
+    customCss: string,
+    shouldRetrieveFieldsMapping: boolean,
     window: Window,
 ): Promise<void> => {
-  let widgetConfig = devConfigs.customizations;
-  let fieldMappings = fieldMappingsParam;
-  let customCss = customCssParam;
-  if (shouldUseOnlineWidgetConfig.widgetConfig || shouldUseOnlineWidgetConfig.fieldMappings
-      || shouldUseOnlineWidgetConfig.customCss) {
+  const widgetConfig = devConfigs.customizations;
+  let fieldsMapping = fieldsMappingParam;
+  if (shouldRetrieveFieldsMapping) {
     const widgetConfigResponse = await fetch((devConfigs.appSettings?.endpoint || DEFAULT_ENDPOINT)
         + `/v2/widget-configs?app_key=${devConfigs.appSettings?.appKey}`
         + `&placement_id=${devConfigs.appSettings?.placementId}&return_fields_mappings=true`);
     const widgetConfigObject = await widgetConfigResponse.json();
-    if (shouldUseOnlineWidgetConfig.widgetConfig) {
-      widgetConfig = JSON.parse(widgetConfigObject.result.config);
-    }
-    if (shouldUseOnlineWidgetConfig.fieldMappings) {
-      fieldMappings = widgetConfigObject.fields_mappings;
-    }
-    if (shouldUseOnlineWidgetConfig.customCss && widgetConfig?.customCss) {
-      customCss = widgetConfig.customCss;
-    }
+    fieldsMapping = widgetConfigObject.fields_mappings;
   }
   const initConfig: any = {
     ...devConfigs,
@@ -236,19 +226,19 @@ export const devInitWidget = async (
     },
   };
 
-  const result = init(initConfig, fieldMappings, widgetType, widgetVersion);
+  const result = init(initConfig, fieldsMapping, widgetType, widgetVersion);
   if (!result) {
     return;
   }
 
   const { widgetClient, config } = result;
-  render(widgetClient, fieldMappings, config, renderer, isMultiRender);
+  render(widgetClient, fieldsMapping, config, renderer, isMultiRender);
   widgetClient.rerender = (selector?: string): void => {
     widgetClient.hideWidget();
     if (selector) {
       config.displaySettings.cssSelector = selector;
     }
-    render(widgetClient, fieldMappings, config, renderer, isMultiRender);
+    render(widgetClient, fieldsMapping, config, renderer, isMultiRender);
   };
   window.widget = widgetClient;
 };

@@ -8,11 +8,8 @@ const customCss = `
 /* Insert the custom CSS here */
 `;
 
-const shouldUseOnlineWidgetConfig = {
-  widgetConfig: false, // set to true to use widget config configured within the placement itself
-  fieldMappings: true, // set to true to use the fields mappings within the app itself
-  customCss: false, // set to true to use custom CSS configured within the placement itself
-};
+// set to true to retrieve the fields mappings from the backend
+const shouldRetrieveFieldsMapping = true;
 
 devInitWidget(
     WidgetType.EMBEDDED_SEARCH_RESULTS,
@@ -22,6 +19,6 @@ devInitWidget(
     devConfigs,
     devFieldMappings,
     customCss,
-    shouldUseOnlineWidgetConfig,
+    shouldRetrieveFieldsMapping,
     window,
 );
