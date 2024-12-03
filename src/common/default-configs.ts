@@ -68,11 +68,15 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
           fontSize: 14,
           fontWeight: 700,
         },
+        productCardSecondaryTitle: {
+          fontSize: 12,
+          fontWeight: 400,
+        },
         productCardPrice: {
           fontSize: 12,
           fontWeight: 400,
         },
-        searchBarText: {
+        productCardOriginalPrice: {
           fontSize: 12,
           fontWeight: 400,
         },
@@ -90,11 +94,15 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
           fontSize: 14,
           fontWeight: 700,
         },
+        productCardSecondaryTitle: {
+          fontSize: 12,
+          fontWeight: 400,
+        },
         productCardPrice: {
           fontSize: 12,
           fontWeight: 400,
         },
-        searchBarText: {
+        productCardOriginalPrice: {
           fontSize: 12,
           fontWeight: 400,
         },
@@ -112,11 +120,15 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
           fontSize: 16,
           fontWeight: 700,
         },
+        productCardSecondaryTitle: {
+          fontSize: 14,
+          fontWeight: 400,
+        },
         productCardPrice: {
           fontSize: 14,
           fontWeight: 400,
         },
-        searchBarText: {
+        productCardOriginalPrice: {
           fontSize: 14,
           fontWeight: 400,
         },

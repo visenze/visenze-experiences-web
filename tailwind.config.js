@@ -3,7 +3,7 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 
 const getFontObj = (configName) => {
   const deviceTypes = ['mobile', 'tablet', 'desktop'];
-  const targetElements = ['widgetTitle', 'callsToActionText', 'productCardTitle', 'productCardPrice', 'searchBarText'];
+  const targetElements = ['widgetTitle', 'callsToActionText', 'productCardTitle', 'productCardSecondaryTitle', 'productCardPrice', 'productCardOriginalPrice'];
   const fontSizeObj = {};
 
   deviceTypes.forEach(deviceType => {

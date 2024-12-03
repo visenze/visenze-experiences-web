@@ -179,8 +179,9 @@ export type TargetElement =
   | 'widgetTitle'
   | 'callsToActionText'
   | 'productCardTitle'
+  | 'productCardSecondaryTitle'
   | 'productCardPrice'
-  | 'searchBarText';
+  | 'productCardOriginalPrice';
 
 type FontConfig = {
   [D in DeviceType]: {
