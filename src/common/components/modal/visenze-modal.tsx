@@ -49,8 +49,8 @@ const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, pos
       closeTimeoutMS={timeout}
       parentSelector={(): HTMLElement => root}
       isOpen={open}
-      className={cn(`vi_modal_${layout} vi_modal_position_${position}`, className)}
-      overlayClassName={`vi_modal_overlay vi_modal_position_${position}`}
+      className={cn(`wigmix-modal wigmix-modal-${layout} wigmix-modal-position-${position}`, className)}
+      overlayClassName={`wigmix-modal-overlay wigmix-modal-position-${position}`}
       onRequestClose={onClose}
       appElement={document.body}>
       {children}
