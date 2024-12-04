@@ -12,7 +12,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler }): ReactElement => {
 
   return (
     <div className='relative flex w-full items-center bg-primary py-4 pl-8 lg:rounded-t-3xl'>
-      <p className='widget-title hidden text-start text-primary md:block' data-pw='ss-widget-title'>
+      <p className='wigmix-widget-title hidden text-start text-primary md:block' data-pw='ss-widget-title'>
         {intl.formatMessage({ id: 'similarSearch.title' })}
       </p>
 

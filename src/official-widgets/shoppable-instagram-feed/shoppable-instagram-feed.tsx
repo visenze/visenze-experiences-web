@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { CSSProperties, FC } from 'react';
 import { useEffect, useState, useContext } from 'react';
 import { Button } from '@nextui-org/button';
 import { Spinner } from '@nextui-org/spinner';
@@ -56,15 +56,33 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
     setActiveProductId('');
   };
 
-  const getProductGridStyles = (): string => {
-    if (config.customizations.productSlider) {
-      return (
-        `grid-cols-${config.customizations.productSlider.display.mobile.slideToShow} `
-        + `md:grid-cols-${config.customizations.productSlider.display.tablet.slideToShow} `
-        + `lg:grid-cols-${config.customizations.productSlider.display.desktop.slideToShow}`
-      );
+  const getProductGridCssClasses = (defaultCols: string): string => {
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.productsPerRow) {
+        classes.push(defaultCols);
+      }
+      return classes.join(' ');
     }
-    return '';
+    return defaultCols;
+  };
+
+  const getProductGridCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.productsPerRow) {
+        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
+      }
+      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
+        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
+      }
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+      }
+    }
+    return cssConfig;
   };
 
   useEffect(() => {
@@ -125,7 +143,8 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
         <div>
           {/* Gallery Products Grid */}
           <div
-            className={`grid ${getProductGridStyles() !== '' ? getProductGridStyles() : 'grid-cols-3'} gap-0.5`}
+            className={`grid ${getProductGridCssClasses('grid-cols-3')} gap-0.5`}
+            style={getProductGridCssConfig()}
             data-pw='sif-gallery-products-grid'>
             {galleryProducts.slice(0, page * 20).map((result, index) => (
               <div key={`${result.im_url}-${index}`} data-pw={`sif-gallery-product-${index + 1}`}>

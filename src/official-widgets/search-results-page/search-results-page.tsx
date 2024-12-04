@@ -1,5 +1,5 @@
 import { memo, useContext, useEffect, useState } from 'react';
-import type { ProductDisplayConfig, WidgetClient, WidgetConfig } from '../../common/visenze-core';
+import type { ProductCardsConfig, WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ResultsPage from './components/ResultsPage';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
@@ -69,7 +69,7 @@ const SearchResultsPage = memo((props: { config: WidgetConfig; productSearch: Wi
               handleMultisearchWithProduct={handleMultisearchWithProduct}
               activeProduct={activeProduct}
               setActiveProduct={setActiveProduct}
-              productCustomization={config.customizations.productSlider || ({} as ProductDisplayConfig)}
+              productCustomizations={config.customizations.productCards || ({} as ProductCardsConfig)}
             />
           )}
         </div>

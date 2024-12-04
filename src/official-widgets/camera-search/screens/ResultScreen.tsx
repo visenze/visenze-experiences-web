@@ -6,7 +6,6 @@ import { Listbox, ListboxItem } from '@nextui-org/listbox';
 import { useSwipeable } from 'react-swipeable';
 import { cn } from '@nextui-org/theme';
 import { useIntl } from 'react-intl';
-import type { ProcessedProduct } from '../../../common/types/product';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import FileDropzone from '../../../common/components/FileDropzone';
 import { ScreenType } from '../../../common/types/constants';
@@ -21,7 +20,7 @@ import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import HotspotContainer from '../../../common/components/hotspots/hotspot-container';
 import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
-import type { ProductDisplayConfig } from '../../../common/visenze-core';
+import type { ProductCardsConfig } from '../../../common/visenze-core';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -43,7 +42,7 @@ interface ResultScreenProps {
   onKeywordUpdate: (q: string) => void;
   selectedChip: string;
   setSelectedChip: (chip: string) => void;
-  productCustomizations: ProductDisplayConfig;
+  productCustomizations: ProductCardsConfig;
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
@@ -65,7 +64,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
   const [showFullResults, setShowFullResults] = useState(false);
   const [showInputSuggest, setShowInputSuggest] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState<string[]>([]);
-  const [cardBorderRadius, setCardBorderRadius] = useState('');
   const [autocompleteSuggestionsHeight, setAutocompleteSuggestionsHeight] = useState(0);
   const resultsRef = useRef<HTMLDivElement>(null);
   const breakpoint = useBreakpoint();
@@ -144,36 +142,48 @@ const ResultScreen: FC<ResultScreenProps> = ({
     onMoreLikeThis(queryImage);
   };
 
-  const getProductGridStyles = (): string => {
-    let styleString = '';
-    if (productCustomizations?.display?.tablet) {
-      styleString += `grid-cols-${productCustomizations.display.tablet.slideToShow}`;
+  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
+    const cssConfigSrc = productCustomizations?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.productsPerRow) {
+        classes.push(defaultCols);
+      }
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push(defaultGapX);
+      }
+      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
+        classes.push(defaultGapY);
+      }
+      return classes.join(' ');
     }
-    if (productCustomizations?.display?.desktop) {
-      styleString += `lg:grid-cols-${productCustomizations.display.desktop.slideToShow}`;
+    return [defaultCols, defaultGapX, defaultGapY].join(' ');
+  };
+
+  const getProductGridCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = productCustomizations?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.productsPerRow) {
+        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
+      }
+      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
+        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
+      }
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+      }
     }
-    return styleString;
+    return cssConfig;
   };
 
   const getProductCardCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (productCustomizations.borderRadius
-      && productCustomizations.borderRadius !== 0) {
-      cssConfig.borderRadius = `${productCustomizations.borderRadius}px`;
-    }
-    if (productCustomizations.contentPadding
-      && productCustomizations.contentPadding !== 0) {
-      cssConfig.padding = `${productCustomizations.contentPadding}px`;
-    }
-    if (productCustomizations.marginVertical
-      && productCustomizations.marginVertical !== 0) {
-      cssConfig.marginTop = `${productCustomizations.marginVertical}px`;
-      cssConfig.marginBottom = `${productCustomizations.marginVertical}px`;
-    }
-    if (productCustomizations.marginHorizontal
-      && productCustomizations.marginHorizontal !== 0) {
-      cssConfig.marginLeft = `${productCustomizations.marginHorizontal}px`;
-      cssConfig.marginRight = `${productCustomizations.marginHorizontal}px`;
+    const cssConfigSrc = productCustomizations?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
+        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
+      }
     }
     return cssConfig;
   };
@@ -223,14 +233,13 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
           <div ref={resultsRef} className='no-scrollbar flex size-full justify-center overflow-y-auto md:hidden'>
             <div
-              className={`mx-2 grid h-full pb-20 
-              ${productCustomizations?.display?.mobile ? `grid-cols-${productCustomizations.display.mobile.slideToShow}` : 'grid-cols-2'}`
-              }
+              className={`wigmix-product-grid mx-2 grid h-full pb-20 pt-2 ${getProductGridCssClasses('grid-cols-2', 'gap-x-4', 'gap-y-2')}`}
+              style={getProductGridCssConfig()}
               data-pw='cs-product-result-grid'>
-              {productResults.map((result: ProcessedProduct, index: number) => (
+              {productResults.map((result, index) => (
                 <div
                   key={result.product_id}
-                  className='border-gray-300 px-2 pt-2'
+                  className='border-gray-300'
                   style={getProductCardCssConfig()}
                 >
                   <Result onMoreLikeThis={onMoreLikeThis} clearSearch={clearSearch} index={index} result={result} />
@@ -293,7 +302,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 <HotspotContainer className='w-3/5' referenceImage={getReferenceImage()} />
 
                 <FileDropzone onImageUpload={onImageUpload} name='upload-icon'>
-                  <p className='calls-to-action-text px-3 py-2 leading-6 text-primary'>
+                  <p className='wigmix-calls-to-action-text px-3 py-2 leading-6 text-primary'>
                     {intl.formatMessage({ id: 'cameraSearch.dragImageToSearch.part1' })}
                     <br />
                     {intl.formatMessage({ id: 'cameraSearch.dragImageToSearch.part2' })}
@@ -306,7 +315,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
               {searchHistory && searchHistory.length > 1 && (
                 <div>
-                  <span className='calls-to-action-text text-primary'>
+                  <span className='wigmix-calls-to-action-text text-primary'>
                     {intl.formatMessage({ id: 'cameraSearch.previousViews' })}
                   </span>
                   <div
@@ -387,10 +396,11 @@ const ResultScreen: FC<ResultScreenProps> = ({
             </div>
 
             <div className='overflow-y-auto'>
-              <div className={`grid gap-x-2 gap-y-3 px-2 pb-3 ${getProductGridStyles() || 'grid-cols-3'}`}
+              <div className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses('grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
+                   style={getProductGridCssConfig()}
                    data-pw='cs-product-result-grid'>
-                {productResults.map((result: ProcessedProduct, index: number) => (
-                  <div key={result.product_id} className={cn('bg-primary', `${cardBorderRadius !== '' ? 'border-2' : ''}`)}>
+                {productResults.map((result, index) => (
+                  <div key={result.product_id} className='bg-primary' style={getProductCardCssConfig()}>
                     <Result onMoreLikeThis={onMoreLikeThis} clearSearch={() => setSearch('')} index={index}
                             result={result}/>
                   </div>
@@ -425,10 +435,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
   }, [inputSuggestions]);
 
   useEffect(() => {
-    if (productCustomizations.borderRadius
-      && productCustomizations.borderRadius !== 0) {
-      setCardBorderRadius(`${productCustomizations.borderRadius}px`);
-    }
     // Send Result Load Page event on page load
     productSearch.sendEvent(Actions.LOAD, {
       cat: Category.RESULT,

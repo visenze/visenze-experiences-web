@@ -33,7 +33,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-  const [cardBorderRadius, setCardBorderRadius] = useState('');
   const [screen, setScreen] = useState<ScreenType | null>(null);
   const [sortType, setSortType] = useState<SortType>(SortType.RELEVANCE);
   const defaultFilters = {
@@ -74,45 +73,53 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
       cat: Category.ENTRANCE,
       label: Labels.ICON,
     });
-    if (config.customizations.productSlider?.borderRadius
-      && config.customizations.productSlider?.borderRadius !== 0) {
-      setCardBorderRadius(`${config.customizations.productSlider?.borderRadius}px`);
-    }
     setDialogVisible(true);
   };
 
-  const getProductCardCssConfig = (): CSSProperties => {
+  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.productsPerRow) {
+        classes.push(defaultCols);
+      }
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push(defaultGapX);
+      }
+      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
+        classes.push(defaultGapY);
+      }
+      return classes.join(' ');
+    }
+    return [defaultCols, defaultGapX, defaultGapY].join(' ');
+  };
+
+  const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (config.customizations.productSlider?.borderRadius
-      && config.customizations.productSlider?.borderRadius !== 0) {
-      cssConfig.borderRadius = `${config.customizations.productSlider?.borderRadius}px`;
-    }
-    if (config.customizations.productSlider?.contentPadding
-      && config.customizations.productSlider?.contentPadding !== 0) {
-      cssConfig.padding = `${config.customizations.productSlider?.contentPadding}px`;
-    }
-    if (config.customizations.productSlider?.marginVertical
-      && config.customizations.productSlider?.marginVertical !== 0) {
-      cssConfig.marginTop = `${config.customizations.productSlider?.marginVertical}px`;
-      cssConfig.marginBottom = `${config.customizations.productSlider?.marginVertical}px`;
-    }
-    if (config.customizations.productSlider?.marginHorizontal
-      && config.customizations.productSlider?.marginHorizontal !== 0) {
-      cssConfig.marginLeft = `${config.customizations.productSlider?.marginHorizontal}px`;
-      cssConfig.marginRight = `${config.customizations.productSlider?.marginHorizontal}px`;
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.productsPerRow) {
+        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
+      }
+      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
+        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
+      }
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+      }
     }
     return cssConfig;
   };
 
-  const getProductGridStyles = (): string => {
-    if (config.customizations.productSlider) {
-      return (
-        `grid-cols-${config.customizations.productSlider.display.mobile.slideToShow} `
-        + `md:grid-cols-${config.customizations.productSlider.display.tablet.slideToShow} `
-        + `lg:grid-cols-${config.customizations.productSlider.display.desktop.slideToShow}`
-      );
+  const getProductCardCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
+        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
+      }
     }
-    return '';
+    return cssConfig;
   };
 
   useEffect(() => {
@@ -154,7 +161,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
           <div className='flex flex-col border-none p-4 lg:w-3/10 lg:px-10 lg:py-6'>
             {/* Widget Title */}
             <div className='flex items-center'>
-              <div className='widget-title text-primary' data-pw='itg-widget-title'>
+              <div className='wigmix-widget-title text-primary' data-pw='itg-widget-title'>
                 {intl.formatMessage({ id: 'iconTriggeredGrid.title' })}
               </div>
             </div>
@@ -185,7 +192,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
                   radius='none'
                   onClick={() => setScreen(ScreenType.SORT)}
                   data-pw='itg-sort-button'>
-                  <span className='calls-to-action-text text-buttonPrimary'>
+                  <span className='wigmix-calls-to-action-text text-buttonPrimary'>
                     {intl.formatMessage({ id: 'iconTriggeredGrid.sort' })}
                   </span>
                 </Button>
@@ -195,7 +202,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
                   radius='none'
                   onClick={() => setScreen(ScreenType.FILTER)}
                   data-pw='itg-filter-button'>
-                  <span className='calls-to-action-text text-buttonPrimary'>
+                  <span className='wigmix-calls-to-action-text text-buttonPrimary'>
                     {intl.formatMessage({ id: 'iconTriggeredGrid.filter' })}
                   </span>
                 </Button>
@@ -204,11 +211,11 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
 
             {/* Product Result Grid */}
             <div
-              className={`grid ${getProductGridStyles() !== '' ? getProductGridStyles() : 'grid-cols-2 lg:grid-cols-3'} gap-x-2 gap-y-4 overflow-y-auto`}
+              className={`grid ${getProductGridCssClasses('grid-cols-2 lg:grid-cols-3', 'gap-x-2', 'gap-y-4')} overflow-y-auto`}
+              style={getProductGridCssConfig()}
               data-pw='itg-product-result-grid'>
               {productResults.map((result, index) => (
                 <div
-                  className={`${cardBorderRadius !== '' ? 'border-2' : ''}`}
                   key={`${result.product_id}-${index}`}
                   data-pw={`itg-product-result-card-${index + 1}`}
                   style={getProductCardCssConfig()}

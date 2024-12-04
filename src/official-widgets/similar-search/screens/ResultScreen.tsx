@@ -7,7 +7,6 @@ import { Listbox, ListboxItem } from '@nextui-org/listbox';
 import { cn } from '@nextui-org/theme';
 import { useIntl } from 'react-intl';
 import { WidgetResultContext } from '../../../common/types/contexts';
-import type { ProcessedProduct } from '../../../common/types/product';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import Result from '../components/Result';
@@ -17,7 +16,7 @@ import Footer from '../../../common/components/Footer';
 import Header from '../components/Header';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
-import type { ProductDisplayConfig } from '../../../common/visenze-core';
+import type { ProductCardsConfig } from '../../../common/visenze-core';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -35,7 +34,7 @@ interface ResultScreenProps {
   onKeywordUpdate: (q: string) => void;
   searchHistory: SearchImage[];
   selectedChip: string;
-  productCustomizations: ProductDisplayConfig;
+  productCustomizations: ProductCardsConfig;
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
@@ -86,25 +85,48 @@ const ResultScreen: FC<ResultScreenProps> = ({
     return '';
   };
 
+  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
+    const cssConfigSrc = productCustomizations?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.productsPerRow) {
+        classes.push(defaultCols);
+      }
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push(defaultGapX);
+      }
+      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
+        classes.push(defaultGapY);
+      }
+      return classes.join(' ');
+    }
+    return [defaultCols, defaultGapX, defaultGapY].join(' ');
+  };
+
+  const getProductGridCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = productCustomizations?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.productsPerRow) {
+        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
+      }
+      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
+        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
+      }
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+      }
+    }
+    return cssConfig;
+  };
+
   const getProductCardCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (productCustomizations?.borderRadius
-      && productCustomizations.borderRadius !== 0) {
-      cssConfig.borderRadius = `${productCustomizations.borderRadius}px`;
-    }
-    if (productCustomizations?.contentPadding
-      && productCustomizations.contentPadding !== 0) {
-      cssConfig.padding = `${productCustomizations.contentPadding}px`;
-    }
-    if (productCustomizations?.marginVertical
-      && productCustomizations.marginVertical !== 0) {
-      cssConfig.marginTop = `${productCustomizations.marginVertical}px`;
-      cssConfig.marginBottom = `${productCustomizations.marginVertical}px`;
-    }
-    if (productCustomizations?.marginHorizontal
-      && productCustomizations.marginHorizontal !== 0) {
-      cssConfig.marginLeft = `${productCustomizations.marginHorizontal}px`;
-      cssConfig.marginRight = `${productCustomizations.marginHorizontal}px`;
+    const cssConfigSrc = productCustomizations?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
+        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
+      }
     }
     return cssConfig;
   };
@@ -192,14 +214,14 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
           <div ref={resultsRef} className='no-scrollbar flex size-full justify-center overflow-y-auto'>
             <div
-              className={`mx-2 grid h-full pb-20
-              ${productCustomizations?.display?.mobile ? `grid-cols-${productCustomizations.display.mobile.slideToShow}` : 'grid-cols-2'}`}
+              className={`wigmix-product-grid mx-2 grid h-full pb-20 pt-2 ${getProductGridCssClasses('grid-cols-2', 'gap-x-4', 'gap-y-2')}`}
+              style={getProductGridCssConfig()}
               data-pw='ss-product-result-grid'
             >
-              {productResults.map((result: ProcessedProduct, index: number) => (
+              {productResults.map((result, index) => (
                 <div
                   key={result.product_id}
-                  className='border-gray-300 px-2 pt-2'
+                  className='border-gray-300'
                   style={getProductCardCssConfig()}
                 >
                   <Result
@@ -270,7 +292,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
               {searchHistory && searchHistory?.length > 1 && (
                 <div className='pt-2'>
-                  <p className='calls-to-action-text text-primary'>Previous views</p>
+                  <p className='wigmix-calls-to-action-text text-primary'>Previous views</p>
                   <div className='no-scrollbar flex h-full flex-row gap-1 overflow-scroll pt-1' data-pw='ss-previous-views'>
                     {searchHistory
                       ?.slice(1)
@@ -346,10 +368,11 @@ const ResultScreen: FC<ResultScreenProps> = ({
             </div>
 
             <div className='overflow-y-auto'>
-              <div className={'grid grid-cols-3 gap-x-2 gap-y-3 px-2 pb-3'}
-                   data-pw='cs-product-result-grid'>
-                {productResults.map((result: ProcessedProduct, index: number) => (
-                  <div key={result.product_id} className={cn('bg-primary')}>
+              <div className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses('grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
+                   style={getProductGridCssConfig()}
+                   data-pw='ss-product-result-grid'>
+                {productResults.map((result, index) => (
+                  <div key={result.product_id} className='bg-primary' style={getProductCardCssConfig()}>
                     <Result onMoreLikeThis={onMoreLikeThis} clearSearch={() => setSearch('')} index={index}
                             result={result}/>
                   </div>

@@ -182,6 +182,23 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
         maxWidth: 0,
       },
     },
+    productCards: {
+      isOpenInNewTab: true,
+      productPrice: {
+        show: true,
+      },
+      productOriginalPrice: {
+        show: true,
+      },
+      productTitle: {
+        show: true,
+        fieldSource: 'title',
+      },
+      productSecondaryTitle: {
+        show: false,
+        fieldSource: '',
+      },
+    },
     customCss: '',
   },
   // ----Callback settings---- //

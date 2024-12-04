@@ -1,14 +1,15 @@
-import type { FC } from 'react';
+import type { CSSProperties, FC } from 'react';
 import { memo, useContext, useMemo } from 'react';
 import { Button } from '@nextui-org/button';
 import type { ObjectProductResponse } from 'visearch-javascript-sdk';
 import { useIntl } from 'react-intl';
 import ViSenzeModal from '../../../common/components/modal/visenze-modal';
-import { CroppingContext, WidgetResultContext } from '../../../common/types/contexts';
+import { CroppingContext, WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import { getFlattenProducts } from '../../../common/utils';
 import Result from './Result';
 import ImageCropThumbnail from './ImageCropThumbnail';
 import CloseIcon from '../../../common/icons/CloseIcon';
+import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 
 /**
  * This component displays a drawer with product recommendations based on selected hotspots in an image.
@@ -28,9 +29,11 @@ interface HotspotRecommendationsProps {
 }
 
 const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, openDrawer, setOpenDrawer, activeImageUrl, placementId }) => {
+  const { customizations } = useContext(WidgetDataContext);
   const { productTypes } = useContext(WidgetResultContext);
   const { selectedHotspot, setSelectedHotspot } = useContext(CroppingContext) ?? {};
   const intl = useIntl();
+  const breakpoint = useBreakpoint();
 
   const closeDrawerHandler = (): void => {
     setOpenDrawer(false);
@@ -44,6 +47,52 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
     if (selectedHotspot === -1 || objects.length === 0) return [];
     return getFlattenProducts(objects[selectedHotspot].result);
   }, [objects, selectedHotspot]);
+
+  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
+    const cssConfigSrc = customizations?.productCards?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.productsPerRow) {
+        classes.push(defaultCols);
+      }
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push(defaultGapX);
+      }
+      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
+        classes.push(defaultGapY);
+      }
+      return classes.join(' ');
+    }
+    return [defaultCols, defaultGapX, defaultGapY].join(' ');
+  };
+
+  const getProductGridCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = customizations?.productCards?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.productsPerRow) {
+        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
+      }
+      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
+        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
+      }
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+      }
+    }
+    return cssConfig;
+  };
+
+  const getProductCardCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = customizations?.productCards?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
+        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
+      }
+    }
+    return cssConfig;
+  };
 
   return (
     <ViSenzeModal open={openDrawer} onClose={closeDrawerHandler} layout='mobile' className='bottom-0 top-[unset] h-9/10 w-full rounded-t-xl' position='center'
@@ -72,10 +121,14 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
         </div>
 
         {/* Product Result Grid */}
-        <div className='grid grid-cols-2 gap-x-2 gap-y-4 overflow-y-auto px-2 pb-4 md:grid-cols-3 lg:grid-cols-4' data-pw='sif-product-result-grid'>
+        <div className={`grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3 lg:grid-cols-4', 'gap-x-2', 'gap-y-4')} overflow-y-auto px-2 pb-4`}
+             style={getProductGridCssConfig()}
+             data-pw='sif-product-result-grid'>
           {
             results.map((result, index) => (
-              <div key={`${result.product_id}-${index}`} data-pw={`sif-product-result-card-${index + 1}`}>
+              <div key={`${result.product_id}-${index}`}
+                   style={getProductCardCssConfig()}
+                   data-pw={`sif-product-result-card-${index + 1}`}>
                 <Result
                   index={index}
                   result={result}

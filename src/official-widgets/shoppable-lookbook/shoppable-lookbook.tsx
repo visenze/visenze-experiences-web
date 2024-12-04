@@ -8,6 +8,7 @@ import { WidgetResultContext } from '../../common/types/contexts';
 import Result from './components/Result';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface ShoppableLookbookProps {
   config: WidgetConfig;
@@ -25,10 +26,10 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
-  const [cardBorderRadius, setCardBorderRadius] = useState('');
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const intl = useIntl();
+  const breakpoint = useBreakpoint();
 
   const { productResults, metadata, referenceImageUrl, error, objectIndex, setObjectIndex, objects } = useRecommendationSearch({
       productSearch,
@@ -53,25 +54,48 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
     }
   };
 
+  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.productsPerRow) {
+        classes.push(defaultCols);
+      }
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push(defaultGapX);
+      }
+      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
+        classes.push(defaultGapY);
+      }
+      return classes.join(' ');
+    }
+    return [defaultCols, defaultGapX, defaultGapY].join(' ');
+  };
+
+  const getProductGridCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.productsPerRow) {
+        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
+      }
+      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
+        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
+      }
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+      }
+    }
+    return cssConfig;
+  };
+
   const getProductCardCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (config.customizations.productSlider?.borderRadius
-      && config.customizations.productSlider?.borderRadius !== 0) {
-      cssConfig.borderRadius = `${config.customizations.productSlider?.borderRadius}px`;
-    }
-    if (config.customizations.productSlider?.contentPadding
-      && config.customizations.productSlider?.contentPadding !== 0) {
-      cssConfig.padding = `${config.customizations.productSlider?.contentPadding}px`;
-    }
-    if (config.customizations.productSlider?.marginVertical
-      && config.customizations.productSlider?.marginVertical !== 0) {
-      cssConfig.marginTop = `${config.customizations.productSlider?.marginVertical}px`;
-      cssConfig.marginBottom = `${config.customizations.productSlider?.marginVertical}px`;
-    }
-    if (config.customizations.productSlider?.marginHorizontal
-      && config.customizations.productSlider?.marginHorizontal !== 0) {
-      cssConfig.marginLeft = `${config.customizations.productSlider?.marginHorizontal}px`;
-      cssConfig.marginRight = `${config.customizations.productSlider?.marginHorizontal}px`;
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
+        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
+      }
     }
     return cssConfig;
   };
@@ -86,17 +110,6 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
     });
   };
 
-  const getProductGridStyles = (): string => {
-    if (config.customizations.productSlider) {
-      return (
-        `grid-cols-${config.customizations.productSlider.display.mobile.slideToShow} `
-        + `md:grid-cols-${config.customizations.productSlider.display.tablet.slideToShow} `
-        + `lg:grid-cols-${config.customizations.productSlider.display.desktop.slideToShow}`
-      );
-    }
-    return '';
-  };
-
   useEffect(() => {
     if (error) {
       setRetryCount(retryCount + 1);
@@ -106,10 +119,6 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
   }, [error]);
 
   useEffect(() => {
-    if (config.customizations.productSlider?.borderRadius
-      && config.customizations.productSlider?.borderRadius !== 0 && isLoading) {
-      setCardBorderRadius(`${config.customizations.productSlider?.borderRadius}px`);
-    }
     setIsLoading(false);
   }, []);
 
@@ -131,7 +140,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         <div className='bg-primary'>
           {/* Widget Title */}
-          <div className='widget-title py-2 text-center text-primary md:py-4' data-pw='sl-widget-title'>
+          <div className='wigmix-widget-title py-2 text-center text-primary md:py-4' data-pw='sl-widget-title'>
             {intl.formatMessage({ id: 'shoppableLookbook.title' })}
           </div>
 
@@ -165,12 +174,12 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
 
             {/* Product card grid */}
             <div
-              className={`grid ${getProductGridStyles() !== '' ? getProductGridStyles() : 'grid-cols-2 md:grid-cols-3'} 
-              gap-x-2 gap-y-4 md:absolute md:right-0 md:top-0 md:h-full md:w-[59%] md:overflow-y-scroll`}
+              className={`grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-4')} 
+              md:absolute md:right-0 md:top-0 md:h-full md:w-[59%] md:overflow-y-scroll`}
+              style={getProductGridCssConfig()}
               data-pw='sl-product-result-grid'>
               {productResults.map((result, index) => (
                 <div
-                  className={`${cardBorderRadius !== '' ? 'border-2' : ''}`}
                   key={`${result.product_id}-${index}`}
                   data-pw={`sl-product-result-card-${index + 1}`}
                   style={getProductCardCssConfig()}

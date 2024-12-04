@@ -22,13 +22,13 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
             <Button isIconOnly className='absolute left-5 top-3 bg-transparent' onClick={onBackHandler} data-pw='cs-back-button'>
               <BackIcon className='size-6'/>
             </Button>
-            <p className='widget-title hidden text-2xl text-primary md:block' data-pw='cs-widget-title'>
+            <p className='wigmix-widget-title hidden text-2xl text-primary md:block' data-pw='cs-widget-title'>
               {intl.formatMessage({ id: 'cameraSearch.resultScreenTitle' })}
             </p>
           </>
         )
         : (
-          <p className='widget-title text-center text-primary' data-pw='cs-widget-title'>
+          <p className='wigmix-widget-title text-center text-primary' data-pw='cs-widget-title'>
             {intl.formatMessage({ id: 'cameraSearch.uploadScreenTitle.part1' })}&nbsp;
             <br className='md:hidden'/>
             {intl.formatMessage({ id: 'cameraSearch.uploadScreenTitle.part2' })}

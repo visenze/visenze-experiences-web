@@ -1,12 +1,13 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@nextui-org/button';
 import { Image } from '@nextui-org/image';
 import { cn } from '@nextui-org/theme';
 import type { ProcessedProduct } from '../../../common/types/product';
 import Result from './Result';
 import CloseIcon from '../../../common/icons/CloseIcon';
-import type { ProductDisplayConfig } from '../../../common/visenze-core';
+import type { ProductCardsConfig } from '../../../common/visenze-core';
+import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 
 /**
  * Component which displays the search results
@@ -19,7 +20,7 @@ interface ResultsPageProps {
   autocompleteResults: string[];
   activeProduct: ProcessedProduct | null;
   setActiveProduct: (activeProduct: ProcessedProduct | null) => void;
-  productCustomization: ProductDisplayConfig;
+  productCustomizations: ProductCardsConfig;
 }
 
 const ResultsPage: FC<ResultsPageProps> = ({
@@ -29,11 +30,11 @@ const ResultsPage: FC<ResultsPageProps> = ({
   handleMultisearchWithProduct,
   activeProduct,
   setActiveProduct,
-  productCustomization,
+  productCustomizations,
 }): ReactElement => {
   const [productHistory, setProductHistory] = useState<ProcessedProduct[]>([]);
-  const [cardBorderRadius, setCardBorderRadius] = useState('');
   const resultsRef = useRef<HTMLDivElement>(null);
+  const breakpoint = useBreakpoint();
 
   const scrollToResultsTop = (): void => {
     resultsRef.current?.scrollTo({
@@ -43,25 +44,48 @@ const ResultsPage: FC<ResultsPageProps> = ({
     });
   };
 
+  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
+    const cssConfigSrc = productCustomizations?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.productsPerRow) {
+        classes.push(defaultCols);
+      }
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push(defaultGapX);
+      }
+      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
+        classes.push(defaultGapY);
+      }
+      return classes.join(' ');
+    }
+    return [defaultCols, defaultGapX, defaultGapY].join(' ');
+  };
+
+  const getProductGridCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = productCustomizations?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.productsPerRow) {
+        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
+      }
+      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
+        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
+      }
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+      }
+    }
+    return cssConfig;
+  };
+
   const getProductCardCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (productCustomization.borderRadius
-      && productCustomization.borderRadius !== 0) {
-      cssConfig.borderRadius = `${productCustomization.borderRadius}px`;
-    }
-    if (productCustomization.contentPadding
-      && productCustomization.contentPadding !== 0) {
-      cssConfig.padding = `${productCustomization.contentPadding}px`;
-    }
-    if (productCustomization.marginVertical
-      && productCustomization.marginVertical !== 0) {
-      cssConfig.marginTop = `${productCustomization.marginVertical}px`;
-      cssConfig.marginBottom = `${productCustomization.marginVertical}px`;
-    }
-    if (productCustomization.marginHorizontal
-      && productCustomization.marginHorizontal !== 0) {
-      cssConfig.marginLeft = `${productCustomization.marginHorizontal}px`;
-      cssConfig.marginRight = `${productCustomization.marginHorizontal}px`;
+    const cssConfigSrc = productCustomizations?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
+        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
+      }
     }
     return cssConfig;
   };
@@ -78,17 +102,6 @@ const ResultsPage: FC<ResultsPageProps> = ({
     scrollToResultsTop();
   };
 
-  const getProductGridStyles = (): string => {
-    if (Object.keys(productCustomization).length > 0) {
-      return (
-        `grid-cols-${productCustomization.display.mobile.slideToShow} `
-        + `md:grid-cols-${productCustomization.display.tablet.slideToShow} `
-        + `lg:grid-cols-${productCustomization.display.desktop.slideToShow}`
-      );
-    }
-    return '';
-  };
-
   const removeFromHistory = (product: ProcessedProduct): void => {
     const newProductHistory = productHistory.filter((item) => item.product_id !== product.product_id);
     if (newProductHistory.length === 0 || activeProduct?.product_id === product.product_id) {
@@ -96,12 +109,6 @@ const ResultsPage: FC<ResultsPageProps> = ({
     }
     setProductHistory(newProductHistory);
   };
-
-  useEffect(() => {
-    if (results.length > 0) {
-      setCardBorderRadius(`${productCustomization.borderRadius}px`);
-    }
-  }, []);
 
   return (
     <div className='flex h-[90vh] w-full flex-col divide-y-1' data-pw='srp-results-page'>
@@ -165,11 +172,11 @@ const ResultsPage: FC<ResultsPageProps> = ({
 
       <div
         ref={resultsRef}
-        className={`grid h-full ${getProductGridStyles() !== '' ? getProductGridStyles() : 'grid-cols-2 md:grid-cols-3'} 
-        gap-x-2 gap-y-4 overflow-y-auto px-3 py-4 md:gap-x-4 md:px-4`}>
+        className={`grid h-full ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-4')} 
+        overflow-y-auto px-3 py-4 md:gap-x-4 md:px-4`}
+        style={getProductGridCssConfig()}>
         {results.map((result, index) => (
           <div
-            className={`${cardBorderRadius !== '' ? 'border-2' : ''}`}
             key={`${result.product_id}-${index}`}
             data-pw={`srp-product-result-card-${index + 1}`}
             style={getProductCardCssConfig()}

@@ -76,9 +76,9 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
           onChange={updateFiltersHandler}
           isSelected={selectedFilters[facetName].has(item.value)}
         >
-          <span className='calls-to-action-text'>{item.value}</span>
+          <span className='wigmix-calls-to-action-text'>{item.value}</span>
         </Checkbox>
-        <span className='calls-to-action-text'>({item.count})</span>
+        <span className='wigmix-calls-to-action-text'>({item.count})</span>
       </div>
     ));
   };

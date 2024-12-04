@@ -11,7 +11,7 @@ import useImageMultisearch from '../../common/components/hooks/use-image-multise
 import { parseBox } from '../../common/utils';
 import ResultScreen from './screens/ResultScreen';
 import { ScreenType } from '../../common/types/constants';
-import type { WidgetConfig, WidgetClient, ProductDisplayConfig } from '../../common/visenze-core';
+import type { WidgetConfig, WidgetClient, ProductCardsConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import LoadingIcon from './icons/LoadingIcon';
@@ -147,7 +147,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
             selectedChip={selectedChip}
-            productCustomizations={config.customizations.productSlider || ({} as ProductDisplayConfig)}
+            productCustomizations={config.customizations.productCards || ({} as ProductCardsConfig)}
           />
         );
       case ScreenType.LOADING:
@@ -165,7 +165,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
             selectedChip={selectedChip}
-            productCustomizations={config.customizations.productSlider || ({} as ProductDisplayConfig)}
+            productCustomizations={config.customizations.productCards || ({} as ProductCardsConfig)}
           />
         );
     }

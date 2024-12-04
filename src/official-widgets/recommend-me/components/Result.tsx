@@ -4,8 +4,12 @@ import { WidgetDataContext, WidgetResultContext } from '../../../common/types/co
 import ResultLogicImpl from '../../../common/client/result-logic';
 import type { ProcessedProduct } from '../../../common/types/product';
 import { Actions } from '../../../common/types/tracking-constants';
-import { getCurrencyFormatter } from '../../../common/locales/locale';
-import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../../common/default-configs';
+import {
+  getOriginalPrice,
+  getPrice,
+  getProductSecondaryTitle,
+  getProductTitle,
+} from '../../../common/components/product-card-parts';
 
 /**
  * An individual product result card
@@ -22,7 +26,7 @@ const Result: FC<ResultProps> = ({ index, result }) => {
   const { metadata } = useContext(WidgetResultContext);
   const { languageSettings } = useContext(WidgetDataContext);
   const { onProductClick } = callbacks;
-  const isOpenInNewTab = customizations.productSlider?.isOpenInNewTab || false;
+  const isOpenInNewTab = customizations.productCards?.isOpenInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
@@ -34,33 +38,6 @@ const Result: FC<ResultProps> = ({ index, result }) => {
     result,
     isOpenInNewTab,
   });
-  const currencyFormatter = getCurrencyFormatter(
-      languageSettings?.locale || customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE,
-      languageSettings?.currency || customizations.languageSettings?.defaultCurrency || DEFAULT_CURRENCY,
-  );
-
-  const getProductName = (): string => {
-    if (result[productDetails.title]) {
-      return result[productDetails.title];
-    }
-    return '';
-  };
-
-  const getPrice = (): string => {
-    if (result[productDetails.price]) {
-      const priceNumber = +result[productDetails.price].value;
-      return currencyFormatter.format(priceNumber);
-    }
-    return '';
-  };
-
-  const getOriginalPrice = (): string => {
-    if (result[productDetails.originalPrice]) {
-      const priceNumber = +result[productDetails.originalPrice].value;
-      return currencyFormatter.format(priceNumber);
-    }
-    return '';
-  };
 
   // Send Product View tracking event when the product is in view
   useEffect(() => {
@@ -86,23 +63,31 @@ const Result: FC<ResultProps> = ({ index, result }) => {
     };
   }, [targetRef]);
 
+  const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
+  const price = getPrice(customizations, languageSettings, productDetails, result);
+
   return (
     <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)}
        onClick={debugMode ? undefined : onClick} data-pw={`rm-product-result-card-${index + 1}`}>
-      <div className='h-52 w-36 md:h-72 md:w-48 lg:h-96 lg:w-64'>
-        <img className='size-full object-cover' src={result.im_url}/>
+      <div className='w-36 md:w-48 lg:w-64'>
+        <img className='widget-product-card-image object-cover' src={result.im_url}/>
       </div>
       <div className='flex w-36 flex-col pt-2 md:w-48 lg:w-64'>
-        <span className='product-card-title truncate text-primary'>{getProductName()}</span>
+        <span className='wigmix-product-card-title line-clamp-1'>
+          {getProductTitle(customizations, productDetails, result)}
+        </span>
+        <span className='wigmix-product-card-secondary-title line-clamp-1'>
+          {getProductSecondaryTitle(customizations, productDetails, result)}
+        </span>
         {
-          getOriginalPrice() && getOriginalPrice() !== getPrice()
+          originalPrice && originalPrice !== price
             ? (
-              <div className='flex gap-1'>
-                <span className='product-card-price text-red-500'>{getPrice()}</span>
-                <span className='product-card-price text-gray-400 line-through'>{getOriginalPrice()}</span>
+              <div className='flex flex-wrap gap-1'>
+                <span className='wigmix-product-card-price text-red-500'>{price}</span>
+                <span className='wigmix-product-card-original-price text-gray-400 line-through'>{originalPrice}</span>
               </div>
             ) : (
-              <span className='product-card-price text-primary'>{getPrice()}</span>
+              <span className='wigmix-product-card-price text-primary'>{price}</span>
             )
         }
       </div>

@@ -10,7 +10,7 @@ import { parseBox } from '../../common/utils';
 import UploadScreen from './screens/UploadScreen';
 import ResultScreen from './screens/ResultScreen';
 import { ScreenType } from '../../common/types/constants';
-import type { ProductDisplayConfig, WidgetClient, WidgetConfig } from '../../common/visenze-core';
+import type { ProductCardsConfig, WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
@@ -156,7 +156,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
             setSearchHistory={setSearchHistory}
             selectedChip={selectedChip}
             setSelectedChip={setSelectedChip}
-            productCustomizations={config.customizations.productSlider || ({} as ProductDisplayConfig)}
+            productCustomizations={config.customizations.productCards || ({} as ProductCardsConfig)}
           />
         );
       case ScreenType.LOADING:

@@ -233,6 +233,7 @@ export interface WidgetConfig {
       gender: string;
       sizes: string;
       colors: string;
+      [key: string]: string;
     };
   };
   searchSettings: Record<string, any>;
@@ -269,7 +270,7 @@ export interface WidgetConfig {
       defaultCurrency: string;
       text: Record<string, Record<string, string>>;
     };
-    productSlider?: ProductDisplayConfig;
+    productCards?: ProductCardsConfig;
   };
   platformSettings?: {
     platformName: string;
@@ -297,19 +298,30 @@ export type ProductDetailField = keyof {
   originalPrice: string;
 };
 
-export interface ProductDisplayConfig {
-  display: {
-    mobile: ProductDisplayFeatures;
-    tablet: ProductDisplayFeatures;
-    desktop: ProductDisplayFeatures;
-  };
+export interface ProductCardsConfig {
+  mobile?: ProductCardConfig,
+  tablet?: ProductCardConfig,
+  desktop?: ProductCardConfig,
   isOpenInNewTab: boolean;
-  borderRadius: number;
-  contentPadding: number;
-  marginVertical: number;
-  marginHorizontal: number;
+  productPrice: {
+    show: boolean;
+  };
+  productOriginalPrice: {
+    show: boolean;
+  };
+  productTitle: {
+    show: boolean;
+    fieldSource: string;
+  };
+  productSecondaryTitle: {
+    show: boolean;
+    fieldSource: string;
+  };
 }
-interface ProductDisplayFeatures {
-  slideToShow: number;
-  slideToScroll?: number;
+
+interface ProductCardConfig {
+  productsPerRow: number;
+  contentPadding: number | undefined;
+  marginVertical: number | undefined;
+  marginHorizontal: number | undefined;
 }

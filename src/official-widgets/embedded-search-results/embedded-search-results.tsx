@@ -19,6 +19,7 @@ import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import FilterIcon from '../../common/icons/FilterIcon';
 import type { ImageUrl } from '../../common/types/image';
 import CloseIcon from '../../common/icons/CloseIcon';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface EmbeddedSearchResultProps {
   config: WidgetConfig;
@@ -44,7 +45,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [cardBorderRadius, setCardBorderRadius] = useState('');
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
   const [imageUrl, setImageUrl] = useState('');
@@ -56,6 +56,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   const widgetTitleRef = useRef<HTMLDivElement>(null);
   const root = useContext(RootContext);
   const intl = useIntl();
+  const breakpoint = useBreakpoint();
   const isMultiSearch = searchBarResultsSettings.enableMultiSearch;
   if (!isMultiSearch) {
     const event = new CustomEvent('wigmix_search_bar_multi_search', { detail: false });
@@ -105,46 +106,54 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
       const event = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
       document.dispatchEvent(event);
     }
-    if (config.customizations.productSlider?.borderRadius
-      && config.customizations.productSlider?.borderRadius !== 0 && isLoading) {
-      setCardBorderRadius(`${config.customizations.productSlider?.borderRadius}px`);
-    }
     setIsFirstLoad(false);
     setIsLoading(false);
   };
 
-  const getProductCardCssConfig = (): CSSProperties => {
+  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.productsPerRow) {
+        classes.push(defaultCols);
+      }
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push(defaultGapX);
+      }
+      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
+        classes.push(defaultGapY);
+      }
+      return classes.join(' ');
+    }
+    return [defaultCols, defaultGapX, defaultGapY].join(' ');
+  };
+
+  const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (config.customizations.productSlider?.borderRadius
-      && config.customizations.productSlider?.borderRadius !== 0) {
-      cssConfig.borderRadius = `${config.customizations.productSlider?.borderRadius}px`;
-    }
-    if (config.customizations.productSlider?.contentPadding
-      && config.customizations.productSlider?.contentPadding !== 0) {
-      cssConfig.padding = `${config.customizations.productSlider?.contentPadding}px`;
-    }
-    if (config.customizations.productSlider?.marginVertical
-      && config.customizations.productSlider?.marginVertical !== 0) {
-      cssConfig.marginTop = `${config.customizations.productSlider?.marginVertical}px`;
-      cssConfig.marginBottom = `${config.customizations.productSlider?.marginVertical}px`;
-    }
-    if (config.customizations.productSlider?.marginHorizontal
-      && config.customizations.productSlider?.marginHorizontal !== 0) {
-      cssConfig.marginLeft = `${config.customizations.productSlider?.marginHorizontal}px`;
-      cssConfig.marginRight = `${config.customizations.productSlider?.marginHorizontal}px`;
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.productsPerRow) {
+        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
+      }
+      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
+        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
+      }
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+      }
     }
     return cssConfig;
   };
 
-  const getProductGridStyles = (): string => {
-    if (config.customizations.productSlider) {
-      return (
-        `grid-cols-${config.customizations.productSlider.display.mobile.slideToShow} `
-        + `md:grid-cols-${config.customizations.productSlider.display.tablet.slideToShow} `
-        + `lg:grid-cols-${config.customizations.productSlider.display.desktop.slideToShow}`
-      );
+  const getProductCardCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
+        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
+      }
     }
-    return '';
+    return cssConfig;
   };
 
   const multisearchWithSearchBarDetails = (pageParam: number, imgUrl: string, removeImId: boolean): void => {
@@ -394,11 +403,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                 : <>
                   {
                     productResults.length > 0
-                      ? <div className={`grid w-full ${getProductGridStyles() || 'grid-cols-2 md:grid-cols-3'} gap-x-2 gap-y-4 px-2 pb-2 md:pl-0 md:pr-2`}
+                      ? <div className={`grid w-full ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-3')}] px-2 pb-2 md:pl-0 md:pr-2`}
+                             style={getProductGridCssConfig()}
                              data-pw='esr-product-result-grid'>
                         {productResults.map((result, index) => (
-                          <div className={`${cardBorderRadius !== '' ? 'border-2' : ''}`}
-                               key={`${result.product_id}-${index}`}
+                          <div key={`${result.product_id}-${index}`}
                                data-pw={`esr-product-result-card-${index + 1}`}
                                style={getProductCardCssConfig()}>
                             <Result

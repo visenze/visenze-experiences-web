@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { CSSProperties, FC } from 'react';
 import { useEffect, useState, useContext } from 'react';
 import Slider from 'react-slick';
 import type { Settings } from 'react-slick';
@@ -27,6 +27,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId 
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const intl = useIntl();
+  const breakpoint = useBreakpoint();
 
   const {
     productResults,
@@ -40,19 +41,15 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId 
   });
 
   const useSlideSettings = (): Settings => {
-    const breakpoint = useBreakpoint();
     const isDesktop = breakpoint === WidgetBreakpoint.DESKTOP;
     const isTablet = breakpoint === WidgetBreakpoint.TABLET;
-    let slidesToShow = config.customizations.productSlider?.display.mobile.slideToShow || 2.5;
-    let slidesToScroll = config.customizations.productSlider?.display.mobile.slideToShow || 2;
-
+    let slidesToShow = config.customizations.productCards?.mobile?.productsPerRow || 2.5;
     if (isDesktop) {
-      slidesToShow = config.customizations.productSlider?.display.desktop.slideToShow || 4;
-      slidesToScroll = config.customizations.productSlider?.display.desktop.slideToScroll || 4;
+      slidesToShow = config.customizations.productCards?.desktop?.productsPerRow || 4;
     } else if (isTablet) {
-      slidesToShow = config.customizations.productSlider?.display.tablet.slideToShow || 3.5;
-      slidesToScroll = config.customizations.productSlider?.display.tablet.slideToScroll || 3;
+      slidesToShow = config.customizations.productCards?.tablet?.productsPerRow || 3.5;
     }
+    const slidesToScroll = Math.floor(slidesToShow);
 
     // Manually center slick track if there are not enough products to show
     const slickTrack: HTMLDivElement | null | undefined = root?.querySelector('.slick-track');
@@ -77,6 +74,30 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId 
   };
 
   const settings = useSlideSettings();
+
+  const getProductCardCssClasses = (): string => {
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push('p-1 md:p-2');
+      }
+      return classes.join(' ');
+    }
+    return 'p-1 md:p-2';
+  };
+
+  const getProductCardCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.marginLeft = cssConfigSrc.marginHorizontal / 2;
+        cssConfig.marginRight = cssConfigSrc.marginHorizontal / 2;
+      }
+    }
+    return cssConfig;
+  };
 
   useEffect(() => {
     if (error) {
@@ -107,17 +128,16 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId 
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {/* Widget Title */}
-        <div className='widget-title py-2 text-center text-primary md:py-4' data-pw='mlt-widget-title'>{intl.formatMessage({ id: 'moreLikeThis.title' })}</div>
+        <div className='wigmix-widget-title py-2 text-center text-primary md:py-4' data-pw='mlt-widget-title'>{intl.formatMessage({ id: 'moreLikeThis.title' })}</div>
 
         {/* Product Result Carousel */}
         <div className='relative pr-1 lg:px-10' data-pw='mlt-product-result-carousel'>
           <Slider {...settings}>
             {productResults.map((result, index) => (
-              <div className='p-1 md:p-2' key={`${result.product_id}-${index}`} data-pw={`mlt-product-result-card-${index + 1}`}>
-                <Result
-                  index={index}
-                  result={result}
-                />
+              <div key={`${result.product_id}-${index}`} data-pw={`mlt-product-result-card-${index + 1}`}>
+                <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
+                  <Result index={index} result={result} />
+                </div>
               </div>
             ))}
           </Slider>

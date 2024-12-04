@@ -25,7 +25,7 @@ const SortOptions: FC<SortOptionsProps> = ({ sortType, setSortType, setScreen, c
   return (
     <div className={cn('bg-primary', className)}>
       <div className='primary-text py-3 text-center text-lg lg:py-0 lg:text-start'>{intl.formatMessage({ id: 'iconTriggeredGrid.sort' })}</div>
-      <div className='calls-to-action-text flex h-full flex-col gap-2 border-1 p-4'>
+      <div className='wigmix-calls-to-action-text flex h-full flex-col gap-2 border-1 p-4'>
         <RadioGroup
           value={sortType}
           onChange={(event) => setSortType(event.target.value as SortType)}

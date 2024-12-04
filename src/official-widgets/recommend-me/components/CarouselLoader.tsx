@@ -28,7 +28,7 @@ const CarouselLoader: FC<{ results: ProcessedProduct[], searchValue: string }> =
         ))}
         {results.length <= 4 && [0, 1, 2, 3].map((i) => (
           <>
-            {i >= results.length && <Skeleton className='h-64 w-36 md:h-80 md:w-48 lg:h-108 lg:w-64'></Skeleton>}
+            {i >= results.length && <Skeleton className='h-48 w-36 md:h-64 md:w-48 lg:h-80 lg:w-64'></Skeleton>}
           </>
         ))}
         <div className='absolute size-full bg-zinc-200 opacity-75 dark:bg-zinc-800'/>

@@ -56,7 +56,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
               imageWithLabel.label
               && <CardFooter className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large
             border-1 border-white/20 bg-gray-800 bg-opacity-80 py-1 shadow-small before:rounded-b-xl'>
-                <p className='calls-to-action-text text-primary'>{imageWithLabel.label}</p>
+                <p className='wigmix-calls-to-action-text text-primary'>{imageWithLabel.label}</p>
               </CardFooter>
             }
           </Card>
@@ -98,7 +98,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                     : <UploadIcon className='size-2/5 py-5'/>
                 }
 
-                <p className='calls-to-action-text hidden px-3 py-2 leading-6 text-primary md:block'>
+                <p className='wigmix-calls-to-action-text hidden px-3 py-2 leading-6 text-primary md:block'>
                   {intl.formatMessage({ id: 'cameraSearch.dragImageToSearch.part1' })}<br/>
                   {intl.formatMessage({ id: 'cameraSearch.dragImageToSearch.part2' })}&nbsp;
                   <span className='underline'>
@@ -106,7 +106,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                   </span>
                 </p>
 
-                <p className='calls-to-action-text pt-3 leading-6 text-primary md:hidden'>
+                <p className='wigmix-calls-to-action-text pt-3 leading-6 text-primary md:hidden'>
                   {intl.formatMessage({ id: 'cameraSearch.tapToSearchImage.part1' })}
                   <br className='md:hidden'/>
                   {intl.formatMessage({ id: 'cameraSearch.tapToSearchImage.part2' })}
@@ -116,7 +116,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
           </div>
 
           <div className='py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0'>
-            <p className='calls-to-action-text px-14 pb-3 text-center text-primary md:px-0 md:text-left'>
+            <p className='wigmix-calls-to-action-text px-14 pb-3 text-center text-primary md:px-0 md:text-left'>
               {intl.formatMessage({ id: 'cameraSearch.tapProductGallery.part1' })}&nbsp;
               <br className='md:hidden'/>
               {intl.formatMessage({ id: 'cameraSearch.tapProductGallery.part2' })}
@@ -141,7 +141,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                     && <CardFooter
                       className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large border-1
                       border-white/20 bg-gray-800 bg-opacity-80 py-1 shadow-small before:rounded-b-xl'>
-                      <p className='calls-to-action-text text-primary'>
+                      <p className='wigmix-calls-to-action-text text-primary'>
                         {customizations?.images[0].label}
                       </p>
                     </CardFooter>
