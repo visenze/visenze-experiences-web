@@ -167,6 +167,7 @@ export interface WidgetClient {
    * Destroys the widget object and reference.
    */
   disposeWidget: () => void;
+  updateConfig: (configOverride: WidgetConfig, isPartial: boolean) => void;
 }
 
 export interface WidgetFont {

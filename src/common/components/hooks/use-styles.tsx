@@ -1,10 +1,11 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { WidgetDataContext } from '../../types/contexts';
 
 /**
  * Copy styles from the temp shadow dom into widget shadow dom
  */
 const useStyles = (root: HTMLElement | null): void => {
+  const [customCssElement, setCustomCssElement] = useState<HTMLStyleElement | null>(null);
   const { productSearch, customizations, platformSettings } = useContext(WidgetDataContext);
   const styleTag = document.getElementById(`vi__${productSearch.widgetType.toLowerCase()}__${productSearch.widgetVersion.toLowerCase()}`);
 
@@ -17,18 +18,31 @@ const useStyles = (root: HTMLElement | null): void => {
       }
       if (customizations && customizations.customCss) {
         const customCss = document.createElement('style');
-        customCss.id = 'custom-css-user';
+        customCss.id = 'wigmix-custom-css-user';
         customCss.innerHTML = customizations.customCss;
         root.appendChild(customCss);
+        setCustomCssElement(customCss);
       }
       if (platformSettings && platformSettings.customCss) {
         const platformCustomCss = document.createElement('style');
-        platformCustomCss.id = `custom-css-platform-${platformSettings.platformName.toLowerCase()}`;
+        platformCustomCss.id = `wigmix-custom-css-platform-${platformSettings.platformName.toLowerCase()}`;
         platformCustomCss.innerHTML = platformSettings.customCss;
         root.appendChild(platformCustomCss);
       }
     }
   }, [root]);
+
+  useEffect(() => {
+    if (customCssElement) {
+      customCssElement.innerHTML = customizations.customCss || '';
+    } else if (root) {
+      const customCss = document.createElement('style');
+      customCss.id = 'wigmix-custom-css-user';
+      customCss.innerHTML = customizations.customCss || '';
+      root.appendChild(customCss);
+      setCustomCssElement(customCss);
+    }
+  }, [customizations.customCss]);
 };
 
 export default useStyles;

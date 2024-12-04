@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import { IntlProvider } from 'react-intl';
 import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import ShadowWrapper from '../../common/components/shadow-wrapper';
@@ -7,6 +8,7 @@ import ShoppingAssistant from './shopping-assistant';
 import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
 import { getLocaleTexts } from '../../common/locales/locale';
+import { deepMerge } from '../../common/client/initialization';
 
 interface AppProps {
   config: WidgetConfig;
@@ -15,14 +17,34 @@ interface AppProps {
 }
 
 const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
-  const locale = config.languageSettings.locale || config.customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE;
-  const messages = getLocaleTexts(locale, config.languageSettings.text, config.customizations.languageSettings?.text);
+  const [configInternal, setConfigInternal] = useState(config);
+  const [locale, setLocale] = useState(DEFAULT_LOCALE);
+  const [messages, setMessages] = useState<Record<string, string>>({});
+
+  productSearch.updateConfig = (configOverride, isPartial): void => {
+    if (configOverride) {
+      if (isPartial) {
+        setConfigInternal(deepMerge(configOverride, config));
+      } else {
+        setConfigInternal((c) => ({
+          ...c,
+          customizations: configOverride.customizations,
+        }));
+      }
+    }
+  };
+
+  useEffect(() => {
+    const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE;
+    setLocale(localeFromConfig);
+    setMessages(getLocaleTexts(localeFromConfig, configInternal.languageSettings.text, configInternal.customizations.languageSettings?.text));
+  }, [configInternal]);
 
   return (
-      <WidgetDataContext.Provider value={{ ...config, fieldMappings, productSearch }}>
+      <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, productSearch }}>
         <ShadowWrapper>
           <IntlProvider messages={messages} locale={locale} defaultLocale='en'>
-            <ShoppingAssistant config={config} productSearch={productSearch} />
+            <ShoppingAssistant config={configInternal} productSearch={productSearch} />
           </IntlProvider>
         </ShadowWrapper>
       </WidgetDataContext.Provider>

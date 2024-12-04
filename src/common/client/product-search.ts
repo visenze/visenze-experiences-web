@@ -277,5 +277,6 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     openWidget,
     hideWidget,
     disposeWidget,
+    updateConfig: (): void => {},
   };
 }
