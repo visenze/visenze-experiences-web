@@ -178,10 +178,8 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
         maxWidth: 767,
       },
       tablet: {
-        maxWidth: 1023,
-      },
-      desktop: {
-        minWidth: 1024,
+        // no tablet definition by default
+        maxWidth: 0,
       },
     },
     customCss: '',

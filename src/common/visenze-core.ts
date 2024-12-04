@@ -258,7 +258,10 @@ export interface WidgetConfig {
       [I in IconName]: string;
     };
     images: ImageWithLabel[];
-    breakpoints: BreakpointConfig;
+    breakpoints: {
+      mobile: ViewportWidth;
+      tablet: ViewportWidth;
+    };
     customCss: string;
     languageSettings?: {
       locale: string;
@@ -278,8 +281,8 @@ export interface WidgetConfig {
 }
 
 interface ViewportWidth {
-  minWidth?: number | string;
-  maxWidth?: number | string;
+  minWidth?: number;
+  maxWidth?: number;
 }
 
 export type RecursivePartial<T> = T extends never[] ? T : { [P in keyof T]?: RecursivePartial<T[P]> };
@@ -291,12 +294,6 @@ export type ProductDetailField = keyof {
   price: string;
   originalPrice: string;
 };
-
-interface BreakpointConfig {
-  mobile: ViewportWidth;
-  tablet: ViewportWidth;
-  desktop: ViewportWidth;
-}
 
 export interface ProductDisplayConfig {
   display: {
