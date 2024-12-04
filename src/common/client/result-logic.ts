@@ -33,7 +33,6 @@ const ResultLogicImpl = ({
   const productTrackingMeta: Record<string, any> = {
     ...trackingMeta,
     pid: result.product_id,
-    imUrl: result.im_url,
     productUrl: getValue('productUrl'),
     pos: index + 1,
   };
