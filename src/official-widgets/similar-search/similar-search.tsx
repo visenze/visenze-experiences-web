@@ -30,7 +30,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
   const [image, setImage] = useState<SearchImage | undefined>();
   const [resizedImage, setResizedImage] = useState<SearchImage | undefined>();
   const [screen, setScreen] = useState<ScreenType>(ScreenType.UPLOAD);
-  const [selectedChip, setSelectedChip] = useState<string>('');
   const [boxData, setBoxData] = useState<BoxData | undefined>();
   const [searchHistory, setSearchHistory] = useState<SearchImage[]>([]);
   const root = useContext(RootContext);
@@ -57,7 +56,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     setImage(undefined);
     setResizedImage(undefined);
     setBoxData(undefined);
-    setSelectedChip('');
     resetSearch();
   };
 
@@ -80,7 +78,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     setSearchHistory([searchImage, ...previousSearches]);
   };
 
-  const onMoreLikeThis = (data: SearchImage): void => {
+  const onImageSearch = (data: SearchImage): void => {
     appendSearchHistory(data);
     if (image === data) {
       // Fake the search if same image
@@ -88,7 +86,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
       setTimeout(() => setScreen(ScreenType.RESULT), 300);
     } else {
       setScreen(ScreenType.LOADING);
-      setSelectedChip('');
       setBoxData(undefined);
       setImage(data);
     }
@@ -98,10 +95,8 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     autocompleteWithQuery(q);
   };
 
-  const onKeywordSearch = (inputKeyword: string, chip: string): void => {
-    setSelectedChip(chip);
-
-    let query = chip ? chip.concat(' ', inputKeyword) : inputKeyword;
+  const onTextSearch = (text: string): void => {
+    let query = text;
     if (query.length > QUERY_MAX_CHARACTER_LENGTH) {
       query = query.slice(0, QUERY_MAX_CHARACTER_LENGTH);
     }
@@ -142,11 +137,10 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
         return (
           <ResultScreen
             onModalClose={onModalClose}
-            onKeywordSearch={onKeywordSearch}
-            onMoreLikeThis={onMoreLikeThis}
+            onTextSearch={onTextSearch}
+            onImageSearch={onImageSearch}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
-            selectedChip={selectedChip}
             productCustomizations={config.customizations.productCards || ({} as ProductCardsConfig)}
           />
         );
@@ -160,11 +154,10 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
         return (
           <ResultScreen
             onModalClose={onModalClose}
-            onKeywordSearch={onKeywordSearch}
-            onMoreLikeThis={onMoreLikeThis}
+            onTextSearch={onTextSearch}
+            onImageSearch={onImageSearch}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
-            selectedChip={selectedChip}
             productCustomizations={config.customizations.productCards || ({} as ProductCardsConfig)}
           />
         );

@@ -36,26 +36,22 @@ interface ResultScreenProps {
   setScreen: (screen: ScreenType) => void;
   searchHistory: SearchImage[];
   setSearchHistory: (searchHistory: SearchImage[]) => void;
-  onKeywordSearch: (keyword: string, chip: string) => void;
-  onMoreLikeThis: (data: SearchImage) => void;
+  onTextSearch: (text: string) => void;
+  onImageSearch: (data: SearchImage) => void;
   onImageUpload: (img: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
-  selectedChip: string;
-  setSelectedChip: (chip: string) => void;
   productCustomizations: ProductCardsConfig;
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
   onModalClose,
   setScreen,
-  onKeywordSearch = (): void => {},
-  onMoreLikeThis = (): void => {},
+  onTextSearch = (): void => {},
+  onImageSearch = (): void => {},
   onImageUpload,
   onKeywordUpdate,
   searchHistory,
   setSearchHistory,
-  selectedChip,
-  setSelectedChip,
   productCustomizations,
 }) => {
   const { productSearch } = useContext(WidgetDataContext);
@@ -133,13 +129,12 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   const onBackHandler = (): void => {
     setSearch('');
-    setSelectedChip('');
     setSearchHistory([]);
     setScreen(ScreenType.UPLOAD);
   };
 
   const onClickMoreLikeThisHandler = (queryImage: SearchImage): void => {
-    onMoreLikeThis(queryImage);
+    onImageSearch(queryImage);
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
@@ -242,7 +237,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   className='border-gray-300'
                   style={getProductCardCssConfig()}
                 >
-                  <Result onMoreLikeThis={onMoreLikeThis} clearSearch={clearSearch} index={index} result={result} />
+                  <Result onImageSearch={onImageSearch} clearSearch={clearSearch} index={index} result={result} />
                 </div>
               ))}
             </div>
@@ -271,7 +266,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             }}
             onKeyDown={(event): void => {
               if (event.nativeEvent.code === 'Enter') {
-                onKeywordSearch(search, selectedChip || '');
+                onTextSearch(search);
                 scrollToResultsTop();
 
                 if (document.activeElement instanceof HTMLElement) {
@@ -281,7 +276,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             }}
             onClear={(): void => {
               setSearch('');
-              onKeywordSearch('', selectedChip || '');
+              onTextSearch('');
               scrollToResultsTop();
             }}
             data-pw='cs-refinement-text-bar'
@@ -348,7 +343,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   aria-label='Actions'
                   onAction={(key): void => {
                     const newSearch = String(key);
-                    onKeywordSearch(newSearch, selectedChip || '');
+                    onTextSearch(newSearch);
                     setSearch(String(newSearch));
                     setTimeout(() => {
                       setShowInputSuggest(false);
@@ -381,13 +376,13 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     }}
                     onKeyDown={(event): void => {
                       if (event.nativeEvent.code === 'Enter') {
-                        onKeywordSearch(search, selectedChip || '');
+                        onTextSearch(search);
                         setShowInputSuggest(false);
                       }
                     }}
                     onClear={(): void => {
                       setSearch('');
-                      onKeywordSearch('', selectedChip || '');
+                      onTextSearch('');
                     }}
                     data-pw='ss-refinement-text-bar'
                   />
@@ -401,7 +396,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    data-pw='cs-product-result-grid'>
                 {productResults.map((result, index) => (
                   <div key={result.product_id} className='bg-primary' style={getProductCardCssConfig()}>
-                    <Result onMoreLikeThis={onMoreLikeThis} clearSearch={() => setSearch('')} index={index}
+                    <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
                             result={result}/>
                   </div>
                 ))}

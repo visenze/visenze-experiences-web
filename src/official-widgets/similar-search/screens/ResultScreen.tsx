@@ -29,21 +29,19 @@ const swipeConfig = {
 
 interface ResultScreenProps {
   onModalClose: () => void;
-  onKeywordSearch: (keyword: string, chip: string) => void;
-  onMoreLikeThis: (data: SearchImage) => void;
+  onTextSearch: (text: string) => void;
+  onImageSearch: (data: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
   searchHistory: SearchImage[];
-  selectedChip: string;
   productCustomizations: ProductCardsConfig;
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
   onModalClose,
-  onKeywordSearch = (): void => {},
-  onMoreLikeThis = (): void => {},
+  onTextSearch = (): void => {},
+  onImageSearch = (): void => {},
   onKeywordUpdate,
   searchHistory,
-  selectedChip,
   productCustomizations,
 }) => {
   const { productResults, image, autocompleteResults } = useContext(WidgetResultContext);
@@ -132,7 +130,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   };
 
   const onClickMoreLikeThisHandler = (queryImage: SearchImage): void => {
-    onMoreLikeThis(queryImage);
+    onImageSearch(queryImage);
   };
 
   const minimizedDrawerHandler = useSwipeable({
@@ -225,7 +223,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   style={getProductCardCssConfig()}
                 >
                   <Result
-                    onMoreLikeThis={onMoreLikeThis}
+                    onImageSearch={onImageSearch}
                     clearSearch={() => setSearch('')}
                     index={index}
                     result={result}
@@ -258,7 +256,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             }}
             onKeyDown={(event): void => {
               if (event.nativeEvent.code === 'Enter') {
-                onKeywordSearch(search, selectedChip || '');
+                onTextSearch(search);
                 scrollToResultsTop();
 
                 if (document.activeElement instanceof HTMLElement) {
@@ -268,7 +266,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             }}
             onClear={(): void => {
               setSearch('');
-              onKeywordSearch('', selectedChip || '');
+              onTextSearch('');
               scrollToResultsTop();
             }}
             data-pw='ss-refinement-text-bar'
@@ -321,7 +319,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   aria-label='Actions'
                   onAction={(key): void => {
                     const newSearch = String(key);
-                    onKeywordSearch(newSearch, selectedChip || '');
+                    onTextSearch(newSearch);
                     setSearch(String(newSearch));
                     setTimeout(() => {
                       setShowInputSuggest(false);
@@ -353,13 +351,13 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     }}
                     onKeyDown={(event): void => {
                       if (event.nativeEvent.code === 'Enter') {
-                        onKeywordSearch(search, selectedChip || '');
+                        onTextSearch(search);
                         setShowInputSuggest(false);
                       }
                     }}
                     onClear={(): void => {
                       setSearch('');
-                      onKeywordSearch('', selectedChip || '');
+                      onTextSearch('');
                     }}
                     data-pw='ss-refinement-text-bar'
                   />
@@ -373,7 +371,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    data-pw='ss-product-result-grid'>
                 {productResults.map((result, index) => (
                   <div key={result.product_id} className='bg-primary' style={getProductCardCssConfig()}>
-                    <Result onMoreLikeThis={onMoreLikeThis} clearSearch={() => setSearch('')} index={index}
+                    <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
                             result={result}/>
                   </div>
                 ))}

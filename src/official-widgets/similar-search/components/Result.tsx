@@ -16,7 +16,7 @@ import {
 interface ResultProps {
   result: ProcessedProduct;
   index: number;
-  onMoreLikeThis: (data: SearchImage) => void;
+  onImageSearch: (data: SearchImage) => void;
   clearSearch: () => void;
   carouselRef?: React.RefObject<HTMLDivElement>;
 }
@@ -24,7 +24,7 @@ interface ResultProps {
 const Result = memo(({
   result,
   index,
-  onMoreLikeThis,
+  onImageSearch,
   clearSearch,
   carouselRef,
 }: ResultProps) => {
@@ -98,7 +98,7 @@ const Result = memo(({
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            onMoreLikeThis({ imgUrl: result.im_url });
+            onImageSearch({ imgUrl: result.im_url });
             carouselRef?.current?.scrollTo({
               top: 0,
               left: 0,

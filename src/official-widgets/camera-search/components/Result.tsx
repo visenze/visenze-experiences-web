@@ -16,14 +16,14 @@ import {
 interface ResultProps {
   result: ProcessedProduct;
   index: number;
-  onMoreLikeThis: (data: SearchImage) => void;
+  onImageSearch: (data: SearchImage) => void;
   clearSearch: () => void;
 }
 
 const Result = memo(({
   result,
   index,
-  onMoreLikeThis,
+  onImageSearch,
   clearSearch,
 }: ResultProps) => {
   const { callbacks, displaySettings, productSearch, customizations, debugMode } = useContext(WidgetDataContext);
@@ -96,7 +96,7 @@ const Result = memo(({
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            onMoreLikeThis({ imgUrl: result.im_url });
+            onImageSearch({ imgUrl: result.im_url });
             clearSearch();
           }}
           data-pw='cs-more-like-this-button'

@@ -26,7 +26,6 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
   const [image, setImage] = useState<SearchImage | undefined>();
   const [resizedImage, setResizedImage] = useState<SearchImage | undefined>();
   const [screen, setScreen] = useState<ScreenType>(ScreenType.UPLOAD);
-  const [selectedChip, setSelectedChip] = useState<string>('');
   const [boxData, setBoxData] = useState<BoxData | undefined>();
   const [searchHistory, setSearchHistory] = useState<SearchImage[]>([]);
   const root = useContext(RootContext);
@@ -53,7 +52,6 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
     setImage(undefined);
     setResizedImage(undefined);
     setBoxData(undefined);
-    setSelectedChip('');
     setScreen(ScreenType.UPLOAD);
     resetSearch();
   };
@@ -84,7 +82,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
     setImage(data);
   };
 
-  const onMoreLikeThis = (data: SearchImage): void => {
+  const onImageSearch = (data: SearchImage): void => {
     appendSearchHistory(data);
     if (image === data) {
       // Fake the search if same image
@@ -92,7 +90,6 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
       setTimeout(() => setScreen(ScreenType.RESULT), 300);
     } else {
       setScreen(ScreenType.LOADING);
-      setSelectedChip('');
       setBoxData(undefined);
       setImage(data);
     }
@@ -102,10 +99,8 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
     autocompleteWithQuery(q);
   };
 
-  const onKeywordSearch = (inputKeyword: string, chip: string): void => {
-    setSelectedChip(chip);
-
-    let query = chip ? chip.concat(' ', inputKeyword) : inputKeyword;
+  const onTextSearch = (text: string): void => {
+    let query = text;
     if (query.length > QUERY_MAX_CHARACTER_LENGTH) {
       query = query.slice(0, QUERY_MAX_CHARACTER_LENGTH);
     }
@@ -148,14 +143,12 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
           <ResultScreen
             onModalClose={onModalClose}
             setScreen={setScreen}
-            onKeywordSearch={onKeywordSearch}
-            onMoreLikeThis={onMoreLikeThis}
+            onTextSearch={onTextSearch}
+            onImageSearch={onImageSearch}
             onImageUpload={onImageUpload}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
             setSearchHistory={setSearchHistory}
-            selectedChip={selectedChip}
-            setSelectedChip={setSelectedChip}
             productCustomizations={config.customizations.productCards || ({} as ProductCardsConfig)}
           />
         );

@@ -1,5 +1,5 @@
 import type { Root } from 'react-dom/client';
-import ViSearch from 'visearch-javascript-sdk';
+import ViSearch, { type ProductSearchResponse } from 'visearch-javascript-sdk';
 import type { Primitive, WidgetClient, WidgetConfig } from '../visenze-core';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
 import { DEFAULT_ENDPOINT } from '../constants';
@@ -28,7 +28,7 @@ const callIfValidFunction = (fn: any, args: any): void => {
 };
 
 const wrapCallbacks = (
-  searchCallback: any,
+  searchCallback: ((apiResponse: ProductSearchResponse) => void) | undefined,
   onSuccess: SuccessHandler,
   onFailure: ErrorHandler,
 ): ((args: any) => void)[] => {
@@ -46,7 +46,7 @@ const wrapCallbacks = (
 export default function getWidgetClient(config: WidgetConfig, widgetType: string, widgetVersion: string): WidgetClient {
   const { vttSource, disableAnalytics } = config;
   const { placementId, appKey, strategyId, country, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
-  const { onSearchCallback } = config?.callbacks;
+  const { onSearchCallback } = config.callbacks;
   let roots: Root[] = [];
   let lastTrackingMetadata: Record<string, Primitive> = {};
   let lastReference = '';
