@@ -264,7 +264,8 @@ export interface WidgetConfig {
     };
     customCss: string;
     languageSettings?: {
-      locale: string;
+      defaultLocale: string;
+      defaultCurrency: string;
       text: Record<string, Record<string, string>>;
     };
     productSlider?: ProductDisplayConfig;

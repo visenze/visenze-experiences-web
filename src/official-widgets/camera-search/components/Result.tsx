@@ -41,8 +41,8 @@ const Result = memo(({
     isOpenInNewTab,
   });
   const currencyFormatter = getCurrencyFormatter(
-      languageSettings?.locale || DEFAULT_LOCALE,
-      languageSettings?.currency || DEFAULT_CURRENCY,
+      languageSettings?.locale || customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE,
+      languageSettings?.currency || customizations.languageSettings?.defaultCurrency || DEFAULT_CURRENCY,
   );
 
   const getProductName = (): string => {

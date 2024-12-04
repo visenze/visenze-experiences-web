@@ -6,6 +6,8 @@ import ResultLogicImpl from '../../../common/client/result-logic';
 import type { ProcessedProduct } from '../../../common/types/product';
 import MoreLikeThisIcon from '../../../common/icons/MoreLikeThisIcon';
 import { Actions } from '../../../common/types/tracking-constants';
+import { getCurrencyFormatter } from '../../../common/locales/locale';
+import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../../common/default-configs';
 
 /**
  * An individual product result card
@@ -21,6 +23,7 @@ const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) 
   const { productSearch, displaySettings, customizations, callbacks, debugMode } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
+  const { languageSettings } = useContext(WidgetDataContext);
   const { onProductClick } = callbacks;
   const isOpenInNewTab = customizations.productSlider?.isOpenInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
@@ -34,6 +37,10 @@ const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) 
     result,
     isOpenInNewTab,
   });
+  const currencyFormatter = getCurrencyFormatter(
+      languageSettings?.locale || customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE,
+      languageSettings?.currency || customizations.languageSettings?.defaultCurrency || DEFAULT_CURRENCY,
+  );
 
   const getProductName = (): string => {
     if (result[productDetails.title]) {
@@ -44,14 +51,16 @@ const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) 
 
   const getPrice = (): string => {
     if (result[productDetails.price]) {
-      return Number(result[productDetails.price].value).toFixed(2);
+      const priceNumber = +result[productDetails.price].value;
+      return currencyFormatter.format(priceNumber);
     }
     return '';
   };
 
   const getOriginalPrice = (): string => {
     if (result[productDetails.originalPrice]) {
-      return Number(result[productDetails.originalPrice].value).toFixed(2);
+      const priceNumber = +result[productDetails.originalPrice].value;
+      return currencyFormatter.format(priceNumber);
     }
     return '';
   };

@@ -47,8 +47,8 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
   },
   // ----Language settings---- //
   languageSettings: {
-    locale: DEFAULT_LOCALE,
-    currency: DEFAULT_CURRENCY,
+    locale: '',
+    currency: '',
     text: {
       en: English,
     },
