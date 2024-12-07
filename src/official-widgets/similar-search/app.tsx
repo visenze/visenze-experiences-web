@@ -44,7 +44,7 @@ const App: FC<AppProps> = ({ config, productSearch, element }) => {
   return (
     <WidgetDataContext.Provider value={{ ...configInternal, productSearch }}>
       <ShadowWrapper>
-        <IntlProvider messages={messages} locale={locale} defaultLocale='en'>
+        <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
           <SimilarSearch config={configInternal} productSearch={productSearch} element={element} />
         </IntlProvider>
       </ShadowWrapper>

@@ -5,7 +5,7 @@ export const getLocaleTexts = (localeParam: string,
                                presetTexts: Record<string, Record<string, string>>,
                                customTexts: Record<string, Record<string, string>> = {}): Record<string, string> => {
   const locale = localeParam || DEFAULT_LOCALE;
-  const lang = locale.indexOf('-') >= 0 ? locale.split('-')[0] : '';
+  const lang = locale.indexOf('-') >= 0 || locale.indexOf('_') >= 0 ? locale.split(/[-_]/)[0] : '';
   const finalTexts = ((): Record<string, string> => {
     if (!lang) {
       // If locale code is just language, return directly
@@ -27,5 +27,5 @@ export const getLocaleTexts = (localeParam: string,
 };
 
 export const getCurrencyFormatter = (locale: string, currency: string): Intl.NumberFormat => {
-  return Intl.NumberFormat(locale, { style: 'currency', currency });
+  return Intl.NumberFormat(locale.replace('_', '-'), { style: 'currency', currency });
 };

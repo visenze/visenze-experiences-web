@@ -43,7 +43,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
   return (
       <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, productSearch }}>
         <ShadowWrapper>
-          <IntlProvider messages={messages} locale={locale} defaultLocale='en'>
+          <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
             <ShoppingAssistant config={configInternal} productSearch={productSearch} />
           </IntlProvider>
         </ShadowWrapper>
