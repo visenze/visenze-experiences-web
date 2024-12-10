@@ -7,7 +7,7 @@ import { WidgetDataContext } from '../../common/types/contexts';
 import SearchResultsPage from './search-results-page';
 import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
-import { getLocaleTexts } from '../../common/locales/locale';
+import { getLocaleTexts, type LanguagePack } from '../../common/locales/locale';
 import { deepMerge } from '../../common/client/initialization';
 
 interface AppProps {
@@ -15,6 +15,12 @@ interface AppProps {
   productSearch: WidgetClient;
   fieldMappings: Record<any, any>;
 }
+
+const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    searchBarPlaceholder: 'What are you looking for?',
+  },
+};
 
 const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
   const [configInternal, setConfigInternal] = useState(config);
@@ -37,7 +43,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
   useEffect(() => {
     const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE;
     setLocale(localeFromConfig);
-    setMessages(getLocaleTexts(localeFromConfig, configInternal.languageSettings.text, configInternal.customizations.languageSettings?.text));
+    setMessages(getLocaleTexts(localeFromConfig, DEFAULT_TEXTS, configInternal.customizations.languageSettings?.text));
   }, [configInternal]);
 
   return (

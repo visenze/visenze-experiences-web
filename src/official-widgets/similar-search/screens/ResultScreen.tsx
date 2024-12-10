@@ -249,7 +249,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             isClearable
             maxLength={QUERY_MAX_CHARACTER_LENGTH}
             type='filters'
-            placeholder={intl.formatMessage({ id: 'similarSearch.searchBarPlaceholder' })}
+            placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
             value={search}
             onValueChange={(input): void => {
               setSearch(input);
@@ -290,7 +290,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
               {searchHistory && searchHistory?.length > 1 && (
                 <div className='pt-2'>
-                  <p className='wigmix-calls-to-action-text text-primary'>Previous views</p>
+                  <p className='wigmix-calls-to-action-text text-primary'>
+                    {intl.formatMessage({ id: 'previousViews' })}
+                  </p>
                   <div className='no-scrollbar flex h-full flex-row gap-1 overflow-scroll pt-1' data-pw='ss-previous-views'>
                     {searchHistory
                       ?.slice(1)
@@ -341,7 +343,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     isClearable
                     maxLength={QUERY_MAX_CHARACTER_LENGTH}
                     type='filters'
-                    placeholder={intl.formatMessage({ id: 'similarSearch.searchBarPlaceholder' })}
+                    placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
                     value={search}
                     onClick={() => setShowInputSuggest(true)}
                     onBlur={() => setTimeout(() => setShowInputSuggest(false), 100)}

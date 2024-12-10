@@ -67,7 +67,7 @@ const RecommendMe = memo((props: {
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        <div className='widget-title py-4 text-primary' data-pw='rm-widget-title'>{intl.formatMessage({ id: 'recommendMe.title' })}</div>
+        <div className='widget-title py-4 text-primary' data-pw='rm-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
 
         {/* Search input bar with Recommend me button */}
         <div className='flex'>
@@ -81,7 +81,7 @@ const RecommendMe = memo((props: {
             }}
             data-pw='rm-recommend-me-button'
           >
-            <span className='text-buttonPrimary'>{intl.formatMessage({ id: 'recommendMe.searchBarButton' })}</span>
+            <span className='text-buttonPrimary'>{intl.formatMessage({ id: 'searchBarButton' })}</span>
           </Button>
           <Input
             classNames={{
@@ -96,7 +96,7 @@ const RecommendMe = memo((props: {
             variant='bordered'
             radius='none'
             value={searchBarValue}
-            placeholder={intl.formatMessage({ id: 'recommendMe.searchBarPlaceholder' })}
+            placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
             onValueChange={(value) => {
               setSearchBarValue(value);
             }}

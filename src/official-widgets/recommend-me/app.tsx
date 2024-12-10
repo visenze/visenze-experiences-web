@@ -7,7 +7,7 @@ import { WidgetDataContext } from '../../common/types/contexts';
 import RecommendMe from './recommend-me';
 import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
-import { getLocaleTexts } from '../../common/locales/locale';
+import { getLocaleTexts, type LanguagePack } from '../../common/locales/locale';
 import { deepMerge } from '../../common/client/initialization';
 
 interface AppProps {
@@ -16,6 +16,15 @@ interface AppProps {
   fieldMappings: Record<string, string>;
   element: HTMLElement;
 }
+
+const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    widgetTitle: 'Personalize your recommendations',
+    searchBarButton: 'Recommend Me',
+    searchBarPlaceholder: 'an outfit to go with this',
+    resultCarouselTitle: 'Results for',
+  },
+};
 
 const App: FC<AppProps> = ({ config, fieldMappings, productSearch, element }) => {
   const [configInternal, setConfigInternal] = useState(config);
@@ -39,7 +48,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch, element }) =>
   useEffect(() => {
     const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE;
     setLocale(localeFromConfig);
-    setMessages(getLocaleTexts(localeFromConfig, configInternal.languageSettings.text, configInternal.customizations.languageSettings?.text));
+    setMessages(getLocaleTexts(localeFromConfig, DEFAULT_TEXTS, configInternal.customizations.languageSettings?.text));
   }, [configInternal]);
 
   return (

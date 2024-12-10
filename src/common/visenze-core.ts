@@ -1,6 +1,7 @@
 import type { Root } from 'react-dom/client';
 import type { ProductSearchResponse, ViSearchClient } from 'visearch-javascript-sdk';
 import type { ErrorHandler, SuccessHandler } from './types/function';
+import type { LanguagePack } from './locales/locale';
 
 // model
 
@@ -240,7 +241,6 @@ export interface WidgetConfig {
   languageSettings: {
     locale: string;
     currency: string;
-    text: Record<string, Record<string, string>>;
   };
   searchBarResultsSettings: {
     enableImageUpload: boolean;
@@ -268,7 +268,7 @@ export interface WidgetConfig {
     languageSettings?: {
       defaultLocale: string;
       defaultCurrency: string;
-      text: Record<string, Record<string, string>>;
+      text: LanguagePack;
     };
     productCards?: ProductCardsConfig;
   };

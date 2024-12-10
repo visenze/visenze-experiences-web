@@ -7,7 +7,7 @@ import { WidgetDataContext } from '../../common/types/contexts';
 import SimilarSearch from './similar-search';
 import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
-import { getLocaleTexts } from '../../common/locales/locale';
+import { getLocaleTexts, type LanguagePack } from '../../common/locales/locale';
 import { deepMerge } from '../../common/client/initialization';
 
 interface AppProps {
@@ -16,6 +16,14 @@ interface AppProps {
   element: HTMLElement;
   index: number;
 }
+
+const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    widgetTitle: 'MORE LIKE THIS',
+    searchBarPlaceholder: 'Type here to refine your results...',
+    previousViews: 'Previous views',
+  },
+};
 
 const App: FC<AppProps> = ({ config, productSearch, element }) => {
   const [configInternal, setConfigInternal] = useState(config);
@@ -38,7 +46,7 @@ const App: FC<AppProps> = ({ config, productSearch, element }) => {
   useEffect(() => {
     const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE;
     setLocale(localeFromConfig);
-    setMessages(getLocaleTexts(localeFromConfig, configInternal.languageSettings.text, configInternal.customizations.languageSettings?.text));
+    setMessages(getLocaleTexts(localeFromConfig, DEFAULT_TEXTS, configInternal.customizations.languageSettings?.text));
   }, [configInternal]);
 
   return (

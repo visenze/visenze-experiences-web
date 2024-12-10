@@ -7,7 +7,7 @@ import { WidgetDataContext } from '../../common/types/contexts';
 import IconTriggeredGrid from './icon-triggered-grid';
 import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
-import { getLocaleTexts } from '../../common/locales/locale';
+import { getLocaleTexts, type LanguagePack } from '../../common/locales/locale';
 import { deepMerge } from '../../common/client/initialization';
 
 interface AppProps {
@@ -16,6 +16,29 @@ interface AppProps {
   element: HTMLElement;
   index: number;
 }
+
+const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    widgetTitle: 'You may also like',
+    'errorMessage.part1': 'Sorry, something went wrong',
+    'errorMessage.part2': 'Please refresh to try again',
+    sort: 'Sort',
+    filter: 'Filter',
+    cancel: 'Cancel',
+    back: 'Back',
+    priceFilterTitle: 'Price',
+    minPriceFilterInputLabel: 'Min price',
+    maxPriceFilterInputLabel: 'Max price',
+    minPriceFilterInputPlaceholder: 'Enter minimum price',
+    maxPriceFilterInputPlaceholder: 'Enter maximum price',
+    minPriceFilterInputError: 'Min price must be less than max price',
+    maxPriceFilterInputError: 'Max price must be more than min price',
+    categoryFilterTitle: 'Category',
+    'sortType.relevance': 'Relevance',
+    'sortType.highToLowPrice': 'High to low (Price)',
+    'sortType.lowToHighPrice': 'Low to high (Price)',
+  },
+};
 
 const App: FC<AppProps> = ({ config, productSearch, element }) => {
   const [configInternal, setConfigInternal] = useState(config);
@@ -39,7 +62,7 @@ const App: FC<AppProps> = ({ config, productSearch, element }) => {
   useEffect(() => {
     const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE;
     setLocale(localeFromConfig);
-    setMessages(getLocaleTexts(localeFromConfig, configInternal.languageSettings.text, configInternal.customizations.languageSettings?.text));
+    setMessages(getLocaleTexts(localeFromConfig, DEFAULT_TEXTS, configInternal.customizations.languageSettings?.text));
   }, [configInternal]);
 
   return (

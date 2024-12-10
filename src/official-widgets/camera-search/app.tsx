@@ -6,7 +6,7 @@ import { WidgetDataContext } from '../../common/types/contexts';
 import CameraSearch from './camera-search';
 import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
-import { getLocaleTexts } from '../../common/locales/locale';
+import { getLocaleTexts, type LanguagePack } from '../../common/locales/locale';
 import { deepMerge, setCssVariables } from '../../common/client/initialization';
 
 interface AppProps {
@@ -14,6 +14,19 @@ interface AppProps {
   productSearch: WidgetClient;
   fieldMappings: Record<string, string>;
 }
+
+const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    uploadScreenTitle: "SHOW US WHAT YOU'RE LOOKING FOR",
+    resultScreenTitle: "HERE'S WHAT WE FOUND",
+    dragImageToSearch: 'drag an image to search or click to browse',
+    tapToSearchImage: 'tap here to search an image',
+    tapProductGallery: 'or tap our trending product gallery below',
+    useCamera: 'USE CAMERA',
+    searchBarPlaceholder: 'Type here to refine your results...',
+    previousViews: 'Previous views',
+  },
+};
 
 const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
   const [configInternal, setConfigInternal] = useState(config);
@@ -36,7 +49,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
   useEffect(() => {
     const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE;
     setLocale(localeFromConfig);
-    setMessages(getLocaleTexts(localeFromConfig, configInternal.languageSettings.text, configInternal.customizations.languageSettings?.text));
+    setMessages(getLocaleTexts(localeFromConfig, DEFAULT_TEXTS, configInternal.customizations.languageSettings?.text));
     setCssVariables(configInternal);
   }, [configInternal]);
 

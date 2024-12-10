@@ -259,7 +259,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             isClearable
             maxLength={QUERY_MAX_CHARACTER_LENGTH}
             type='filters'
-            placeholder={intl.formatMessage({ id: 'cameraSearch.searchBarPlaceholder' })}
+            placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
             value={search}
             onValueChange={(input): void => {
               setSearch(input);
@@ -298,12 +298,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
                 <FileDropzone onImageUpload={onImageUpload} name='upload-icon'>
                   <p className='wigmix-calls-to-action-text px-3 py-2 leading-6 text-primary'>
-                    {intl.formatMessage({ id: 'cameraSearch.dragImageToSearch.part1' })}
-                    <br />
-                    {intl.formatMessage({ id: 'cameraSearch.dragImageToSearch.part2' })}
-                    <span className='underline'>
-                      &nbsp;{intl.formatMessage({ id: 'cameraSearch.dragImageToSearch.part3' })}
-                    </span>
+                    {intl.formatMessage({ id: 'dragImageToSearch' })}
                   </p>
                 </FileDropzone>
               </div>
@@ -311,7 +306,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
               {searchHistory && searchHistory.length > 1 && (
                 <div>
                   <span className='wigmix-calls-to-action-text text-primary'>
-                    {intl.formatMessage({ id: 'cameraSearch.previousViews' })}
+                    {intl.formatMessage({ id: 'previousViews' })}
                   </span>
                   <div
                     className='no-scrollbar flex h-full flex-row gap-1 overflow-scroll pt-1'
@@ -366,7 +361,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     isClearable
                     maxLength={QUERY_MAX_CHARACTER_LENGTH}
                     type='filters'
-                    placeholder={intl.formatMessage({ id: 'similarSearch.searchBarPlaceholder' })}
+                    placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
                     value={search}
                     onClick={() => setShowInputSuggest(true)}
                     onBlur={() => setTimeout(() => setShowInputSuggest(false), 100)}

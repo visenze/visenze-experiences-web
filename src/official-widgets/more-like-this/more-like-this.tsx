@@ -118,8 +118,8 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId 
   if (error) {
     return (
       <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'moreLikeThis.errorMessage.part1' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'moreLikeThis.errorMessage.part2' })}</span>
+        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorMessage.part1' })}</span>
+        <span className='text-sm'>{intl.formatMessage({ id: 'errorMessage.part2' })}</span>
       </div>
     );
   }
@@ -128,7 +128,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId 
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {/* Widget Title */}
-        <div className='wigmix-widget-title py-2 text-center text-primary md:py-4' data-pw='mlt-widget-title'>{intl.formatMessage({ id: 'moreLikeThis.title' })}</div>
+        <div className='wigmix-widget-title py-2 text-center text-primary md:py-4' data-pw='mlt-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
 
         {/* Product Result Carousel */}
         <div className='relative pr-1 lg:px-10' data-pw='mlt-product-result-carousel'>

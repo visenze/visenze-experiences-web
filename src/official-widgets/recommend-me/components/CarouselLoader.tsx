@@ -14,7 +14,7 @@ const CarouselLoader: FC<{ results: ProcessedProduct[], searchValue: string }> =
   return (
     <>
       <div className='relative flex items-center pb-2 pt-4 text-primary'>
-        <span>{intl.formatMessage({ id: 'recommendMe.resultCarouselTitle' })}</span>
+        <span>{intl.formatMessage({ id: 'resultCarouselTitle' })}</span>
         &nbsp;&quot;<div className='max-w-13/20 truncate font-bold'>{searchValue}</div>&quot;
       </div>
       <div className='no-scrollbar relative flex gap-x-4 overflow-scroll pt-3'>

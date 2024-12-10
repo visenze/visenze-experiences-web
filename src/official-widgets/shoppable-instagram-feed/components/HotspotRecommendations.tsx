@@ -109,7 +109,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
         </Button>
 
         {/* Image Crop Thumbnails */}
-        <span className='calls-to-action-text text-center font-bold text-primary md:pt-3'>{intl.formatMessage({ id: 'shoppableInstagramFeed.hotspotRecommendationsTitle' })}</span>
+        <span className='calls-to-action-text text-center font-bold text-primary md:pt-3'>{intl.formatMessage({ id: 'hotspotRecommendationsTitle' })}</span>
         <div className='flex justify-center gap-x-3 py-3'>
           {
             productTypes?.map((productType, index) => (
@@ -141,7 +141,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
         {/* No Results Message */}
         {
           results.length === 0
-          && <div className='flex size-full items-center justify-center'>{intl.formatMessage({ id: 'shoppableInstagramFeed.noResults' })}</div>
+          && <div className='flex size-full items-center justify-center'>{intl.formatMessage({ id: 'noResults' })}</div>
         }
       </div>
     </ViSenzeModal>

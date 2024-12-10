@@ -156,8 +156,8 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
   if (error) {
     return (
       <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'shopTheLook.errorMessage.part1' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'shopTheLook.errorMessage.part2' })}</span>
+        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorMessage.part1' })}</span>
+        <span className='text-sm'>{intl.formatMessage({ id: 'errorMessage.part2' })}</span>
       </div>
     );
   }
@@ -166,7 +166,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {/* Widget Title */}
-        <div className='wigmix-widget-title py-2 text-center text-primary md:py-4' data-pw='stl-widget-title'>{intl.formatMessage({ id: 'shopTheLook.title' })}</div>
+        <div className='wigmix-widget-title py-2 text-center text-primary md:py-4' data-pw='stl-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
 
         <div className='items-center justify-center md:flex md:flex-row md:gap-4 lg:gap-0'>
           {/* Reference Image */}

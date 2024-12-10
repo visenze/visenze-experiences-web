@@ -1,9 +1,12 @@
 import { DEFAULT_LOCALE } from '../default-configs';
 import { deepMerge } from '../client/initialization';
 
+// Hierarchy: locale > text key > text value
+export type LanguagePack = Record<string, Record<string, string>>;
+
 export const getLocaleTexts = (localeParam: string,
-                               presetTexts: Record<string, Record<string, string>>,
-                               customTexts: Record<string, Record<string, string>> = {}): Record<string, string> => {
+                               presetTexts: LanguagePack,
+                               customTexts: LanguagePack = {}): Record<string, string> => {
   const locale = localeParam || DEFAULT_LOCALE;
   const lang = locale.indexOf('-') >= 0 || locale.indexOf('_') >= 0 ? locale.split(/[-_]/)[0] : '';
   const finalTexts = ((): Record<string, string> => {
@@ -11,7 +14,7 @@ export const getLocaleTexts = (localeParam: string,
       // If locale code is just language, return directly
       return presetTexts[locale] || presetTexts[DEFAULT_LOCALE];
     }
-    const textsWithRegionVariants = presetTexts[lang] || {};
+    const textsWithRegionVariants = presetTexts[lang] || presetTexts[DEFAULT_LOCALE];
     Object.keys(presetTexts[locale] || {}).forEach((key) => {
       if (presetTexts[locale][key]) {
         // Replace all available keys with regional variant

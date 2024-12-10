@@ -162,7 +162,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
             {/* Widget Title */}
             <div className='flex items-center'>
               <div className='wigmix-widget-title text-primary' data-pw='itg-widget-title'>
-                {intl.formatMessage({ id: 'iconTriggeredGrid.title' })}
+                {intl.formatMessage({ id: 'widgetTitle' })}
               </div>
             </div>
 
@@ -181,7 +181,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
             <div className='flex items-center pb-4'>
               {/* Sort Type */}
               <div className='text-lg text-primary'>
-                {intl.formatMessage({ id: 'iconTriggeredGrid.sort' })}:&nbsp;
+                {intl.formatMessage({ id: 'sort' })}:&nbsp;
                 {intl.formatMessage({ id: getSortTypeIntlId(sortType) })}
               </div>
               {/* Sort and Filter buttons */}
@@ -193,7 +193,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
                   onClick={() => setScreen(ScreenType.SORT)}
                   data-pw='itg-sort-button'>
                   <span className='wigmix-calls-to-action-text text-buttonPrimary'>
-                    {intl.formatMessage({ id: 'iconTriggeredGrid.sort' })}
+                    {intl.formatMessage({ id: 'sort' })}
                   </span>
                 </Button>
                 <Button
@@ -203,7 +203,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
                   onClick={() => setScreen(ScreenType.FILTER)}
                   data-pw='itg-filter-button'>
                   <span className='wigmix-calls-to-action-text text-buttonPrimary'>
-                    {intl.formatMessage({ id: 'iconTriggeredGrid.filter' })}
+                    {intl.formatMessage({ id: 'filter' })}
                   </span>
                 </Button>
               </div>

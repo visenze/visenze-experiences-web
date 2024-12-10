@@ -129,8 +129,8 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
   if (error) {
     return (
       <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'shoppableLookbook.errorMessage.part1' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'shoppableLookbook.errorMessage.part2' })}</span>
+        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorMessage.part1' })}</span>
+        <span className='text-sm'>{intl.formatMessage({ id: 'errorMessage.part2' })}</span>
       </div>
     );
   }
@@ -141,7 +141,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
         <div className='bg-primary'>
           {/* Widget Title */}
           <div className='wigmix-widget-title py-2 text-center text-primary md:py-4' data-pw='sl-widget-title'>
-            {intl.formatMessage({ id: 'shoppableLookbook.title' })}
+            {intl.formatMessage({ id: 'widgetTitle' })}
           </div>
 
           {/* Reference Image and Product Card Grid container */}

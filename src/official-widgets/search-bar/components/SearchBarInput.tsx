@@ -44,7 +44,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedire
       size='lg'
       isClearable
       maxLength={QUERY_MAX_CHARACTER_LENGTH}
-      placeholder={intl.formatMessage({ id: 'searchBar.searchBarPlaceholder' })}
+      placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
       onClick={() => setShowDropdown(true)}
       onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
       onKeyDown={(e) => {

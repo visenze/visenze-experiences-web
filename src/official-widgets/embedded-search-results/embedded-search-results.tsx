@@ -240,16 +240,16 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
         {/* Widget Title */}
         <div ref={(el) => el && setSearchResultTopRef(el)}></div>
         <div className='flex flex-col items-center gap-y-2 bg-primary px-2 py-6 md:py-8 lg:py-10' ref={widgetTitleRef}>
-          <div className='widget-title font-bold'>{intl.formatMessage({ id: 'embeddedSearchResults.title' })}</div>
+          <div className='widget-title font-bold'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
           {query && !imageUrl && (
             <>
               <div className='hidden break-words text-lg sm:block'>
-                {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })} &quot;{query}&quot;
+                {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })} &quot;{query}&quot;
                 ({totalResults} items)
               </div>
               <div className='flex w-full justify-between gap-4 break-words text-lg sm:hidden'>
                 <div>
-                  {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })} &quot;{query}&quot;
+                  {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })} &quot;{query}&quot;
                 </div>
                 <div>
                   ({totalResults} items)
@@ -260,7 +260,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
           {!query && imageUrl && (
             <>
               <div className='mt-2 hidden items-center gap-x-3 text-lg sm:flex'>
-                {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}
+                {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })}
                 <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>
                   <img className='object-fit aspect-[4/5] w-20 border-1 border-black' src={imageUrl} />
                   {isMultiSearch && (
@@ -282,7 +282,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
               <div className='mt-2 flex w-full items-center justify-between gap-x-3 text-lg sm:hidden'>
                 <div className='flex items-center gap-x-3'>
                   <div>
-                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}
+                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })}
                   </div>
                   <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>
                     <img className='object-fit aspect-[4/5] w-20 border-1 border-black' src={imageUrl}/>
@@ -312,7 +312,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
               <div className='mt-2 hidden items-center gap-x-3 text-lg sm:flex'>
                 <div className='flex items-center gap-x-3'>
                   <div>
-                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })} &quot;{query}&quot;
+                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })} &quot;{query}&quot;
                   </div>
                   <div>+</div>
                   <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>
@@ -337,7 +337,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
               <div className='mt-2 flex w-full items-center justify-between gap-8 text-lg sm:hidden'>
                 <div className='flex items-center gap-x-3'>
                   <div>
-                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })} &quot;{query}&quot;
+                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })} &quot;{query}&quot;
                   </div>
                   <div>+</div>
                   <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>

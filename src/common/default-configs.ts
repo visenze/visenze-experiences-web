@@ -1,4 +1,3 @@
-import English from './locales/en.json';
 import type { WidgetConfig } from './visenze-core';
 
 export const DEFAULT_LOCALE = 'en';
@@ -49,9 +48,6 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
   languageSettings: {
     locale: '',
     currency: '',
-    text: {
-      en: English,
-    },
   },
   customizations: {
     fonts: {

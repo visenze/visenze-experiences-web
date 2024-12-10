@@ -130,9 +130,9 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
     return (
       <div className='flex h-60 flex-col items-center justify-center gap-4'>
         <span className='text-md font-bold'>
-          {intl.formatMessage({ id: 'shoppableInstagramFeed.errorMessage.part1' })}
+          {intl.formatMessage({ id: 'errorMessage.part1' })}
         </span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'shoppableInstagramFeed.errorMessage.part2' })}</span>
+        <span className='text-sm'>{intl.formatMessage({ id: 'errorMessage.part2' })}</span>
       </div>
     );
   }

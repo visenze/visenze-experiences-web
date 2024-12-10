@@ -7,7 +7,7 @@ import { WidgetDataContext } from '../../common/types/contexts';
 import SearchBar from './search-bar';
 import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
-import { getLocaleTexts } from '../../common/locales/locale';
+import { getLocaleTexts, type LanguagePack } from '../../common/locales/locale';
 import { deepMerge } from '../../common/client/initialization';
 
 interface AppProps {
@@ -15,6 +15,21 @@ interface AppProps {
   productSearch: WidgetClient;
   fieldMappings: Record<any, any>;
 }
+
+const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    searchBarPlaceholder: 'What are you looking for?',
+    'searchBar.uploadScreenTitle.part1': 'SHOW US WHAT',
+    'searchBar.uploadScreenTitle.part2': "YOU'RE LOOKING FOR",
+    'searchBar.dragImageToSearch.part1': 'drag an image to',
+    'searchBar.dragImageToSearch.part2': 'search or',
+    'searchBar.dragImageToSearch.part3': 'click to browse',
+    'searchBar.tapToSearchImage.part1': 'tap here to',
+    'searchBar.tapToSearchImage.part2': 'search an image',
+    'searchBar.tapProductGallery.part1': 'or tap our trending',
+    'searchBar.tapProductGallery.part2': 'product gallery below',
+  },
+};
 
 const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
   const [configInternal, setConfigInternal] = useState(config);
@@ -37,7 +52,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
   useEffect(() => {
     const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE;
     setLocale(localeFromConfig);
-    setMessages(getLocaleTexts(localeFromConfig, configInternal.languageSettings.text, configInternal.customizations.languageSettings?.text));
+    setMessages(getLocaleTexts(localeFromConfig, DEFAULT_TEXTS, configInternal.customizations.languageSettings?.text));
   }, [configInternal]);
 
   return (
