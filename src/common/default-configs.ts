@@ -32,11 +32,11 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
     cssSelector: '',
     // Field mapping for Product Card. Fields are based on the schema, you can't give a field which doesn't exist in the schema.
     productDetails: {
-      mainImageUrl: '',
-      productUrl: '',
+      main_image_url: '',
+      product_url: '',
       title: '',
       price: '',
-      originalPrice: '',
+      original_price: '',
       category: '',
       brand: '',
       gender: '',

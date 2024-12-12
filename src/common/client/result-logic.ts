@@ -1,4 +1,4 @@
-import type { ProductDetailField, WidgetClient, WidgetConfig } from '../visenze-core';
+import type { WidgetClient, WidgetConfig } from '../visenze-core';
 import { Actions } from '../types/tracking-constants';
 import type { ResultLogic } from '../types/logic';
 import type { ProcessedProduct } from '../types/product';
@@ -26,14 +26,11 @@ const ResultLogicImpl = ({
   isOpenInNewTab,
 }: ResultLogicProps): ResultLogic => {
   const placementId = productSearch.placementId;
-  const getValue = (key: ProductDetailField): any => {
-    return result[displaySettings.productDetails[key]];
-  };
 
   const productTrackingMeta: Record<string, any> = {
     ...trackingMeta,
     pid: result.product_id,
-    productUrl: getValue('productUrl'),
+    productUrl: result[displaySettings.productDetails['product_url']],
     pos: index + 1,
   };
 
@@ -55,7 +52,7 @@ const ResultLogicImpl = ({
     if (onProductClick && typeof onProductClick === 'function') {
       onProductClick(result, productTrackingMeta);
     } else {
-      const url = getURL(getValue('productUrl'), productTrackingMeta, isRecommendation);
+      const url = getURL(result[displaySettings.productDetails['product_url']], productTrackingMeta, isRecommendation);
       if (isOpenInNewTab) {
         window.open(url?.href, '_blank');
       } else {

@@ -224,11 +224,11 @@ export interface WidgetConfig {
   displaySettings: {
     cssSelector: string;
     productDetails: {
-      mainImageUrl: string;
-      productUrl: string;
+      main_image_url: string;
+      product_url: string;
       title: string;
       price: string;
-      originalPrice: string;
+      original_price: string;
       category: string;
       brand: string;
       gender: string;
@@ -289,14 +289,6 @@ interface ViewportWidth {
 }
 
 export type RecursivePartial<T> = T extends never[] ? T : { [P in keyof T]?: RecursivePartial<T[P]> };
-
-export type ProductDetailField = keyof {
-  mainImageUrl: string;
-  productUrl: string;
-  title: string;
-  price: string;
-  originalPrice: string;
-};
 
 export interface ProductCardsConfig {
   mobile?: ProductCardConfig,

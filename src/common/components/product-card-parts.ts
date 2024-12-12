@@ -61,8 +61,8 @@ export const getOriginalPrice = (
   if (!customizations.productCards?.productOriginalPrice?.show || !customizations?.productCards?.productPrice?.show) {
     return '';
   }
-  if (result[productDetails.originalPrice]) {
-    const priceNumber = +result[productDetails.originalPrice].value;
+  if (result[productDetails.original_price]) {
+    const priceNumber = +result[productDetails.original_price].value;
     const currencyFormatter = currencyFormatterFactory(languageSettings, customizations);
     return currencyFormatter.format(priceNumber);
   }

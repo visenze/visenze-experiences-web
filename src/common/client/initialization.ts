@@ -85,16 +85,19 @@ export const setCssVariables = (config: WidgetConfig): void => {
  * Assign the alias names to attrs_to_get in searchSettings
  */
 const populateProductDetailsAndAttrsToGet = (config: WidgetConfig, fieldMappings: Record<string, string>): WidgetConfig => {
-  config.displaySettings.productDetails.mainImageUrl = fieldMappings['main_image_url'] || '';
-  config.displaySettings.productDetails.productUrl = fieldMappings['product_url'] || '';
-  config.displaySettings.productDetails.title = fieldMappings['title'] || '';
-  config.displaySettings.productDetails.price = fieldMappings['price'] || '';
-  config.displaySettings.productDetails.originalPrice = fieldMappings['original_price'] || '';
-  config.displaySettings.productDetails.category = fieldMappings['category'] || '';
-  config.displaySettings.productDetails.brand = fieldMappings['brand'] || '';
-  config.displaySettings.productDetails.gender = fieldMappings['gender'] || '';
-  config.displaySettings.productDetails.sizes = fieldMappings['sizes'] || '';
-  config.displaySettings.productDetails.colors = fieldMappings['colors'] || '';
+  config.displaySettings.productDetails = {
+    ...fieldMappings,
+    main_image_url: fieldMappings['main_image_url'] || '',
+    product_url: fieldMappings['product_url'] || '',
+    title: fieldMappings['title'] || '',
+    price: fieldMappings['price'] || '',
+    original_price: fieldMappings['original_price'] || '',
+    category: fieldMappings['category'] || '',
+    brand: fieldMappings['brand'] || '',
+    gender: fieldMappings['gender'] || '',
+    sizes: fieldMappings['sizes'] || '',
+    colors: fieldMappings['colors'] || '',
+  };
   config.searchSettings.attrs_to_get = Object.values(config.displaySettings.productDetails).filter(value => Boolean(value));
 
   return config;
