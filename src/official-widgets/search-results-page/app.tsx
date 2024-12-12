@@ -8,7 +8,7 @@ import SearchResultsPage from './search-results-page';
 import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
 import { getLocaleTexts, type LanguagePack } from '../../common/locales/locale';
-import { deepMerge } from '../../common/client/initialization';
+import { deepMerge, setCssVariables } from '../../common/client/initialization';
 
 interface AppProps {
   config: WidgetConfig;
@@ -44,6 +44,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
     const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE;
     setLocale(localeFromConfig);
     setMessages(getLocaleTexts(localeFromConfig, DEFAULT_TEXTS, configInternal.customizations.languageSettings?.text));
+    setCssVariables(configInternal);
   }, [configInternal]);
 
   return (
