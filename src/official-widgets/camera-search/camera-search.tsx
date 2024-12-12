@@ -244,7 +244,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
           open={dialogVisible}
           layout={breakpoint}
           onClose={onModalClose}
-          position='center'
+          position={config.customizations.popup?.position || 'center'}
           fontFamily={config.customizations.generalLayout?.fontFamily}
           placementId={`${config.appSettings.placementId}`}>
           {getScreen()}

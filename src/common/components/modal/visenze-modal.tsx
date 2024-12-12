@@ -12,7 +12,7 @@ interface ModalProps {
   layout: 'desktop' | 'tablet' | 'mobile' | 'nested_mobile';
   children: ReactElement | ReactElement[];
   className?: string;
-  position: 'center' | 'right';
+  position: 'left' | 'center' | 'right';
 }
 
 const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position }) => {
@@ -62,7 +62,7 @@ interface VisenzeModalProps {
   open: boolean;
   onClose: () => void;
   layout: 'desktop' | 'tablet' | 'mobile' | 'nested_mobile';
-  position: 'center' | 'right';
+  position: 'left' | 'center' | 'right';
   children: ReactElement | ReactElement[];
   className?: string;
   placementId: string;
