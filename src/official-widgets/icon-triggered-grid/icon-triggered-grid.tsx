@@ -181,7 +181,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
                   radius='none'
                   onClick={() => setScreen(ScreenType.SORT)}
                   data-pw='itg-sort-button'>
-                  <span className='wigmix-calls-to-action-text text-buttonPrimary'>
+                  <span className='text-buttonPrimary'>
                     {intl.formatMessage({ id: 'sort' })}
                   </span>
                 </Button>
@@ -191,7 +191,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
                   radius='none'
                   onClick={() => setScreen(ScreenType.FILTER)}
                   data-pw='itg-filter-button'>
-                  <span className='wigmix-calls-to-action-text text-buttonPrimary'>
+                  <span className='text-buttonPrimary'>
                     {intl.formatMessage({ id: 'filter' })}
                   </span>
                 </Button>

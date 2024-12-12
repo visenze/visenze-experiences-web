@@ -88,7 +88,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
               imageWithLabel.label
               && <CardFooter className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large
             border-1 border-white/20 bg-gray-800 bg-opacity-80 py-1 shadow-small before:rounded-b-xl'>
-                <p className='calls-to-action-text text-primary'>{imageWithLabel.label}</p>
+                <p className='text-primary'>{imageWithLabel.label}</p>
               </CardFooter>
             }
           </Card>
@@ -144,7 +144,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
                       : <UploadIcon className='size-2/5 py-5'/>
                   }
 
-                  <p className='calls-to-action-text hidden px-3 py-2 leading-6 text-primary md:block'>
+                  <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
                     {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part1' })}<br/>
                     {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part2' })}&nbsp;
                     <span className='underline'>
@@ -152,7 +152,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
                 </span>
                   </p>
 
-                  <p className='calls-to-action-text pt-3 leading-6 text-primary md:hidden'>
+                  <p className='pt-3 leading-6 text-primary md:hidden'>
                     {intl.formatMessage({ id: 'searchBar.tapToSearchImage.part1' })}
                     <br className='md:hidden'/>
                     {intl.formatMessage({ id: 'searchBar.tapToSearchImage.part2' })}
@@ -162,7 +162,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
             </div>
 
             <div className='py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0'>
-              <p className='calls-to-action-text px-14 pb-3 text-center text-primary md:px-0 md:text-left'>
+              <p className='px-14 pb-3 text-center text-primary md:px-0 md:text-left'>
                 {intl.formatMessage({ id: 'searchBar.tapProductGallery.part1' })}&nbsp;
                 <br className='md:hidden'/>
                 {intl.formatMessage({ id: 'searchBar.tapProductGallery.part2' })}
@@ -188,7 +188,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
                       && <CardFooter
                         className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large border-1
                     border-white/20 bg-gray-800 bg-opacity-80 py-1 shadow-small before:rounded-b-xl'>
-                        <p className='calls-to-action-text text-primary'>
+                        <p className='text-primary'>
                           {customizations?.images[0].label}
                         </p>
                       </CardFooter>

@@ -275,7 +275,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
               {searchHistory && searchHistory?.length > 1 && (
                 <div className='pt-2'>
-                  <p className='wigmix-calls-to-action-text text-primary'>
+                  <p className='text-primary'>
                     {intl.formatMessage({ id: 'previousViews' })}
                   </p>
                   <div className='no-scrollbar flex h-full flex-row gap-1 overflow-scroll pt-1' data-pw='ss-previous-views'>

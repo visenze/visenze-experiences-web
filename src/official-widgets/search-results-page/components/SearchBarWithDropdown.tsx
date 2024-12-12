@@ -83,7 +83,7 @@ const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({ searchBarValue,
                   key={result}
                   endContent={<MagnifyingGlassIcon className='size-4'/>}
                 >
-                  <span className='calls-to-action-text pl-2 text-primary' data-pw={`srp-autocomplete-suggestion-${index + 1}`}>{result}</span>
+                  <span className='pl-2 text-primary' data-pw={`srp-autocomplete-suggestion-${index + 1}`}>{result}</span>
                 </ListboxItem>
               ))}
             </ListboxSection>

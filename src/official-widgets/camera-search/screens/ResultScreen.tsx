@@ -282,7 +282,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 <HotspotContainer className='w-3/5' referenceImage={getReferenceImage()} />
 
                 <FileDropzone onImageUpload={onImageUpload} name='upload-icon'>
-                  <p className='wigmix-calls-to-action-text px-3 py-2 leading-6 text-primary'>
+                  <p className='px-3 py-2 leading-6 text-primary'>
                     {intl.formatMessage({ id: 'dragImageToSearch' })}
                   </p>
                 </FileDropzone>
@@ -290,7 +290,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
               {searchHistory && searchHistory.length > 1 && (
                 <div>
-                  <span className='wigmix-calls-to-action-text text-primary'>
+                  <span className='text-primary'>
                     {intl.formatMessage({ id: 'previousViews' })}
                   </span>
                   <div

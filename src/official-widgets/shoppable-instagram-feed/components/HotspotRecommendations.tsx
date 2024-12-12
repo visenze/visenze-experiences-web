@@ -98,7 +98,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
         </Button>
 
         {/* Image Crop Thumbnails */}
-        <span className='calls-to-action-text text-center font-bold text-primary md:pt-3'>{intl.formatMessage({ id: 'hotspotRecommendationsTitle' })}</span>
+        <span className='text-center font-bold text-primary md:pt-3'>{intl.formatMessage({ id: 'hotspotRecommendationsTitle' })}</span>
         <div className='flex justify-center gap-x-3 py-3'>
           {
             productTypes?.map((productType, index) => (

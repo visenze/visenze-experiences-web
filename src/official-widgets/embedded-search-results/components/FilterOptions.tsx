@@ -64,9 +64,9 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
           onChange={updateFiltersHandler}
           isSelected={selectedFilters[facetName].has(item.value)}
         >
-          <span className='calls-to-action-text'>{item.value}</span>
+          <span>{item.value}</span>
         </Checkbox>
-        <span className='calls-to-action-text'>({item.count})</span>
+        <span>({item.count})</span>
       </div>
     ));
   };

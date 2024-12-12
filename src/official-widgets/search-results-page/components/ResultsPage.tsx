@@ -151,7 +151,7 @@ const ResultsPage: FC<ResultsPageProps> = ({
               onClick={() => {
                 handleMultisearchWithQuery(result);
               }}>
-              <span className='calls-to-action-text text-buttonPrimary' data-pw={`srp-autocomplete-chip-${index + 1}`}>
+              <span className='text-buttonPrimary' data-pw={`srp-autocomplete-chip-${index + 1}`}>
                 {result}
               </span>
             </Button>

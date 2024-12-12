@@ -369,7 +369,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
           <div className='sticky top-0 z-20 w-full bg-white px-2 py-1 md:hidden md:px-0'>
             <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowMobileFilterOptions(true)}>
               <FilterIcon className='size-5'/>
-              <span className='calls-to-action-text'>
+              <span>
               {intl.formatMessage({ id: 'embeddedSearchResults.filter' })}
             </span>
             </Button>
@@ -406,8 +406,8 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                         ))}
                       </div>
                       : <div className='flex flex-col gap-y-2 py-24 text-center md:w-3/4'>
-                        <p className='calls-to-action-text font-semibold'>{intl.formatMessage({ id: 'embeddedSearchResults.errorMessage.part1' })}</p>
-                        <p className='calls-to-action-text'>{intl.formatMessage({ id: 'embeddedSearchResults.errorMessage.part2' })}</p>
+                        <p className='font-semibold'>{intl.formatMessage({ id: 'embeddedSearchResults.errorMessage.part1' })}</p>
+                        <p>{intl.formatMessage({ id: 'embeddedSearchResults.errorMessage.part2' })}</p>
                       </div>
                   }
                 </>

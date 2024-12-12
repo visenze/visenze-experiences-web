@@ -168,7 +168,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                     endContent={<MagnifyingGlassIcon className='size-4'/>}
                     textValue={result}
                   >
-                    <span className='calls-to-action-text pl-2 text-primary'
+                    <span className='pl-2 text-primary'
                           data-pw={`sb-autocomplete-suggestion-${index + 1}`}>{result}</span>
                   </ListboxItem>
                 ))}

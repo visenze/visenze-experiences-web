@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import type { WidgetType, WidgetClient, WidgetConfig, RecursivePartial } from '../visenze-core';
+import type { WidgetType, WidgetClient, WidgetConfig, RecursivePartial, Font } from '../visenze-core';
 import { DEFAULT_CONFIGS } from '../default-configs';
 import getWidgetClient from './product-search';
 import { DEFAULT_ENDPOINT } from '../constants';
@@ -59,22 +59,55 @@ const isPlacementSkippable = (placementId: number | string | undefined): boolean
 
 export const setCssVariables = (config: WidgetConfig): void => {
   if (config.customizations) {
-    const { fonts, colours } = config.customizations;
+    const fontCustomizations: Record<string, {
+      mobile: Font,
+      tablet: Font,
+      desktop: Font,
+    } | undefined> = {
+      heading: config.customizations.generalLayout?.headingFont,
+      body: config.customizations.generalLayout?.bodyFont,
+      productCardTitle: config.customizations.productCards?.productTitle?.font,
+      productCardSecondaryTitle: config.customizations.productCards?.productSecondaryTitle?.font,
+      productCardPrice: config.customizations.productCards?.productPrice?.font,
+      productCardOriginalPrice: config.customizations.productCards?.productOriginalPrice?.font,
+    };
+    const colourCustomizations: Record<string, {
+      fontColor: string,
+      backgroundColor: string,
+    } | undefined> = {
+      primary: config.customizations.generalLayout,
+      buttonPrimary: config.customizations.buttons?.primary,
+      buttonSecondary: config.customizations.buttons?.secondary,
+    };
     const root = document.querySelector(':root') as HTMLElement;
 
-    for (const [deviceType, obj] of Object.entries(fonts)) {
-      for (const [targetElement, font] of Object.entries(obj)) {
+    for (const [targetElement, obj] of Object.entries(fontCustomizations)) {
+      if (!obj) {
+        continue;
+      }
+      for (const [deviceType, font] of Object.entries(obj)) {
         root.style.setProperty(
-          `--widget-${deviceType}-${targetElement}-fontSize`,
-          font.fontSize.toString() + 'px',
+          `--wigmix-${deviceType}-${targetElement}-fontSize`,
+          font.size.toString() + 'px',
         );
-        root.style.setProperty(`--widget-${deviceType}-${targetElement}-fontWeight`, font.fontWeight.toString());
+        root.style.setProperty(`--wigmix-${deviceType}-${targetElement}-fontWeight`, font.weight.toString());
       }
     }
 
-    for (const [colourType, obj] of Object.entries(colours)) {
-      for (const [colourName, colourNameValue] of Object.entries(obj)) {
-        root.style.setProperty(`--widget-${colourType}-${colourName}`, colourNameValue);
+    for (const [colourType, obj] of Object.entries(colourCustomizations)) {
+      if (!obj) {
+        continue;
+      }
+      for (const [colourFieldName, colourNameValue] of Object.entries(obj)) {
+        let colourName = '';
+        if (colourFieldName === 'fontColor') {
+          colourName = 'text';
+        } else if (colourFieldName === 'backgroundColor') {
+          colourName = 'background';
+        }
+        if (colourName) {
+          root.style.setProperty(`--wigmix-${colourName}-${colourType}`, colourNameValue);
+        }
       }
     }
   }
