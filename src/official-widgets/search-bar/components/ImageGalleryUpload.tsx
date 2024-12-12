@@ -59,16 +59,16 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
   };
 
   const onGallerySelect = (index: number): void => {
-    if (customizations && customizations.images[index]) {
-      imageUploadHandler?.({ imgUrl: customizations.images[index].url });
-      createImageEvent({ imgUrl: customizations.images[index].url });
+    if (customizations.imageUpload?.images[index]) {
+      imageUploadHandler?.({ imgUrl: customizations.imageUpload.images[index].url });
+      createImageEvent({ imgUrl: customizations.imageUpload.images[index].url });
     }
     setOpenModal(false);
   };
 
   const getGalleryCards = (): ReactNode => {
     if (customizations) {
-      return Object.entries(customizations.images).map(([, imageWithLabel], index) => {
+      return Object.entries(customizations.imageUpload?.images || []).map(([, imageWithLabel], index) => {
         if (index === 0) return null;
         return (
           <Card
@@ -83,7 +83,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
               }
             }}
           >
-            <img className='object-fit h-full' src={imageWithLabel.url} data-pw={`sb-gallery-image-${index + 1}`}/>
+            <img className='h-full object-cover' src={imageWithLabel.url} data-pw={`sb-gallery-image-${index + 1}`}/>
             {
               imageWithLabel.label
               && <CardFooter className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large
@@ -181,15 +181,15 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
                         onGallerySelect(0);
                       }
                     }}>
-                    <img className='object-fit h-full' src={customizations?.images[0].url}
+                    <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url}
                          data-pw='sb-gallery-image-1'/>
                     {
-                      customizations?.images[0].label
+                      customizations.imageUpload?.images[0].label
                       && <CardFooter
                         className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large border-1
                     border-white/20 bg-gray-800 bg-opacity-80 py-1 shadow-small before:rounded-b-xl'>
                         <p className='text-primary'>
-                          {customizations?.images[0].label}
+                          {customizations.imageUpload?.images[0].label}
                         </p>
                       </CardFooter>
                     }
