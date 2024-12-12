@@ -182,20 +182,167 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
       isOpenInNewTab: true,
       productPrice: {
         show: true,
+        font: {
+          mobile: {
+            size: 12,
+            weight: 400,
+          },
+          tablet: {
+            size: 12,
+            weight: 400,
+          },
+          desktop: {
+            size: 14,
+            weight: 400,
+          },
+        },
+        fontColor: '',
       },
       productOriginalPrice: {
         show: true,
+        font: {
+          mobile: {
+            size: 12,
+            weight: 400,
+          },
+          tablet: {
+            size: 12,
+            weight: 400,
+          },
+          desktop: {
+            size: 14,
+            weight: 400,
+          },
+        },
+        fontColor: '',
       },
       productTitle: {
         show: true,
         fieldSource: 'title',
+        font: {
+          mobile: {
+            size: 14,
+            weight: 700,
+          },
+          tablet: {
+            size: 14,
+            weight: 700,
+          },
+          desktop: {
+            size: 16,
+            weight: 700,
+          },
+        },
       },
       productSecondaryTitle: {
         show: false,
         fieldSource: '',
+        font: {
+          mobile: {
+            size: 12,
+            weight: 400,
+          },
+          tablet: {
+            size: 12,
+            weight: 400,
+          },
+          desktop: {
+            size: 14,
+            weight: 400,
+          },
+        },
+      },
+      findSimilar: {
+        enable: true,
+        position: 'bottom_right',
+        icon: {
+          url: '',
+          color: '',
+        },
       },
     },
+    buttons: {
+      primary: {
+        fontColor: '#FFFFFF',
+        backgroundColor: '#616161',
+      },
+      secondary: {
+        fontColor: '#FFFFFF',
+        backgroundColor: '#000000',
+      },
+    },
+    imageUpload: {
+      enable: true,
+      icon: {
+        url: '',
+        color: '',
+      },
+      images: [
+        {
+          url: 'https://cdn.visenze.com/images/widget-1.jpg',
+          label: '',
+        },
+        {
+          url: 'https://cdn.visenze.com/images/widget-2.jpg',
+          label: '',
+        },
+        {
+          url: 'https://cdn.visenze.com/images/widget-3.jpg',
+          label: '',
+        },
+        {
+          url: 'https://cdn.visenze.com/images/widget-4.jpg',
+          label: '',
+        },
+        {
+          url: 'https://cdn.visenze.com/images/widget-5.jpg',
+          label: '',
+        },
+      ],
+    },
     customCss: '',
+    generalLayout: {
+      showWidgetTitle: true,
+      headingFont: {
+        mobile: {
+          size: 20,
+          weight: 400,
+        },
+        tablet: {
+          size: 22,
+          weight: 400,
+        },
+        desktop: {
+          size: 24,
+          weight: 400,
+        },
+      },
+      bodyFont: {
+        mobile: {
+          size: 14,
+          weight: 400,
+        },
+        tablet: {
+          size: 14,
+          weight: 400,
+        },
+        desktop: {
+          size: 16,
+          weight: 400,
+        },
+      },
+      fontFamily: '',
+      fontColor: '#000000',
+      backgroundColor: '#FFFFFF',
+      showViSenzeLogo: true,
+    },
+    popup: {
+      position: 'center',
+      triggerIcon: {
+        url: '',
+        color: '',
+      },
+    },
   },
   // ----Callback settings---- //
   callbacks: {

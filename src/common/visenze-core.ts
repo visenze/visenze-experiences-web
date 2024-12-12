@@ -207,6 +207,35 @@ interface ImageWithLabel {
   label: string;
 }
 
+export interface Icon {
+  url: string;
+  color: string;
+}
+
+export interface Font {
+  size: number;
+  weight: number;
+}
+
+interface MultiDeviceFont {
+  font: {
+    [D in DeviceType]: Font;
+  };
+}
+
+interface HideableText extends MultiDeviceFont {
+  show: boolean;
+}
+
+interface HideableField extends HideableText {
+  fieldSource: string;
+}
+
+interface ColoredInterface {
+  fontColor: string;
+  backgroundColor: string;
+}
+
 export interface WidgetConfig {
   appSettings: {
     appKey: string;
@@ -260,6 +289,25 @@ export interface WidgetConfig {
       [I in IconName]: string;
     };
     images: ImageWithLabel[];
+    generalLayout: ColoredInterface & {
+      fontFamily: string;
+      headingFont: {
+        [D in DeviceType]: Font;
+      };
+      bodyFont: {
+        [D in DeviceType]: Font;
+      };
+      showWidgetTitle: boolean;
+      showViSenzeLogo: boolean;
+    };
+    popup: {
+      position: 'left' | 'center' | 'right';
+      triggerIcon: Icon;
+    };
+    buttons: {
+      primary: ColoredInterface;
+      secondary: ColoredInterface;
+    };
     breakpoints: {
       mobile: ViewportWidth;
       tablet: ViewportWidth;
@@ -271,6 +319,11 @@ export interface WidgetConfig {
       text: LanguagePack;
     };
     productCards?: ProductCardsConfig;
+    imageUpload: {
+      enable: boolean;
+      icon: Icon;
+      images: ImageWithLabel[];
+    };
   };
   platformSettings?: {
     platformName: string;
@@ -295,19 +348,18 @@ export interface ProductCardsConfig {
   tablet?: ProductCardConfig,
   desktop?: ProductCardConfig,
   isOpenInNewTab: boolean;
-  productPrice: {
-    show: boolean;
+  productPrice: HideableText & {
+    fontColor: string;
   };
-  productOriginalPrice: {
-    show: boolean;
+  productOriginalPrice: HideableText & {
+    fontColor: string;
   };
-  productTitle: {
-    show: boolean;
-    fieldSource: string;
-  };
-  productSecondaryTitle: {
-    show: boolean;
-    fieldSource: string;
+  productTitle: HideableField;
+  productSecondaryTitle: HideableField;
+  findSimilar: {
+    enable: boolean;
+    position: 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right';
+    icon: Icon;
   };
 }
 
