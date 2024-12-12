@@ -171,36 +171,7 @@ export interface WidgetClient {
   updateConfig: (configOverride: WidgetConfig, isPartial: boolean) => void;
 }
 
-export interface WidgetFont {
-  fontSize: number;
-  fontWeight: number;
-}
-
-export type DeviceType = 'mobile' | 'tablet' | 'desktop';
-export type TargetElement =
-  | 'widgetTitle'
-  | 'callsToActionText'
-  | 'productCardTitle'
-  | 'productCardSecondaryTitle'
-  | 'productCardPrice'
-  | 'productCardOriginalPrice';
-
-type FontConfig = {
-  [D in DeviceType]: {
-    [T in TargetElement]: WidgetFont;
-  };
-};
-
-export type ColourType = 'text' | 'background';
-export type ColourName = 'primary' | 'buttonPrimary' | 'buttonSecondary';
-
-type ColourConfig = {
-  [T in ColourType]: {
-    [N in ColourName]: string;
-  };
-};
-
-type IconName = 'cameraButton' | 'upload' | 'moreLikeThis';
+type DeviceType = 'mobile' | 'tablet' | 'desktop';
 
 interface ImageWithLabel {
   url: string;
@@ -283,12 +254,6 @@ export interface WidgetConfig {
     onSearchCallback?: (apiResponse: ProductSearchResponse) => void;
   };
   customizations: {
-    fonts: FontConfig;
-    colours: ColourConfig;
-    icons: {
-      [I in IconName]: string;
-    };
-    images: ImageWithLabel[];
     generalLayout: ColoredInterface & {
       fontFamily: string;
       headingFont: {
