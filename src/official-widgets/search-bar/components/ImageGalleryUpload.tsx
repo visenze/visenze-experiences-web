@@ -7,11 +7,11 @@ import PhotoIcon from '../../../common/icons/PhotoIcon';
 import VisenzeModal from '../../../common/components/modal/visenze-modal';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import FileDropzone from '../../../common/components/FileDropzone';
-import UploadIcon from '../../../common/icons/UploadIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import CloseIcon from '../../../common/icons/CloseIcon';
+import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 
 interface ImageGalleryUploadProps {
   imageUploadHandler: (image: SearchImage) => void;
@@ -137,12 +137,13 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
               <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload'>
                 <div
                   className='flex w-full flex-col items-center rounded-3xl border border-black py-1 text-center text-medium'>
-                  {
-                    customizations?.icons.upload
-                      ? <img className='w-3/5 rounded-lg object-cover object-center lg:h-full'
-                             src={customizations?.icons.upload}/>
-                      : <UploadIcon className='size-2/5 py-5'/>
-                  }
+                  <CustomizableIcon
+                      className='size-2/5'
+                      height={24}
+                      width={24}
+                      url={customizations.imageUpload?.icon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
+                      color={customizations.imageUpload?.icon?.color || ''}
+                  />
 
                   <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
                     {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part1' })}<br/>

@@ -4,7 +4,6 @@ import { WidgetDataContext, WidgetResultContext } from '../../../common/types/co
 import type { ProcessedProduct } from '../../../common/types/product';
 import ResultLogicImpl from '../../../common/client/result-logic';
 import type { SearchImage } from '../../../common/types/image';
-import MoreLikeThisIcon from '../../../common/icons/MoreLikeThisIcon';
 import { Actions } from '../../../common/types/tracking-constants';
 import {
   getOriginalPrice,
@@ -12,6 +11,7 @@ import {
   getProductSecondaryTitle,
   getProductTitle,
 } from '../../../common/components/product-card-parts';
+import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 
 interface ResultProps {
   result: ProcessedProduct;
@@ -108,11 +108,13 @@ const Result = memo(({
           }}
           data-pw='ss-more-like-this-button'
         >
-          {
-            customizations?.icons.moreLikeThis
-              ? <img src={customizations.icons.moreLikeThis} className='size-5'></img>
-              : <MoreLikeThisIcon className='size-5'/>
-          }
+          <CustomizableIcon
+              className='wigmix-image-search-icon'
+              height={20}
+              width={20}
+              url={customizations?.productCards?.imageSearch?.icon?.url || 'https://cdn.visenze.com/images/more-like-this-icon-2.svg'}
+              color={customizations?.productCards?.imageSearch?.icon?.color || ''}
+          />
         </Button>
       </div>
       <div className='pt-2'>

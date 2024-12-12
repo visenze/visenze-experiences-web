@@ -14,10 +14,10 @@ import type { ProductCardsConfig, WidgetClient, WidgetConfig } from '../../commo
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
-import CameraIcon from './icons/CameraIcon';
 import LoadingIcon from './icons/LoadingIcon';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetClient }) => {
   const { config, productSearch } = props;
@@ -231,14 +231,15 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
         metadata,
       }}>
       <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
-        {config.customizations?.icons.cameraButton ? (
-          <img
-            src={config.customizations.icons.cameraButton}
-            onClick={onCameraButtonClick}
-            className='size-7 cursor-pointer'></img>
-        ) : (
-          <CameraIcon onClickHandler={onCameraButtonClick} />
-        )}
+        <div className='wigmix-popup-trigger w-fit cursor-pointer'>
+          <CustomizableIcon
+              height={28}
+              width={28}
+              url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/camera-icon.svg'}
+              color={config.customizations.popup?.triggerIcon?.color || ''}
+              onClickHandler={onCameraButtonClick}
+          />
+        </div>
         <ViSenzeModal
           open={dialogVisible}
           layout={breakpoint}
