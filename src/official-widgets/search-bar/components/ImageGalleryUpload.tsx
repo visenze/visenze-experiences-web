@@ -118,6 +118,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
       </Button>
 
       <VisenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint} position='center'
+                    fontFamily={customizations.generalLayout?.fontFamily}
                     placementId={placementId} idSuffix='image-gallery-upload'>
         <div className='relative flex size-full flex-col bg-primary'>
           {/* Title */}

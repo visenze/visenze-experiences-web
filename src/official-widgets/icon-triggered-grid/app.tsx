@@ -68,7 +68,7 @@ const App: FC<AppProps> = ({ config, productSearch, element }) => {
 
   return (
     <WidgetDataContext.Provider value={{ ...configInternal, productSearch }}>
-      <ShadowWrapper>
+      <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
           <IconTriggeredGrid config={configInternal} productSearch={productSearch} productId={productId} />
         </IntlProvider>

@@ -85,6 +85,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
 
   return (
     <ViSenzeModal open={openDrawer} onClose={closeDrawerHandler} layout='mobile' className='bottom-0 top-[unset] h-9/10 w-full rounded-t-xl' position='center'
+                  fontFamily={customizations.generalLayout?.fontFamily}
                   placementId={placementId} idSuffix='hotspot' >
       <div className='flex size-full flex-col bg-primary' data-pw='sif-hotspot-recommendations'>
         {/* Close Button Tablet/Desktop */}

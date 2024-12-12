@@ -220,6 +220,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
       </Button>
 
       <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose} position='right'
+                    fontFamily={config.customizations.generalLayout?.fontFamily}
                     placementId={`${config.appSettings.placementId}`}>
         {getScreen()}
       </ViSenzeModal>

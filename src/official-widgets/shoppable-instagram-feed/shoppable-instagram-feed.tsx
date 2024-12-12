@@ -164,6 +164,7 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
             onClose={onCloseHandler}
             layout={breakpoint}
             position='center'
+            fontFamily={config.customizations.generalLayout?.fontFamily}
             placementId={`${config.appSettings.placementId}`}
             className='left-[unset] top-[unset] h-[500px] w-[300px] rounded-xl'>
             <div className='flex size-full flex-col bg-primary pt-1/5' data-pw='sif-image-hotspot-modal'>

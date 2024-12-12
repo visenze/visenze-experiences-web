@@ -4,12 +4,12 @@ import { NextUIProvider } from '@nextui-org/system';
 import useStyles from './hooks/use-styles';
 import { WidgetDataContext } from '../types/contexts';
 
-const rootStyle: CSSProperties = {
+const createRootStyle: (fontFamily?: string) => CSSProperties = (fontFamily) => ({
   position: 'relative',
-  fontFamily: 'inherit',
+  fontFamily: fontFamily || 'inherit',
   letterSpacing: 'inherit',
   display: 'block',
-};
+});
 
 const rootContainerStyle: CSSProperties = {
   display: 'block',
@@ -35,7 +35,7 @@ const Style: FC = () => {
   return <style ref={onRefChange}></style>;
 };
 
-const ShadowWrapper: FC<{ children: ReactNode }> = ({ children }) => {
+const ShadowWrapper: FC<{ fontFamily: string, children: ReactNode }> = ({ fontFamily, children }) => {
   const [rootNode, setRootNode] = useState<HTMLElement | null>(null);
 
   const onRefChange = useCallback((ref: HTMLElement | null) => {
@@ -50,7 +50,7 @@ const ShadowWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <root.div style={rootContainerStyle}>
       <Style></Style>
-      <div ref={onRefChange} style={rootStyle}>
+      <div ref={onRefChange} style={createRootStyle(fontFamily)}>
         <RootContext.Provider value={rootNode}>
           <StyleLoader rootNode={rootNode}>
             <NextUIProvider>{children}</NextUIProvider>

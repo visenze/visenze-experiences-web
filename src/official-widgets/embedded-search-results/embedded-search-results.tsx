@@ -375,6 +375,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
             </Button>
           </div>
           <ViSenzeModal className='bottom-0 top-[unset] h-4/5' open={showMobileFilterOptions} layout='mobile' onClose={() => setShowMobileFilterOptions(false)} position='center'
+                        fontFamily={config.customizations.generalLayout?.fontFamily}
                         placementId={`${config.appSettings.placementId}`}>
             <FilterOptions
               facets={facets}
