@@ -20,7 +20,7 @@ import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import HotspotContainer from '../../../common/components/hotspots/hotspot-container';
 import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
-import type { ProductCardsConfig } from '../../../common/visenze-core';
+import type { WidgetConfig } from '../../../common/visenze-core';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -40,7 +40,7 @@ interface ResultScreenProps {
   onImageSearch: (data: SearchImage) => void;
   onImageUpload: (img: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
-  productCustomizations: ProductCardsConfig;
+  customizations: WidgetConfig['customizations'];
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
@@ -52,7 +52,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   onKeywordUpdate,
   searchHistory,
   setSearchHistory,
-  productCustomizations,
+  customizations,
 }) => {
   const { productSearch } = useContext(WidgetDataContext);
   const { productResults, autocompleteResults } = useContext(WidgetResultContext);
@@ -138,7 +138,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = productCustomizations?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.productsPerRow) {
@@ -157,7 +157,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = productCustomizations?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
         cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;

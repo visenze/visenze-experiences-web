@@ -6,7 +6,7 @@ import { cn } from '@nextui-org/theme';
 import type { ProcessedProduct } from '../../../common/types/product';
 import Result from './Result';
 import CloseIcon from '../../../common/icons/CloseIcon';
-import type { ProductCardsConfig } from '../../../common/visenze-core';
+import type { WidgetConfig } from '../../../common/visenze-core';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 
 /**
@@ -20,7 +20,7 @@ interface ResultsPageProps {
   autocompleteResults: string[];
   activeProduct: ProcessedProduct | null;
   setActiveProduct: (activeProduct: ProcessedProduct | null) => void;
-  productCustomizations: ProductCardsConfig;
+  customizations: WidgetConfig['customizations'];
 }
 
 const ResultsPage: FC<ResultsPageProps> = ({
@@ -30,7 +30,7 @@ const ResultsPage: FC<ResultsPageProps> = ({
   handleMultisearchWithProduct,
   activeProduct,
   setActiveProduct,
-  productCustomizations,
+  customizations,
 }): ReactElement => {
   const [productHistory, setProductHistory] = useState<ProcessedProduct[]>([]);
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -45,7 +45,7 @@ const ResultsPage: FC<ResultsPageProps> = ({
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = productCustomizations?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.productsPerRow) {
@@ -64,7 +64,7 @@ const ResultsPage: FC<ResultsPageProps> = ({
 
   const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = productCustomizations?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
         cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;

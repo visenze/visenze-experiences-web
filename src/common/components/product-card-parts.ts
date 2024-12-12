@@ -7,8 +7,8 @@ const currencyFormatterFactory = (
     languageSettings: WidgetConfig['languageSettings'],
     customizations: WidgetConfig['customizations'],
 ): Intl.NumberFormat => getCurrencyFormatter(
-    languageSettings?.locale || customizations.languageSettings?.defaultLocale || DEFAULT_LOCALE,
-    languageSettings?.currency || customizations.languageSettings?.defaultCurrency || DEFAULT_CURRENCY,
+    languageSettings?.locale || customizations.localization?.defaultLocale || DEFAULT_LOCALE,
+    languageSettings?.currency || customizations.localization?.defaultCurrency || DEFAULT_CURRENCY,
 );
 
 export const getProductTitle = (
@@ -16,10 +16,10 @@ export const getProductTitle = (
     productDetails: WidgetConfig['displaySettings']['productDetails'],
     result: ProcessedProduct,
 ): string => {
-  if (!customizations.productCards?.productTitle || !customizations.productCards.productTitle.show) {
+  if (!customizations.productCard?.title || !customizations.productCard.title.show) {
     return '';
   }
-  const titleField = productDetails[customizations.productCards.productTitle.fieldSource || 'title'];
+  const titleField = productDetails[customizations.productCard.title.fieldSource || 'title'];
   return result[titleField] || '';
 };
 
@@ -28,10 +28,10 @@ export const getProductSecondaryTitle = (
     productDetails: WidgetConfig['displaySettings']['productDetails'],
     result: ProcessedProduct,
 ): string => {
-  if (!customizations.productCards?.productSecondaryTitle || !customizations.productCards.productSecondaryTitle.show) {
+  if (!customizations.productCard?.secondaryTitle || !customizations.productCard.secondaryTitle.show) {
     return '';
   }
-  const secondaryTitleField = productDetails[customizations.productCards.productSecondaryTitle.fieldSource || 'brand'];
+  const secondaryTitleField = productDetails[customizations.productCard.secondaryTitle.fieldSource || 'brand'];
   return result[secondaryTitleField] || '';
 };
 
@@ -41,7 +41,7 @@ export const getPrice = (
     productDetails: WidgetConfig['displaySettings']['productDetails'],
     result: ProcessedProduct,
 ): string => {
-  if (!customizations?.productCards?.productPrice?.show) {
+  if (!customizations?.productCard?.price?.show) {
     return '';
   }
   if (result[productDetails.price]) {
@@ -58,7 +58,7 @@ export const getOriginalPrice = (
     productDetails: WidgetConfig['displaySettings']['productDetails'],
     result: ProcessedProduct,
 ): string => {
-  if (!customizations.productCards?.productOriginalPrice?.show || !customizations?.productCards?.productPrice?.show) {
+  if (!customizations.productCard?.originalPrice?.show || !customizations?.productCard?.price?.show) {
     return '';
   }
   if (result[productDetails.original_price]) {

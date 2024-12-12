@@ -278,12 +278,34 @@ export interface WidgetConfig {
       tablet: ViewportWidth;
     };
     customCss: string;
-    languageSettings?: {
+    localization?: {
       defaultLocale: string;
       defaultCurrency: string;
       text: LanguagePack;
     };
-    productCards?: ProductCardsConfig;
+    productGrid?: {
+      [D in DeviceType]: {
+        productsPerRow: number;
+        marginVertical: number | undefined;
+        marginHorizontal: number | undefined;
+      };
+    };
+    productCard?: {
+      openLinksInNewTab: boolean;
+      price: HideableText & {
+        fontColor: string;
+      };
+      originalPrice: HideableText & {
+        fontColor: string;
+      };
+      title: HideableField;
+      secondaryTitle: HideableField;
+      findSimilar: {
+        enable: boolean;
+        position: 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right';
+        icon: Icon;
+      };
+    };
     imageUpload: {
       enable: boolean;
       icon: Icon;
@@ -307,29 +329,3 @@ interface ViewportWidth {
 }
 
 export type RecursivePartial<T> = T extends never[] ? T : { [P in keyof T]?: RecursivePartial<T[P]> };
-
-export interface ProductCardsConfig {
-  mobile?: ProductCardConfig,
-  tablet?: ProductCardConfig,
-  desktop?: ProductCardConfig,
-  isOpenInNewTab: boolean;
-  productPrice: HideableText & {
-    fontColor: string;
-  };
-  productOriginalPrice: HideableText & {
-    fontColor: string;
-  };
-  productTitle: HideableField;
-  productSecondaryTitle: HideableField;
-  findSimilar: {
-    enable: boolean;
-    position: 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right';
-    icon: Icon;
-  };
-}
-
-interface ProductCardConfig {
-  productsPerRow: number;
-  marginVertical: number | undefined;
-  marginHorizontal: number | undefined;
-}

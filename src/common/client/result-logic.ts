@@ -12,7 +12,7 @@ interface ResultLogicProps {
   index: number;
   onProductClick?: (result: ProcessedProduct, productTrackingMeta: Record<string, any>) => void;
   result: ProcessedProduct;
-  isOpenInNewTab: boolean;
+  openLinksInNewTab: boolean;
 }
 
 const ResultLogicImpl = ({
@@ -23,7 +23,7 @@ const ResultLogicImpl = ({
   index,
   onProductClick,
   result,
-  isOpenInNewTab,
+  openLinksInNewTab,
 }: ResultLogicProps): ResultLogic => {
   const placementId = productSearch.placementId;
 
@@ -53,7 +53,7 @@ const ResultLogicImpl = ({
       onProductClick(result, productTrackingMeta);
     } else {
       const url = getURL(result[displaySettings.productDetails['product_url']], productTrackingMeta, isRecommendation);
-      if (isOpenInNewTab) {
+      if (openLinksInNewTab) {
         window.open(url?.href, '_blank');
       } else {
         window.open(url?.href, '_self');

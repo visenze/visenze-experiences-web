@@ -43,11 +43,11 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId 
   const useSlideSettings = (): Settings => {
     const isDesktop = breakpoint === WidgetBreakpoint.DESKTOP;
     const isTablet = breakpoint === WidgetBreakpoint.TABLET;
-    let slidesToShow = config.customizations.productCards?.mobile?.productsPerRow || 2.5;
+    let slidesToShow = config.customizations.productGrid?.mobile?.productsPerRow || 2.5;
     if (isDesktop) {
-      slidesToShow = config.customizations.productCards?.desktop?.productsPerRow || 4;
+      slidesToShow = config.customizations.productGrid?.desktop?.productsPerRow || 4;
     } else if (isTablet) {
-      slidesToShow = config.customizations.productCards?.tablet?.productsPerRow || 3.5;
+      slidesToShow = config.customizations.productGrid?.tablet?.productsPerRow || 3.5;
     }
     const slidesToScroll = Math.floor(slidesToShow);
 
@@ -76,7 +76,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId 
   const settings = useSlideSettings();
 
   const getProductCardCssClasses = (): string => {
-    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
@@ -89,7 +89,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId 
 
   const getProductCardCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
+    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
         cssConfig.marginLeft = cssConfigSrc.marginHorizontal / 2;

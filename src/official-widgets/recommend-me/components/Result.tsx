@@ -26,7 +26,7 @@ const Result: FC<ResultProps> = ({ index, result }) => {
   const { metadata } = useContext(WidgetResultContext);
   const { languageSettings } = useContext(WidgetDataContext);
   const { onProductClick } = callbacks;
-  const isOpenInNewTab = customizations.productCards?.isOpenInNewTab || false;
+  const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
@@ -36,7 +36,7 @@ const Result: FC<ResultProps> = ({ index, result }) => {
     index,
     onProductClick,
     result,
-    isOpenInNewTab,
+    openLinksInNewTab,
   });
 
   // Send Product View tracking event when the product is in view

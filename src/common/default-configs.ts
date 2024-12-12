@@ -59,9 +59,9 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
         maxWidth: 0,
       },
     },
-    productCards: {
-      isOpenInNewTab: true,
-      productPrice: {
+    productCard: {
+      openLinksInNewTab: true,
+      price: {
         show: true,
         font: {
           mobile: {
@@ -79,7 +79,7 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
         },
         fontColor: '',
       },
-      productOriginalPrice: {
+      originalPrice: {
         show: true,
         font: {
           mobile: {
@@ -97,7 +97,7 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
         },
         fontColor: '',
       },
-      productTitle: {
+      title: {
         show: true,
         fieldSource: 'title',
         font: {
@@ -115,7 +115,7 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
           },
         },
       },
-      productSecondaryTitle: {
+      secondaryTitle: {
         show: false,
         fieldSource: '',
         font: {

@@ -66,10 +66,10 @@ export const setCssVariables = (config: WidgetConfig): void => {
     } | undefined> = {
       heading: config.customizations.generalLayout?.headingFont,
       body: config.customizations.generalLayout?.bodyFont,
-      productCardTitle: config.customizations.productCards?.productTitle?.font,
-      productCardSecondaryTitle: config.customizations.productCards?.productSecondaryTitle?.font,
-      productCardPrice: config.customizations.productCards?.productPrice?.font,
-      productCardOriginalPrice: config.customizations.productCards?.productOriginalPrice?.font,
+      productCardTitle: config.customizations.productCard?.title?.font,
+      productCardSecondaryTitle: config.customizations.productCard?.secondaryTitle?.font,
+      productCardPrice: config.customizations.productCard?.price?.font,
+      productCardOriginalPrice: config.customizations.productCard?.originalPrice?.font,
     };
     const colourCustomizations: Record<string, {
       fontColor: string,

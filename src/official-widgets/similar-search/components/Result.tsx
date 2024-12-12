@@ -34,7 +34,7 @@ const Result = memo(({
   const { languageSettings } = useContext(WidgetDataContext);
   const { onProductClick } = callbacks;
   const [isLoading, setIsLoading] = useState(true);
-  const isOpenInNewTab = customizations.productCards?.isOpenInNewTab || false;
+  const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
@@ -44,7 +44,7 @@ const Result = memo(({
     index,
     onProductClick,
     result,
-    isOpenInNewTab,
+    openLinksInNewTab,
   });
 
   // Send Product View tracking event when the product is in view
@@ -112,8 +112,8 @@ const Result = memo(({
               className='wigmix-image-search-icon'
               height={20}
               width={20}
-              url={customizations?.productCards?.imageSearch?.icon?.url || 'https://cdn.visenze.com/images/more-like-this-icon-2.svg'}
-              color={customizations?.productCards?.imageSearch?.icon?.color || ''}
+              url={customizations?.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/more-like-this-icon-2.svg'}
+              color={customizations?.productCard?.findSimilar?.icon?.color || ''}
           />
         </Button>
       </div>
