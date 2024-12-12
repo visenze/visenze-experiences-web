@@ -205,11 +205,9 @@ export const devInitWidget = async (
     isMultiRender: boolean,
     devConfigs: RecursivePartial<WidgetConfig>,
     fieldsMappingParam: Record<string, string>,
-    customCss: string,
     shouldRetrieveFieldsMapping: boolean,
     window: Window,
 ): Promise<void> => {
-  const widgetConfig = devConfigs.customizations;
   let fieldsMapping = fieldsMappingParam;
   if (shouldRetrieveFieldsMapping) {
     const widgetConfigResponse = await fetch((devConfigs.appSettings?.endpoint || DEFAULT_ENDPOINT)
@@ -218,15 +216,8 @@ export const devInitWidget = async (
     const widgetConfigObject = await widgetConfigResponse.json();
     fieldsMapping = widgetConfigObject.fields_mappings;
   }
-  const initConfig: any = {
-    ...devConfigs,
-    customizations: {
-      ...widgetConfig,
-      customCss,
-    },
-  };
 
-  const result = init(initConfig, fieldsMapping, widgetType, widgetVersion);
+  const result = init(devConfigs as WidgetConfig, fieldsMapping, widgetType, widgetVersion);
   if (!result) {
     return;
   }
