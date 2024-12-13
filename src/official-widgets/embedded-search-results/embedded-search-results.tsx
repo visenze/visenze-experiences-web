@@ -145,17 +145,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     return cssConfig;
   };
 
-  const getProductCardCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
-        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
-      }
-    }
-    return cssConfig;
-  };
-
   const multisearchWithSearchBarDetails = (pageParam: number, imgUrl: string, removeImId: boolean): void => {
     setShouldIgnoreImId((curr) => curr || removeImId);
     setPage(pageParam);
@@ -407,9 +396,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                              style={getProductGridCssConfig()}
                              data-pw='esr-product-result-grid'>
                         {productResults.map((result, index) => (
-                          <div key={`${result.product_id}-${index}`}
-                               data-pw={`esr-product-result-card-${index + 1}`}
-                               style={getProductCardCssConfig()}>
+                          <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
                             <Result
                               index={index}
                               result={result}

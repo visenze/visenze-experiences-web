@@ -79,17 +79,6 @@ const ResultsPage: FC<ResultsPageProps> = ({
     return cssConfig;
   };
 
-  const getProductCardCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = productCustomizations?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
-        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
-      }
-    }
-    return cssConfig;
-  };
-
   const onClickMoreLikeThisHandler = (product: ProcessedProduct): void => {
     handleMultisearchWithProduct(product);
     const isProductInHistory = productHistory.some((item) => item.product_id === product.product_id);
@@ -176,11 +165,7 @@ const ResultsPage: FC<ResultsPageProps> = ({
         overflow-y-auto px-3 py-4 md:gap-x-4 md:px-4`}
         style={getProductGridCssConfig()}>
         {results.map((result, index) => (
-          <div
-            key={`${result.product_id}-${index}`}
-            data-pw={`srp-product-result-card-${index + 1}`}
-            style={getProductCardCssConfig()}
-          >
+          <div key={`${result.product_id}-${index}`} data-pw={`srp-product-result-card-${index + 1}`}>
             <Result
               key={result.product_id}
               index={index}

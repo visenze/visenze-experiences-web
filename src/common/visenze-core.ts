@@ -321,7 +321,6 @@ export interface ProductCardsConfig {
 
 interface ProductCardConfig {
   productsPerRow: number;
-  contentPadding: number | undefined;
   marginVertical: number | undefined;
   marginHorizontal: number | undefined;
 }

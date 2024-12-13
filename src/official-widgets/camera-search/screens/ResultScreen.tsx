@@ -172,17 +172,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
     return cssConfig;
   };
 
-  const getProductCardCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = productCustomizations?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
-        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
-      }
-    }
-    return cssConfig;
-  };
-
   const getMobileView = (): ReactElement => (
     <div className='flex h-full flex-col gap-8 bg-primary md:hidden'>
       <Header onCloseHandler={onModalClose} onBackHandler={onBackHandler} isResultScreen={true} />
@@ -232,11 +221,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
               style={getProductGridCssConfig()}
               data-pw='cs-product-result-grid'>
               {productResults.map((result, index) => (
-                <div
-                  key={result.product_id}
-                  className='border-gray-300'
-                  style={getProductCardCssConfig()}
-                >
+                <div key={result.product_id} className='border-gray-300'>
                   <Result onImageSearch={onImageSearch} clearSearch={clearSearch} index={index} result={result} />
                 </div>
               ))}
@@ -390,7 +375,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    style={getProductGridCssConfig()}
                    data-pw='cs-product-result-grid'>
                 {productResults.map((result, index) => (
-                  <div key={result.product_id} className='bg-primary' style={getProductCardCssConfig()}>
+                  <div key={result.product_id} className='bg-primary'>
                     <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
                             result={result}/>
                   </div>

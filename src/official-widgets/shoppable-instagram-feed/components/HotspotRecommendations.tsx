@@ -83,17 +83,6 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
     return cssConfig;
   };
 
-  const getProductCardCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations?.productCards?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
-        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
-      }
-    }
-    return cssConfig;
-  };
-
   return (
     <ViSenzeModal open={openDrawer} onClose={closeDrawerHandler} layout='mobile' className='bottom-0 top-[unset] h-9/10 w-full rounded-t-xl' position='center'
                   placementId={placementId} idSuffix='hotspot' >
@@ -126,9 +115,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
              data-pw='sif-product-result-grid'>
           {
             results.map((result, index) => (
-              <div key={`${result.product_id}-${index}`}
-                   style={getProductCardCssConfig()}
-                   data-pw={`sif-product-result-card-${index + 1}`}>
+              <div key={`${result.product_id}-${index}`} data-pw={`sif-product-result-card-${index + 1}`}>
                 <Result
                   index={index}
                   result={result}

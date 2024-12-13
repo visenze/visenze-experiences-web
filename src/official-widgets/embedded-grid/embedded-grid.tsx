@@ -64,17 +64,6 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, productSearch, productId 
     return cssConfig;
   };
 
-  const getProductCardCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
-        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
-      }
-    }
-    return cssConfig;
-  };
-
   useEffect(() => {
     if (error) {
       setRetryCount(retryCount + 1);
@@ -115,11 +104,7 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, productSearch, productId 
             style={getProductGridCssConfig()}
             data-pw='eg-product-result-grid'>
             {productResults.map((result, index) => (
-              <div
-                key={`${result.product_id}-${index}`}
-                data-pw={`eg-product-result-card-${index + 1}`}
-                style={getProductCardCssConfig()}
-              >
+              <div key={`${result.product_id}-${index}`} data-pw={`eg-product-result-card-${index + 1}`}>
                 <Result index={index} result={result} />
               </div>
             ))}

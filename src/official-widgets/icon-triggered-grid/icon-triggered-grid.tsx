@@ -111,17 +111,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
     return cssConfig;
   };
 
-  const getProductCardCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productCards?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
-        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
-      }
-    }
-    return cssConfig;
-  };
-
   useEffect(() => {
     if (error) {
       console.error(error);
@@ -215,11 +204,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
               style={getProductGridCssConfig()}
               data-pw='itg-product-result-grid'>
               {productResults.map((result, index) => (
-                <div
-                  key={`${result.product_id}-${index}`}
-                  data-pw={`itg-product-result-card-${index + 1}`}
-                  style={getProductCardCssConfig()}
-                >
+                <div key={`${result.product_id}-${index}`} data-pw={`itg-product-result-card-${index + 1}`}>
                   <Result index={index} result={result} isReferenceProduct={false} />
                 </div>
               ))}

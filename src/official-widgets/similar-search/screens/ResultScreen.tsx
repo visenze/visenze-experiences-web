@@ -118,17 +118,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
     return cssConfig;
   };
 
-  const getProductCardCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = productCustomizations?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.contentPadding || cssConfigSrc.contentPadding === 0) {
-        cssConfig.padding = `${cssConfigSrc.contentPadding}px`;
-      }
-    }
-    return cssConfig;
-  };
-
   const onClickMoreLikeThisHandler = (queryImage: SearchImage): void => {
     onImageSearch(queryImage);
   };
@@ -217,11 +206,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
               data-pw='ss-product-result-grid'
             >
               {productResults.map((result, index) => (
-                <div
-                  key={result.product_id}
-                  className='border-gray-300'
-                  style={getProductCardCssConfig()}
-                >
+                <div key={result.product_id} className='border-gray-300'>
                   <Result
                     onImageSearch={onImageSearch}
                     clearSearch={() => setSearch('')}
@@ -372,7 +357,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    style={getProductGridCssConfig()}
                    data-pw='ss-product-result-grid'>
                 {productResults.map((result, index) => (
-                  <div key={result.product_id} className='bg-primary' style={getProductCardCssConfig()}>
+                  <div key={result.product_id} className='bg-primary'>
                     <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
                             result={result}/>
                   </div>
