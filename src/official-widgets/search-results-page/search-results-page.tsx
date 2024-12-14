@@ -49,7 +49,7 @@ const SearchResultsPage = memo((props: { config: WidgetConfig; productSearch: Wi
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        <div className='flex size-full flex-col items-center bg-primary'>
+        <div className='flex size-full flex-col items-center text-primary'>
           {/* Search bar with autocomplete dropdown */}
           <SearchBarWithDropdown
             searchBarValue={searchBarValue}
@@ -69,7 +69,6 @@ const SearchResultsPage = memo((props: { config: WidgetConfig; productSearch: Wi
               handleMultisearchWithProduct={handleMultisearchWithProduct}
               activeProduct={activeProduct}
               setActiveProduct={setActiveProduct}
-              customizations={config.customizations}
             />
           )}
         </div>

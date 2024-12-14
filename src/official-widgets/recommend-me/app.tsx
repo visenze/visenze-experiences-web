@@ -22,6 +22,10 @@ const DEFAULT_TEXTS: LanguagePack = {
     widgetTitle: 'Personalize your recommendations',
     searchBarButton: 'Recommend Me',
     searchBarPlaceholder: 'an outfit to go with this',
+    resultLoading1: 'Searching the latest trends...',
+    resultLoading2: 'Finding the perfect look...',
+    resultLoading3: 'Almost there...',
+    resultRendering: 'Here\'s what I found for you',
     resultCarouselTitle: 'Results for',
   },
 };

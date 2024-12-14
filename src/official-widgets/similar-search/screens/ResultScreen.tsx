@@ -6,17 +6,15 @@ import { Input } from '@nextui-org/input';
 import { Listbox, ListboxItem } from '@nextui-org/listbox';
 import { cn } from '@nextui-org/theme';
 import { useIntl } from 'react-intl';
-import { WidgetResultContext } from '../../../common/types/contexts';
+import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import Result from '../components/Result';
-import ArrowDownIcon from '../../../common/icons/ArrowDownIcon';
-import ArrowUpIcon from '../../../common/icons/ArrowUpIcon';
 import Footer from '../../../common/components/Footer';
 import Header from '../components/Header';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
-import type { WidgetConfig } from '../../../common/visenze-core';
+import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -33,7 +31,6 @@ interface ResultScreenProps {
   onImageSearch: (data: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
   searchHistory: SearchImage[];
-  customizations: WidgetConfig['customizations'];
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
@@ -42,8 +39,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
   onImageSearch = (): void => {},
   onKeywordUpdate,
   searchHistory,
-  customizations,
 }) => {
+  const { customizations } = useContext(WidgetDataContext);
   const { productResults, image, autocompleteResults } = useContext(WidgetResultContext);
   const [search, setSearch] = useState<string>('');
   const [showFullResults, setShowFullResults] = useState(false);
@@ -56,7 +53,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   const autocompleteSuggestionsStyle = {
     height: `${showInputSuggest ? autocompleteSuggestionsHeight : 0}px`,
-    top: `${showInputSuggest ? -autocompleteSuggestionsHeight : 0}px`,
+    width: 'calc(100% - 16px)',
+    top: '52px',
   };
 
   const toggleFullResults = (): void => {
@@ -152,8 +150,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
   };
 
   const getMobileView = (): ReactElement => (
-    <div className='flex h-full flex-col gap-8 bg-primary md:hidden'>
-      <Header onCloseHandler={onModalClose}/>
+    <div className='flex h-full flex-col gap-8 md:hidden'>
+      <Header onCloseHandler={onModalClose}
+              showTitle={customizations.generalLayout?.showWidgetTitle}
+              iconColor={customizations.generalLayout?.fontColor} />
       <div className='relative h-screen grow overflow-hidden'>
         <div className='flex justify-center'
           {...minimizedDrawerHandler}
@@ -184,18 +184,24 @@ const ResultScreen: FC<ResultScreenProps> = ({
         <div
           className={cn(
             showFullResults ? 'top-10 bottom-14 left-0 right-0' : 'top-60 bottom-14 left-3 right-3',
-            'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8',
+            'transition-all duration-1000 z-10 absolute rounded-xl shadow-inner pt-8',
           )}
           {...minimizedDrawerHandler}>
           <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
             <Button
               isIconOnly
               radius='full'
-              className='absolute inset-x-0 -top-3 m-auto bg-buttonSecondary'
+              className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary'
               onClick={(): void => toggleFullResults()}
               data-pw='ss-arrow-button'
             >
-              {showFullResults ? <ArrowDownIcon className='size-6'/> : <ArrowUpIcon className='size-6'/>}
+              <CustomizableIcon
+                  height={24}
+                  width={24}
+                  url={`https://cdn.visenze.com/images/arrow-${showFullResults ? 'down' : 'up'}-icon.svg`}
+                  color={customizations.buttons?.primary?.fontColor}
+                  className='cursor-pointer'
+              />
             </Button>
           </div>
 
@@ -225,7 +231,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           showFullResults ? 'opacity-100 pb-2 z-20' : 'opacity-0',
           'absolute bottom-8 left-0 w-full pt-1 transition-all duration-700',
         )}>
-        <div className='bg-primary px-3 pt-2'>
+        <div className='px-3 pt-2'>
           {/* Refinement Text Bar */}
           <Input
             classNames={{
@@ -263,8 +269,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   const getTabletAndDesktopView = (): ReactElement => (
     <div className='hidden md:block'>
-      <Header onCloseHandler={onModalClose}/>
-      <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden bg-primary'>
+      <Header onCloseHandler={onModalClose}
+              showTitle={customizations.generalLayout?.showWidgetTitle}
+              iconColor={customizations.generalLayout?.fontColor} />
+      <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
           <div className='relative left-0 row-span-1 h-full w-1/4 py-4'>
             <div className='flex h-full flex-col justify-between px-16 md:px-6'>
@@ -275,7 +283,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
               {searchHistory && searchHistory?.length > 1 && (
                 <div className='pt-2'>
-                  <p className='text-primary'>
+                  <p>
                     {intl.formatMessage({ id: 'previousViews' })}
                   </p>
                   <div className='no-scrollbar flex h-full flex-row gap-1 overflow-scroll pt-1' data-pw='ss-previous-views'>
@@ -297,30 +305,32 @@ const ResultScreen: FC<ResultScreenProps> = ({
           </div>
 
           <div className='flex w-2/3 flex-col'>
-            <div className='z-10 col-span-2 pb-4'>
+            <div className='z-20 col-span-2 pb-4'>
               <div className='relative'>
                 {/* Autocomplete Suggestions */}
-                <Listbox
-                  style={autocompleteSuggestionsStyle}
-                  classNames={{ base: 'absolute w-full overflow-y-auto rounded-t-lg border-1 border-gray-200 bg-white transition-all' }}
-                  aria-label='Actions'
-                  onAction={(key): void => {
-                    const newSearch = String(key);
-                    onTextSearch(newSearch);
-                    setSearch(String(newSearch));
-                    setTimeout(() => {
-                      setShowInputSuggest(false);
-                    });
-                  }}>
-                  {inputSuggestions.map((keyword, index) => (
-                    <ListboxItem key={keyword} className={cn(keyword === search ? 'bg-gray' : '', 'pl-8')}>
-                      <span className='text-base' data-pw={`ss-autocomplete-suggestion-${index + 1}`}>{keyword}</span>
-                    </ListboxItem>
-                  ))}
-                </Listbox>
+                {showInputSuggest && inputSuggestions.length > 0 && (
+                  <Listbox
+                      style={autocompleteSuggestionsStyle}
+                      classNames={{ base: 'absolute overflow-y-auto rounded-b-lg border-1 border-gray-200 bg-default-100 text-black mx-2 transition-all' }}
+                      aria-label='Actions'
+                      onAction={(key): void => {
+                        const newSearch = String(key);
+                        onTextSearch(newSearch);
+                        setSearch(String(newSearch));
+                        setTimeout(() => {
+                          setShowInputSuggest(false);
+                        });
+                      }}>
+                    {['dress', 'red', 'blue'].map((keyword, index) => (
+                      <ListboxItem key={keyword} className={cn(keyword === search ? 'bg-gray' : '', 'pl-8')}>
+                        <span className='text-base' data-pw={`ss-autocomplete-suggestion-${index + 1}`}>{keyword}</span>
+                      </ListboxItem>
+                    ))}
+                  </Listbox>
+                )}
 
                 {/* Refinement Text Bar */}
-                <div className='relative z-20 bg-primary px-2 pt-3'>
+                <div className='relative z-20 px-2 pt-3'>
                   <Input
                     classNames={{
                       input: 'text-tablet-searchBarText lg:text-desktop-searchBarText font-tablet-searchBarText lg:font-desktop-searchBarText',
@@ -357,7 +367,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    style={getProductGridCssConfig()}
                    data-pw='ss-product-result-grid'>
                 {productResults.map((result, index) => (
-                  <div key={result.product_id} className='bg-primary'>
+                  <div key={result.product_id}>
                     <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
                             result={result}/>
                   </div>
@@ -388,7 +398,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
     if (inputSuggestions.length === 0) {
       setAutocompleteSuggestionsHeight(0);
     } else {
-      setAutocompleteSuggestionsHeight(Math.min(36 * inputSuggestions.length + 5, 144));
+      setAutocompleteSuggestionsHeight(Math.min(38 * inputSuggestions.length + 8, 144));
     }
   }, [inputSuggestions]);
 
@@ -396,7 +406,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
     <>
       {breakpoint === 'mobile' && getMobileView()}
       {(breakpoint === 'tablet' || breakpoint === 'desktop') && getTabletAndDesktopView()}
-      <Footer className='fixed bottom-0 bg-white py-2 md:absolute lg:rounded-b-3xl' dataPw='ss-visenze-footer'/>
+      {customizations.generalLayout?.showViSenzeLogo && (
+        <Footer className='fixed bottom-0 py-2 md:absolute lg:rounded-b-3xl' dataPw='ss-visenze-footer'/>
+      )}
     </>
   );
 };

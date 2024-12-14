@@ -14,13 +14,11 @@ import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import Result from '../components/Result';
 import Footer from '../../../common/components/Footer';
 import Header from '../components/Header';
-import ArrowUpIcon from '../../../common/icons/ArrowUpIcon';
-import ArrowDownIcon from '../../../common/icons/ArrowDownIcon';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import HotspotContainer from '../../../common/components/hotspots/hotspot-container';
 import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
-import type { WidgetConfig } from '../../../common/visenze-core';
+import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -40,7 +38,6 @@ interface ResultScreenProps {
   onImageSearch: (data: SearchImage) => void;
   onImageUpload: (img: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
-  customizations: WidgetConfig['customizations'];
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
@@ -52,9 +49,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
   onKeywordUpdate,
   searchHistory,
   setSearchHistory,
-  customizations,
 }) => {
-  const { productSearch } = useContext(WidgetDataContext);
+  const { customizations, productSearch } = useContext(WidgetDataContext);
   const { productResults, autocompleteResults } = useContext(WidgetResultContext);
   const [search, setSearch] = useState<string>('');
   const [showFullResults, setShowFullResults] = useState(false);
@@ -67,7 +63,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   const autocompleteSuggestionsStyle = {
     height: `${showInputSuggest ? autocompleteSuggestionsHeight : 0}px`,
-    top: `${showInputSuggest ? -autocompleteSuggestionsHeight : 0}px`,
+    width: 'calc(100% - 16px)',
+    top: '52px',
   };
 
   const toggleFullResults = (): void => {
@@ -173,8 +170,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
   };
 
   const getMobileView = (): ReactElement => (
-    <div className='flex h-full flex-col gap-8 bg-primary md:hidden'>
-      <Header onCloseHandler={onModalClose} onBackHandler={onBackHandler} isResultScreen={true} />
+    <div className='flex h-full flex-col gap-8 md:hidden'>
+      <Header onCloseHandler={onModalClose} onBackHandler={onBackHandler} isResultScreen={true}
+              showTitle={customizations.generalLayout?.showWidgetTitle}
+              iconColor={customizations.generalLayout?.fontColor} />
       <div className='relative h-screen grow overflow-hidden'>
         <div className='flex justify-center'
           {...minimizedDrawerHandler}
@@ -200,7 +199,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
         <div
           className={cn(
-            showFullResults ? 'top-10 bottom-14 left-0 right-0' : 'top-11/20 bottom-14 left-3 right-3',
+            showFullResults ? 'top-20 bottom-24 left-0 right-0' : 'top-11/20 bottom-14 left-3 right-3',
             'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8',
           )}
           {...minimizedDrawerHandler}>
@@ -208,10 +207,16 @@ const ResultScreen: FC<ResultScreenProps> = ({
             <Button
               isIconOnly
               radius='full'
-              className='absolute inset-x-0 -top-3 m-auto bg-buttonSecondary'
+              className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary'
               onClick={(): void => toggleFullResults()}
               data-pw='cs-arrow-button'>
-              {showFullResults ? <ArrowDownIcon className='size-6' /> : <ArrowUpIcon className='size-6' />}
+              <CustomizableIcon
+                  height={24}
+                  width={24}
+                  url={`https://cdn.visenze.com/images/arrow-${showFullResults ? 'down' : 'up'}-icon.svg`}
+                  color={customizations.buttons?.primary?.fontColor}
+                  className='cursor-pointer'
+              />
             </Button>
           </div>
 
@@ -273,16 +278,18 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   const getTabletAndDesktopView = (): ReactElement => (
     <div className='hidden md:block md:overflow-hidden lg:rounded-t-3xl'>
-      <Header onCloseHandler={onModalClose} onBackHandler={onBackHandler} isResultScreen={true} />
-      <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden bg-primary'>
+      <Header onCloseHandler={onModalClose} onBackHandler={onBackHandler} isResultScreen={true}
+              showTitle={customizations.generalLayout?.showWidgetTitle}
+              iconColor={customizations.generalLayout?.fontColor} />
+      <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
           <div className='relative left-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8'>
             <div className='flex h-9/10 flex-col justify-between px-2'>
-              <div className='flex w-full flex-col items-center rounded-3xl border border-black pt-2 text-center'>
+              <div className='wigmix-reference-image flex w-full flex-col items-center rounded-3xl border border-gray-300 pt-2 text-center'>
                 <HotspotContainer className='w-3/5' referenceImage={getReferenceImage()} />
 
                 <FileDropzone onImageUpload={onImageUpload} name='upload-icon'>
-                  <p className='px-3 py-2 leading-6 text-primary'>
+                  <p className='px-3 py-2 leading-6'>
                     {intl.formatMessage({ id: 'dragImageToSearch' })}
                   </p>
                 </FileDropzone>
@@ -290,7 +297,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
               {searchHistory && searchHistory.length > 1 && (
                 <div>
-                  <span className='text-primary'>
+                  <span>
                     {intl.formatMessage({ id: 'previousViews' })}
                   </span>
                   <div
@@ -301,7 +308,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       .map((searchImage, index) => (
                         <img
                           key={`image-history-${index}`}
-                          className='aspect-[4/5] w-1/3 cursor-pointer rounded-lg object-cover object-center'
+                          className='w-1/3 cursor-pointer rounded-lg object-cover object-center'
                           src={getFile(searchImage)}
                           onClick={() => onClickMoreLikeThisHandler(searchImage)}
                           data-pw={`cs-previous-views-image-${index + 1}`}
@@ -314,30 +321,32 @@ const ResultScreen: FC<ResultScreenProps> = ({
           </div>
 
           <div className='flex w-2/3 flex-col'>
-            <div className='z-10 col-span-2 pb-4'>
+            <div className='z-20 col-span-2 pb-4'>
               <div className='relative'>
                 {/* Autocomplete Suggestions */}
-                <Listbox
-                  style={autocompleteSuggestionsStyle}
-                  classNames={{ base: 'absolute w-full overflow-y-auto rounded-t-lg border-1 border-gray-200 bg-white transition-all' }}
-                  aria-label='Actions'
-                  onAction={(key): void => {
-                    const newSearch = String(key);
-                    onTextSearch(newSearch);
-                    setSearch(String(newSearch));
-                    setTimeout(() => {
-                      setShowInputSuggest(false);
-                    });
-                  }}>
-                  {inputSuggestions.map((keyword, index) => (
-                    <ListboxItem key={keyword} className={cn(keyword === search ? 'bg-gray' : '', 'pl-8')}>
-                      <span className='text-base' data-pw={`cs-autocomplete-suggestion-${index + 1}`}>{keyword}</span>
-                    </ListboxItem>
-                  ))}
-                </Listbox>
+                {showInputSuggest && inputSuggestions.length > 0 && (
+                  <Listbox
+                      style={autocompleteSuggestionsStyle}
+                      classNames={{ base: 'absolute overflow-y-auto rounded-b-lg border-1 border-gray-200 bg-default-100 text-black mx-2 transition-all' }}
+                      aria-label='Actions'
+                      onAction={(key): void => {
+                        const newSearch = String(key);
+                        onTextSearch(newSearch);
+                        setSearch(String(newSearch));
+                        setTimeout(() => {
+                          setShowInputSuggest(false);
+                        });
+                      }}>
+                    {inputSuggestions.map((keyword, index) => (
+                      <ListboxItem key={keyword} className={cn(keyword === search ? 'bg-gray' : '', 'pl-8')}>
+                        <span className='text-base' data-pw={`cs-autocomplete-suggestion-${index + 1}`}>{keyword}</span>
+                      </ListboxItem>
+                    ))}
+                  </Listbox>
+                )}
 
                 {/* Refinement Text Bar */}
-                <div className='relative z-20 bg-primary px-2 pt-3'>
+                <div className='relative z-20 px-2 pt-3'>
                   <Input
                     classNames={{
                       input:
@@ -375,7 +384,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    style={getProductGridCssConfig()}
                    data-pw='cs-product-result-grid'>
                 {productResults.map((result, index) => (
-                  <div key={result.product_id} className='bg-primary'>
+                  <div key={result.product_id}>
                     <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
                             result={result}/>
                   </div>
@@ -405,7 +414,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
     if (inputSuggestions.length === 0) {
       setAutocompleteSuggestionsHeight(0);
     } else {
-      setAutocompleteSuggestionsHeight(Math.min(36 * inputSuggestions.length + 5, 144));
+      setAutocompleteSuggestionsHeight(Math.min(38 * inputSuggestions.length + 8, 144));
     }
   }, [inputSuggestions]);
 
@@ -429,7 +438,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
     <>
       {breakpoint === 'mobile' && getMobileView()}
       {(breakpoint === 'tablet' || breakpoint === 'desktop') && getTabletAndDesktopView()}
-      <Footer className='fixed bottom-0 bg-white py-2 md:absolute md:justify-start md:pl-20 lg:rounded-b-3xl' />
+      {customizations.generalLayout?.showViSenzeLogo && (
+        <Footer className='fixed bottom-0 bg-primary py-2 md:absolute md:justify-start md:pl-20 lg:rounded-b-3xl' />
+      )}
     </>
   );
 };

@@ -1,13 +1,13 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { Button } from '@nextui-org/button';
 import { Image } from '@nextui-org/image';
 import { cn } from '@nextui-org/theme';
 import type { ProcessedProduct } from '../../../common/types/product';
 import Result from './Result';
 import CloseIcon from '../../../common/icons/CloseIcon';
-import type { WidgetConfig } from '../../../common/visenze-core';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
+import { WidgetDataContext } from '../../../common/types/contexts';
 
 /**
  * Component which displays the search results
@@ -20,7 +20,6 @@ interface ResultsPageProps {
   autocompleteResults: string[];
   activeProduct: ProcessedProduct | null;
   setActiveProduct: (activeProduct: ProcessedProduct | null) => void;
-  customizations: WidgetConfig['customizations'];
 }
 
 const ResultsPage: FC<ResultsPageProps> = ({
@@ -30,8 +29,8 @@ const ResultsPage: FC<ResultsPageProps> = ({
   handleMultisearchWithProduct,
   activeProduct,
   setActiveProduct,
-  customizations,
 }): ReactElement => {
+  const { customizations } = useContext(WidgetDataContext);
   const [productHistory, setProductHistory] = useState<ProcessedProduct[]>([]);
   const resultsRef = useRef<HTMLDivElement>(null);
   const breakpoint = useBreakpoint();

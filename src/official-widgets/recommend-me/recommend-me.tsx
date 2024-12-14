@@ -67,7 +67,9 @@ const RecommendMe = memo((props: {
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        <div className='widget-title py-4 text-primary' data-pw='rm-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+        {config.customizations.generalLayout?.showWidgetTitle && (
+          <div className='wigmix-widget-title py-4 text-primary' data-pw='rm-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+        )}
 
         {/* Search input bar with Recommend me button */}
         <div className='flex'>
@@ -85,9 +87,7 @@ const RecommendMe = memo((props: {
           </Button>
           <Input
             classNames={{
-              inputWrapper: 'border-l-0 rounded-r',
-              input: 'text-mobile-searchBarText md:text-tablet-searchBarText lg:text-desktop-searchBarText font-mobile-searchBarText md:font-tablet-searchBarText '
-                + 'lg:font-desktop-searchBarText',
+              inputWrapper: 'border-l-0 rounded-r bg-default-100 text-black',
             }}
             disabled={isStreaming}
             isClearable

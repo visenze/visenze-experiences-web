@@ -1,6 +1,5 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useState, useCallback, useContext } from 'react';
-import { Button } from '@nextui-org/button';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetResultContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
@@ -15,8 +14,8 @@ import type { WidgetConfig, WidgetClient } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import LoadingIcon from './icons/LoadingIcon';
-import SimilarSearchIcon from './icons/SimilarSearchIcon';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 interface SimilarSearchProps {
   config: WidgetConfig;
@@ -64,7 +63,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     if (productResults.length > 0) {
       productSearch.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
-        metadata,
+        ...metadata,
       });
     }
 
@@ -141,12 +140,11 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
             onImageSearch={onImageSearch}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
-            customizations={config.customizations}
           />
         );
       case ScreenType.LOADING:
         return (
-          <div className='my-40 flex justify-center'>
+          <div className='flex h-full items-center justify-center'>
             <LoadingIcon />
           </div>
         );
@@ -158,7 +156,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
             onImageSearch={onImageSearch}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
-            customizations={config.customizations}
           />
         );
     }
@@ -207,17 +204,16 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
         image: resizedImage ?? image,
         metadata,
       }}>
-      <Button isIconOnly radius='full' size='sm' className='bg-white' onClick={onPopupIconClick}>
-        <SimilarSearchIcon>
-          <text
-            style={{ fontFamily: 'Arial, sans-serif', fontSize: '167.8px', whiteSpace: 'pre' }}
-            x='-1.867'
-            y='427.772'
-            transform='matrix(1, 0, 0, 1, 2.842170943040401e-14, 7.105427357601002e-15)'>
-            MORE
-          </text>
-        </SimilarSearchIcon>
-      </Button>
+      <div className='wigmix-popup-trigger w-fit cursor-pointer'>
+        <CustomizableIcon
+            height={24}
+            width={24}
+            url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/similar-search-icon.svg'}
+            color={config.customizations.popup?.triggerIcon?.color || ''}
+            className='wigmix-popup-trigger-icon cursor-pointer'
+            onClickHandler={onPopupIconClick}
+        />
+      </div>
 
       <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
                     position={config.customizations.popup?.position || 'right'}

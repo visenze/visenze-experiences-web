@@ -61,7 +61,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
     if (productResults.length > 0) {
       productSearch.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
-        metadata,
+        ...metadata,
       });
     }
 
@@ -137,7 +137,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
   const getScreen = (): ReactElement => {
     switch (screen) {
       case ScreenType.UPLOAD:
-        return <UploadScreen onModalClose={onModalClose} setScreen={setScreen} onImageUpload={onImageUpload} />;
+        return <UploadScreen onModalClose={onModalClose} onImageUpload={onImageUpload} />;
       case ScreenType.RESULT:
         return (
           <ResultScreen
@@ -149,7 +149,6 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
             setSearchHistory={setSearchHistory}
-            customizations={config.customizations}
           />
         );
       case ScreenType.LOADING:
@@ -159,7 +158,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
           </div>
         );
       default:
-        return <UploadScreen onModalClose={onModalClose} onImageUpload={onImageUpload} setScreen={setScreen} />;
+        return <UploadScreen onModalClose={onModalClose} onImageUpload={onImageUpload} />;
     }
   };
 
