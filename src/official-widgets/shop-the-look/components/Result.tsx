@@ -1,5 +1,4 @@
-import type { FC } from 'react';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, type CSSProperties, type FC } from 'react';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import ResultLogicImpl from '../../../common/client/result-logic';
 import type { ProcessedProduct } from '../../../common/types/product';
@@ -21,10 +20,9 @@ interface ResultProps {
 }
 
 const Result: FC<ResultProps> = ({ index, result }) => {
-  const { productSearch, displaySettings, customizations, callbacks, debugMode } = useContext(WidgetDataContext);
+  const { productSearch, displaySettings, customizations, callbacks, debugMode, languageSettings } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
-  const { languageSettings } = useContext(WidgetDataContext);
   const { onProductClick } = callbacks;
   const [isLoading, setIsLoading] = useState(true);
   const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;
@@ -72,6 +70,22 @@ const Result: FC<ResultProps> = ({ index, result }) => {
     return <></>;
   }
 
+  const getProductPriceColorStyle = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    if (customizations.productCard?.price?.fontColor) {
+      cssConfig.color = customizations.productCard?.price?.fontColor;
+    }
+    return cssConfig;
+  };
+
+  const getProductOriginalPriceColorStyle = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    if (customizations.productCard?.originalPrice?.fontColor) {
+      cssConfig.color = customizations.productCard?.originalPrice?.fontColor;
+    }
+    return cssConfig;
+  };
+
   const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
   const price = getPrice(customizations, languageSettings, productDetails, result);
 
@@ -91,12 +105,12 @@ const Result: FC<ResultProps> = ({ index, result }) => {
         {
           originalPrice && originalPrice !== price
             ? (
-              <div className='flex flex-wrap gap-1'>
-                <span className='wigmix-product-card-price text-red-500'>{price}</span>
-                <span className='wigmix-product-card-original-price text-gray-400 line-through'>{originalPrice}</span>
+              <div className='flex flex-wrap items-center gap-1'>
+                <span className='wigmix-product-card-price text-red-500' style={getProductPriceColorStyle()}>{price}</span>
+                <span className='wigmix-product-card-original-price text-gray-400 line-through' style={getProductOriginalPriceColorStyle()}>{originalPrice}</span>
               </div>
             ) : (
-              <span className='wigmix-product-card-price text-primary'>{price}</span>
+              <span className='wigmix-product-card-price'>{price}</span>
             )
         }
       </div>

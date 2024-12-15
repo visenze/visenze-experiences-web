@@ -10,13 +10,12 @@ import { type FacetType, SortType, WidgetBreakpoint } from '../../common/types/c
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
-import IconTriggeredGridIcon from './components/IconTriggeredGridIcon';
 import Footer from '../../common/components/Footer';
 import Result from './components/Result';
-import CloseIcon from '../../common/icons/CloseIcon';
 import SortOptions from './components/SortOptions';
 import FilterOptions from './components/FilterOptions';
 import { getSortTypeIntlId } from '../../common/utils';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 export enum ScreenType {
   SORT = 'sort',
@@ -63,7 +62,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
     if (productResults.length > 0) {
       productSearch.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
-        metadata,
+        ...metadata,
       });
     }
   }, [productResults]);
@@ -127,9 +126,14 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
         productResults,
         metadata,
       }}>
-      <Button isIconOnly radius='full' size='sm' className='bg-white' onClick={onPopupIconClick}>
-        <IconTriggeredGridIcon className='size-6' />
-      </Button>
+      <CustomizableIcon
+          height={24}
+          width={24}
+          url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
+          color={config.customizations.popup?.triggerIcon?.color || ''}
+          className='wigmix-popup-trigger-icon cursor-pointer'
+          onClickHandler={onPopupIconClick}
+      />
 
       <ViSenzeModal
         open={dialogVisible}
@@ -138,33 +142,38 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
         position={config.customizations.popup?.position || 'center'}
         fontFamily={config.customizations.generalLayout?.fontFamily}
         placementId={`${config.appSettings.placementId}`}>
-        <div className='relative flex size-full flex-col bg-primary lg:flex-row lg:justify-between lg:divide-x-1'>
+        <div className='relative flex size-full flex-col lg:flex-row lg:justify-between lg:divide-x-1'>
           {/* Close Button */}
           <Button
             isIconOnly
             className='absolute right-3 top-3 z-10 border-none bg-transparent'
             onClick={onModalClose}
             data-pw='itg-close-button'>
-            <CloseIcon className='size-6' />
+            <CustomizableIcon
+                height={24}
+                width={24}
+                url={'https://cdn.visenze.com/images/close-icon.svg'}
+                color={config.customizations.generalLayout?.fontColor}
+            />
           </Button>
 
           <div className='flex flex-col border-none p-4 lg:w-3/10 lg:px-10 lg:py-6'>
             {/* Widget Title */}
-            <div className='flex items-center'>
-              <div className='wigmix-widget-title text-primary' data-pw='itg-widget-title'>
-                {intl.formatMessage({ id: 'widgetTitle' })}
-              </div>
-            </div>
+            {config.customizations.generalLayout?.showWidgetTitle && (
+              <div className='wigmix-widget-title text-primary' data-pw='itg-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+            )}
 
             {/* Reference Product */}
             {productInfo && (
-              <div className='pt-4 lg:pt-8' data-pw='itg-reference-product'>
+              <div className='wigmix-reference-image pt-4 lg:pt-8' data-pw='itg-reference-product'>
                 <Result index={0} result={productInfo} isReferenceProduct={true} />
               </div>
             )}
 
             {/* ViSenze Footer desktop */}
-            <Footer className='mt-auto hidden bg-transparent lg:flex' dataPw='itg-visenze-footer-desktop' />
+            {config.customizations.generalLayout?.showViSenzeLogo && (
+              <Footer className='mt-auto hidden bg-transparent lg:flex' dataPw='itg-visenze-footer-desktop' />
+            )}
           </div>
 
           <div className='relative flex w-full flex-col bg-primary px-6 pb-4 lg:w-7/10 lg:pt-[6.5%]'>

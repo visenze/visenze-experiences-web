@@ -6,11 +6,11 @@ import { Slider } from '@nextui-org/slider';
 import type { Facet } from 'visearch-javascript-sdk';
 import { Button } from '@nextui-org/button';
 import { useIntl } from 'react-intl';
-import LeftChevronIcon from '../../../common/icons/LeftChevronIcon';
 import type { FacetType } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { getFacetNameByKey, getTitleCase } from '../../../common/utils';
 import type { ScreenType } from '../icon-triggered-grid';
+import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 
 /**
  * A component for selecting and applying product result filtering options.
@@ -25,7 +25,7 @@ interface FilterOptionsProps {
 }
 
 const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilters, setSelectedFilters, setScreen }) => {
-  const { displaySettings } = useContext(WidgetDataContext);
+  const { displaySettings, customizations } = useContext(WidgetDataContext);
   const intl = useIntl();
 
   const showFacetValues = (facet: Facet): ReactElement | ReactElement[] => {
@@ -43,7 +43,7 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
 
     if (facet.range) {
       return <Slider
-        label='Price Range'
+        label={`${getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))} Range`}
         color='secondary'
         minValue={facet.range.min}
         maxValue={facet.range.max}
@@ -76,9 +76,9 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
           onChange={updateFiltersHandler}
           isSelected={selectedFilters[facetName].has(item.value)}
         >
-          <span>{item.value}</span>
+          <span className='text-primary'>{item.value}</span>
         </Checkbox>
-        <span>({item.count})</span>
+        <span className='text-primary'>({item.count})</span>
       </div>
     ));
   };
@@ -89,10 +89,17 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
         {
           facets.map((facet) => (
             <AccordionItem
-              classNames={{ title: 'font-bold' }}
+              classNames={{ title: 'font-bold text-primary' }}
               key={facet.key}
               title={getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
-              indicator={<LeftChevronIcon className='size-4'/>}
+              indicator={
+                <CustomizableIcon
+                    height={20}
+                    width={20}
+                    url={'https://cdn.visenze.com/images/chevron-left-icon.svg'}
+                    color={customizations.generalLayout?.fontColor}
+                />
+              }
             >
               <div className='flex flex-col gap-y-2 px-4 pb-4'>
                 {showFacetValues(facet)}
@@ -103,7 +110,7 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
       </Accordion>
 
       {/* Back button */}
-      <Button className='my-3 mr-3 w-1/4 flex-shrink-0 self-end rounded border bg-buttonPrimary px-14 text-white'
+      <Button className='my-3 mr-3 w-1/4 flex-shrink-0 self-end rounded bg-buttonPrimary px-14'
               radius='none' onClick={() => setScreen(null)} data-pw='itg-back-button'>
         <span className='text-buttonPrimary'>
           {intl.formatMessage({ id: 'back' })}

@@ -11,12 +11,12 @@ import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import CloseIcon from '../../common/icons/CloseIcon';
 import HotspotContainer from '../../common/components/hotspots/hotspot-container';
 import type { BoxData, ProcessedProduct } from '../../common/types/product';
 import { getFlattenProducts } from '../../common/utils';
 import HotspotRecommendations from './components/HotspotRecommendations';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 interface ShoppableInstagramFeedProps {
   config: WidgetConfig;
@@ -130,9 +130,9 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
     return (
       <div className='flex h-60 flex-col items-center justify-center gap-4'>
         <span className='text-md font-bold'>
-          {intl.formatMessage({ id: 'errorMessage.part1' })}
+          {intl.formatMessage({ id: 'errorDescription' })}
         </span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'errorMessage.part2' })}</span>
+        <span className='text-sm'>{intl.formatMessage({ id: 'errorResolution' })}</span>
       </div>
     );
   }
@@ -154,7 +154,9 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
           </div>
 
           {/* ViSenze Footer */}
-          <Footer className='bg-transparent py-4 md:py-8' dataPw='sif-visenze-footer' />
+          {config.customizations.generalLayout?.showViSenzeLogo && (
+            <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='sif-visenze-footer'/>
+          )}
         </div>
 
         <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
@@ -173,7 +175,12 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
                 className='absolute right-2 top-2 bg-transparent'
                 onClick={onCloseHandler}
                 data-pw='sif-modal-close-button'>
-                <CloseIcon className='size-6' />
+                <CustomizableIcon
+                    height={24}
+                    width={24}
+                    url={'https://cdn.visenze.com/images/close-icon.svg'}
+                    color={config.customizations.generalLayout?.fontColor}
+                />
               </Button>
               {productTypes.length > 0 && (
                 <HotspotContainer

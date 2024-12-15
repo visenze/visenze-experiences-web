@@ -80,8 +80,8 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
       initialSlide: 0,
       slidesToScroll,
       slidesToShow,
-      prevArrow: isDesktop ? <PrevArrow /> : <></>,
-      nextArrow: isDesktop ? <NextArrow /> : <></>,
+      prevArrow: isDesktop ? <PrevArrow iconColor={config.customizations?.generalLayout?.fontColor} /> : <></>,
+      nextArrow: isDesktop ? <NextArrow iconColor={config.customizations?.generalLayout?.fontColor} /> : <></>,
       variableWidth: false,
     };
   };
@@ -156,8 +156,8 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
   if (error) {
     return (
       <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorMessage.part1' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'errorMessage.part2' })}</span>
+        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorDescription' })}</span>
+        <span className='text-sm'>{intl.formatMessage({ id: 'errorResolution' })}</span>
       </div>
     );
   }
@@ -166,9 +166,11 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {/* Widget Title */}
-        <div className='wigmix-widget-title py-2 text-center text-primary md:py-4' data-pw='stl-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+        {config.customizations.generalLayout?.showWidgetTitle && (
+          <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='stl-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+        )}
 
-        <div className='items-center justify-center md:flex md:flex-row md:gap-4 lg:gap-0'>
+        <div className='items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0'>
           {/* Reference Image */}
           <div className='px-1 md:w-7/20 lg:w-3/10'>
             <div className='relative'>
@@ -189,7 +191,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
               <Skeleton isLoaded={!!referenceImageUrl}>
                 <img
                   ref={imageRef}
-                  className='object-fit size-full'
+                  className='wigmix-reference-image size-full object-cover'
                   src={referenceImageUrl}
                   onLoad={onImageLoad}
                   data-pw='stl-reference-image'
@@ -213,7 +215,9 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
         </div>
 
         {/* ViSenze Footer */}
-        <Footer className='bg-transparent py-4 md:py-8' dataPw='stl-visenze-footer'/>
+        {config.customizations.generalLayout?.showViSenzeLogo && (
+          <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='stl-visenze-footer'/>
+        )}
       </WidgetResultContext.Provider>
     </>
   );

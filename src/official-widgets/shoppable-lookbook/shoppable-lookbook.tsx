@@ -118,8 +118,8 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
   if (error) {
     return (
       <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorMessage.part1' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'errorMessage.part2' })}</span>
+        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorDescription' })}</span>
+        <span className='text-sm'>{intl.formatMessage({ id: 'errorResolution' })}</span>
       </div>
     );
   }
@@ -127,14 +127,14 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        <div className='bg-primary'>
+        <div>
           {/* Widget Title */}
-          <div className='wigmix-widget-title py-2 text-center text-primary md:py-4' data-pw='sl-widget-title'>
-            {intl.formatMessage({ id: 'widgetTitle' })}
-          </div>
+          {config.customizations.generalLayout?.showWidgetTitle && (
+            <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='sl-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+          )}
 
           {/* Reference Image and Product Card Grid container */}
-          <div className='relative flex flex-col gap-y-4 md:flex-row'>
+          <div className='relative flex flex-col gap-y-4 text-primary md:flex-row'>
             {/* Reference Image */}
             <div className='relative md:h-full md:w-2/5'>
               {objectDots.map((obj, index) => (
@@ -153,7 +153,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
               <Skeleton classNames={{ content: 'md:aspect-[2/3]' }} isLoaded={!!referenceImageUrl}>
                 <img
                   ref={imageRef}
-                  className='object-fit size-full'
+                  className='wigmix-reference-image size-full object-cover'
                   src={referenceImageUrl}
                   onLoad={onImageLoad}
                   data-pw='sl-reference-image'
@@ -176,7 +176,9 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
           </div>
 
           {/* ViSenze Footer */}
-          <Footer className='bg-transparent py-4 md:py-8' dataPw='sl-visenze-footer' />
+          {config.customizations.generalLayout?.showViSenzeLogo && (
+              <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='sl-visenze-footer' />
+          )}
         </div>
       </WidgetResultContext.Provider>
     </>

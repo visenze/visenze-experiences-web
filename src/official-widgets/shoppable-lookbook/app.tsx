@@ -20,8 +20,8 @@ interface AppProps {
 const DEFAULT_TEXTS: LanguagePack = {
   en: {
     widgetTitle: 'You may also like',
-    'errorMessage.part1': 'Sorry, something went wrong',
-    'errorMessage.part2': 'Please refresh to try again',
+    errorDescription: 'Sorry, something went wrong',
+    errorResolution: 'Please refresh to try again',
   },
 };
 

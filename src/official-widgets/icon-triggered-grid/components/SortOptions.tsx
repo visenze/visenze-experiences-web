@@ -31,14 +31,26 @@ const SortOptions: FC<SortOptionsProps> = ({ sortType, setSortType, setScreen, c
           onChange={(event) => setSortType(event.target.value as SortType)}
           color='secondary'
         >
-          <Radio value={SortType.RELEVANCE} data-pw='itg-sort-relevance'>{intl.formatMessage({ id: getSortTypeIntlId(SortType.RELEVANCE) })}</Radio>
-          <Radio value={SortType.PRICE_HTL} data-pw='itg-sort-high-to-low'>{intl.formatMessage({ id: getSortTypeIntlId(SortType.PRICE_HTL) })}</Radio>
-          <Radio value={SortType.PRICE_LTH} data-pw='itg-sort-low-to-high'>{intl.formatMessage({ id: getSortTypeIntlId(SortType.PRICE_LTH) })}</Radio>
+          <Radio value={SortType.RELEVANCE} data-pw='itg-sort-relevance'>
+            <span className='text-primary'>
+              {intl.formatMessage({ id: getSortTypeIntlId(SortType.RELEVANCE) })}
+            </span>
+          </Radio>
+          <Radio value={SortType.PRICE_HTL} data-pw='itg-sort-high-to-low'>
+            <span className='text-primary'>
+              {intl.formatMessage({ id: getSortTypeIntlId(SortType.PRICE_HTL) })}
+            </span>
+          </Radio>
+          <Radio value={SortType.PRICE_LTH} data-pw='itg-sort-low-to-high'>
+            <span className='text-primary'>
+              {intl.formatMessage({ id: getSortTypeIntlId(SortType.PRICE_LTH) })}
+            </span>
+          </Radio>
         </RadioGroup>
       </div>
 
       {/* Back button */}
-      <Button className='my-3 mr-3 w-1/4 flex-shrink-0 self-end rounded border bg-buttonPrimary px-14 text-white'
+      <Button className='my-3 mr-3 w-1/4 flex-shrink-0 self-end rounded bg-buttonPrimary px-14'
               radius='none' onClick={() => setScreen(null)} data-pw='itg-back-button'>
         <span className='text-buttonPrimary'>
           {intl.formatMessage({ id: 'back' })}

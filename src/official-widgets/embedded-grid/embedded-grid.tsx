@@ -83,8 +83,8 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, productSearch, productId 
   if (error) {
     return (
       <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorMessage.part1' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'errorMessage.part2' })}</span>
+        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorDescription' })}</span>
+        <span className='text-sm'>{intl.formatMessage({ id: 'errorResolution' })}</span>
       </div>
     );
   }
@@ -92,15 +92,15 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, productSearch, productId 
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        <div className='bg-primary'>
+        <div>
           {/* Widget Title */}
-          <div className='wigmix-widget-title py-2 text-center text-primary md:py-4' data-pw='eg-widget-title'>
-            {intl.formatMessage({ id: 'widgetTitle' })}
-          </div>
+          {config.customizations.generalLayout?.showWidgetTitle && (
+            <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='eg-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+          )}
 
           {/* Product result grid */}
           <div
-            className={`grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-5', 'gap-x-2', 'gap-y-4')}`}
+            className={`grid text-primary ${getProductGridCssClasses('grid-cols-2 md:grid-cols-5', 'gap-x-2', 'gap-y-4')}`}
             style={getProductGridCssConfig()}
             data-pw='eg-product-result-grid'>
             {productResults.map((result, index) => (
@@ -111,7 +111,9 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, productSearch, productId 
           </div>
 
           {/* ViSenze Footer */}
-          <Footer className='bg-transparent py-4 md:py-8' dataPw='eg-visenze-footer' />
+          {config.customizations.generalLayout?.showViSenzeLogo && (
+            <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='eg-visenze-footer' />
+          )}
         </div>
       </WidgetResultContext.Provider>
     </>

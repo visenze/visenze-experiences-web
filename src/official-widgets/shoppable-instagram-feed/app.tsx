@@ -18,8 +18,8 @@ interface AppProps {
 
 const DEFAULT_TEXTS: LanguagePack = {
   en: {
-    'errorMessage.part1': 'Sorry, something went wrong',
-    'errorMessage.part2': 'Please refresh to try again',
+    errorDescription: 'Sorry, something went wrong',
+    errorResolution: 'Please refresh to try again',
     hotspotRecommendationsTitle: 'In this photo',
     noResults: 'There are no results for this hotspot',
   },
