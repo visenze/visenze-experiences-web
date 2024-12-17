@@ -24,6 +24,11 @@ const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedire
   const searchBarRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
 
+  const createImageEvent = (image: SearchImage): void => {
+    const event = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
+    document.dispatchEvent(event);
+  };
+
   const imageUploadHandler = (img: SearchImage): void => {
     setImage(img);
     setAllowRedirect(true);
@@ -57,7 +62,16 @@ const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedire
       }}
       value={query}
       onValueChange={(value) => {
-        setQuery(value);
+        const isImageUrl = (url: string): boolean => /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url.toLowerCase());
+
+        if (isImageUrl(value)) {
+          createImageEvent({ imgUrl: value });
+          setImage({ imgUrl: value });
+          setQuery('');
+          // setAllowRedirect(true);
+        } else {
+          setQuery(value);
+        }
       }}
       startContent={
         <div className='flex items-center gap-2'>
