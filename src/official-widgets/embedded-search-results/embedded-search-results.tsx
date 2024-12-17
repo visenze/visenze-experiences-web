@@ -19,6 +19,7 @@ import FilterIcon from '../../common/icons/FilterIcon';
 import FindSimilarHistory from './components/FindSimilarHistory';
 import type { ImageUrl } from '../../common/types/image';
 import CloseIcon from '../../common/icons/CloseIcon';
+import SearchBarInput from './components/SearchBarInput';
 
 interface EmbeddedSearchResultProps {
   config: WidgetConfig;
@@ -44,6 +45,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [imageUrl, setImageUrl] = useState('');
   const [activeImgUrl, setActiveImgUrl] = useState<string | null>('');
   const [findSimilarHistory, setFindSimilarHistory] = useState<string[]>([]);
@@ -86,6 +88,30 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     setIsLoading(false);
   };
 
+  const handleRedirect = (): void => {
+    if (!query) {
+      return;
+    }
+
+    const url = new URL(searchBarResultsSettings.redirectUrl);
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const searchBarImageId = urlSearchParams.get('im_id');
+    const searchBarImageUrl = urlSearchParams.get('im_url');
+    if (searchBarImageId) {
+      url.searchParams.append('im_id', searchBarImageId || '');
+    } else if (searchBarImageUrl) {
+      url.searchParams.append('im_url', searchBarImageUrl || '');
+    }
+    if (query && (isMultiSearch || (!searchBarImageId && !searchBarImageUrl))) {
+      url.searchParams.append('q', query);
+    }
+    if (debugMode) {
+      window.history.pushState(null, '', url.toString());
+    } else {
+      window.location.href = url.toString();
+    }
+  };
+
   const multisearchWithSearchBarDetails = (imgUrl?: string): void => {
     setIsLoading(true);
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -94,6 +120,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     const searchBarQuery = urlSearchParams.get('q');
     if (!imgUrl || searchBarResultsSettings.enableMultiSearch) {
       setQuery(searchBarQuery || '');
+      setDebouncedQuery(searchBarQuery || '');
     }
     const params: Record<string, any> = {
       ...searchSettings,
@@ -169,24 +196,41 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     );
   }
 
-  if (!root || error) {
-    console.error(error);
+  if (!root) {
     return <></>;
+  }
+
+  if (error) {
+    console.error(error);
   }
 
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
+        <div className='flex w-full justify-center'>
+          <div className='flex w-full flex-col justify-center gap-y-2 px-2 py-6 md:w-1/2 md:py-8 lg:py-10'>
+            <SearchBarInput
+              query={query}
+              setQuery={setQuery}
+              handleRedirect={() => {
+                if (query) {
+                  handleRedirect();
+                }
+              }}
+            />
+          </div>
+        </div>
+
         {/* Widget Title */}
         <div className='flex flex-col items-center gap-y-2 bg-primary px-2 py-6 md:py-8 lg:py-10' ref={widgetTitleRef}>
-          <div className='widget-title font-bold'>{intl.formatMessage({ id: 'embeddedSearchResults.title' })}</div>
-          {query && !imageUrl && (
+          {/* <div className='widget-title font-bold'>{intl.formatMessage({ id: 'embeddedSearchResults.title' })}</div> */}
+          {debouncedQuery && !imageUrl && (
             <div className='break-words text-lg'>
               {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}&nbsp;
-              {productResults.length} {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })} <b>{query}</b>
+              {productResults.length} {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })} <b>{debouncedQuery}</b>
             </div>
           )}
-          {!query && imageUrl && (
+          {!debouncedQuery && imageUrl && (
               <div className='mt-2 flex items-center gap-x-3 text-lg'>
                 {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}&nbsp;
                 {productResults.length} {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })}
@@ -206,11 +250,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                 </div>
               </div>
           )}
-          {isMultiSearch && query && imageUrl && (
+          {isMultiSearch && debouncedQuery && imageUrl && (
               <div className='mt-2 flex items-center gap-x-3 text-lg'>
                 {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}&nbsp;
                 {productResults.length} {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })}
-                <b>{query}</b>
+                <b>{debouncedQuery}</b>
                 {' '}+{' '}
                 <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>
                   <img className='object-fit aspect-[4/5] w-20 border-1 border-black' src={imageUrl} />
@@ -231,7 +275,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
         </div>
         <div className='flex size-full flex-col justify-center bg-primary md:flex-row'>
           {/* Filter Section Tablet & Desktop */}
-          {
+          {/* {
               facets
               && <div className='sticky top-0 hidden h-full w-1/4 flex-col md:flex'>
               <div
@@ -242,7 +286,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                 setSelectedFilters={setSelectedFilters}
               />
             </div>
-          }
+          } */}
           {/* Filter Section Mobile */}
           <div className='sticky top-0 z-20 w-full bg-white px-2 py-1 md:hidden md:px-0'>
             <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowMobileFilterOptions(true)}>
@@ -260,7 +304,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
               setSelectedFilters={setSelectedFilters}
             />
           </ViSenzeModal>
-          <div className='flex flex-col md:w-3/4'>
+          <div className='flex w-full flex-col'>
             {/* Find Similar Image History */}
             <FindSimilarHistory
               activeImgUrl={activeImgUrl}
@@ -270,32 +314,37 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
               multisearchWithSearchBarDetails={multisearchWithSearchBarDetails}
             />
             {/* Product Result Grid */}
-            {
-              isLoading && !isFirstLoad
-                ? <div className='flex w-full justify-center py-32'>
-                  <Spinner color='secondary'/>
-                </div>
-                : <>
-                  {
-                    productResults.length > 0
-                      ? <div className='grid w-full grid-cols-2 gap-x-2 gap-y-4 px-2 pb-2 md:grid-cols-3 md:pl-0 md:pr-2' data-pw='esr-product-result-grid'>
-                        {productResults.map((result, index) => (
-                          <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
-                            <Result
-                              index={index}
-                              result={result}
-                              findSimilarClickHandler={findSimilarClickHandler}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                      : <div className='flex flex-col gap-y-2 py-24 text-center md:w-3/4'>
-                        <p className='calls-to-action-text font-semibold'>{intl.formatMessage({ id: 'embeddedSearchResults.errorMessage.part1' })}</p>
-                        <p className='calls-to-action-text'>{intl.formatMessage({ id: 'embeddedSearchResults.errorMessage.part2' })}</p>
-                      </div>
-                  }
-                </>
-            }
+            <div className='flex items-center'>
+              {
+                isLoading && !isFirstLoad
+                  ? <div className='flex w-full justify-center py-32'>
+                    <Spinner color='secondary'/>
+                  </div>
+                  : <>
+                    {
+                      productResults.length > 0
+                        ? <div className='grid w-full grid-cols-2 gap-x-2 gap-y-4 pb-2 md:grid-cols-4' data-pw='esr-product-result-grid'>
+                          {productResults.map((result, index) => (
+                            <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
+                              <Result
+                                index={index}
+                                result={result}
+                                findSimilarClickHandler={findSimilarClickHandler}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                        : <div className={cn(
+                          'flex flex-col gap-y-2 py-24 text-center md:w-3/4',
+                          !debouncedQuery && !imageUrl && 'hidden',
+                        )}>
+                          <p className='calls-to-action-text font-semibold'>{intl.formatMessage({ id: 'embeddedSearchResults.errorMessage.part1' })}</p>
+                          <p className='calls-to-action-text'>{intl.formatMessage({ id: 'embeddedSearchResults.errorMessage.part2' })}</p>
+                        </div>
+                    }
+                  </>
+              }
+            </div>
           </div>
         </div>
       </WidgetResultContext.Provider>
