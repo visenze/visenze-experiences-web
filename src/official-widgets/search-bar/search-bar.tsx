@@ -36,9 +36,12 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
   const redirectWithAutocomplete = (autocomplete: string): void => {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const searchBarImageId = urlSearchParams.get('im_id');
+    const searchBarImageUrl = urlSearchParams.get('im_url');
     const url = new URL(searchBarResultsSettings.redirectUrl);
     if (isMultiSearch && (imageId || searchBarImageId)) {
       url.searchParams.append('im_id', imageId || searchBarImageId || '');
+    } else if (isMultiSearch && searchBarImageUrl) {
+      url.searchParams.append('im_url', searchBarImageUrl);
     }
     url.searchParams.set('q', autocomplete);
     if (debugMode) {
