@@ -90,6 +90,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     setIsLoading(true);
     const urlSearchParams = new URLSearchParams(window.location.search);
     const searchBarImageId = urlSearchParams.get('im_id');
+    const searchBarImageUrl = urlSearchParams.get('im_url');
     const searchBarQuery = urlSearchParams.get('q');
     if (!imgUrl || searchBarResultsSettings.enableMultiSearch) {
       setQuery(searchBarQuery || '');
@@ -115,6 +116,9 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     }
     if (searchBarImageId && !imgUrl && (searchBarResultsSettings.enableMultiSearch || !searchBarQuery)) {
       params.im_id = searchBarImageId;
+    }
+    if (searchBarImageUrl && !imgUrl && !searchBarImageId && (searchBarResultsSettings.enableMultiSearch || !searchBarQuery)) {
+      params.im_url = searchBarImageUrl;
     }
 
     productSearch.multisearchByImage(params, handleSuccess, handleError);
@@ -225,7 +229,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
               </div>
           )}
         </div>
-        <div className='flex size-full flex-col bg-primary md:flex-row'>
+        <div className='flex size-full flex-col justify-center bg-primary md:flex-row'>
           {/* Filter Section Tablet & Desktop */}
           {
               facets
