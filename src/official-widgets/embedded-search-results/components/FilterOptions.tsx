@@ -67,7 +67,6 @@ const FilterOptions:FC<FilterOptionsProps> = ({ facets, selectedFilters, setSele
         >
           <span className='calls-to-action-text'>{item.value}</span>
         </Checkbox>
-        <span className='calls-to-action-text'>({item.count})</span>
       </div>
     ));
   };
