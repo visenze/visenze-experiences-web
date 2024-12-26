@@ -208,7 +208,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         <div className='flex w-full justify-center'>
-          <div className='flex w-full flex-col justify-center gap-y-2 px-2 py-6 md:w-1/2 md:py-8 lg:py-10'>
+          <div className='flex w-full flex-col justify-center gap-y-2 px-2 py-3 md:w-1/2 lg:py-4 xl:py-8'>
             <SearchBarInput
               query={query}
               setQuery={setQuery}
@@ -222,7 +222,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
         </div>
 
         {/* Widget Title */}
-        <div className='flex flex-col items-center gap-y-2 bg-primary px-2 py-6 md:py-8 lg:py-10' ref={widgetTitleRef}>
+        <div className='flex flex-col items-center gap-y-2 bg-primary px-2 lg:py-4 xl:py-8' ref={widgetTitleRef}>
           {/* <div className='widget-title font-bold'>{intl.formatMessage({ id: 'embeddedSearchResults.title' })}</div> */}
           {debouncedQuery && !imageUrl && (
             <div className='break-words text-lg'>
