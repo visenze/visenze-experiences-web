@@ -18,7 +18,7 @@ import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import FilterIcon from '../../common/icons/FilterIcon';
 import FindSimilarHistory from './components/FindSimilarHistory';
 import type { ImageUrl } from '../../common/types/image';
-import CloseIcon from '../../common/icons/CloseIcon';
+// import CloseIcon from '../../common/icons/CloseIcon';
 import SearchBarInput from './components/SearchBarInput';
 
 interface EmbeddedSearchResultProps {
@@ -163,10 +163,10 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     }
     setImageUrl(imgUrl);
     multisearchWithSearchBarDetails(imgUrl);
-    // const isProductInHistory = findSimilarHistory.some((item) => item === imgUrl);
-    // if (!isProductInHistory) {
-    //   setFindSimilarHistory([...findSimilarHistory, imgUrl]);
-    // }
+    const isProductInHistory = findSimilarHistory.some((item) => item === imgUrl);
+    if (!isProductInHistory) {
+      setFindSimilarHistory([...findSimilarHistory, imgUrl]);
+    }
 
     setActiveImgUrl(imgUrl);
   };
@@ -185,6 +185,13 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   }, [selectedFilters]);
 
   useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const searchBarImageUrl = urlSearchParams.get('im_url');
+    if (searchBarImageUrl) {
+      setFindSimilarHistory([...findSimilarHistory, searchBarImageUrl]);
+      setActiveImgUrl(searchBarImageUrl);
+    }
+
     multisearchWithSearchBarDetails();
   }, []);
 
@@ -218,13 +225,22 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                 }
               }}
             />
+
+            {/* Find Similar Image History */}
+            <FindSimilarHistory
+              activeImgUrl={activeImgUrl}
+              setActiveImgUrl={setActiveImgUrl}
+              findSimilarHistory={findSimilarHistory}
+              setFindSimilarHistory={setFindSimilarHistory}
+              multisearchWithSearchBarDetails={multisearchWithSearchBarDetails}
+            />
           </div>
         </div>
 
         {/* Widget Title */}
         <div className='flex flex-col items-center gap-y-2 bg-primary px-2 py-6 md:py-8 lg:py-10' ref={widgetTitleRef}>
           {/* <div className='widget-title font-bold'>{intl.formatMessage({ id: 'embeddedSearchResults.title' })}</div> */}
-          {debouncedQuery && !imageUrl && (
+          {/* {debouncedQuery && !imageUrl && (
             <div className='break-words text-lg'>
               {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}&nbsp;
               {productResults.length} {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })} <b>{debouncedQuery}</b>
@@ -271,7 +287,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                   </button>
                 </div>
               </div>
-          )}
+          )} */}
         </div>
         <div className='flex size-full flex-col justify-center bg-primary md:flex-row'>
           {/* Filter Section Tablet & Desktop */}
@@ -305,14 +321,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
             />
           </ViSenzeModal>
           <div className='flex w-full flex-col'>
-            {/* Find Similar Image History */}
-            <FindSimilarHistory
-              activeImgUrl={activeImgUrl}
-              setActiveImgUrl={setActiveImgUrl}
-              findSimilarHistory={findSimilarHistory}
-              setFindSimilarHistory={setFindSimilarHistory}
-              multisearchWithSearchBarDetails={multisearchWithSearchBarDetails}
-            />
             {/* Product Result Grid */}
             <div className='flex items-center'>
               {
