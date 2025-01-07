@@ -355,7 +355,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
 
         <div className='flex size-full flex-col justify-center bg-primary md:flex-row'>
           {/* Filter Section Mobile */}
-          <div className='sticky top-0 z-20 w-full bg-white px-2 py-1 md:hidden md:px-0'>
+          <div className=' w-full bg-white px-2 py-1 md:hidden md:px-0'>
             <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowMobileFilterOptions(true)}>
               <FilterIcon className='size-5'/>
               <span className='calls-to-action-text'>

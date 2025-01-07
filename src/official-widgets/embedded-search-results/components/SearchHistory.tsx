@@ -32,11 +32,11 @@ export default function SearchHistory({
   searchFromHistory: (entry: SearchHistoryEntry) => void
 }): ReactElement {
   return (
-    <div className='no-scrollbar flex h-32 w-full gap-2 overflow-x-scroll px-2 py-3 md:h-36 md:px-0 lg:h-40' data-pw='esr-product-history'>
-      <div className='flex w-1/4 flex-col'>
-        <p className='w-full pb-2 text-center'>Past searches</p>
+    <div className='no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3 md:h-36 md:flex-row md:px-0 lg:h-40' data-pw='esr-product-history'>
+      <div className='flex w-full flex-row items-center md:w-1/4 md:flex-col'>
+        <p className='w-auto pb-2 text-center'>Past searches</p>
 
-        <div className='grid auto-cols-max grid-flow-col gap-2'>
+        <div className='grid auto-cols-max grid-flow-col gap-2 pl-2'>
           {history.filter((entry) => entry.type === 'text').map((entry, index) => (
             <div key={index}>
               <button
@@ -55,11 +55,12 @@ export default function SearchHistory({
         </div>
       </div>
 
+      <div className='flex flex-row gap-2 md:w-3/4'>
       {history.filter((entry) => entry.type === 'image').map((entry, index) => (
         <div
           key={index}
           className={cn(
-            'relative h-full flex-shrink-0 cursor-pointer',
+            'relative h-32 flex-shrink-0 cursor-pointer',
             entry.id === activeHistory?.id ? 'border border-gray-500' : 'opacity-60',
           )}
           onClick={() => {
@@ -85,6 +86,7 @@ export default function SearchHistory({
           </button>
         </div>
       ))}
+      </div>
     </div>
   );
 }
