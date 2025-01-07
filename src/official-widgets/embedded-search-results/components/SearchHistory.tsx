@@ -2,7 +2,7 @@
 import { cn } from '@nextui-org/theme';
 import type { ReactElement } from 'react';
 import { Image } from '@nextui-org/image';
-import CloseIcon from '../../../common/icons/CloseIcon';
+// import CloseIcon from '../../../common/icons/CloseIcon';
 
 export interface SearchHistoryEntry {
   id: string;
@@ -73,7 +73,7 @@ export default function SearchHistory({
             className='h-full rounded-none object-cover' src={entry.imageUrl ?? ''}
             data-pw={`esr-product-history-image-${index + 1}`}
           />
-          <button
+          {/* <button
             className='absolute right-1 top-1 z-10 rounded-full bg-white p-1'
             onClick={(event) => {
               event.preventDefault();
@@ -83,7 +83,7 @@ export default function SearchHistory({
             data-pw='esr-product-history-delete'
           >
             <CloseIcon className='size-3'/>
-          </button>
+          </button> */}
         </div>
       ))}
       </div>
