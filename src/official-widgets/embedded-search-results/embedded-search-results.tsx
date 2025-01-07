@@ -39,6 +39,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     colors: new Set<string>(),
   };
   const [selectedFilters, setSelectedFilters] = useState<Record<FacetType, any>>(defaultFilters);
+  const [showDesktopFilterOptions, setShowDesktopFilterOptions] = useState(false);
   const [showMobileFilterOptions, setShowMobileFilterOptions] = useState(false);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -253,16 +254,42 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         <div className='flex w-full flex-col items-center'>
-          <div className='flex w-full justify-center gap-y-2 px-2 py-6 md:w-1/2 md:py-8 lg:py-10'>
-            <SearchBarInput
-              query={query}
-              setQuery={setQuery}
-              handleRedirect={() => {
-                if (query) {
-                  handleRedirect();
-                }
-              }}
-            />
+          <div className='flex w-full gap-y-2 px-2 py-6 md:py-8 lg:py-10'>
+            <div className='sticky top-0 z-20 hidden w-1/4 px-2 py-1 md:block md:px-0'>
+              <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowDesktopFilterOptions(true)}>
+                <FilterIcon className='size-5'/>
+                <span className='calls-to-action-text'>
+                {intl.formatMessage({ id: 'embeddedSearchResults.filter' })}
+              </span>
+              </Button>
+
+              <ViSenzeModal
+                className='inset-y-0 w-1/5'
+                open={showDesktopFilterOptions}
+                layout='mobile'
+                onClose={() => setShowDesktopFilterOptions(false)}
+                position='center'
+                placementId={`${config.appSettings.placementId}`}
+              >
+                <FilterOptions
+                  facets={facets}
+                  selectedFilters={selectedFilters}
+                  setSelectedFilters={setSelectedFilters}
+                />
+              </ViSenzeModal>
+            </div>
+
+            <div className='w-full md:w-1/2'>
+              <SearchBarInput
+                query={query}
+                setQuery={setQuery}
+                handleRedirect={() => {
+                  if (query) {
+                    handleRedirect();
+                  }
+                }}
+              />
+            </div>
           </div>
 
           <SearchHistory
@@ -283,15 +310,22 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
               {intl.formatMessage({ id: 'embeddedSearchResults.filter' })}
             </span>
             </Button>
+
+            <ViSenzeModal
+              className='bottom-0 top-[unset] h-4/5'
+              open={showMobileFilterOptions} layout='mobile'
+              onClose={() => setShowMobileFilterOptions(false)}
+              position='center'
+              placementId={`${config.appSettings.placementId}`}
+            >
+              <FilterOptions
+                facets={facets}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
+              />
+            </ViSenzeModal>
           </div>
-          <ViSenzeModal className='bottom-0 top-[unset] h-4/5' open={showMobileFilterOptions} layout='mobile' onClose={() => setShowMobileFilterOptions(false)} position='center'
-                        placementId={`${config.appSettings.placementId}`}>
-            <FilterOptions
-              facets={facets}
-              selectedFilters={selectedFilters}
-              setSelectedFilters={setSelectedFilters}
-            />
-          </ViSenzeModal>
+
           <div className='flex w-full flex-col'>
             {/* Product Result Grid */}
             <div className='flex items-center'>
