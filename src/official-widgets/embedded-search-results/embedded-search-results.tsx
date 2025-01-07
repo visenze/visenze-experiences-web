@@ -78,15 +78,15 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
 
       setSearchHistory((prevHistory) => {
         const updatedHistory = prevHistory.map((item) => {
-          if (item.imageId === res.im_id) {
+          if (item.imageId === res.im_id && item.product_types?.length === 0) {
             return {
               ...item,
               imageUrl: res.query_tmp_url,
+              product_types: res.product_types,
             };
           }
           return item;
         });
-        console.log(updatedHistory);
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedHistory));
         return updatedHistory;
@@ -137,10 +137,10 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   };
 
   const searchFromHistory = (entry: SearchHistoryEntry): void => {
-    console.log('searchFromHistory', entry);
     const url = new URL(searchBarResultsSettings.redirectUrl);
     if (entry.imageId) {
       url.searchParams.append('im_id', entry.imageId);
+      url.searchParams.append('box', entry.box?.join(',') || '');
     } else if (entry.imageUrl) {
       url.searchParams.append('im_url', entry.imageUrl);
     }
@@ -159,12 +159,16 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     const url = new URL(searchBarResultsSettings.redirectUrl);
     const urlSearchParams = new URLSearchParams(window.location.search);
     const searchBarImageId = urlSearchParams.get('im_id');
+    const searchBarBox = urlSearchParams.get('box');
     const searchBarImageUrl = urlSearchParams.get('im_url');
 
     if (imgUrl) {
       url.searchParams.append('im_url', imgUrl);
     } else if (searchBarImageId) {
       url.searchParams.append('im_id', searchBarImageId);
+      if (searchBarBox) {
+        url.searchParams.append('box', searchBarBox);
+      }
     } else if (searchBarImageUrl) {
       url.searchParams.append('im_url', searchBarImageUrl);
     }
@@ -187,6 +191,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
 
     const urlSearchParams = new URLSearchParams(window.location.search);
     const searchBarImageId = urlSearchParams.get('im_id');
+    const searchBarBox = urlSearchParams.get('box');
     const searchBarImageUrl = urlSearchParams.get('im_url');
     const searchBarQuery = urlSearchParams.get('q');
     if (!imgUrl || searchBarResultsSettings.enableMultiSearch) {
@@ -215,6 +220,9 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     }
     if (searchBarImageId && !imgUrl && (searchBarResultsSettings.enableMultiSearch || !searchBarQuery)) {
       params.im_id = searchBarImageId;
+      if (searchBarBox) {
+        params.box = searchBarBox.split(',');
+      }
     }
     if (searchBarImageUrl && !imgUrl && !searchBarImageId && (searchBarResultsSettings.enableMultiSearch || !searchBarQuery)) {
       params.im_url = searchBarImageUrl;
@@ -325,7 +333,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
         <div className='flex w-full flex-col items-center'>
           <div className='flex w-full gap-y-2 px-2 py-6 md:py-8 lg:py-10'>
             <div className='sticky top-0 z-20 hidden w-1/4 px-2 py-1 md:block md:px-0'>
-              <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowDesktopFilterOptions(true)}>
+              <Button className='self-start rounded-md bg-gray-200 px-4' data-pw='esr-filter-button' onClick={() => setShowDesktopFilterOptions(true)}>
                 <FilterIcon className='size-5'/>
                 <span className='calls-to-action-text'>
                 {intl.formatMessage({ id: 'embeddedSearchResults.filter' })}
