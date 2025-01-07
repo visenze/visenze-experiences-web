@@ -227,13 +227,18 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
           {debouncedQuery && !imageUrl && (
             <div className='break-words text-lg'>
               {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}&nbsp;
-              {productResults.length} {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })} <b>{debouncedQuery}</b>
+              {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })} <b>{debouncedQuery}</b>
             </div>
           )}
           {!debouncedQuery && imageUrl && (
               <div className='mt-2 flex items-center gap-x-3 text-lg'>
-                {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}&nbsp;
-                {productResults.length} {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })}
+                <div className='flex flex-col lg:flex-row'>
+                  <span>
+                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}&nbsp;
+                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })}&nbsp;
+                  </span>
+                  <span className='font-bold'> {debouncedQuery}</span>
+                </div>
                 <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>
                   <img className='object-fit aspect-[4/5] w-20 border-1 border-black' src={imageUrl} />
                   <button
@@ -251,10 +256,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
               </div>
           )}
           {isMultiSearch && debouncedQuery && imageUrl && (
-              <div className='mt-2 flex items-center gap-x-3 text-lg'>
-                {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}&nbsp;
-                {productResults.length} {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })}
-                <b>{debouncedQuery}</b>
+              <div className='mt-2 flex w-full items-center justify-between gap-x-3 text-lg xl:w-auto'>
+                <div className='flex flex-col lg:flex-row'>
+                  <span>
+                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part1' })}&nbsp;
+                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle.part2' })}&nbsp;
+                  </span>
+                  <span className='font-bold'> {debouncedQuery}</span>
+                </div>
                 {' '}+{' '}
                 <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>
                   <img className='object-fit aspect-[4/5] w-20 border-1 border-black' src={imageUrl} />
