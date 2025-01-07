@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useRef, useContext, useState, useLayoutEffect } from 'react';
 import type { ProductSearchResponse, Facet } from 'visearch-javascript-sdk';
 import { Button } from '@nextui-org/button';
 import { useIntl } from 'react-intl';
@@ -50,6 +50,9 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   const [imageUrl, setImageUrl] = useState('');
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [activeHistory, setActiveHistory] = useState<SearchHistoryEntry>();
+  const [page, setPage] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const loaderRef = useRef<HTMLDivElement>(null);
   const root = useContext(RootContext);
   const intl = useIntl();
   const isMultiSearch = searchBarResultsSettings.enableMultiSearch;
@@ -72,7 +75,10 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
         cat: Category.RESULT,
         queryId: res.reqid,
       });
-      setProductResults(getFlattenProducts(res.result));
+
+      console.log('page on success', page);
+      const newProducts = getFlattenProducts(res.result);
+      setProductResults((prev) => ((page === 1) ? newProducts : [...prev, ...newProducts]));
       // Only set facets once
       if (facets.length === 0 && res.facets) {
         const image: ImageUrl = {
@@ -86,6 +92,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     }
     setIsFirstLoad(false);
     setIsLoading(false);
+    setIsLoadingMore(false);
   };
 
   // Function to generate unique ID for history entries
@@ -154,8 +161,13 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     }
   };
 
-  const multisearchWithSearchBarDetails = (imgUrl?: string): void => {
-    setIsLoading(true);
+  const multisearchWithSearchBarDetails = (imgUrl?: string, currentPage: number = 1): void => {
+    if (currentPage === 1) {
+      setIsLoading(true);
+    } else {
+      setIsLoadingMore(true);
+    }
+
     const urlSearchParams = new URLSearchParams(window.location.search);
     const searchBarImageId = urlSearchParams.get('im_id');
     const searchBarImageUrl = urlSearchParams.get('im_url');
@@ -166,6 +178,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     }
     const params: Record<string, any> = {
       ...searchSettings,
+      page: imgUrl ? currentPage : page,
       filters: getFilterQueries(productDetails, selectedFilters),
       facets: getFacets(productDetails),
       facets_show_count: true,
@@ -228,6 +241,45 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
 
     productSearch.multisearchByImage(params, handleSuccess, handleError);
   };
+
+  const resetPagination = (): void => {
+    setPage(1);
+    setProductResults([]);
+  };
+
+  useLayoutEffect(() => {
+    // Wait for the next frame after UI update
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (target.isIntersecting && !isLoading && !isLoadingMore && productResults.length > 0) {
+          console.log('trigger next page search');
+          setPage((prevPage) => {
+            const nextPage = prevPage + 1;
+            multisearchWithSearchBarDetails(undefined, nextPage);
+            return nextPage;
+          });
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+
+    return (): void => {
+      observer.disconnect();
+    };
+  }, [isLoading, isLoadingMore, imageUrl, productResults.length]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      resetPagination();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      multisearchWithSearchBarDetails();
+    }
+  }, [selectedFilters]);
 
   useEffect(() => {
     const savedHistory = localStorage.getItem(STORAGE_KEY);
@@ -328,7 +380,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
 
           <div className='flex w-full flex-col'>
             {/* Product Result Grid */}
-            <div className='flex items-center'>
+            <div className='flex flex-col items-center'>
               {
                 isLoading && isFirstLoad
                   ? <div className='flex w-full justify-center py-32'>
@@ -358,6 +410,10 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                     }
                   </>
               }
+
+              <div ref={loaderRef} className='flex h-10 items-center justify-center'>
+                {isLoadingMore && <Spinner color='secondary' />}
+              </div>
             </div>
           </div>
         </div>
