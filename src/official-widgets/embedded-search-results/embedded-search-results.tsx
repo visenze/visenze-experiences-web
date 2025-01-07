@@ -76,6 +76,22 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
         queryId: res.reqid,
       });
 
+      setSearchHistory((prevHistory) => {
+        const updatedHistory = prevHistory.map((item) => {
+          if (item.imageId === res.im_id) {
+            return {
+              ...item,
+              imageUrl: res.query_tmp_url,
+            };
+          }
+          return item;
+        });
+        console.log(updatedHistory);
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedHistory));
+        return updatedHistory;
+      });
+
       console.log('page on success', page);
       const newProducts = getFlattenProducts(res.result);
       setProductResults((prev) => ((page === 1) ? newProducts : [...prev, ...newProducts]));
@@ -144,10 +160,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     const urlSearchParams = new URLSearchParams(window.location.search);
     const searchBarImageId = urlSearchParams.get('im_id');
     const searchBarImageUrl = urlSearchParams.get('im_url');
-    if (searchBarImageId) {
-      url.searchParams.append('im_id', searchBarImageId);
-    } else if (imgUrl) {
+
+    if (imgUrl) {
       url.searchParams.append('im_url', imgUrl);
+    } else if (searchBarImageId) {
+      url.searchParams.append('im_id', searchBarImageId);
     } else if (searchBarImageUrl) {
       url.searchParams.append('im_url', searchBarImageUrl);
     }
