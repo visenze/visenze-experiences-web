@@ -138,52 +138,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     setActiveHistory(newEntry);
   };
 
-  const searchFromHistory = (entry: SearchHistoryEntry): void => {
-    const url = new URL(searchBarResultsSettings.redirectUrl);
-    if (entry.imageId) {
-      url.searchParams.append('im_id', entry.imageId);
-      url.searchParams.append('box', entry.box?.join(',') || '');
-    } else if (entry.imageUrl) {
-      url.searchParams.append('im_url', entry.imageUrl);
-    }
-
-    if (entry.query && isMultiSearch) {
-      url.searchParams.append('q', entry.query);
-    }
-    if (debugMode) {
-      window.history.pushState(null, '', url.toString());
-    } else {
-      window.location.href = url.toString();
-    }
-  };
-
-  const handleRedirect = (imgUrl?: string): void => {
-    const url = new URL(searchBarResultsSettings.redirectUrl);
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const searchBarImageId = urlSearchParams.get('im_id');
-    const searchBarBox = urlSearchParams.get('box');
-    const searchBarImageUrl = urlSearchParams.get('im_url');
-
-    if (imgUrl) {
-      url.searchParams.append('im_url', imgUrl);
-    } else if (searchBarImageId) {
-      url.searchParams.append('im_id', searchBarImageId);
-      if (searchBarBox) {
-        url.searchParams.append('box', searchBarBox);
-      }
-    } else if (searchBarImageUrl) {
-      url.searchParams.append('im_url', searchBarImageUrl);
-    }
-    if (query && (isMultiSearch || (!searchBarImageId && !searchBarImageUrl))) {
-      url.searchParams.append('q', query);
-    }
-    if (debugMode) {
-      window.history.pushState(null, '', url.toString());
-    } else {
-      window.location.href = url.toString();
-    }
-  };
-
   const multisearchWithSearchBarDetails = (imgUrl?: string, currentPage: number = 1): void => {
     if (currentPage === 1) {
       setIsLoading(true);
@@ -269,6 +223,58 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     productSearch.multisearchByImage(params, handleSuccess, handleError);
   };
 
+  const searchFromHistory = (entry: SearchHistoryEntry): void => {
+    const url = new URL(searchBarResultsSettings.redirectUrl);
+    if (entry.imageId) {
+      url.searchParams.append('im_id', entry.imageId);
+      url.searchParams.append('box', entry.box?.join(',') || '');
+    } else if (entry.imageUrl) {
+      url.searchParams.append('im_url', entry.imageUrl);
+    }
+
+    if (entry.query && isMultiSearch) {
+      url.searchParams.append('q', entry.query);
+    }
+    if (debugMode) {
+      window.history.pushState(null, '', url.toString());
+    } else {
+      window.history.pushState(null, '', url.toString());
+      multisearchWithSearchBarDetails();
+      setIsLoading(true);
+      // window.location.href = url.toString();
+    }
+  };
+
+  const handleRedirect = (imgUrl?: string): void => {
+    const url = new URL(searchBarResultsSettings.redirectUrl);
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const searchBarImageId = urlSearchParams.get('im_id');
+    const searchBarBox = urlSearchParams.get('box');
+    const searchBarImageUrl = urlSearchParams.get('im_url');
+
+    if (imgUrl) {
+      url.searchParams.append('im_url', imgUrl);
+    } else if (searchBarImageId) {
+      url.searchParams.append('im_id', searchBarImageId);
+      if (searchBarBox) {
+        url.searchParams.append('box', searchBarBox);
+      }
+    } else if (searchBarImageUrl) {
+      url.searchParams.append('im_url', searchBarImageUrl);
+    }
+    if (query && (isMultiSearch || (!searchBarImageId && !searchBarImageUrl))) {
+      url.searchParams.append('q', query);
+    }
+    if (debugMode) {
+      window.history.pushState(null, '', url.toString());
+    } else {
+      window.history.pushState(null, '', url.toString());
+      multisearchWithSearchBarDetails();
+      setIsLoading(true);
+      // window.location.href = url.toString();
+    }
+  };
+
   const resetPagination = (): void => {
     setPage(1);
     setProductResults([]);
@@ -322,7 +328,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   }, []);
 
   if (!root) {
-    return <></>;
+    return <>Searching...</>;
   }
 
   if (error) {
@@ -416,13 +422,27 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                   : <>
                     {
                       productResults.length > 0
-                        ? <div className='grid w-full grid-cols-2 gap-x-2 gap-y-4 pb-2 md:grid-cols-4' data-pw='esr-product-result-grid'>
+                        ? <div className={cn(
+                            'grid w-full grid-cols-2 gap-x-2 gap-y-4 pb-2 md:grid-cols-4',
+                            isLoading && 'opacity-50',
+                            )}
+                            data-pw='esr-product-result-grid'
+                          >
+                          {isLoading && (
+                            <div className='absolute z-20 flex w-full justify-center py-32'>
+                              <Spinner color='secondary'/>
+                            </div>
+                          )}
                           {productResults.map((result, index) => (
                             <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
                               <Result
                                 index={index}
                                 result={result}
-                                findSimilarClickHandler={handleRedirect}
+                                findSimilarClickHandler={(imUrl) => {
+                                  if (!isLoading) {
+                                    handleRedirect(imUrl);
+                                  }
+                                }}
                               />
                             </div>
                           ))}

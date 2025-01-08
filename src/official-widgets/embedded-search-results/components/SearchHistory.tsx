@@ -82,9 +82,7 @@ export default function SearchHistory({
   return (
     <div className='no-scrollbar flex w-full flex-col items-center gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
       <div className='flex size-full flex-row items-center md:w-1/2'>
-        {history.filter((entry) => entry.type === 'text').length > 0 && (
-          <p className='flex h-full w-auto items-center'>Search History</p>
-        )}
+        <p className='flex h-full w-auto items-center'>Search History</p>
 
         <div className='grid auto-cols-max grid-flow-col gap-2 pl-4'>
           {history.filter((entry) => entry.type === 'text').map((entry, index) => (
