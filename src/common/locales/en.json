@@ -68,6 +68,8 @@
   "embeddedSearchResults.filter": "Filter",
   "embeddedSearchResults.errorMessage.part1": "No Results Found",
   "embeddedSearchResults.errorMessage.part2": "We could not find any products matching your search.",
+  "embeddedSearchResults.noSearchInput.part1": "No search input",
+  "embeddedSearchResults.noSearchInput.part2": "Enter a search term or select an image to find results.",
   "sortType.relevance": "Relevance",
   "sortType.highToLowPrice": "High to low (Price)",
   "sortType.lowToHighPrice": "Low to high (Price)"

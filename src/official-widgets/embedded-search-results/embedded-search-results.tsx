@@ -78,12 +78,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
 
       setSearchHistory((prevHistory) => {
         const updatedHistory = prevHistory.map((item) => {
-          if (item.imageId === res.im_id && item.product_types?.length === 0) {
-            return {
+          if (item.imageId && item.imageId === res.im_id && (!item.product_types || item.product_types?.length === 0)) {
+            const newItem = {
               ...item,
               imageUrl: res.query_tmp_url,
               product_types: res.product_types,
             };
+            setActiveHistory(newItem);
+            return newItem;
           }
           return item;
         });
@@ -442,6 +444,13 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
             </div>
           </div>
         </div>
+
+        {!isLoading && !query && !imageUrl && productResults.length === 0 && (
+          <div className='flex w-full flex-col items-center justify-center gap-y-2 py-24 text-center'>
+            <p className='calls-to-action-text font-semibold'>{intl.formatMessage({ id: 'embeddedSearchResults.noSearchInput.part1' })}</p>
+            <p className='calls-to-action-text'>{intl.formatMessage({ id: 'embeddedSearchResults.noSearchInput.part2' })}</p>
+          </div>
+        )}
       </WidgetResultContext.Provider>
     </>
   );
