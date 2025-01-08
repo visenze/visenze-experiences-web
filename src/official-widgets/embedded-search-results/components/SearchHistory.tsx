@@ -80,11 +80,11 @@ export default function SearchHistory({
   };
 
   return (
-    <div className='no-scrollbar flex w-full flex-col items-center gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
+    <div className='no-scrollbar flex w-full flex-col items-center gap-2 px-2 py-3' data-pw='esr-product-history'>
       <div className='flex size-full flex-row items-center md:w-1/2'>
-        <p className='flex h-full w-auto items-center'>Search History</p>
+        <p className='flex h-full w-auto items-center pr-2'>History</p>
 
-        <div className='grid auto-cols-max grid-flow-col gap-2 pl-4'>
+        <div className='grid auto-cols-max grid-flow-col gap-2 overflow-x-scroll'>
           {history.filter((entry) => entry.type === 'text').map((entry, index) => (
             <div key={index}>
               <button
@@ -103,7 +103,7 @@ export default function SearchHistory({
         </div>
       </div>
 
-      <div className='flex w-full flex-row gap-2 md:w-1/2'>
+      <div className='flex w-full flex-row gap-2 overflow-x-scroll md:w-1/2'>
         {history
           .filter((entry) => (entry.type === 'image'))
           // eslint-disable-next-line no-confusing-arrow
