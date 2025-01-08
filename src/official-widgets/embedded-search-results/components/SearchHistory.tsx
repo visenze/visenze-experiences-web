@@ -73,7 +73,6 @@ export default function SearchHistory({
         } else {
           baseId += `-${activeHistory.product_types[0].box.join()}`;
         }
-        console.log(baseId);
       }
       return baseId;
     }
@@ -81,13 +80,13 @@ export default function SearchHistory({
   };
 
   return (
-    <div className='no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3 md:h-36 md:flex-row md:px-0 lg:h-40' data-pw='esr-product-history'>
-      <div className='flex w-full flex-row items-center md:w-1/4 md:flex-col'>
+    <div className='no-scrollbar flex w-full flex-col items-center gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
+      <div className='flex size-full flex-row items-center md:w-1/2'>
         {history.filter((entry) => entry.type === 'text').length > 0 && (
-          <p className='w-auto pb-2'>Past searches</p>
+          <p className='flex h-full w-auto items-center'>Search History</p>
         )}
 
-        <div className='grid auto-cols-max grid-flow-col gap-2 pl-2'>
+        <div className='grid auto-cols-max grid-flow-col gap-2 pl-4'>
           {history.filter((entry) => entry.type === 'text').map((entry, index) => (
             <div key={index}>
               <button
@@ -106,7 +105,7 @@ export default function SearchHistory({
         </div>
       </div>
 
-      <div className='flex flex-row gap-2 md:w-3/4'>
+      <div className='flex w-full flex-row gap-2 md:w-1/2'>
         {history
           .filter((entry) => (entry.type === 'image'))
           // eslint-disable-next-line no-confusing-arrow
@@ -137,7 +136,7 @@ export default function SearchHistory({
                       <ImageCropThumbnail
                         imageSrc={entry.imageUrl}
                         originalBox={entry.box}
-                        className='h-full rounded-none'
+                        className='h-full rounded-none bg-gray-200'
                         data-pw={`esr-product-history-image-cropped-${index + 1}`}
                       />
                     </>
