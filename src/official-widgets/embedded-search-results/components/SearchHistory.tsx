@@ -35,13 +35,13 @@ export default function SearchHistory({
   // setActiveHistory,
   history,
   // multisearchWithSearchBarDetails,
-  searchFromHistory,
+  onHistorySelect,
 }: {
   activeHistory: SearchHistoryEntry | undefined;
   setActiveHistory: (entry: SearchHistoryEntry | undefined) => void;
   history: SearchHistoryEntry[];
   multisearchWithSearchBarDetails: (imgUrl?: string) => void;
-  searchFromHistory: (entry: SearchHistoryEntry) => void
+  onHistorySelect: (entry: SearchHistoryEntry) => void
 }): ReactElement {
   const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number, height: number } }>({});
 
@@ -93,7 +93,7 @@ export default function SearchHistory({
                   entry.id === activeHistory?.id ? 'border border-gray-500' : 'opacity-60',
                 )}
                 onClick={() => {
-                  searchFromHistory(entry);
+                  onHistorySelect(entry);
                 }}
               >
                 {entry.query}
@@ -122,7 +122,7 @@ export default function SearchHistory({
                 entry.id === getActiveHistoryId() ? 'border border-gray-500' : 'opacity-60',
               )}
               onClick={() => {
-                searchFromHistory(entry);
+                onHistorySelect(entry);
               }}
               data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
             >

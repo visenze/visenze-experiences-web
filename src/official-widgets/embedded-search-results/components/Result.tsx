@@ -5,7 +5,7 @@ import { WidgetDataContext, WidgetResultContext } from '../../../common/types/co
 import ResultLogicImpl from '../../../common/client/result-logic';
 import type { ProcessedProduct } from '../../../common/types/product';
 import { Actions } from '../../../common/types/tracking-constants';
-import MoreLikeThisIcon from '../../../common/icons/MoreLikeThisIcon';
+// import MoreLikeThisIcon from '../../../common/icons/MoreLikeThisIcon';
 import { getCurrencyFormatter } from '../../../common/locales/locale';
 import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../../common/default-configs';
 
@@ -105,8 +105,6 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
         {
           searchBarResultsSettings.enableFindSimilar
           && <Button
-            isIconOnly
-            size='sm'
             radius='full'
             className='absolute bottom-3 right-3 z-10 bg-white shadow-md'
             onClick={(event) => {
@@ -119,7 +117,7 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
             {
               customizations?.icons.moreLikeThis
                 ? <img src={customizations.icons.moreLikeThis} className='size-5'></img>
-                : <MoreLikeThisIcon className='size-5'/>
+                : <p>More like</p>
             }
           </Button>
         }

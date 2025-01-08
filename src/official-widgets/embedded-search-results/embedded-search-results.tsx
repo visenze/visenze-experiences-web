@@ -245,6 +245,23 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     }
   };
 
+  const onHistorySelect = (entry: SearchHistoryEntry): void => {
+    if (entry.id !== activeHistory?.id) {
+      searchFromHistory(entry);
+    } else {
+      const url = new URL(searchBarResultsSettings.redirectUrl);
+
+      window.history.pushState(null, '', url.toString());
+      multisearchWithSearchBarDetails();
+      setQuery('');
+      setImageUrl('');
+      setProductResults([]);
+      setActiveHistory(undefined);
+      setIsLoading(true);
+      setIsFirstLoad(true);
+    }
+  };
+
   const handleRedirect = (imgUrl?: string): void => {
     const url = new URL(searchBarResultsSettings.redirectUrl);
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -382,7 +399,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
             setActiveHistory={setActiveHistory}
             history={searchHistory}
             multisearchWithSearchBarDetails={handleRedirect}
-            searchFromHistory={searchFromHistory}
+            onHistorySelect={onHistorySelect}
           />
         </div>
 
