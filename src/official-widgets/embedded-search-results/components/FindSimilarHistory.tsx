@@ -40,7 +40,7 @@ const FindSimilarHistory:FC<FindSimilarHistoryProps> = ({ activeImgUrl, setActiv
                 data-pw={`esr-${imgUrl === activeImgUrl ? 'active-product' : 'inactive-product'}`}
               >
                 <Image
-                  classNames={{ wrapper: 'h-full aspect-square' }}
+                  classNames={{ wrapper: 'h-full' }}
                   className='h-full rounded-none object-cover' src={imgUrl}
                   data-pw={`esr-product-history-image-${index + 1}`}
                 />
