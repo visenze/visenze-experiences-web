@@ -251,10 +251,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     } else {
       const url = new URL(searchBarResultsSettings.redirectUrl);
 
+      if (entry.type === 'image') {
+        url.searchParams.append('q', debouncedQuery);
+      }
+
       window.history.pushState(null, '', url.toString());
       multisearchWithSearchBarDetails();
-      setQuery('');
       setImageUrl('');
+      setPage(1);
       setProductResults([]);
       setActiveHistory(undefined);
       setIsLoading(true);
