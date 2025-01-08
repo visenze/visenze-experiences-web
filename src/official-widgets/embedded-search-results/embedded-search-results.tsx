@@ -336,6 +336,12 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   }, [selectedFilters]);
 
   useEffect(() => {
+    if (isLoading) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
     const savedHistory = localStorage.getItem(STORAGE_KEY);
     if (savedHistory) {
       try {

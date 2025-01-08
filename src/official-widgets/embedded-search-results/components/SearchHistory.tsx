@@ -1,6 +1,6 @@
 // src/official-widgets/embedded-search-results/components/SearchHistory.tsx
 import { cn } from '@nextui-org/theme';
-import { useState, type ReactElement } from 'react';
+import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { Image as NextImage } from '@nextui-org/image';
 import ImageCropThumbnail from './ImageCropThumbnail';
 // import CloseIcon from '../../../common/icons/CloseIcon';
@@ -44,6 +44,17 @@ export default function SearchHistory({
   onHistorySelect: (entry: SearchHistoryEntry) => void
 }): ReactElement {
   const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number, height: number } }>({});
+  const activeItemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (activeItemRef.current) {
+      activeItemRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'nearest',
+      });
+    }
+  }, [activeHistory]);
 
   const loadImageDimensions = (imageUrl: string): void => {
     if (!imageDimensions[imageUrl]) {
@@ -118,6 +129,7 @@ export default function SearchHistory({
             .map((entry, index) => (
               <div
                 key={`${entry.id}-${index}`}
+                ref={entry.id === getActiveHistoryId() ? activeItemRef : undefined}
                 className={cn(
                   'relative h-32 flex-shrink-0 cursor-pointer overflow-hidden rounded-md',
                   entry.id === getActiveHistoryId() ? 'border border-gray-500' : 'opacity-60',
