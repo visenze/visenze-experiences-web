@@ -80,11 +80,11 @@ export default function SearchHistory({
   };
 
   return (
-    <div className='no-scrollbar flex w-full flex-col items-center gap-2 px-2 py-3' data-pw='esr-product-history'>
+    <>
       <div className='flex size-full flex-row items-center md:w-1/2'>
         <p className='flex h-full w-auto items-center pr-2'>History</p>
 
-        <div className='grid auto-cols-max grid-flow-col gap-2 overflow-x-scroll'>
+        <div className='no-scrollbar grid auto-cols-max grid-flow-col gap-2 overflow-x-scroll'>
           {history.filter((entry) => entry.type === 'text').map((entry, index) => (
             <div key={index}>
               <button
@@ -103,54 +103,56 @@ export default function SearchHistory({
         </div>
       </div>
 
-      <div className='flex w-full flex-row gap-2 overflow-x-scroll md:w-1/2'>
-        {history
-          .filter((entry) => (entry.type === 'image'))
-          // eslint-disable-next-line no-confusing-arrow
-          .flatMap((entry) => (entry.product_types !== undefined)
-            ? entry.product_types.map((type) => ({
-                ...entry,
-                id: `${entry.id}-${type.box.join()}`,
-                box: type.box,
-              }))
-            : [entry])
-          .map((entry, index) => (
-            <div
-              key={`${entry.id}-${index}`}
-              className={cn(
-                'relative h-32 flex-shrink-0 cursor-pointer overflow-hidden rounded-md',
-                entry.id === getActiveHistoryId() ? 'border border-gray-500' : 'opacity-60',
-              )}
-              onClick={() => {
-                onHistorySelect(entry);
-              }}
-              data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
-            >
-              {entry.box ? (
-                <div className='h-32 w-24 overflow-hidden'>
-                  {entry.imageUrl && (
-                    <>
-                      {!imageDimensions[entry.imageUrl] && loadImageDimensions(entry.imageUrl)}
-                      <ImageCropThumbnail
-                        imageSrc={entry.imageUrl}
-                        originalBox={entry.box}
-                        className='h-full rounded-none bg-gray-200'
-                        data-pw={`esr-product-history-image-cropped-${index + 1}`}
-                      />
-                    </>
-                  )}
-                </div>
-              ) : (
-                <NextImage
-                  classNames={{ wrapper: 'h-full' }}
-                  className='h-full rounded-none object-cover'
-                  src={entry.imageUrl ?? ''}
-                  data-pw={`esr-product-history-image-${index + 1}`}
-                />
-              )}
-            </div>
-          ))}
+      <div className='no-scrollbar flex w-full flex-col items-center gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
+        <div className='flex w-full flex-row gap-2 md:w-1/2'>
+          {history
+            .filter((entry) => (entry.type === 'image'))
+            // eslint-disable-next-line no-confusing-arrow
+            .flatMap((entry) => (entry.product_types !== undefined)
+              ? entry.product_types.map((type) => ({
+                  ...entry,
+                  id: `${entry.id}-${type.box.join()}`,
+                  box: type.box,
+                }))
+              : [entry])
+            .map((entry, index) => (
+              <div
+                key={`${entry.id}-${index}`}
+                className={cn(
+                  'relative h-32 flex-shrink-0 cursor-pointer overflow-hidden rounded-md',
+                  entry.id === getActiveHistoryId() ? 'border border-gray-500' : 'opacity-60',
+                )}
+                onClick={() => {
+                  onHistorySelect(entry);
+                }}
+                data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
+              >
+                {entry.box ? (
+                  <div className='h-32 w-24 overflow-hidden'>
+                    {entry.imageUrl && (
+                      <>
+                        {!imageDimensions[entry.imageUrl] && loadImageDimensions(entry.imageUrl)}
+                        <ImageCropThumbnail
+                          imageSrc={entry.imageUrl}
+                          originalBox={entry.box}
+                          className='h-full rounded-none bg-gray-200'
+                          data-pw={`esr-product-history-image-cropped-${index + 1}`}
+                        />
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <NextImage
+                    classNames={{ wrapper: 'h-full' }}
+                    className='h-full rounded-none object-cover'
+                    src={entry.imageUrl ?? ''}
+                    data-pw={`esr-product-history-image-${index + 1}`}
+                  />
+                )}
+              </div>
+            ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
