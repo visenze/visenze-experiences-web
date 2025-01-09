@@ -94,9 +94,8 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
         return updatedHistory;
       });
 
-      console.log('page on success', page);
       const newProducts = getFlattenProducts(res.result);
-      setProductResults((prev) => ((page === 1) ? newProducts : [...prev, ...newProducts]));
+      setProductResults((prev) => ((res.page === 1) ? newProducts : [...prev, ...newProducts]));
       // Only set facets once
       if (facets.length === 0 && res.facets) {
         const image: ImageUrl = {
@@ -138,11 +137,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     setActiveHistory(newEntry);
   };
 
-  const multisearchWithSearchBarDetails = (imgUrl?: string, currentPage: number = 1): void => {
-    if (currentPage === 1) {
-      setIsLoading(true);
-    } else {
+  const multisearchWithSearchBarDetails = (imgUrl?: string, currentPage?: number): void => {
+    if (currentPage && currentPage >= 1) {
       setIsLoadingMore(true);
+    } else {
+      setIsLoading(true);
     }
 
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -156,7 +155,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     }
     const params: Record<string, any> = {
       ...searchSettings,
-      page: imgUrl ? currentPage : page,
+      page: currentPage ?? page,
       filters: getFilterQueries(productDetails, selectedFilters),
       facets: getFacets(productDetails),
       facets_show_count: true,
@@ -239,13 +238,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
       window.history.pushState(null, '', url.toString());
     } else {
       window.history.pushState(null, '', url.toString());
-      multisearchWithSearchBarDetails();
+      multisearchWithSearchBarDetails(undefined, 1);
       setIsLoading(true);
       // window.location.href = url.toString();
     }
   };
 
   const onHistorySelect = (entry: SearchHistoryEntry): void => {
+    setPage(1);
     if (entry.id !== activeHistory?.id) {
       searchFromHistory(entry);
     } else {
@@ -256,17 +256,17 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
       }
 
       window.history.pushState(null, '', url.toString());
-      multisearchWithSearchBarDetails();
       setImageUrl('');
-      setPage(1);
       setProductResults([]);
       setActiveHistory(undefined);
       setIsLoading(true);
       setIsFirstLoad(true);
+      multisearchWithSearchBarDetails(undefined, 1);
     }
   };
 
   const handleRedirect = (imgUrl?: string): void => {
+    setPage(1);
     const url = new URL(searchBarResultsSettings.redirectUrl);
     const urlSearchParams = new URLSearchParams(window.location.search);
     const searchBarImageId = urlSearchParams.get('im_id');
@@ -290,7 +290,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
       window.history.pushState(null, '', url.toString());
     } else {
       window.history.pushState(null, '', url.toString());
-      multisearchWithSearchBarDetails();
+      multisearchWithSearchBarDetails(imgUrl, 1);
       setIsLoading(true);
       // window.location.href = url.toString();
     }
