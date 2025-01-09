@@ -138,7 +138,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   };
 
   const multisearchWithSearchBarDetails = (imgUrl?: string, currentPage?: number): void => {
-    if (currentPage && currentPage >= 1) {
+    if (currentPage && currentPage > 1) {
       setIsLoadingMore(true);
     } else {
       setIsLoading(true);
