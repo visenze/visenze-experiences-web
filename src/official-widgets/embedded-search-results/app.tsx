@@ -14,22 +14,25 @@ interface AppProps {
   config: WidgetConfig;
   productSearch: WidgetClient;
   fieldMappings: Record<any, any>;
+  element: HTMLElement;
 }
 
 const DEFAULT_TEXTS: LanguagePack = {
   en: {
     widgetTitle: 'Search Results',
-    'embeddedSearchResults.subtitle': 'Search results for',
-    'embeddedSearchResults.filter': 'Filter',
-    'embeddedSearchResults.errorMessage.part1': 'No Results Found',
-    'embeddedSearchResults.errorMessage.part2': 'We could not find any products matching your search.',
+    subtitle: 'Search results for',
+    filter: 'Filter',
+    noResults: 'No Results Found',
+    noResultsDescription: 'We could not find any products matching your search.',
   },
 };
 
-const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
+const App: FC<AppProps> = ({ config, fieldMappings, productSearch, element }) => {
   const [configInternal, setConfigInternal] = useState(config);
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
   const [messages, setMessages] = useState<Record<string, string>>({});
+  const textQuery = element.dataset.text ?? '';
+  const imUrl = element?.dataset.url ?? '';
 
   productSearch.updateConfig = (configOverride, isPartial): void => {
     if (configOverride) {
@@ -55,7 +58,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
     <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, productSearch }}>
       <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
-          <EmbeddedSearchResults config={configInternal} />
+          <EmbeddedSearchResults config={configInternal} textQuery={textQuery} imUrl={imUrl} />
         </IntlProvider>
       </ShadowWrapper>
     </WidgetDataContext.Provider>

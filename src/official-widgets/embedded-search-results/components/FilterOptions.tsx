@@ -5,8 +5,8 @@ import { Slider } from '@nextui-org/slider';
 import { Checkbox } from '@nextui-org/checkbox';
 import type { FacetType } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
-import LeftChevronIcon from '../../../common/icons/LeftChevronIcon';
 import { getFacetNameByKey, getTitleCase } from '../../../common/utils';
+import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 
 interface FilterOptionsProps {
   facets: Facet[];
@@ -15,7 +15,7 @@ interface FilterOptionsProps {
 }
 
 const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSelectedFilters }) => {
-  const { displaySettings } = useContext(WidgetDataContext);
+  const { displaySettings, customizations } = useContext(WidgetDataContext);
 
   const showFacetValues = (facet: Facet): ReactElement | ReactElement[] => {
     const priceRangeChangeHandler = (value: number | number[]): void => {
@@ -64,9 +64,9 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
           onChange={updateFiltersHandler}
           isSelected={selectedFilters[facetName].has(item.value)}
         >
-          <span>{item.value}</span>
+          <span className='text-primary'>{item.value}</span>
         </Checkbox>
-        <span>({item.count})</span>
+        <span className='text-primary'>({item.count})</span>
       </div>
     ));
   };
@@ -77,10 +77,17 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
         {
           facets.map((facet) => (
             <AccordionItem
-              classNames={{ title: 'font-bold' }}
+              classNames={{ title: 'font-bold text-primary' }}
               key={facet.key}
               title={getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
-              indicator={<LeftChevronIcon className='size-4'/>}
+              indicator={
+                <CustomizableIcon
+                    height={20}
+                    width={20}
+                    url={'https://cdn.visenze.com/images/chevron-left-icon.svg'}
+                    color={customizations.generalLayout?.fontColor}
+                />
+              }
             >
               <div className='flex flex-col gap-y-2 px-4 pb-4'>
                 {showFacetValues(facet)}

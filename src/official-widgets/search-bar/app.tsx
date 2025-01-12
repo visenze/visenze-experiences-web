@@ -14,27 +14,25 @@ interface AppProps {
   config: WidgetConfig;
   productSearch: WidgetClient;
   fieldMappings: Record<any, any>;
+  element: HTMLElement;
 }
 
 const DEFAULT_TEXTS: LanguagePack = {
   en: {
     searchBarPlaceholder: 'What are you looking for?',
-    'searchBar.uploadScreenTitle.part1': 'SHOW US WHAT',
-    'searchBar.uploadScreenTitle.part2': "YOU'RE LOOKING FOR",
-    'searchBar.dragImageToSearch.part1': 'drag an image to',
-    'searchBar.dragImageToSearch.part2': 'search or',
-    'searchBar.dragImageToSearch.part3': 'click to browse',
-    'searchBar.tapToSearchImage.part1': 'tap here to',
-    'searchBar.tapToSearchImage.part2': 'search an image',
-    'searchBar.tapProductGallery.part1': 'or tap our trending',
-    'searchBar.tapProductGallery.part2': 'product gallery below',
+    uploadScreenTitle: "SHOW US WHAT YOU'RE LOOKING FOR",
+    dragImageToSearch: 'drag an image to search or click to browse',
+    tapToSearchImage: 'tap here to search an image',
+    tapProductGallery: 'or tap our trending product gallery below',
   },
 };
 
-const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
+const App: FC<AppProps> = ({ config, fieldMappings, productSearch, element }) => {
   const [configInternal, setConfigInternal] = useState(config);
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
   const [messages, setMessages] = useState<Record<string, string>>({});
+  const textQuery = element.dataset.text ?? '';
+  const imUrl = element?.dataset.url ?? '';
 
   productSearch.updateConfig = (configOverride, isPartial): void => {
     if (configOverride) {
@@ -60,7 +58,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
     <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, productSearch }}>
       <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
-          <SearchBar config={configInternal} />
+          <SearchBar config={configInternal} textQuery={textQuery} imUrl={imUrl} />
         </IntlProvider>
       </ShadowWrapper>
     </WidgetDataContext.Provider>

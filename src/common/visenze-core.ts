@@ -1,6 +1,7 @@
 import type { Root } from 'react-dom/client';
 import type { ProductSearchResponse, ViSearchClient } from 'visearch-javascript-sdk';
 import type { ErrorHandler, SuccessHandler } from './types/function';
+import type { SearchImage } from './types/image';
 import type { LanguagePack } from './locales/locale';
 
 // model
@@ -242,16 +243,11 @@ export interface WidgetConfig {
     locale: string;
     currency: string;
   };
-  searchBarResultsSettings: {
-    enableImageUpload: boolean;
-    enableFindSimilar: boolean;
-    enableMultiSearch: boolean;
-    redirectUrl: string;
-  };
   callbacks: {
     trackingCallback?: (action: string, params: Record<string, any>) => void;
     onProductClick?: (productDetails: Record<string, any>, trackingMeta: Record<string, any>) => void;
     onSearchCallback?: (apiResponse: ProductSearchResponse) => void;
+    onSearchBarInput?: (text: string | undefined, image: SearchImage | undefined) => void;
   };
   customizations: {
     generalLayout: ColoredInterface & {

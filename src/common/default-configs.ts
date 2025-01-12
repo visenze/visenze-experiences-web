@@ -242,12 +242,6 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
     // @param {apiResponse} response from visearch API
     onSearchCallback: undefined,
   },
-  searchBarResultsSettings: {
-    enableImageUpload: true,
-    enableFindSimilar: true,
-    enableMultiSearch: true,
-    redirectUrl: 'http://localhost:8080/',
-  },
   hideTrigger: false,
   debugMode: false,
   disableAnalytics: false,

@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { CSSProperties, FC } from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { Button } from '@nextui-org/button';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
@@ -24,7 +24,7 @@ interface ResultProps {
 }
 
 const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => {
-  const { productSearch, displaySettings, callbacks, debugMode, customizations, searchBarResultsSettings } = useContext(WidgetDataContext);
+  const { productSearch, displaySettings, callbacks, debugMode, customizations } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { languageSettings } = useContext(WidgetDataContext);
@@ -75,6 +75,38 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
     return <></>;
   }
 
+  const createFindSimilarPositionClasses = (): string => {
+    const position = customizations.productCard?.findSimilar?.position || 'bottom_right';
+    switch (position) {
+      case 'bottom_left':
+        return 'bottom-3 left-3';
+      case 'bottom_right':
+        return 'bottom-3 right-3';
+      case 'top_left':
+        return 'top-3 left-3';
+      case 'top_right':
+        return 'top-3 right-3';
+      default:
+        return '';
+    }
+  };
+
+  const getProductPriceColorStyle = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    if (customizations.productCard?.price?.fontColor) {
+      cssConfig.color = customizations.productCard?.price?.fontColor;
+    }
+    return cssConfig;
+  };
+
+  const getProductOriginalPriceColorStyle = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    if (customizations.productCard?.originalPrice?.fontColor) {
+      cssConfig.color = customizations.productCard?.originalPrice?.fontColor;
+    }
+    return cssConfig;
+  };
+
   const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
   const price = getPrice(customizations, languageSettings, productDetails, result);
 
@@ -84,13 +116,12 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
         <div>
           <img className='widget-product-card-image object-cover' src={result.im_url}/>
         </div>
-        {
-          searchBarResultsSettings.enableFindSimilar
-          && <Button
+        {customizations.productCard?.findSimilar?.enable && (
+          <Button
             isIconOnly
             size='sm'
             radius='full'
-            className='absolute bottom-3 right-3 z-10 bg-white shadow-md'
+            className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-10 bg-white shadow-md`}
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
@@ -99,14 +130,13 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
             data-pw='esr-more-like-this-button'
           >
             <CustomizableIcon
-              className='wigmix-image-search-icon'
               height={20}
               width={20}
-              url={customizations?.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/more-like-this-icon-2.svg'}
+              url={customizations?.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/magnifying-glass-icon.svg'}
               color={customizations?.productCard?.findSimilar?.icon?.color || ''}
             />
           </Button>
-        }
+        )}
       </div>
       <div className='pt-2'>
         <span className='wigmix-product-card-title line-clamp-1'>
@@ -118,12 +148,12 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
         {
           originalPrice && originalPrice !== price
             ? (
-              <div className='flex flex-wrap gap-1'>
-                <span className='wigmix-product-card-price text-red-500'>{price}</span>
-                <span className='wigmix-product-card-original-price text-gray-400 line-through'>{originalPrice}</span>
+              <div className='flex flex-wrap items-center gap-1'>
+                <span className='wigmix-product-card-price text-red-500' style={getProductPriceColorStyle()}>{price}</span>
+                <span className='wigmix-product-card-original-price text-gray-400 line-through' style={getProductOriginalPriceColorStyle()}>{originalPrice}</span>
               </div>
             ) : (
-              <span className='wigmix-product-card-price text-primary'>{price}</span>
+              <span className='wigmix-product-card-price'>{price}</span>
             )
         }
       </div>

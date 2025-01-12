@@ -23,12 +23,14 @@ import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface EmbeddedSearchResultProps {
   config: WidgetConfig;
+  textQuery: string;
+  imUrl: string;
 }
 
 const FACETS_ORDERING = ['category', 'price', 'brand', 'colors', 'sizes'];
 
-const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): ReactElement => {
-  const { productSearch, searchSettings, displaySettings, debugMode, searchBarResultsSettings } = useContext(WidgetDataContext);
+const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuery, imUrl }): ReactElement => {
+  const { productSearch, searchSettings, displaySettings, customizations } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
@@ -48,7 +50,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [shouldIgnoreImId, setShouldIgnoreImId] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const [totalResults, setTotalResults] = useState(0);
@@ -57,11 +58,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   const root = useContext(RootContext);
   const intl = useIntl();
   const breakpoint = useBreakpoint();
-  const isMultiSearch = searchBarResultsSettings.enableMultiSearch;
-  if (!isMultiSearch) {
-    const event = new CustomEvent('wigmix_search_bar_multi_search', { detail: false });
-    document.dispatchEvent(event);
-  }
 
   const handleError = (errorMsg: string): void => {
     setError(errorMsg);
@@ -99,12 +95,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
         });
         setFacets(reorderedFacets);
       }
-      const image: ImageUrl = {
-        imgUrl: res.query_tmp_url || '',
-      };
-      setImageUrl(image.imgUrl);
-      const event = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
-      document.dispatchEvent(event);
     }
     setIsFirstLoad(false);
     setIsLoading(false);
@@ -145,40 +135,23 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
     return cssConfig;
   };
 
-  const multisearchWithSearchBarDetails = (pageParam: number, imgUrl: string, removeImId: boolean): void => {
-    setShouldIgnoreImId((curr) => curr || removeImId);
+  const multisearchWithSearchBarDetails = (pageParam: number, imgUrl: string): void => {
     setPage(pageParam);
     setIsLoading(true);
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const searchBarQuery = urlSearchParams.get('q');
-    if (!imgUrl || searchBarResultsSettings.enableMultiSearch) {
-      setQuery(searchBarQuery || '');
-    }
+    setQuery(textQuery || '');
     const params: Record<string, any> = {
       ...searchSettings,
       filters: getFilterQueries(productDetails, selectedFilters),
       facets: getFacets(productDetails),
       facets_show_count: true,
-      return_query_temp_url: true,
       page: pageParam,
     };
 
-    if (debugMode) {
-      params.q = 'black';
-    }
-    if (!imgUrl || searchBarResultsSettings.enableMultiSearch) {
-      if (searchBarQuery) {
-        params.q = searchBarQuery;
-      }
+    if (textQuery) {
+      params.q = textQuery;
     }
     if (imgUrl) {
       params.im_url = imgUrl;
-    }
-    if (!shouldIgnoreImId && !removeImId) {
-      const searchBarImageId = urlSearchParams.get('im_id');
-      if (searchBarImageId && (searchBarResultsSettings.enableMultiSearch || !searchBarQuery)) {
-        params.im_id = searchBarImageId;
-      }
     }
     params.limit = 24; // hardcode for now
 
@@ -186,28 +159,23 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   };
 
   const findSimilarClickHandler = (imgUrl: string): void => {
-    if (searchBarResultsSettings.enableMultiSearch) {
-      const image: ImageUrl = { imgUrl };
-      const event1 = new CustomEvent('wigmix_search_bar_replace_image', { detail: image });
-      document.dispatchEvent(event1);
-      const event2 = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
-      document.dispatchEvent(event2);
-    } else {
-      setQuery('');
-    }
+    const image: ImageUrl = { imgUrl };
+    const event = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
+    document.dispatchEvent(event);
     setImageUrl(imgUrl);
-    multisearchWithSearchBarDetails(1, imgUrl, true);
+    multisearchWithSearchBarDetails(1, imgUrl);
   };
 
   useEffect(() => {
     if (!isLoading) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      multisearchWithSearchBarDetails(1, imageUrl, false);
+      multisearchWithSearchBarDetails(1, imageUrl);
     }
   }, [selectedFilters]);
 
   useEffect(() => {
-    multisearchWithSearchBarDetails(1, imageUrl, false);
+    setImageUrl(imUrl);
+    multisearchWithSearchBarDetails(1, imUrl);
   }, []);
 
   if (isLoading && isFirstLoad) {
@@ -226,19 +194,21 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        {/* Widget Title */}
         <div ref={(el) => el && setSearchResultTopRef(el)}></div>
-        <div className='flex flex-col items-center gap-y-2 bg-primary px-2 py-6 md:py-8 lg:py-10' ref={widgetTitleRef}>
-          <div className='widget-title font-bold'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+        <div className='flex flex-col items-center gap-y-2 px-2 py-6 text-primary md:py-8 lg:py-10' ref={widgetTitleRef}>
+          {/* Widget Title */}
+          {customizations.generalLayout?.showWidgetTitle && (
+            <div className='wigmix-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+          )}
           {query && !imageUrl && (
             <>
               <div className='hidden break-words text-lg sm:block'>
-                {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })} &quot;{query}&quot;
+                {intl.formatMessage({ id: 'subtitle' })} &quot;{query}&quot;
                 ({totalResults} items)
               </div>
               <div className='flex w-full justify-between gap-4 break-words text-lg sm:hidden'>
                 <div>
-                  {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })} &quot;{query}&quot;
+                  {intl.formatMessage({ id: 'subtitle' })} &quot;{query}&quot;
                 </div>
                 <div>
                   ({totalResults} items)
@@ -249,45 +219,19 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
           {!query && imageUrl && (
             <>
               <div className='mt-2 hidden items-center gap-x-3 text-lg sm:flex'>
-                {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })}
+                {intl.formatMessage({ id: 'subtitle' })}
                 <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>
                   <img className='object-fit aspect-[4/5] w-20 border-1 border-black' src={imageUrl} />
-                  {isMultiSearch && (
-                    <button
-                        className='absolute right-1 top-1 z-10 rounded-full bg-white p-1'
-                        onClick={(event) => {
-                          event.preventDefault();
-                          event.stopPropagation();
-                          findSimilarClickHandler('');
-                        }}
-                        data-pw='esr-product-history-delete'
-                    >
-                      <CloseIcon className='size-3'/>
-                    </button>
-                  )}
                 </div>
                 ({totalResults} items)
               </div>
               <div className='mt-2 flex w-full items-center justify-between gap-x-3 text-lg sm:hidden'>
                 <div className='flex items-center gap-x-3'>
                   <div>
-                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })}
+                    {intl.formatMessage({ id: 'subtitle' })}
                   </div>
                   <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>
                     <img className='object-fit aspect-[4/5] w-20 border-1 border-black' src={imageUrl}/>
-                    {isMultiSearch && (
-                      <button
-                          className='absolute right-1 top-1 z-10 rounded-full bg-white p-1'
-                          onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            findSimilarClickHandler('');
-                          }}
-                          data-pw='esr-product-history-delete'
-                      >
-                        <CloseIcon className='size-3'/>
-                      </button>
-                    )}
                   </div>
                 </div>
                 <div>
@@ -296,14 +240,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
               </div>
             </>
           )}
-          {isMultiSearch && query && imageUrl && (
-            <>
-              <div className='mt-2 hidden items-center gap-x-3 text-lg sm:flex'>
-                <div className='flex items-center gap-x-3'>
-                  <div>
-                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })} &quot;{query}&quot;
-                  </div>
-                  <div>+</div>
+          {query && imageUrl && (
+              <>
+                <div className='mt-2 hidden items-center gap-x-3 text-lg sm:flex'>
+                  <div className='flex items-center gap-x-3'>
+                    <div>
+                      {intl.formatMessage({ id: 'subtitle' })} &quot;{query}&quot;
+                    </div>
+                    <div>+</div>
                   <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>
                     <img className='object-fit aspect-[4/5] w-20 border-1 border-black' src={imageUrl}/>
                     <button
@@ -326,7 +270,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
               <div className='mt-2 flex w-full items-center justify-between gap-8 text-lg sm:hidden'>
                 <div className='flex items-center gap-x-3'>
                   <div>
-                    {intl.formatMessage({ id: 'embeddedSearchResults.subtitle' })} &quot;{query}&quot;
+                    {intl.formatMessage({ id: 'subtitle' })} &quot;{query}&quot;
                   </div>
                   <div>+</div>
                   <div className={cn('relative h-full flex-shrink-0 cursor-pointer border border-gray-500')}>
@@ -351,13 +295,13 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
             </>
           )}
         </div>
-        <div className='flex size-full flex-col bg-primary md:flex-row'>
+        <div className='flex size-full flex-col text-primary md:flex-row'>
           {/* Filter Section Tablet & Desktop */}
           {
               facets
               && <div className='sticky top-0 hidden h-full w-1/4 flex-col md:flex'>
               <div
-                className='p-3 text-center text-xl font-bold'>{intl.formatMessage({ id: 'embeddedSearchResults.filter' })}</div>
+                className='p-3 text-center text-xl font-bold'>{intl.formatMessage({ id: 'filter' })}</div>
               <FilterOptions
                 facets={facets}
                 selectedFilters={selectedFilters}
@@ -370,7 +314,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
             <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowMobileFilterOptions(true)}>
               <FilterIcon className='size-5'/>
               <span>
-              {intl.formatMessage({ id: 'embeddedSearchResults.filter' })}
+              {intl.formatMessage({ id: 'filter' })}
             </span>
             </Button>
           </div>
@@ -407,8 +351,8 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                         ))}
                       </div>
                       : <div className='flex flex-col gap-y-2 py-24 text-center md:w-3/4'>
-                        <p className='font-semibold'>{intl.formatMessage({ id: 'embeddedSearchResults.errorMessage.part1' })}</p>
-                        <p>{intl.formatMessage({ id: 'embeddedSearchResults.errorMessage.part2' })}</p>
+                        <p className='font-semibold'>{intl.formatMessage({ id: 'noResults' })}</p>
+                        <p>{intl.formatMessage({ id: 'noResultsDescription' })}</p>
                       </div>
                   }
                 </>
@@ -419,7 +363,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config }): React
                             if (searchResultTopRef) {
                               searchResultTopRef.scrollIntoView({ behavior: 'instant' });
                             }
-                            multisearchWithSearchBarDetails(p, imageUrl, true);
+                            multisearchWithSearchBarDetails(p, imageUrl);
                           }}/>
             </div>
           </div>

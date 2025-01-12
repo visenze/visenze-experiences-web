@@ -16,9 +16,10 @@ import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 interface ImageGalleryUploadProps {
   imageUploadHandler: (image: SearchImage) => void;
   placementId: string;
+  image: SearchImage | undefined;
 }
 
-const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, placementId }) => {
+const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, placementId, image }) => {
   const { customizations } = useContext(WidgetDataContext);
   const [openModal, setOpenModal] = useState(false);
   const [searchImage, setSearchImage] = useState<SearchImage>();
@@ -47,21 +48,18 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
     };
   }, []);
 
-  const createImageEvent = (image: SearchImage): void => {
-    const event = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
-    document.dispatchEvent(event);
-  };
+  useEffect(() => {
+    setSearchImage(image);
+  }, [image]);
 
-  const onImageUpload = (image: SearchImage): void => {
-    imageUploadHandler(image);
-    createImageEvent(image);
+  const onImageUpload = (im: SearchImage): void => {
+    imageUploadHandler(im);
     setOpenModal(false);
   };
 
   const onGallerySelect = (index: number): void => {
     if (customizations.imageUpload?.images[index]) {
       imageUploadHandler?.({ imgUrl: customizations.imageUpload.images[index].url });
-      createImageEvent({ imgUrl: customizations.imageUpload.images[index].url });
     }
     setOpenModal(false);
   };
@@ -110,6 +108,9 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
               {isImageDataUrl(searchImage) && (
                   <img src={searchImage.file} />
               )}
+              {!isImageUrl(searchImage) && !isImageDataUrl(searchImage) && (
+                  <PhotoIcon className='size-6'/>
+              )}
             </>
         )}
         {!searchImage && (
@@ -123,9 +124,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
         <div className='relative flex size-full flex-col bg-primary'>
           {/* Title */}
           <p className='widget-title py-4 text-center text-primary' data-pw='sb-image-upload-title'>
-            {intl.formatMessage({ id: 'searchBar.uploadScreenTitle.part1' })}&nbsp;
-            <br className='md:hidden'/>
-            {intl.formatMessage({ id: 'searchBar.uploadScreenTitle.part2' })}
+            {intl.formatMessage({ id: 'uploadScreenTitle' })}
           </p>
 
           {/* Close Button */}
@@ -137,27 +136,20 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
             <div className='px-1/5 md:w-1/3 md:px-10'>
               <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload'>
                 <div
-                  className='flex w-full flex-col items-center rounded-3xl border border-black py-1 text-center text-medium'>
+                  className='wigmix-reference-image flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center'>
                   <CustomizableIcon
-                      className='size-2/5'
-                      height={24}
-                      width={24}
-                      url={customizations.imageUpload?.icon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
+                      height={80}
+                      width={80}
+                      url={customizations.imageUpload?.icon?.url || 'https://cdn.visenze.com/images/upload-icon.svg'}
                       color={customizations.imageUpload?.icon?.color || ''}
                   />
 
                   <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
-                    {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part1' })}<br/>
-                    {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part2' })}&nbsp;
-                    <span className='underline'>
-                  {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part3' })}
-                </span>
+                    {intl.formatMessage({ id: 'dragImageToSearch' })}
                   </p>
 
                   <p className='pt-3 leading-6 text-primary md:hidden'>
-                    {intl.formatMessage({ id: 'searchBar.tapToSearchImage.part1' })}
-                    <br className='md:hidden'/>
-                    {intl.formatMessage({ id: 'searchBar.tapToSearchImage.part2' })}
+                    {intl.formatMessage({ id: 'tapToSearchImage' })}
                   </p>
                 </div>
               </FileDropzone>
@@ -165,9 +157,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
 
             <div className='py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0'>
               <p className='px-14 pb-3 text-center text-primary md:px-0 md:text-left'>
-                {intl.formatMessage({ id: 'searchBar.tapProductGallery.part1' })}&nbsp;
-                <br className='md:hidden'/>
-                {intl.formatMessage({ id: 'searchBar.tapProductGallery.part2' })}
+                {intl.formatMessage({ id: 'tapProductGallery' })}
               </p>
 
               <div className='grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0'>

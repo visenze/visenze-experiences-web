@@ -12,6 +12,7 @@ interface AutocompleteProps {
 
 interface Autocomplete {
   imageId: string;
+  imageUrl: string;
   autocompleteResults: string[];
   error: string;
 }
@@ -22,6 +23,7 @@ const useAutocomplete = ({
 }: AutocompleteProps): Autocomplete => {
   const { searchSettings, productSearch } = useContext(WidgetDataContext);
   const [imageId, setImageId] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [autocompleteResults, setAutocompleteResults] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
 
@@ -42,6 +44,9 @@ const useAutocomplete = ({
       if (res.im_id) {
         setImageId(res.im_id);
       }
+      if (res.query_tmp_url) {
+        setImageUrl(res.query_tmp_url);
+      }
 
       const newAutocompleteResults = (res.result || []).map((r: any) => r.text);
       setAutocompleteResults(newAutocompleteResults);
@@ -54,7 +59,10 @@ const useAutocomplete = ({
   };
 
   const autocomplete = (): void => {
-    const params = { ...searchSettings };
+    const params: Record<string, any> = {
+      ...searchSettings,
+      return_query_temp_url: true,
+    };
     params.q = query;
 
     if (image) {
@@ -77,6 +85,7 @@ const useAutocomplete = ({
 
   return {
     imageId,
+    imageUrl,
     autocompleteResults,
     error,
   };
