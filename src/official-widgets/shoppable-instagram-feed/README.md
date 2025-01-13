@@ -1,4 +1,7 @@
 # Shoppable Instagram Feed widget
+
+![status](https://img.shields.io/badge/status-beta-yellow)
+
 This is the repository for ViSenze's Shoppable Instagram Feed widget. 
 
 This widget is designed to power recommendation experiences in ecommerce websites
