@@ -36,7 +36,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(true);
   const [allowRedirect, setAllowRedirect] = useState(false);
   const [isMultiSearch, setIsMultiSearch] = useState(true);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
