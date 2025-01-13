@@ -13,6 +13,18 @@ import type { WidgetConfig } from '../../common/visenze-core';
 import FileDropzone from '../../common/components/FileDropzone';
 import UploadIcon from '../../common/icons/UploadIcon';
 
+const STORAGE_KEY = 'visenze_search_history';
+export interface SearchHistoryEntry {
+  id: string; // Unique identifier for deduplication
+  type: 'text' | 'image';
+  query?: string;
+  imageUrl?: string;
+  imageId?: string; // For im_id parameter
+  timestamp: number;
+  filters?: Record<string, any>;
+  source: 'url' | 'user'; // Track whether entry came from URL or user action
+}
+
 interface SearchBarResultProps {
   config: WidgetConfig;
 }
@@ -25,6 +37,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [allowRedirect, setAllowRedirect] = useState(false);
   const [isMultiSearch, setIsMultiSearch] = useState(true);
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const root = useContext(RootContext);
   const intl = useIntl();
 
@@ -134,6 +147,17 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
     };
   }, []);
 
+  useEffect(() => {
+    const savedHistory = localStorage.getItem(STORAGE_KEY);
+    if (savedHistory) {
+      try {
+        setSearchHistory(JSON.parse(savedHistory));
+      } catch (e) {
+        console.error('Failed to parse search history:', e);
+      }
+    }
+  }, []);
+
   if (error) {
     console.error(error);
   }
@@ -194,32 +218,46 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
               //        '
               aria-label='Drag or upload image'
             >
-              <div className='max-h-52'>
-                <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload-dropdown'>
-                  <div
-                    className='flex flex-col items-center gap-6 py-1 text-center text-medium'>
-                    {
-                      customizations?.icons.upload
-                        ? <img className='w-3/5 rounded-lg object-cover object-center lg:h-full'
-                              src={customizations?.icons.upload}/>
-                        : <UploadIcon className='size-24 py-5'/>
-                    }
+              <div className='flex max-h-52 divide-x divide-gray-200 py-1'>
+                <div className='flex-1'>
+                  <div className='flex flex-col gap-2 px-4 py-1'>
+                    <p className='text-large font-semibold leading-6 text-primary'>Recent searches</p>
 
-                    <p className='calls-to-action-text hidden px-3 py-2 leading-6 text-primary md:block'>
-                      {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part1' })}<br/>
-                      {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part2' })}&nbsp;
-                      <span className='underline'>
-                        {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part3' })}
-                      </span>
-                    </p>
-
-                    <p className='calls-to-action-text pt-3 leading-6 text-primary md:hidden'>
-                      {intl.formatMessage({ id: 'searchBar.tapToSearchImage.part1' })}
-                      <br className='md:hidden'/>
-                      {intl.formatMessage({ id: 'searchBar.tapToSearchImage.part2' })}
-                    </p>
+                    <div className='flex flex-col gap-1 pl-4'>
+                      {searchHistory.filter((entry) => entry.type === 'text').slice(0, 5).map((entry) => (
+                        <a key={entry.id} href={`/search?q=${entry.query}`}>{entry.query}</a>
+                      ))}
+                    </div>
                   </div>
-                </FileDropzone>
+                </div>
+
+                <div className='hidden w-1/4 justify-center md:flex'>
+                  <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload-dropdown'>
+                    <div
+                      className='flex flex-col items-center gap-6 py-1 text-center text-medium'>
+                      {
+                        customizations?.icons.upload
+                          ? <img className='w-3/5 rounded-lg object-cover object-center lg:h-full'
+                                src={customizations?.icons.upload}/>
+                          : <UploadIcon className='size-24 py-5'/>
+                      }
+
+                      <p className='calls-to-action-text hidden px-3 py-2 leading-6 text-primary md:block'>
+                        {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part1' })}<br/>
+                        {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part2' })}&nbsp;
+                        <span className='underline'>
+                          {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part3' })}
+                        </span>
+                      </p>
+
+                      <p className='calls-to-action-text pt-3 leading-6 text-primary md:hidden'>
+                        {intl.formatMessage({ id: 'searchBar.tapToSearchImage.part1' })}
+                        <br className='md:hidden'/>
+                        {intl.formatMessage({ id: 'searchBar.tapToSearchImage.part2' })}
+                      </p>
+                    </div>
+                  </FileDropzone>
+                </div>
               </div>
             </div>
           }
