@@ -66,7 +66,6 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
         >
           <span className='text-primary'>{item.value}</span>
         </Checkbox>
-        <span className='text-primary'>({item.count})</span>
       </div>
     ));
   };
