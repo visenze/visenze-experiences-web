@@ -1,17 +1,19 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useContext, useState } from 'react';
 import { Listbox, ListboxItem, ListboxSection } from '@nextui-org/listbox';
-import { cn } from '@nextui-org/theme';
+// import { cn } from '@nextui-org/theme';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import type { SearchImage } from '../../common/types/image';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 import SearchBarInput from './components/SearchBarInput';
 import useAutocomplete from '../../common/components/hooks/use-autocomplete';
+import useSearchAsYouType from '../../common/components/hooks/use-search-as-you-type';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { WidgetConfig } from '../../common/visenze-core';
 import FileDropzone from '../../common/components/FileDropzone';
 import UploadIcon from '../../common/icons/UploadIcon';
+import Result from './components/Result';
 
 const STORAGE_KEY = 'visenze_search_history';
 export interface SearchHistoryEntry {
@@ -46,6 +48,15 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
     autocompleteResults,
     error,
   } = useAutocomplete({
+    image,
+    query: debouncedQuery,
+  });
+
+  const {
+    // imageId,
+    searchAsYouTypeResults,
+    // error,
+  } = useSearchAsYouType({
     image,
     query: debouncedQuery,
   });
@@ -181,57 +192,102 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                           setShowDropdown={setShowDropdown}
                           placementId={`${config.appSettings.placementId}`} />
           {/* Autocomplete dropdown */}
-          {
-            <Listbox
-              onAction={(key) => {
-                setQuery(String(key));
-                redirectWithAutocomplete(String(key));
-              }}
-              classNames={{
-                base: cn(
-                  'absolute top-12 rounded-b-md max-h-52 w-full overflow-y-auto border-gray-200 bg-white transition-all z-20',
-                  showDropdown && autocompleteResults.length > 0 ? 'border-b-1 border-x-1' : 'border-none hidden',
-                ),
-              }}
-              aria-label='Autocomplete Dropdown'
-            >
-              <ListboxSection classNames={{ base: 'mb-0' }}>
-                {autocompleteResults.map((result, index) => (
-                  <ListboxItem
-                    tabIndex={0}
-                    className='pr-4'
-                    key={result}
-                    endContent={<MagnifyingGlassIcon className='size-4'/>}
-                    textValue={result}
-                  >
-                    <span className='calls-to-action-text pl-2 text-primary'
-                          data-pw={`sb-autocomplete-suggestion-${index + 1}`}>{result}</span>
-                  </ListboxItem>
-                ))}
-              </ListboxSection>
-            </Listbox>
-          }
-
-          {showDropdown && !query
+          {showDropdown && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
             && <div
-              className='absolute top-12 z-20 h-52 w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
+              className='absolute top-12 z-20 w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
               //        '
               aria-label='Drag or upload image'
             >
-              <div className='flex max-h-52 divide-x divide-gray-200 py-1'>
+              <div className='flex divide-x divide-gray-200 py-1'>
+                <div className='flex-1'>
+                  <div className='flex flex-col gap-2 px-4 py-1'>
+                    <p className='text-large font-semibold leading-6 text-primary'>Suggestions</p>
+
+                    <Listbox
+                      onAction={(key) => {
+                        setQuery(String(key));
+                        redirectWithAutocomplete(String(key));
+                      }}
+                      aria-label='Autocomplete Dropdown'
+                    >
+                      <ListboxSection classNames={{ base: 'mb-0' }}>
+                        {autocompleteResults.map((result, index) => (
+                          <ListboxItem
+                            tabIndex={0}
+                            className='pr-4'
+                            key={result}
+                            endContent={<MagnifyingGlassIcon className='size-4'/>}
+                            textValue={result}
+                          >
+                            <span className='calls-to-action-text pl-2 text-primary'
+                                  data-pw={`sb-autocomplete-suggestion-${index + 1}`}>{result}</span>
+                          </ListboxItem>
+                        ))}
+                      </ListboxSection>
+                    </Listbox>
+                  </div>
+                </div>
+
+                <div className='hidden w-2/5 justify-center md:flex'>
+                  <div className='flex flex-col gap-2 px-4 py-1'>
+                    <p className='text-large font-semibold leading-6 text-primary'>Related products</p>
+
+                      <div
+                        className='grid w-full grid-cols-3 gap-x-2 gap-y-4 pb-2'
+                        data-pw='esr-product-result-grid'
+                      >
+                        {searchAsYouTypeResults.map((result, index) => (
+                          <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
+                            <Result
+                              index={index}
+                              result={result}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          {showDropdown && !query && autocompleteResults.length <= 0
+            && <div
+              className='absolute top-12 z-20 w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
+              //        '
+              aria-label='Drag or upload image'
+            >
+              <div className='flex divide-x divide-gray-200 py-1'>
                 <div className='flex-1'>
                   <div className='flex flex-col gap-2 px-4 py-1'>
                     <p className='text-large font-semibold leading-6 text-primary'>Recent searches</p>
 
-                    <div className='flex flex-col gap-1 pl-4'>
-                      {searchHistory.filter((entry) => entry.type === 'text').slice(0, 5).map((entry) => (
-                        <a key={entry.id} href={`/search?q=${entry.query}`}>{entry.query}</a>
-                      ))}
-                    </div>
+                    <Listbox
+                      onAction={(key) => {
+                        setQuery(String(key));
+                        redirectWithAutocomplete(String(key));
+                      }}
+                      aria-label='Recent searches'
+                    >
+                      <ListboxSection classNames={{ base: 'mb-0' }}>
+                        {searchHistory.filter((entry) => entry.type === 'text').slice(0, 5).map((entry) => (
+                          <ListboxItem
+                            tabIndex={0}
+                            className='pr-4'
+                            key={String(entry.query)}
+                            endContent={<MagnifyingGlassIcon className='size-4'/>}
+                            textValue={entry.query}
+                          >
+                            <span className='calls-to-action-text pl-2 text-primary'
+                                  data-pw={`sb-recent-searches-${entry.id}`}>{entry.query}</span>
+                          </ListboxItem>
+                        ))}
+                      </ListboxSection>
+                    </Listbox>
                   </div>
                 </div>
 
-                <div className='hidden w-1/4 justify-center md:flex'>
+                <div className='hidden w-2/5 justify-center md:flex'>
                   <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload-dropdown'>
                     <div
                       className='flex flex-col items-center gap-6 py-1 text-center text-medium'>
