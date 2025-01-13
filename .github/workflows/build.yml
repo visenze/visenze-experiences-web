@@ -32,5 +32,5 @@ jobs:
           node-version: 20
       - name: Install Frontend Dependencies
         run: npm ci
-      - name: Run Lint Checks
+      - name: Build Widgets
         run: npm run build
