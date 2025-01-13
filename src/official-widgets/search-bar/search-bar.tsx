@@ -36,7 +36,6 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
-  const [showDropdown, setShowDropdown] = useState(true);
   const [allowRedirect, setAllowRedirect] = useState(false);
   const [isMultiSearch, setIsMultiSearch] = useState(true);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
@@ -189,10 +188,9 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                               redirectWithAutocomplete(query);
                             }
                           }}
-                          setShowDropdown={setShowDropdown}
                           placementId={`${config.appSettings.placementId}`} />
           {/* Autocomplete dropdown */}
-          {showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
+          {query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
             ? (<div
               className='absolute top-12 z-20 w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
               //        '

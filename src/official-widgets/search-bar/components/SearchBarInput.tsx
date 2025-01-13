@@ -14,13 +14,12 @@ interface SearchBarInputProps {
   setQuery: (query: string) => void;
   handleRedirect: () => void;
   setAllowRedirect: (allowRedirect: boolean) => void;
-  setShowDropdown: (showDropdown: boolean) => void;
   setImage: (image: SearchImage) => void;
   imageUploadHandler: (image: SearchImage) => void;
   placementId: string;
 }
 
-const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedirect, setShowDropdown, setImage, imageUploadHandler, placementId }) => {
+const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedirect, setImage, imageUploadHandler, placementId }) => {
   const { searchBarResultsSettings } = useContext(WidgetDataContext);
   const searchBarRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
@@ -46,8 +45,6 @@ const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedire
       isClearable
       maxLength={QUERY_MAX_CHARACTER_LENGTH}
       placeholder={intl.formatMessage({ id: 'searchBar.searchBarPlaceholder' })}
-      onClick={() => setShowDropdown(true)}
-      onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
           handleRedirect();
