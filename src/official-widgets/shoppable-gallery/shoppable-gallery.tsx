@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { WidgetResultContext, WidgetDataContext } from '../../common/types/contexts';
-import InstagramImage from './components/InstagramImage';
+import GalleryImage from './components/GalleryImage';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
@@ -18,12 +18,12 @@ import HotspotRecommendations from './components/HotspotRecommendations';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
-interface ShoppableInstagramFeedProps {
+interface ShoppableGalleryProps {
   config: WidgetConfig;
   productSearch: WidgetClient;
 }
 
-const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, productSearch }) => {
+const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, productSearch }) => {
   const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
   const [retryCount, setRetryCount] = useState(0);
@@ -45,7 +45,7 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
     productId: activeProductId,
   });
 
-  const instagramImageClickHandler = (result: ProcessedProduct): void => {
+  const galleryImageClickHandler = (result: ProcessedProduct): void => {
     setActiveProductId(result.product_id);
     setActiveImageUrl(result.im_url);
     setOpenModal(true);
@@ -148,7 +148,7 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
             data-pw='sif-gallery-products-grid'>
             {galleryProducts.slice(0, page * 20).map((result, index) => (
               <div key={`${result.im_url}-${index}`} data-pw={`sif-gallery-product-${index + 1}`}>
-                <InstagramImage index={index} result={result} onClickHandler={instagramImageClickHandler} />
+                <GalleryImage index={index} result={result} onClickHandler={galleryImageClickHandler} />
               </div>
             ))}
           </div>
@@ -207,4 +207,4 @@ const ShoppableInstagramFeed: FC<ShoppableInstagramFeedProps> = ({ config, produ
   );
 };
 
-export default ShoppableInstagramFeed;
+export default ShoppableGallery;

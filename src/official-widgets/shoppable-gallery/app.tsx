@@ -4,7 +4,7 @@ import { IntlProvider } from 'react-intl';
 import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import ShadowWrapper from '../../common/components/shadow-wrapper';
 import { WidgetDataContext } from '../../common/types/contexts';
-import ShoppableInstagramFeed from './shoppable-instagram-feed';
+import ShoppableGallery from './shoppable-gallery';
 import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
 import { getLocaleTexts, type LanguagePack } from '../../common/locales/locale';
@@ -54,7 +54,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
     <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, productSearch }}>
       <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
-          <ShoppableInstagramFeed config={configInternal} productSearch={productSearch}/>
+          <ShoppableGallery config={configInternal} productSearch={productSearch}/>
         </IntlProvider>
       </ShadowWrapper>
     </WidgetDataContext.Provider>

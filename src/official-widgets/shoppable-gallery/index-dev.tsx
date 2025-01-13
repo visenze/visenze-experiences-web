@@ -8,7 +8,7 @@ import version from './version';
 const shouldRetrieveFieldsMapping = true;
 
 devInitWidget(
-    WidgetType.SHOPPABLE_INSTAGRAM_FEED,
+    WidgetType.SHOPPABLE_GALLERY,
     version,
     ({ config, client, fieldMappings }) => <App productSearch={client} fieldMappings={fieldMappings} config={config}></App>,
     false,

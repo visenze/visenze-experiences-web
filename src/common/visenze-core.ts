@@ -18,7 +18,7 @@ export enum WidgetType {
   SHOP_THE_LOOK = 'shop_the_look',
   EMBEDDED_GRID = 'embedded_grid',
   SHOPPABLE_LOOKBOOK = 'shoppable_lookbook',
-  SHOPPABLE_INSTAGRAM_FEED = 'shoppable_instagram_feed',
+  SHOPPABLE_GALLERY = 'shoppable_gallery',
   ICON_TRIGGERED_GRID = 'icon_triggered_grid',
   SEARCH_BAR = 'search_bar',
   EMBEDDED_SEARCH_RESULTS = 'embedded_search_results',

@@ -4,16 +4,16 @@ import { WidgetDataContext } from '../../../common/types/contexts';
 import type { ProcessedProduct } from '../../../common/types/product';
 
 /**
- * An individual instagram image component
+ * An individual gallery image component
  */
 
-interface InstagramImageProps {
+interface GalleryImageProps {
   index: number;
   result: ProcessedProduct;
   onClickHandler: (result: ProcessedProduct) => void;
 }
 
-const InstagramImage: FC<InstagramImageProps> = ({ result, onClickHandler }) => {
+const GalleryImage: FC<GalleryImageProps> = ({ result, onClickHandler }) => {
   const { debugMode } = useContext(WidgetDataContext);
   const [, setIsLoading] = useState(true);
 
@@ -30,4 +30,4 @@ const InstagramImage: FC<InstagramImageProps> = ({ result, onClickHandler }) => 
   );
 };
 
-export default InstagramImage;
+export default GalleryImage;

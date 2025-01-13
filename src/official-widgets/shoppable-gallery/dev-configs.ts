@@ -16,7 +16,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     limit: 20,
   },
   displaySettings: {
-    cssSelector: '.shoppable-instagram-feed-widget',
+    cssSelector: '.shoppable-gallery-widget',
     productDetails: {
       mainImageUrl: '',
       productUrl: '',
