@@ -16,10 +16,11 @@ interface SearchBarInputProps {
   setAllowRedirect: (allowRedirect: boolean) => void;
   setShowDropdown: (showDropdown: boolean) => void;
   setImage: (image: SearchImage) => void;
+  imageUploadHandler: (image: SearchImage) => void;
   placementId: string;
 }
 
-const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedirect, setAllowRedirect, setShowDropdown, setImage, placementId }) => {
+const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedirect, setShowDropdown, setImage, imageUploadHandler, placementId }) => {
   const { searchBarResultsSettings } = useContext(WidgetDataContext);
   const searchBarRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
@@ -27,11 +28,6 @@ const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedire
   const createImageEvent = (image: SearchImage): void => {
     const event = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
     document.dispatchEvent(event);
-  };
-
-  const imageUploadHandler = (img: SearchImage): void => {
-    setImage(img);
-    setAllowRedirect(true);
   };
 
   return (

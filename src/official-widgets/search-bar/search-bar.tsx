@@ -2,6 +2,7 @@ import type { FC, ReactElement } from 'react';
 import { useEffect, useContext, useState } from 'react';
 import { Listbox, ListboxItem, ListboxSection } from '@nextui-org/listbox';
 import { cn } from '@nextui-org/theme';
+import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import type { SearchImage } from '../../common/types/image';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
@@ -9,13 +10,15 @@ import SearchBarInput from './components/SearchBarInput';
 import useAutocomplete from '../../common/components/hooks/use-autocomplete';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { WidgetConfig } from '../../common/visenze-core';
+import FileDropzone from '../../common/components/FileDropzone';
+import UploadIcon from '../../common/icons/UploadIcon';
 
 interface SearchBarResultProps {
   config: WidgetConfig;
 }
 
 const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
-  const { searchBarResultsSettings, debugMode } = useContext(WidgetDataContext);
+  const { searchBarResultsSettings, customizations, debugMode } = useContext(WidgetDataContext);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
@@ -23,6 +26,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
   const [allowRedirect, setAllowRedirect] = useState(false);
   const [isMultiSearch, setIsMultiSearch] = useState(true);
   const root = useContext(RootContext);
+  const intl = useIntl();
 
   const {
     imageId,
@@ -32,6 +36,24 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
     image,
     query: debouncedQuery,
   });
+
+  const imageUploadHandler = (img: SearchImage): void => {
+    console.log('onImageUpload', img);
+    setImage(img);
+    setAllowRedirect(true);
+  };
+
+  const createImageEvent = (img: SearchImage): void => {
+    console.log('onImageUpload', img);
+    const event = new CustomEvent('wigmix_search_bar_append_image', { detail: img });
+    document.dispatchEvent(event);
+  };
+
+  const onImageUpload = (img: SearchImage): void => {
+    console.log('onImageUpload', img);
+    imageUploadHandler(img);
+    createImageEvent(img);
+  };
 
   const redirectWithAutocomplete = (autocomplete: string): void => {
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -71,11 +93,6 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
       window.location.href = url.toString();
     }
   };
-
-  useEffect(() => {
-    if (!query) setShowDropdown(false);
-    else setShowDropdown(true);
-  }, [query]);
 
   useEffect(() => {
     if (imageId && allowRedirect) {
@@ -131,6 +148,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
         <div className='relative flex w-full flex-col items-center'>
           {/* Search bar */}
           <SearchBarInput query={query} setQuery={setQuery} setImage={setImage} setAllowRedirect={setAllowRedirect}
+                          imageUploadHandler={imageUploadHandler}
                           handleRedirect={() => {
                             if (query) {
                               redirectWithAutocomplete(query);
@@ -168,6 +186,42 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                 ))}
               </ListboxSection>
             </Listbox>
+          }
+
+          {showDropdown && !query
+            && <div
+              className='absolute top-12 z-20 h-52 w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
+              //        '
+              aria-label='Drag or upload image'
+            >
+              <div className='max-h-52'>
+                <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload-dropdown'>
+                  <div
+                    className='flex flex-col items-center gap-6 py-1 text-center text-medium'>
+                    {
+                      customizations?.icons.upload
+                        ? <img className='w-3/5 rounded-lg object-cover object-center lg:h-full'
+                              src={customizations?.icons.upload}/>
+                        : <UploadIcon className='size-24 py-5'/>
+                    }
+
+                    <p className='calls-to-action-text hidden px-3 py-2 leading-6 text-primary md:block'>
+                      {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part1' })}<br/>
+                      {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part2' })}&nbsp;
+                      <span className='underline'>
+                        {intl.formatMessage({ id: 'searchBar.dragImageToSearch.part3' })}
+                      </span>
+                    </p>
+
+                    <p className='calls-to-action-text pt-3 leading-6 text-primary md:hidden'>
+                      {intl.formatMessage({ id: 'searchBar.tapToSearchImage.part1' })}
+                      <br className='md:hidden'/>
+                      {intl.formatMessage({ id: 'searchBar.tapToSearchImage.part2' })}
+                    </p>
+                  </div>
+                </FileDropzone>
+              </div>
+            </div>
           }
         </div>
       </div>
