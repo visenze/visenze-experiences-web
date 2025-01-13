@@ -192,8 +192,8 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                           setShowDropdown={setShowDropdown}
                           placementId={`${config.appSettings.placementId}`} />
           {/* Autocomplete dropdown */}
-          {showDropdown && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
-            && <div
+          {showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
+            ? (<div
               className='absolute top-12 z-20 w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
               //        '
               aria-label='Drag or upload image'
@@ -249,10 +249,8 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                 </div>
               </div>
             </div>
-          }
-
-          {showDropdown && !query && autocompleteResults.length <= 0
-            && <div
+            )
+            : <div
               className='absolute top-12 z-20 w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
               //        '
               aria-label='Drag or upload image'
