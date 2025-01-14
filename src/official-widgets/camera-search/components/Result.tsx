@@ -26,7 +26,7 @@ const Result = memo(({
   onImageSearch,
   clearSearch,
 }: ResultProps) => {
-  const { callbacks, displaySettings, productSearch, customizations, debugMode, languageSettings } = useContext(WidgetDataContext);
+  const { callbacks, displaySettings, productSearch, customizations, languageSettings } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { onProductClick } = callbacks;
@@ -112,8 +112,8 @@ const Result = memo(({
   const price = getPrice(customizations, languageSettings, productDetails, result);
 
   return (
-    <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)}
-       onClick={debugMode ? undefined : onClick} data-pw={`cs-product-result-card-${index + 1}`}>
+    <a className='cursor-pointer' ref={(r) => r && setTargetRef(r)}
+       onClick={onClick} data-pw={`cs-product-result-card-${index + 1}`}>
       <div className='relative'>
         <div className='flex justify-center'>
           <img className='wigmix-product-card-image object-cover' src={result.im_url}

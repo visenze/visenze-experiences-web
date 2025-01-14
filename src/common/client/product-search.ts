@@ -44,8 +44,8 @@ const wrapCallbacks = (
 };
 
 export default function getWidgetClient(config: WidgetConfig, widgetType: string, widgetVersion: string): WidgetClient {
-  const { vttSource, disableAnalytics } = config;
-  const { placementId, appKey, strategyId, country, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
+  const { disableAnalytics } = config;
+  const { placementId, appKey, strategyId, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
   const { onSearchCallback } = config.callbacks;
   let roots: Root[] = [];
   let lastTrackingMetadata: Record<string, Primitive> = {};
@@ -56,7 +56,6 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     placement_id: placementId,
     strategy_id: strategyId,
     app_key: appKey,
-    is_cn: country === 'CN',
     endpoint: endpoint || DEFAULT_ENDPOINT,
     gtm_tracking: gtmTracking,
     resize_settings: resizeSettings || {},
@@ -145,9 +144,6 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     if (!analyticsParams.widgetVersion) {
       analyticsParams.widgetVersion = `${widgetType}.${widgetVersion}.js`;
     }
-    if (vttSource) {
-      analyticsParams.vtt_source = vttSource;
-    }
 
     visearch.sendEvent(action, analyticsParams, callback, failure);
   };
@@ -209,15 +205,6 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     return lastClickQueryId;
   };
 
-  /**
-   * Set a value for visearch settings.
-   * @param {*} key key for visearch settings
-   * @param {*} val value for visearch settings
-   */
-  const set = (key: string, val: any): void => {
-    visearch.set(key, val);
-  };
-
   const hideWidget = (): void => {
     // flush react script
     roots.forEach((root) => {
@@ -261,8 +248,6 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     widgetVersion,
     placementId,
     setLastTrackingMeta,
-    set,
-    send: sendEvent,
     sendEvent,
     sendEvents,
     getLastClickQueryId,

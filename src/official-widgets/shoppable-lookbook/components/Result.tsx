@@ -20,7 +20,7 @@ interface ResultProps {
 }
 
 const Result: FC<ResultProps> = ({ index, result }) => {
-  const { productSearch, displaySettings, callbacks, customizations, debugMode, languageSettings } = useContext(WidgetDataContext);
+  const { productSearch, displaySettings, callbacks, customizations, languageSettings } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { onProductClick } = callbacks;
@@ -90,8 +90,8 @@ const Result: FC<ResultProps> = ({ index, result }) => {
   const price = getPrice(customizations, languageSettings, productDetails, result);
 
   return (
-    <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)}
-       onClick={debugMode ? undefined : onClick}>
+    <a className='cursor-pointer' ref={(r) => r && setTargetRef(r)}
+       onClick={onClick}>
       <div>
         <img className='wigmix-product-card-image object-cover' src={result.im_url}/>
       </div>

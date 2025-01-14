@@ -8,7 +8,6 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
   appSettings: {
     appKey: '', // APP_KEY - required
     placementId: '', // PLACEMENT_ID - required
-    country: '', // 2 DIGIT COUNTRY CODE
     uid: '', // UID,
     endpoint: '',
     gtmTracking: false, // If true, the widget will push result_load event to GTM objects
@@ -243,8 +242,6 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
     onSearchCallback: undefined,
   },
   hideTrigger: false,
-  debugMode: false,
   disableAnalytics: false,
   maxRetryCount: 1,
-  vttSource: '',
 };
