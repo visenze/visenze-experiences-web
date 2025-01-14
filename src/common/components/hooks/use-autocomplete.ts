@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import type { ProductSearchResponse } from 'visearch-javascript-sdk';
 import type { SearchImage } from '../../types/image';
-import { isImageUrl } from '../../types/image';
+import { isImageFile, isImageUrl } from '../../types/image';
 import { WidgetDataContext } from '../../types/contexts';
 import { Actions, Category } from '../../types/tracking-constants';
 
@@ -12,6 +12,7 @@ interface AutocompleteProps {
 
 interface Autocomplete {
   imageId: string;
+  imageUrl: string;
   autocompleteResults: string[];
   error: string;
 }
@@ -22,6 +23,7 @@ const useAutocomplete = ({
 }: AutocompleteProps): Autocomplete => {
   const { searchSettings, productSearch } = useContext(WidgetDataContext);
   const [imageId, setImageId] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [autocompleteResults, setAutocompleteResults] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
 
@@ -42,25 +44,31 @@ const useAutocomplete = ({
       if (res.im_id) {
         setImageId(res.im_id);
       }
+      if (res.query_tmp_url) {
+        setImageUrl(res.query_tmp_url);
+      }
 
       const newAutocompleteResults = (res.result || []).map((r: any) => r.text);
       setAutocompleteResults(newAutocompleteResults);
 
       if (newAutocompleteResults.length > 0) {
-        productSearch.send(Actions.RESULT_LOAD, newMetadata);
-        productSearch.lastTrackingMetadata = newMetadata;
+        productSearch.sendEvent(Actions.RESULT_LOAD, newMetadata);
+        productSearch.setLastTrackingMeta(newMetadata);
       }
     }
   };
 
   const autocomplete = (): void => {
-    const params = { ...searchSettings };
+    const params: Record<string, any> = {
+      ...searchSettings,
+      return_query_temp_url: true,
+    };
     params.q = query;
 
     if (image) {
       if (isImageUrl(image)) {
         params.im_url = image.imgUrl;
-      } else {
+      } else if (isImageFile(image)) {
         const [file] = image.files;
         params.image = file;
       }
@@ -77,6 +85,7 @@ const useAutocomplete = ({
 
   return {
     imageId,
+    imageUrl,
     autocompleteResults,
     error,
   };

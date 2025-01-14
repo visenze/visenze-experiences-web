@@ -1,4 +1,7 @@
 # Similar Search widget
+
+![status](https://img.shields.io/badge/status-beta-yellow)
+
 This is the repository for ViSenze's Similar Search widget. 
 
 This widget is designed to enable consumers to search similar products from a PLP or search results page

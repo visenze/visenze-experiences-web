@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { CSSProperties, FC } from 'react';
 import { useEffect, useRef, useState, useContext } from 'react';
 import Slider from 'react-slick';
 import type { Settings } from 'react-slick';
@@ -36,6 +36,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const intl = useIntl();
+  const breakpoint = useBreakpoint();
 
   const {
     productResults,
@@ -53,19 +54,15 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
   });
 
   const useSlideSettings = (): Settings => {
-    const breakpoint = useBreakpoint();
     const isDesktop = breakpoint === WidgetBreakpoint.DESKTOP;
     const isTablet = breakpoint === WidgetBreakpoint.TABLET;
-    let slidesToShow = 2.5;
-    let slidesToScroll = 2;
-
+    let slidesToShow = config.customizations.productGrid?.mobile?.productsPerRow || 2.5;
     if (isDesktop) {
-      slidesToShow = 4;
-      slidesToScroll = 4;
+      slidesToShow = config.customizations.productGrid?.desktop?.productsPerRow || 4;
     } else if (isTablet) {
-      slidesToShow = 3.5;
-      slidesToScroll = 3;
+      slidesToShow = config.customizations.productGrid?.tablet?.productsPerRow || 3.5;
     }
+    const slidesToScroll = Math.floor(slidesToShow);
 
     // Manually left align slick track if there are not enough products to show
     const slickTrack: HTMLDivElement | null | undefined = root?.querySelector('.slick-track');
@@ -83,8 +80,8 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
       initialSlide: 0,
       slidesToScroll,
       slidesToShow,
-      prevArrow: isDesktop ? <PrevArrow /> : <></>,
-      nextArrow: isDesktop ? <NextArrow /> : <></>,
+      prevArrow: isDesktop ? <PrevArrow iconColor={config.customizations?.generalLayout?.fontColor} /> : <></>,
+      nextArrow: isDesktop ? <NextArrow iconColor={config.customizations?.generalLayout?.fontColor} /> : <></>,
       variableWidth: false,
     };
   };
@@ -116,6 +113,30 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
     });
   };
 
+  const getProductCardCssClasses = (): string => {
+    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push('p-1 md:p-2');
+      }
+      return classes.join(' ');
+    }
+    return 'p-1 md:p-2';
+  };
+
+  const getProductCardCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.marginLeft = cssConfigSrc.marginHorizontal / 2;
+        cssConfig.marginRight = cssConfigSrc.marginHorizontal / 2;
+      }
+    }
+    return cssConfig;
+  };
+
   useEffect(() => {
     if (error) {
       setRetryCount(retryCount + 1);
@@ -135,8 +156,8 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
   if (error) {
     return (
       <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'shopTheLook.errorMessage.part1' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'shopTheLook.errorMessage.part2' })}</span>
+        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorDescription' })}</span>
+        <span className='text-sm'>{intl.formatMessage({ id: 'errorResolution' })}</span>
       </div>
     );
   }
@@ -145,9 +166,11 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {/* Widget Title */}
-        <div className='widget-title py-2 text-center text-primary md:py-4' data-pw='stl-widget-title'>{intl.formatMessage({ id: 'shopTheLook.title' })}</div>
+        {config.customizations.generalLayout?.showWidgetTitle && (
+          <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='stl-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+        )}
 
-        <div className='items-center justify-center md:flex md:flex-row md:gap-4 lg:gap-0'>
+        <div className='items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0'>
           {/* Reference Image */}
           <div className='px-1 md:w-7/20 lg:w-3/10'>
             <div className='relative'>
@@ -168,7 +191,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
               <Skeleton isLoaded={!!referenceImageUrl}>
                 <img
                   ref={imageRef}
-                  className='object-fit size-full'
+                  className='wigmix-reference-image size-full object-cover'
                   src={referenceImageUrl}
                   onLoad={onImageLoad}
                   data-pw='stl-reference-image'
@@ -181,11 +204,10 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
           <div className='relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10' data-pw='stl-product-result-carousel'>
             <Slider {...settings}>
               {productResults.map((result, index) => (
-                <div className='p-1 md:p-2' key={`${result.product_id}-${index}`} data-pw={`stl-product-result-card-${index + 1}`}>
-                  <Result
-                    index={index}
-                    result={result}
-                  />
+                <div key={`${result.product_id}-${index}`} data-pw={`stl-product-result-card-${index + 1}`}>
+                  <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
+                    <Result index={index} result={result} />
+                  </div>
                 </div>
               ))}
             </Slider>
@@ -193,7 +215,9 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
         </div>
 
         {/* ViSenze Footer */}
-        <Footer className='bg-transparent py-4 md:py-8' dataPw='stl-visenze-footer'/>
+        {config.customizations.generalLayout?.showViSenzeLogo && (
+          <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='stl-visenze-footer'/>
+        )}
       </WidgetResultContext.Provider>
     </>
   );

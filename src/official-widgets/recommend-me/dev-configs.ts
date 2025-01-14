@@ -1,5 +1,9 @@
 import type { RecursivePartial, WidgetConfig } from '../../common/visenze-core';
 
+const customCss = `
+/* Insert the custom CSS here */
+`;
+
 export const devConfigs: RecursivePartial<WidgetConfig> = {
   appSettings: {
     appKey: '',
@@ -20,6 +24,9 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
       price: '',
       originalPrice: '',
     },
+  },
+  customizations: {
+    customCss,
   },
   callbacks: {
     trackingCallback: (action: string, params: Record<string, any>) => {

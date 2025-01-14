@@ -1,4 +1,7 @@
 # Embedded Grid widget
+
+![status](https://img.shields.io/badge/status-beta-yellow)
+
 This is the repository for ViSenze's Embedded Grid widget. 
 
 This widget is designed to power recommendation experiences in ecommerce websites

@@ -5,12 +5,12 @@ import App from './app';
 
 // eslint-disable-next-line func-names
 (function (context: Window): void {
-  const widgetType = `wigmix_${WidgetType.SHOPPABLE_INSTAGRAM_FEED}`;
+  const widgetType = `wigmix_${WidgetType.SHOPPABLE_GALLERY}`;
   context.visenzewigmixwidget = context.visenzewigmixwidget || {};
   context.visenzewigmixwidget[widgetType] = context.visenzewigmixwidget[widgetType] || {};
   context.visenzewigmixwidget[widgetType][version] = context.visenzewigmixwidget[widgetType][version] || {
     initWidget: initWidgetFactory(
-        WidgetType.SHOPPABLE_INSTAGRAM_FEED,
+        WidgetType.SHOPPABLE_GALLERY,
         version,
         ({ config, client, fieldMappings }) => <App productSearch={client} fieldMappings={fieldMappings} config={config}></App>,
         false,

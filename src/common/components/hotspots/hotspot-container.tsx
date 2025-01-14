@@ -2,7 +2,6 @@ import type { FC } from 'react';
 import { useEffect, useContext, useState, useRef } from 'react';
 import { cn } from '@nextui-org/theme';
 import { CroppingContext, WidgetResultContext } from '../../types/contexts';
-import { isSameBox } from '../../box-utils';
 import type { CroppedBox } from '../../types/box';
 import Hotspot from './hotspot';
 
@@ -13,6 +12,13 @@ interface HotspotContainerProps {
   noSelectedHotspot?: boolean;
   handleBoxClick?: () => void;
 }
+
+const isSameBox = (box1: CroppedBox, box2: CroppedBox | undefined): boolean => {
+  if (!box2) {
+    return false;
+  }
+  return box1.x1 === box2.x1 && box1.y1 === box2.y1 && box1.x2 === box2.x2 && box1.y2 === box2.y2;
+};
 
 const HotspotContainer: FC<HotspotContainerProps> = ({
   referenceImage,

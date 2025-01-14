@@ -18,7 +18,7 @@ const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name }) 
 
   const onDrop = (acceptedFiles: File[], fileRejections: FileRejection[]): void => {
     if (fileRejections.length > 0) {
-      productSearch.send(Actions.ERROR, {
+      productSearch.sendEvent(Actions.ERROR, {
         cat: Category.UPLOAD,
         label: Labels.SEARCH_ERROR,
       });
@@ -32,7 +32,7 @@ const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name }) 
 
     const reader = new FileReader();
     reader.onload = (e: any): void => {
-      productSearch.send(Actions.CLICK, {
+      productSearch.sendEvent(Actions.CLICK, {
         cat: Category.UPLOAD,
         label: Labels.UPLOAD,
       });

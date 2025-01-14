@@ -1,9 +1,8 @@
 import type { Root } from 'react-dom/client';
-import ViSearch from 'visearch-javascript-sdk';
-import type { WidgetInitOptions, WidgetClient } from '../visenze-core';
+import ViSearch, { type ProductSearchResponse } from 'visearch-javascript-sdk';
+import type { Primitive, WidgetClient, WidgetConfig } from '../visenze-core';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
-
-const Endpoint = 'https://search.visenze.com';
+import { DEFAULT_ENDPOINT } from '../constants';
 
 const validateBatchEvents = (
   events: Record<string, string>[],
@@ -29,7 +28,7 @@ const callIfValidFunction = (fn: any, args: any): void => {
 };
 
 const wrapCallbacks = (
-  searchCallback: any,
+  searchCallback: ((apiResponse: ProductSearchResponse) => void) | undefined,
   onSuccess: SuccessHandler,
   onFailure: ErrorHandler,
 ): ((args: any) => void)[] => {
@@ -44,13 +43,13 @@ const wrapCallbacks = (
   return [newOnSuccess, newOnError];
 };
 
-export default function getWidgetClient(options: WidgetInitOptions): WidgetClient {
-  const { config, widgetType, widgetVersion, widgetDirectory, deployTypeId } = options;
+export default function getWidgetClient(config: WidgetConfig, widgetType: string, widgetVersion: string): WidgetClient {
   const { vttSource, disableAnalytics } = config;
-  const lastTrackingMetadata: Record<string, any> = {};
   const { placementId, appKey, strategyId, country, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
-  const { onSearchCallback } = config?.callbacks;
+  const { onSearchCallback } = config.callbacks;
   let roots: Root[] = [];
+  let lastTrackingMetadata: Record<string, Primitive> = {};
+  let lastReference = '';
 
   const visearch = ViSearch();
   visearch.setKeys({
@@ -58,7 +57,7 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
     strategy_id: strategyId,
     app_key: appKey,
     is_cn: country === 'CN',
-    endpoint: endpoint || Endpoint,
+    endpoint: endpoint || DEFAULT_ENDPOINT,
     gtm_tracking: gtmTracking,
     resize_settings: resizeSettings || {},
   });
@@ -73,6 +72,7 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
     handleError: ErrorHandler,
   ): void => {
     const [success, error] = wrapCallbacks(onSearchCallback, handleSuccess, handleError);
+    lastReference = pid;
     visearch.productSearchById(
       pid,
       {
@@ -122,7 +122,7 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
   /**
    * Sends event to ViSenze Analytics
    */
-  const send = async (
+  const sendEvent = async (
     action: string,
     params: Record<string, any> = {},
     callback?: (...args: any) => any,
@@ -139,9 +139,11 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
 
     const analyticsParams = params;
 
+    if (!analyticsParams.queryId) {
+      analyticsParams.queryId = getLastClickQueryId();
+    }
     if (!analyticsParams.widgetVersion) {
       analyticsParams.widgetVersion = `${widgetType}.${widgetVersion}.js`;
-      analyticsParams.widgetDir = widgetDirectory;
     }
     if (vttSource) {
       analyticsParams.vtt_source = vttSource;
@@ -172,9 +174,20 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
         if (action.toLowerCase() === 'transaction' && !event.transId) {
           event.transId = batchId;
         }
-        send(action, event, callback, failure);
+        sendEvent(action, event, callback, failure);
       });
     });
+  };
+
+  /**
+   * Gets the metadata of the last request
+   */
+  const getLastTrackingMeta = (): Record<string, any> => {
+    return lastTrackingMetadata;
+  };
+
+  const setLastTrackingMeta = (metadata: Record<string, Primitive> | undefined): void => {
+    lastTrackingMetadata = metadata || {};
   };
 
   /**
@@ -214,9 +227,13 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
 
   const disposeWidget = (): void => {
     hideWidget();
-    if (placementId && window.visenzeWidgets?.[placementId]) {
-      // eslint-disable-next-line
+    if (window.visenzeWidgets?.[placementId]) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete window.visenzeWidgets[placementId];
+    }
+    if (window[`visenzeWidgets${placementId}`]) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete window[`visenzeWidgets${placementId}`];
     }
   };
 
@@ -236,18 +253,22 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
     roots = renderRoots;
   };
 
+  const getLastReference = (): any => lastReference;
+
   return {
     visearch,
     widgetType,
-    deployTypeId,
-    placementId: placementId ? Number(placementId) : undefined,
-    lastTrackingMetadata,
+    widgetVersion,
+    placementId,
+    setLastTrackingMeta,
     set,
-    send,
-    sendEvent: send,
+    send: sendEvent,
+    sendEvent,
     sendEvents,
     getLastClickQueryId,
     getLastQueryId,
+    getLastTrackingMeta,
+    getLastReference,
     searchById,
     multisearchByImage,
     multisearchAutocomplete,
@@ -256,5 +277,6 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
     openWidget,
     hideWidget,
     disposeWidget,
+    updateConfig: (): void => {},
   };
 }

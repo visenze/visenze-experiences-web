@@ -1,4 +1,7 @@
 # Search Results Page widget
+
+![status](https://img.shields.io/badge/status-deprecated-lightgrey)
+
 This is the repository for ViSenze's Search Results page widget. 
 
 This widget is designed to power search page experiences in ecommerce websites

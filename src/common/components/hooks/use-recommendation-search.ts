@@ -161,8 +161,8 @@ const useRecommendationSearch = ({
 
       // Send RESULT LOAD tracking event if there are results
       if (results.length) {
-        productSearch.send(Actions.RESULT_LOAD, metadata);
-        productSearch.lastTrackingMetadata = metadata;
+        productSearch.sendEvent(Actions.RESULT_LOAD, metadata);
+        productSearch.setLastTrackingMeta(metadata);
       }
     }
   }, [response]);

@@ -4,28 +4,27 @@ import { Listbox, ListboxItem, ListboxSection } from '@nextui-org/listbox';
 import { cn } from '@nextui-org/theme';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import type { SearchImage } from '../../common/types/image';
+import { isImageFile } from '../../common/types/image';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 import SearchBarInput from './components/SearchBarInput';
 import useAutocomplete from '../../common/components/hooks/use-autocomplete';
-import { WidgetDataContext } from '../../common/types/contexts';
 import type { WidgetConfig } from '../../common/visenze-core';
 
 interface SearchBarResultProps {
   config: WidgetConfig;
+  textQuery: string;
+  imUrl: string;
 }
 
-const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
-  const { searchBarResultsSettings, debugMode } = useContext(WidgetDataContext);
+const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): ReactElement => {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
   const [showDropdown, setShowDropdown] = useState(false);
-  const [allowRedirect, setAllowRedirect] = useState(false);
-  const [isMultiSearch, setIsMultiSearch] = useState(true);
   const root = useContext(RootContext);
 
   const {
-    imageId,
+    imageUrl,
     autocompleteResults,
     error,
   } = useAutocomplete({
@@ -33,52 +32,42 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
     query: debouncedQuery,
   });
 
-  const redirectWithAutocomplete = (autocomplete: string): void => {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const searchBarImageId = urlSearchParams.get('im_id');
-    const url = new URL(searchBarResultsSettings.redirectUrl);
-    if (isMultiSearch && (imageId || searchBarImageId)) {
-      url.searchParams.append('im_id', imageId || searchBarImageId || '');
-    }
-    url.searchParams.set('q', autocomplete);
-    if (debugMode) {
-      window.history.pushState(null, '', url.toString());
-    } else {
-      window.location.href = url.toString();
-    }
-  };
+  useEffect(() => {
+    const handleImageAppended = (e: any): void => {
+      setImage(e.detail);
+    };
+    document.addEventListener('wigmix_search_bar_append_image', handleImageAppended);
+    return (): void => {
+      document.removeEventListener('wigmix_search_bar_append_image', handleImageAppended);
+    };
+  }, []);
 
-  const handleRedirect = (): void => {
-    if (!query && !image) {
-      return;
-    }
-
-    const url = new URL(searchBarResultsSettings.redirectUrl);
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const searchBarImageId = urlSearchParams.get('im_id');
-    if (imageId || searchBarImageId) {
-      url.searchParams.append('im_id', imageId || searchBarImageId || '');
-    }
-    if (query && (isMultiSearch || (!imageId && !searchBarImageId))) {
-      url.searchParams.append('q', query);
-    }
-    if (debugMode) {
-      window.history.pushState(null, '', url.toString());
-    } else {
-      window.location.href = url.toString();
+  const emitSearchBarCallback = (t: string | undefined, i: SearchImage | undefined): void => {
+    if (config.callbacks?.onSearchBarInput && typeof config.callbacks.onSearchBarInput === 'function') {
+      config.callbacks.onSearchBarInput(t, i);
     }
   };
 
   useEffect(() => {
-    if (!query) setShowDropdown(false);
-    else setShowDropdown(true);
-  }, [query]);
-
-  useEffect(() => {
-    if (imageId && allowRedirect) {
-      handleRedirect();
+    if (imageUrl) {
+      if (image) {
+        if (isImageFile(image)) {
+          setImage({
+            imgUrl: imageUrl,
+          });
+          emitSearchBarCallback(query, {
+            imgUrl: imageUrl,
+          });
+        }
+      } else {
+        setImage({
+          imgUrl: imageUrl,
+        });
+      }
+    } else {
+      setImage(undefined);
     }
-  }, [imageId]);
+  }, [imageUrl]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -91,27 +80,14 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
   }, [query]);
 
   useEffect(() => {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const searchBarQuery = urlSearchParams.get('q');
-    if (searchBarQuery) {
-      setQuery(searchBarQuery);
+    if (textQuery) {
+      setQuery(textQuery);
     }
-  }, []);
-
-  useEffect(() => {
-    const handleImageAppended = (e: any): void => {
-      setAllowRedirect(false);
-      setImage(e.detail);
-    };
-    const handleMultiSearch = (e: any): void => {
-      setIsMultiSearch(e.detail);
-    };
-    document.addEventListener('wigmix_search_bar_replace_image', handleImageAppended);
-    document.addEventListener('wigmix_search_bar_multi_search', handleMultiSearch);
-    return (): void => {
-      document.removeEventListener('wigmix_search_bar_replace_image', handleImageAppended);
-      document.removeEventListener('wigmix_search_bar_multi_search', handleMultiSearch);
-    };
+    if (imUrl) {
+      setImage({
+        imgUrl: imUrl,
+      });
+    }
   }, []);
 
   if (error) {
@@ -127,11 +103,15 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
       <div className='flex size-full flex-col bg-primary'>
         <div className='relative flex w-full flex-col items-center'>
           {/* Search bar */}
-          <SearchBarInput query={query} setQuery={setQuery} setImage={setImage} setAllowRedirect={setAllowRedirect}
-                          handleRedirect={() => {
-                            if (query) {
-                              redirectWithAutocomplete(query);
+          <SearchBarInput query={query} setQuery={setQuery} image={image}
+                          imageUploadHandler={(img: SearchImage) => {
+                            setImage(img);
+                            if (img && !isImageFile(img)) {
+                              emitSearchBarCallback(query, img);
                             }
+                          }}
+                          emitSearchBarCallback={() => {
+                            emitSearchBarCallback(query, image);
                           }}
                           setShowDropdown={setShowDropdown}
                           placementId={`${config.appSettings.placementId}`} />
@@ -140,7 +120,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
             <Listbox
               onAction={(key) => {
                 setQuery(String(key));
-                redirectWithAutocomplete(String(key));
+                emitSearchBarCallback(String(key), image);
               }}
               classNames={{
                 base: cn(
@@ -159,7 +139,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                     endContent={<MagnifyingGlassIcon className='size-4'/>}
                     textValue={result}
                   >
-                    <span className='calls-to-action-text pl-2 text-primary'
+                    <span className='pl-2 text-primary'
                           data-pw={`sb-autocomplete-suggestion-${index + 1}`}>{result}</span>
                   </ListboxItem>
                 ))}

@@ -1,4 +1,7 @@
 # Recommend me widget
+
+![status](https://img.shields.io/badge/status-beta-yellow)
+
 This is the repository for ViSenze's Recommend Me widget. 
 
 This widget is designed to power recommendation experiences in ecommerce websites

@@ -1,14 +1,14 @@
 import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import { IntlProvider } from 'react-intl';
 import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
-import { WidgetType } from '../../common/visenze-core';
 import ShadowWrapper from '../../common/components/shadow-wrapper';
 import { WidgetDataContext } from '../../common/types/contexts';
 import MoreLikeThis from './more-like-this';
-import version from './version';
 import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
-import { getLocaleTexts } from '../../common/locales/locale';
+import { getLocaleTexts, type LanguagePack } from '../../common/locales/locale';
+import { deepMerge, setCssVariables } from '../../common/client/initialization';
 
 interface AppProps {
   config: WidgetConfig;
@@ -17,17 +17,45 @@ interface AppProps {
   element: HTMLElement;
 }
 
+const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    widgetTitle: 'More Like This',
+    errorDescription: 'Sorry, something went wrong',
+    errorResolution: 'Please refresh to try again',
+  },
+};
+
 const App: FC<AppProps> = ({ config, fieldMappings, productSearch, element }) => {
-  const locale = config.languageSettings.locale || DEFAULT_LOCALE;
-  const messages = getLocaleTexts(config.languageSettings.text, locale);
-  const widgetType = WidgetType.MORE_LIKE_THIS;
+  const [configInternal, setConfigInternal] = useState(config);
+  const [locale, setLocale] = useState(DEFAULT_LOCALE);
+  const [messages, setMessages] = useState<Record<string, string>>({});
   const productId = element.dataset.pid ?? '';
 
+  productSearch.updateConfig = (configOverride, isPartial): void => {
+    if (configOverride) {
+      if (isPartial) {
+        setConfigInternal(deepMerge(configOverride, config));
+      } else {
+        setConfigInternal((c) => ({
+          ...c,
+          customizations: configOverride.customizations,
+        }));
+      }
+    }
+  };
+
+  useEffect(() => {
+    const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.localization?.defaultLocale || DEFAULT_LOCALE;
+    setLocale(localeFromConfig);
+    setMessages(getLocaleTexts(localeFromConfig, DEFAULT_TEXTS, configInternal.customizations.localization?.text));
+    setCssVariables(configInternal);
+  }, [configInternal]);
+
   return (
-    <WidgetDataContext.Provider value={{ ...config, fieldMappings, productSearch, widgetType, version }}>
-      <ShadowWrapper>
-        <IntlProvider messages={messages} locale={locale} defaultLocale='en'>
-          <MoreLikeThis config={config} productSearch={productSearch} productId={productId}/>
+    <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, productSearch }}>
+      <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
+        <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
+          <MoreLikeThis config={configInternal} productSearch={productSearch} productId={productId}/>
         </IntlProvider>
       </ShadowWrapper>
     </WidgetDataContext.Provider>

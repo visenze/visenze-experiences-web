@@ -3,6 +3,7 @@ import type { WidgetClient, WidgetConfig } from '../../visenze-core';
 import type { ProcessedProduct } from '../../types/product';
 import { getFlattenProduct } from '../../utils';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
+import { DEFAULT_ENDPOINT } from '../../constants';
 
 interface RecommendMeProps {
   config: WidgetConfig;
@@ -17,8 +18,6 @@ export interface RecommendMe {
   requestId: string;
   error: string;
 }
-
-const DEFAULT_ENDPOINT = 'https://search.visenze.com';
 
 const useRecommendMe = ({
   config,

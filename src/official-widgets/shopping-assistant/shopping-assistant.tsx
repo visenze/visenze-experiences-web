@@ -5,11 +5,11 @@ import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import CloseIcon from '../../common/icons/CloseIcon';
-import NewChatIcon from './icons/NewChatIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
 import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
 import type { Product } from './components/ProductCard';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 const defaultInitialMessages = [
     'Let\'s get started',
@@ -399,14 +399,19 @@ const ShoppingAssistant = memo((props: {
       <>
         {!config.hideTrigger && (
             <>
-              {config.customizations?.icons.cameraButton
-                  ? <img src={config.customizations.icons.cameraButton} onClick={onChatButtonClick}
-                         className='size-7 cursor-pointer'></img>
-                  : <NewChatIcon onClickHandler={onChatButtonClick}/>
-              }
+              <CustomizableIcon
+                  height={28}
+                  width={28}
+                  url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/new-chat-icon.svg'}
+                  color={config.customizations.popup?.triggerIcon?.color || ''}
+                  className='wigmix-popup-trigger-icon cursor-pointer'
+                  onClickHandler={onChatButtonClick}
+              />
             </>
         )}
-        <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose} position='center'
+        <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
+                      position={config.customizations.popup?.position || 'center'}
+                      fontFamily={config.customizations.generalLayout?.fontFamily}
                       placementId={`${config.appSettings.placementId}`}>
           {getScreen()}
         </ViSenzeModal>

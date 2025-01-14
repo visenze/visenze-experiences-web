@@ -3,6 +3,7 @@ import type { ProductSearchResponse, ProductSearchResponseSuccess, ProductType }
 import type { WidgetClient, WidgetConfig } from '../../visenze-core';
 import { Actions, Category } from '../../types/tracking-constants';
 import type { SearchImage } from '../../types/image';
+import { isImageFile, isImageUrl } from '../../types/image';
 import type { BoxData, ProcessedProduct } from '../../types/product';
 import { getFlattenProducts, parseBox, parseToProductTypes } from '../../utils';
 
@@ -23,9 +24,9 @@ const getSearchParams = (
 ): Record<string, any> => {
   const params = { ...config.searchSettings };
 
-  if ('imgUrl' in img) {
+  if (isImageUrl(img)) {
     params.im_url = img.imgUrl;
-  } else if ('files' in img) {
+  } else if (isImageFile(img)) {
     params.image = img.files[0];
   } else {
     params.im_id = imageId;
@@ -172,8 +173,8 @@ const useImageMultisearch = ({
       autocompleteWithQuery('');
 
       if (results.length) {
-        productSearch.send(Actions.RESULT_LOAD, metadata);
-        productSearch.lastTrackingMetadata = metadata;
+        productSearch.sendEvent(Actions.RESULT_LOAD, metadata);
+        productSearch.setLastTrackingMeta(metadata);
       }
     }
   }, [response]);

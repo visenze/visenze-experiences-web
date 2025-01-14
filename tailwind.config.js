@@ -3,12 +3,12 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 
 const getFontObj = (configName) => {
   const deviceTypes = ['mobile', 'tablet', 'desktop'];
-  const targetElements = ['widgetTitle', 'callsToActionText', 'productCardTitle', 'productCardPrice', 'searchBarText'];
+  const targetElements = ['heading', 'body', 'productCardTitle', 'productCardSecondaryTitle', 'productCardPrice', 'productCardOriginalPrice'];
   const fontSizeObj = {};
 
   deviceTypes.forEach(deviceType => {
     targetElements.forEach(targetElement => {
-      fontSizeObj[`${deviceType}-${targetElement}`] = `var(--widget-${deviceType}-${targetElement}-${configName})`;
+      fontSizeObj[`${deviceType}-${targetElement}`] = `var(--wigmix-${deviceType}-${targetElement}-${configName})`;
     });
   });
 
@@ -20,7 +20,7 @@ const getColourObj = (configName) => {
   const colourObj = {};
 
   colourNames.forEach(colourName => {
-    colourObj[`${colourName}`] = `var(--widget-${configName}-${colourName})`;
+    colourObj[`${colourName}`] = `var(--wigmix-${configName}-${colourName})`;
   });
 
   return colourObj;
@@ -60,7 +60,7 @@ function remToPx(input, fontSize = 16) {
 module.exports = {
   content: [
     './src/**/*.{html,js,ts,jsx,tsx}',
-    './node_modules/@nextui-org/theme/dist/components/(button|card|chip|image|input|listbox|spacer|skeleton|accordion|checkbox|radio|spinner|slider).js',
+    './node_modules/@nextui-org/theme/dist/components/(button|card|chip|image|input|listbox|pagination|spacer|skeleton|accordion|checkbox|radio|spinner|slider).js',
   ],
   theme: {
     ...remToPx(defaultTheme),

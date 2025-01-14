@@ -1,9 +1,9 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useState, useCallback, useContext } from 'react';
-import { Button } from '@nextui-org/button';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetResultContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
+import { isImageDataUrl } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
@@ -14,8 +14,8 @@ import type { WidgetConfig, WidgetClient } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import LoadingIcon from './icons/LoadingIcon';
-import SimilarSearchIcon from './icons/SimilarSearchIcon';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 interface SimilarSearchProps {
   config: WidgetConfig;
@@ -29,10 +29,8 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
   const [image, setImage] = useState<SearchImage | undefined>();
   const [resizedImage, setResizedImage] = useState<SearchImage | undefined>();
   const [screen, setScreen] = useState<ScreenType>(ScreenType.UPLOAD);
-  const [selectedChip, setSelectedChip] = useState<string>('');
   const [boxData, setBoxData] = useState<BoxData | undefined>();
   const [searchHistory, setSearchHistory] = useState<SearchImage[]>([]);
-  const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]);
   const root = useContext(RootContext);
 
   const {
@@ -57,17 +55,15 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     setImage(undefined);
     setResizedImage(undefined);
     setBoxData(undefined);
-    setTrendingKeywords([]);
-    setSelectedChip('');
     resetSearch();
   };
 
   const onModalClose = useCallback((): void => {
     setDialogVisible(false);
     if (productResults.length > 0) {
-      productSearch.send(Actions.CLOSE, {
+      productSearch.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
-        metadata,
+        ...metadata,
       });
     }
 
@@ -81,7 +77,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     setSearchHistory([searchImage, ...previousSearches]);
   };
 
-  const onMoreLikeThis = (data: SearchImage): void => {
+  const onImageSearch = (data: SearchImage): void => {
     appendSearchHistory(data);
     if (image === data) {
       // Fake the search if same image
@@ -89,8 +85,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
       setTimeout(() => setScreen(ScreenType.RESULT), 300);
     } else {
       setScreen(ScreenType.LOADING);
-      setTrendingKeywords([]);
-      setSelectedChip('');
       setBoxData(undefined);
       setImage(data);
     }
@@ -100,10 +94,8 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     autocompleteWithQuery(q);
   };
 
-  const onKeywordSearch = (inputKeyword: string, chip: string): void => {
-    setSelectedChip(chip);
-
-    let query = chip ? chip.concat(' ', inputKeyword) : inputKeyword;
+  const onTextSearch = (text: string): void => {
+    let query = text;
     if (query.length > QUERY_MAX_CHARACTER_LENGTH) {
       query = query.slice(0, QUERY_MAX_CHARACTER_LENGTH);
     }
@@ -130,7 +122,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
   const onPopupIconClick = (event: any): void => {
     event.stopPropagation();
     event.preventDefault();
-    productSearch.send(Actions.CLICK, {
+    productSearch.sendEvent(Actions.CLICK, {
       cat: Category.ENTRANCE,
       label: Labels.ICON,
     });
@@ -144,17 +136,15 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
         return (
           <ResultScreen
             onModalClose={onModalClose}
-            onKeywordSearch={onKeywordSearch}
-            onMoreLikeThis={onMoreLikeThis}
+            onTextSearch={onTextSearch}
+            onImageSearch={onImageSearch}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
-            selectedChip={selectedChip}
-            trendingKeywords={trendingKeywords}
           />
         );
       case ScreenType.LOADING:
         return (
-          <div className='my-40 flex justify-center'>
+          <div className='flex h-full items-center justify-center'>
             <LoadingIcon />
           </div>
         );
@@ -162,12 +152,10 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
         return (
           <ResultScreen
             onModalClose={onModalClose}
-            onKeywordSearch={onKeywordSearch}
-            onMoreLikeThis={onMoreLikeThis}
+            onTextSearch={onTextSearch}
+            onImageSearch={onImageSearch}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
-            selectedChip={selectedChip}
-            trendingKeywords={trendingKeywords}
           />
         );
     }
@@ -184,8 +172,8 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
 
   useEffect(() => {
     (async (): Promise<void> => {
-      if (image && 'file' in image) {
-        await productSearch.visearch.resizeImage(image.file, config.appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '', files: image.files }));
+      if (image && isImageDataUrl(image)) {
+        await productSearch.visearch.resizeImage(image.file, config.appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
       }
     })();
   }, [image]);
@@ -195,12 +183,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
       setScreen(ScreenType.RESULT);
     }
   }, [productResults]);
-
-  useEffect(() => {
-    if (trendingKeywords.length === 0) {
-      setTrendingKeywords(autocompleteResults);
-    }
-  }, [autocompleteResults]);
 
   useEffect(() => {
     if (error) {
@@ -222,19 +204,20 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
         image: resizedImage ?? image,
         metadata,
       }}>
-      <Button isIconOnly radius='full' size='sm' className='bg-white' onClick={onPopupIconClick}>
-        <SimilarSearchIcon>
-          <text
-            style={{ fontFamily: 'Arial, sans-serif', fontSize: '167.8px', whiteSpace: 'pre' }}
-            x='-1.867'
-            y='427.772'
-            transform='matrix(1, 0, 0, 1, 2.842170943040401e-14, 7.105427357601002e-15)'>
-            MORE
-          </text>
-        </SimilarSearchIcon>
-      </Button>
+      <div className='wigmix-popup-trigger w-fit cursor-pointer'>
+        <CustomizableIcon
+            height={24}
+            width={24}
+            url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/similar-search-icon.svg'}
+            color={config.customizations.popup?.triggerIcon?.color || ''}
+            className='wigmix-popup-trigger-icon cursor-pointer'
+            onClickHandler={onPopupIconClick}
+        />
+      </div>
 
-      <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose} position='right'
+      <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
+                    position={config.customizations.popup?.position || 'right'}
+                    fontFamily={config.customizations.generalLayout?.fontFamily}
                     placementId={`${config.appSettings.placementId}`}>
         {getScreen()}
       </ViSenzeModal>
