@@ -1,4 +1,4 @@
-import version from './version';
+import version from '../../version';
 import { deepMerge, initWidgetFactory } from '../../common/client/initialization';
 import { WidgetType } from '../../common/visenze-core';
 import App from './app';

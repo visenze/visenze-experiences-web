@@ -1,5 +1,5 @@
 import { deepMerge, initWidgetFactory } from '../../common/client/initialization';
-import version from './version';
+import version from '../../version';
 import { WidgetType } from '../../common/visenze-core';
 import App from './app';
 

@@ -8,7 +8,7 @@ const getWebpackModule = require('./webpack.util');
 module.exports = (config) => {
 	let entry = 'index-dev.tsx';
 	let dir = config.dir || env.dir;
-	let version = require(`./src/${dir}/version`);
+	let version = require(`./src/version`);
 	let packageName = dir.split('/').pop().replaceAll('-', '_');
 	let useShadowDom = true;
 	let customBuild = config.customBuild || env.custom_build;

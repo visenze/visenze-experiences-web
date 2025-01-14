@@ -15,7 +15,7 @@ const getWebpackConfig = (config) => {
   let entry = config.entry || 'index.ts';
   let isUseShadowDom = config.use_shadow_dom !== 'false';
   let packageName = config.name.replaceAll('-', '_');
-  let version = require(`./src/${dir}/version`);
+  let version = require(`./src/version`);
   let buildEnv = env.build || 'production';
   let isPublish = env.publish === 'true';
   let prefix = 'wigmix';
