@@ -51,6 +51,9 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
     config,
     productId,
     retryCount,
+    additionalParams: {
+      show_best_product_images: true,
+    },
   });
 
   const useSlideSettings = (): Settings => {

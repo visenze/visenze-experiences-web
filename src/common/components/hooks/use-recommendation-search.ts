@@ -19,6 +19,7 @@ interface RecommendationSearchProps {
   retryCount: number;
   sortType?: SortType;
   filters?: Record<FacetType, any>;
+  additionalParams?: Record<string, any>;
 }
 
 export interface RecommendationSearch {
@@ -42,6 +43,7 @@ const useRecommendationSearch = ({
   retryCount,
   sortType,
   filters,
+  additionalParams,
 }: RecommendationSearchProps): RecommendationSearch => {
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
   const [metadata, setMetadata] = useState<Record<string, any>>({});
@@ -59,7 +61,6 @@ const useRecommendationSearch = ({
   const handleSuccess = (res: ProductSearchResponse): void => {
     if (res.status === 'fail') {
       handleError(res.error.message);
-      return;
     } else {
       setError('');
       setResponse(res);
@@ -94,6 +95,12 @@ const useRecommendationSearch = ({
 
     if (filters) {
       params.filters = getFilterQueries(productDetails, filters);
+    }
+
+    if (additionalParams) {
+      Object.keys(additionalParams).forEach((key) => {
+        params[key] = additionalParams[key];
+      });
     }
 
     productSearch.searchById(productId, params, handleSuccess, handleError);
