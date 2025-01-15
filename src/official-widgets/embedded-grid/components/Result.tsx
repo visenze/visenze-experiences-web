@@ -90,9 +90,9 @@ const Result: FC<ResultProps> = ({ index, result }) => {
   const price = getPrice(customizations, languageSettings, productDetails, result);
 
   return (
-    <a className='cursor-pointer' ref={(r) => r && setTargetRef(r)}
+    <a className='flex h-full cursor-pointer flex-col justify-between' ref={(r) => r && setTargetRef(r)}
        onClick={onClick}>
-      <div>
+      <div className='flex h-full'>
         <img className='wigmix-product-card-image object-cover' src={result.im_url}/>
       </div>
       <div className='pt-2'>

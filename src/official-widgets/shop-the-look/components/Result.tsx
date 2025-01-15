@@ -92,8 +92,8 @@ const Result: FC<ResultProps> = ({ index, result }) => {
   return (
     <a className='cursor-pointer' ref={(r) => r && setTargetRef(r)}
        onClick={onClick}>
-      <div>
-        <img className='wigmix-product-card-image object-cover' src={result.im_url}/>
+      <div className='flex justify-center'>
+        <img className='wigmix-product-card-image object-cover' style={{ maxHeight: 300 }} src={result.im_url} />
       </div>
       <div className='pt-2'>
         <span className='wigmix-product-card-title line-clamp-1'>
