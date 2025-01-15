@@ -148,9 +148,9 @@ export interface WidgetClient {
    */
   rerender: (selector?: string, ...args: any) => void;
   /**
-   * Opens the widget popup for search widget.
+   * Opens the widget popup; applicable only for widget types that have popup behavior.
    */
-  openWidget: ((params: object) => void) | undefined;
+  openWidget: ((params: any) => void) | undefined;
   /**
    * Hides the widget from view.
    */

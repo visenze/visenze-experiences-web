@@ -110,6 +110,10 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
     return cssConfig;
   };
 
+  productSearch.openWidget = (): void => {
+    setDialogVisible(true);
+  };
+
   useEffect(() => {
     if (error) {
       console.error(error);

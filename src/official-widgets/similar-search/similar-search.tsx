@@ -170,6 +170,10 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     }
   }, [dialogVisible]);
 
+  productSearch.openWidget = (): void => {
+    setDialogVisible(true);
+  };
+
   useEffect(() => {
     (async (): Promise<void> => {
       if (image && isImageDataUrl(image)) {

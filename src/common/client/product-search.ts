@@ -224,18 +224,6 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     }
   };
 
-  const openWidget = (params: object): void => {
-    const { cssSelector } = config.displaySettings;
-    const element =
-      document.querySelector(cssSelector || `.ps-widget-${placementId}`);
-    if (element) {
-      (element as HTMLElement).dataset.visenzeDialogOpen = 'true';
-      if (params) {
-        (element as HTMLElement).dataset.visenzeRuntimeParams = JSON.stringify(params);
-      }
-    }
-  };
-
   const setRenderRoots = (renderRoots: Root[]): void => {
     roots = renderRoots;
   };
@@ -259,7 +247,7 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     multisearchAutocomplete,
     setRenderRoots,
     rerender: (): void => {},
-    openWidget,
+    openWidget: (): void => {},
     hideWidget,
     disposeWidget,
     updateConfig: (): void => {},

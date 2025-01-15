@@ -162,30 +162,9 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
     }
   };
 
-  // Accompanying logic to open the widget via the widget client's openWidget function
-  useEffect(() => {
-    const element = document.querySelector(config.displaySettings.cssSelector) as HTMLElement | null;
-    const callback = (mutationList: MutationRecord[]): void => {
-      mutationList.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'data-visenze-dialog-open') {
-          if (element && element.dataset.visenzeDialogOpen === 'true') {
-            setDialogVisible(true);
-          }
-        }
-      });
-    };
-    const observer = new MutationObserver(callback);
-    if (element) {
-      observer.observe(element, {
-        attributes: true,
-        childList: false,
-        subtree: false,
-      });
-    }
-    return (): void => {
-      observer.disconnect();
-    };
-  }, []);
+  productSearch.openWidget = (): void => {
+    setDialogVisible(true);
+  };
 
   useEffect(() => {
     (async (): Promise<void> => {
