@@ -6,9 +6,10 @@ import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../default-configs';
 const currencyFormatterFactory = (
     languageSettings: WidgetConfig['languageSettings'],
     customizations: WidgetConfig['customizations'],
+    currencyFromProduct?: string,
 ): Intl.NumberFormat => getCurrencyFormatter(
     languageSettings?.locale || customizations.localization?.defaultLocale || DEFAULT_LOCALE,
-    languageSettings?.currency || customizations.localization?.defaultCurrency || DEFAULT_CURRENCY,
+    currencyFromProduct || languageSettings?.currency || customizations.localization?.defaultCurrency || DEFAULT_CURRENCY,
 );
 
 export const getProductTitle = (
@@ -46,7 +47,7 @@ export const getPrice = (
   }
   if (result[productDetails.price]) {
     const priceNumber = +result[productDetails.price].value;
-    const currencyFormatter = currencyFormatterFactory(languageSettings, customizations);
+    const currencyFormatter = currencyFormatterFactory(languageSettings, customizations, result[productDetails.price].currency);
     return currencyFormatter.format(priceNumber);
   }
   return '';
@@ -63,7 +64,7 @@ export const getOriginalPrice = (
   }
   if (result[productDetails.original_price]) {
     const priceNumber = +result[productDetails.original_price].value;
-    const currencyFormatter = currencyFormatterFactory(languageSettings, customizations);
+    const currencyFormatter = currencyFormatterFactory(languageSettings, customizations, result[productDetails.original_price].currency);
     return currencyFormatter.format(priceNumber);
   }
   return '';

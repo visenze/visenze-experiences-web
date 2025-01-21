@@ -184,7 +184,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
         <div
           className={cn(
             showFullResults ? 'top-10 bottom-14 left-0 right-0' : 'top-60 bottom-14 left-3 right-3',
-            'transition-all duration-1000 z-10 absolute rounded-xl shadow-inner pt-8',
+            'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8',
           )}
           {...minimizedDrawerHandler}>
           <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>

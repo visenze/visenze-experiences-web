@@ -1,5 +1,5 @@
 import { deepMerge, initWidgetFactory } from '../../common/client/initialization';
-import version from './version';
+import version from '../../version';
 import { WidgetType } from '../../common/visenze-core';
 import App from './app';
 
@@ -12,7 +12,7 @@ import App from './app';
     initWidget: initWidgetFactory(
         WidgetType.MORE_LIKE_THIS,
         version,
-        ({ config, client, fieldMappings, element }) => <App productSearch={client} fieldMappings={fieldMappings} config={config} element={element}></App>,
+        ({ config, client, fieldMappings, element }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config} element={element}></App>,
         false,
     ),
     deepMerge,

@@ -57,15 +57,6 @@ export interface WidgetClient {
    */
   getLastReference: () => any;
   /**
-   * Alias for sendEvents, kept in here for legacy reasons.
-   */
-  send: (
-    action: string,
-    params: Record<string, any>,
-    callback?: SuccessHandler,
-    failure?: ErrorHandler,
-  ) => Promise<void>;
-  /**
    * Sends an event to ViSenze Analytics
    * @param action - action name
    * @param params - query parameters
@@ -114,7 +105,6 @@ export interface WidgetClient {
    * Tracking metadata from the last search result.
    */
   setLastTrackingMeta: (metadata: Record<string, Primitive> | undefined) => void;
-  set: (key: string, val: any) => void;
   /**
    *
    * @param roots - render root for the widget.
@@ -158,9 +148,9 @@ export interface WidgetClient {
    */
   rerender: (selector?: string, ...args: any) => void;
   /**
-   * Opens the widget popup for search widget.
+   * Opens the widget popup; applicable only for widget types that have popup behavior.
    */
-  openWidget: ((params: object) => void) | undefined;
+  openWidget: ((params: any) => void) | undefined;
   /**
    * Hides the widget from view.
    */
@@ -213,7 +203,6 @@ export interface WidgetConfig {
     appKey: string;
     placementId: string | number;
     strategyId?: string | number;
-    country?: string;
     uid?: string;
     gtmTracking?: boolean;
     endpoint?: string;
@@ -313,10 +302,8 @@ export interface WidgetConfig {
     customCss: string;
   };
   hideTrigger: boolean;
-  debugMode: boolean;
   disableAnalytics: boolean;
   maxRetryCount: number;
-  vttSource: string;
 }
 
 interface ViewportWidth {

@@ -6,26 +6,20 @@ const { env } = require('process');
 const getWebpackModule = require('./webpack.util');
 
 module.exports = (config) => {
-	let entry = 'index-dev.tsx';
-	let dir = config.dir || env.dir;
-	let version = require(`./src/${dir}/version`);
-	let packageName = dir.split('/').pop().replaceAll('-', '_');
-	let useShadowDom = true;
-	let customBuild = config.customBuild || env.custom_build;
-	if (customBuild) {
-		useShadowDom = false;
-	}
-	const directory = 'src/' + (customBuild ? `${customBuild}/${dir}` : dir);
+	const dir = config.dir;
+	const version = require(`./src/version`);
+	const packageName = dir.split('/').pop().replaceAll('-', '_');
+	const directory = `src/${dir}`;
 	return {
 		devtool: 'source-map',
-		entry: path.resolve(directory, entry),
+		entry: path.resolve(directory, 'index-dev.tsx'),
 		output: {
 			path: path.resolve(directory, 'dist'),
 			filename: 'index_bundle.js',
 			publicPath: '/',
 		},
 		mode: 'development',
-		module: getWebpackModule(packageName, version, useShadowDom),
+		module: getWebpackModule(packageName, version),
 		plugins: [
 			new HtmlWebpackPlugin({
 				template: path.resolve(directory, 'index.html'),
@@ -40,9 +34,6 @@ module.exports = (config) => {
 		],
 		resolve: {
 			extensions: ['.js', '.ts', '.tsx', '.jsx', '.css', '.scss'],
-			alias: {
-				environment$: path.resolve(__dirname, 'environment/environment.dev.ts'),
-			},
 		},
 	};
 };

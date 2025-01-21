@@ -50,7 +50,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   searchHistory,
   setSearchHistory,
 }) => {
-  const { customizations, productSearch } = useContext(WidgetDataContext);
+  const { customizations, widgetClient } = useContext(WidgetDataContext);
   const { productResults, autocompleteResults } = useContext(WidgetResultContext);
   const [search, setSearch] = useState<string>('');
   const [showFullResults, setShowFullResults] = useState(false);
@@ -420,14 +420,14 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   useEffect(() => {
     // Send Result Load Page event on page load
-    productSearch.sendEvent(Actions.LOAD, {
+    widgetClient.sendEvent(Actions.LOAD, {
       cat: Category.RESULT,
       label: Labels.PAGE,
     });
 
     return (): void => {
       // Send Result Close Page event on page close
-      productSearch.sendEvent(Actions.CLOSE, {
+      widgetClient.sendEvent(Actions.CLOSE, {
         cat: Category.RESULT,
         label: Labels.PAGE,
       });

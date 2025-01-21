@@ -1,12 +1,12 @@
 import type { Product, ProductSearchResponseSuccess, ProductType } from 'visearch-javascript-sdk';
 import type { CroppedBox } from './types/box';
 import type { ProcessedProduct } from './types/product';
-import {FacetType, SortType} from './types/constants';
-import type {WidgetConfig} from './visenze-core';
+import { FacetType, SortType } from './types/constants';
+import type { WidgetConfig } from './visenze-core';
 
 export const getFlattenProduct = (result: Product): ProcessedProduct => {
   return {
-    im_url: result.main_image_url,
+    im_url: result.best_images?.length ? result.best_images[0].url : result.main_image_url,
     product_id: result.product_id,
     ...result.data,
   };

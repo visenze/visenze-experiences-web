@@ -18,11 +18,11 @@ import { WidgetBreakpoint } from '../../common/types/constants';
 
 interface MoreLikeThisProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   productId: string;
 }
 
-const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId }) => {
+const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, widgetClient, productId }) => {
   const root = useContext(RootContext);
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,10 +34,13 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, productSearch, productId 
     metadata,
     error,
   } = useRecommendationSearch({
-    productSearch,
+    widgetClient,
     config,
     productId,
     retryCount,
+    additionalParams: {
+      show_best_product_images: true,
+    },
   });
 
   const useSlideSettings = (): Settings => {

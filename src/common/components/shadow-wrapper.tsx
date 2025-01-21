@@ -23,11 +23,11 @@ const StyleLoader: FC<{ rootNode: HTMLElement | null, children: ReactNode }> = (
 };
 
 const Style: FC = () => {
-  const { productSearch } = useContext(WidgetDataContext);
+  const { widgetClient } = useContext(WidgetDataContext);
   const onRefChange = useCallback((ref: HTMLElement | null) => {
     if (ref) {
-      const template = document.head.querySelector(`#vi_template__${productSearch.widgetType}`) as HTMLTemplateElement;
-      const styleTag = template.shadowRoot?.getElementById(`vi_style__${productSearch.widgetType}__${productSearch.widgetVersion}`) as HTMLStyleElement;
+      const template = document.head.querySelector(`#vi_template__${widgetClient.widgetType}`) as HTMLTemplateElement;
+      const styleTag = template.shadowRoot?.getElementById(`vi_style__${widgetClient.widgetType}__${widgetClient.widgetVersion}`) as HTMLStyleElement;
       // Convert NextUI CSS variable values from rem to px
       ref.innerHTML = styleTag.innerHTML.replace(/(\d*\.?\d+)rem/g, (_, val) => `${parseFloat(val) * 16}px`);
     }

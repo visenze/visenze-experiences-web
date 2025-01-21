@@ -24,11 +24,11 @@ export enum ScreenType {
 
 interface IconTriggeredGridProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   productId: string;
 }
 
-const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, productId }) => {
+const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, productId }) => {
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
@@ -47,7 +47,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
   const intl = useIntl();
 
   const { productInfo, productResults, facets, metadata, error } = useRecommendationSearch({
-    productSearch,
+    widgetClient,
     config,
     productId,
     retryCount,
@@ -60,7 +60,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
     setSortType(SortType.RELEVANCE);
     setRetryCount(0);
     if (productResults.length > 0) {
-      productSearch.sendEvent(Actions.CLOSE, {
+      widgetClient.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
         ...metadata,
       });
@@ -68,7 +68,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
   }, [productResults]);
 
   const onPopupIconClick = (): void => {
-    productSearch.sendEvent(Actions.CLICK, {
+    widgetClient.sendEvent(Actions.CLICK, {
       cat: Category.ENTRANCE,
       label: Labels.ICON,
     });
@@ -110,6 +110,10 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
     return cssConfig;
   };
 
+  widgetClient.openWidget = (): void => {
+    setDialogVisible(true);
+  };
+
   useEffect(() => {
     if (error) {
       console.error(error);
@@ -142,7 +146,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
         position={config.customizations.popup?.position || 'center'}
         fontFamily={config.customizations.generalLayout?.fontFamily}
         placementId={`${config.appSettings.placementId}`}>
-        <div className='relative flex size-full flex-col lg:flex-row lg:justify-between lg:divide-x-1'>
+        <div className='relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1'>
           {/* Close Button */}
           <Button
             isIconOnly
@@ -157,7 +161,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
             />
           </Button>
 
-          <div className='flex flex-col border-none p-4 lg:w-3/10 lg:px-10 lg:py-6'>
+          <div className='flex flex-col border-none p-4 md:w-3/10 md:px-10 md:py-6'>
             {/* Widget Title */}
             {config.customizations.generalLayout?.showWidgetTitle && (
               <div className='wigmix-widget-title text-primary' data-pw='itg-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
@@ -165,18 +169,18 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
 
             {/* Reference Product */}
             {productInfo && (
-              <div className='wigmix-reference-image pt-4 lg:pt-8' data-pw='itg-reference-product'>
+              <div className='wigmix-reference-image pt-4 md:pt-8' data-pw='itg-reference-product'>
                 <Result index={0} result={productInfo} isReferenceProduct={true} />
               </div>
             )}
 
             {/* ViSenze Footer desktop */}
             {config.customizations.generalLayout?.showViSenzeLogo && (
-              <Footer className='mt-auto hidden bg-transparent lg:flex' dataPw='itg-visenze-footer-desktop' />
+              <Footer className='mt-auto hidden bg-transparent md:flex' dataPw='itg-visenze-footer-desktop' />
             )}
           </div>
 
-          <div className='relative flex w-full flex-col bg-primary px-6 pb-4 lg:w-7/10 lg:pt-[6.5%]'>
+          <div className='relative flex w-full flex-col bg-primary px-6 pb-4 md:w-7/10 md:pt-[6.5%]'>
             <div className='flex items-center pb-4'>
               {/* Sort Type */}
               <div className='text-lg text-primary'>
@@ -221,12 +225,12 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
             </div>
 
             {/* ViSenze Footer mobile */}
-            <Footer className='mt-auto bg-transparent pt-4 lg:hidden' dataPw='itg-visenze-footer-mobile' />
+            <Footer className='mt-auto bg-transparent pt-4 md:hidden' dataPw='itg-visenze-footer-mobile' />
 
             {/* Sort Options Desktop */}
             {screen === ScreenType.SORT && breakpoint === WidgetBreakpoint.DESKTOP && (
               <SortOptions
-                className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 px-8 pb-8 pt-4 text-primary lg:flex'
+                className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 px-8 pb-8 pt-4 text-primary md:flex'
                 sortType={sortType}
                 setSortType={setSortType}
                 setScreen={setScreen}
@@ -235,7 +239,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
             {/* Filter Options Desktop */}
             {screen === ScreenType.FILTER && breakpoint === WidgetBreakpoint.DESKTOP && (
               <FilterOptions
-                className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 bg-primary px-4 pb-8 pt-4 text-primary lg:flex'
+                className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 bg-primary px-4 pb-8 pt-4 text-primary md:flex'
                 facets={facets}
                 selectedFilters={selectedFilters}
                 setSelectedFilters={setSelectedFilters}

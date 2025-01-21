@@ -24,7 +24,7 @@ interface ResultProps {
 }
 
 const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => {
-  const { productSearch, displaySettings, callbacks, debugMode, customizations } = useContext(WidgetDataContext);
+  const { widgetClient, displaySettings, callbacks, customizations } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { languageSettings } = useContext(WidgetDataContext);
@@ -34,7 +34,7 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
-    productSearch,
+    widgetClient,
     trackingMeta: metadata,
     isRecommendation: true,
     index,
@@ -49,7 +49,7 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
       entries.forEach((entry) => {
         if (entry.isIntersecting && productTrackingMeta) {
           observer.disconnect();
-          productSearch.sendEvent(Actions.PRODUCT_VIEW, productTrackingMeta);
+          widgetClient.sendEvent(Actions.PRODUCT_VIEW, productTrackingMeta);
         }
       });
     }, {
@@ -111,7 +111,7 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
   const price = getPrice(customizations, languageSettings, productDetails, result);
 
   return (
-    <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)} onClick={debugMode ? undefined : onClick}>
+    <a className='cursor-pointer' ref={(r) => r && setTargetRef(r)} onClick={onClick}>
       <div className='relative'>
         <div>
           <img className='widget-product-card-image object-cover' src={result.im_url}/>

@@ -19,11 +19,11 @@ import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 interface SimilarSearchProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   element: HTMLElement | null;
 }
 
-const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element }) => {
+const SimilarSearch: FC<SimilarSearchProps> = ({ config, widgetClient, element }) => {
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [image, setImage] = useState<SearchImage | undefined>();
@@ -47,7 +47,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     image,
     boxData,
     config,
-    productSearch,
+    widgetClient,
   });
 
   const resetData = (): void => {
@@ -61,7 +61,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
   const onModalClose = useCallback((): void => {
     setDialogVisible(false);
     if (productResults.length > 0) {
-      productSearch.sendEvent(Actions.CLOSE, {
+      widgetClient.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
         ...metadata,
       });
@@ -122,7 +122,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
   const onPopupIconClick = (event: any): void => {
     event.stopPropagation();
     event.preventDefault();
-    productSearch.sendEvent(Actions.CLICK, {
+    widgetClient.sendEvent(Actions.CLICK, {
       cat: Category.ENTRANCE,
       label: Labels.ICON,
     });
@@ -170,10 +170,14 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, productSearch, element 
     }
   }, [dialogVisible]);
 
+  widgetClient.openWidget = (): void => {
+    setDialogVisible(true);
+  };
+
   useEffect(() => {
     (async (): Promise<void> => {
       if (image && isImageDataUrl(image)) {
-        await productSearch.visearch.resizeImage(image.file, config.appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
+        await widgetClient.visearch.resizeImage(image.file, config.appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
       }
     })();
   }, [image]);

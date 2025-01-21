@@ -28,7 +28,7 @@ const Result = memo(({
   clearSearch,
   carouselRef,
 }: ResultProps) => {
-  const { callbacks, displaySettings, productSearch, customizations, debugMode, languageSettings } = useContext(WidgetDataContext);
+  const { callbacks, displaySettings, widgetClient, customizations, languageSettings } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { onProductClick } = callbacks;
@@ -37,7 +37,7 @@ const Result = memo(({
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
-    productSearch,
+    widgetClient,
     trackingMeta: metadata,
     isRecommendation: false,
     index,
@@ -52,7 +52,7 @@ const Result = memo(({
       entries.forEach((entry) => {
         if (entry.isIntersecting && productTrackingMeta) {
           observer.disconnect();
-          productSearch.sendEvent(Actions.PRODUCT_VIEW, productTrackingMeta);
+          widgetClient.sendEvent(Actions.PRODUCT_VIEW, productTrackingMeta);
         }
       });
     }, {
@@ -114,8 +114,8 @@ const Result = memo(({
   const price = getPrice(customizations, languageSettings, productDetails, result);
 
   return (
-    <a className={`${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)}
-       onClick={debugMode ? undefined : onClick} data-pw={`ss-product-result-card-${index + 1}`}>
+    <a className='cursor-pointer' ref={(r) => r && setTargetRef(r)}
+       onClick={onClick} data-pw={`ss-product-result-card-${index + 1}`}>
       <div className='relative'>
         <div className='flex justify-center'>
           <img className='wigmix-product-card-image' style={{ maxHeight: 240 }} src={result.im_url}

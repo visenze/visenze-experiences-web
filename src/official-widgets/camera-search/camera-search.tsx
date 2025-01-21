@@ -19,8 +19,8 @@ import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
-const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetClient }) => {
-  const { config, productSearch } = props;
+const CameraSearch = memo((props: { config: WidgetConfig; widgetClient: WidgetClient }) => {
+  const { config, widgetClient } = props;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [image, setImage] = useState<SearchImage | undefined>();
@@ -44,7 +44,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
     image,
     boxData,
     config,
-    productSearch,
+    widgetClient,
   });
 
   const resetData = (): void => {
@@ -59,7 +59,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
   const onModalClose = useCallback((): void => {
     setDialogVisible(false);
     if (productResults.length > 0) {
-      productSearch.sendEvent(Actions.CLOSE, {
+      widgetClient.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
         ...metadata,
       });
@@ -127,7 +127,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
   const onCameraButtonClick = (event: any): void => {
     event.stopPropagation();
     event.preventDefault();
-    productSearch.sendEvent(Actions.CLICK, {
+    widgetClient.sendEvent(Actions.CLICK, {
       label: Labels.ENTER,
       cat: Category.ENTRANCE,
     });
@@ -162,35 +162,14 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
     }
   };
 
-  // Accompanying logic to open the widget via the widget client's openWidget function
-  useEffect(() => {
-    const element = document.querySelector(config.displaySettings.cssSelector) as HTMLElement | null;
-    const callback = (mutationList: MutationRecord[]): void => {
-      mutationList.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'data-visenze-dialog-open') {
-          if (element && element.dataset.visenzeDialogOpen === 'true') {
-            setDialogVisible(true);
-          }
-        }
-      });
-    };
-    const observer = new MutationObserver(callback);
-    if (element) {
-      observer.observe(element, {
-        attributes: true,
-        childList: false,
-        subtree: false,
-      });
-    }
-    return (): void => {
-      observer.disconnect();
-    };
-  }, []);
+  widgetClient.openWidget = (): void => {
+    setDialogVisible(true);
+  };
 
   useEffect(() => {
     (async (): Promise<void> => {
       if (image && isImageDataUrl(image)) {
-        await productSearch.visearch.resizeImage(image.file, config.appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
+        await widgetClient.visearch.resizeImage(image.file, config.appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
       }
     })();
   }, [image]);
@@ -209,7 +188,7 @@ const CameraSearch = memo((props: { config: WidgetConfig; productSearch: WidgetC
 
   useEffect(() => {
     // Send Entrance Load event on widget render
-    productSearch.sendEvent(Actions.LOAD, {
+    widgetClient.sendEvent(Actions.LOAD, {
       cat: Category.ENTRANCE,
       label: Labels.PAGE,
     });

@@ -74,9 +74,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({ message, onMessageChange, onOverflo
 
 const ShoppingAssistant = memo((props: {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
 }) => {
-  const { config, productSearch } = props;
+  const { config, widgetClient } = props;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
@@ -140,10 +140,10 @@ const ShoppingAssistant = memo((props: {
     // Retrieve user id and session id from ViSearch client
     let uid = '';
     let sid = '';
-    productSearch.visearch.getUid((uidResp) => {
+    widgetClient.visearch.getUid((uidResp) => {
       uid = uidResp;
     });
-    productSearch.visearch.getSid((sidResp) => {
+    widgetClient.visearch.getSid((sidResp) => {
       sid = sidResp;
     });
     setAllowUserInput(false);
@@ -314,7 +314,7 @@ const ShoppingAssistant = memo((props: {
       }, 2000);
     };
     setDialogVisible(true);
-    productSearch.visearch.generateUuid((uuid) => {
+    widgetClient.visearch.generateUuid((uuid) => {
       setChatId(uuid);
       renderChat(1, uuid);
     });
@@ -358,38 +358,13 @@ const ShoppingAssistant = memo((props: {
       </div>
   );
 
-  // Accompanying logic to open the widget via the widget client's openWidget function
-  useEffect(() => {
-    const element = document.querySelector(config.displaySettings.cssSelector) as HTMLElement | null;
-    const callback = (mutationList: MutationRecord[]): void => {
-      mutationList.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'data-visenze-dialog-open') {
-          if (element && element.dataset.visenzeDialogOpen === 'true') {
-            const runtimeParamsString = element.dataset.visenzeRuntimeParams;
-            let initialMessages = defaultInitialMessages;
-            if (runtimeParamsString) {
-              const runtimeParams = JSON.parse(runtimeParamsString);
-              if (runtimeParams.initial_messages) {
-                initialMessages = runtimeParams.initial_messages;
-              }
-            }
-            openDialog(initialMessages);
-          }
-        }
-      });
-    };
-    const observer = new MutationObserver(callback);
-    if (element) {
-      observer.observe(element, {
-        attributes: true,
-        childList: false,
-        subtree: false,
-      });
+  widgetClient.openWidget = (params: any): void => {
+    let initialMessages = defaultInitialMessages;
+    if (params && params.initial_messages) {
+      initialMessages = params.initial_messages;
     }
-    return (): void => {
-      observer.disconnect();
-    };
-  }, []);
+    openDialog(initialMessages);
+  };
 
   if (!root) {
     return <></>;

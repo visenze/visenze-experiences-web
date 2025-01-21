@@ -30,7 +30,7 @@ interface EmbeddedSearchResultProps {
 const FACETS_ORDERING = ['category', 'price', 'brand', 'colors', 'sizes'];
 
 const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuery, imUrl }): ReactElement => {
-  const { productSearch, searchSettings, displaySettings, customizations } = useContext(WidgetDataContext);
+  const { widgetClient, searchSettings, displaySettings, customizations } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
@@ -155,7 +155,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
     }
     params.limit = 24; // hardcode for now
 
-    productSearch.multisearchByImage(params, handleSuccess, handleError);
+    widgetClient.multisearchByImage(params, handleSuccess, handleError);
   };
 
   const findSimilarClickHandler = (imgUrl: string): void => {

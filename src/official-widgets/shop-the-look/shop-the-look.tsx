@@ -1,4 +1,4 @@
-import type { CSSProperties, FC } from 'react';
+import type { CSSProperties, FC, ReactElement } from 'react';
 import { useEffect, useRef, useState, useContext } from 'react';
 import Slider from 'react-slick';
 import type { Settings } from 'react-slick';
@@ -19,7 +19,7 @@ import { WidgetBreakpoint } from '../../common/types/constants';
 
 interface ShopTheLookProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   productId: string;
 }
 
@@ -29,7 +29,7 @@ interface ObjectDot {
   left: number;
 }
 
-const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId }) => {
+const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) => {
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
@@ -47,10 +47,13 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
     setObjectIndex,
     objects,
   } = useRecommendationSearch({
-    productSearch,
+    widgetClient,
     config,
     productId,
     retryCount,
+    additionalParams: {
+      show_best_product_images: true,
+    },
   });
 
   const useSlideSettings = (): Settings => {
@@ -149,6 +152,20 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
     setIsLoading(false);
   }, []);
 
+  const getProductCarouselView = (): ReactElement => (
+    <div className='relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10' data-pw='stl-product-result-carousel'>
+      <Slider {...settings}>
+        {productResults.map((result, index) => (
+            <div key={`${result.product_id}-${index}`} data-pw={`stl-product-result-card-${index + 1}`}>
+              <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
+                <Result index={index} result={result}/>
+              </div>
+            </div>
+        ))}
+      </Slider>
+    </div>
+  );
+
   if (!root || isLoading) {
     return <></>;
   }
@@ -197,21 +214,17 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
                   data-pw='stl-reference-image'
                 />
               </Skeleton>
+              {/* Product Result Carousel */}
+              {breakpoint === 'mobile' && (
+                <div className='absolute bottom-4 w-full bg-primary'>
+                  {getProductCarouselView()}
+                </div>
+              )}
             </div>
           </div>
 
           {/* Product Result Carousel */}
-          <div className='relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10' data-pw='stl-product-result-carousel'>
-            <Slider {...settings}>
-              {productResults.map((result, index) => (
-                <div key={`${result.product_id}-${index}`} data-pw={`stl-product-result-card-${index + 1}`}>
-                  <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
-                    <Result index={index} result={result} />
-                  </div>
-                </div>
-              ))}
-            </Slider>
-          </div>
+          {(breakpoint === 'tablet' || breakpoint === 'desktop') && getProductCarouselView()}
         </div>
 
         {/* ViSenze Footer */}

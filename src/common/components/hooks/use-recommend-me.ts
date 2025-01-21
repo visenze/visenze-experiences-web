@@ -7,7 +7,7 @@ import { DEFAULT_ENDPOINT } from '../../constants';
 
 interface RecommendMeProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   productId: string;
 }
 
@@ -21,7 +21,7 @@ export interface RecommendMe {
 
 const useRecommendMe = ({
   config,
-  productSearch,
+  widgetClient,
   productId,
 }: RecommendMeProps): RecommendMe => {
   const { appKey, placementId, endpoint } = config.appSettings;
@@ -33,8 +33,8 @@ const useRecommendMe = ({
   // Retrieve user id and session id from ViSearch client
   let visenzeUserId = '';
   let visenzeSessionId = '';
-  productSearch.visearch.getUid((uid) => { visenzeUserId = uid; });
-  productSearch.visearch.getSid((sid) => { visenzeSessionId = sid; });
+  widgetClient.visearch.getUid((uid) => { visenzeUserId = uid; });
+  widgetClient.visearch.getSid((sid) => { visenzeSessionId = sid; });
 
   const recommendMeWithQuery = (query: string): void => {
     if (!appKey || !placementId) {
