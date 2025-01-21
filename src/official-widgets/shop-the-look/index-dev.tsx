@@ -10,7 +10,7 @@ const shouldRetrieveFieldsMapping = true;
 devInitWidget(
     WidgetType.SHOP_THE_LOOK,
     version,
-    ({ config, client, fieldMappings, element }) => <App productSearch={client} fieldMappings={fieldMappings} config={config} element={element}></App>,
+    ({ config, client, fieldMappings, element }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config} element={element}></App>,
     false,
     devConfigs,
     devFieldMappings,

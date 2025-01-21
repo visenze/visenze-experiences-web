@@ -13,7 +13,7 @@ import type { ProcessedProduct } from '../../types/product';
 import {getFacets, getFilterQueries, getFlattenProduct, getFlattenProducts, parseToProductTypes} from '../../utils';
 
 interface RecommendationSearchProps {
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   config: WidgetConfig;
   productId: string;
   retryCount: number;
@@ -37,7 +37,7 @@ export interface RecommendationSearch {
 }
 
 const useRecommendationSearch = ({
-  productSearch,
+  widgetClient,
   config,
   productId,
   retryCount,
@@ -103,7 +103,7 @@ const useRecommendationSearch = ({
       });
     }
 
-    productSearch.searchById(productId, params, handleSuccess, handleError);
+    widgetClient.searchById(productId, params, handleSuccess, handleError);
   };
 
   const getMetadata = (): Record<string, any> => {
@@ -168,8 +168,8 @@ const useRecommendationSearch = ({
 
       // Send RESULT LOAD tracking event if there are results
       if (results.length) {
-        productSearch.sendEvent(Actions.RESULT_LOAD, metadata);
-        productSearch.setLastTrackingMeta(metadata);
+        widgetClient.sendEvent(Actions.RESULT_LOAD, metadata);
+        widgetClient.setLastTrackingMeta(metadata);
       }
     }
   }, [response]);

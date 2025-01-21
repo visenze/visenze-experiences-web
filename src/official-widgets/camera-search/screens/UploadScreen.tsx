@@ -16,12 +16,12 @@ interface UploadScreenProps {
 }
 
 const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) => {
-  const { productSearch, customizations } = useContext(WidgetDataContext);
+  const { widgetClient, customizations } = useContext(WidgetDataContext);
   const intl = useIntl();
 
   const onGallerySelect = (index: number): void => {
     // Send Upload Click Sample event when a gallery image is clicked
-    productSearch.sendEvent(Actions.CLICK, {
+    widgetClient.sendEvent(Actions.CLICK, {
       cat: Category.UPLOAD,
       label: Labels.SAMPLE,
       pos: index + 1,
@@ -67,14 +67,14 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
 
   useEffect(() => {
     // Send Upload Load Page event on page load
-    productSearch.sendEvent(Actions.LOAD, {
+    widgetClient.sendEvent(Actions.LOAD, {
       cat: Category.UPLOAD,
       label: Labels.PAGE,
     });
 
     return (): void => {
       // Send Upload Close Page event on page close
-      productSearch.sendEvent(Actions.CLOSE, {
+      widgetClient.sendEvent(Actions.CLOSE, {
         cat: Category.UPLOAD,
         label: Labels.PAGE,
       });

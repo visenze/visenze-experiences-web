@@ -20,10 +20,10 @@ import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 interface ShoppableGalleryProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
 }
 
-const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, productSearch }) => {
+const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) => {
   const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
   const [retryCount, setRetryCount] = useState(0);
@@ -39,7 +39,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, productSearch }) 
   const intl = useIntl();
 
   const { objects, productResults, productTypes, metadata, error } = useRecommendationSearch({
-    productSearch,
+    widgetClient,
     config,
     retryCount,
     productId: activeProductId,

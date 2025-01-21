@@ -95,22 +95,8 @@ productSearch.sendEvent('event_name', {
 
 ### Custom callbacks
 
-ViSenze widgets provide some pre-defined callbacks such as after tracking (`trackingCallback`) and after product search (`onSearchCallback`).
-These callbacks can be captured via the widget configuration object within the website code, such as:
-
-```ts
-// e.g. for placement ID 5000
-window.visenzeConfigs[5000] = {
-  // ... other configurations
-  callbacks: {
-    onProductClick: (productDetails, trackingMeta) => {
-      // process the parameters as needed
-    },
-  },
-};
-```
-
-The similar idea can be easily extended for custom callbacks.
+ViSenze widgets provide some pre-defined callback events such as after tracking (`trackingCallback`), after product search (`onSearchCallback`), and after product click (`onProductClick`).
+Additional callback events can be added as follows:
 
 1. Add the callback definition under `WidgetConfig` interface in `visenze-core.ts`, e.g.:
    ```ts

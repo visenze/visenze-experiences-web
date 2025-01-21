@@ -56,7 +56,7 @@ const parseResults = (res: ProductSearchResponseSuccess, boxData?: BoxData): Pro
 };
 
 interface ImageMultisearchProps {
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   image: SearchImage | undefined;
   boxData: BoxData | undefined;
   config: WidgetConfig;
@@ -78,7 +78,7 @@ const useImageMultisearch = ({
   image,
   boxData,
   config,
-  productSearch,
+  widgetClient,
 }: ImageMultisearchProps): ImageMultisearch => {
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
   const [imageId, setImageId] = useState<string>('');
@@ -133,7 +133,7 @@ const useImageMultisearch = ({
     if (image) {
       const product = getProductType(boxData);
       const params = getSearchParams(image, imageId, config, product);
-      productSearch.multisearchByImage(params, handleImageSuccess, handleError);
+      widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
     } else {
       resetSearch();
     }
@@ -141,7 +141,7 @@ const useImageMultisearch = ({
 
   const multisearchWithParams = (params: Record<string, any>): void => {
     params = {...params, ...config.searchSettings};
-    productSearch.multisearchByImage(params, handleImageSuccess, handleError);
+    widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
   };
 
   const autocompleteWithQuery = (q: string): void => {
@@ -154,7 +154,7 @@ const useImageMultisearch = ({
       return;
     }
 
-    productSearch.multisearchAutocomplete(params, handleAutocompleteSuccess, handleError);
+    widgetClient.multisearchAutocomplete(params, handleAutocompleteSuccess, handleError);
   };
 
   useEffect(() => {
@@ -173,8 +173,8 @@ const useImageMultisearch = ({
       autocompleteWithQuery('');
 
       if (results.length) {
-        productSearch.sendEvent(Actions.RESULT_LOAD, metadata);
-        productSearch.setLastTrackingMeta(metadata);
+        widgetClient.sendEvent(Actions.RESULT_LOAD, metadata);
+        widgetClient.setLastTrackingMeta(metadata);
       }
     }
   }, [response]);

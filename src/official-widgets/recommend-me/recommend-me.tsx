@@ -14,10 +14,10 @@ import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 
 const RecommendMe = memo((props: {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   productId: string;
 }) => {
-  const { config, productSearch, productId } = props;
+  const { config, widgetClient, productId } = props;
   const [searchBarValue, setSearchBarValue] = useState('');
   const [query, setQueryValue] = useState('');
   const [carouselHistory, setCarouselHistory] = useState<any[]>([]);
@@ -32,7 +32,7 @@ const RecommendMe = memo((props: {
     requestId,
   } = useRecommendMe({
     config,
-    productSearch,
+    widgetClient,
     productId,
   });
 
@@ -47,8 +47,8 @@ const RecommendMe = memo((props: {
         queryId: requestId,
         cat: Category.RESULT,
       };
-      productSearch.sendEvent(Actions.RESULT_LOAD, requestMetadata);
-      productSearch.setLastTrackingMeta(requestMetadata);
+      widgetClient.sendEvent(Actions.RESULT_LOAD, requestMetadata);
+      widgetClient.setLastTrackingMeta(requestMetadata);
       setMetadata(requestMetadata);
 
       // Prepend newly created carousel to carousel history

@@ -29,7 +29,7 @@ interface EmbeddedSearchResultProps {
 }
 
 const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuery, imUrl }): ReactElement => {
-  const { productSearch, searchSettings, displaySettings } = useContext(WidgetDataContext);
+  const { widgetClient, searchSettings, displaySettings } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
@@ -195,7 +195,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
     }
     params.limit = 24; // hardcode for now
 
-    productSearch.multisearchByImage(params, handleSuccess, handleError);
+    widgetClient.multisearchByImage(params, handleSuccess, handleError);
 
     // Only add to history if we have actual search parameters
     if (text || imgUrl) {
@@ -230,7 +230,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
       });
     }
 
-    productSearch.multisearchByImage(params, handleSuccess, handleError);
+    widgetClient.multisearchByImage(params, handleSuccess, handleError);
   };
 
   const searchFromHistory = (entry: SearchHistoryEntry): void => {

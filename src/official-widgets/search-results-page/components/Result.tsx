@@ -24,7 +24,7 @@ interface ResultProps {
 }
 
 const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) => {
-  const { productSearch, displaySettings, customizations, callbacks, languageSettings } = useContext(WidgetDataContext);
+  const { widgetClient, displaySettings, customizations, callbacks, languageSettings } = useContext(WidgetDataContext);
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { onProductClick } = callbacks;
@@ -32,7 +32,7 @@ const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) 
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
-    productSearch,
+    widgetClient,
     trackingMeta: metadata,
     isRecommendation: false,
     index,
@@ -47,7 +47,7 @@ const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) 
       entries.forEach((entry) => {
         if (entry.isIntersecting && productTrackingMeta) {
           observer.disconnect();
-          productSearch.sendEvent(Actions.PRODUCT_VIEW, productTrackingMeta);
+          widgetClient.sendEvent(Actions.PRODUCT_VIEW, productTrackingMeta);
         }
       });
     }, {

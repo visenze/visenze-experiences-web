@@ -7,7 +7,7 @@ import type { SearchImage } from './image';
 import type { BoxData, ProcessedProduct } from './product';
 
 interface WidgetData extends WidgetConfig {
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   fieldMappings?: Record<string, string>;
 }
 
@@ -31,7 +31,7 @@ export interface CroppingContextValue {
 
 export const WidgetDataContext = createContext<WidgetData>({
   ...DEFAULT_CONFIGS,
-  productSearch: getWidgetClient(DEFAULT_CONFIGS, WidgetType.CAMERA_SEARCH, '0.0.0'),
+  widgetClient: getWidgetClient(DEFAULT_CONFIGS, WidgetType.CAMERA_SEARCH, '0.0.0'),
 });
 
 export const WidgetResultContext = createContext<WidgetResultContextValue>({

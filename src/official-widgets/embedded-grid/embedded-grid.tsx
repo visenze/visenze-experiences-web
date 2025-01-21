@@ -11,11 +11,11 @@ import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface EmbeddedGridProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   productId: string;
 }
 
-const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, productSearch, productId }) => {
+const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, widgetClient, productId }) => {
   const root = useContext(RootContext);
   const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +23,7 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, productSearch, productId 
   const breakpoint = useBreakpoint();
 
   const { productResults, metadata, error } = useRecommendationSearch({
-    productSearch,
+    widgetClient,
     config,
     productId,
     retryCount,

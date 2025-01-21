@@ -21,7 +21,7 @@ const useAutocomplete = ({
   query,
   image,
 }: AutocompleteProps): Autocomplete => {
-  const { searchSettings, productSearch } = useContext(WidgetDataContext);
+  const { searchSettings, widgetClient } = useContext(WidgetDataContext);
   const [imageId, setImageId] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [autocompleteResults, setAutocompleteResults] = useState<string[]>([]);
@@ -52,8 +52,8 @@ const useAutocomplete = ({
       setAutocompleteResults(newAutocompleteResults);
 
       if (newAutocompleteResults.length > 0) {
-        productSearch.sendEvent(Actions.RESULT_LOAD, newMetadata);
-        productSearch.setLastTrackingMeta(newMetadata);
+        widgetClient.sendEvent(Actions.RESULT_LOAD, newMetadata);
+        widgetClient.setLastTrackingMeta(newMetadata);
       }
     }
   };
@@ -74,7 +74,7 @@ const useAutocomplete = ({
       }
     }
 
-    productSearch.multisearchAutocomplete(params, handleAutocompleteSuccess, handleError);
+    widgetClient.multisearchAutocomplete(params, handleAutocompleteSuccess, handleError);
   };
 
   useEffect(() => {

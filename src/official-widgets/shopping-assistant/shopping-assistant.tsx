@@ -74,9 +74,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({ message, onMessageChange, onOverflo
 
 const ShoppingAssistant = memo((props: {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
 }) => {
-  const { config, productSearch } = props;
+  const { config, widgetClient } = props;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
@@ -140,10 +140,10 @@ const ShoppingAssistant = memo((props: {
     // Retrieve user id and session id from ViSearch client
     let uid = '';
     let sid = '';
-    productSearch.visearch.getUid((uidResp) => {
+    widgetClient.visearch.getUid((uidResp) => {
       uid = uidResp;
     });
-    productSearch.visearch.getSid((sidResp) => {
+    widgetClient.visearch.getSid((sidResp) => {
       sid = sidResp;
     });
     setAllowUserInput(false);
@@ -314,7 +314,7 @@ const ShoppingAssistant = memo((props: {
       }, 2000);
     };
     setDialogVisible(true);
-    productSearch.visearch.generateUuid((uuid) => {
+    widgetClient.visearch.generateUuid((uuid) => {
       setChatId(uuid);
       renderChat(1, uuid);
     });
@@ -358,7 +358,7 @@ const ShoppingAssistant = memo((props: {
       </div>
   );
 
-  productSearch.openWidget = (params: any): void => {
+  widgetClient.openWidget = (params: any): void => {
     let initialMessages = defaultInitialMessages;
     if (params && params.initial_messages) {
       initialMessages = params.initial_messages;
