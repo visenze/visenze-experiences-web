@@ -1,4 +1,4 @@
-module.exports = (widget, version, useCustomLoader=true) => {
+module.exports = (widget, version, useTailwindStyleLoader = true) => {
   const widgetName = widget.toLowerCase();
   const tailwindStyleLoader = {
     loader: 'style-loader',
@@ -15,7 +15,7 @@ module.exports = (widget, version, useCustomLoader=true) => {
     loader: 'css-loader',
     options: { modules: { namedExport: false, localIdentName: 'vi_[name]__[local]' } },
   };
-  const styleLoader = useCustomLoader ? tailwindStyleLoader : 'style-loader';
+  const styleLoader = useTailwindStyleLoader ? tailwindStyleLoader : 'style-loader';
 
   return {
     rules: [

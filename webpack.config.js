@@ -10,15 +10,11 @@ const getWebpackModule = require('./webpack.util');
 const getS3Plugin = require('./webpack.s3');
 
 const getWebpackConfig = (config) => {
-  let customer = config.custom_build;
-  let dir = config.dir;
-  let entry = config.entry || 'index.ts';
-  let isUseShadowDom = config.use_shadow_dom !== 'false';
-  let packageName = config.name.replaceAll('-', '_');
-  let version = require(`./src/version`);
-  let buildEnv = env.build || 'production';
-  let isPublish = env.publish === 'true';
-  let prefix = 'wigmix';
+  const dir = config.dir;
+  const version = require(`./src/version`);
+  const packageName = dir.split('/').pop().replaceAll('-', '_');
+  const buildEnv = env.build || 'production';
+  const isPublish = env.publish === 'true';
 
   if (!versionRegex.test(version)) {
     throw new Error('Invalid script version');
@@ -26,15 +22,15 @@ const getWebpackConfig = (config) => {
 
   const exportConfig = {
     entry: {
-      [version]: path.resolve(dir ? `src/${dir}` : 'src', entry),
+      [version]: path.resolve(`src/${dir}`, 'index.tsx'),
     },
     output: {
-      path: path.resolve(__dirname, `dist/${customer ? customer + '/' : ''}${packageName}`),
-      filename: (customer ? `${customer}.` : '') + `${buildEnv}.${prefix}_${packageName.toLowerCase()}.[name].js`,
+      path: path.resolve(__dirname, `dist/${packageName}`),
+      filename: `${buildEnv}.wigmix_${packageName.toLowerCase()}.[name].js`,
       publicPath: '/',
     },
     mode: 'production',
-    module: getWebpackModule(packageName, version, isUseShadowDom),
+    module: getWebpackModule(packageName, version),
     plugins: [
       new DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
