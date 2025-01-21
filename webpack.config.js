@@ -4,7 +4,7 @@ const path = require('path');
 const CompressionPlugin = require('compression-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const versionRegex = new RegExp(/^(\d)+\.(\d){1,3}\.(\d){1,3}$/);
-const { DefinePlugin, IgnorePlugin } = require('webpack');
+const { DefinePlugin, IgnorePlugin, optimize } = require('webpack');
 const { env } = require('process');
 const getWebpackModule = require('./webpack.util');
 const getS3Plugin = require('./webpack.s3');
@@ -42,6 +42,9 @@ const getWebpackConfig = (config) => {
       }),
       new IgnorePlugin({
         resourceRegExp: /\/iconv-loader$/,
+      }),
+      new optimize.LimitChunkCountPlugin({
+        maxChunks: 1,
       }),
       new ESLintPlugin({
         extensions: ['ts', 'tsx', 'js', 'jsxs'],
