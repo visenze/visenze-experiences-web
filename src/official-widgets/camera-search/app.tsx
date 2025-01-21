@@ -31,7 +31,7 @@ const DEFAULT_TEXTS: LanguagePack = {
 const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
   const [configInternal, setConfigInternal] = useState(config);
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
-  const [messages, setMessages] = useState<Record<string, string>>({});
+  const [messages, setMessages] = useState(DEFAULT_TEXTS[DEFAULT_LOCALE]);
 
   productSearch.updateConfig = (configOverride, isPartial): void => {
     if (configOverride) {
