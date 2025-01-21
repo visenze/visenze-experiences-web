@@ -12,7 +12,7 @@ import App from './app';
     initWidget: initWidgetFactory(
         WidgetType.SHOPPABLE_GALLERY,
         version,
-        ({ config, client, fieldMappings }) => <App productSearch={client} fieldMappings={fieldMappings} config={config}></App>,
+        ({ config, client, fieldMappings }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config}></App>,
         false,
     ),
     deepMerge,

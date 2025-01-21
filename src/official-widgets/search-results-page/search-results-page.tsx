@@ -7,8 +7,8 @@ import { WidgetResultContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
 import SearchBarWithDropdown from './components/SearchBarWithDropdown';
 
-const SearchResultsPage = memo((props: { config: WidgetConfig; productSearch: WidgetClient }) => {
-  const { config, productSearch } = props;
+const SearchResultsPage = memo((props: { config: WidgetConfig; widgetClient: WidgetClient }) => {
+  const { config, widgetClient } = props;
   const [searchBarValue, setSearchBarValue] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeProduct, setActiveProduct] = useState<ProcessedProduct | null>(null);
@@ -18,7 +18,7 @@ const SearchResultsPage = memo((props: { config: WidgetConfig; productSearch: Wi
       image: undefined,
       boxData: undefined,
       config,
-      productSearch,
+      widgetClient,
     });
 
   const handleMultisearchWithQuery = (query: string): void => {

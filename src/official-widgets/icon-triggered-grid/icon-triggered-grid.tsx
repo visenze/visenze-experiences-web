@@ -24,11 +24,11 @@ export enum ScreenType {
 
 interface IconTriggeredGridProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   productId: string;
 }
 
-const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, productId }) => {
+const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, productId }) => {
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
@@ -47,7 +47,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
   const intl = useIntl();
 
   const { productInfo, productResults, facets, metadata, error } = useRecommendationSearch({
-    productSearch,
+    widgetClient,
     config,
     productId,
     retryCount,
@@ -60,7 +60,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
     setSortType(SortType.RELEVANCE);
     setRetryCount(0);
     if (productResults.length > 0) {
-      productSearch.sendEvent(Actions.CLOSE, {
+      widgetClient.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
         ...metadata,
       });
@@ -68,7 +68,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
   }, [productResults]);
 
   const onPopupIconClick = (): void => {
-    productSearch.sendEvent(Actions.CLICK, {
+    widgetClient.sendEvent(Actions.CLICK, {
       cat: Category.ENTRANCE,
       label: Labels.ICON,
     });
@@ -110,7 +110,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, productSearch, 
     return cssConfig;
   };
 
-  productSearch.openWidget = (): void => {
+  widgetClient.openWidget = (): void => {
     setDialogVisible(true);
   };
 

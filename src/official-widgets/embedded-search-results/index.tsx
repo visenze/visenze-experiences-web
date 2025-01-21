@@ -12,7 +12,7 @@ import App from './app';
     initWidget: initWidgetFactory(
         WidgetType.EMBEDDED_SEARCH_RESULTS,
         version,
-        ({ config, client, fieldMappings, element }) => <App productSearch={client} fieldMappings={fieldMappings} config={config} element={element}></App>,
+        ({ config, client, fieldMappings, element }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config} element={element}></App>,
         false,
     ),
     deepMerge,

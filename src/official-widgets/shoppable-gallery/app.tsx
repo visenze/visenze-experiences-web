@@ -12,7 +12,7 @@ import { deepMerge, setCssVariables } from '../../common/client/initialization';
 
 interface AppProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   fieldMappings: Record<string, string>;
 }
 
@@ -25,12 +25,12 @@ const DEFAULT_TEXTS: LanguagePack = {
   },
 };
 
-const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
+const App: FC<AppProps> = ({ config, fieldMappings, widgetClient }) => {
   const [configInternal, setConfigInternal] = useState(config);
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
   const [messages, setMessages] = useState(DEFAULT_TEXTS[DEFAULT_LOCALE]);
 
-  productSearch.updateConfig = (configOverride, isPartial): void => {
+  widgetClient.updateConfig = (configOverride, isPartial): void => {
     if (configOverride) {
       if (isPartial) {
         setConfigInternal(deepMerge(configOverride, config));
@@ -51,10 +51,10 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch }) => {
   }, [configInternal]);
 
   return (
-    <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, productSearch }}>
+    <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, widgetClient }}>
       <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
-          <ShoppableGallery config={configInternal} productSearch={productSearch}/>
+          <ShoppableGallery config={configInternal} widgetClient={widgetClient}/>
         </IntlProvider>
       </ShadowWrapper>
     </WidgetDataContext.Provider>

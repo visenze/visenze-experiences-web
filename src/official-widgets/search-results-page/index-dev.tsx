@@ -10,7 +10,7 @@ const shouldRetrieveFieldsMapping = true;
 devInitWidget(
     WidgetType.SEARCH_RESULTS_PAGE,
     version,
-    ({ config, client, fieldMappings }) => <App productSearch={client} fieldMappings={fieldMappings} config={config}></App>,
+    ({ config, client, fieldMappings }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config}></App>,
     false,
     devConfigs,
     devFieldMappings,

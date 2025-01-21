@@ -6,7 +6,7 @@ import { getURL } from '../utils';
 
 interface ResultLogicProps {
   displaySettings: WidgetConfig['displaySettings'];
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   trackingMeta: Record<string, any>;
   isRecommendation: boolean;
   index: number;
@@ -17,7 +17,7 @@ interface ResultLogicProps {
 
 const ResultLogicImpl = ({
   displaySettings,
-  productSearch,
+  widgetClient,
   trackingMeta,
   isRecommendation,
   index,
@@ -25,7 +25,7 @@ const ResultLogicImpl = ({
   result,
   openLinksInNewTab,
 }: ResultLogicProps): ResultLogic => {
-  const placementId = productSearch.placementId;
+  const placementId = widgetClient.placementId;
 
   const productTrackingMeta: Record<string, any> = {
     ...trackingMeta,
@@ -48,7 +48,7 @@ const ResultLogicImpl = ({
       `visenze_last_click_query_id_${placementId}`,
       productTrackingMeta.queryId,
     );
-    productSearch.sendEvent(Actions.PRODUCT_CLICK, productTrackingMeta);
+    widgetClient.sendEvent(Actions.PRODUCT_CLICK, productTrackingMeta);
     if (onProductClick && typeof onProductClick === 'function') {
       onProductClick(result, productTrackingMeta);
     } else {

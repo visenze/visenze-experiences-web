@@ -12,7 +12,7 @@ import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface ShoppableLookbookProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   productId: string;
 }
 
@@ -22,7 +22,7 @@ interface ObjectDot {
   left: number;
 }
 
-const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, productId }) => {
+const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, productId }) => {
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
@@ -32,7 +32,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, productSearch, 
   const breakpoint = useBreakpoint();
 
   const { productResults, metadata, referenceImageUrl, error, objectIndex, setObjectIndex, objects } = useRecommendationSearch({
-      productSearch,
+      widgetClient,
       config,
       productId,
       retryCount,

@@ -19,7 +19,7 @@ import { WidgetBreakpoint } from '../../common/types/constants';
 
 interface ShopTheLookProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   productId: string;
 }
 
@@ -29,7 +29,7 @@ interface ObjectDot {
   left: number;
 }
 
-const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId }) => {
+const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) => {
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
@@ -47,7 +47,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, productSearch, productId })
     setObjectIndex,
     objects,
   } = useRecommendationSearch({
-    productSearch,
+    widgetClient,
     config,
     productId,
     retryCount,

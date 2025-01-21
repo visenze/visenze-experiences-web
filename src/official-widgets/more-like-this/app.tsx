@@ -12,7 +12,7 @@ import { deepMerge, setCssVariables } from '../../common/client/initialization';
 
 interface AppProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   fieldMappings: Record<string, string>;
   element: HTMLElement;
 }
@@ -25,13 +25,13 @@ const DEFAULT_TEXTS: LanguagePack = {
   },
 };
 
-const App: FC<AppProps> = ({ config, fieldMappings, productSearch, element }) => {
+const App: FC<AppProps> = ({ config, fieldMappings, widgetClient, element }) => {
   const [configInternal, setConfigInternal] = useState(config);
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
   const [messages, setMessages] = useState(DEFAULT_TEXTS[DEFAULT_LOCALE]);
   const productId = element.dataset.pid ?? '';
 
-  productSearch.updateConfig = (configOverride, isPartial): void => {
+  widgetClient.updateConfig = (configOverride, isPartial): void => {
     if (configOverride) {
       if (isPartial) {
         setConfigInternal(deepMerge(configOverride, config));
@@ -52,10 +52,10 @@ const App: FC<AppProps> = ({ config, fieldMappings, productSearch, element }) =>
   }, [configInternal]);
 
   return (
-    <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, productSearch }}>
+    <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, widgetClient }}>
       <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
-          <MoreLikeThis config={configInternal} productSearch={productSearch} productId={productId}/>
+          <MoreLikeThis config={configInternal} widgetClient={widgetClient} productId={productId}/>
         </IntlProvider>
       </ShadowWrapper>
     </WidgetDataContext.Provider>
