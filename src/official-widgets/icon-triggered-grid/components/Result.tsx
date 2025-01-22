@@ -1,4 +1,4 @@
-import { useState, memo, useEffect, useContext, type CSSProperties, type FC } from 'react';
+import { useState, useEffect, useContext, type CSSProperties, type FC } from 'react';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import ResultLogicImpl from '../../../common/client/result-logic';
 import type { ProcessedProduct } from '../../../common/types/product';
@@ -22,7 +22,8 @@ interface ResultProps {
 
 const Result: FC<ResultProps> = ({ index, result, isReferenceProduct }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const { widgetClient, displaySettings, customizations, callbacks, languageSettings } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { onProductClick } = callbacks;
@@ -119,4 +120,4 @@ const Result: FC<ResultProps> = ({ index, result, isReferenceProduct }) => {
   );
 };
 
-export default memo(Result);
+export default Result;

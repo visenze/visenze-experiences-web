@@ -52,7 +52,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, widgetClient, element }) => 
   }, [configInternal]);
 
   return (
-    <WidgetDataContext.Provider value={{ ...configInternal, fieldMappings, widgetClient }}>
+    <WidgetDataContext.Provider value={{ widgetConfig: configInternal, fieldMappings, widgetClient }}>
       <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
           <EmbeddedGrid config={configInternal} widgetClient={widgetClient} productId={productId}/>

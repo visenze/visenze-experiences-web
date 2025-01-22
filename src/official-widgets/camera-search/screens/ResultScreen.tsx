@@ -50,7 +50,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
   searchHistory,
   setSearchHistory,
 }) => {
-  const { customizations, widgetClient } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const { productResults, autocompleteResults } = useContext(WidgetResultContext);
   const [search, setSearch] = useState<string>('');
   const [showFullResults, setShowFullResults] = useState(false);

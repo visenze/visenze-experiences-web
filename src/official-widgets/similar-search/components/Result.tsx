@@ -1,4 +1,4 @@
-import { useContext, memo, useEffect, useState, type CSSProperties } from 'react';
+import { useContext, useEffect, useState, type CSSProperties, type FC } from 'react';
 import { Button } from '@nextui-org/button';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import type { ProcessedProduct } from '../../../common/types/product';
@@ -21,14 +21,15 @@ interface ResultProps {
   carouselRef?: React.RefObject<HTMLDivElement>;
 }
 
-const Result = memo(({
+const Result: FC<ResultProps> = ({
   result,
   index,
   onImageSearch,
   clearSearch,
   carouselRef,
-}: ResultProps) => {
-  const { callbacks, displaySettings, widgetClient, customizations, languageSettings } = useContext(WidgetDataContext);
+}) => {
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { onProductClick } = callbacks;
@@ -170,6 +171,6 @@ const Result = memo(({
       </div>
     </a>
   );
-});
+};
 
 export default Result;

@@ -29,7 +29,8 @@ interface HotspotRecommendationsProps {
 }
 
 const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, openDrawer, setOpenDrawer, activeImageUrl, placementId }) => {
-  const { customizations } = useContext(WidgetDataContext);
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const { productTypes } = useContext(WidgetResultContext);
   const { selectedHotspot, setSelectedHotspot } = useContext(CroppingContext) ?? {};
   const intl = useIntl();

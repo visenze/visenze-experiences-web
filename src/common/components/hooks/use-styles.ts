@@ -6,7 +6,8 @@ import { WidgetDataContext } from '../../types/contexts';
  */
 const useStyles = (root: HTMLElement | null): void => {
   const [customCssElement, setCustomCssElement] = useState<HTMLStyleElement | null>(null);
-  const { widgetClient, customizations, platformSettings } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { customizations, platformSettings } = widgetConfig;
   const styleTag = document.getElementById(`vi__${widgetClient.widgetType.toLowerCase()}__${widgetClient.widgetVersion.toLowerCase()}`);
 
   useEffect(() => {

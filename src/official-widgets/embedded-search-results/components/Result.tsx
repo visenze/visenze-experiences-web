@@ -24,10 +24,10 @@ interface ResultProps {
 }
 
 const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => {
-  const { widgetClient, displaySettings, callbacks, customizations } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
-  const { languageSettings } = useContext(WidgetDataContext);
   const { onProductClick } = callbacks;
   const [isLoading, setIsLoading] = useState(true);
   const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;

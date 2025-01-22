@@ -24,7 +24,8 @@ interface ResultProps {
 }
 
 const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) => {
-  const { widgetClient, displaySettings, customizations, callbacks, languageSettings } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { onProductClick } = callbacks;

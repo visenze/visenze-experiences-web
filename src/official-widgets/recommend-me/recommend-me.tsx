@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect, useState } from 'react';
+import { type FC, useContext, useEffect, useState } from 'react';
 import { Button } from '@nextui-org/button';
 import { v4 as uuid } from 'uuid';
 import { Input } from '@nextui-org/input';
@@ -12,12 +12,13 @@ import CarouselLoader from './components/CarouselLoader';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 
-const RecommendMe = memo((props: {
+interface RecommendMeProps {
   config: WidgetConfig;
   widgetClient: WidgetClient;
   productId: string;
-}) => {
-  const { config, widgetClient, productId } = props;
+}
+
+const RecommendMe: FC<RecommendMeProps> = ({ config, widgetClient, productId }) => {
   const [searchBarValue, setSearchBarValue] = useState('');
   const [query, setQueryValue] = useState('');
   const [carouselHistory, setCarouselHistory] = useState<any[]>([]);
@@ -123,6 +124,6 @@ const RecommendMe = memo((props: {
       </WidgetResultContext.Provider>
     </>
   );
-});
+};
 
 export default RecommendMe;

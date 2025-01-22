@@ -25,7 +25,8 @@ interface FilterOptionsProps {
 }
 
 const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilters, setSelectedFilters, setScreen }) => {
-  const { displaySettings, customizations } = useContext(WidgetDataContext);
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { displaySettings, customizations } = widgetConfig;
   const intl = useIntl();
 
   const showFacetValues = (facet: Facet): ReactElement | ReactElement[] => {

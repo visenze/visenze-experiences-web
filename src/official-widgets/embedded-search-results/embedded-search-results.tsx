@@ -30,7 +30,8 @@ interface EmbeddedSearchResultProps {
 const FACETS_ORDERING = ['category', 'price', 'brand', 'colors', 'sizes'];
 
 const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuery, imUrl }): ReactElement => {
-  const { widgetClient, searchSettings, displaySettings, customizations } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { displaySettings, searchSettings, customizations } = widgetConfig;
   const { productDetails } = displaySettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);

@@ -20,7 +20,8 @@ interface ImageGalleryUploadProps {
 }
 
 const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, placementId, image }) => {
-  const { customizations } = useContext(WidgetDataContext);
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const [openModal, setOpenModal] = useState(false);
   const [searchImage, setSearchImage] = useState<SearchImage>();
   const breakpoint = useBreakpoint();
