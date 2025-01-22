@@ -59,7 +59,7 @@ const useSearchAsYouType = ({
     const params = { ...searchSettings };
     params.q = query;
     params.sayt = true;
-    params.limit = 3;
+    params.limit = 8;
 
     if (image) {
       if (isImageUrl(image)) {

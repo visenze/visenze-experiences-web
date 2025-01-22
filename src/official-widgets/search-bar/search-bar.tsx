@@ -2,6 +2,7 @@ import type { FC, ReactElement } from 'react';
 import { useEffect, useContext, useState } from 'react';
 import { Listbox, ListboxItem, ListboxSection } from '@nextui-org/listbox';
 // import { cn } from '@nextui-org/theme';
+import { Button } from '@nextui-org/button';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import type { SearchImage } from '../../common/types/image';
@@ -209,7 +210,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                       aria-label='Autocomplete Dropdown'
                     >
                       <ListboxSection classNames={{ base: 'mb-0' }}>
-                        {autocompleteResults.map((result, index) => (
+                        {autocompleteResults.slice(0, 6).map((result, index) => (
                           <ListboxItem
                             tabIndex={0}
                             className='pr-4'
@@ -224,14 +225,28 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                       </ListboxSection>
                     </Listbox>
                   </div>
+
+                  <div className='px-4'>
+                    <Button
+                      className='w-full rounded bg-buttonPrimary py-2 font-semibold text-white'
+                      radius='none'
+                      onClick={() => {
+                        if (query) {
+                          redirectWithAutocomplete(query);
+                        }
+                      }}
+                    >
+                      View all products
+                    </Button>
+                  </div>
                 </div>
 
-                <div className='hidden w-2/5 justify-center md:flex'>
+                <div className='hidden w-3/5 justify-center md:flex'>
                   <div className='flex flex-col gap-2 px-4 py-1'>
                     <p className='text-large font-semibold leading-6 text-primary'>Related products</p>
 
                       <div
-                        className='grid w-full grid-cols-3 gap-x-2 gap-y-4 pb-2'
+                        className='grid w-full grid-cols-4 gap-x-2 gap-y-4 pb-2'
                         data-pw='esr-product-result-grid'
                       >
                         {searchAsYouTypeResults.map((result, index) => (
@@ -266,7 +281,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                       aria-label='Recent searches'
                     >
                       <ListboxSection classNames={{ base: 'mb-0' }}>
-                        {searchHistory.filter((entry) => entry.type === 'text').slice(0, 5).map((entry) => (
+                        {searchHistory.filter((entry) => entry.type === 'text').slice(0, 4).map((entry) => (
                           <ListboxItem
                             tabIndex={0}
                             className='pr-4'
