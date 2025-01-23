@@ -6,14 +6,13 @@ import getWidgetClient from '../client/product-search';
 import type { SearchImage } from './image';
 import type { BoxData, ProcessedProduct } from './product';
 
-interface WidgetData extends WidgetConfig {
-  productSearch: WidgetClient;
+interface WidgetData {
+  widgetConfig: WidgetConfig;
+  widgetClient: WidgetClient;
   fieldMappings?: Record<string, string>;
-  widgetType: WidgetType;
-  version: string;
 }
 
-export interface WidgetResultContextValue {
+interface WidgetResultContextValue {
   productTypes?: ProductType[];
   image?: SearchImage;
   imageId?: string;
@@ -24,7 +23,7 @@ export interface WidgetResultContextValue {
   autocompleteResults?: string[];
 }
 
-export interface CroppingContextValue {
+interface CroppingContextValue {
   selectedHotspot: number;
   setSelectedHotspot: (selectedHotspot: number) => void;
   boxData?: BoxData;
@@ -32,16 +31,8 @@ export interface CroppingContextValue {
 }
 
 export const WidgetDataContext = createContext<WidgetData>({
-  ...DEFAULT_CONFIGS,
-  productSearch: getWidgetClient({
-    config: DEFAULT_CONFIGS,
-    widgetType: undefined,
-    widgetVersion: '0.0.0',
-    widgetDirectory: '/',
-    deployTypeId: 0,
-  }),
-  widgetType: WidgetType.CAMERA_SEARCH,
-  version: '0.0.0',
+  widgetConfig: DEFAULT_CONFIGS,
+  widgetClient: getWidgetClient(DEFAULT_CONFIGS, WidgetType.CAMERA_SEARCH, '0.0.0'),
 });
 
 export const WidgetResultContext = createContext<WidgetResultContextValue>({

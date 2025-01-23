@@ -12,7 +12,7 @@ interface ModalProps {
   layout: 'desktop' | 'tablet' | 'mobile' | 'nested_mobile';
   children: ReactElement | ReactElement[];
   className?: string;
-  position: 'center' | 'right';
+  position: 'left' | 'center' | 'right';
 }
 
 const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position }) => {
@@ -49,8 +49,8 @@ const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, pos
       closeTimeoutMS={timeout}
       parentSelector={(): HTMLElement => root}
       isOpen={open}
-      className={cn(`vi_modal_${layout} vi_modal_position_${position}`, className)}
-      overlayClassName={`vi_modal_overlay vi_modal_position_${position}`}
+      className={cn(`wigmix-modal bg-primary text-primary wigmix-modal-${layout} wigmix-modal-position-${position}`, className)}
+      overlayClassName={`wigmix-modal-overlay wigmix-modal-position-${position}`}
       onRequestClose={onClose}
       appElement={document.body}>
       {children}
@@ -62,16 +62,17 @@ interface VisenzeModalProps {
   open: boolean;
   onClose: () => void;
   layout: 'desktop' | 'tablet' | 'mobile' | 'nested_mobile';
-  position: 'center' | 'right';
+  position: 'left' | 'center' | 'right';
   children: ReactElement | ReactElement[];
   className?: string;
   placementId: string;
   idSuffix?: string;
+  fontFamily: string;
 }
 
 const ViSenzeModal: FC<VisenzeModalProps> = (props) => (
     <Portal idName={`visenze-widget-modal-portal-${props.placementId}${props.idSuffix ? `-${props.idSuffix}` : ''}`}>
-      <ShadowWrapper>
+      <ShadowWrapper fontFamily={props.fontFamily}>
         <Modal {...props} />
       </ShadowWrapper>
     </Portal>

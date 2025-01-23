@@ -1,4 +1,7 @@
 # Camera Search widget
+
+![status](https://img.shields.io/badge/status-beta-yellow)
+
 This is the repository for ViSenze's Camera Search widget. 
 
 This widget is designed to enable consumers to quickly finding products using images. 

@@ -1,22 +1,34 @@
 import { DEFAULT_LOCALE } from '../default-configs';
+import { deepMerge } from '../client/initialization';
 
-export const getLocaleTexts = (texts: Record<string, Record<string, string>>, localeParam: string): Record<string, string> => {
+// Hierarchy: locale > text key > text value
+export type LanguagePack = Record<string, Record<string, string>>;
+
+export const getLocaleTexts = (localeParam: string,
+                               presetTexts: LanguagePack,
+                               customTexts: LanguagePack = {}): Record<string, string> => {
   const locale = localeParam || DEFAULT_LOCALE;
-  const lang = locale.indexOf('-') >= 0 ? locale.split('-')[0] : '';
-  if (!lang) {
-    // If locale code is just language, return directly
-    return texts[locale] || texts[DEFAULT_LOCALE];
-  }
-  const textsWithRegionVariants = texts[lang] || {};
-  Object.keys(texts[locale] || {}).forEach((key) => {
-    if (texts[locale][key]) {
-      // Replace all available keys with regional variant
-      textsWithRegionVariants[key] = texts[locale][key];
+  const lang = locale.indexOf('-') >= 0 || locale.indexOf('_') >= 0 ? locale.split(/[-_]/)[0] : '';
+  const finalTexts = ((): Record<string, string> => {
+    if (!lang) {
+      // If locale code is just language, return directly
+      return presetTexts[locale] || presetTexts[DEFAULT_LOCALE];
     }
-  });
-  return textsWithRegionVariants;
+    const textsWithRegionVariants = presetTexts[lang] || presetTexts[DEFAULT_LOCALE];
+    Object.keys(presetTexts[locale] || {}).forEach((key) => {
+      if (presetTexts[locale][key]) {
+        // Replace all available keys with regional variant
+        textsWithRegionVariants[key] = presetTexts[locale][key];
+      }
+    });
+    return textsWithRegionVariants;
+  })();
+  if (customTexts[locale]) {
+    return deepMerge(customTexts[locale], finalTexts);
+  }
+  return finalTexts;
 };
 
 export const getCurrencyFormatter = (locale: string, currency: string): Intl.NumberFormat => {
-  return Intl.NumberFormat(locale, { style: 'currency', currency });
+  return Intl.NumberFormat(locale.replace('_', '-'), { style: 'currency', currency });
 };

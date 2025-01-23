@@ -1,10 +1,12 @@
 import type { Root } from 'react-dom/client';
 import type { ProductSearchResponse, ViSearchClient } from 'visearch-javascript-sdk';
 import type { ErrorHandler, SuccessHandler } from './types/function';
+import type { SearchImage } from './types/image';
+import type { LanguagePack } from './locales/locale';
 
 // model
 
-type Primitive = boolean | string | number;
+export type Primitive = boolean | string | number;
 
 export enum WidgetType {
   CAMERA_SEARCH = 'camera_search',
@@ -16,21 +18,28 @@ export enum WidgetType {
   SHOP_THE_LOOK = 'shop_the_look',
   EMBEDDED_GRID = 'embedded_grid',
   SHOPPABLE_LOOKBOOK = 'shoppable_lookbook',
-  SHOPPABLE_INSTAGRAM_FEED = 'shoppable_instagram_feed',
+  SHOPPABLE_GALLERY = 'shoppable_gallery',
   ICON_TRIGGERED_GRID = 'icon_triggered_grid',
   SEARCH_BAR = 'search_bar',
-  EMBEDDED_SEARCH_RESULTS = 'embedded_search_results'
+  EMBEDDED_SEARCH_RESULTS = 'embedded_search_results',
 }
 
-interface GenericWidgetClient {
+/**
+ * Widget client for ViSenze widgets.
+ */
+export interface WidgetClient {
   /**
    * Widget type
    */
-  widgetType?: WidgetType;
+  widgetType: string;
   /**
-   * Widget placement id.
+   * Widget version
    */
-  placementId?: number;
+  widgetVersion: string;
+  /**
+   * Widget placement ID.
+   */
+  placementId: string | number;
   /**
    * Gets the query id of the API call results in the last click event
    */
@@ -40,24 +49,13 @@ interface GenericWidgetClient {
    */
   getLastQueryId: () => Promise<string>;
   /**
-   * Sends an event to ViSenze Analytics
-   * @param action - action name
-   * @param params - query parameters
-   * @param callback - callback to be executed upon event sent
-   * @param failure - callback to be executed upon event sent failure
-   *
-   * @example
-   * // Sends an add to cart event.
-   * ```
-   * widgetClient.sendEvent('add_to_cart', {pid: 'my_product_id'});
-   * ```
+   * Gets the last successful search tracking metadata.
    */
-  send: (
-    action: string,
-    params: Record<string, any>,
-    callback?: SuccessHandler,
-    failure?: ErrorHandler,
-  ) => Promise<void>;
+  getLastTrackingMeta: () => Record<string, Primitive> | undefined;
+  /**
+   * Gets last reference id or product id used for search/recommendations
+   */
+  getLastReference: () => any;
   /**
    * Sends an event to ViSenze Analytics
    * @param action - action name
@@ -99,14 +97,6 @@ interface GenericWidgetClient {
     callback?: SuccessHandler,
     failure?: ErrorHandler,
   ) => Promise<void>;
-}
-
-// widget-client
-
-/**
- * Widget client for ViSenze widgets.
- */
-export interface WidgetClient extends GenericWidgetClient {
   /**
    * Visearch client.
    */
@@ -114,19 +104,11 @@ export interface WidgetClient extends GenericWidgetClient {
   /**
    * Tracking metadata from the last search result.
    */
-  lastTrackingMetadata: Record<string, Primitive> | undefined;
+  setLastTrackingMeta: (metadata: Record<string, Primitive> | undefined) => void;
   /**
-   * Widget type
-   */
-  widgetType?: WidgetType;
-  /**
-   * Widget deploy type id for tag deployment.
-   */
-  deployTypeId: number | undefined;
-  set: (key: string, val: any) => void /**
    *
    * @param roots - render root for the widget.
-   */;
+   */
   setRenderRoots: (roots: Root[]) => void;
   /**
    * Search by product id.
@@ -135,7 +117,12 @@ export interface WidgetClient extends GenericWidgetClient {
    * @param handleSuccess - callback to be executed upon search success
    * @param handleError - callback to be executed upon search failure
    */
-  searchById: (pid: string, params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
+  searchById: (
+    pid: string,
+    params: Record<string, any>,
+    handleSuccess: SuccessHandler,
+    handleError: ErrorHandler,
+  ) => void;
   /**
    * Multisearch by product image.
    * @param params - search query parameters
@@ -161,9 +148,9 @@ export interface WidgetClient extends GenericWidgetClient {
    */
   rerender: (selector?: string, ...args: any) => void;
   /**
-   * Opens the widget popup for search widget.
+   * Opens the widget popup; applicable only for widget types that have popup behavior.
    */
-  openWidget: ((params: object) => void) | undefined;
+  openWidget: ((params: any) => void) | undefined;
   /**
    * Hides the widget from view.
    */
@@ -172,52 +159,50 @@ export interface WidgetClient extends GenericWidgetClient {
    * Destroys the widget object and reference.
    */
   disposeWidget: () => void;
+  updateConfig: (configOverride: WidgetConfig, isPartial: boolean) => void;
 }
 
-export interface WidgetInitOptions {
-  config: WidgetConfig;
-  widgetType: WidgetType | undefined;
-  widgetVersion: string;
-  widgetDirectory: string;
-  deployTypeId: number | undefined;
-}
-
-export interface WidgetFont {
-  fontSize: number;
-  fontWeight: number;
-}
-
-export type DeviceType = 'mobile' | 'tablet' | 'desktop';
-export type TargetElement = 'widgetTitle' | 'callsToActionText' | 'productCardTitle' | 'productCardPrice' | 'searchBarText';
-
-type FontConfig = {
-  [D in DeviceType]: {
-    [T in TargetElement]: WidgetFont;
-  };
-};
-
-export type ColourType = 'text' | 'background';
-export type ColourName = 'primary' | 'buttonPrimary' | 'buttonSecondary';
-
-type ColourConfig = {
-  [T in ColourType]: {
-    [N in ColourName]: string;
-  };
-};
-
-type IconName = 'cameraButton' | 'upload' | 'moreLikeThis';
+type DeviceType = 'mobile' | 'tablet' | 'desktop';
 
 interface ImageWithLabel {
   url: string;
   label: string;
 }
 
+export interface Icon {
+  url: string;
+  color: string;
+}
+
+export interface Font {
+  size: number;
+  weight: number;
+}
+
+interface MultiDeviceFont {
+  font: {
+    [D in DeviceType]: Font;
+  };
+}
+
+interface HideableText extends MultiDeviceFont {
+  show: boolean;
+}
+
+interface HideableField extends HideableText {
+  fieldSource: string;
+}
+
+interface ColoredInterface {
+  fontColor: string;
+  backgroundColor: string;
+}
+
 export interface WidgetConfig {
   appSettings: {
-    appKey?: string;
-    placementId?: string | number;
+    appKey: string;
+    placementId: string | number;
     strategyId?: string | number;
-    country?: string;
     uid?: string;
     gtmTracking?: boolean;
     endpoint?: string;
@@ -225,80 +210,105 @@ export interface WidgetConfig {
       maxWidth: number;
       maxHeight: number;
     };
-    disableCache?: boolean;
   };
   displaySettings: {
     cssSelector: string;
     productDetails: {
-      mainImageUrl: string;
-      productUrl: string;
+      main_image_url: string;
+      product_url: string;
       title: string;
       price: string;
-      originalPrice: string;
+      original_price: string;
       category: string;
       brand: string;
       gender: string;
       sizes: string;
       colors: string;
+      [key: string]: string;
     };
   };
   searchSettings: Record<string, any>;
   languageSettings: {
     locale: string;
     currency: string;
-    text: Record<string, Record<string, string>>;
-  };
-  searchBarResultsSettings: {
-    enableImageUpload: boolean;
-    enableFindSimilar: boolean;
-    enableMultiSearch: boolean;
-    redirectUrl: string;
   };
   callbacks: {
     trackingCallback?: (action: string, params: Record<string, any>) => void;
     onProductClick?: (productDetails: Record<string, any>, trackingMeta: Record<string, any>) => void;
     onSearchCallback?: (apiResponse: ProductSearchResponse) => void;
+    onSearchBarInput?: (text: string | undefined, image: SearchImage | undefined) => void;
   };
   customizations: {
-    fonts: FontConfig;
-    colours: ColourConfig;
-    icons: {
-      [I in IconName]: string;
+    generalLayout: ColoredInterface & {
+      fontFamily: string;
+      headingFont: {
+        [D in DeviceType]: Font;
+      };
+      bodyFont: {
+        [D in DeviceType]: Font;
+      };
+      showWidgetTitle: boolean;
+      showViSenzeLogo: boolean;
     };
-    images: ImageWithLabel[];
-    breakpoints: BreakpointConfig;
+    popup: {
+      position: 'left' | 'center' | 'right';
+      triggerIcon: Icon;
+    };
+    buttons: {
+      primary: ColoredInterface;
+      secondary: ColoredInterface;
+    };
+    breakpoints: {
+      mobile: ViewportWidth;
+      tablet: ViewportWidth;
+    };
+    customCss: string;
+    localization?: {
+      defaultLocale: string;
+      defaultCurrency: string;
+      text: LanguagePack;
+    };
+    productGrid?: {
+      [D in DeviceType]: {
+        productsPerRow: number;
+        marginVertical: number | undefined;
+        marginHorizontal: number | undefined;
+      };
+    };
+    productCard?: {
+      openLinksInNewTab: boolean;
+      price: HideableText & {
+        fontColor: string;
+      };
+      originalPrice: HideableText & {
+        fontColor: string;
+      };
+      title: HideableField;
+      secondaryTitle: HideableField;
+      findSimilar: {
+        enable: boolean;
+        position: 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right';
+        icon: Icon;
+      };
+    };
+    imageUpload: {
+      enable: boolean;
+      icon: Icon;
+      images: ImageWithLabel[];
+    };
+  };
+  platformSettings?: {
+    platformName: string;
     customCss: string;
   };
   hideTrigger: boolean;
-  debugMode: boolean;
   disableAnalytics: boolean;
   maxRetryCount: number;
-  vttSource: string;
 }
 
-interface MediaQueryFeatures {
-  minHeight?: number | string;
-  maxHeight?: number | string;
-  minDeviceHeight?: number | string;
-  maxDeviceHeight?: number | string;
-  minWidth?: number | string;
-  maxWidth?: number | string;
-  minDeviceWidth?: number | string;
-  maxDeviceWidth?: number | string;
+interface ViewportWidth {
+  minWidth?: number;
+  maxWidth?: number;
 }
 
 export type RecursivePartial<T> = T extends never[] ? T : { [P in keyof T]?: RecursivePartial<T[P]> };
-
-export type ProductDetailField = keyof {
-  mainImageUrl: string;
-  productUrl: string;
-  title: string;
-  price: string;
-  originalPrice: string;
-};
-
-interface BreakpointConfig {
-  mobile: MediaQueryFeatures;
-  tablet: MediaQueryFeatures;
-  desktop: MediaQueryFeatures;
-}

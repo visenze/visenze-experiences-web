@@ -1,9 +1,8 @@
 import type { Root } from 'react-dom/client';
-import ViSearch from 'visearch-javascript-sdk';
-import type { WidgetInitOptions, WidgetClient } from '../visenze-core';
+import ViSearch, { type ProductSearchResponse } from 'visearch-javascript-sdk';
+import type { Primitive, WidgetClient, WidgetConfig } from '../visenze-core';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
-
-const Endpoint = 'https://search.visenze.com';
+import { DEFAULT_ENDPOINT } from '../constants';
 
 const validateBatchEvents = (
   events: Record<string, string>[],
@@ -29,7 +28,7 @@ const callIfValidFunction = (fn: any, args: any): void => {
 };
 
 const wrapCallbacks = (
-  searchCallback: any,
+  searchCallback: ((apiResponse: ProductSearchResponse) => void) | undefined,
   onSuccess: SuccessHandler,
   onFailure: ErrorHandler,
 ): ((args: any) => void)[] => {
@@ -44,21 +43,20 @@ const wrapCallbacks = (
   return [newOnSuccess, newOnError];
 };
 
-export default function getWidgetClient(options: WidgetInitOptions): WidgetClient {
-  const { config, widgetType, widgetVersion, widgetDirectory, deployTypeId } = options;
-  const { vttSource, disableAnalytics } = config;
-  const lastTrackingMetadata: Record<string, any> = {};
-  const { placementId, appKey, strategyId, country, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
-  const { onSearchCallback } = config?.callbacks;
+export default function getWidgetClient(config: WidgetConfig, widgetType: string, widgetVersion: string): WidgetClient {
+  const { disableAnalytics } = config;
+  const { placementId, appKey, strategyId, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
+  const { onSearchCallback } = config.callbacks;
   let roots: Root[] = [];
+  let lastTrackingMetadata: Record<string, Primitive> = {};
+  let lastReference = '';
 
   const visearch = ViSearch();
   visearch.setKeys({
     placement_id: placementId,
     strategy_id: strategyId,
     app_key: appKey,
-    is_cn: country === 'CN',
-    endpoint: endpoint || Endpoint,
+    endpoint: endpoint || DEFAULT_ENDPOINT,
     gtm_tracking: gtmTracking,
     resize_settings: resizeSettings || {},
   });
@@ -73,6 +71,7 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
     handleError: ErrorHandler,
   ): void => {
     const [success, error] = wrapCallbacks(onSearchCallback, handleSuccess, handleError);
+    lastReference = pid;
     visearch.productSearchById(
       pid,
       {
@@ -122,7 +121,7 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
   /**
    * Sends event to ViSenze Analytics
    */
-  const send = async (
+  const sendEvent = async (
     action: string,
     params: Record<string, any> = {},
     callback?: (...args: any) => any,
@@ -139,12 +138,11 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
 
     const analyticsParams = params;
 
+    if (!analyticsParams.queryId) {
+      analyticsParams.queryId = getLastClickQueryId();
+    }
     if (!analyticsParams.widgetVersion) {
       analyticsParams.widgetVersion = `${widgetType}.${widgetVersion}.js`;
-      analyticsParams.widgetDir = widgetDirectory;
-    }
-    if (vttSource) {
-      analyticsParams.vtt_source = vttSource;
     }
 
     visearch.sendEvent(action, analyticsParams, callback, failure);
@@ -172,9 +170,20 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
         if (action.toLowerCase() === 'transaction' && !event.transId) {
           event.transId = batchId;
         }
-        send(action, event, callback, failure);
+        sendEvent(action, event, callback, failure);
       });
     });
+  };
+
+  /**
+   * Gets the metadata of the last request
+   */
+  const getLastTrackingMeta = (): Record<string, any> => {
+    return lastTrackingMetadata;
+  };
+
+  const setLastTrackingMeta = (metadata: Record<string, Primitive> | undefined): void => {
+    lastTrackingMetadata = metadata || {};
   };
 
   /**
@@ -196,15 +205,6 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
     return lastClickQueryId;
   };
 
-  /**
-   * Set a value for visearch settings.
-   * @param {*} key key for visearch settings
-   * @param {*} val value for visearch settings
-   */
-  const set = (key: string, val: any): void => {
-    visearch.set(key, val);
-  };
-
   const hideWidget = (): void => {
     // flush react script
     roots.forEach((root) => {
@@ -214,21 +214,13 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
 
   const disposeWidget = (): void => {
     hideWidget();
-    if (placementId && window.visenzeWidgets?.[placementId]) {
-      // eslint-disable-next-line
+    if (window.visenzeWidgets?.[placementId]) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete window.visenzeWidgets[placementId];
     }
-  };
-
-  const openWidget = (params: object): void => {
-    const { cssSelector } = config.displaySettings;
-    const element =
-      document.querySelector(cssSelector || `.ps-widget-${placementId}`);
-    if (element) {
-      (element as HTMLElement).dataset.visenzeDialogOpen = 'true';
-      if (params) {
-        (element as HTMLElement).dataset.visenzeRuntimeParams = JSON.stringify(params);
-      }
+    if (window[`visenzeWidgets${placementId}`]) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete window[`visenzeWidgets${placementId}`];
     }
   };
 
@@ -236,25 +228,28 @@ export default function getWidgetClient(options: WidgetInitOptions): WidgetClien
     roots = renderRoots;
   };
 
+  const getLastReference = (): any => lastReference;
+
   return {
     visearch,
     widgetType,
-    deployTypeId,
-    placementId: placementId ? Number(placementId) : undefined,
-    lastTrackingMetadata,
-    set,
-    send,
-    sendEvent: send,
+    widgetVersion,
+    placementId,
+    setLastTrackingMeta,
+    sendEvent,
     sendEvents,
     getLastClickQueryId,
     getLastQueryId,
+    getLastTrackingMeta,
+    getLastReference,
     searchById,
     multisearchByImage,
     multisearchAutocomplete,
     setRenderRoots,
     rerender: (): void => {},
-    openWidget,
+    openWidget: (): void => {},
     hideWidget,
     disposeWidget,
+    updateConfig: (): void => {},
   };
 }

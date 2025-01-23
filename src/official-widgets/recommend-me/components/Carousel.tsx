@@ -1,8 +1,10 @@
-import type { FC } from 'react';
-import { memo, useEffect, useState } from 'react';
+import type { CSSProperties, FC } from 'react';
+import { useContext, memo, useEffect, useState } from 'react';
 import type { ProcessedProduct } from '../../../common/types/product';
 import Result from './Result';
-import TrashIcon from '../../../common/icons/TrashIcon';
+import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
+import { WidgetDataContext } from '../../../common/types/contexts';
 
 /**
  * An individual carousel of product cards based on a search query
@@ -15,11 +17,37 @@ interface CarouselProps {
 }
 
 const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }) => {
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const [isLoading, setIsLoading] = useState(true);
+  const breakpoint = useBreakpoint();
 
   useEffect(() => {
     setIsLoading(false);
   }, []);
+
+  const getProductGridCssClasses = (defaultGapX: string): string => {
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push(defaultGapX);
+      }
+      return classes.join(' ');
+    }
+    return [defaultGapX].join(' ');
+  };
+
+  const getProductGridCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+      }
+    }
+    return cssConfig;
+  };
 
   return (
     <div data-pw='rm-product-result-carousel'>
@@ -29,12 +57,19 @@ const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }
           <div className='max-w-13/20 truncate font-bold'>{searchValue}</div>
           <span>&quot;</span>
         </div>
-        {
-          !isLoading
-          && <TrashIcon className='absolute right-0 top-4 size-5 cursor-pointer' onClickHandler={removeFromHistory}/>
-        }
+        {!isLoading && (
+          <CustomizableIcon
+              height={20}
+              width={20}
+              url={'https://cdn.visenze.com/images/trash-icon.svg'}
+              color={customizations.generalLayout?.fontColor}
+              onClickHandler={removeFromHistory}
+              className='absolute right-0 top-4 cursor-pointer'
+          />
+        )}
       </div>
-      <div className='no-scrollbar flex w-full items-end gap-x-4 overflow-scroll'>
+      <div className={`no-scrollbar flex w-full items-end text-primary ${getProductGridCssClasses('gap-x-4')} overflow-scroll`}
+           style={getProductGridCssConfig()}>
         {results.map((result, i) => (
           <div key={result.product_id}>
             <Result

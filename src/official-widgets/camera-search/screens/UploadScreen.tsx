@@ -3,40 +3,39 @@ import { useContext, useEffect } from 'react';
 import { Card, CardFooter } from '@nextui-org/card';
 import { useIntl } from 'react-intl';
 import FileDropzone from '../../../common/components/FileDropzone';
-import type { ScreenType } from '../../../common/types/constants';
 import type { SearchImage } from '../../../common/types/image';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
 import Header from '../components/Header';
 import Footer from '../../../common/components/Footer';
-import UploadIcon from '../../../common/icons/UploadIcon';
+import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 
 interface UploadScreenProps {
   onModalClose: () => void;
-  setScreen: (screen: ScreenType) => void;
   onImageUpload: (img: SearchImage) => void;
 }
 
 const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) => {
-  const { productSearch, customizations } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const intl = useIntl();
 
   const onGallerySelect = (index: number): void => {
     // Send Upload Click Sample event when a gallery image is clicked
-    productSearch.send(Actions.CLICK, {
+    widgetClient.sendEvent(Actions.CLICK, {
       cat: Category.UPLOAD,
       label: Labels.SAMPLE,
       pos: index + 1,
     });
 
     if (customizations) {
-      onImageUpload?.({ imgUrl: customizations?.images[index].url });
+      onImageUpload?.({ imgUrl: customizations?.imageUpload?.images[index].url });
     }
   };
 
   const getGalleryCards = (): ReactNode => {
     if (customizations) {
-      return Object.entries(customizations.images).map(([, imageWithLabel], index) => {
+      return Object.entries(customizations.imageUpload?.images || []).map(([, imageWithLabel], index) => {
         if (index === 0) return null;
         return (
           <Card
@@ -51,12 +50,12 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
               }
             }}
           >
-            <img className='object-fit h-full' src={imageWithLabel.url} data-pw={`cs-gallery-image-${index + 1}`}/>
+            <img className='h-full object-cover' src={imageWithLabel.url} data-pw={`cs-gallery-image-${index + 1}`}/>
             {
               imageWithLabel.label
               && <CardFooter className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large
-            border-1 border-white/20 bg-gray-800 bg-opacity-80 py-1 shadow-small before:rounded-b-xl'>
-                <p className='calls-to-action-text text-primary'>{imageWithLabel.label}</p>
+            border-1 border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small before:rounded-b-xl'>
+                <p>{imageWithLabel.label}</p>
               </CardFooter>
             }
           </Card>
@@ -69,14 +68,14 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
 
   useEffect(() => {
     // Send Upload Load Page event on page load
-    productSearch.send(Actions.LOAD, {
+    widgetClient.sendEvent(Actions.LOAD, {
       cat: Category.UPLOAD,
       label: Labels.PAGE,
     });
 
     return (): void => {
       // Send Upload Close Page event on page close
-      productSearch.send(Actions.CLOSE, {
+      widgetClient.sendEvent(Actions.CLOSE, {
         cat: Category.UPLOAD,
         label: Labels.PAGE,
       });
@@ -85,41 +84,36 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
 
   return (
     <div className='w-full md:overflow-hidden'>
-      <Header onCloseHandler={onModalClose} />
-      <div className='size-full bg-primary'>
+      <Header onCloseHandler={onModalClose} isResultScreen={false} onBackHandler={() => {}}
+              showTitle={customizations.generalLayout?.showWidgetTitle}
+              iconColor={customizations.generalLayout?.fontColor} />
+      <div className='size-full'>
         <div className='flex flex-col pb-5 md:flex-row'>
           <div className='px-1/5 md:w-1/3 md:px-10'>
             <FileDropzone onImageUpload={onImageUpload} name='cs-upload-icon'>
               <div
-                className='flex w-full flex-col items-center rounded-3xl border border-black py-1 text-center text-medium'>
-                {
-                  customizations?.icons.upload
-                    ? <img className='w-3/5 rounded-lg object-cover object-center lg:h-full' src={customizations?.icons.upload}/>
-                    : <UploadIcon className='size-2/5 py-5'/>
-                }
+                className='wigmix-reference-image flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center'>
+                <CustomizableIcon
+                    height={80}
+                    width={80}
+                    url={customizations.imageUpload?.icon?.url || 'https://cdn.visenze.com/images/upload-icon.svg'}
+                    color={customizations.imageUpload?.icon?.color || ''}
+                />
 
-                <p className='calls-to-action-text hidden px-3 py-2 leading-6 text-primary md:block'>
-                  {intl.formatMessage({ id: 'cameraSearch.dragImageToSearch.part1' })}<br/>
-                  {intl.formatMessage({ id: 'cameraSearch.dragImageToSearch.part2' })}&nbsp;
-                  <span className='underline'>
-                    {intl.formatMessage({ id: 'cameraSearch.dragImageToSearch.part3' })}
-                  </span>
+                <p className='hidden px-3 py-2 leading-6 md:block'>
+                  {intl.formatMessage({ id: 'dragImageToSearch' })}
                 </p>
 
-                <p className='calls-to-action-text pt-3 leading-6 text-primary md:hidden'>
-                  {intl.formatMessage({ id: 'cameraSearch.tapToSearchImage.part1' })}
-                  <br className='md:hidden'/>
-                  {intl.formatMessage({ id: 'cameraSearch.tapToSearchImage.part2' })}
+                <p className='px-6 pt-3 md:hidden'>
+                  {intl.formatMessage({ id: 'tapToSearchImage' })}
                 </p>
               </div>
             </FileDropzone>
           </div>
 
           <div className='py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0'>
-            <p className='calls-to-action-text px-14 pb-3 text-center text-primary md:px-0 md:text-left'>
-              {intl.formatMessage({ id: 'cameraSearch.tapProductGallery.part1' })}&nbsp;
-              <br className='md:hidden'/>
-              {intl.formatMessage({ id: 'cameraSearch.tapProductGallery.part2' })}
+            <p className='px-16 pb-3 text-center md:px-0 md:text-left'>
+              {intl.formatMessage({ id: 'tapProductGallery' })}
             </p>
 
             <div className='grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0'>
@@ -135,14 +129,14 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                       onGallerySelect(0);
                     }
                   }}>
-                  <img className='object-fit h-full' src={customizations?.images[0].url} data-pw='cs-gallery-image-1'/>
+                  <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url} data-pw='cs-gallery-image-1'/>
                   {
-                    customizations?.images[0].label
+                    customizations.imageUpload?.images[0].label
                     && <CardFooter
                       className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large border-1
-                      border-white/20 bg-gray-800 bg-opacity-80 py-1 shadow-small before:rounded-b-xl'>
-                      <p className='calls-to-action-text text-primary'>
-                        {customizations?.images[0].label}
+                      border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small before:rounded-b-xl'>
+                      <p>
+                        {customizations.imageUpload?.images[0].label}
                       </p>
                     </CardFooter>
                   }
@@ -158,15 +152,17 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
 
           <div className='pb-5'>
             <FileDropzone onImageUpload={onImageUpload} name='cs-use-camera'>
-              <div className='mx-16 mt-3 rounded-full bg-buttonPrimary py-2 text-center font-bold text-buttonPrimary md:hidden'>
-                {intl.formatMessage({ id: 'cameraSearch.useCamera' })}
+              <div className='mx-16 mt-3 rounded-full bg-buttonPrimary py-2 text-center font-bold text-buttonPrimary hover:opacity-80 md:hidden'>
+                {intl.formatMessage({ id: 'useCamera' })}
               </div>
             </FileDropzone>
           </div>
         </div>
       </div>
 
-      <Footer className='sticky bottom-0 bg-white py-2 md:absolute md:justify-start md:pl-20 lg:rounded-b-3xl' dataPw='cs-visenze-footer'/>
+      {customizations.generalLayout?.showViSenzeLogo && (
+        <Footer className='sticky bottom-0 bg-primary py-2 md:absolute md:justify-start md:pl-20 lg:rounded-b-3xl' dataPw='cs-visenze-footer'/>
+      )}
     </div>
   );
 };

@@ -12,20 +12,21 @@ import { WidgetDataContext } from '../../../common/types/contexts';
 interface SearchBarInputProps {
   query: string;
   setQuery: (query: string) => void;
-  handleRedirect: () => void;
-  setAllowRedirect: (allowRedirect: boolean) => void;
-  setImage: (image: SearchImage) => void;
+  emitSearchBarCallback: () => void;
   imageUploadHandler: (image: SearchImage) => void;
   placementId: string;
+  setShowDropdown: (showDropdown: boolean) => void;
+  image: SearchImage | undefined;
 }
 
-const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedirect, setImage, imageUploadHandler, placementId }) => {
-  const { searchBarResultsSettings } = useContext(WidgetDataContext);
+const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, emitSearchBarCallback, imageUploadHandler, setShowDropdown, placementId, image }) => {
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const searchBarRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
 
-  const createImageEvent = (image: SearchImage): void => {
-    const event = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
+  const createImageEvent = (im: SearchImage): void => {
+    const event = new CustomEvent('wigmix_search_bar_append_image', { detail: im });
     document.dispatchEvent(event);
   };
 
@@ -35,7 +36,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedire
       ref={searchBarRef}
       className='z-30'
       classNames={{
-        inputWrapper: cn('rounded-md bg-white w-full border border-gray-200', searchBarResultsSettings.enableImageUpload ? 'px-1.5' : 'px-3'),
+        inputWrapper: cn('rounded-md bg-white w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
         input: 'text-mobile-searchBarText md:text-tablet-searchBarText lg:text-desktop-searchBarText font-mobile-searchBarText md:font-tablet-searchBarText '
           + 'lg:font-desktop-searchBarText',
       }}
@@ -44,10 +45,12 @@ const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedire
       size='lg'
       isClearable
       maxLength={QUERY_MAX_CHARACTER_LENGTH}
-      placeholder={intl.formatMessage({ id: 'searchBar.searchBarPlaceholder' })}
+      placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
+      onClick={() => setShowDropdown(true)}
+      onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
-          handleRedirect();
+          emitSearchBarCallback();
           if (searchBarRef.current) {
             searchBarRef.current.blur();
           }
@@ -59,21 +62,17 @@ const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, handleRedire
 
         if (isImageUrl(value)) {
           createImageEvent({ imgUrl: value });
-          setImage({ imgUrl: value });
+          imageUploadHandler({ imgUrl: value });
           setQuery('');
-          // setAllowRedirect(true);
         } else {
           setQuery(value);
         }
       }}
       startContent={
         <div className='flex items-center gap-2'>
-          {
-            searchBarResultsSettings.enableImageUpload
-            && <>
-              <ImageGalleryUpload imageUploadHandler={imageUploadHandler} placementId={placementId} />
-            </>
-          }
+          {customizations.imageUpload?.enable && (
+            <ImageGalleryUpload imageUploadHandler={imageUploadHandler} placementId={placementId} image={image} />
+          )}
           <MagnifyingGlassIcon className='size-4'/>
         </div>
       }

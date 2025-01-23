@@ -14,7 +14,7 @@ const CarouselLoader: FC<{ results: ProcessedProduct[], searchValue: string }> =
   return (
     <>
       <div className='relative flex items-center pb-2 pt-4 text-primary'>
-        <span>{intl.formatMessage({ id: 'recommendMe.resultCarouselTitle' })}</span>
+        <span>{intl.formatMessage({ id: 'resultCarouselTitle' })}</span>
         &nbsp;&quot;<div className='max-w-13/20 truncate font-bold'>{searchValue}</div>&quot;
       </div>
       <div className='no-scrollbar relative flex gap-x-4 overflow-scroll pt-3'>
@@ -28,12 +28,12 @@ const CarouselLoader: FC<{ results: ProcessedProduct[], searchValue: string }> =
         ))}
         {results.length <= 4 && [0, 1, 2, 3].map((i) => (
           <>
-            {i >= results.length && <Skeleton className='h-64 w-36 md:h-80 md:w-48 lg:h-108 lg:w-64'></Skeleton>}
+            {i >= results.length && <Skeleton className='h-48 w-36 md:h-64 md:w-48 lg:h-80 lg:w-64'></Skeleton>}
           </>
         ))}
         <div className='absolute size-full bg-zinc-200 opacity-75 dark:bg-zinc-800'/>
 
-        <div className='absolute flex size-full flex-col items-center justify-center gap-6 p-3 text-lg dark:text-zinc-200 lg:text-3xl'>
+        <div className='absolute flex size-full flex-col items-center justify-center gap-6 p-3 text-lg text-black lg:text-3xl'>
           <motion.div
             className='size-5 bg-blue-700 dark:bg-blue-400'
             animate={{
@@ -54,20 +54,22 @@ const CarouselLoader: FC<{ results: ProcessedProduct[], searchValue: string }> =
               onInit={(typewriter) => {
                 typewriter
                   .pauseFor(200)
-                  .typeString('Searching the latest trends...')
+                  .typeString(intl.formatMessage({ id: 'resultLoading1' }))
                   .pauseFor(800)
                   .changeDeleteSpeed(4)
                   .deleteAll()
-                  .typeString('Finding the perfect look...')
+                  .typeString(intl.formatMessage({ id: 'resultLoading2' }))
                   .pauseFor(600)
                   .deleteAll()
-                  .typeString('Almost there...')
+                  .typeString(intl.formatMessage({ id: 'resultLoading3' }))
                   .pauseFor(600)
                   .start();
               }}
             />
           ) : (
-            <p className='rounded-xl bg-zinc-200 p-1 dark:bg-zinc-800'>Here&apos;s what I found for you</p>
+            <p className='rounded-xl p-1'>
+              {intl.formatMessage({ id: 'resultRendering' })}
+            </p>
           )}
         </div>
       </div>

@@ -13,12 +13,13 @@ import type { ProcessedProduct } from '../../types/product';
 import {getFacets, getFilterQueries, getFlattenProduct, getFlattenProducts, parseToProductTypes} from '../../utils';
 
 interface RecommendationSearchProps {
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   config: WidgetConfig;
   productId: string;
   retryCount: number;
   sortType?: SortType;
   filters?: Record<FacetType, any>;
+  additionalParams?: Record<string, any>;
 }
 
 export interface RecommendationSearch {
@@ -36,12 +37,13 @@ export interface RecommendationSearch {
 }
 
 const useRecommendationSearch = ({
-  productSearch,
+  widgetClient,
   config,
   productId,
   retryCount,
   sortType,
   filters,
+  additionalParams,
 }: RecommendationSearchProps): RecommendationSearch => {
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
   const [metadata, setMetadata] = useState<Record<string, any>>({});
@@ -59,7 +61,6 @@ const useRecommendationSearch = ({
   const handleSuccess = (res: ProductSearchResponse): void => {
     if (res.status === 'fail') {
       handleError(res.error.message);
-      return;
     } else {
       setError('');
       setResponse(res);
@@ -96,7 +97,13 @@ const useRecommendationSearch = ({
       params.filters = getFilterQueries(productDetails, filters);
     }
 
-    productSearch.searchById(productId, params, handleSuccess, handleError);
+    if (additionalParams) {
+      Object.keys(additionalParams).forEach((key) => {
+        params[key] = additionalParams[key];
+      });
+    }
+
+    widgetClient.searchById(productId, params, handleSuccess, handleError);
   };
 
   const getMetadata = (): Record<string, any> => {
@@ -161,8 +168,8 @@ const useRecommendationSearch = ({
 
       // Send RESULT LOAD tracking event if there are results
       if (results.length) {
-        productSearch.send(Actions.RESULT_LOAD, metadata);
-        productSearch.lastTrackingMetadata = metadata;
+        widgetClient.sendEvent(Actions.RESULT_LOAD, metadata);
+        widgetClient.setLastTrackingMeta(metadata);
       }
     }
   }, [response]);

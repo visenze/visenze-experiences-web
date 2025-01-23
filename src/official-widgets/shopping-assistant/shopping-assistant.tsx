@@ -1,15 +1,15 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { memo, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { type FC, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import CloseIcon from '../../common/icons/CloseIcon';
-import NewChatIcon from './icons/NewChatIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
 import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
 import type { Product } from './components/ProductCard';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 const defaultInitialMessages = [
     'Let\'s get started',
@@ -72,11 +72,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({ message, onMessageChange, onOverflo
   );
 };
 
-const ShoppingAssistant = memo((props: {
+interface ShoppingAssistantProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
-}) => {
-  const { config, productSearch } = props;
+  widgetClient: WidgetClient;
+}
+
+const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient }) => {
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
@@ -140,10 +141,10 @@ const ShoppingAssistant = memo((props: {
     // Retrieve user id and session id from ViSearch client
     let uid = '';
     let sid = '';
-    productSearch.visearch.getUid((uidResp) => {
+    widgetClient.visearch.getUid((uidResp) => {
       uid = uidResp;
     });
-    productSearch.visearch.getSid((sidResp) => {
+    widgetClient.visearch.getSid((sidResp) => {
       sid = sidResp;
     });
     setAllowUserInput(false);
@@ -314,7 +315,7 @@ const ShoppingAssistant = memo((props: {
       }, 2000);
     };
     setDialogVisible(true);
-    productSearch.visearch.generateUuid((uuid) => {
+    widgetClient.visearch.generateUuid((uuid) => {
       setChatId(uuid);
       renderChat(1, uuid);
     });
@@ -358,38 +359,13 @@ const ShoppingAssistant = memo((props: {
       </div>
   );
 
-  // Accompanying logic to open the widget via the widget client's openWidget function
-  useEffect(() => {
-    const element = document.querySelector(config.displaySettings.cssSelector) as HTMLElement | null;
-    const callback = (mutationList: MutationRecord[]): void => {
-      mutationList.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'data-visenze-dialog-open') {
-          if (element && element.dataset.visenzeDialogOpen === 'true') {
-            const runtimeParamsString = element.dataset.visenzeRuntimeParams;
-            let initialMessages = defaultInitialMessages;
-            if (runtimeParamsString) {
-              const runtimeParams = JSON.parse(runtimeParamsString);
-              if (runtimeParams.initial_messages) {
-                initialMessages = runtimeParams.initial_messages;
-              }
-            }
-            openDialog(initialMessages);
-          }
-        }
-      });
-    };
-    const observer = new MutationObserver(callback);
-    if (element) {
-      observer.observe(element, {
-        attributes: true,
-        childList: false,
-        subtree: false,
-      });
+  widgetClient.openWidget = (params: any): void => {
+    let initialMessages = defaultInitialMessages;
+    if (params && params.initial_messages) {
+      initialMessages = params.initial_messages;
     }
-    return (): void => {
-      observer.disconnect();
-    };
-  }, []);
+    openDialog(initialMessages);
+  };
 
   if (!root) {
     return <></>;
@@ -399,19 +375,24 @@ const ShoppingAssistant = memo((props: {
       <>
         {!config.hideTrigger && (
             <>
-              {config.customizations?.icons.cameraButton
-                  ? <img src={config.customizations.icons.cameraButton} onClick={onChatButtonClick}
-                         className='size-7 cursor-pointer'></img>
-                  : <NewChatIcon onClickHandler={onChatButtonClick}/>
-              }
+              <CustomizableIcon
+                  height={28}
+                  width={28}
+                  url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/new-chat-icon.svg'}
+                  color={config.customizations.popup?.triggerIcon?.color || ''}
+                  className='wigmix-popup-trigger-icon cursor-pointer'
+                  onClickHandler={onChatButtonClick}
+              />
             </>
         )}
-        <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose} position='center'
+        <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
+                      position={config.customizations.popup?.position || 'center'}
+                      fontFamily={config.customizations.generalLayout?.fontFamily}
                       placementId={`${config.appSettings.placementId}`}>
           {getScreen()}
         </ViSenzeModal>
       </>
   );
-});
+};
 
 export default ShoppingAssistant;

@@ -15,9 +15,8 @@ Each widget can operate as a standalone component to be deployed in an ecommerce
    ├─ types             <- TypeScript typing
 ├── official-widgets    <- Widgets built and officially supported by ViSenze
    ├─ camera-search 
-   ├─ search-results-page
    ├─ similar-search
-   
+   ├─ etc.
 ```
 
 ## Local development

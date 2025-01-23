@@ -1,11 +1,17 @@
-import type { FC } from 'react';
+import type { CSSProperties, FC } from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { Button } from '@nextui-org/button';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import ResultLogicImpl from '../../../common/client/result-logic';
 import type { ProcessedProduct } from '../../../common/types/product';
-import MoreLikeThisIcon from '../../../common/icons/MoreLikeThisIcon';
 import { Actions } from '../../../common/types/tracking-constants';
+import {
+  getOriginalPrice,
+  getPrice,
+  getProductSecondaryTitle,
+  getProductTitle,
+} from '../../../common/components/product-card-parts';
+import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 
 /**
  * An individual product result card
@@ -18,41 +24,23 @@ interface ResultProps {
 }
 
 const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) => {
-  const { productSearch, displaySettings, customizations, callbacks, debugMode } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
   const { onProductClick } = callbacks;
+  const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
-    productSearch,
+    widgetClient,
     trackingMeta: metadata,
     isRecommendation: false,
     index,
     onProductClick,
     result,
+    openLinksInNewTab,
   });
-
-  const getProductName = (): string => {
-    if (result[productDetails.title]) {
-      return result[productDetails.title];
-    }
-    return '';
-  };
-
-  const getPrice = (): string => {
-    if (result[productDetails.price]) {
-      return Number(result[productDetails.price].value).toFixed(2);
-    }
-    return '';
-  };
-
-  const getOriginalPrice = (): string => {
-    if (result[productDetails.originalPrice]) {
-      return Number(result[productDetails.originalPrice].value).toFixed(2);
-    }
-    return '';
-  };
 
   // Send Product View tracking event when the product is in view
   useEffect(() => {
@@ -60,7 +48,7 @@ const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) 
       entries.forEach((entry) => {
         if (entry.isIntersecting && productTrackingMeta) {
           observer.disconnect();
-          productSearch.send(Actions.PRODUCT_VIEW, productTrackingMeta);
+          widgetClient.sendEvent(Actions.PRODUCT_VIEW, productTrackingMeta);
         }
       });
     }, {
@@ -78,43 +66,87 @@ const Result: FC<ResultProps> = ({ index, result, onClickMoreLikeThisHandler }) 
     };
   }, [targetRef]);
 
+  const createFindSimilarPositionClasses = (): string => {
+    const position = customizations.productCard?.findSimilar?.position || 'bottom_right';
+    switch (position) {
+      case 'bottom_left':
+        return 'bottom-3 left-3';
+      case 'bottom_right':
+        return 'bottom-3 right-3';
+      case 'top_left':
+        return 'top-3 left-3';
+      case 'top_right':
+        return 'top-3 right-3';
+      default:
+        return '';
+    }
+  };
+
+  const getProductPriceColorStyle = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    if (customizations.productCard?.price?.fontColor) {
+      cssConfig.color = customizations.productCard?.price?.fontColor;
+    }
+    return cssConfig;
+  };
+
+  const getProductOriginalPriceColorStyle = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    if (customizations.productCard?.originalPrice?.fontColor) {
+      cssConfig.color = customizations.productCard?.originalPrice?.fontColor;
+    }
+    return cssConfig;
+  };
+
+  const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
+  const price = getPrice(customizations, languageSettings, productDetails, result);
+
   return (
-    <a className={`size-full ${debugMode ? '' : 'cursor-pointer'}`} ref={(r) => r && setTargetRef(r)}
-       onClick={debugMode ? undefined : onClick} data-pw={`srp-product-result-card-${index + 1}`}>
+    <a className='size-full cursor-pointer' ref={(r) => r && setTargetRef(r)}
+       onClick={onClick} data-pw={`srp-product-result-card-${index + 1}`}>
       <div className='relative'>
-        <div className='aspect-[2/3]'>
-          <img className='object-fit size-full' src={result.im_url} data-pw={`srp-product-result-card-image-${index + 1}`}/>
+        <div>
+          <img className='wigmix-product-card-image object-cover' src={result.im_url}
+               data-pw={`srp-product-result-card-image-${index + 1}`}/>
         </div>
-        <Button
-          isIconOnly
-          size='sm'
-          radius='full'
-          className='absolute bottom-3 right-3 z-10 bg-white shadow-md'
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onClickMoreLikeThisHandler(result);
-          }}
-          data-pw='srp-more-like-this-button'
-        >
-          {
-            customizations?.icons.moreLikeThis
-              ? <img src={customizations.icons.moreLikeThis} className='size-5'></img>
-              : <MoreLikeThisIcon className='size-5'/>
-          }
-        </Button>
+        {customizations.productCard?.findSimilar?.enable && (
+          <Button
+              isIconOnly
+              size='sm'
+              radius='full'
+              className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-10 bg-white shadow-md`}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onClickMoreLikeThisHandler(result);
+              }}
+              data-pw='srp-more-like-this-button'
+          >
+            <CustomizableIcon
+                height={20}
+                width={20}
+                url={customizations?.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/magnifying-glass-icon.svg'}
+                color={customizations?.productCard?.findSimilar?.icon?.color || ''}
+            />
+          </Button>
+        )}
       </div>
       <div className='pt-2'>
-        <span className='product-card-title line-clamp-1 font-semibold text-primary'>{getProductName()}</span>
+        <span className='wigmix-product-card-title line-clamp-1'>
+          {getProductTitle(customizations, productDetails, result)}
+        </span>
+        <span className='wigmix-product-card-secondary-title line-clamp-1'>
+          {getProductSecondaryTitle(customizations, productDetails, result)}
+        </span>
         {
-          getOriginalPrice() && getOriginalPrice() !== getPrice()
+          originalPrice && originalPrice !== price
             ? (
-              <div className='flex gap-1'>
-                <span className='product-card-price text-red-500'>${getPrice()}</span>
-                <span className='product-card-price text-gray-400 line-through'>${getOriginalPrice()}</span>
+              <div className='flex flex-wrap items-center gap-1'>
+                <span className='wigmix-product-card-price text-red-500' style={getProductPriceColorStyle()}>{price}</span>
+                <span className='wigmix-product-card-original-price text-gray-400 line-through' style={getProductOriginalPriceColorStyle()}>{originalPrice}</span>
               </div>
             ) : (
-              <span className='product-card-price text-primary'>${getPrice()}</span>
+              <span className='wigmix-product-card-price'>{price}</span>
             )
         }
       </div>

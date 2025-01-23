@@ -44,7 +44,7 @@ const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({ searchBarValue,
         size='lg'
         isClearable
         maxLength={QUERY_MAX_CHARACTER_LENGTH}
-        placeholder={intl.formatMessage({ id: 'searchResultsPage.searchBarPlaceholder' })}
+        placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
         onClick={() => setShowDropdown(true)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
         onKeyDown={(e) => {
@@ -71,11 +71,11 @@ const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({ searchBarValue,
         )} data-pw='srp-autocomplete-dropdown'>
           <Listbox
             onAction={(key: Key) => handleMultisearchWithQuery(String(key))}
-            className='size-full overflow-auto bg-primary'
+            className='size-full overflow-auto bg-default-100'
           >
             <ListboxSection
               classNames={{
-                heading: 'pl-4 text-sm md:text-md lg:text-lg text-primary font-bold',
+                heading: 'pl-4 text-sm md:text-md lg:text-lg text-base font-bold',
               }}>
               {autocompleteResults.map((result, index) => (
                 <ListboxItem
@@ -83,7 +83,7 @@ const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({ searchBarValue,
                   key={result}
                   endContent={<MagnifyingGlassIcon className='size-4'/>}
                 >
-                  <span className='calls-to-action-text pl-2 text-primary' data-pw={`srp-autocomplete-suggestion-${index + 1}`}>{result}</span>
+                  <span className='pl-2 text-base' data-pw={`srp-autocomplete-suggestion-${index + 1}`}>{result}</span>
                 </ListboxItem>
               ))}
             </ListboxSection>

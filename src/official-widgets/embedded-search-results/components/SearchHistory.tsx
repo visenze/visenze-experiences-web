@@ -1,9 +1,8 @@
-// src/official-widgets/embedded-search-results/components/SearchHistory.tsx
 import { cn } from '@nextui-org/theme';
 import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { Image as NextImage } from '@nextui-org/image';
 import ImageCropThumbnail from './ImageCropThumbnail';
-// import CloseIcon from '../../../common/icons/CloseIcon';
+import CloseIcon from '../../../common/icons/CloseIcon';
 
 export interface ProductType {
   type: string;
@@ -27,21 +26,20 @@ export interface SearchHistoryEntry {
   source: 'url' | 'user';
 }
 
-export const STORAGE_KEY = 'visenze_search_history';
 export const MAX_HISTORY_ITEMS = 20;
 
 export default function SearchHistory({
   activeHistory,
-  // setActiveHistory,
   history,
-  // multisearchWithSearchBarDetails,
   onHistorySelect,
+  onHistoryRemove,
 }: {
   activeHistory: SearchHistoryEntry | undefined;
   setActiveHistory: (entry: SearchHistoryEntry | undefined) => void;
   history: SearchHistoryEntry[];
   multisearchWithSearchBarDetails: (imgUrl?: string) => void;
-  onHistorySelect: (entry: SearchHistoryEntry) => void
+  onHistorySelect: (entry: SearchHistoryEntry) => void;
+  onHistoryRemove: (entry: SearchHistoryEntry) => void;
 }): ReactElement {
   const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number, height: number } }>({});
   const activeItemRef = useRef<HTMLDivElement>(null);
@@ -92,29 +90,7 @@ export default function SearchHistory({
 
   return (
     <>
-      <div className='flex size-full flex-row items-center md:w-1/2'>
-        <p className='flex h-full w-auto items-center pr-2'>History</p>
-
-        <div className='no-scrollbar grid auto-cols-max grid-flow-col gap-2 overflow-x-scroll'>
-          {history.filter((entry) => entry.type === 'text').map((entry, index) => (
-            <div key={index}>
-              <button
-                className={cn(
-                  'rounded-xl bg-gray-200 px-2 py-1',
-                  entry.id === activeHistory?.id ? 'border border-gray-500' : 'opacity-60',
-                )}
-                onClick={() => {
-                  onHistorySelect(entry);
-                }}
-              >
-                {entry.query}
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className='no-scrollbar flex w-full flex-col items-center gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
+      <div className='no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
         <div className='flex w-full flex-row gap-2 md:w-1/2'>
           {history
             .filter((entry) => (entry.type === 'image'))
@@ -135,10 +111,22 @@ export default function SearchHistory({
                   entry.id === getActiveHistoryId() ? 'border border-gray-500' : 'opacity-60',
                 )}
                 onClick={() => {
-                  onHistorySelect(entry);
+                  if (entry.id !== getActiveHistoryId()) {
+                    onHistorySelect(entry);
+                  }
                 }}
                 data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
               >
+                {entry.id !== getActiveHistoryId() && (
+                    <div className='absolute right-1 top-1 z-20 rounded-full bg-white'
+                         onClick={(event) => {
+                           event.preventDefault();
+                           event.stopPropagation();
+                           onHistoryRemove(entry);
+                         }}>
+                      <CloseIcon className='size-4'/>
+                    </div>
+                )}
                 {entry.box ? (
                   <div className='h-32 w-24 overflow-hidden'>
                     {entry.imageUrl && (

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import type { ProductSearchResponse } from 'visearch-javascript-sdk';
 import type { SearchImage } from '../../types/image';
-import { isImageUrl } from '../../types/image';
+import { isImageFile, isImageUrl } from '../../types/image';
 import { WidgetDataContext } from '../../types/contexts';
 import { Actions, Category } from '../../types/tracking-constants';
 import type { ProcessedProduct } from '../../types/product';
@@ -22,7 +22,8 @@ const useSearchAsYouType = ({
   query,
   image,
 }: SearchAsYouTypeProps): SearchAsYouType => {
-  const { searchSettings, productSearch } = useContext(WidgetDataContext);
+  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { searchSettings } = widgetConfig;
   const [productCount, setProductCount] = useState(0);
   const [searchAsYouTypeResults, setSearchAsYouTypeResults] = useState<ProcessedProduct[]>([]);
   const [error, setError] = useState<string>('');
@@ -49,8 +50,8 @@ const useSearchAsYouType = ({
       setSearchAsYouTypeResults(newSearchAsYouTypeResults);
 
       if (newSearchAsYouTypeResults.length > 0) {
-        productSearch.send(Actions.RESULT_LOAD, newMetadata);
-        productSearch.lastTrackingMetadata = newMetadata;
+        widgetClient.sendEvent(Actions.RESULT_LOAD, newMetadata);
+        widgetClient.setLastTrackingMeta(newMetadata);
       }
     }
   };
@@ -64,13 +65,13 @@ const useSearchAsYouType = ({
     if (image) {
       if (isImageUrl(image)) {
         params.im_url = image.imgUrl;
-      } else {
+      } else if (isImageFile(image)) {
         const [file] = image.files;
         params.image = file;
       }
     }
 
-    productSearch.multisearchByImage(params, handleSearchAsYouTypeSuccess, handleError);
+    widgetClient.multisearchByImage(params, handleSearchAsYouTypeSuccess, handleError);
   };
 
   useEffect(() => {

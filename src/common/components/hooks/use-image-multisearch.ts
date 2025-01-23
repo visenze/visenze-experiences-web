@@ -3,6 +3,7 @@ import type { ProductSearchResponse, ProductSearchResponseSuccess, ProductType }
 import type { WidgetClient, WidgetConfig } from '../../visenze-core';
 import { Actions, Category } from '../../types/tracking-constants';
 import type { SearchImage } from '../../types/image';
+import { isImageFile, isImageUrl } from '../../types/image';
 import type { BoxData, ProcessedProduct } from '../../types/product';
 import { getFlattenProducts, parseBox, parseToProductTypes } from '../../utils';
 
@@ -23,9 +24,9 @@ const getSearchParams = (
 ): Record<string, any> => {
   const params = { ...config.searchSettings };
 
-  if ('imgUrl' in img) {
+  if (isImageUrl(img)) {
     params.im_url = img.imgUrl;
-  } else if ('files' in img) {
+  } else if (isImageFile(img)) {
     params.image = img.files[0];
   } else {
     params.im_id = imageId;
@@ -55,7 +56,7 @@ const parseResults = (res: ProductSearchResponseSuccess, boxData?: BoxData): Pro
 };
 
 interface ImageMultisearchProps {
-  productSearch: WidgetClient;
+  widgetClient: WidgetClient;
   image: SearchImage | undefined;
   boxData: BoxData | undefined;
   config: WidgetConfig;
@@ -77,7 +78,7 @@ const useImageMultisearch = ({
   image,
   boxData,
   config,
-  productSearch,
+  widgetClient,
 }: ImageMultisearchProps): ImageMultisearch => {
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
   const [imageId, setImageId] = useState<string>('');
@@ -132,7 +133,7 @@ const useImageMultisearch = ({
     if (image) {
       const product = getProductType(boxData);
       const params = getSearchParams(image, imageId, config, product);
-      productSearch.multisearchByImage(params, handleImageSuccess, handleError);
+      widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
     } else {
       resetSearch();
     }
@@ -140,7 +141,7 @@ const useImageMultisearch = ({
 
   const multisearchWithParams = (params: Record<string, any>): void => {
     params = {...params, ...config.searchSettings};
-    productSearch.multisearchByImage(params, handleImageSuccess, handleError);
+    widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
   };
 
   const autocompleteWithQuery = (q: string): void => {
@@ -153,7 +154,7 @@ const useImageMultisearch = ({
       return;
     }
 
-    productSearch.multisearchAutocomplete(params, handleAutocompleteSuccess, handleError);
+    widgetClient.multisearchAutocomplete(params, handleAutocompleteSuccess, handleError);
   };
 
   useEffect(() => {
@@ -172,8 +173,8 @@ const useImageMultisearch = ({
       autocompleteWithQuery('');
 
       if (results.length) {
-        productSearch.send(Actions.RESULT_LOAD, metadata);
-        productSearch.lastTrackingMetadata = metadata;
+        widgetClient.sendEvent(Actions.RESULT_LOAD, metadata);
+        widgetClient.setLastTrackingMeta(metadata);
       }
     }
   }, [response]);

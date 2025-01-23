@@ -1,4 +1,3 @@
-import * as English from './locales/en.json';
 import type { WidgetConfig } from './visenze-core';
 
 export const DEFAULT_LOCALE = 'en';
@@ -9,7 +8,6 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
   appSettings: {
     appKey: '', // APP_KEY - required
     placementId: '', // PLACEMENT_ID - required
-    country: '', // 2 DIGIT COUNTRY CODE
     uid: '', // UID,
     endpoint: '',
     gtmTracking: false, // If true, the widget will push result_load event to GTM objects
@@ -33,11 +31,11 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
     cssSelector: '',
     // Field mapping for Product Card. Fields are based on the schema, you can't give a field which doesn't exist in the schema.
     productDetails: {
-      mainImageUrl: '',
-      productUrl: '',
+      main_image_url: '',
+      product_url: '',
       title: '',
       price: '',
-      originalPrice: '',
+      original_price: '',
       category: '',
       brand: '',
       gender: '',
@@ -47,132 +45,184 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
   },
   // ----Language settings---- //
   languageSettings: {
-    locale: DEFAULT_LOCALE,
-    currency: DEFAULT_CURRENCY,
-    text: {
-      en: English,
-    },
+    locale: '',
+    currency: '',
   },
   customizations: {
-    fonts: {
-      mobile: {
-        widgetTitle: {
-          fontSize: 20,
-          fontWeight: 400,
-        },
-        callsToActionText: {
-          fontSize: 14,
-          fontWeight: 400,
-        },
-        productCardTitle: {
-          fontSize: 14,
-          fontWeight: 700,
-        },
-        productCardPrice: {
-          fontSize: 12,
-          fontWeight: 400,
-        },
-        searchBarText: {
-          fontSize: 12,
-          fontWeight: 400,
-        },
-      },
-      tablet: {
-        widgetTitle: {
-          fontSize: 22,
-          fontWeight: 400,
-        },
-        callsToActionText: {
-          fontSize: 14,
-          fontWeight: 400,
-        },
-        productCardTitle: {
-          fontSize: 14,
-          fontWeight: 700,
-        },
-        productCardPrice: {
-          fontSize: 12,
-          fontWeight: 400,
-        },
-        searchBarText: {
-          fontSize: 12,
-          fontWeight: 400,
-        },
-      },
-      desktop: {
-        widgetTitle: {
-          fontSize: 24,
-          fontWeight: 400,
-        },
-        callsToActionText: {
-          fontSize: 16,
-          fontWeight: 400,
-        },
-        productCardTitle: {
-          fontSize: 16,
-          fontWeight: 700,
-        },
-        productCardPrice: {
-          fontSize: 14,
-          fontWeight: 400,
-        },
-        searchBarText: {
-          fontSize: 14,
-          fontWeight: 400,
-        },
-      },
-    },
-    colours: {
-      text: {
-        primary: '#000000',
-        buttonPrimary: '#FFFFFF',
-        buttonSecondary: '#FFFFFF',
-      },
-      background: {
-        primary: '#FFFFFF',
-        buttonPrimary: '#616161',
-        buttonSecondary: '#000000',
-      },
-    },
-    icons: {
-      cameraButton: '',
-      upload: '',
-      moreLikeThis: '',
-    },
-    images: [
-      {
-        url: 'https://cdn.visenze.com/images/widget-1.jpg',
-        label: '',
-      },
-      {
-        url: 'https://cdn.visenze.com/images/widget-2.jpg',
-        label: '',
-      },
-      {
-        url: 'https://cdn.visenze.com/images/widget-3.jpg',
-        label: '',
-      },
-      {
-        url: 'https://cdn.visenze.com/images/widget-4.jpg',
-        label: '',
-      },
-      {
-        url: 'https://cdn.visenze.com/images/widget-5.jpg',
-        label: '',
-      },
-    ],
     breakpoints: {
       mobile: {
         maxWidth: 767,
       },
       tablet: {
-        maxWidth: 1023,
-      },
-      desktop: {
-        minWidth: 1024,
+        // no tablet definition by default
+        maxWidth: 0,
       },
     },
+    productCard: {
+      openLinksInNewTab: true,
+      price: {
+        show: true,
+        font: {
+          mobile: {
+            size: 12,
+            weight: 400,
+          },
+          tablet: {
+            size: 12,
+            weight: 400,
+          },
+          desktop: {
+            size: 14,
+            weight: 400,
+          },
+        },
+        fontColor: '',
+      },
+      originalPrice: {
+        show: true,
+        font: {
+          mobile: {
+            size: 12,
+            weight: 400,
+          },
+          tablet: {
+            size: 12,
+            weight: 400,
+          },
+          desktop: {
+            size: 14,
+            weight: 400,
+          },
+        },
+        fontColor: '',
+      },
+      title: {
+        show: true,
+        fieldSource: 'title',
+        font: {
+          mobile: {
+            size: 14,
+            weight: 700,
+          },
+          tablet: {
+            size: 14,
+            weight: 700,
+          },
+          desktop: {
+            size: 16,
+            weight: 700,
+          },
+        },
+      },
+      secondaryTitle: {
+        show: false,
+        fieldSource: '',
+        font: {
+          mobile: {
+            size: 12,
+            weight: 400,
+          },
+          tablet: {
+            size: 12,
+            weight: 400,
+          },
+          desktop: {
+            size: 14,
+            weight: 400,
+          },
+        },
+      },
+      findSimilar: {
+        enable: true,
+        position: 'bottom_right',
+        icon: {
+          url: '',
+          color: '',
+        },
+      },
+    },
+    buttons: {
+      primary: {
+        fontColor: '#FFFFFF',
+        backgroundColor: '#616161',
+      },
+      secondary: {
+        fontColor: '#FFFFFF',
+        backgroundColor: '#000000',
+      },
+    },
+    imageUpload: {
+      enable: true,
+      icon: {
+        url: '',
+        color: '',
+      },
+      images: [
+        {
+          url: 'https://cdn.visenze.com/images/widget-1.jpg',
+          label: '',
+        },
+        {
+          url: 'https://cdn.visenze.com/images/widget-2.jpg',
+          label: '',
+        },
+        {
+          url: 'https://cdn.visenze.com/images/widget-3.jpg',
+          label: '',
+        },
+        {
+          url: 'https://cdn.visenze.com/images/widget-4.jpg',
+          label: '',
+        },
+        {
+          url: 'https://cdn.visenze.com/images/widget-5.jpg',
+          label: '',
+        },
+      ],
+    },
     customCss: '',
+    generalLayout: {
+      showWidgetTitle: true,
+      headingFont: {
+        mobile: {
+          size: 20,
+          weight: 400,
+        },
+        tablet: {
+          size: 22,
+          weight: 400,
+        },
+        desktop: {
+          size: 24,
+          weight: 400,
+        },
+      },
+      bodyFont: {
+        mobile: {
+          size: 14,
+          weight: 400,
+        },
+        tablet: {
+          size: 14,
+          weight: 400,
+        },
+        desktop: {
+          size: 16,
+          weight: 400,
+        },
+      },
+      fontFamily: '',
+      fontColor: '#000000',
+      backgroundColor: '#FFFFFF',
+      showViSenzeLogo: true,
+    },
+    popup: {
+      position: 'center',
+      triggerIcon: {
+        url: '',
+        color: '',
+      },
+    },
   },
   // ----Callback settings---- //
   callbacks: {
@@ -191,15 +241,7 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
     // @param {apiResponse} response from visearch API
     onSearchCallback: undefined,
   },
-  searchBarResultsSettings: {
-    enableImageUpload: true,
-    enableFindSimilar: true,
-    enableMultiSearch: true,
-    redirectUrl: 'http://localhost:8080/',
-  },
   hideTrigger: false,
-  debugMode: false,
   disableAnalytics: false,
   maxRetryCount: 1,
-  vttSource: '',
 };

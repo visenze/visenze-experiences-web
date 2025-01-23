@@ -4,8 +4,3 @@ export interface CroppedBox {
   y1: number;
   y2: number;
 }
-
-export interface Coordinates {
-  clientX: number;
-  clientY: number;
-}

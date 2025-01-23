@@ -2,26 +2,18 @@ import { WidgetType } from '../../common/visenze-core';
 import { devInitWidget } from '../../common/client/initialization';
 import { devConfigs, devFieldMappings } from './dev-configs';
 import App from './app';
-import version from './version';
+import version from '../../version';
 
-const customCss = `
-/* Insert the custom CSS here */
-`;
-
-const initConfig = {
-  ...devConfigs,
-  customizations: {
-    ...devConfigs.customizations,
-    customCss,
-  },
-};
+// set to true to retrieve the fields mappings from the backend
+const shouldRetrieveFieldsMapping = true;
 
 devInitWidget(
     WidgetType.EMBEDDED_SEARCH_RESULTS,
     version,
-    ({ config, client, fieldMappings }) => <App productSearch={client} fieldMappings={fieldMappings} config={config}></App>,
+    ({ config, client, fieldMappings, element }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config} element={element}></App>,
     false,
-    initConfig,
+    devConfigs,
     devFieldMappings,
+    shouldRetrieveFieldsMapping,
     window,
 );

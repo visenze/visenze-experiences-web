@@ -13,12 +13,12 @@ interface FileDropzoneProps {
 }
 
 const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name }) => {
-  const { productSearch } = useContext(WidgetDataContext);
+  const { widgetClient } = useContext(WidgetDataContext);
   const MAX_IMAGE_FILE_SIZE = 10000000;
 
   const onDrop = (acceptedFiles: File[], fileRejections: FileRejection[]): void => {
     if (fileRejections.length > 0) {
-      productSearch.send(Actions.ERROR, {
+      widgetClient.sendEvent(Actions.ERROR, {
         cat: Category.UPLOAD,
         label: Labels.SEARCH_ERROR,
       });
@@ -32,7 +32,7 @@ const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name }) 
 
     const reader = new FileReader();
     reader.onload = (e: any): void => {
-      productSearch.send(Actions.CLICK, {
+      widgetClient.sendEvent(Actions.CLICK, {
         cat: Category.UPLOAD,
         label: Labels.UPLOAD,
       });

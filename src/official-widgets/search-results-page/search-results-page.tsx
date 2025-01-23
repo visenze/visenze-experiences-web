@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect, useState } from 'react';
+import { type FC, useContext, useEffect, useState } from 'react';
 import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ResultsPage from './components/ResultsPage';
@@ -7,29 +7,23 @@ import { WidgetResultContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
 import SearchBarWithDropdown from './components/SearchBarWithDropdown';
 
-const SearchResultsPage = memo((props: {
+interface SearchResultsPageProps {
   config: WidgetConfig;
-  productSearch: WidgetClient;
-}) => {
-  const { config, productSearch } = props;
+  widgetClient: WidgetClient;
+}
+
+const SearchResultsPage: FC<SearchResultsPageProps> = ({ config, widgetClient }) => {
   const [searchBarValue, setSearchBarValue] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeProduct, setActiveProduct] = useState<ProcessedProduct | null>(null);
   const root = useContext(RootContext);
 
-  const {
-    productResults,
-    autocompleteWithQuery,
-    multisearchWithParams,
-    autocompleteResults,
-    metadata,
-    error,
-  } = useImageMultisearch({
-    image: undefined,
-    boxData: undefined,
-    config,
-    productSearch,
-  });
+  const { productResults, autocompleteWithQuery, multisearchWithParams, autocompleteResults, metadata, error } = useImageMultisearch({
+      image: undefined,
+      boxData: undefined,
+      config,
+      widgetClient,
+    });
 
   const handleMultisearchWithQuery = (query: string): void => {
     setSearchBarValue(query);
@@ -59,7 +53,7 @@ const SearchResultsPage = memo((props: {
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        <div className='flex size-full flex-col items-center bg-primary'>
+        <div className='flex size-full flex-col items-center text-primary'>
           {/* Search bar with autocomplete dropdown */}
           <SearchBarWithDropdown
             searchBarValue={searchBarValue}
@@ -71,9 +65,8 @@ const SearchResultsPage = memo((props: {
             handleMultisearchWithProduct={handleMultisearchWithProduct}
           />
           {/* Results page */}
-          {
-            productResults.length > 0
-            && <ResultsPage
+          {productResults.length > 0 && (
+            <ResultsPage
               autocompleteResults={autocompleteResults}
               results={productResults}
               handleMultisearchWithQuery={handleMultisearchWithQuery}
@@ -81,11 +74,11 @@ const SearchResultsPage = memo((props: {
               activeProduct={activeProduct}
               setActiveProduct={setActiveProduct}
             />
-          }
+          )}
         </div>
       </WidgetResultContext.Provider>
     </>
   );
-});
+};
 
 export default SearchResultsPage;
