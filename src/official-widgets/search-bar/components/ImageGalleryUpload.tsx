@@ -95,7 +95,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
   };
 
   return (
-    <div className='hidden md:flex'>
+    <div className='flex'>
       <Button isIconOnly className='rounded-full bg-zinc-100' onClick={onIconClickHandler} data-pw='sb-gallery-button'>
         {searchImage && (
             <>

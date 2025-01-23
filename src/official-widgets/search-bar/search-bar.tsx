@@ -4,6 +4,8 @@ import { Listbox, ListboxItem, ListboxSection } from '@nextui-org/listbox';
 // import { cn } from '@nextui-org/theme';
 import { Button } from '@nextui-org/button';
 import { useIntl } from 'react-intl';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import { WidgetBreakpoint } from '../../common/types/constants';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import type { SearchImage } from '../../common/types/image';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
@@ -40,6 +42,9 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
   const [allowRedirect, setAllowRedirect] = useState(false);
   const [isMultiSearch, setIsMultiSearch] = useState(true);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
+  const [suggestionMax, setSuggestionMax] = useState(6);
+  const [relatedMax, setRelatedMax] = useState(8);
+  const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
   const intl = useIntl();
 
@@ -53,9 +58,8 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
   });
 
   const {
-    // imageId,
+    productCount,
     searchAsYouTypeResults,
-    // error,
   } = useSearchAsYouType({
     image,
     query: debouncedQuery,
@@ -117,6 +121,13 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
       window.location.href = url.toString();
     }
   };
+
+  useEffect(() => {
+    if (breakpoint === WidgetBreakpoint.MOBILE) {
+      setSuggestionMax(4);
+      setRelatedMax(2);
+    }
+  }, [breakpoint]);
 
   useEffect(() => {
     if (imageId && allowRedirect) {
@@ -197,8 +208,8 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
               //        '
               aria-label='Drag or upload image'
             >
-              <div className='flex divide-x divide-gray-200 py-1'>
-                <div className='flex-1'>
+              <div className='flex flex-col divide-x divide-gray-200 py-1 md:flex-row'>
+                <div className='flex flex-col justify-between md:w-2/5'>
                   <div className='flex flex-col gap-2 px-4 py-1'>
                     <p className='text-large font-semibold leading-6 text-primary'>Suggestions</p>
 
@@ -210,7 +221,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                       aria-label='Autocomplete Dropdown'
                     >
                       <ListboxSection classNames={{ base: 'mb-0' }}>
-                        {autocompleteResults.slice(0, 6).map((result, index) => (
+                        {autocompleteResults.slice(0, suggestionMax).map((result, index) => (
                           <ListboxItem
                             tabIndex={0}
                             className='pr-4'
@@ -226,7 +237,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                     </Listbox>
                   </div>
 
-                  <div className='px-4'>
+                  <div className='hidden px-4 pb-4 md:flex'>
                     <Button
                       className='w-full rounded bg-buttonPrimary py-2 font-semibold text-white'
                       radius='none'
@@ -236,20 +247,20 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                         }
                       }}
                     >
-                      View all products
+                      View all {productCount} products
                     </Button>
                   </div>
                 </div>
 
-                <div className='hidden w-3/5 justify-center md:flex'>
+                <div className='flex w-full justify-center md:w-3/5'>
                   <div className='flex flex-col gap-2 px-4 py-1'>
                     <p className='text-large font-semibold leading-6 text-primary'>Related products</p>
 
                       <div
-                        className='grid w-full grid-cols-4 gap-x-2 gap-y-4 pb-2'
+                        className='grid w-full grid-cols-2 gap-x-2 gap-y-4 pb-2 md:grid-cols-4'
                         data-pw='esr-product-result-grid'
                       >
-                        {searchAsYouTypeResults.map((result, index) => (
+                        {searchAsYouTypeResults.slice(0, relatedMax).map((result, index) => (
                           <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
                             <Result
                               index={index}
@@ -260,11 +271,25 @@ const SearchBar: FC<SearchBarResultProps> = ({ config }): ReactElement => {
                       </div>
                   </div>
                 </div>
+
+                <div className='flex px-4 pb-4 md:hidden'>
+                  <Button
+                    className='w-full rounded bg-buttonPrimary py-2 font-semibold text-white'
+                    radius='none'
+                    onClick={() => {
+                      if (query) {
+                        redirectWithAutocomplete(query);
+                      }
+                    }}
+                  >
+                    View all {productCount} products
+                  </Button>
+                </div>
               </div>
             </div>
             )
             : <div
-              className='absolute top-12 z-20 w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
+              className='absolute top-12 z-20 w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
               //        '
               aria-label='Drag or upload image'
             >

@@ -13,7 +13,7 @@ interface SearchAsYouTypeProps {
 }
 
 interface SearchAsYouType {
-  imageId: string;
+  productCount: number;
   searchAsYouTypeResults: ProcessedProduct[];
   error: string;
 }
@@ -23,7 +23,7 @@ const useSearchAsYouType = ({
   image,
 }: SearchAsYouTypeProps): SearchAsYouType => {
   const { searchSettings, productSearch } = useContext(WidgetDataContext);
-  const [imageId, setImageId] = useState('');
+  const [productCount, setProductCount] = useState(0);
   const [searchAsYouTypeResults, setSearchAsYouTypeResults] = useState<ProcessedProduct[]>([]);
   const [error, setError] = useState<string>('');
 
@@ -41,8 +41,8 @@ const useSearchAsYouType = ({
         queryId: res.reqid,
       };
 
-      if (res.im_id) {
-        setImageId(res.im_id);
+      if (res.total) {
+        setProductCount(res.total);
       }
 
       const newSearchAsYouTypeResults = getFlattenProducts(res.result || []);
@@ -80,7 +80,7 @@ const useSearchAsYouType = ({
   }, [query, image]);
 
   return {
-    imageId,
+    productCount,
     searchAsYouTypeResults,
     error,
   };
