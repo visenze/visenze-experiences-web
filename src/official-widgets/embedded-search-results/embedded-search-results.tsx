@@ -18,7 +18,7 @@ import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import FilterIcon from '../../common/icons/FilterIcon';
 import type { ImageUrl } from '../../common/types/image';
 import SearchBarInput from './components/SearchBarInput';
-import SearchHistory, { STORAGE_KEY, MAX_HISTORY_ITEMS } from './components/SearchHistory';
+import SearchHistory, { MAX_HISTORY_ITEMS } from './components/SearchHistory';
 import type { SearchHistoryEntry } from './components/SearchHistory';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
@@ -43,14 +43,12 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
     colors: new Set<string>(),
   };
   const [selectedFilters, setSelectedFilters] = useState<Record<FacetType, any>>(defaultFilters);
-  const [showDesktopFilterOptions, setShowDesktopFilterOptions] = useState(false);
   const [showMobileFilterOptions, setShowMobileFilterOptions] = useState(false);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
-  // const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [imageUrl, setImageUrl] = useState('');
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [activeHistory, setActiveHistory] = useState<SearchHistoryEntry>();
@@ -90,7 +88,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
           return item;
         });
 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedHistory));
         return updatedHistory;
       });
 
@@ -128,11 +125,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
       timestamp: Date.now(),
     };
 
-    setSearchHistory((prevHistory) => {
-      const newHistory = [newEntry, ...prevHistory].slice(0, MAX_HISTORY_ITEMS);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newHistory));
-      return newHistory;
-    });
+    setSearchHistory((prevHistory) => [newEntry, ...prevHistory].slice(0, MAX_HISTORY_ITEMS));
 
     setActiveHistory(newEntry);
   };
@@ -259,7 +252,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
       setActiveHistory(undefined);
       setIsLoading(true);
       setIsFirstLoad(true);
-      multisearchWithSearchBarDetails(undefined, undefined, 1);
+      multisearchWithSearchBarDetails(imageUrl, query, 1);
     }
   };
 
@@ -288,7 +281,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
         if (target.isIntersecting && !isLoading && !isLoadingMore && productResults.length > 0) {
           setPage((prevPage) => {
             const nextPage = prevPage + 1;
-            multisearchWithSearchBarDetails(undefined, undefined, nextPage);
+            multisearchWithSearchBarDetails(imageUrl, query, nextPage);
             return nextPage;
           });
         }
@@ -309,7 +302,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
     if (!isLoading) {
       resetPagination();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      multisearchWithSearchBarDetails();
+      multisearchWithSearchBarDetails(imageUrl, query);
     }
   }, [selectedFilters]);
 
@@ -320,14 +313,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
   }, [isLoading]);
 
   useEffect(() => {
-    const savedHistory = localStorage.getItem(STORAGE_KEY);
-    if (savedHistory) {
-      try {
-        setSearchHistory(JSON.parse(savedHistory));
-      } catch (e) {
-        console.error('Failed to parse search history:', e);
-      }
-    }
     setQuery(textQuery);
     setImageUrl(imUrl);
     multisearchWithSearchBarDetails(imUrl, textQuery);
@@ -345,62 +330,54 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         <div className='flex w-full flex-col items-center'>
-          <div className='flex w-full gap-y-2 px-2 py-6 md:py-8 lg:py-10'>
-            <div className='sticky top-0 z-20 hidden w-1/4 px-2 py-1 md:block md:px-0'>
-              <Button className='self-start rounded-md bg-gray-200 px-4' data-pw='esr-filter-button' onClick={() => setShowDesktopFilterOptions(true)}>
-                <FilterIcon className='size-5'/>
-                <span className='calls-to-action-text'>
-                {intl.formatMessage({ id: 'filter' })}
-              </span>
-              </Button>
-
-              <ViSenzeModal
-                className='inset-y-0 w-1/5'
-                open={showDesktopFilterOptions}
-                layout='mobile'
-                onClose={() => setShowDesktopFilterOptions(false)}
-                position='center'
-                placementId={`${config.appSettings.placementId}`}
-                fontFamily={config.customizations.generalLayout?.fontFamily}
-              >
-                <FilterOptions
-                  facets={facets}
-                  selectedFilters={selectedFilters}
-                  setSelectedFilters={setSelectedFilters}
-                />
-              </ViSenzeModal>
+          <div className='flex w-full gap-y-2 px-2 py-3 md:py-4 lg:py-5'>
+            <div className='sticky top-0 z-20 hidden w-2/12 px-2 py-1 md:block md:px-0'>
             </div>
 
-            <div className='w-full md:w-1/2'>
+            <div className='w-full md:w-8/12'>
               <SearchBarInput
                 query={query}
                 setQuery={setQuery}
                 emitSearchBarCallback={() => {
                   if (query) {
+                    setSearchHistory([]);
                     findSimilarClickHandler();
                   }
                 }}
               />
             </div>
           </div>
-
-          <SearchHistory
-            activeHistory={activeHistory}
-            setActiveHistory={setActiveHistory}
-            history={searchHistory}
-            multisearchWithSearchBarDetails={findSimilarClickHandler}
-            onHistorySelect={onHistorySelect}
-          />
+          <div className='flex w-full items-end gap-y-2 px-2 pb-3 md:pb-4 lg:pb-5'>
+            <div className='hidden w-2/12 md:flex' />
+            <div className='w-full md:w-8/12'>
+              <SearchHistory
+                activeHistory={activeHistory}
+                setActiveHistory={setActiveHistory}
+                history={searchHistory}
+                multisearchWithSearchBarDetails={findSimilarClickHandler}
+                onHistorySelect={onHistorySelect}
+              />
+            </div>
+          </div>
+          <div className='hidden w-full gap-y-2 px-2 pb-2 md:flex'>
+            <div className='w-2/12' />
+            <FilterOptions
+                displayAsDropdown={true}
+                facets={facets}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
+            />
+          </div>
         </div>
 
         <div className='flex size-full flex-col justify-center bg-primary md:flex-row'>
           {/* Filter Section Mobile */}
-          <div className=' w-full bg-white px-2 py-1 md:hidden md:px-0'>
+          <div className='w-full bg-white px-2 py-1 md:hidden md:px-0'>
             <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowMobileFilterOptions(true)}>
               <FilterIcon className='size-5'/>
-              <span className='text-primary'>
-              {intl.formatMessage({ id: 'filter' })}
-            </span>
+              <span className='text-black'>
+                {intl.formatMessage({ id: 'filter' })}
+              </span>
             </Button>
 
             <ViSenzeModal
@@ -412,6 +389,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
               fontFamily={config.customizations.generalLayout?.fontFamily}
             >
               <FilterOptions
+                displayAsDropdown={false}
                 facets={facets}
                 selectedFilters={selectedFilters}
                 setSelectedFilters={setSelectedFilters}
@@ -476,8 +454,8 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
 
         {!isLoading && !query && !imageUrl && productResults.length === 0 && (
           <div className='flex w-full flex-col items-center justify-center gap-y-2 py-24 text-center'>
-            <p className='calls-to-action-text font-semibold'>{intl.formatMessage({ id: 'noSearchInput' })}</p>
-            <p className='calls-to-action-text'>{intl.formatMessage({ id: 'noSearchInputDescription' })}</p>
+            <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noSearchInput' })}</p>
+            <p className='text-primary'>{intl.formatMessage({ id: 'noSearchInputDescription' })}</p>
           </div>
         )}
       </WidgetResultContext.Provider>

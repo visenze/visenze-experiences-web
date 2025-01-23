@@ -27,7 +27,6 @@ export interface SearchHistoryEntry {
   source: 'url' | 'user';
 }
 
-export const STORAGE_KEY = 'visenze_search_history';
 export const MAX_HISTORY_ITEMS = 20;
 
 export default function SearchHistory({
@@ -92,29 +91,7 @@ export default function SearchHistory({
 
   return (
     <>
-      <div className='flex size-full flex-row items-center md:w-1/2'>
-        <p className='flex h-full w-auto items-center pr-2'>History</p>
-
-        <div className='no-scrollbar grid auto-cols-max grid-flow-col gap-2 overflow-x-scroll'>
-          {history.filter((entry) => entry.type === 'text').map((entry, index) => (
-            <div key={index}>
-              <button
-                className={cn(
-                  'rounded-xl bg-gray-200 px-2 py-1',
-                  entry.id === activeHistory?.id ? 'border border-gray-500' : 'opacity-60',
-                )}
-                onClick={() => {
-                  onHistorySelect(entry);
-                }}
-              >
-                {entry.query}
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className='no-scrollbar flex w-full flex-col items-center gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
+      <div className='no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
         <div className='flex w-full flex-row gap-2 md:w-1/2'>
           {history
             .filter((entry) => (entry.type === 'image'))

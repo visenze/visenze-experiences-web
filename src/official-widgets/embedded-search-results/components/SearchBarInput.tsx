@@ -18,7 +18,8 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
   setQuery,
   emitSearchBarCallback,
 }) => {
-  const { customizations } = useContext(WidgetDataContext);
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const searchBarRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
 

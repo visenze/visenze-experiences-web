@@ -45,8 +45,6 @@ export const SearchHistoryProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const addToHistory = (entry: Omit<SearchHistoryEntry, 'timestamp'>): (SearchHistoryEntry | undefined) => {
-    console.log('addToHistory', entry);
-
     let newEntry: SearchHistoryEntry;
     try {
       newEntry = {
