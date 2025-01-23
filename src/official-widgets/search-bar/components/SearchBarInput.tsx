@@ -20,7 +20,8 @@ interface SearchBarInputProps {
 }
 
 const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, emitSearchBarCallback, imageUploadHandler, setShowDropdown, placementId, image }) => {
-  const { customizations } = useContext(WidgetDataContext);
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const searchBarRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
 

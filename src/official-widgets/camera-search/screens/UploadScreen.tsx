@@ -16,7 +16,8 @@ interface UploadScreenProps {
 }
 
 const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) => {
-  const { widgetClient, customizations } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const intl = useIntl();
 
   const onGallerySelect = (index: number): void => {

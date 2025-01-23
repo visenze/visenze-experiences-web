@@ -30,7 +30,8 @@ const ResultsPage: FC<ResultsPageProps> = ({
   activeProduct,
   setActiveProduct,
 }): ReactElement => {
-  const { customizations } = useContext(WidgetDataContext);
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const [productHistory, setProductHistory] = useState<ProcessedProduct[]>([]);
   const resultsRef = useRef<HTMLDivElement>(null);
   const breakpoint = useBreakpoint();

@@ -21,7 +21,8 @@ const useAutocomplete = ({
   query,
   image,
 }: AutocompleteProps): Autocomplete => {
-  const { searchSettings, widgetClient } = useContext(WidgetDataContext);
+  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { searchSettings } = widgetConfig;
   const [imageId, setImageId] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [autocompleteResults, setAutocompleteResults] = useState<string[]>([]);

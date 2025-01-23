@@ -35,7 +35,8 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
   const [galleryProducts, setGalleryProducts] = useState<ProcessedProduct[]>([]);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [page, setPage] = useState(1);
-  const { appSettings } = useContext(WidgetDataContext);
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { appSettings } = widgetConfig;
   const intl = useIntl();
 
   const { objects, productResults, productTypes, metadata, error } = useRecommendationSearch({

@@ -1,5 +1,5 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { memo, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { type FC, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -72,11 +72,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({ message, onMessageChange, onOverflo
   );
 };
 
-const ShoppingAssistant = memo((props: {
+interface ShoppingAssistantProps {
   config: WidgetConfig;
   widgetClient: WidgetClient;
-}) => {
-  const { config, widgetClient } = props;
+}
+
+const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient }) => {
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
@@ -392,6 +393,6 @@ const ShoppingAssistant = memo((props: {
         </ViSenzeModal>
       </>
   );
-});
+};
 
 export default ShoppingAssistant;

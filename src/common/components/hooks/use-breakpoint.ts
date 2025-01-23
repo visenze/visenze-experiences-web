@@ -4,7 +4,8 @@ import { WidgetDataContext } from '../../types/contexts';
 import { WidgetBreakpoint } from '../../types/constants';
 
 const useBreakpoint = (): WidgetBreakpoint => {
-  const { customizations } = useContext(WidgetDataContext);
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   if (!customizations || !customizations.breakpoints) {
     return WidgetBreakpoint.DESKTOP;
   }

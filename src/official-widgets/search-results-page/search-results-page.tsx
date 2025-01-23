@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect, useState } from 'react';
+import { type FC, useContext, useEffect, useState } from 'react';
 import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ResultsPage from './components/ResultsPage';
@@ -7,8 +7,12 @@ import { WidgetResultContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
 import SearchBarWithDropdown from './components/SearchBarWithDropdown';
 
-const SearchResultsPage = memo((props: { config: WidgetConfig; widgetClient: WidgetClient }) => {
-  const { config, widgetClient } = props;
+interface SearchResultsPageProps {
+  config: WidgetConfig;
+  widgetClient: WidgetClient;
+}
+
+const SearchResultsPage: FC<SearchResultsPageProps> = ({ config, widgetClient }) => {
   const [searchBarValue, setSearchBarValue] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeProduct, setActiveProduct] = useState<ProcessedProduct | null>(null);
@@ -75,6 +79,6 @@ const SearchResultsPage = memo((props: { config: WidgetConfig; widgetClient: Wid
       </WidgetResultContext.Provider>
     </>
   );
-});
+};
 
 export default SearchResultsPage;

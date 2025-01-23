@@ -15,7 +15,8 @@ interface FilterOptionsProps {
 }
 
 const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSelectedFilters }) => {
-  const { displaySettings, customizations } = useContext(WidgetDataContext);
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { displaySettings, customizations } = widgetConfig;
 
   const showFacetValues = (facet: Facet): ReactElement | ReactElement[] => {
     const priceRangeChangeHandler = (value: number | number[]): void => {

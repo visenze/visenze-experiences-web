@@ -12,7 +12,7 @@ import App from './app';
     initWidget: initWidgetFactory(
         WidgetType.ICON_TRIGGERED_GRID,
         version,
-        ({ config, client, index, element }) => <App config={config} widgetClient={client} index={index} element={element}></App>,
+        ({ config, client, index, element, fieldMappings }) => <App config={config} fieldMappings={fieldMappings} widgetClient={client} index={index} element={element}></App>,
         true,
     ),
     deepMerge,

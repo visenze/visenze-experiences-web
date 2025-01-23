@@ -17,7 +17,8 @@ interface CarouselProps {
 }
 
 const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }) => {
-  const { customizations } = useContext(WidgetDataContext);
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const [isLoading, setIsLoading] = useState(true);
   const breakpoint = useBreakpoint();
 

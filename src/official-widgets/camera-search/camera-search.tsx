@@ -1,5 +1,5 @@
-import type { ReactElement } from 'react';
-import { useEffect, memo, useCallback, useContext, useState } from 'react';
+import type { FC, ReactElement } from 'react';
+import { useEffect, useCallback, useContext, useState } from 'react';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetResultContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
@@ -19,8 +19,12 @@ import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
-const CameraSearch = memo((props: { config: WidgetConfig; widgetClient: WidgetClient }) => {
-  const { config, widgetClient } = props;
+interface CameraSearchProps {
+  config: WidgetConfig;
+  widgetClient: WidgetClient;
+}
+
+const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [image, setImage] = useState<SearchImage | undefined>();
@@ -230,6 +234,6 @@ const CameraSearch = memo((props: { config: WidgetConfig; widgetClient: WidgetCl
       </CroppingProvider>
     </WidgetResultContext.Provider>
   );
-});
+};
 
 export default CameraSearch;
