@@ -256,6 +256,10 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
     }
   };
 
+  const onHistoryRemove = (entry: SearchHistoryEntry): void => {
+    setSearchHistory((prev) => prev.filter((hist) => hist.id !== entry.id));
+  };
+
   const findSimilarClickHandler = (imgUrl?: string): void => {
     setPage(1);
     if (imgUrl) {
@@ -356,6 +360,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
                 history={searchHistory}
                 multisearchWithSearchBarDetails={findSimilarClickHandler}
                 onHistorySelect={onHistorySelect}
+                onHistoryRemove={onHistoryRemove}
               />
             </div>
           </div>

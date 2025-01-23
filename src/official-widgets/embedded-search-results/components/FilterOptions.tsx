@@ -115,7 +115,9 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
         <div className='flex w-8/12'>
           {facets.map((facet) => (
               <div key={facet.key} className='w-2/6 p-1'>
-                <Button className='w-full'
+                <Button className='w-full text-primary'
+                        variant='bordered'
+                        radius='none'
                         endContent={<ChevronDownIcon />}
                         onClick={() => {
                           setShownFacets((prev) => {

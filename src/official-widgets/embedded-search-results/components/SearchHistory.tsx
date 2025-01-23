@@ -1,9 +1,8 @@
-// src/official-widgets/embedded-search-results/components/SearchHistory.tsx
 import { cn } from '@nextui-org/theme';
 import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { Image as NextImage } from '@nextui-org/image';
 import ImageCropThumbnail from './ImageCropThumbnail';
-// import CloseIcon from '../../../common/icons/CloseIcon';
+import CloseIcon from '../../../common/icons/CloseIcon';
 
 export interface ProductType {
   type: string;
@@ -31,16 +30,16 @@ export const MAX_HISTORY_ITEMS = 20;
 
 export default function SearchHistory({
   activeHistory,
-  // setActiveHistory,
   history,
-  // multisearchWithSearchBarDetails,
   onHistorySelect,
+  onHistoryRemove,
 }: {
   activeHistory: SearchHistoryEntry | undefined;
   setActiveHistory: (entry: SearchHistoryEntry | undefined) => void;
   history: SearchHistoryEntry[];
   multisearchWithSearchBarDetails: (imgUrl?: string) => void;
-  onHistorySelect: (entry: SearchHistoryEntry) => void
+  onHistorySelect: (entry: SearchHistoryEntry) => void;
+  onHistoryRemove: (entry: SearchHistoryEntry) => void;
 }): ReactElement {
   const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number, height: number } }>({});
   const activeItemRef = useRef<HTMLDivElement>(null);
@@ -112,10 +111,22 @@ export default function SearchHistory({
                   entry.id === getActiveHistoryId() ? 'border border-gray-500' : 'opacity-60',
                 )}
                 onClick={() => {
-                  onHistorySelect(entry);
+                  if (entry.id !== getActiveHistoryId()) {
+                    onHistorySelect(entry);
+                  }
                 }}
                 data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
               >
+                {entry.id !== getActiveHistoryId() && (
+                    <div className='absolute right-1 top-1 z-20 rounded-full bg-white'
+                         onClick={(event) => {
+                           event.preventDefault();
+                           event.stopPropagation();
+                           onHistoryRemove(entry);
+                         }}>
+                      <CloseIcon className='size-4'/>
+                    </div>
+                )}
                 {entry.box ? (
                   <div className='h-32 w-24 overflow-hidden'>
                     {entry.imageUrl && (
