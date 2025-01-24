@@ -344,8 +344,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
                 setQuery={setQuery}
                 emitSearchBarCallback={() => {
                   if (query) {
-                    setSearchHistory([]);
-                    findSimilarClickHandler();
+                    findSimilarClickHandler(imageUrl);
                   }
                 }}
               />
@@ -375,7 +374,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
           </div>
         </div>
 
-        <div className='flex size-full flex-col justify-center bg-primary md:flex-row'>
+        <div className='flex size-full flex-col justify-center md:flex-row'>
           {/* Filter Section Mobile */}
           <div className='w-full bg-white px-2 py-1 md:hidden md:px-0'>
             <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowMobileFilterOptions(true)}>
@@ -404,7 +403,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
 
           <div className='flex w-full flex-col'>
             {/* Product Result Grid */}
-            <div className='flex flex-col items-center'>
+            <div className='flex flex-col items-center text-primary'>
               {
                 isLoading && isFirstLoad
                   ? <div className='flex w-full justify-center py-32'>

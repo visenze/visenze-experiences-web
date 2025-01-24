@@ -1,6 +1,5 @@
 import React, { useContext, type ChangeEvent, type FC, type ReactElement, useState, useEffect, useRef } from 'react';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
-import { Button } from '@nextui-org/button';
 import type { Facet } from 'visearch-javascript-sdk';
 import { Slider } from '@nextui-org/slider';
 import { Checkbox } from '@nextui-org/checkbox';
@@ -115,23 +114,25 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
         <div className='flex w-8/12'>
           {facets.map((facet) => (
               <div key={facet.key} className='w-2/6 p-1'>
-                <Button className='w-full text-primary'
-                        variant='bordered'
-                        radius='none'
-                        endContent={<ChevronDownIcon />}
-                        onClick={() => {
-                          setShownFacets((prev) => {
-                            const originalValueForFacet = prev[facet.key];
-                            const newState: Record<string, boolean> = {};
-                            Object.keys(prev).forEach((f) => {
-                              newState[f] = false;
-                            });
-                            newState[facet.key] = !originalValueForFacet;
-                            return newState;
-                          });
-                        }}>
-                  {getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
-                </Button>
+                <div className='w-full border-y border-y-gray-300 py-2'
+                     onClick={() => {
+                       setShownFacets((prev) => {
+                         const originalValueForFacet = prev[facet.key];
+                         const newState: Record<string, boolean> = {};
+                         Object.keys(prev).forEach((f) => {
+                           newState[f] = false;
+                         });
+                         newState[facet.key] = !originalValueForFacet;
+                         return newState;
+                       });
+                     }}>
+                  <div className='flex cursor-pointer items-center justify-between text-primary hover:opacity-80'>
+                    <span>
+                      {getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
+                    </span>
+                    <ChevronDownIcon />
+                  </div>
+                </div>
                 {shownFacets[facet.key] && (
                     <OutsideAlerter facet={facet.key}>
                       <div className='absolute z-20 mt-1 w-3/12 rounded border-gray-300 bg-gray-100 p-3 text-black'>

@@ -19,8 +19,6 @@ interface AppProps {
 
 const DEFAULT_TEXTS: LanguagePack = {
   en: {
-    widgetTitle: 'Search Results',
-    subtitle: 'Search results for',
     filter: 'Filter',
     noResults: 'No Results Found',
     noResultsDescription: 'We could not find any products matching your search.',

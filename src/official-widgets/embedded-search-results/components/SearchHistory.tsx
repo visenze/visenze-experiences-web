@@ -117,16 +117,14 @@ export default function SearchHistory({
                 }}
                 data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
               >
-                {entry.id !== getActiveHistoryId() && (
-                    <div className='absolute right-1 top-1 z-20 rounded-full bg-white'
-                         onClick={(event) => {
-                           event.preventDefault();
-                           event.stopPropagation();
-                           onHistoryRemove(entry);
-                         }}>
-                      <CloseIcon className='size-4'/>
-                    </div>
-                )}
+                <div className='absolute right-1 top-1 z-20 rounded-full bg-white'
+                     onClick={(event) => {
+                       event.preventDefault();
+                       event.stopPropagation();
+                       onHistoryRemove(entry);
+                     }}>
+                  <CloseIcon className='size-4'/>
+                </div>
                 {entry.box ? (
                   <div className='h-32 w-24 overflow-hidden'>
                     {entry.imageUrl && (
