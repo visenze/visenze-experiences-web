@@ -119,7 +119,6 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
         {customizations.productCard?.findSimilar?.enable && (
           <Button
             isIconOnly
-            size='sm'
             radius='full'
             className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-10 bg-white shadow-md`}
             onClick={(event) => {
@@ -130,10 +129,10 @@ const Result: FC<ResultProps> = ({ index, result, findSimilarClickHandler }) => 
             data-pw='esr-more-like-this-button'
           >
             <CustomizableIcon
-              height={20}
-              width={20}
-              url={customizations?.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/magnifying-glass-icon.svg'}
-              color={customizations?.productCard?.findSimilar?.icon?.color || ''}
+                height={20}
+                width={20}
+                url={customizations?.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/magnifying-glass-icon.svg'}
+                color={customizations?.productCard?.findSimilar?.icon?.color || ''}
             />
           </Button>
         )}
