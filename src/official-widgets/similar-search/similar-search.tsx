@@ -77,7 +77,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, widgetClient, element }
     setSearchHistory([searchImage, ...previousSearches]);
   };
 
-  const onImageSearch = (data: SearchImage): void => {
+  const onFindSimilar = (data: SearchImage): void => {
     appendSearchHistory(data);
     if (image === data) {
       // Fake the search if same image
@@ -137,7 +137,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, widgetClient, element }
           <ResultScreen
             onModalClose={onModalClose}
             onTextSearch={onTextSearch}
-            onImageSearch={onImageSearch}
+            onFindSimilar={onFindSimilar}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
           />
@@ -153,7 +153,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, widgetClient, element }
           <ResultScreen
             onModalClose={onModalClose}
             onTextSearch={onTextSearch}
-            onImageSearch={onImageSearch}
+            onFindSimilar={onFindSimilar}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
           />

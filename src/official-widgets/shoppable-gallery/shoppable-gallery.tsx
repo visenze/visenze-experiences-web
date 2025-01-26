@@ -146,9 +146,9 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
           <div
             className={`wigmix-product-grid grid ${getProductGridCssClasses('grid-cols-3')} gap-0.5`}
             style={getProductGridCssConfig()}
-            data-pw='sif-gallery-products-grid'>
+            data-pw='sg-gallery-products-grid'>
             {galleryProducts.slice(0, page * 20).map((result, index) => (
-              <div key={`${result.im_url}-${index}`} data-pw={`sif-gallery-product-${index + 1}`}>
+              <div key={`${result.im_url}-${index}`} data-pw={`sg-gallery-product-${index + 1}`}>
                 <GalleryImage index={index} result={result} onClickHandler={galleryImageClickHandler} />
               </div>
             ))}
@@ -156,7 +156,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
 
           {/* ViSenze Footer */}
           {config.customizations.generalLayout?.showViSenzeLogo && (
-            <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='sif-visenze-footer'/>
+            <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='sg-visenze-footer'/>
           )}
         </div>
 
@@ -170,12 +170,12 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
             fontFamily={config.customizations.generalLayout?.fontFamily}
             placementId={`${config.appSettings.placementId}`}
             className='left-[unset] top-[unset] h-[500px] w-[300px] rounded-xl'>
-            <div className='flex size-full flex-col bg-primary pt-1/5' data-pw='sif-image-hotspot-modal'>
+            <div className='flex size-full flex-col bg-primary pt-1/5' data-pw='sg-image-hotspot-modal'>
               <Button
                 isIconOnly
                 className='absolute right-2 top-2 bg-transparent'
                 onClick={onCloseHandler}
-                data-pw='sif-modal-close-button'>
+                data-pw='sg-modal-close-button'>
                 <CustomizableIcon
                     height={24}
                     width={24}

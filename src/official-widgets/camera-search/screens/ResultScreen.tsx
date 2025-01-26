@@ -11,7 +11,7 @@ import FileDropzone from '../../../common/components/FileDropzone';
 import { ScreenType } from '../../../common/types/constants';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
-import Result from '../components/Result';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import Footer from '../../../common/components/Footer';
 import Header from '../components/Header';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
@@ -35,7 +35,7 @@ interface ResultScreenProps {
   searchHistory: SearchImage[];
   setSearchHistory: (searchHistory: SearchImage[]) => void;
   onTextSearch: (text: string) => void;
-  onImageSearch: (data: SearchImage) => void;
+  onFindSimilar: (data: SearchImage) => void;
   onImageUpload: (img: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
 }
@@ -44,7 +44,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   onModalClose,
   setScreen,
   onTextSearch = (): void => {},
-  onImageSearch = (): void => {},
+  onFindSimilar = (): void => {},
   onImageUpload,
   onKeywordUpdate,
   searchHistory,
@@ -83,10 +83,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
       return image.file;
     }
     return '';
-  };
-
-  const clearSearch = (): void => {
-    setSearch('');
   };
 
   const getReferenceImage = (): string => {
@@ -129,10 +125,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
     setSearch('');
     setSearchHistory([]);
     setScreen(ScreenType.UPLOAD);
-  };
-
-  const onClickMoreLikeThisHandler = (queryImage: SearchImage): void => {
-    onImageSearch(queryImage);
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
@@ -191,7 +183,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 key={`image-history-${index}`}
                 className='aspect-square w-1/5 object-cover'
                 src={getFile(searchImage)}
-                onClick={() => onClickMoreLikeThisHandler(searchImage)}
+                onClick={() => onFindSimilar(searchImage)}
                 data-pw={`cs-previous-views-image-${index + 1}`}
               />
             ))}
@@ -228,7 +220,15 @@ const ResultScreen: FC<ResultScreenProps> = ({
               data-pw='cs-product-result-grid'>
               {productResults.map((result, index) => (
                 <div key={result.product_id} className='border-gray-300'>
-                  <Result onImageSearch={onImageSearch} clearSearch={clearSearch} index={index} result={result} />
+                  <ProductCard onFindSimilar={(data) => {
+                                 setSearch('');
+                                 return onFindSimilar({ imgUrl: data.im_url });
+                               }}
+                               index={index}
+                               result={result}
+                               isRecommendation={false}
+                               hasFindSimilar={true}
+                               pwPrefix='cs' />
                 </div>
               ))}
             </div>
@@ -308,7 +308,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                           key={`image-history-${index}`}
                           className='aspect-square w-1/3 cursor-pointer rounded-lg object-cover'
                           src={getFile(searchImage)}
-                          onClick={() => onClickMoreLikeThisHandler(searchImage)}
+                          onClick={() => onFindSimilar(searchImage)}
                           data-pw={`cs-previous-views-image-${index + 1}`}
                         />
                       ))}
@@ -379,8 +379,15 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    data-pw='cs-product-result-grid'>
                 {productResults.map((result, index) => (
                   <div key={result.product_id}>
-                    <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
-                            result={result}/>
+                    <ProductCard onFindSimilar={(data) => {
+                                   setSearch('');
+                                   return onFindSimilar({ imgUrl: data.im_url });
+                                 }}
+                                 index={index}
+                                 result={result}
+                                 isRecommendation={false}
+                                 hasFindSimilar={true}
+                                 pwPrefix='cs' />
                   </div>
                 ))}
               </div>

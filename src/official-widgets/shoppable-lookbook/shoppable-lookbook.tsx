@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { WidgetResultContext } from '../../common/types/contexts';
-import Result from './components/Result';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
@@ -169,7 +169,11 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, p
               data-pw='sl-product-result-grid'>
               {productResults.map((result, index) => (
                 <div key={`${result.product_id}-${index}`} data-pw={`sl-product-result-card-${index + 1}`}>
-                  <Result index={index} result={result} />
+                  <ProductCard index={index}
+                               result={result}
+                               hasFindSimilar={false}
+                               isRecommendation={true}
+                               pwPrefix='sl' />
                 </div>
               ))}
             </div>

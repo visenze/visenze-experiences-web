@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
-import Result from '../components/Result';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import Footer from '../../../common/components/Footer';
 import Header from '../components/Header';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
@@ -28,7 +28,7 @@ const swipeConfig = {
 interface ResultScreenProps {
   onModalClose: () => void;
   onTextSearch: (text: string) => void;
-  onImageSearch: (data: SearchImage) => void;
+  onFindSimilar: (data: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
   searchHistory: SearchImage[];
 }
@@ -36,7 +36,7 @@ interface ResultScreenProps {
 const ResultScreen: FC<ResultScreenProps> = ({
   onModalClose,
   onTextSearch = (): void => {},
-  onImageSearch = (): void => {},
+  onFindSimilar = (): void => {},
   onKeywordUpdate,
   searchHistory,
 }) => {
@@ -117,10 +117,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
     return cssConfig;
   };
 
-  const onClickMoreLikeThisHandler = (queryImage: SearchImage): void => {
-    onImageSearch(queryImage);
-  };
-
   const minimizedDrawerHandler = useSwipeable({
     onSwipedUp: () => setShowFullResults(true),
     ...swipeConfig,
@@ -174,7 +170,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 key={`image-history-${index}`}
                 className='wigmix-search-history-image aspect-square w-1/5 object-cover'
                 src={getFile(searchImage)}
-                onClick={() => onClickMoreLikeThisHandler(searchImage)}
+                onClick={() => onFindSimilar(searchImage)}
                 data-pw={`ss-previous-views-image-${index + 1}`}
               />
             ))}
@@ -213,12 +209,15 @@ const ResultScreen: FC<ResultScreenProps> = ({
             >
               {productResults.map((result, index) => (
                 <div key={result.product_id} className='border-gray-300'>
-                  <Result
-                    onImageSearch={onImageSearch}
-                    clearSearch={() => setSearch('')}
-                    index={index}
-                    result={result}
-                  />
+                  <ProductCard onFindSimilar={(data) => {
+                                 setSearch('');
+                                 return onFindSimilar({ imgUrl: data.im_url });
+                               }}
+                               index={index}
+                               result={result}
+                               isRecommendation={false}
+                               hasFindSimilar={true}
+                               pwPrefix='ss' />
                 </div>
               ))}
             </div>
@@ -291,7 +290,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                           key={`image-history-${index}`}
                           className='aspect-square w-1/3 cursor-pointer rounded-lg object-cover'
                           src={getFile(searchImage)}
-                          onClick={() => onClickMoreLikeThisHandler(searchImage)}
+                          onClick={() => onFindSimilar(searchImage)}
                           data-pw={`ss-previous-views-image-${index + 1}`}
                         />
                       ))}
@@ -362,8 +361,15 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    data-pw='ss-product-result-grid'>
                 {productResults.map((result, index) => (
                   <div key={result.product_id}>
-                    <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
-                            result={result}/>
+                    <ProductCard onFindSimilar={(data) => {
+                                   setSearch('');
+                                   return onFindSimilar({ imgUrl: data.im_url });
+                                 }}
+                                 index={index}
+                                 result={result}
+                                 isRecommendation={false}
+                                 hasFindSimilar={true}
+                                 pwPrefix='ss' />
                   </div>
                 ))}
               </div>

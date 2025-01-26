@@ -86,7 +86,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
     setImage(data);
   };
 
-  const onImageSearch = (data: SearchImage): void => {
+  const onFindSimilar = (data: SearchImage): void => {
     appendSearchHistory(data);
     if (image === data) {
       // Fake the search if same image
@@ -148,7 +148,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
             onModalClose={onModalClose}
             setScreen={setScreen}
             onTextSearch={onTextSearch}
-            onImageSearch={onImageSearch}
+            onFindSimilar={onFindSimilar}
             onImageUpload={onImageUpload}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}

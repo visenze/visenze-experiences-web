@@ -1,7 +1,7 @@
 import type { CSSProperties, FC } from 'react';
 import { useContext, memo, useEffect, useState } from 'react';
 import type { ProcessedProduct } from '../../../common/types/product';
-import Result from './Result';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { WidgetDataContext } from '../../../common/types/contexts';
@@ -70,12 +70,13 @@ const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }
       </div>
       <div className={`no-scrollbar flex w-full items-end text-primary ${getProductGridCssClasses('gap-x-4')} overflow-scroll`}
            style={getProductGridCssConfig()}>
-        {results.map((result, i) => (
+        {results.map((result, index) => (
           <div key={result.product_id}>
-            <Result
-              index={i}
-              result={result}
-            />
+            <ProductCard index={index}
+                         result={result}
+                         hasFindSimilar={false}
+                         isRecommendation={false}
+                         pwPrefix='rm' />
           </div>
         ))}
       </div>

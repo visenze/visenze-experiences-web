@@ -26,6 +26,7 @@ This can be used alongside the previously mentioned look-and-feel customization.
   | `wigmix-widget-title`                 | `div`        |
   | `wigmix-reference-image`              | `div`        |
   | `wigmix-product-grid`                 | `div`        |
+  | `wigmix-product-card`                 | `a`          |
   | `wigmix-product-card-image`           | `img`        |
   | `wigmix-product-card-title`           | `span`       |
   | `wigmix-product-card-secondary-title` | `span`       |
@@ -64,7 +65,6 @@ the following folder structure is expected to be common across all widgets:
 ```txt
 ├─ camera-search
    ├─ components          <- Folder containing some reusable components
-      ├─ Result.tsx       <- Product card component; exists in most (if not all) widgets
    ├─ app.css
    ├─ app.tsx             <- Wrapper component used to provide context and data, including localized texts
    ├─ camera-search.tsx   <- Main widget code consisting of the components and layout; will have the same name as the widget name

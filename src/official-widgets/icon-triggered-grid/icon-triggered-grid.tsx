@@ -11,7 +11,7 @@ import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import Footer from '../../common/components/Footer';
-import Result from './components/Result';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import SortOptions from './components/SortOptions';
 import FilterOptions from './components/FilterOptions';
 import { getSortTypeIntlId } from '../../common/utils';
@@ -170,7 +170,11 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
             {/* Reference Product */}
             {productInfo && (
               <div className='wigmix-reference-image pt-4 md:pt-8' data-pw='itg-reference-product'>
-                <Result index={0} result={productInfo} isReferenceProduct={true} />
+                <img
+                    className='wigmix-reference-image size-full object-cover'
+                    src={productInfo.im_url}
+                    data-pw='sl-reference-image'
+                />
               </div>
             )}
 
@@ -219,7 +223,11 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
               data-pw='itg-product-result-grid'>
               {productResults.map((result, index) => (
                 <div key={`${result.product_id}-${index}`} data-pw={`itg-product-result-card-${index + 1}`}>
-                  <Result index={index} result={result} isReferenceProduct={false} />
+                  <ProductCard index={index}
+                               result={result}
+                               hasFindSimilar={false}
+                               isRecommendation={true}
+                               pwPrefix='itg' />
                 </div>
               ))}
             </div>

@@ -4,7 +4,7 @@ import { Button } from '@nextui-org/button';
 import { Image } from '@nextui-org/image';
 import { cn } from '@nextui-org/theme';
 import type { ProcessedProduct } from '../../../common/types/product';
-import Result from './Result';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import CloseIcon from '../../../common/icons/CloseIcon';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { WidgetDataContext } from '../../../common/types/contexts';
@@ -79,7 +79,7 @@ const ResultsPage: FC<ResultsPageProps> = ({
     return cssConfig;
   };
 
-  const onClickMoreLikeThisHandler = (product: ProcessedProduct): void => {
+  const onFindSimilar = (product: ProcessedProduct): void => {
     handleMultisearchWithProduct(product);
     const isProductInHistory = productHistory.some((item) => item.product_id === product.product_id);
 
@@ -166,12 +166,13 @@ const ResultsPage: FC<ResultsPageProps> = ({
         style={getProductGridCssConfig()}>
         {results.map((result, index) => (
           <div key={`${result.product_id}-${index}`} data-pw={`srp-product-result-card-${index + 1}`}>
-            <Result
-              key={result.product_id}
-              index={index}
-              result={result}
-              onClickMoreLikeThisHandler={onClickMoreLikeThisHandler}
-            />
+            <ProductCard key={result.product_id}
+                         index={index}
+                         result={result}
+                         isRecommendation={false}
+                         onFindSimilar={onFindSimilar}
+                         hasFindSimilar={true}
+                         pwPrefix='srp' />
           </div>
         ))}
       </div>

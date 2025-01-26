@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { WidgetResultContext } from '../../common/types/contexts';
-import Result from './components/Result';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import PrevArrow from './components/PrevArrow';
@@ -158,7 +158,11 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
         {productResults.map((result, index) => (
             <div key={`${result.product_id}-${index}`} data-pw={`stl-product-result-card-${index + 1}`}>
               <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
-                <Result index={index} result={result}/>
+                <ProductCard index={index}
+                             result={result}
+                             hasFindSimilar={false}
+                             isRecommendation={true}
+                             pwPrefix='stl' />
               </div>
             </div>
         ))}

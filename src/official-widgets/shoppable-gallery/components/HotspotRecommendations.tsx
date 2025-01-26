@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 import ViSenzeModal from '../../../common/components/modal/visenze-modal';
 import { CroppingContext, WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import { getFlattenProducts } from '../../../common/utils';
-import Result from './Result';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import ImageCropThumbnail from './ImageCropThumbnail';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
@@ -88,9 +88,9 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
     <ViSenzeModal open={openDrawer} onClose={closeDrawerHandler} layout='mobile' className='bottom-0 top-[unset] h-9/10 w-full rounded-t-xl' position='center'
                   fontFamily={customizations.generalLayout?.fontFamily}
                   placementId={placementId} idSuffix='hotspot' >
-      <div className='flex size-full flex-col bg-primary' data-pw='sif-hotspot-recommendations'>
+      <div className='flex size-full flex-col bg-primary' data-pw='sg-hotspot-recommendations'>
         {/* Close Button Tablet/Desktop */}
-        <Button isIconOnly className='absolute right-3 top-2 hidden bg-transparent md:flex' onClick={closeDrawerHandler} data-pw='sif-drawer-close-button-desktop'>
+        <Button isIconOnly className='absolute right-3 top-2 hidden bg-transparent md:flex' onClick={closeDrawerHandler} data-pw='sg-drawer-close-button-desktop'>
           <CustomizableIcon
               height={24}
               width={24}
@@ -100,7 +100,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
         </Button>
 
         {/* Close Button Mobile */}
-        <Button className='flex flex-shrink-0 justify-center bg-primary md:hidden' size='sm' onClick={closeDrawerHandler} data-pw='sif-drawer-close-button-mobile'>
+        <Button className='flex flex-shrink-0 justify-center bg-primary md:hidden' size='sm' onClick={closeDrawerHandler} data-pw='sg-drawer-close-button-mobile'>
           <div className='h-1 w-12 bg-gray-400'></div>
         </Button>
 
@@ -119,14 +119,15 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
         {/* Product Result Grid */}
         <div className={`wigmix-product-grid grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3 lg:grid-cols-4', 'gap-x-2', 'gap-y-4')} overflow-y-auto px-2 pb-4`}
              style={getProductGridCssConfig()}
-             data-pw='sif-product-result-grid'>
+             data-pw='sg-product-result-grid'>
           {
             results.map((result, index) => (
-              <div key={`${result.product_id}-${index}`} data-pw={`sif-product-result-card-${index + 1}`}>
-                <Result
-                  index={index}
-                  result={result}
-                />
+              <div key={`${result.product_id}-${index}`} data-pw={`sg-product-result-card-${index + 1}`}>
+                <ProductCard index={index}
+                             result={result}
+                             hasFindSimilar={false}
+                             isRecommendation={true}
+                             pwPrefix='sg' />
               </div>
             ))
           }

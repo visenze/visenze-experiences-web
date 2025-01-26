@@ -10,7 +10,7 @@ import { RootContext } from '../../common/components/shadow-wrapper';
 import { getFacets, getFilterQueries, getFlattenProducts } from '../../common/utils';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Category } from '../../common/types/tracking-constants';
-import Result from './components/Result';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import type { FacetType } from '../../common/types/constants';
 import type { WidgetConfig } from '../../common/visenze-core';
 import FilterOptions from './components/FilterOptions';
@@ -426,15 +426,16 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
                           )}
                           {productResults.map((result, index) => (
                             <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
-                              <Result
-                                index={index}
-                                result={result}
-                                findSimilarClickHandler={(imgUrl) => {
-                                  if (!isLoading) {
-                                    findSimilarClickHandler(imgUrl);
-                                  }
-                                }}
-                              />
+                              <ProductCard index={index}
+                                           result={result}
+                                           onFindSimilar={(data) => {
+                                             if (!isLoading) {
+                                               findSimilarClickHandler(data.im_url);
+                                             }
+                                           }}
+                                           isRecommendation={true}
+                                           hasFindSimilar={true}
+                                           pwPrefix='esr' />
                             </div>
                           ))}
                         </div>

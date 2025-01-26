@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 import { motion } from 'framer-motion';
 import Typewriter from 'typewriter-effect';
 import type { ProcessedProduct } from '../../../common/types/product';
-import Result from './Result';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 
 /**
  * A placeholder carousel that displays products as they are being received from the ongoing event stream.
@@ -20,10 +20,12 @@ const CarouselLoader: FC<{ results: ProcessedProduct[], searchValue: string }> =
       <div className='no-scrollbar relative flex gap-x-4 overflow-scroll pt-3'>
         {results.map((result, index) => (
           <div key={`${result.product_id}-${index}`}>
-            <Result
-              index={index}
-              result={result}
-            />
+            <ProductCard index={index}
+                         result={result}
+                         hasFindSimilar={false}
+                         isRecommendation={false}
+                         pwPrefix='rm'
+                         imageClasses='w-36 md:w-48 lg:w-64' />
           </div>
         ))}
         {results.length <= 4 && [0, 1, 2, 3].map((i) => (
