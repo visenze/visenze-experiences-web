@@ -67,7 +67,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, widgetClient }) => {
     <WidgetDataContext.Provider value={{ widgetConfig: configInternal, fieldMappings, widgetClient }}>
       <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
-          <SearchResultsPage config={configInternal} widgetClient={widgetClient} />
+          <SearchResultsPage />
         </IntlProvider>
       </ShadowWrapper>
     </WidgetDataContext.Provider>

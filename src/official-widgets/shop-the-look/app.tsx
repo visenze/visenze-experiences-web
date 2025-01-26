@@ -71,7 +71,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, widgetClient, element }) => 
     <WidgetDataContext.Provider value={{ widgetConfig: configInternal, fieldMappings, widgetClient }}>
       <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
-          <ShopTheLook config={configInternal} widgetClient={widgetClient} productId={productId}/>
+          <ShopTheLook productId={productId} />
         </IntlProvider>
       </ShadowWrapper>
     </WidgetDataContext.Provider>

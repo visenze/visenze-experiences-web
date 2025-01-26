@@ -2,17 +2,14 @@ import type { CSSProperties, FC } from 'react';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { Skeleton } from '@nextui-org/skeleton';
 import { useIntl } from 'react-intl';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface ShoppableLookbookProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
   productId: string;
 }
 
@@ -22,7 +19,9 @@ interface ObjectDot {
   left: number;
 }
 
-const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, productId }) => {
+const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
@@ -31,10 +30,8 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, p
   const breakpoint = useBreakpoint();
 
   const { productResults, metadata, referenceImageUrl, error, objectIndex, setObjectIndex, objects } = useRecommendationSearch({
-      widgetClient,
-      config,
-      productId,
-    });
+    productId,
+  });
 
   const resizeObjectDots = (image: HTMLImageElement): void => {
     const heightScale = image.clientHeight / image.naturalHeight;
@@ -53,7 +50,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, p
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.productsPerRow) {
@@ -72,7 +69,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, p
 
   const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
         cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
@@ -119,7 +116,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, p
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         <div>
           {/* Widget Title */}
-          {config.customizations.generalLayout?.showWidgetTitle && (
+          {customizations.generalLayout?.showWidgetTitle && (
             <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='sl-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
           )}
 
@@ -170,7 +167,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, p
           </div>
 
           {/* ViSenze Footer */}
-          {config.customizations.generalLayout?.showViSenzeLogo && (
+          {customizations.generalLayout?.showViSenzeLogo && (
               <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='sl-visenze-footer' />
           )}
         </div>

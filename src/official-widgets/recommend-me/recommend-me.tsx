@@ -3,9 +3,8 @@ import { Button } from '@nextui-org/button';
 import { v4 as uuid } from 'uuid';
 import { Input } from '@nextui-org/input';
 import { useIntl } from 'react-intl';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import useRecommendMe from '../../common/components/hooks/use-recommend-me';
 import Carousel from './components/Carousel';
 import CarouselLoader from './components/CarouselLoader';
@@ -13,12 +12,12 @@ import { Actions, Category } from '../../common/types/tracking-constants';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 
 interface RecommendMeProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
   productId: string;
 }
 
-const RecommendMe: FC<RecommendMeProps> = ({ config, widgetClient, productId }) => {
+const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const [searchBarValue, setSearchBarValue] = useState('');
   const [query, setQueryValue] = useState('');
   const [carouselHistory, setCarouselHistory] = useState<any[]>([]);
@@ -32,8 +31,6 @@ const RecommendMe: FC<RecommendMeProps> = ({ config, widgetClient, productId }) 
     isStreaming,
     requestId,
   } = useRecommendMe({
-    config,
-    widgetClient,
     productId,
   });
 
@@ -68,7 +65,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ config, widgetClient, productId }) 
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        {config.customizations.generalLayout?.showWidgetTitle && (
+        {customizations.generalLayout?.showWidgetTitle && (
           <div className='wigmix-widget-title py-4 text-primary' data-pw='rm-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
         )}
 

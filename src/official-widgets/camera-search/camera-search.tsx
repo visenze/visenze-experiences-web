@@ -1,7 +1,7 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useCallback, useContext, useState } from 'react';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
-import { WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
 import { isImageDataUrl } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
@@ -10,7 +10,6 @@ import { parseBox } from '../../common/utils';
 import UploadScreen from './screens/UploadScreen';
 import ResultScreen from './screens/ResultScreen';
 import { ScreenType } from '../../common/types/constants';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
@@ -20,11 +19,12 @@ import CroppingProvider from '../../common/components/providers/CroppingProvider
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 interface CameraSearchProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
+  // no properties at the moment
 }
 
-const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
+const CameraSearch: FC<CameraSearchProps> = () => {
+  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { appSettings, customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [image, setImage] = useState<SearchImage | undefined>();
@@ -47,8 +47,6 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
   } = useImageMultisearch({
     image,
     boxData,
-    config,
-    widgetClient,
   });
 
   const resetData = (): void => {
@@ -113,7 +111,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
       q: query,
       im_id: imageId,
       page: 1,
-      limit: config.searchSettings.limit,
+      limit: searchSettings.limit,
       get_all_fl: true,
     };
     const product = boxData?.index ? productTypes[boxData.index] : boxData;
@@ -173,7 +171,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
   useEffect(() => {
     (async (): Promise<void> => {
       if (image && isImageDataUrl(image)) {
-        await widgetClient.visearch.resizeImage(image.file, config.appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
+        await widgetClient.visearch.resizeImage(image.file, appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
       }
     })();
   }, [image]);
@@ -217,8 +215,8 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
           <CustomizableIcon
               height={28}
               width={28}
-              url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/camera-icon.svg'}
-              color={config.customizations.popup?.triggerIcon?.color || ''}
+              url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/camera-icon.svg'}
+              color={customizations.popup?.triggerIcon?.color || ''}
               onClickHandler={onCameraButtonClick}
           />
         </div>
@@ -226,9 +224,9 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
           open={dialogVisible}
           layout={breakpoint}
           onClose={onModalClose}
-          position={config.customizations.popup?.position || 'center'}
-          fontFamily={config.customizations.generalLayout?.fontFamily}
-          placementId={`${config.appSettings.placementId}`}>
+          position={customizations.popup?.position || 'center'}
+          fontFamily={customizations.generalLayout?.fontFamily}
+          placementId={`${appSettings.placementId}`}>
           {getScreen()}
         </ViSenzeModal>
       </CroppingProvider>

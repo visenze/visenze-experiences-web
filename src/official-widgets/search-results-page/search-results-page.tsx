@@ -1,5 +1,4 @@
 import { type FC, useContext, useEffect, useState } from 'react';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ResultsPage from './components/ResultsPage';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
@@ -8,22 +7,19 @@ import type { ProcessedProduct } from '../../common/types/product';
 import SearchBarWithDropdown from './components/SearchBarWithDropdown';
 
 interface SearchResultsPageProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
+  // no properties at the moment
 }
 
-const SearchResultsPage: FC<SearchResultsPageProps> = ({ config, widgetClient }) => {
+const SearchResultsPage: FC<SearchResultsPageProps> = () => {
   const [searchBarValue, setSearchBarValue] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeProduct, setActiveProduct] = useState<ProcessedProduct | null>(null);
   const root = useContext(RootContext);
 
   const { productResults, autocompleteWithQuery, multisearchWithParams, autocompleteResults, metadata, error } = useImageMultisearch({
-      image: undefined,
-      boxData: undefined,
-      config,
-      widgetClient,
-    });
+    image: undefined,
+    boxData: undefined,
+  });
 
   const handleMultisearchWithQuery = (query: string): void => {
     setSearchBarValue(query);

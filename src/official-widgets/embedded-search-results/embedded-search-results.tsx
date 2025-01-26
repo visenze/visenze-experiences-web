@@ -12,7 +12,6 @@ import type { ProcessedProduct } from '../../common/types/product';
 import { Category } from '../../common/types/tracking-constants';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import type { FacetType } from '../../common/types/constants';
-import type { WidgetConfig } from '../../common/visenze-core';
 import FilterOptions from './components/FilterOptions';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import FilterIcon from '../../common/icons/FilterIcon';
@@ -23,14 +22,13 @@ import type { SearchHistoryEntry } from './components/SearchHistory';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface EmbeddedSearchResultProps {
-  config: WidgetConfig;
   textQuery: string;
   imUrl: string;
 }
 
-const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuery, imUrl }): ReactElement => {
+const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl }): ReactElement => {
   const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
-  const { displaySettings, searchSettings } = widgetConfig;
+  const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
@@ -131,7 +129,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.productsPerRow) {
@@ -150,7 +148,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
 
   const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
         cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
@@ -389,8 +387,8 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
               open={showMobileFilterOptions} layout='mobile'
               onClose={() => setShowMobileFilterOptions(false)}
               position='center'
-              placementId={`${config.appSettings.placementId}`}
-              fontFamily={config.customizations.generalLayout?.fontFamily}
+              placementId={`${appSettings.placementId}`}
+              fontFamily={customizations.generalLayout?.fontFamily}
             >
               <FilterOptions
                 displayAsDropdown={false}

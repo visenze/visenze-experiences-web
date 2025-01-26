@@ -3,9 +3,8 @@ import { useEffect, useCallback, useContext, useState } from 'react';
 import { Button } from '@nextui-org/button';
 import { useIntl } from 'react-intl';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
-import { WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { type FacetType, SortType, WidgetBreakpoint } from '../../common/types/constants';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
@@ -23,12 +22,12 @@ export enum ScreenType {
 }
 
 interface IconTriggeredGridProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
   productId: string;
 }
 
-const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, productId }) => {
+const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [screen, setScreen] = useState<ScreenType | null>(null);
@@ -46,8 +45,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
   const intl = useIntl();
 
   const { productInfo, productResults, facets, metadata, error } = useRecommendationSearch({
-    widgetClient,
-    config,
     productId,
     sortType,
     filters: selectedFilters,
@@ -73,7 +70,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.productsPerRow) {
@@ -92,7 +89,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
 
   const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
         cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
@@ -130,8 +127,8 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
       <CustomizableIcon
           height={24}
           width={24}
-          url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
-          color={config.customizations.popup?.triggerIcon?.color || ''}
+          url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
+          color={customizations.popup?.triggerIcon?.color || ''}
           className='wigmix-popup-trigger-icon cursor-pointer'
           onClickHandler={onPopupIconClick}
       />
@@ -140,9 +137,9 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
         open={dialogVisible}
         layout={breakpoint}
         onClose={onModalClose}
-        position={config.customizations.popup?.position || 'center'}
-        fontFamily={config.customizations.generalLayout?.fontFamily}
-        placementId={`${config.appSettings.placementId}`}>
+        position={customizations.popup?.position || 'center'}
+        fontFamily={customizations.generalLayout?.fontFamily}
+        placementId={`${appSettings.placementId}`}>
         <div className='relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1'>
           {/* Close Button */}
           <Button
@@ -154,13 +151,13 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
                 height={24}
                 width={24}
                 url={'https://cdn.visenze.com/images/close-icon.svg'}
-                color={config.customizations.generalLayout?.fontColor}
+                color={customizations.generalLayout?.fontColor}
             />
           </Button>
 
           <div className='flex flex-col border-none p-4 md:w-3/10 md:px-10 md:py-6'>
             {/* Widget Title */}
-            {config.customizations.generalLayout?.showWidgetTitle && (
+            {customizations.generalLayout?.showWidgetTitle && (
               <div className='wigmix-widget-title text-primary' data-pw='itg-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
             )}
 
@@ -176,7 +173,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
             )}
 
             {/* ViSenze Footer desktop */}
-            {config.customizations.generalLayout?.showViSenzeLogo && (
+            {customizations.generalLayout?.showViSenzeLogo && (
               <Footer className='mt-auto hidden bg-transparent md:flex' dataPw='itg-visenze-footer-desktop' />
             )}
           </div>
@@ -261,8 +258,8 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
               layout='nested_mobile'
               onClose={() => setScreen(null)}
               position='center'
-              fontFamily={config.customizations.generalLayout?.fontFamily}
-              placementId={`${config.appSettings.placementId}`}>
+              fontFamily={customizations.generalLayout?.fontFamily}
+              placementId={`${appSettings.placementId}`}>
               <>
                 {screen === ScreenType.SORT && (
                   <SortOptions

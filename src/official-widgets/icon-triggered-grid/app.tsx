@@ -79,7 +79,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, widgetClient, element }) => 
     <WidgetDataContext.Provider value={{ widgetConfig: configInternal, fieldMappings, widgetClient }}>
       <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
-          <IconTriggeredGrid config={configInternal} widgetClient={widgetClient} productId={productId} />
+          <IconTriggeredGrid productId={productId} />
         </IntlProvider>
       </ShadowWrapper>
     </WidgetDataContext.Provider>

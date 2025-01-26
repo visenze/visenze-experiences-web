@@ -1,7 +1,7 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useState, useCallback, useContext } from 'react';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
-import { WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
 import { isImageDataUrl } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
@@ -10,7 +10,6 @@ import useImageMultisearch from '../../common/components/hooks/use-image-multise
 import { parseBox } from '../../common/utils';
 import ResultScreen from './screens/ResultScreen';
 import { ScreenType } from '../../common/types/constants';
-import type { WidgetConfig, WidgetClient } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import LoadingIcon from './icons/LoadingIcon';
@@ -18,12 +17,12 @@ import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 
 interface SimilarSearchProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
-  element: HTMLElement | null;
+  imUrl: string;
 }
 
-const SimilarSearch: FC<SimilarSearchProps> = ({ config, widgetClient, element }) => {
+const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
+  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { appSettings, customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [image, setImage] = useState<SearchImage | undefined>();
@@ -46,8 +45,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, widgetClient, element }
   } = useImageMultisearch({
     image,
     boxData,
-    config,
-    widgetClient,
   });
 
   const resetData = (): void => {
@@ -104,7 +101,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, widgetClient, element }
       q: query,
       im_id: imageId,
       page: 1,
-      limit: config.searchSettings.limit,
+      limit: searchSettings.limit,
       get_all_fl: true,
     };
     const product = boxData?.index ? productTypes[boxData.index] : boxData;
@@ -163,10 +160,8 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, widgetClient, element }
 
   useEffect(() => {
     if (!productResults.length && dialogVisible) {
-      const imgUrl = element?.dataset.url ?? '';
-
-      appendSearchHistory({ imgUrl });
-      setImage({ imgUrl });
+      appendSearchHistory({ imgUrl: imUrl });
+      setImage({ imgUrl: imUrl });
     }
   }, [dialogVisible]);
 
@@ -177,7 +172,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, widgetClient, element }
   useEffect(() => {
     (async (): Promise<void> => {
       if (image && isImageDataUrl(image)) {
-        await widgetClient.visearch.resizeImage(image.file, config.appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
+        await widgetClient.visearch.resizeImage(image.file, appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
       }
     })();
   }, [image]);
@@ -212,17 +207,17 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ config, widgetClient, element }
         <CustomizableIcon
             height={24}
             width={24}
-            url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/similar-search-icon.svg'}
-            color={config.customizations.popup?.triggerIcon?.color || ''}
+            url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/similar-search-icon.svg'}
+            color={customizations.popup?.triggerIcon?.color || ''}
             className='wigmix-popup-trigger-icon cursor-pointer'
             onClickHandler={onPopupIconClick}
         />
       </div>
 
       <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
-                    position={config.customizations.popup?.position || 'right'}
-                    fontFamily={config.customizations.generalLayout?.fontFamily}
-                    placementId={`${config.appSettings.placementId}`}>
+                    position={customizations.popup?.position || 'right'}
+                    fontFamily={customizations.generalLayout?.fontFamily}
+                    placementId={`${appSettings.placementId}`}>
         {getScreen()}
       </ViSenzeModal>
     </WidgetResultContext.Provider>

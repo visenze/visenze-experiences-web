@@ -34,6 +34,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, widgetClient, element }) => 
   const [configInternal, setConfigInternal] = useState(config);
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
   const [messages, setMessages] = useState(DEFAULT_TEXTS[DEFAULT_LOCALE]);
+  const imUrl = element.dataset.url ?? '';
 
   widgetClient.updateConfig = (configOverride, isPartial): void => {
     if (!ENABLE_CUSTOMIZATION) {
@@ -71,7 +72,7 @@ const App: FC<AppProps> = ({ config, fieldMappings, widgetClient, element }) => 
     <WidgetDataContext.Provider value={{ widgetConfig: configInternal, fieldMappings, widgetClient }}>
       <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
         <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
-          <SimilarSearch config={configInternal} widgetClient={widgetClient} element={element} />
+          <SimilarSearch imUrl={imUrl} />
         </IntlProvider>
       </ShadowWrapper>
     </WidgetDataContext.Provider>

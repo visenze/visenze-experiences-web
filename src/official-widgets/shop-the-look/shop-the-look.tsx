@@ -6,9 +6,8 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 import { Skeleton } from '@nextui-org/skeleton';
 import { useIntl } from 'react-intl';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
@@ -18,8 +17,6 @@ import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { WidgetBreakpoint } from '../../common/types/constants';
 
 interface ShopTheLookProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
   productId: string;
 }
 
@@ -29,7 +26,9 @@ interface ObjectDot {
   left: number;
 }
 
-const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) => {
+const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
@@ -46,8 +45,6 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
     setObjectIndex,
     objects,
   } = useRecommendationSearch({
-    widgetClient,
-    config,
     productId,
     additionalParams: {
       show_best_product_images: true,
@@ -57,11 +54,11 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
   const useSlideSettings = (): Settings => {
     const isDesktop = breakpoint === WidgetBreakpoint.DESKTOP;
     const isTablet = breakpoint === WidgetBreakpoint.TABLET;
-    let slidesToShow = config.customizations.productGrid?.mobile?.productsPerRow || 2.5;
+    let slidesToShow = customizations.productGrid?.mobile?.productsPerRow || 2.5;
     if (isDesktop) {
-      slidesToShow = config.customizations.productGrid?.desktop?.productsPerRow || 4;
+      slidesToShow = customizations.productGrid?.desktop?.productsPerRow || 4;
     } else if (isTablet) {
-      slidesToShow = config.customizations.productGrid?.tablet?.productsPerRow || 3.5;
+      slidesToShow = customizations.productGrid?.tablet?.productsPerRow || 3.5;
     }
     const slidesToScroll = Math.floor(slidesToShow);
 
@@ -81,8 +78,8 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
       initialSlide: 0,
       slidesToScroll,
       slidesToShow,
-      prevArrow: isDesktop ? <PrevArrow iconColor={config.customizations.generalLayout?.fontColor} /> : <></>,
-      nextArrow: isDesktop ? <NextArrow iconColor={config.customizations.generalLayout?.fontColor} /> : <></>,
+      prevArrow: isDesktop ? <PrevArrow iconColor={customizations.generalLayout?.fontColor} /> : <></>,
+      nextArrow: isDesktop ? <NextArrow iconColor={customizations.generalLayout?.fontColor} /> : <></>,
       variableWidth: false,
     };
   };
@@ -115,7 +112,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
   };
 
   const getProductCardCssClasses = (): string => {
-    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
@@ -128,7 +125,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
 
   const getProductCardCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
         cssConfig.marginLeft = cssConfigSrc.marginHorizontal / 2;
@@ -177,7 +174,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {/* Widget Title */}
-        {config.customizations.generalLayout?.showWidgetTitle && (
+        {customizations.generalLayout?.showWidgetTitle && (
           <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='stl-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
         )}
 
@@ -222,7 +219,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
         </div>
 
         {/* ViSenze Footer */}
-        {config.customizations.generalLayout?.showViSenzeLogo && (
+        {customizations.generalLayout?.showViSenzeLogo && (
           <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='stl-visenze-footer'/>
         )}
       </WidgetResultContext.Provider>

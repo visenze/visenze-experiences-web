@@ -1,7 +1,7 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { type FC, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
+import { WidgetDataContext } from '../../common/types/contexts';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import CloseIcon from '../../common/icons/CloseIcon';
@@ -10,6 +10,7 @@ import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
 import type { Product } from './components/ProductCard';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import { DEFAULT_ENDPOINT } from '../../common/constants';
 
 const defaultInitialMessages = [
     'Let\'s get started',
@@ -73,11 +74,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({ message, onMessageChange, onOverflo
 };
 
 interface ShoppingAssistantProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
+  // no properties at the moment
 }
 
-const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient }) => {
+const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
+  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
@@ -111,7 +113,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
     if (!messageToSend) {
       return;
     }
-    if (!config.appSettings.appKey || !config.appSettings.placementId) {
+    if (!appSettings.appKey || !appSettings.placementId) {
       console.error('App Key or Placement ID not found');
       return;
     }
@@ -149,14 +151,14 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
     });
     setAllowUserInput(false);
     const params = new URLSearchParams({
-      app_key: config.appSettings.appKey,
-      placement_id: config.appSettings.placementId.toString(),
+      app_key: appSettings.appKey,
+      placement_id: appSettings.placementId.toString(),
       chat_id: chatIdToUse,
       q: messageToSend,
       va_uid: uid,
       va_sid: sid,
     });
-    fetchEventSource(`${config.appSettings.endpoint}/v1/product/multisearch/chat/shopping-assistant?${params.toString()}`, {
+    fetchEventSource(`${appSettings.endpoint || DEFAULT_ENDPOINT}/v1/product/multisearch/chat/shopping-assistant?${params.toString()}`, {
       openWhenHidden: true,
       onmessage: (ev) => {
         if (ev.event === 'chat_id') {
@@ -376,15 +378,15 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
         <CustomizableIcon
             height={28}
             width={28}
-            url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/new-chat-icon.svg'}
-            color={config.customizations.popup?.triggerIcon?.color || ''}
+            url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/new-chat-icon.svg'}
+            color={customizations.popup?.triggerIcon?.color || ''}
             className='wigmix-popup-trigger-icon cursor-pointer'
             onClickHandler={onChatButtonClick}
         />
         <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
-                      position={config.customizations.popup?.position || 'center'}
-                      fontFamily={config.customizations.generalLayout?.fontFamily}
-                      placementId={`${config.appSettings.placementId}`}>
+                      position={customizations.popup?.position || 'center'}
+                      fontFamily={customizations.generalLayout?.fontFamily}
+                      placementId={`${appSettings.placementId}`}>
           {getScreen()}
         </ViSenzeModal>
       </>

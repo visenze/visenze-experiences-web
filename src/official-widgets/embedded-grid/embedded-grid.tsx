@@ -1,34 +1,31 @@
 import type { CSSProperties, FC } from 'react';
 import { useEffect, useState, useContext } from 'react';
 import { useIntl } from 'react-intl';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface EmbeddedGridProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
   productId: string;
 }
 
-const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, widgetClient, productId }) => {
+const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
   const intl = useIntl();
   const breakpoint = useBreakpoint();
 
   const { productResults, metadata, error } = useRecommendationSearch({
-    widgetClient,
-    config,
     productId,
   });
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.productsPerRow) {
@@ -47,7 +44,7 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, widgetClient, productId }
 
   const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
         cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
@@ -84,7 +81,7 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, widgetClient, productId }
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
         <div>
           {/* Widget Title */}
-          {config.customizations.generalLayout?.showWidgetTitle && (
+          {customizations.generalLayout?.showWidgetTitle && (
             <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='eg-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
           )}
 
@@ -105,7 +102,7 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, widgetClient, productId }
           </div>
 
           {/* ViSenze Footer */}
-          {config.customizations.generalLayout?.showViSenzeLogo && (
+          {customizations.generalLayout?.showViSenzeLogo && (
             <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='eg-visenze-footer' />
           )}
         </div>

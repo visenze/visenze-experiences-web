@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import type {
   Facet,
   ObjectProductResponse,
@@ -6,15 +6,13 @@ import type {
   ProductSearchResponseSuccess,
   ProductType,
 } from 'visearch-javascript-sdk';
-import type { WidgetClient, WidgetConfig } from '../../visenze-core';
-import {type FacetType, SortType} from '../../types/constants';
+import { WidgetDataContext } from '../../types/contexts';
+import { type FacetType, SortType } from '../../types/constants';
 import { Actions, Category } from '../../types/tracking-constants';
 import type { ProcessedProduct } from '../../types/product';
-import {getFacets, getFilterQueries, getFlattenProduct, getFlattenProducts, parseToProductTypes} from '../../utils';
+import { getFacets, getFilterQueries, getFlattenProduct, getFlattenProducts, parseToProductTypes } from '../../utils';
 
 interface RecommendationSearchProps {
-  widgetClient: WidgetClient;
-  config: WidgetConfig;
   productId: string;
   sortType?: SortType;
   filters?: Record<FacetType, any>;
@@ -36,13 +34,12 @@ export interface RecommendationSearch {
 }
 
 const useRecommendationSearch = ({
-  widgetClient,
-  config,
   productId,
   sortType,
   filters,
   additionalParams,
 }: RecommendationSearchProps): RecommendationSearch => {
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
@@ -53,7 +50,7 @@ const useRecommendationSearch = ({
   const [productTypes, setProductTypes] = useState<ProductType[]>([]);
   const [objectIndex, setObjectIndex] = useState<number>(0);
   const [error, setError] = useState<string>('');
-  const productDetails = config.displaySettings.productDetails;
+  const productDetails = widgetConfig.displaySettings.productDetails;
 
   const handleSuccess = (res: ProductSearchResponse): void => {
     if (res.status === 'fail') {
@@ -77,7 +74,7 @@ const useRecommendationSearch = ({
   };
 
   const searchById = (): void => {
-    const params = config.searchSettings;
+    const params = widgetConfig.searchSettings;
     params['return_product_info'] = true;
     params['show_best_product_images'] = true;
     params['sort_by'] = '';
