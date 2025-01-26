@@ -16,7 +16,6 @@ interface RecommendationSearchProps {
   widgetClient: WidgetClient;
   config: WidgetConfig;
   productId: string;
-  retryCount: number;
   sortType?: SortType;
   filters?: Record<FacetType, any>;
   additionalParams?: Record<string, any>;
@@ -40,7 +39,6 @@ const useRecommendationSearch = ({
   widgetClient,
   config,
   productId,
-  retryCount,
   sortType,
   filters,
   additionalParams,
@@ -56,7 +54,6 @@ const useRecommendationSearch = ({
   const [objectIndex, setObjectIndex] = useState<number>(0);
   const [error, setError] = useState<string>('');
   const productDetails = config.displaySettings.productDetails;
-  const MAX_RETRY_COUNT = config.maxRetryCount;
 
   const handleSuccess = (res: ProductSearchResponse): void => {
     if (res.status === 'fail') {
@@ -182,13 +179,6 @@ const useRecommendationSearch = ({
       resetSearch();
     }
   }, [productId, sortType, filters]);
-
-  // Attempt the API call again up to the maximum allowed retries
-  useEffect(() => {
-    if (retryCount && retryCount <= MAX_RETRY_COUNT) {
-      searchById();
-    }
-  }, [retryCount]);
 
   // Update product results when objectIndex changes
   useEffect(() => {

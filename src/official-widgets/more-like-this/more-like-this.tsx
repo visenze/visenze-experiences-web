@@ -24,7 +24,6 @@ interface MoreLikeThisProps {
 
 const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, widgetClient, productId }) => {
   const root = useContext(RootContext);
-  const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const intl = useIntl();
   const breakpoint = useBreakpoint();
@@ -37,7 +36,6 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, widgetClient, productId }
     widgetClient,
     config,
     productId,
-    retryCount,
     additionalParams: {
       show_best_product_images: true,
     },
@@ -101,14 +99,6 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, widgetClient, productId }
     }
     return cssConfig;
   };
-
-  useEffect(() => {
-    if (error) {
-      setRetryCount(retryCount + 1);
-    } else {
-      setRetryCount(0);
-    }
-  }, [error]);
 
   useEffect(() => {
     setIsLoading(false);

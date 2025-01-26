@@ -31,7 +31,6 @@ interface IconTriggeredGridProps {
 const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, productId }) => {
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
   const [screen, setScreen] = useState<ScreenType | null>(null);
   const [sortType, setSortType] = useState<SortType>(SortType.RELEVANCE);
   const defaultFilters = {
@@ -50,7 +49,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
     widgetClient,
     config,
     productId,
-    retryCount,
     sortType,
     filters: selectedFilters,
   });
@@ -58,7 +56,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
   const onModalClose = useCallback((): void => {
     setDialogVisible(false);
     setSortType(SortType.RELEVANCE);
-    setRetryCount(0);
     if (productResults.length > 0) {
       widgetClient.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,

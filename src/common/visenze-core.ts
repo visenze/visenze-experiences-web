@@ -302,7 +302,6 @@ export interface WidgetConfig {
     customCss: string;
   };
   disableAnalytics: boolean;
-  maxRetryCount: number;
 }
 
 interface ViewportWidth {

@@ -26,7 +26,6 @@ interface ShoppableGalleryProps {
 const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) => {
   const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
-  const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [activeProductId, setActiveProductId] = useState('');
@@ -42,7 +41,6 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
   const { objects, productResults, productTypes, metadata, error } = useRecommendationSearch({
     widgetClient,
     config,
-    retryCount,
     productId: activeProductId,
   });
 
@@ -85,14 +83,6 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
     }
     return cssConfig;
   };
-
-  useEffect(() => {
-    if (error) {
-      setRetryCount(retryCount + 1);
-    } else {
-      setRetryCount(0);
-    }
-  }, [error]);
 
   // Retrieve gallery products
   useEffect(() => {

@@ -17,7 +17,6 @@ interface EmbeddedGridProps {
 
 const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, widgetClient, productId }) => {
   const root = useContext(RootContext);
-  const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const intl = useIntl();
   const breakpoint = useBreakpoint();
@@ -26,7 +25,6 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, widgetClient, productId }
     widgetClient,
     config,
     productId,
-    retryCount,
   });
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
@@ -63,14 +61,6 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, widgetClient, productId }
     }
     return cssConfig;
   };
-
-  useEffect(() => {
-    if (error) {
-      setRetryCount(retryCount + 1);
-    } else {
-      setRetryCount(0);
-    }
-  }, [error]);
 
   useEffect(() => {
     setIsLoading(false);

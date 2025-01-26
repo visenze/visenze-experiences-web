@@ -67,5 +67,4 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
     onSearchCallback: undefined,
   },
   disableAnalytics: false,
-  maxRetryCount: 1,
 };

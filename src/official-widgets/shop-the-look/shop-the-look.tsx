@@ -33,7 +33,6 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
-  const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const intl = useIntl();
   const breakpoint = useBreakpoint();
@@ -50,7 +49,6 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
     widgetClient,
     config,
     productId,
-    retryCount,
     additionalParams: {
       show_best_product_images: true,
     },
@@ -139,14 +137,6 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
     }
     return cssConfig;
   };
-
-  useEffect(() => {
-    if (error) {
-      setRetryCount(retryCount + 1);
-    } else {
-      setRetryCount(0);
-    }
-  }, [error]);
 
   useEffect(() => {
     setIsLoading(false);

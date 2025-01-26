@@ -26,7 +26,6 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, p
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
-  const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const intl = useIntl();
   const breakpoint = useBreakpoint();
@@ -35,7 +34,6 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, p
       widgetClient,
       config,
       productId,
-      retryCount,
     });
 
   const resizeObjectDots = (image: HTMLImageElement): void => {
@@ -98,14 +96,6 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, p
       }
     });
   };
-
-  useEffect(() => {
-    if (error) {
-      setRetryCount(retryCount + 1);
-    } else {
-      setRetryCount(0);
-    }
-  }, [error]);
 
   useEffect(() => {
     setIsLoading(false);
