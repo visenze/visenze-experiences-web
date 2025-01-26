@@ -301,7 +301,6 @@ export interface WidgetConfig {
     platformName: string;
     customCss: string;
   };
-  hideTrigger: boolean;
   disableAnalytics: boolean;
   maxRetryCount: number;
 }

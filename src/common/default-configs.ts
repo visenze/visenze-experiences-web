@@ -66,7 +66,6 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
     // @param {apiResponse} response from visearch API
     onSearchCallback: undefined,
   },
-  hideTrigger: false,
   disableAnalytics: false,
   maxRetryCount: 1,
 };

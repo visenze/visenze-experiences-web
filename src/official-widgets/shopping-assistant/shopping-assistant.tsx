@@ -373,18 +373,14 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
 
   return (
       <>
-        {!config.hideTrigger && (
-            <>
-              <CustomizableIcon
-                  height={28}
-                  width={28}
-                  url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/new-chat-icon.svg'}
-                  color={config.customizations.popup?.triggerIcon?.color || ''}
-                  className='wigmix-popup-trigger-icon cursor-pointer'
-                  onClickHandler={onChatButtonClick}
-              />
-            </>
-        )}
+        <CustomizableIcon
+            height={28}
+            width={28}
+            url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/new-chat-icon.svg'}
+            color={config.customizations.popup?.triggerIcon?.color || ''}
+            className='wigmix-popup-trigger-icon cursor-pointer'
+            onClickHandler={onChatButtonClick}
+        />
         <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
                       position={config.customizations.popup?.position || 'center'}
                       fontFamily={config.customizations.generalLayout?.fontFamily}
