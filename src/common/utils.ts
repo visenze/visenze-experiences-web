@@ -38,25 +38,6 @@ const removeDecimalPlace = (value: number): string => {
   return value.toString().split('.')[0];
 };
 
-export const getURL = (
-  productUrl: string | null | undefined,
-  trackingMeta: Record<string, any>,
-  isRecommendation: boolean,
-): URL | null => {
-  if (!productUrl) {
-    return null;
-  }
-  const url = new URL(String(productUrl));
-  // For recommendation widgets, we set the query ID, product ID, and position in the URL.
-  // This allows other recommendation widgets on the page to use these values as the source for their tracking events.
-  if (isRecommendation) {
-    url.searchParams.set('vsFromReqId', trackingMeta.queryId);
-    url.searchParams.set('vsFromPid', trackingMeta.pid);
-    url.searchParams.set('vsFromPos', trackingMeta.pos);
-  }
-  return url;
-};
-
 export const parseToProductTypes = (res: ProductSearchResponseSuccess): ProductType[] => {
   if (res.product_types?.length) {
     return res.product_types;

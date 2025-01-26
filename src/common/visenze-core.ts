@@ -280,10 +280,21 @@ export interface WidgetConfig {
     /**
      * Fires whenever a product card is clicked on.
      *
+     * If this function is defined, clicking on the product will not redirect to the product URL.
+     * If such behaviour is still needed, the following callback function can be used:
+     * ```
+     * onProductClick: (productDetails, trackingMeta, productUrl) => {
+     *   // ... enter custom behaviour ...
+     *
+     *   window.open(productUrl); // this line restores the redirect behaviour
+     * },
+     * ```
+     *
      * @param productDetails The details of the product
      * @param trackingMeta Relevant metadata attached to the action
+     * @param productUrl The URL of the product
      */
-    onProductClick?: (productDetails: Record<string, any>, trackingMeta: Record<string, any>) => void;
+    onProductClick?: (productDetails: Record<string, any>, trackingMeta: Record<string, any>, productUrl: string) => void;
     /**
      * Fires whenever response from a search/recommendation API result is returned.
      *

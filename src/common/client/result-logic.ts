@@ -2,28 +2,23 @@ import type { WidgetClient, WidgetConfig } from '../visenze-core';
 import { Actions } from '../types/tracking-constants';
 import type { ResultLogic } from '../types/logic';
 import type { ProcessedProduct } from '../types/product';
-import { getURL } from '../utils';
 
 interface ResultLogicProps {
   displaySettings: WidgetConfig['displaySettings'];
   widgetClient: WidgetClient;
   trackingMeta: Record<string, any>;
-  isRecommendation: boolean;
   index: number;
-  onProductClick?: (result: ProcessedProduct, productTrackingMeta: Record<string, any>) => void;
+  onProductClick?: (result: ProcessedProduct, productTrackingMeta: Record<string, any>, productUrl: string) => void;
   result: ProcessedProduct;
-  openLinksInNewTab: boolean;
 }
 
 const ResultLogicImpl = ({
   displaySettings,
   widgetClient,
   trackingMeta,
-  isRecommendation,
   index,
   onProductClick,
   result,
-  openLinksInNewTab,
 }: ResultLogicProps): ResultLogic => {
   const placementId = widgetClient.placementId;
 
@@ -34,9 +29,7 @@ const ResultLogicImpl = ({
     pos: index + 1,
   };
 
-  const onClick = (event: any): void => {
-    event.stopPropagation();
-    event.preventDefault();
+  const onClick = (event: any, productUrl: string): void => {
     localStorage.setItem(
       'visenze_widget_last_click',
       JSON.stringify({
@@ -50,14 +43,9 @@ const ResultLogicImpl = ({
     );
     widgetClient.sendEvent(Actions.PRODUCT_CLICK, productTrackingMeta);
     if (onProductClick && typeof onProductClick === 'function') {
-      onProductClick(result, productTrackingMeta);
-    } else {
-      const url = getURL(result[displaySettings.productDetails['product_url']], productTrackingMeta, isRecommendation);
-      if (openLinksInNewTab) {
-        window.open(url?.href, '_blank');
-      } else {
-        window.open(url?.href, '_self');
-      }
+      event.stopPropagation();
+      event.preventDefault();
+      onProductClick(result, productTrackingMeta, productUrl);
     }
   };
 

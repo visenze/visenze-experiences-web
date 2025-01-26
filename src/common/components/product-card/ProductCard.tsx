@@ -87,6 +87,25 @@ const getOriginalPrice = (
   return '';
 };
 
+const getProductUrlWithTrackingParams = (
+    productUrl: string | null | undefined,
+    trackingMeta: Record<string, any>,
+    isRecommendation: boolean,
+): string => {
+  if (!productUrl) {
+    return '';
+  }
+  const url = new URL(String(productUrl));
+  // For recommendation widgets, we set the query ID, product ID, and position in the URL.
+  // This allows other recommendation widgets on the page to use these values as the source for their tracking events.
+  if (isRecommendation) {
+    url.searchParams.set('vsFromReqId', trackingMeta.queryId);
+    url.searchParams.set('vsFromPid', trackingMeta.pid);
+    url.searchParams.set('vsFromPos', trackingMeta.pos);
+  }
+  return url.toString();
+};
+
 const ProductCard: FC<ProductCardProps> = ({
   result,
   index,
@@ -108,11 +127,9 @@ const ProductCard: FC<ProductCardProps> = ({
     displaySettings,
     widgetClient,
     trackingMeta: metadata,
-    isRecommendation,
     index,
     onProductClick,
     result,
-    openLinksInNewTab,
   });
 
   // Send Product View tracking event when the product is in view
@@ -173,10 +190,16 @@ const ProductCard: FC<ProductCardProps> = ({
 
   const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
   const price = getPrice(customizations, languageSettings, productDetails, result);
+  const productUrl = getProductUrlWithTrackingParams(result[productDetails.product_url], productTrackingMeta, isRecommendation);
 
   return (
-    <a className='wigmix-product-card cursor-pointer' ref={(r) => r && setTargetRef(r)}
-       onClick={onClick} data-pw={`${pwPrefix}-product-result-card-${index + 1}`}>
+    <a className='wigmix-product-card cursor-pointer'
+       ref={(r) => r && setTargetRef(r)}
+       href={productUrl}
+       target={openLinksInNewTab ? '_blank' : ''}
+       rel={openLinksInNewTab ? 'noopener noreferrer' : ''}
+       onClick={(event) => onClick(event, productUrl)}
+       data-pw={`${pwPrefix}-product-result-card-${index + 1}`}>
       <div className='relative'>
         <div className='flex justify-center'>
           {isLoading && <Skeleton className={`aspect-square size-full ${imageClasses || ''}`} />}
