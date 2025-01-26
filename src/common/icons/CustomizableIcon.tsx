@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import type { Icon } from '../visenze-core';
+import type { Icon } from '../wigmix-core';
 
 interface CustomizableIconProps extends Icon {
   height?: number;

@@ -1,6 +1,6 @@
 import type { Root } from 'react-dom/client';
 import ViSearch, { type ProductSearchResponse } from 'visearch-javascript-sdk';
-import type { Primitive, WidgetClient, WidgetConfig } from '../visenze-core';
+import type { Primitive, WidgetClient, WidgetConfig } from '../wigmix-core';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
 import { DEFAULT_ENDPOINT } from '../constants';
 

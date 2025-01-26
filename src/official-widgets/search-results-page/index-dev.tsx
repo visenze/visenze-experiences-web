@@ -1,4 +1,4 @@
-import { WidgetType } from '../../common/visenze-core';
+import { WidgetType } from '../../common/wigmix-core';
 import { devInitWidget } from '../../common/client/initialization';
 import { devConfigs, devFieldMappings } from './dev-configs';
 import App from './app';

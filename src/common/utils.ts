@@ -2,7 +2,7 @@ import type { Product, ProductSearchResponseSuccess, ProductType } from 'visearc
 import type { CroppedBox } from './types/box';
 import type { ProcessedProduct } from './types/product';
 import { FacetType, SortType } from './types/constants';
-import type { WidgetConfig } from './visenze-core';
+import type { WidgetConfig } from './wigmix-core';
 
 export const getFlattenProduct = (result: Product): ProcessedProduct => {
   return {

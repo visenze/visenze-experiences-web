@@ -1,6 +1,6 @@
 import { type FC, useEffect, useState } from 'react';
 import { IntlProvider } from 'react-intl';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
+import type { WidgetClient, WidgetConfig } from '../../common/wigmix-core';
 import ShadowWrapper from '../../common/components/shadow-wrapper';
 import { WidgetDataContext } from '../../common/types/contexts';
 import CameraSearch from './camera-search';

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { WidgetConfig } from '../src/common/visenze-core';
+import { WidgetConfig } from '../src/common/wigmix-core';
 import ResultLogicImpl from '../src/common/client/result-logic';
 import getWidgetClient from '../src/common/client/product-search';
 import DEFAULT_CONFIGS from '../src/default-configs';

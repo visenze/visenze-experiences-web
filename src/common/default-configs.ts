@@ -1,4 +1,4 @@
-import type { WidgetConfig } from './visenze-core';
+import type { WidgetConfig } from './wigmix-core';
 
 export const DEFAULT_LOCALE = 'en';
 export const DEFAULT_CURRENCY = 'USD';

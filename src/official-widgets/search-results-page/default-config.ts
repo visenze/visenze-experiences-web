@@ -1,4 +1,4 @@
-import type { WidgetConfig } from '../../common/visenze-core';
+import type { WidgetConfig } from '../../common/wigmix-core';
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   breakpoints: {

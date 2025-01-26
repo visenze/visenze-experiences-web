@@ -1,4 +1,4 @@
-import type { WidgetClient, WidgetConfig } from '../visenze-core';
+import type { WidgetClient, WidgetConfig } from '../wigmix-core';
 import { Actions } from '../types/tracking-constants';
 import type { ResultLogic } from '../types/logic';
 import type { ProcessedProduct } from '../types/product';

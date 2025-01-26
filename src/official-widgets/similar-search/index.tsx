@@ -1,6 +1,6 @@
 import version from '../../version';
 import { deepMerge, initWidgetFactory } from '../../common/client/initialization';
-import { WidgetType } from '../../common/visenze-core';
+import { WidgetType } from '../../common/wigmix-core';
 import App from './app';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 

@@ -6,7 +6,7 @@ import type { ProcessedProduct } from '../../types/product';
 import ResultLogicImpl from '../../client/result-logic';
 import { Actions } from '../../types/tracking-constants';
 import CustomizableIcon from '../../icons/CustomizableIcon';
-import type { WidgetConfig } from '../../visenze-core';
+import type { WidgetConfig } from '../../wigmix-core';
 import { getCurrencyFormatter } from '../../locales/locale';
 import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../default-configs';
 

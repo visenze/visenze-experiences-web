@@ -116,7 +116,7 @@ productSearch.sendEvent('event_name', {
 ViSenze widgets provide some pre-defined callback events such as after tracking (`trackingCallback`), after product search (`onSearchCallback`), and after product click (`onProductClick`).
 Additional callback events can be added as follows:
 
-1. Add the callback definition under `WidgetConfig` interface in `visenze-core.ts`, e.g.:
+1. Add the callback definition under `WidgetConfig` interface in `wigmix-core.ts`, e.g.:
    ```ts
    export interface WidgetConfig {
      // ...

@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import { IntlProvider } from 'react-intl';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
+import type { WidgetClient, WidgetConfig } from '../../common/wigmix-core';
 import ShadowWrapper from '../../common/components/shadow-wrapper';
 import { WidgetDataContext } from '../../common/types/contexts';
 import EmbeddedGrid from './embedded-grid';

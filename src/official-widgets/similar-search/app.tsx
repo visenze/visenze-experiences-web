@@ -1,7 +1,7 @@
 import { IntlProvider } from 'react-intl';
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
-import type { WidgetConfig, WidgetClient } from '../../common/visenze-core';
+import type { WidgetConfig, WidgetClient } from '../../common/wigmix-core';
 import ShadowWrapper from '../../common/components/shadow-wrapper';
 import { WidgetDataContext } from '../../common/types/contexts';
 import SimilarSearch from './similar-search';

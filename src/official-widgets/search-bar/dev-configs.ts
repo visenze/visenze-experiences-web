@@ -1,4 +1,4 @@
-import type { RecursivePartial, WidgetConfig } from '../../common/visenze-core';
+import type { RecursivePartial, WidgetConfig } from '../../common/wigmix-core';
 
 const customCss = `
 /* Insert the custom CSS here */

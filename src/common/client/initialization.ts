@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import type { WidgetType, WidgetClient, WidgetConfig, RecursivePartial, Font } from '../visenze-core';
+import type { WidgetType, WidgetClient, WidgetConfig, RecursivePartial, Font } from '../wigmix-core';
 import { DEFAULT_CONFIGS } from '../default-configs';
 import getWidgetClient from './product-search';
 import { DEFAULT_ENDPOINT } from '../constants';
