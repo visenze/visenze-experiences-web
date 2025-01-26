@@ -58,7 +58,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
   };
 
   const getProductGridCssClasses = (defaultCols: string): string => {
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.productsPerRow) {
@@ -71,7 +71,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
 
   const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
         cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;

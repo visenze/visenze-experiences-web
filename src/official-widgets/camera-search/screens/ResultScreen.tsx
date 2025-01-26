@@ -207,7 +207,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   height={24}
                   width={24}
                   url={`https://cdn.visenze.com/images/arrow-${showFullResults ? 'down' : 'up'}-icon.svg`}
-                  color={customizations.buttons?.primary?.fontColor}
+                  color={customizations.buttons?.primary?.fontColor || ''}
                   className='cursor-pointer'
               />
             </Button>

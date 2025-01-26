@@ -137,17 +137,21 @@ const populateProductDetailsAndAttrsToGet = (config: WidgetConfig, fieldMappings
 };
 
 
-export const init = (
+const init = (
   initConfig: WidgetConfig,
   fieldMappings: Record<string, string>,
   widgetType: WidgetType,
   widgetVersion: string,
+  customizations: WidgetConfig['customizations'],
 ): WidgetInitResult | undefined => {
   if (isPlacementSkippable(initConfig.appSettings.placementId)) {
     return;
   }
 
-  let config = deepMerge(initConfig, DEFAULT_CONFIGS);
+  let config = deepMerge(initConfig, {
+    ...DEFAULT_CONFIGS,
+    customizations,
+  });
   setCssVariables(config);
   config = populateProductDetailsAndAttrsToGet(config, fieldMappings);
   const widgetClient = getWidgetClient(config, widgetType, widgetVersion);
@@ -210,9 +214,10 @@ export const initWidgetFactory = (
     widgetVersion: string,
     renderer: WidgetRenderer,
     isMultiRender: boolean,
+    customizations: WidgetConfig['customizations'],
 ): WidgetInitializer => {
   return (initConfig, fieldMappings, skipRender) => {
-    const result = init(initConfig, fieldMappings, widgetType, widgetVersion);
+    const result = init(initConfig, fieldMappings, widgetType, widgetVersion, customizations);
     if (!result) {
       return undefined;
     }
@@ -243,6 +248,7 @@ export const devInitWidget = async (
     fieldsMappingParam: Record<string, string>,
     shouldRetrieveFieldsMapping: boolean,
     window: Window,
+    customizations: WidgetConfig['customizations'],
 ): Promise<void> => {
   let fieldsMapping = fieldsMappingParam;
   if (shouldRetrieveFieldsMapping) {
@@ -253,7 +259,7 @@ export const devInitWidget = async (
     fieldsMapping = widgetConfigObject.fields_mappings;
   }
 
-  const result = init(devConfigs as WidgetConfig, fieldsMapping, widgetType, widgetVersion);
+  const result = init(devConfigs as WidgetConfig, fieldsMapping, widgetType, widgetVersion, customizations);
   if (!result) {
     return;
   }

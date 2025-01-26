@@ -2,6 +2,7 @@ import { deepMerge, initWidgetFactory } from '../../common/client/initialization
 import version from '../../version';
 import { WidgetType } from '../../common/visenze-core';
 import App from './app';
+import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 
 // eslint-disable-next-line func-names
 (function (context: Window): void {
@@ -14,6 +15,7 @@ import App from './app';
         version,
         ({ config, client, fieldMappings, element }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config} element={element}></App>,
         false,
+        DEFAULT_CUSTOMIZATIONS,
     ),
     deepMerge,
   };

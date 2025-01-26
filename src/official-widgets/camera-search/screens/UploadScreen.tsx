@@ -28,8 +28,8 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
       pos: index + 1,
     });
 
-    if (customizations) {
-      onImageUpload?.({ imgUrl: customizations?.imageUpload?.images[index].url });
+    if (customizations.imageUpload) {
+      onImageUpload?.({ imgUrl: customizations.imageUpload?.images[index].url });
     }
   };
 

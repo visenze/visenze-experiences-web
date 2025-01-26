@@ -59,7 +59,7 @@ const getPrice = (
     productDetails: WidgetConfig['displaySettings']['productDetails'],
     result: ProcessedProduct,
 ): string => {
-  if (!customizations?.productCard?.price?.show) {
+  if (!customizations.productCard?.price?.show) {
     return '';
   }
   if (result[productDetails.price]) {
@@ -76,7 +76,7 @@ const getOriginalPrice = (
     productDetails: WidgetConfig['displaySettings']['productDetails'],
     result: ProcessedProduct,
 ): string => {
-  if (!customizations.productCard?.originalPrice?.show || !customizations?.productCard?.price?.show) {
+  if (!customizations.productCard?.originalPrice?.show || !customizations.productCard?.price?.show) {
     return '';
   }
   if (result[productDetails.original_price]) {
@@ -204,8 +204,8 @@ const ProductCard: FC<ProductCardProps> = ({
             <CustomizableIcon
                 height={20}
                 width={20}
-                url={customizations?.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/magnifying-glass-icon.svg'}
-                color={customizations?.productCard?.findSimilar?.icon?.color || ''}
+                url={customizations.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/magnifying-glass-icon.svg'}
+                color={customizations.productCard?.findSimilar?.icon?.color || ''}
             />
           </Button>
         )}

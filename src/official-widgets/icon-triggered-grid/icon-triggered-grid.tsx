@@ -76,7 +76,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.productsPerRow) {
@@ -95,7 +95,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
 
   const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
         cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;

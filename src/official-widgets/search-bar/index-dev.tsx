@@ -3,6 +3,7 @@ import { devInitWidget } from '../../common/client/initialization';
 import { devConfigs, devFieldMappings } from './dev-configs';
 import App from './app';
 import version from '../../version';
+import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 
 // set to true to retrieve the fields mappings from the backend
 const shouldRetrieveFieldsMapping = true;
@@ -16,4 +17,5 @@ devInitWidget(
     devFieldMappings,
     shouldRetrieveFieldsMapping,
     window,
+    DEFAULT_CUSTOMIZATIONS,
 );

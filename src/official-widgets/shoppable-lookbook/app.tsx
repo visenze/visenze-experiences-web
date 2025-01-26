@@ -9,6 +9,7 @@ import './app.css';
 import { DEFAULT_LOCALE } from '../../common/default-configs';
 import { getLocaleTexts, type LanguagePack } from '../../common/locales/locale';
 import { deepMerge, setCssVariables } from '../../common/client/initialization';
+import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 
 interface AppProps {
   config: WidgetConfig;
@@ -25,6 +26,9 @@ const DEFAULT_TEXTS: LanguagePack = {
   },
 };
 
+// Set to true to enable customization via WidgetConfig
+const ENABLE_CUSTOMIZATION = true;
+
 const App: FC<AppProps> = ({ config, fieldMappings, widgetClient, element }) => {
   const [configInternal, setConfigInternal] = useState(config);
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
@@ -32,6 +36,9 @@ const App: FC<AppProps> = ({ config, fieldMappings, widgetClient, element }) => 
   const productId = element.dataset.pid ?? '';
 
   widgetClient.updateConfig = (configOverride, isPartial): void => {
+    if (!ENABLE_CUSTOMIZATION) {
+      return;
+    }
     if (configOverride) {
       if (isPartial) {
         setConfigInternal(deepMerge(configOverride, config));
@@ -50,6 +57,15 @@ const App: FC<AppProps> = ({ config, fieldMappings, widgetClient, element }) => 
     setMessages(getLocaleTexts(localeFromConfig, DEFAULT_TEXTS, configInternal.customizations.localization?.text));
     setCssVariables(configInternal);
   }, [configInternal]);
+
+  useEffect(() => {
+    if (!ENABLE_CUSTOMIZATION || !config.customizations) {
+      setConfigInternal({
+        ...config,
+        customizations: DEFAULT_CUSTOMIZATIONS,
+      });
+    }
+  }, []);
 
   return (
     <WidgetDataContext.Provider value={{ widgetConfig: configInternal, fieldMappings, widgetClient }}>

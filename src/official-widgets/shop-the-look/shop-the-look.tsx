@@ -83,8 +83,8 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
       initialSlide: 0,
       slidesToScroll,
       slidesToShow,
-      prevArrow: isDesktop ? <PrevArrow iconColor={config.customizations?.generalLayout?.fontColor} /> : <></>,
-      nextArrow: isDesktop ? <NextArrow iconColor={config.customizations?.generalLayout?.fontColor} /> : <></>,
+      prevArrow: isDesktop ? <PrevArrow iconColor={config.customizations.generalLayout?.fontColor} /> : <></>,
+      nextArrow: isDesktop ? <NextArrow iconColor={config.customizations.generalLayout?.fontColor} /> : <></>,
       variableWidth: false,
     };
   };
@@ -117,7 +117,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
   };
 
   const getProductCardCssClasses = (): string => {
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
@@ -130,7 +130,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ config, widgetClient, productId }) 
 
   const getProductCardCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = config.customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
         cssConfig.marginLeft = cssConfigSrc.marginHorizontal / 2;

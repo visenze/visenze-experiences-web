@@ -170,7 +170,7 @@ interface ImageWithLabel {
 }
 
 export interface Icon {
-  url: string;
+  url?: string;
   color: string;
 }
 
@@ -250,11 +250,11 @@ export interface WidgetConfig {
       showWidgetTitle: boolean;
       showViSenzeLogo: boolean;
     };
-    popup: {
+    popup?: {
       position: 'left' | 'center' | 'right';
       triggerIcon: Icon;
     };
-    buttons: {
+    buttons?: {
       primary: ColoredInterface;
       secondary: ColoredInterface;
     };
@@ -262,7 +262,7 @@ export interface WidgetConfig {
       mobile: ViewportWidth;
       tablet: ViewportWidth;
     };
-    customCss: string;
+    customCss?: string;
     localization?: {
       defaultLocale: string;
       defaultCurrency: string;
@@ -285,13 +285,13 @@ export interface WidgetConfig {
       };
       title: HideableField;
       secondaryTitle: HideableField;
-      findSimilar: {
+      findSimilar?: {
         enable: boolean;
         position: 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right';
         icon: Icon;
       };
     };
-    imageUpload: {
+    imageUpload?: {
       enable: boolean;
       icon: Icon;
       images: ImageWithLabel[];
