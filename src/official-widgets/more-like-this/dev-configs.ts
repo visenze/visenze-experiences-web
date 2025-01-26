@@ -32,6 +32,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
       console.log(`Successfully send event: ${action}`, params);
     },
   },
+  disableAnalytics: true,
 };
 
 // Update according to your catalog's field mappings

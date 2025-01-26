@@ -422,6 +422,8 @@ export interface WidgetConfig {
   /**
    * Set to true to disable sending of events to ViSenze Analytics.
    * Mainly used for development purpose.
+   *
+   * Note that setting this to true does NOT disable the trackingCallback event.
    */
   disableAnalytics: boolean;
 }

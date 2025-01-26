@@ -127,13 +127,13 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     callback?: (...args: any) => any,
     failure?: (err: any) => void,
   ): Promise<void> => {
-    if (disableAnalytics) {
-      return;
-    }
-
     const trackingCallback = config?.callbacks.trackingCallback;
     if (trackingCallback && typeof trackingCallback === 'function') {
       trackingCallback(action, params);
+    }
+
+    if (disableAnalytics) {
+      return;
     }
 
     const analyticsParams = params;
@@ -157,10 +157,6 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     callback?: (...args: any) => any,
     failure?: (err: any) => void,
   ): Promise<void> => {
-    if (disableAnalytics) {
-      return;
-    }
-
     if (!validateBatchEvents(events, failure)) {
       return;
     }
