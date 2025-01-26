@@ -198,13 +198,34 @@ interface ColoredInterface {
   backgroundColor: string;
 }
 
+/**
+ * Configuration for ViSenze widgets.
+ */
 export interface WidgetConfig {
   appSettings: {
+    /**
+     * ViSenze app key; obtainable from Discovery Suite console.
+     */
     appKey: string;
+    /**
+     * ViSenze placement ID; obtainable from Discovery Suite console.
+     */
     placementId: string | number;
+    /**
+     * (optional) ViSenze strategy ID; obtainable from Discovery Suite console.
+     */
     strategyId?: string | number;
+    /**
+     * UID used to override ViSenze tracking parameter.
+     */
     uid?: string;
+    /**
+     * If true, the widget will push result_load event to GTM (Google Tag Manager) objects.
+     */
     gtmTracking?: boolean;
+    /**
+     * ViSenze search/recommendations API endpoint.
+     */
     endpoint?: string;
     resizeSettings?: {
       maxWidth: number;
@@ -212,7 +233,13 @@ export interface WidgetConfig {
     };
   };
   displaySettings: {
+    /**
+     * CSS selector on which the widget will be rendered on.
+     */
     cssSelector: string;
+    /**
+     * Field mapping for product card. The fields are based on the schema of the Discovery Suite catalog.
+     */
     productDetails: {
       main_image_url: string;
       product_url: string;
@@ -227,17 +254,48 @@ export interface WidgetConfig {
       [key: string]: string;
     };
   };
+  /**
+   * Additional key-value parameters that will be sent to ViSenze search/recommendation APIs.
+   */
   searchSettings: Record<string, any>;
   languageSettings: {
     locale: string;
     currency: string;
   };
   callbacks: {
+    /**
+     * Fires whenever an event is sent to ViSenze Analytics, or when `sendEvent` is called.
+     *
+     * @param action The action that is being recorded
+     * @param params The attached metadata related to the action
+     */
     trackingCallback?: (action: string, params: Record<string, any>) => void;
+    /**
+     * Fires whenever a product card is clicked on.
+     *
+     * @param productDetails The details of the product
+     * @param trackingMeta Relevant metadata attached to the action
+     */
     onProductClick?: (productDetails: Record<string, any>, trackingMeta: Record<string, any>) => void;
+    /**
+     * Fires whenever response from a search/recommendation API result is returned.
+     *
+     * @param apiResponse Response from ViSenze search/recommendation API.
+     */
     onSearchCallback?: (apiResponse: ProductSearchResponse) => void;
+    /**
+     * Fires when there is an input change within the search bar (when exists),
+     * such as clicking enter in search bar, selecting an autocomplete option, or uploading a new image.
+     *
+     * @param text Text query of the search bar
+     * @param image Image query of the search bar
+     */
     onSearchBarInput?: (text: string | undefined, image: SearchImage | undefined) => void;
   };
+  /**
+   * Widget look-and-feel customization. The values for this section is set
+   * through configurations within the Discovery Suite console.
+   */
   customizations: {
     generalLayout: ColoredInterface & {
       fontFamily: string;
@@ -247,11 +305,26 @@ export interface WidgetConfig {
       bodyFont: {
         [D in DeviceType]: Font;
       };
+      /**
+       * Whether to show the widget title.
+       */
       showWidgetTitle: boolean;
+      /**
+       * Whether to show "Powered by ViSenze" footer in appropriate places.
+       */
       showViSenzeLogo: boolean;
     };
+    /**
+     * Popup-related settings. This section is relevant only for widgets that have popup behavior.
+     */
     popup?: {
+      /**
+       * Popup position on the screen.
+       */
       position: 'left' | 'center' | 'right';
+      /**
+       * Configurations for the icon that triggers the popup.
+       */
       triggerIcon: Icon;
     };
     buttons?: {
@@ -262,12 +335,18 @@ export interface WidgetConfig {
       mobile: ViewportWidth;
       tablet: ViewportWidth;
     };
+    /**
+     * Additional custom CSS to be applied to the widget.
+     */
     customCss?: string;
     localization?: {
       defaultLocale: string;
       defaultCurrency: string;
       text: LanguagePack;
     };
+    /**
+     * Product grid- or slider-related settings.
+     */
     productGrid?: {
       [D in DeviceType]: {
         productsPerRow: number;
@@ -275,25 +354,64 @@ export interface WidgetConfig {
         marginHorizontal: number | undefined;
       };
     };
+    /**
+     * Product card-related settings.
+     */
     productCard?: {
+      /**
+       * Indicates whether clicking a product card opens the link in the same or different browser tab.
+       */
       openLinksInNewTab: boolean;
+      /**
+       * Configuration for price field.
+       */
       price: HideableText & {
         fontColor: string;
       };
+      /**
+       * Configuration for original price (i.e. before discount) field.
+       */
       originalPrice: HideableText & {
         fontColor: string;
       };
+      /**
+       * Configuration for primary title field.
+       */
       title: HideableField;
+      /**
+       * Configuration for secondary title field.
+       */
       secondaryTitle: HideableField;
+      /**
+       * Configuration for the "find similar" feature within a product card image.
+       */
       findSimilar?: {
+        /**
+         * Whether the "find similar" feature is enabled or not.
+         */
         enable: boolean;
+        /**
+         * Position of the "find similar" icon relative to the product card image.
+         */
         position: 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right';
+        /**
+         * Configurations for the find similar icon.
+         */
         icon: Icon;
       };
     };
+    /**
+     * Image upload-related settings. This section is relevant only for widgets that intend to support image upload.
+     */
     imageUpload?: {
+      /**
+       * Whether the "image upload" feature is enabled or not.
+       */
       enable: boolean;
       icon: Icon;
+      /**
+       * List of images which will be used as a gallery of images for quick upload.
+       */
       images: ImageWithLabel[];
     };
   };
@@ -301,6 +419,10 @@ export interface WidgetConfig {
     platformName: string;
     customCss: string;
   };
+  /**
+   * Set to true to disable sending of events to ViSenze Analytics.
+   * Mainly used for development purpose.
+   */
   disableAnalytics: boolean;
 }
 

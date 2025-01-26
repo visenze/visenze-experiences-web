@@ -131,7 +131,9 @@ const populateProductDetailsAndAttrsToGet = (config: WidgetConfig, fieldMappings
     sizes: fieldMappings['sizes'] || '',
     colors: fieldMappings['colors'] || '',
   };
-  config.searchSettings.attrs_to_get = Object.values(config.displaySettings.productDetails).filter(value => Boolean(value));
+  if (!config.searchSettings.attrs_to_get || config.searchSettings.attrs_to_get.length === 0) {
+    config.searchSettings.attrs_to_get = Object.values(config.displaySettings.productDetails).filter(value => Boolean(value));
+  }
 
   return config;
 };

@@ -11,7 +11,6 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     endpoint: '',
   },
   searchSettings: {
-    attrs_to_get: [],
     facets_limit: 10,
     limit: 20,
   },
