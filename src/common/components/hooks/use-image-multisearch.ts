@@ -91,6 +91,9 @@ const useImageMultisearch = ({
       handleError(res.error.message);
     } else {
       setError('');
+      if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+        widgetConfig.callbacks.preprocessResponse(res);
+      }
       setResponse(res);
     }
   };
@@ -101,6 +104,9 @@ const useImageMultisearch = ({
     } else {
       setError('');
 
+      if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+        widgetConfig.callbacks.preprocessResponse(res);
+      }
       const newAutocompleteResults = (res.result || []).map((r: any) => r.text);
       setAutocompleteResults(newAutocompleteResults);
     }

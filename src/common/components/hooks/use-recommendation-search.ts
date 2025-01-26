@@ -57,6 +57,9 @@ const useRecommendationSearch = ({
       handleError(res.error.message);
     } else {
       setError('');
+      if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+        widgetConfig.callbacks.preprocessResponse(res);
+      }
       setResponse(res);
     }
   };

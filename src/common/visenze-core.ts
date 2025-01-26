@@ -1,5 +1,5 @@
 import type { Root } from 'react-dom/client';
-import type { ProductSearchResponse, ViSearchClient } from 'visearch-javascript-sdk';
+import type { ProductSearchResponse, ProductSearchResponseSuccess, ViSearchClient } from 'visearch-javascript-sdk';
 import type { ErrorHandler, SuccessHandler } from './types/function';
 import type { SearchImage } from './types/image';
 import type { LanguagePack } from './locales/locale';
@@ -263,6 +263,13 @@ export interface WidgetConfig {
     currency: string;
   };
   callbacks: {
+    /**
+     * Pre-processes API response before being passed further down into the components.
+     * The modification is expected to happen in-place.
+     *
+     * @param resp The original API response.
+     */
+    preprocessResponse?: (resp: ProductSearchResponseSuccess) => void;
     /**
      * Fires whenever an event is sent to ViSenze Analytics, or when `sendEvent` is called.
      *
