@@ -161,7 +161,7 @@ const ResultsPage: FC<ResultsPageProps> = ({
 
       <div
         ref={resultsRef}
-        className={`grid h-full ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-4')} 
+        className={`wigmix-product-grid grid h-full ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-4')} 
         overflow-y-auto px-3 py-4 md:gap-x-4 md:px-4`}
         style={getProductGridCssConfig()}>
         {results.map((result, index) => (

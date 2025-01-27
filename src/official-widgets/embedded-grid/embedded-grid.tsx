@@ -100,7 +100,7 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ config, widgetClient, productId }
 
           {/* Product result grid */}
           <div
-            className={`grid text-primary ${getProductGridCssClasses('grid-cols-2 md:grid-cols-5', 'gap-x-2', 'gap-y-4')}`}
+            className={`wigmix-product-grid grid text-primary ${getProductGridCssClasses('grid-cols-2 md:grid-cols-5', 'gap-x-2', 'gap-y-4')}`}
             style={getProductGridCssConfig()}
             data-pw='eg-product-result-grid'>
             {productResults.map((result, index) => (

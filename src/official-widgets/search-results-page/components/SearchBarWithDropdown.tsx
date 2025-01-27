@@ -36,8 +36,6 @@ const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({ searchBarValue,
         className='z-30'
         classNames={{
           inputWrapper: 'rounded-md bg-white w-full border border-gray-200',
-          input: 'text-mobile-searchBarText md:text-tablet-searchBarText lg:text-desktop-searchBarText font-mobile-searchBarText md:font-tablet-searchBarText '
-            + 'lg:font-desktop-searchBarText',
         }}
         autoCapitalize='off'
         autoComplete='off'

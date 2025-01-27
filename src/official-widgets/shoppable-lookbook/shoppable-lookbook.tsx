@@ -163,7 +163,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ config, widgetClient, p
 
             {/* Product card grid */}
             <div
-              className={`grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-4')} 
+              className={`wigmix-product-grid grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-4')} 
               md:absolute md:right-0 md:top-0 md:h-full md:w-[59%] md:overflow-y-scroll`}
               style={getProductGridCssConfig()}
               data-pw='sl-product-result-grid'>

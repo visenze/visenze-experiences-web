@@ -189,7 +189,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {searchHistory?.map((searchImage, index) => (
               <img
                 key={`image-history-${index}`}
-                className='w-1/6'
+                className='aspect-square w-1/5 object-cover'
                 src={getFile(searchImage)}
                 onClick={() => onClickMoreLikeThisHandler(searchImage)}
                 data-pw={`cs-previous-views-image-${index + 1}`}
@@ -244,9 +244,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
         <div className='bg-primary px-3 pt-2'>
           {/* Refinement Text Bar */}
           <Input
-            classNames={{
-              input: '!text-mobile-searchBarText !font-mobile-searchBarText',
-            }}
             isClearable
             maxLength={QUERY_MAX_CHARACTER_LENGTH}
             type='filters'
@@ -309,7 +306,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       .map((searchImage, index) => (
                         <img
                           key={`image-history-${index}`}
-                          className='w-1/3 cursor-pointer rounded-lg object-cover object-center'
+                          className='aspect-square w-1/3 cursor-pointer rounded-lg object-cover'
                           src={getFile(searchImage)}
                           onClick={() => onClickMoreLikeThisHandler(searchImage)}
                           data-pw={`cs-previous-views-image-${index + 1}`}
@@ -349,10 +346,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 {/* Refinement Text Bar */}
                 <div className='relative z-20 px-2 pt-3'>
                   <Input
-                    classNames={{
-                      input:
-                        'text-tablet-searchBarText lg:text-desktop-searchBarText font-tablet-searchBarText lg:font-desktop-searchBarText',
-                    }}
                     isClearable
                     maxLength={QUERY_MAX_CHARACTER_LENGTH}
                     type='filters'

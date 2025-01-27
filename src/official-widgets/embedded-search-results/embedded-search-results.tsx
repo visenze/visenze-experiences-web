@@ -413,7 +413,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
                     {
                       productResults.length > 0
                         ? <div className={cn(
-                            `grid w-full ${getProductGridCssClasses('grid-cols-2 md:grid-cols-4', 'gap-x-2', 'gap-y-4')}`,
+                            `wigmix-product-grid grid w-full ${getProductGridCssClasses('grid-cols-2 md:grid-cols-4', 'gap-x-2', 'gap-y-4')}`,
                             isLoading && 'opacity-50',
                             )}
                             style={getProductGridCssConfig()}

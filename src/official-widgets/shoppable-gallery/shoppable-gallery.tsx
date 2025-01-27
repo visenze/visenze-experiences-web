@@ -144,7 +144,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
         <div>
           {/* Gallery Products Grid */}
           <div
-            className={`grid ${getProductGridCssClasses('grid-cols-3')} gap-0.5`}
+            className={`wigmix-product-grid grid ${getProductGridCssClasses('grid-cols-3')} gap-0.5`}
             style={getProductGridCssConfig()}
             data-pw='sif-gallery-products-grid'>
             {galleryProducts.slice(0, page * 20).map((result, index) => (

@@ -214,7 +214,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
 
             {/* Product Result Grid */}
             <div
-              className={`grid ${getProductGridCssClasses('grid-cols-2 lg:grid-cols-3', 'gap-x-2', 'gap-y-4')} overflow-y-auto`}
+              className={`wigmix-product-grid grid ${getProductGridCssClasses('grid-cols-2 lg:grid-cols-3', 'gap-x-2', 'gap-y-4')} overflow-y-auto`}
               style={getProductGridCssConfig()}
               data-pw='itg-product-result-grid'>
               {productResults.map((result, index) => (

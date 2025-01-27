@@ -117,7 +117,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
         </div>
 
         {/* Product Result Grid */}
-        <div className={`grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3 lg:grid-cols-4', 'gap-x-2', 'gap-y-4')} overflow-y-auto px-2 pb-4`}
+        <div className={`wigmix-product-grid grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3 lg:grid-cols-4', 'gap-x-2', 'gap-y-4')} overflow-y-auto px-2 pb-4`}
              style={getProductGridCssConfig()}
              data-pw='sif-product-result-grid'>
           {
