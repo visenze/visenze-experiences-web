@@ -45,7 +45,9 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
   };
 
   const results = useMemo(() => {
-    if (selectedHotspot === -1 || objects.length === 0) return [];
+    if (selectedHotspot === -1 || objects.length === 0) {
+      return [];
+    }
     return getFlattenProducts(objects[selectedHotspot].result);
   }, [objects, selectedHotspot]);
 

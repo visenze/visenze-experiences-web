@@ -17,7 +17,7 @@ const rootContainerStyle: CSSProperties = {
 
 export const RootContext = createContext<HTMLElement | null>(null);
 
-const StyleLoader: FC<{ rootNode: HTMLElement | null, children: ReactNode }> = ({ rootNode, children }) => {
+const StyleLoader: FC<{ rootNode: HTMLElement | null; children: ReactNode }> = ({ rootNode, children }) => {
   useStyles(rootNode);
   return <>{children}</>;
 };
@@ -35,7 +35,7 @@ const Style: FC = () => {
   return <style ref={onRefChange}></style>;
 };
 
-const ShadowWrapper: FC<{ fontFamily: string, children: ReactNode }> = ({ fontFamily, children }) => {
+const ShadowWrapper: FC<{ fontFamily: string; children: ReactNode }> = ({ fontFamily, children }) => {
   const [rootNode, setRootNode] = useState<HTMLElement | null>(null);
 
   const onRefChange = useCallback((ref: HTMLElement | null) => {

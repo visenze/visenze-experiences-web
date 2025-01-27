@@ -48,7 +48,9 @@ const ImageCropThumbnail: FC<ImageCropThumbnailProps> = ({ imageUrl, box, index 
         canvas.height = 64;
         canvas.width = 64;
         const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        if (!ctx) {
+          return;
+        }
 
         // Calculate the ratio to scale the cropped image to fit into the canvas
         const ratio = Math.min(canvas.width / croppedImage.width, canvas.height / croppedImage.height);

@@ -9,7 +9,7 @@ import ProductCard from '../../../common/components/product-card/ProductCard';
 /**
  * A placeholder carousel that displays products as they are being received from the ongoing event stream.
  */
-const CarouselLoader: FC<{ results: ProcessedProduct[], searchValue: string }> = ({ results, searchValue }): ReactElement => {
+const CarouselLoader: FC<{ results: ProcessedProduct[]; searchValue: string }> = ({ results, searchValue }): ReactElement => {
   const intl = useIntl();
   return (
     <>

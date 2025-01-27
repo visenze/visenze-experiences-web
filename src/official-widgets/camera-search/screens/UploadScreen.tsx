@@ -36,7 +36,9 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
   const getGalleryCards = (): ReactNode => {
     if (customizations) {
       return Object.entries(customizations.imageUpload?.images || []).map(([, imageWithLabel], index) => {
-        if (index === 0) return null;
+        if (index === 0) {
+          return null;
+        }
         return (
           <Card
             key={index}

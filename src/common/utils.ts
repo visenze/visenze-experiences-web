@@ -71,7 +71,9 @@ export const getSortTypeIntlId = (sortType: SortType): string => {
 };
 
 export const getTitleCase = (text: string): string => {
-  if (!text) return '';
+  if (!text) {
+    return '';
+  }
 
   const textLowerCase = text.toLowerCase();
   return textLowerCase.charAt(0).toUpperCase() + textLowerCase.slice(1);

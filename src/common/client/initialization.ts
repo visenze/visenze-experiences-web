@@ -60,9 +60,9 @@ const isPlacementSkippable = (placementId: number | string | undefined): boolean
 export const setCssVariables = (config: WidgetConfig): void => {
   if (config.customizations) {
     const fontCustomizations: Record<string, {
-      mobile: Font,
-      tablet: Font,
-      desktop: Font,
+      mobile: Font;
+      tablet: Font;
+      desktop: Font;
     } | undefined> = {
       heading: config.customizations.generalLayout?.headingFont,
       body: config.customizations.generalLayout?.bodyFont,
@@ -72,8 +72,8 @@ export const setCssVariables = (config: WidgetConfig): void => {
       productCardOriginalPrice: config.customizations.productCard?.originalPrice?.font,
     };
     const colourCustomizations: Record<string, {
-      fontColor: string,
-      backgroundColor: string,
+      fontColor: string;
+      backgroundColor: string;
     } | undefined> = {
       primary: config.customizations.generalLayout,
       buttonPrimary: config.customizations.buttons?.primary,

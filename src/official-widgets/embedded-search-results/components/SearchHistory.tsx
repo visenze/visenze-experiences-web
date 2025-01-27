@@ -41,7 +41,7 @@ export default function SearchHistory({
   onHistorySelect: (entry: SearchHistoryEntry) => void;
   onHistoryRemove: (entry: SearchHistoryEntry) => void;
 }): ReactElement {
-  const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number, height: number } }>({});
+  const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number; height: number } }>({});
   const activeItemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

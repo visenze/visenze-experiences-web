@@ -22,8 +22,15 @@ interface SearchBarWithDropdownProps {
   handleMultisearchWithProduct: (product?: ProcessedProduct) => void;
 }
 
-const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({ searchBarValue, setSearchBarValue, showDropdown, setShowDropdown, autocompleteResults,
-                                         handleMultisearchWithQuery, handleMultisearchWithProduct }): ReactElement => {
+const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({
+  searchBarValue,
+  setSearchBarValue,
+  showDropdown,
+  setShowDropdown,
+  autocompleteResults,
+  handleMultisearchWithQuery,
+  handleMultisearchWithProduct,
+}): ReactElement => {
   const searchBarInputRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
 

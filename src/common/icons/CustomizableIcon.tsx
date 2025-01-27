@@ -4,7 +4,7 @@ import type { Icon } from '../wigmix-core';
 interface CustomizableIconProps extends Icon {
   height?: number;
   width?: number;
-  className?: string
+  className?: string;
   onClickHandler?: (event: any) => void;
 }
 

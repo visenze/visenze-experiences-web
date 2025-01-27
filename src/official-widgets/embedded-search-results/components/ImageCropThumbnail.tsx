@@ -48,7 +48,9 @@ export default function ImageCropThumbnail({
             canvas.height = parentRect.height;
           }
           const ctx = canvas.getContext('2d');
-          if (!ctx) return;
+          if (!ctx) {
+            return;
+          }
 
           ctx.drawImage(croppedImage, 0, 0, canvas.width, canvas.height);
         }

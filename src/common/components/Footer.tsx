@@ -2,8 +2,8 @@ import type { FC, ReactElement } from 'react';
 import { cn } from '@heroui/theme';
 
 interface FooterProps {
-  className?: string
-  dataPw?: string,
+  className?: string;
+  dataPw?: string;
 }
 
 const Footer: FC<FooterProps> = ({ className, dataPw }): ReactElement => (
