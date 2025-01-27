@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { useContext, useEffect } from 'react';
-import { Card, CardFooter } from '@nextui-org/card';
+import { Card, CardFooter } from '@heroui/card';
 import { useIntl } from 'react-intl';
 import FileDropzone from '../../../common/components/FileDropzone';
 import type { SearchImage } from '../../../common/types/image';

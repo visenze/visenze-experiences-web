@@ -1,6 +1,6 @@
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 import { useEffect, useRef, useState, type ReactElement } from 'react';
-import { Image as NextImage } from '@nextui-org/image';
+import { Image as NextImage } from '@heroui/image';
 import ImageCropThumbnail from './ImageCropThumbnail';
 import CloseIcon from '../../../common/icons/CloseIcon';
 

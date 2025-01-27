@@ -56,15 +56,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index, queryId }) =>
   }, [targetRef]);
 
   return (
-      <a href={product.product_url} ref={(r) => r && setTargetRef(r)} onClick={() => {
-        widgetClient.sendEvent(Actions.PRODUCT_CLICK, {
-          label: 'dialogue',
-          pid: product.pid,
-          pos: index + 1,
-          queryId,
-          cat: 'Result',
-        });
-      }}>
+      <a href={product.product_url}
+         ref={(r) => {
+           if (r) {
+             setTargetRef(r);
+           }
+         }}
+         onClick={() => {
+           widgetClient.sendEvent(Actions.PRODUCT_CLICK, {
+             label: 'dialogue',
+             pid: product.pid,
+             pos: index + 1,
+             queryId,
+             cat: 'Result',
+           });
+         }}>
         <div className='product-card'>
           <div className='product-image'>
             <img src={product.image_url}/>

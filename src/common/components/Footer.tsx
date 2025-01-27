@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 
 interface FooterProps {
   className?: string

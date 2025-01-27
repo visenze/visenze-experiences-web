@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react';
 import { useContext, useEffect, useState } from 'react';
-import { Button } from '@nextui-org/button';
-import { Card, CardFooter } from '@nextui-org/card';
+import { Button } from '@heroui/button';
+import { Card, CardFooter } from '@heroui/card';
 import { useIntl } from 'react-intl';
 import PhotoIcon from '../../../common/icons/PhotoIcon';
 import VisenzeModal from '../../../common/components/modal/visenze-modal';

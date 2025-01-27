@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { useEffect, useContext, useState, useRef } from 'react';
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 import { CroppingContext, WidgetResultContext } from '../../types/contexts';
 import type { CroppedBox } from '../../types/box';
 import Hotspot from './hotspot';

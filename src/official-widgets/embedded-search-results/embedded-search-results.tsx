@@ -1,10 +1,10 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useEffect, useRef, useContext, useState, useLayoutEffect } from 'react';
 import type { ProductSearchResponse, Facet } from 'visearch-javascript-sdk';
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/button';
 import { useIntl } from 'react-intl';
-import { Spinner } from '@nextui-org/spinner';
-import { cn } from '@nextui-org/theme';
+import { Spinner } from '@heroui/spinner';
+import { cn } from '@heroui/theme';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { getFacets, getFilterQueries, getFlattenProducts } from '../../common/utils';

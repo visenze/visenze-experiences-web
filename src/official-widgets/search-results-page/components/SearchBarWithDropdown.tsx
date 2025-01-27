@@ -1,8 +1,8 @@
 import type { FC, Key, ReactElement } from 'react';
 import { useRef } from 'react';
-import { Listbox, ListboxSection, ListboxItem } from '@nextui-org/listbox';
-import { Input } from '@nextui-org/input';
-import { cn } from '@nextui-org/theme';
+import { Listbox, ListboxSection, ListboxItem } from '@heroui/listbox';
+import { Input } from '@heroui/input';
+import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import MagnifyingGlassIcon from '../../../common/icons/MagnifyingGlassIcon';
 import type { ProcessedProduct } from '../../../common/types/product';

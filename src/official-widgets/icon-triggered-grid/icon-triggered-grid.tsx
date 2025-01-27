@@ -1,6 +1,6 @@
 import type { CSSProperties, FC } from 'react';
 import { useEffect, useCallback, useContext, useState } from 'react';
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/button';
 import { useIntl } from 'react-intl';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';

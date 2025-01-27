@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 
 export default function ImageCropThumbnail({
   imageSrc,

@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useContext, memo, useRef } from 'react';
-import { Input } from '@nextui-org/input';
+import { Input } from '@heroui/input';
 import { useIntl } from 'react-intl';
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import ImageGalleryUpload from './ImageGalleryUpload';
 import type { SearchImage } from '../../../common/types/image';

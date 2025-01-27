@@ -1,6 +1,6 @@
 import type { CSSProperties, FC } from 'react';
 import { useEffect, useState, useContext, useRef } from 'react';
-import { Skeleton } from '@nextui-org/skeleton';
+import { Skeleton } from '@heroui/skeleton';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';

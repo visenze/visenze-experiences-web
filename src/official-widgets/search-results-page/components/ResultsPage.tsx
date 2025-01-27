@@ -1,8 +1,8 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useContext, useRef, useState } from 'react';
-import { Button } from '@nextui-org/button';
-import { Image } from '@nextui-org/image';
-import { cn } from '@nextui-org/theme';
+import { Button } from '@heroui/button';
+import { Image } from '@heroui/image';
+import { cn } from '@heroui/theme';
 import type { ProcessedProduct } from '../../../common/types/product';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import CloseIcon from '../../../common/icons/CloseIcon';

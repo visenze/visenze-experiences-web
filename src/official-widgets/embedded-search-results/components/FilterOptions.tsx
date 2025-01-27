@@ -1,8 +1,8 @@
 import React, { useContext, type ChangeEvent, type FC, type ReactElement, useState, useEffect, useRef } from 'react';
-import { Accordion, AccordionItem } from '@nextui-org/accordion';
+import { Accordion, AccordionItem } from '@heroui/accordion';
 import type { Facet } from 'visearch-javascript-sdk';
-import { Slider } from '@nextui-org/slider';
-import { Checkbox } from '@nextui-org/checkbox';
+import { Slider } from '@heroui/slider';
+import { Checkbox } from '@heroui/checkbox';
 import type { FacetType } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { getFacetNameByKey, getTitleCase } from '../../../common/utils';

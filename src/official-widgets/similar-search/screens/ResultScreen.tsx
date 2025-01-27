@@ -1,10 +1,10 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useSwipeable } from 'react-swipeable';
-import { Button } from '@nextui-org/button';
-import { Input } from '@nextui-org/input';
-import { Listbox, ListboxItem } from '@nextui-org/listbox';
-import { cn } from '@nextui-org/theme';
+import { Button } from '@heroui/button';
+import { Input } from '@heroui/input';
+import { Listbox, ListboxItem } from '@heroui/listbox';
+import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';

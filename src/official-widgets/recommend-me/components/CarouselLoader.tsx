@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { Skeleton } from '@nextui-org/skeleton';
+import { Skeleton } from '@heroui/skeleton';
 import { useIntl } from 'react-intl';
 import { motion } from 'framer-motion';
 import Typewriter from 'typewriter-effect';

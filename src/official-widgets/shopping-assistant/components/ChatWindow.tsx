@@ -96,7 +96,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage
                 )}
               </div>
           )}
-          <div ref={(el) => el && setMessageBottomRef(el)}></div>
+          <div ref={(el) => {
+            if (el) {
+              setMessageBottomRef(el);
+            }
+          }}></div>
         </div>
         <div style={{ flexGrow: 1 }}></div>
         <div className={`vi-shopping-assistant-arrow-container ${breakpoint}`} style={{ position: 'relative' }}>

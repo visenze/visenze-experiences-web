@@ -1,8 +1,8 @@
 import type { FC, ReactElement } from 'react';
 import { memo } from 'react';
-import { Button } from '@nextui-org/button';
-import { cn } from '@nextui-org/theme';
-import { Radio, RadioGroup } from '@nextui-org/radio';
+import { Button } from '@heroui/button';
+import { cn } from '@heroui/theme';
+import { Radio, RadioGroup } from '@heroui/radio';
 import { useIntl } from 'react-intl';
 import { SortType } from '../../../common/types/constants';
 import type { ScreenType } from '../icon-triggered-grid';

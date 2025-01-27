@@ -4,7 +4,7 @@ import Slider from 'react-slick';
 import type { Settings } from 'react-slick';
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
-import { Skeleton } from '@nextui-org/skeleton';
+import { Skeleton } from '@heroui/skeleton';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';

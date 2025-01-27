@@ -1,7 +1,7 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useContext, useState } from 'react';
-import { Listbox, ListboxItem, ListboxSection } from '@nextui-org/listbox';
-import { cn } from '@nextui-org/theme';
+import { Listbox, ListboxItem, ListboxSection } from '@heroui/listbox';
+import { cn } from '@heroui/theme';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import type { SearchImage } from '../../common/types/image';
 import { isImageFile } from '../../common/types/image';

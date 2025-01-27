@@ -1,6 +1,6 @@
 import type { FC, MouseEventHandler } from 'react';
-import { Button } from '@nextui-org/button';
-import { cn } from '@nextui-org/theme';
+import { Button } from '@heroui/button';
+import { cn } from '@heroui/theme';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 
 interface PrevArrowProps {

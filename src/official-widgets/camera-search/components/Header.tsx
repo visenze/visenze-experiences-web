@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/button';
 import type { FC, ReactElement } from 'react';
 import { useIntl } from 'react-intl';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';

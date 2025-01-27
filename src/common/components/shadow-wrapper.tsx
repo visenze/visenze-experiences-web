@@ -1,6 +1,6 @@
 import { createContext, type CSSProperties, type FC, type ReactNode, useCallback, useContext, useState } from 'react';
 import root from 'react-shadow';
-import { NextUIProvider } from '@nextui-org/system';
+import { HeroUIProvider } from '@heroui/system';
 import useStyles from './hooks/use-styles';
 import { WidgetDataContext } from '../types/contexts';
 
@@ -28,7 +28,7 @@ const Style: FC = () => {
     if (ref) {
       const template = document.head.querySelector(`#vi_template__${widgetClient.widgetType}`) as HTMLTemplateElement;
       const styleTag = template.shadowRoot?.getElementById(`vi_style__${widgetClient.widgetType}__${widgetClient.widgetVersion}`) as HTMLStyleElement;
-      // Convert NextUI CSS variable values from rem to px
+      // Convert HeroUI CSS variable values from rem to px
       ref.innerHTML = styleTag.innerHTML.replace(/(\d*\.?\d+)rem/g, (_, val) => `${parseFloat(val) * 16}px`);
     }
   }, []);
@@ -53,7 +53,7 @@ const ShadowWrapper: FC<{ fontFamily: string, children: ReactNode }> = ({ fontFa
       <div className='wigmix-shadow-root' ref={onRefChange} style={createRootStyle(fontFamily)}>
         <RootContext.Provider value={rootNode}>
           <StyleLoader rootNode={rootNode}>
-            <NextUIProvider>{children}</NextUIProvider>
+            <HeroUIProvider>{children}</HeroUIProvider>
           </StyleLoader>
         </RootContext.Provider>
       </div>

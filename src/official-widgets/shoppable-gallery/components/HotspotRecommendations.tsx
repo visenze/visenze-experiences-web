@@ -1,6 +1,6 @@
 import type { CSSProperties, FC } from 'react';
 import { memo, useContext, useMemo } from 'react';
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/button';
 import type { ObjectProductResponse } from 'visearch-javascript-sdk';
 import { useIntl } from 'react-intl';
 import ViSenzeModal from '../../../common/components/modal/visenze-modal';

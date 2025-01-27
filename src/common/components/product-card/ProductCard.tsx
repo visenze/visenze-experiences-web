@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, type CSSProperties, type FC } from 'react';
-import { Button } from '@nextui-org/button';
-import { Skeleton } from '@nextui-org/skeleton';
+import { Button } from '@heroui/button';
+import { Skeleton } from '@heroui/skeleton';
 import { WidgetDataContext, WidgetResultContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 import ResultLogicImpl from '../../client/result-logic';
@@ -194,7 +194,11 @@ const ProductCard: FC<ProductCardProps> = ({
 
   return (
     <a className='wigmix-product-card cursor-pointer'
-       ref={(r) => r && setTargetRef(r)}
+       ref={(r) => {
+         if (r) {
+           setTargetRef(r);
+         }
+       }}
        href={productUrl}
        target={openLinksInNewTab ? '_blank' : ''}
        rel={openLinksInNewTab ? 'noopener noreferrer' : ''}

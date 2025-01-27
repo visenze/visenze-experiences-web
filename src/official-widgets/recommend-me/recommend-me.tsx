@@ -1,7 +1,7 @@
 import { type FC, useContext, useEffect, useState } from 'react';
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/button';
 import { v4 as uuid } from 'uuid';
-import { Input } from '@nextui-org/input';
+import { Input } from '@heroui/input';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
