@@ -6,7 +6,7 @@ import { WidgetDataContext } from '../types/contexts';
 
 const createRootStyle: (fontFamily?: string) => CSSProperties = (fontFamily) => ({
   position: 'relative',
-  fontFamily: fontFamily || 'inherit',
+  fontFamily: fontFamily || '',
   letterSpacing: 'inherit',
   display: 'block',
 });
@@ -42,7 +42,7 @@ const ShadowWrapper: FC<{ fontFamily: string, children: ReactNode }> = ({ fontFa
     if (ref) {
       setRootNode(ref);
 
-      ref.className = 'light';
+      ref.classList.add('light');
       ref.style.colorScheme = 'light';
     }
   }, []);
@@ -50,7 +50,7 @@ const ShadowWrapper: FC<{ fontFamily: string, children: ReactNode }> = ({ fontFa
   return (
     <root.div style={rootContainerStyle}>
       <Style></Style>
-      <div ref={onRefChange} style={createRootStyle(fontFamily)}>
+      <div className='wigmix-shadow-root' ref={onRefChange} style={createRootStyle(fontFamily)}>
         <RootContext.Provider value={rootNode}>
           <StyleLoader rootNode={rootNode}>
             <NextUIProvider>{children}</NextUIProvider>
