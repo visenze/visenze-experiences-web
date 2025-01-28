@@ -35,6 +35,10 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
   disableAnalytics: true,
 };
 
+// Set to true to retrieve the fields mappings from the backend.
+// If this is set to true, the subsequent devFieldMappings variable needs not be set.
+export const shouldRetrieveFieldsMapping = true;
+
 // Update according to your catalog's field mappings
 export const devFieldMappings: Record<string, string> = {
   main_image_url: 'main_image_url',
@@ -42,5 +46,4 @@ export const devFieldMappings: Record<string, string> = {
   title: 'title',
   price: 'price',
   original_price: 'original_price',
-  category: 'category',
 };
