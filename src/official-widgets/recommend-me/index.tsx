@@ -13,7 +13,9 @@ import { DEFAULT_CUSTOMIZATIONS } from './default-config';
     initWidget: initWidgetFactory(
         WidgetType.RECOMMEND_ME,
         version,
-        ({ config, client, fieldMappings, element }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config} element={element}></App>,
+        ({ config, client, fieldMappings, element }) => (
+            <App widgetClient={client} fieldMappings={fieldMappings} widgetConfig={config} element={element} />
+        ),
         false,
         DEFAULT_CUSTOMIZATIONS,
     ),

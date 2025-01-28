@@ -13,7 +13,9 @@ import { DEFAULT_CUSTOMIZATIONS } from './default-config';
     initWidget: initWidgetFactory(
         WidgetType.SEARCH_BAR,
         version,
-        ({ config, client, fieldMappings, element }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config} element={element} />,
+        ({ config, client, fieldMappings, element }) => (
+            <App widgetClient={client} fieldMappings={fieldMappings} widgetConfig={config} element={element} />
+        ),
         false,
         DEFAULT_CUSTOMIZATIONS,
     ),

@@ -11,7 +11,9 @@ const shouldRetrieveFieldsMapping = true;
 devInitWidget(
     WidgetType.CAMERA_SEARCH,
     version,
-    ({ config, client, fieldMappings }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config}></App>,
+    ({ config, client, fieldMappings }) => (
+        <App widgetClient={client} fieldMappings={fieldMappings} widgetConfig={config} />
+    ),
     false,
     devConfigs,
     devFieldMappings,

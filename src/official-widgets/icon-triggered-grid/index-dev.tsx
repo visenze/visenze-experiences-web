@@ -11,7 +11,9 @@ const shouldRetrieveFieldsMapping = true;
 devInitWidget(
     WidgetType.ICON_TRIGGERED_GRID,
     version,
-    ({ config, client, index, element, fieldMappings }) => <App config={config} fieldMappings={fieldMappings} widgetClient={client} index={index} element={element}></App>,
+    ({ config, client, index, element, fieldMappings }) => (
+        <App widgetConfig={config} fieldMappings={fieldMappings} widgetClient={client} index={index} element={element} />
+    ),
     true,
     devConfigs,
     devFieldMappings,

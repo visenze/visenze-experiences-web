@@ -11,7 +11,9 @@ const shouldRetrieveFieldsMapping = true;
 devInitWidget(
     WidgetType.RECOMMEND_ME,
     version,
-    ({ config, client, fieldMappings, element }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config} element={element}></App>,
+    ({ config, client, fieldMappings, element }) => (
+        <App widgetClient={client} fieldMappings={fieldMappings} widgetConfig={config} element={element} />
+    ),
     false,
     devConfigs,
     devFieldMappings,

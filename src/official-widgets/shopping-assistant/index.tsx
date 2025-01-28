@@ -13,7 +13,9 @@ import { DEFAULT_CUSTOMIZATIONS } from './default-config';
     initWidget: initWidgetFactory(
         WidgetType.SHOPPING_ASSISTANT,
         version,
-        ({ config, client, fieldMappings }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config}></App>,
+        ({ config, client, fieldMappings }) => (
+            <App widgetClient={client} fieldMappings={fieldMappings} widgetConfig={config} />
+        ),
         false,
         DEFAULT_CUSTOMIZATIONS,
     ),
