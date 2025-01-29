@@ -165,15 +165,13 @@ const ResultsPage: FC<ResultsPageProps> = ({
         overflow-y-auto px-3 py-4 md:gap-x-4 md:px-4`}
         style={getProductGridCssConfig()}>
         {results.map((result, index) => (
-          <div key={`${result.product_id}-${index}`} data-pw={`srp-product-result-card-${index + 1}`}>
-            <ProductCard key={result.product_id}
+            <ProductCard key={`${result.product_id}-${index}`}
                          index={index}
                          result={result}
                          isRecommendation={false}
                          onFindSimilar={onFindSimilar}
                          hasFindSimilar={true}
                          pwPrefix='srp' />
-          </div>
         ))}
       </div>
     </div>

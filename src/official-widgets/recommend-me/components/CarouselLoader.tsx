@@ -17,18 +17,17 @@ const CarouselLoader: FC<{ results: ProcessedProduct[]; searchValue: string }> =
         <span>{intl.formatMessage({ id: 'resultCarouselTitle' })}</span>
         &nbsp;&quot;<div className='max-w-13/20 truncate font-bold'>{searchValue}</div>&quot;
       </div>
-      <div className='no-scrollbar relative flex gap-x-4 overflow-scroll pt-3'>
+      <div className='no-scrollbar relative grid grid-cols-5 gap-x-4 overflow-scroll pt-3'>
         {results.map((result, index) => (
-          <div key={`${result.product_id}-${index}`}>
-            <ProductCard index={index}
+            <ProductCard key={`${result.product_id}-${index}`}
+                         index={index}
                          result={result}
                          hasFindSimilar={false}
                          isRecommendation={false}
                          pwPrefix='rm'
                          imageClasses='w-36 md:w-48 lg:w-64' />
-          </div>
         ))}
-        {results.length <= 4 && [0, 1, 2, 3].map((i) => (
+        {results.length <= 4 && [0, 1, 2, 3, 4].map((i) => (
           <>
             {i >= results.length && <Skeleton className='h-48 w-36 md:h-64 md:w-48 lg:h-80 lg:w-64'></Skeleton>}
           </>

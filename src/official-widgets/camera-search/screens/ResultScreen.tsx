@@ -219,8 +219,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
               style={getProductGridCssConfig()}
               data-pw='cs-product-result-grid'>
               {productResults.map((result, index) => (
-                <div key={result.product_id} className='border-gray-300'>
-                  <ProductCard onFindSimilar={(data) => {
+                  <ProductCard key={`${result.product_id}-${index}`}
+                               onFindSimilar={(data) => {
                                  setSearch('');
                                  return onFindSimilar({ imgUrl: data.im_url });
                                }}
@@ -229,7 +229,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                isRecommendation={false}
                                hasFindSimilar={true}
                                pwPrefix='cs' />
-                </div>
               ))}
             </div>
           </div>
@@ -378,8 +377,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    style={getProductGridCssConfig()}
                    data-pw='cs-product-result-grid'>
                 {productResults.map((result, index) => (
-                  <div key={result.product_id}>
-                    <ProductCard onFindSimilar={(data) => {
+                    <ProductCard key={`${result.product_id}-${index}`}
+                                 onFindSimilar={(data) => {
                                    setSearch('');
                                    return onFindSimilar({ imgUrl: data.im_url });
                                  }}
@@ -388,7 +387,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                  isRecommendation={false}
                                  hasFindSimilar={true}
                                  pwPrefix='cs' />
-                  </div>
                 ))}
               </div>
             </div>

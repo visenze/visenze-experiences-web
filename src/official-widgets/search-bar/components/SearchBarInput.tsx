@@ -42,7 +42,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
     <Input
       data-pw='sb-search-bar-input'
       ref={searchBarRef}
-      className='z-30'
+      className='z-5'
       classNames={{
         inputWrapper: cn('rounded-md bg-white w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
       }}

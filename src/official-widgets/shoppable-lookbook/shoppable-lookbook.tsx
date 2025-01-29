@@ -155,13 +155,12 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
               style={getProductGridCssConfig()}
               data-pw='sl-product-result-grid'>
               {productResults.map((result, index) => (
-                <div key={`${result.product_id}-${index}`} data-pw={`sl-product-result-card-${index + 1}`}>
-                  <ProductCard index={index}
+                  <ProductCard key={`${result.product_id}-${index}`}
+                               index={index}
                                result={result}
                                hasFindSimilar={false}
                                isRecommendation={true}
                                pwPrefix='sl' />
-                </div>
               ))}
             </div>
           </div>

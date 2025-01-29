@@ -68,16 +68,15 @@ const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }
           />
         )}
       </div>
-      <div className={`no-scrollbar flex w-full items-end text-primary ${getProductGridCssClasses('gap-x-4')} overflow-scroll`}
+      <div className={`no-scrollbar grid grid-cols-5 w-full items-end text-primary ${getProductGridCssClasses('gap-x-4')} overflow-scroll`}
            style={getProductGridCssConfig()}>
         {results.map((result, index) => (
-          <div key={result.product_id}>
-            <ProductCard index={index}
+            <ProductCard key={`${result.product_id}-${index}`}
+                         index={index}
                          result={result}
                          hasFindSimilar={false}
                          isRecommendation={false}
                          pwPrefix='rm' />
-          </div>
         ))}
       </div>
     </div>

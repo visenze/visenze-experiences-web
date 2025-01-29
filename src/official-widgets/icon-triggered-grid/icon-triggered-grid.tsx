@@ -216,13 +216,12 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
               style={getProductGridCssConfig()}
               data-pw='itg-product-result-grid'>
               {productResults.map((result, index) => (
-                <div key={`${result.product_id}-${index}`} data-pw={`itg-product-result-card-${index + 1}`}>
-                  <ProductCard index={index}
+                  <ProductCard key={`${result.product_id}-${index}`}
+                               index={index}
                                result={result}
                                hasFindSimilar={false}
                                isRecommendation={true}
                                pwPrefix='itg' />
-                </div>
               ))}
             </div>
 

@@ -40,7 +40,7 @@ const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({
       {/* Search bar input */}
       <Input
         ref={searchBarInputRef}
-        className='z-30'
+        className='z-5'
         classNames={{
           inputWrapper: 'rounded-md bg-white w-full border border-gray-200',
         }}

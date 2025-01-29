@@ -193,74 +193,77 @@ const ProductCard: FC<ProductCardProps> = ({
   const productUrl = getProductUrlWithTrackingParams(result[productDetails.product_url], productTrackingMeta, isRecommendation);
 
   return (
-    <a className='wigmix-product-card cursor-pointer'
-       ref={(r) => {
-         if (r) {
-           setTargetRef(r);
-         }
-       }}
-       href={productUrl}
-       target={openLinksInNewTab ? '_blank' : ''}
-       rel={openLinksInNewTab ? 'noopener noreferrer' : ''}
-       onClick={(event) => onClick(event, productUrl)}
-       data-pw={`${pwPrefix}-product-result-card-${index + 1}`}>
-      <div className='relative'>
-        <div className='flex justify-center'>
-          {isLoading && <Skeleton className={`aspect-square size-full ${imageClasses || ''}`} />}
-          <img className={`wigmix-product-card-image aspect-square object-cover ${imageClasses || ''}`} src={result.im_url} alt=''
-               onLoad={() => {
-                 setIsLoading(false);
-               }}
-               data-pw={`${pwPrefix}-product-result-card-image-${index + 1}`}/>
+    <div className='wigmix-product-card'>
+      <a className='cursor-pointer'
+         ref={(r) => {
+           if (r) {
+             setTargetRef(r);
+           }
+         }}
+         href={productUrl}
+         target={openLinksInNewTab ? '_blank' : ''}
+         rel={openLinksInNewTab ? 'noopener noreferrer' : ''}
+         onClick={(event) => onClick(event, productUrl)}
+         data-pw={`${pwPrefix}-product-result-card-${index + 1}`}>
+        <div className='wigmix-product-card-image-container'>
+          <div className='flex justify-center relative'>
+            {isLoading && <Skeleton className={`aspect-square size-full ${imageClasses || ''}`} />}
+            <img className={`wigmix-product-card-image aspect-square object-cover ${imageClasses || ''}`} src={result.im_url} alt=''
+                 onLoad={() => {
+                   setIsLoading(false);
+                 }}
+                 data-pw={`${pwPrefix}-product-result-card-image-${index + 1}`}/>
+            {hasFindSimilar && !isLoading && customizations.productCard?.findSimilar?.enable && (
+                <Button
+                    isIconOnly
+                    size='sm'
+                    radius='full'
+                    className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-5 bg-white shadow-md`}
+                    onClick={(event) => {
+                      if (onFindSimilar) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        onFindSimilar(result);
+                      }
+                    }}
+                    data-pw={`${pwPrefix}-more-like-this-button`}
+                >
+                  <CustomizableIcon
+                      height={20}
+                      width={20}
+                      className='wigmix-find-similar-icon'
+                      url={customizations.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/magnifying-glass-icon.svg'}
+                      color={customizations.productCard?.findSimilar?.icon?.color || ''}
+                  />
+                </Button>
+            )}
+          </div>
         </div>
-        {hasFindSimilar && !isLoading && customizations.productCard?.findSimilar?.enable && (
-          <Button
-              isIconOnly
-              size='sm'
-              radius='full'
-              className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-10 bg-white shadow-md`}
-              onClick={(event) => {
-                if (onFindSimilar) {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  onFindSimilar(result);
-                }
-              }}
-              data-pw={`${pwPrefix}-more-like-this-button`}
-          >
-            <CustomizableIcon
-                height={20}
-                width={20}
-                url={customizations.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/magnifying-glass-icon.svg'}
-                color={customizations.productCard?.findSimilar?.icon?.color || ''}
-            />
-          </Button>
-        )}
-      </div>
-      <div className='pt-2'>
-        <span className='wigmix-product-card-title line-clamp-1'>
-          {getProductTitle(customizations, productDetails, result)}
-        </span>
-        <span className='wigmix-product-card-secondary-title line-clamp-1'>
-          {getProductSecondaryTitle(customizations, productDetails, result)}
-        </span>
-        {
-          originalPrice && originalPrice !== price
-            ? (
-              <div className='flex flex-wrap items-center gap-1'>
-                <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
-                  {price}
-                </span>
-                <span className='wigmix-product-card-original-price line-through' style={getProductOriginalPriceColorStyle()}>
-                  {originalPrice}
-                </span>
-              </div>
-            ) : (
-              <span className='wigmix-product-card-price'>{price}</span>
-            )
-        }
-      </div>
-    </a>
+        <div className='wigmix-product-card-details pt-2'>
+          <span className='wigmix-product-card-title line-clamp-1'>
+            {getProductTitle(customizations, productDetails, result)}
+          </span>
+          <span className='wigmix-product-card-secondary-title line-clamp-1'>
+            {getProductSecondaryTitle(customizations, productDetails, result)}
+          </span>
+          {
+            originalPrice && originalPrice !== price
+              ? (
+                <div className='wigmix-product-card-price-row flex flex-wrap items-center gap-1'>
+                  <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
+                    {price}
+                  </span>
+                  <span className='wigmix-product-card-original-price line-through' style={getProductOriginalPriceColorStyle()}>
+                    {originalPrice}
+                  </span>
+                </div>
+              ) : (
+                <span className='wigmix-product-card-price'>{price}</span>
+              )
+          }
+        </div>
+      </a>
+    </div>
   );
 };
 

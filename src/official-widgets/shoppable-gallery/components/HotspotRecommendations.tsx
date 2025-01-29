@@ -124,13 +124,12 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
              data-pw='sg-product-result-grid'>
           {
             results.map((result, index) => (
-              <div key={`${result.product_id}-${index}`} data-pw={`sg-product-result-card-${index + 1}`}>
-                <ProductCard index={index}
+                <ProductCard key={`${result.product_id}-${index}`}
+                             index={index}
                              result={result}
                              hasFindSimilar={false}
                              isRecommendation={true}
                              pwPrefix='sg' />
-              </div>
             ))
           }
         </div>

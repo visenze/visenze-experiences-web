@@ -26,13 +26,17 @@ This can be used alongside the previously mentioned look-and-feel customization.
   | `wigmix-widget-title`                 | `div`        |
   | `wigmix-reference-image`              | `div`        |
   | `wigmix-product-grid`                 | `div`        |
-  | `wigmix-product-card`                 | `a`          |
+  | `wigmix-product-card`                 | `div`        |
+  | `wigmix-product-card-image-container` | `div`        |
   | `wigmix-product-card-image`           | `img`        |
+  | `wigmix-product-card-details`         | `div`        |
   | `wigmix-product-card-title`           | `span`       |
   | `wigmix-product-card-secondary-title` | `span`       |
+  | `wigmix-product-card-price-row`       | `div`        |
   | `wigmix-product-card-price`           | `span`       |
   | `wigmix-product-card-original-price`  | `span`       |
   | `wigmix-find-similar-button`          | `button`     |
+  | `wigmix-find-similar-icon`            | `div`        |
   | `wigmix-modal`                        | `div`        |
   | `wigmix-modal-overlay`                | `div`        |
 

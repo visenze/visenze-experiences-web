@@ -423,8 +423,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                             </div>
                           )}
                           {productResults.map((result, index) => (
-                            <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
-                              <ProductCard index={index}
+                              <ProductCard key={`${result.product_id}-${index}`} index={index}
                                            result={result}
                                            onFindSimilar={(data) => {
                                              if (!isLoading) {
@@ -434,7 +433,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                                            isRecommendation={true}
                                            hasFindSimilar={true}
                                            pwPrefix='esr' />
-                            </div>
                           ))}
                         </div>
                         : <div className={cn(

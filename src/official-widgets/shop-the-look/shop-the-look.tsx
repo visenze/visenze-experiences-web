@@ -143,7 +143,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
     <div className='relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10' data-pw='stl-product-result-carousel'>
       <Slider {...settings}>
         {productResults.map((result, index) => (
-            <div key={`${result.product_id}-${index}`} data-pw={`stl-product-result-card-${index + 1}`}>
+            <div key={`${result.product_id}-${index}`}>
               <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
                 <ProductCard index={index}
                              result={result}
