@@ -189,6 +189,9 @@ const render = (
     renderer: WidgetRenderer,
     isMultiRender: boolean,
 ): void => {
+  // Clear all existing render roots
+  client.getRenderRoots().forEach((r) => r.unmount());
+
   const roots: Root[] = [];
 
   if (isMultiRender) {
@@ -200,15 +203,15 @@ const render = (
     });
   } else {
     const element = getRenderElement(config);
-    if (!element) {
-      throw new Error('Element not found');
+    if (element) {
+      const root = createRoot(element);
+      root.render(renderer({ config, fieldMappings, client, index: 0, element }));
+      roots.push(root);
     }
-    const root = createRoot(element);
-    root.render(renderer({ config, fieldMappings, client, index: 0, element }));
-    roots.push(root);
   }
 
   client.setRenderRoots(roots);
+  client.markAsRendered(roots.length > 0);
 };
 
 export const initWidgetFactory = (

@@ -8,6 +8,8 @@ import type { LanguagePack } from './locales/locale';
 
 export type Primitive = boolean | string | number;
 
+export type WidgetRenderStatus = 'UNRENDERED' | 'HIDDEN' | 'RENDERED';
+
 export enum WidgetType {
   CAMERA_SEARCH = 'camera_search',
   SIMILAR_SEARCH = 'similar_search',
@@ -56,6 +58,21 @@ export interface WidgetClient {
    * Gets last reference id or product id used for search/recommendations
    */
   getLastReference: () => any;
+  /**
+   * Returns the rendering status of the widget.
+   *
+   * The return value will be one of the following:
+   * - UNRENDERED: Widget is not rendered anywhere in the page.
+   *   Most likely, it is because the reference element cannot be found.
+   * - HIDDEN: Widget was rendered in the page but is currently hidden.
+   * - RENDERED: Widget is rendered in the page and is currently shown.
+   *   If a widget with this status is not visible in the page,
+   *   it is likely that one of the following has occurred:
+   *   - The widget is placed under a reference element that is not visible in the page.
+   *   - There are some styling rules in the page that prevents the widget from being visible.
+   *   - The widget has been removed from view by other scripts in the page, or by navigation in SPAs.
+   */
+  getRenderStatus: () => WidgetRenderStatus;
   /**
    * Sends an event to ViSenze Analytics
    * @param action - action name
@@ -106,10 +123,17 @@ export interface WidgetClient {
    */
   setLastTrackingMeta: (metadata: Record<string, Primitive> | undefined) => void;
   /**
-   *
-   * @param roots - render root for the widget.
+   * Sets the render roots for the widget. Used internally.
    */
   setRenderRoots: (roots: Root[]) => void;
+  /**
+   * Gets the render roots of the widget. Used internally.
+   */
+  getRenderRoots: () => Root[];
+  /**
+   * Marks the widget as rendered or unrendered. Used internally.
+   */
+  markAsRendered: (isRendered: boolean) => void;
   /**
    * Search by product id.
    * @param pid - product id

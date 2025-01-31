@@ -1,6 +1,6 @@
 import type { Root } from 'react-dom/client';
 import ViSearch, { type ProductSearchResponse } from 'visearch-javascript-sdk';
-import type { Primitive, WidgetClient, WidgetConfig } from '../wigmix-core';
+import type { Primitive, WidgetClient, WidgetConfig, WidgetRenderStatus } from '../wigmix-core';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
 import { DEFAULT_ENDPOINT } from '../constants';
 
@@ -47,6 +47,7 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
   const { disableAnalytics } = config;
   const { placementId, appKey, strategyId, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
   const { onSearchCallback } = config.callbacks;
+  let renderStatus: WidgetRenderStatus = 'UNRENDERED';
   let roots: Root[] = [];
   let lastTrackingMetadata: Record<string, Primitive> = {};
   let lastReference = '';
@@ -206,6 +207,7 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     roots.forEach((root) => {
       root.render(null);
     });
+    renderStatus = 'HIDDEN';
   };
 
   const disposeWidget = (): void => {
@@ -224,7 +226,19 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     roots = renderRoots;
   };
 
+  const getRenderRoots = (): Root[]  => {
+    return roots;
+  };
+
   const getLastReference = (): any => lastReference;
+
+  const markAsRendered = (isRendered: boolean): void => {
+    renderStatus = isRendered ? 'RENDERED' : 'UNRENDERED';
+  };
+
+  const getRenderStatus = (): WidgetRenderStatus => {
+    return renderStatus;
+  };
 
   return {
     visearch,
@@ -234,10 +248,13 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     setLastTrackingMeta,
     sendEvent,
     sendEvents,
+    markAsRendered,
     getLastClickQueryId,
     getLastQueryId,
     getLastTrackingMeta,
     getLastReference,
+    getRenderStatus,
+    getRenderRoots,
     searchById,
     multisearchByImage,
     multisearchAutocomplete,
