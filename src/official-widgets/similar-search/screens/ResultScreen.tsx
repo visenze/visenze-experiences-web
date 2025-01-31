@@ -1,7 +1,6 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useSwipeable } from 'react-swipeable';
-import { Button } from '@heroui/button';
 import { Input } from '@heroui/input';
 import { Listbox, ListboxItem } from '@heroui/listbox';
 import { cn } from '@heroui/theme';
@@ -184,12 +183,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
           )}
           {...minimizedDrawerHandler}>
           <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
-            <Button
-              isIconOnly
-              radius='full'
-              className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary'
-              onClick={(): void => toggleFullResults()}
-              data-pw='ss-arrow-button'
+            <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
+                 onClick={(): void => toggleFullResults()}
+                 data-pw='ss-arrow-button'
             >
               <CustomizableIcon
                   height={24}
@@ -198,7 +194,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   color={customizations.buttons?.primary?.fontColor || ''}
                   className='cursor-pointer'
               />
-            </Button>
+            </div>
           </div>
 
           <div ref={resultsRef} className='no-scrollbar flex size-full justify-center overflow-y-auto'>

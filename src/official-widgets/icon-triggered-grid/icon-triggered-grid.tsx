@@ -124,14 +124,16 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
         productResults,
         metadata,
       }}>
-      <CustomizableIcon
-          height={24}
-          width={24}
-          url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
-          color={customizations.popup?.triggerIcon?.color || ''}
-          className='wigmix-popup-trigger-icon cursor-pointer'
-          onClickHandler={onPopupIconClick}
-      />
+      <div className='wigmix-popup-trigger-button w-fit cursor-pointer'>
+        <CustomizableIcon
+            height={24}
+            width={24}
+            url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
+            color={customizations.popup?.triggerIcon?.color || ''}
+            className='wigmix-popup-trigger-icon'
+            onClickHandler={onPopupIconClick}
+        />
+      </div>
 
       <ViSenzeModal
         open={dialogVisible}
@@ -142,9 +144,8 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
         placementId={`${appSettings.placementId}`}>
         <div className='relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1'>
           {/* Close Button */}
-          <Button
-            isIconOnly
-            className='absolute right-3 top-3 z-10 border-none bg-transparent'
+          <div
+            className='absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90'
             onClick={onModalClose}
             data-pw='itg-close-button'>
             <CustomizableIcon
@@ -153,7 +154,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                 url={'https://cdn.visenze.com/images/close-icon.svg'}
                 color={customizations.generalLayout?.fontColor}
             />
-          </Button>
+          </div>
 
           <div className='flex flex-col border-none p-4 md:w-3/10 md:px-10 md:py-6'>
             {/* Widget Title */}
@@ -163,7 +164,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
 
             {/* Reference Product */}
             {productInfo && (
-              <div className='wigmix-reference-image pt-4 md:pt-8' data-pw='itg-reference-product'>
+              <div className='wigmix-reference-image-container pt-4 md:pt-8' data-pw='itg-reference-product'>
                 <img
                     className='wigmix-reference-image size-full object-cover'
                     src={productInfo.im_url}
@@ -229,7 +230,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
             <Footer className='mt-auto bg-transparent pt-4 md:hidden' dataPw='itg-visenze-footer-mobile' />
 
             {/* Sort Options Desktop */}
-            {screen === ScreenType.SORT && breakpoint === WidgetBreakpoint.DESKTOP && (
+            {screen === ScreenType.SORT && (breakpoint === WidgetBreakpoint.DESKTOP || breakpoint === WidgetBreakpoint.TABLET) && (
               <SortOptions
                 className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 px-8 pb-8 pt-4 text-primary md:flex'
                 sortType={sortType}
@@ -238,7 +239,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
               />
             )}
             {/* Filter Options Desktop */}
-            {screen === ScreenType.FILTER && breakpoint === WidgetBreakpoint.DESKTOP && (
+            {screen === ScreenType.FILTER && (breakpoint === WidgetBreakpoint.DESKTOP || breakpoint === WidgetBreakpoint.TABLET) && (
               <FilterOptions
                 className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 bg-primary px-4 pb-8 pt-4 text-primary md:flex'
                 facets={facets}

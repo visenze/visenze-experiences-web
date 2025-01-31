@@ -137,7 +137,8 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
                     className={`rounded-full bg-white transition-all duration-300 group-hover:size-4 ${objectIndex === index ? 'size-4' : 'size-2'}`}></div>
                 </button>
               ))}
-              <Skeleton classNames={{ content: 'md:aspect-[2/3]' }} isLoaded={!!referenceImageUrl}>
+              {!referenceImageUrl && <Skeleton className='aspect-square' />}
+              {referenceImageUrl && (
                 <img
                   ref={imageRef}
                   className='wigmix-reference-image size-full object-cover'
@@ -145,7 +146,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
                   onLoad={onImageLoad}
                   data-pw='sl-reference-image'
                 />
-              </Skeleton>
+              )}
             </div>
 
             {/* Product card grid */}

@@ -196,7 +196,8 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                   <div className={`rounded-full bg-white transition-all duration-300 group-hover:size-4 ${objectIndex === index ? 'size-4' : 'size-2'}`}></div>
                 </button>
               ))}
-              <Skeleton isLoaded={!!referenceImageUrl}>
+              {!referenceImageUrl && <Skeleton className='aspect-square' />}
+              {referenceImageUrl && (
                 <img
                   ref={imageRef}
                   className='wigmix-reference-image size-full object-cover'
@@ -204,7 +205,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                   onLoad={onImageLoad}
                   data-pw='stl-reference-image'
                 />
-              </Skeleton>
+              )}
               {/* Product Result Carousel */}
               {breakpoint === 'mobile' && (
                 <div className='absolute bottom-4 w-full bg-primary'>

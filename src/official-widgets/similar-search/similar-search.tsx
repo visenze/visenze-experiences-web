@@ -203,13 +203,13 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
         image: resizedImage ?? image,
         metadata,
       }}>
-      <div className='wigmix-popup-trigger w-fit cursor-pointer'>
+      <div className='wigmix-popup-trigger-button w-fit cursor-pointer'>
         <CustomizableIcon
             height={24}
             width={24}
             url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/similar-search-icon.svg'}
             color={customizations.popup?.triggerIcon?.color || ''}
-            className='wigmix-popup-trigger-icon cursor-pointer'
+            className='wigmix-popup-trigger-icon'
             onClickHandler={onPopupIconClick}
         />
       </div>

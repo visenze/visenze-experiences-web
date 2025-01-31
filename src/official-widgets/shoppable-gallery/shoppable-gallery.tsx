@@ -1,6 +1,5 @@
 import type { CSSProperties, FC } from 'react';
 import { useEffect, useState, useContext } from 'react';
-import { Button } from '@heroui/button';
 import { Spinner } from '@heroui/spinner';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -157,9 +156,8 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
             placementId={`${appSettings.placementId}`}
             className='left-[unset] top-[unset] h-[500px] w-[300px] rounded-xl'>
             <div className='flex size-full flex-col bg-primary pt-1/5' data-pw='sg-image-hotspot-modal'>
-              <Button
-                isIconOnly
-                className='absolute right-2 top-2 bg-transparent'
+              <div
+                className='absolute right-2 top-2 bg-transparent rounded-full p-1 hover:opacity-90 cursor-pointer'
                 onClick={onCloseHandler}
                 data-pw='sg-modal-close-button'>
                 <CustomizableIcon
@@ -168,7 +166,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
                     url={'https://cdn.visenze.com/images/close-icon.svg'}
                     color={customizations.generalLayout?.fontColor}
                 />
-              </Button>
+              </div>
               {productTypes.length > 0 && (
                 <HotspotContainer
                   referenceImage={activeImageUrl}

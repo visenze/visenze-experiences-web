@@ -1,6 +1,5 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { Button } from '@heroui/button';
 import { Input } from '@heroui/input';
 import { Listbox, ListboxItem } from '@heroui/listbox';
 import { useSwipeable } from 'react-swipeable';
@@ -197,12 +196,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
           )}
           {...minimizedDrawerHandler}>
           <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
-            <Button
-              isIconOnly
-              radius='full'
-              className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary'
-              onClick={(): void => toggleFullResults()}
-              data-pw='cs-arrow-button'>
+            <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
+                 onClick={(): void => toggleFullResults()}
+                 data-pw='cs-arrow-button'>
               <CustomizableIcon
                   height={24}
                   width={24}
@@ -210,7 +206,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   color={customizations.buttons?.primary?.fontColor || ''}
                   className='cursor-pointer'
               />
-            </Button>
+            </div>
           </div>
 
           <div ref={resultsRef} className='no-scrollbar flex size-full justify-center overflow-y-auto md:hidden'>
@@ -282,7 +278,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
         <div className='flex h-full flex-row'>
           <div className='relative left-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8'>
             <div className='flex h-9/10 flex-col justify-between px-2'>
-              <div className='wigmix-reference-image flex w-full flex-col items-center rounded-3xl border border-gray-300 pt-2 text-center'>
+              <div className='wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 pt-2 text-center'>
                 <HotspotContainer className='w-3/5' referenceImage={getReferenceImage()} />
 
                 <FileDropzone onImageUpload={onImageUpload} name='upload-icon'>

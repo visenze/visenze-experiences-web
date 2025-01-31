@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState, type CSSProperties, type FC } from 'react';
-import { Button } from '@heroui/button';
 import { Skeleton } from '@heroui/skeleton';
 import { WidgetDataContext, WidgetResultContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
@@ -214,11 +213,8 @@ const ProductCard: FC<ProductCardProps> = ({
                  }}
                  data-pw={`${pwPrefix}-product-result-card-image-${index + 1}`}/>
             {hasFindSimilar && !isLoading && customizations.productCard?.findSimilar?.enable && (
-                <Button
-                    isIconOnly
-                    size='sm'
-                    radius='full'
-                    className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-5 bg-white shadow-md`}
+                <div
+                    className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-5 bg-white rounded-full p-1 hover:opacity-90`}
                     onClick={(event) => {
                       if (onFindSimilar) {
                         event.preventDefault();
@@ -235,7 +231,7 @@ const ProductCard: FC<ProductCardProps> = ({
                       url={customizations.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/magnifying-glass-icon.svg'}
                       color={customizations.productCard?.findSimilar?.icon?.color || ''}
                   />
-                </Button>
+                </div>
             )}
           </div>
         </div>

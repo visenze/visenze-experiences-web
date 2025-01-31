@@ -4,20 +4,20 @@ const widgetType = process.env.widget_dir;
 
 // Here, the HeroUI packages needed by different widget types are specified
 // so that unused packages are not unnecessarily included and increasing bundle size.
-// button|skeleton are needed everywhere as they are part of product card.
+// skeleton is needed everywhere as it is part of product card.
 const herouiPackagesForOfficialWidgets = {
-  'official-widgets/camera-search': 'button|card|input|listbox|skeleton',
-  'official-widgets/similar-search': 'button|input|listbox|skeleton',
-  'official-widgets/search-results-page': 'button|input|listbox|image|skeleton',
-  'official-widgets/recommend-me': 'button|input|skeleton',
-  'official-widgets/more-like-this': 'button|skeleton',
-  'official-widgets/shop-the-look': 'button|skeleton',
-  'official-widgets/embedded-grid': 'button|skeleton',
-  'official-widgets/shoppable-lookbook': 'button|skeleton',
-  'official-widgets/shoppable-gallery': 'button|skeleton|spinner',
+  'official-widgets/camera-search': 'input|listbox|skeleton',
+  'official-widgets/similar-search': 'input|listbox|skeleton',
+  'official-widgets/search-results-page': 'button|input|listbox|skeleton',
+  'official-widgets/recommend-me': 'input|skeleton',
+  'official-widgets/more-like-this': 'skeleton',
+  'official-widgets/shop-the-look': 'skeleton',
+  'official-widgets/embedded-grid': 'skeleton',
+  'official-widgets/shoppable-lookbook': 'skeleton',
+  'official-widgets/shoppable-gallery': 'skeleton|spinner',
   'official-widgets/icon-triggered-grid': 'accordion|button|checkbox|radio|skeleton|slider|spinner',
-  'official-widgets/search-bar': 'button|card|input|listbox|skeleton',
-  'official-widgets/embedded-search-results': 'accordion|button|checkbox|image|input|skeleton|slider|spinner',
+  'official-widgets/search-bar': 'button|input|listbox|skeleton',
+  'official-widgets/embedded-search-results': 'accordion|checkbox|input|skeleton|slider|spinner',
 };
 
 const herouiPackagesForWidget = herouiPackagesForOfficialWidgets[widgetType]

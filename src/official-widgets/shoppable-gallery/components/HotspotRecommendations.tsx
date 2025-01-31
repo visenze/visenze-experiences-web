@@ -1,6 +1,5 @@
 import type { CSSProperties, FC } from 'react';
 import { memo, useContext, useMemo } from 'react';
-import { Button } from '@heroui/button';
 import type { ObjectProductResponse } from 'visearch-javascript-sdk';
 import { useIntl } from 'react-intl';
 import ViSenzeModal from '../../../common/components/modal/visenze-modal';
@@ -92,19 +91,22 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
                   placementId={placementId} idSuffix='hotspot' >
       <div className='flex size-full flex-col bg-primary' data-pw='sg-hotspot-recommendations'>
         {/* Close Button Tablet/Desktop */}
-        <Button isIconOnly className='absolute right-3 top-2 hidden bg-transparent md:flex' onClick={closeDrawerHandler} data-pw='sg-drawer-close-button-desktop'>
+        <div className='absolute right-3 top-2 hidden bg-transparent md:flex rounded-full p-1 hover:opacity-90 cursor-pointer'
+             onClick={closeDrawerHandler}
+             data-pw='sg-drawer-close-button-desktop'>
           <CustomizableIcon
               height={24}
               width={24}
               url={'https://cdn.visenze.com/images/close-icon.svg'}
               color={customizations.generalLayout?.fontColor}
           />
-        </Button>
+        </div>
 
         {/* Close Button Mobile */}
-        <Button className='flex flex-shrink-0 justify-center bg-primary md:hidden' size='sm' onClick={closeDrawerHandler} data-pw='sg-drawer-close-button-mobile'>
+        <div className='flex flex-shrink-0 justify-center bg-buttonPrimary md:hidden rounded-full p-1 hover:opacity-90 w-full cursor-pointer'
+             onClick={closeDrawerHandler} data-pw='sg-drawer-close-button-mobile'>
           <div className='h-1 w-12 bg-gray-400'></div>
-        </Button>
+        </div>
 
         {/* Image Crop Thumbnails */}
         <span className='text-center font-bold text-primary md:pt-3'>{intl.formatMessage({ id: 'hotspotRecommendationsTitle' })}</span>

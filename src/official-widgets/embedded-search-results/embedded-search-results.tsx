@@ -1,7 +1,6 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useEffect, useRef, useContext, useState, useLayoutEffect } from 'react';
 import type { ProductSearchResponse, Facet } from 'visearch-javascript-sdk';
-import { Button } from '@heroui/button';
 import { useIntl } from 'react-intl';
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
@@ -374,30 +373,28 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
 
         <div className='flex size-full flex-col justify-center md:flex-row'>
           {/* Filter Section Mobile */}
-          <div className='w-full bg-white px-2 py-1 md:hidden md:px-0'>
-            <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowMobileFilterOptions(true)}>
-              <FilterIcon className='size-5'/>
-              <span className='text-black'>
-                {intl.formatMessage({ id: 'filter' })}
-              </span>
-            </Button>
-
-            <ViSenzeModal
+          <div className='w-full bg-white p-2 md:hidden md:px-0 cursor-pointer flex gap-2 mb-2 items-center'
+               onClick={() => setShowMobileFilterOptions(true)}>
+            <FilterIcon className='size-5'/>
+            <span className='text-black'>
+              {intl.formatMessage({ id: 'filter' })}
+            </span>
+          </div>
+          <ViSenzeModal
               className='bottom-0 top-[unset] h-4/5'
               open={showMobileFilterOptions} layout='mobile'
               onClose={() => setShowMobileFilterOptions(false)}
               position='center'
               placementId={`${appSettings.placementId}`}
               fontFamily={customizations.generalLayout?.fontFamily}
-            >
-              <FilterOptions
+          >
+            <FilterOptions
                 displayAsDropdown={false}
                 facets={facets}
                 selectedFilters={selectedFilters}
                 setSelectedFilters={setSelectedFilters}
-              />
-            </ViSenzeModal>
-          </div>
+            />
+          </ViSenzeModal>
 
           <div className='flex w-full flex-col'>
             {/* Product Result Grid */}

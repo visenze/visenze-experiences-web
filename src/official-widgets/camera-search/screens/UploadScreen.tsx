@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from 'react';
 import { useContext, useEffect } from 'react';
-import { Card, CardFooter } from '@heroui/card';
 import { useIntl } from 'react-intl';
 import FileDropzone from '../../../common/components/FileDropzone';
 import type { SearchImage } from '../../../common/types/image';
@@ -40,11 +39,9 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
           return null;
         }
         return (
-          <Card
+          <div
             key={index}
-            isPressable
-            radius='lg'
-            className='row-span-1 border-none'
+            className='row-span-1 border-none relative cursor-pointer'
             onClick={(): void => onGallerySelect(index)}
             onKeyDown={(evt): void => {
               if (evt.key === 'Enter') {
@@ -53,14 +50,13 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
             }}
           >
             <img className='h-full object-cover' src={imageWithLabel.url} data-pw={`cs-gallery-image-${index + 1}`}/>
-            {
-              imageWithLabel.label
-              && <CardFooter className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large
-            border-1 border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small before:rounded-b-xl'>
+            {imageWithLabel.label && (
+              <div className='absolute bottom-0 z-10 w-full text-center overflow-hidden
+            border-1 border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small'>
                 <p>{imageWithLabel.label}</p>
-              </CardFooter>
-            }
-          </Card>
+              </div>
+            )}
+          </div>
         );
       });
     }
@@ -94,7 +90,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
           <div className='px-1/5 md:w-1/3 md:px-10'>
             <FileDropzone onImageUpload={onImageUpload} name='cs-upload-icon'>
               <div
-                className='wigmix-reference-image flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center'>
+                className='wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center'>
                 <CustomizableIcon
                     height={80}
                     width={80}
@@ -120,11 +116,8 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
 
             <div className='grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0'>
               <div className='col-span-1'>
-                <Card
-                  isFooterBlurred
-                  isPressable
-                  radius='lg'
-                  className='h-full'
+                <div
+                  className='h-full relative cursor-pointer'
                   onClick={(): void => onGallerySelect(0)}
                   onKeyDown={(evt): void => {
                     if (evt.key === 'Enter') {
@@ -132,17 +125,15 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                     }
                   }}>
                   <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url} data-pw='cs-gallery-image-1'/>
-                  {
-                    customizations.imageUpload?.images[0].label
-                    && <CardFooter
-                      className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large border-1
-                      border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small before:rounded-b-xl'>
+                  {customizations.imageUpload?.images[0].label && (
+                    <div className='absolute bottom-0 z-10 w-full text-center overflow-hidden border-1
+                      border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small'>
                       <p>
                         {customizations.imageUpload?.images[0].label}
                       </p>
-                    </CardFooter>
-                  }
-                </Card>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className='col-span-1'>
                 <div className='grid grid-cols-2 gap-2 md:gap-4'>

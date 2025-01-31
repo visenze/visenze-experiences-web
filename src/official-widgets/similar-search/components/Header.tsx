@@ -1,4 +1,3 @@
-import { Button } from '@heroui/button';
 import type { FC, ReactElement } from 'react';
 import { useIntl } from 'react-intl';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
@@ -20,8 +19,9 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, showTitle, iconColor }): Reac
         </div>
       )}
 
-      <Button isIconOnly className='absolute right-4 top-2 bg-transparent md:right-5 md:top-4' onClick={onCloseHandler}
-              data-pw='ss-close-button'>
+      <div className='absolute right-4 top-2 bg-transparent md:right-5 md:top-4 rounded-full p-1 hover:opacity-90'
+           onClick={onCloseHandler}
+           data-pw='ss-close-button'>
         <CustomizableIcon
             height={24}
             width={24}
@@ -29,7 +29,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, showTitle, iconColor }): Reac
             color={iconColor}
             className='wigmix-close-popup-icon cursor-pointer'
         />
-      </Button>
+      </div>
     </div>
   );
 };

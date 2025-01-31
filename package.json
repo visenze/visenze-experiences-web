@@ -56,9 +56,7 @@
   "dependencies": {
     "@heroui/accordion": "^2.2.8",
     "@heroui/button": "^2.2.10",
-    "@heroui/card": "^2.2.10",
     "@heroui/checkbox": "^2.3.9",
-    "@heroui/image": "^2.2.6",
     "@heroui/input": "^2.4.10",
     "@heroui/listbox": "^2.3.10",
     "@heroui/radio": "^2.3.9",
@@ -79,7 +77,6 @@
     "react-slick": "^0.30.3",
     "react-swipeable": "^7.0.2",
     "slick-carousel": "^1.8.1",
-    "typewriter-effect": "^2.21.0",
     "uuid": "^11.0.5",
     "visearch-javascript-sdk": "^5.0.0"
   },

@@ -211,12 +211,13 @@ const CameraSearch: FC<CameraSearchProps> = () => {
         metadata,
       }}>
       <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
-        <div className='wigmix-popup-trigger w-fit cursor-pointer'>
+        <div className='wigmix-popup-trigger-button w-fit cursor-pointer'>
           <CustomizableIcon
               height={28}
               width={28}
               url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/camera-icon.svg'}
               color={customizations.popup?.triggerIcon?.color || ''}
+              className='wigmix-popup-trigger-icon'
               onClickHandler={onCameraButtonClick}
           />
         </div>

@@ -1,7 +1,6 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useContext, useRef, useState } from 'react';
 import { Button } from '@heroui/button';
-import { Image } from '@heroui/image';
 import { cn } from '@heroui/theme';
 import type { ProcessedProduct } from '../../../common/types/product';
 import ProductCard from '../../../common/components/product-card/ProductCard';
@@ -118,12 +117,9 @@ const ResultsPage: FC<ResultsPageProps> = ({
                 scrollToResultsTop();
               }}
               data-pw={`srp-${product.product_id === activeProduct?.product_id ? 'active-product' : 'inactive-product'}`}>
-              <Image
-                classNames={{ wrapper: 'h-full' }}
-                className='object-fit h-full rounded-none'
-                src={product.im_url}
-                data-pw={`srp-product-history-image-${index + 1}`}
-              />
+              <img className='h-full rounded-none object-fit'
+                   src={product.im_url}
+                   data-pw={`srp-product-history-image-${index + 1}`} />
               <button
                 className='absolute right-1 top-1 z-10 rounded-full bg-white p-1'
                 onClick={(event) => {

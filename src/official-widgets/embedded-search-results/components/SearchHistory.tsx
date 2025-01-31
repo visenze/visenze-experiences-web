@@ -1,6 +1,5 @@
 import { cn } from '@heroui/theme';
 import { useEffect, useRef, useState, type ReactElement } from 'react';
-import { Image as NextImage } from '@heroui/image';
 import ImageCropThumbnail from './ImageCropThumbnail';
 import CloseIcon from '../../../common/icons/CloseIcon';
 
@@ -28,7 +27,7 @@ export interface SearchHistoryEntry {
 
 export const MAX_HISTORY_ITEMS = 20;
 
-export default function SearchHistory({
+const SearchHistory = ({
   activeHistory,
   history,
   onHistorySelect,
@@ -40,7 +39,7 @@ export default function SearchHistory({
   multisearchWithSearchBarDetails: (imgUrl?: string) => void;
   onHistorySelect: (entry: SearchHistoryEntry) => void;
   onHistoryRemove: (entry: SearchHistoryEntry) => void;
-}): ReactElement {
+}): ReactElement => {
   const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number; height: number } }>({});
   const activeItemRef = useRef<HTMLDivElement>(null);
 
@@ -123,7 +122,7 @@ export default function SearchHistory({
                        event.stopPropagation();
                        onHistoryRemove(entry);
                      }}>
-                  <CloseIcon className='size-4'/>
+                  <CloseIcon className='size-4 text-black' />
                 </div>
                 {entry.box ? (
                   <div className='h-32 w-24 overflow-hidden'>
@@ -140,12 +139,9 @@ export default function SearchHistory({
                     )}
                   </div>
                 ) : (
-                  <NextImage
-                    classNames={{ wrapper: 'h-full' }}
-                    className='h-full rounded-none object-cover'
-                    src={entry.imageUrl ?? ''}
-                    data-pw={`esr-product-history-image-${index + 1}`}
-                  />
+                  <img className='h-full rounded-none object-cover'
+                       src={entry.imageUrl ?? ''}
+                       data-pw={`esr-product-history-image-${index + 1}`} />
                 )}
               </div>
             ))}
@@ -153,4 +149,6 @@ export default function SearchHistory({
       </div>
     </>
   );
-}
+};
+
+export default SearchHistory;

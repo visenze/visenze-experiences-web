@@ -1,5 +1,4 @@
 import type { FC, MouseEventHandler } from 'react';
-import { Button } from '@heroui/button';
 import { cn } from '@heroui/theme';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 
@@ -12,25 +11,18 @@ interface PrevArrowProps {
 const PrevArrow: FC<PrevArrowProps> = ({ className, onClick, iconColor }) => (
   <div
     className={cn(
-      'absolute -left-10 top-1/2 z-20 flex w-12 transition-opacity',
-      className?.includes('slick-disabled') ? 'opacity-0' : 'opacity-100',
+      'absolute -left-10 top-1/2 flex w-fit transition-opacity rounded-full p-1 cursor-pointer',
+      className?.includes('slick-disabled') ? 'opacity-0' : 'opacity-100 hover:opacity-90',
     )}
-    data-pw='mlt-prev-arrow'
+    onClick={onClick}
+    data-pw='stl-prev-arrow'
   >
-    <Button
-      isIconOnly
-      disableRipple
-      className='bg-transparent'
-      size='md'
-      onClick={onClick}
-    >
-      <CustomizableIcon
-          height={24}
-          width={24}
-          url={'https://cdn.visenze.com/images/chevron-left-icon.svg'}
-          color={iconColor}
-      />
-    </Button>
+    <CustomizableIcon
+        height={24}
+        width={24}
+        url={'https://cdn.visenze.com/images/chevron-left-icon.svg'}
+        color={iconColor}
+    />
   </div>
 );
 

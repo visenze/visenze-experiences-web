@@ -1,5 +1,4 @@
 import { type FC, useContext, useEffect, useState } from 'react';
-import { Button } from '@heroui/button';
 import { v4 as uuid } from 'uuid';
 import { Input } from '@heroui/input';
 import { useIntl } from 'react-intl';
@@ -71,18 +70,19 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
 
         {/* Search input bar with Recommend me button */}
         <div className='flex'>
-          <Button
-            className='w-48 rounded-l bg-buttonPrimary px-3 py-2 font-semibold'
-            radius='none'
-            disabled={!searchBarValue}
+          <div
+            className='w-48 rounded-l bg-buttonPrimary px-3 py-2 font-semibold cursor-pointer hover:opacity-90'
             onClick={() => {
+              if (!searchBarValue) {
+                return;
+              }
               setQueryValue(searchBarValue);
               recommendMeWithQuery(searchBarValue);
             }}
             data-pw='rm-recommend-me-button'
           >
             <span className='text-buttonPrimary'>{intl.formatMessage({ id: 'searchBarButton' })}</span>
-          </Button>
+          </div>
           <Input
             classNames={{
               inputWrapper: 'border-l-0 rounded-r bg-default-100 text-black',

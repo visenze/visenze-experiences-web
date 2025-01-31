@@ -1,4 +1,3 @@
-import { Button } from '@heroui/button';
 import type { FC, ReactElement } from 'react';
 import { useIntl } from 'react-intl';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
@@ -20,7 +19,9 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
         isResultScreen
         ? (
           <>
-            <Button isIconOnly className='absolute left-5 top-3 bg-transparent' onClick={onBackHandler} data-pw='cs-back-button'>
+            <div className='absolute left-5 top-3 bg-transparent rounded-full p-1 hover:opacity-90'
+                 onClick={onBackHandler}
+                 data-pw='cs-back-button'>
               <CustomizableIcon
                   height={24}
                   width={24}
@@ -28,7 +29,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
                   color={iconColor}
                   className='cursor-pointer'
               />
-            </Button>
+            </div>
             {showTitle && (
               <div className='wigmix-widget-title hidden md:block' data-pw='cs-widget-title'>
                 {intl.formatMessage({ id: 'resultScreenTitle' })}
@@ -47,7 +48,9 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
         )
       }
 
-      <Button isIconOnly className='absolute right-5 top-3 bg-transparent' onClick={onCloseHandler} data-pw='cs-close-button'>
+      <div className='absolute right-5 top-3 bg-transparent rounded-full p-1 hover:opacity-90'
+           onClick={onCloseHandler}
+           data-pw='cs-close-button'>
         <CustomizableIcon
             height={24}
             width={24}
@@ -55,7 +58,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
             color={iconColor}
             className='wigmix-close-popup-icon cursor-pointer'
         />
-      </Button>
+      </div>
     </div>
   );
 };
