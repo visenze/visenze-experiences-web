@@ -30,22 +30,6 @@ const AppWrapper: FC<AppProps> = ({
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
   const [messages, setMessages] = useState(defaultTexts[DEFAULT_LOCALE]);
 
-  widgetClient.updateConfig = (configOverride, isPartial): void => {
-    if (!enableCustomization) {
-      return;
-    }
-    if (configOverride) {
-      if (isPartial) {
-        setConfigInternal(deepMerge(configOverride, widgetConfig));
-      } else {
-        setConfigInternal((c) => ({
-          ...c,
-          customizations: configOverride.customizations,
-        }));
-      }
-    }
-  };
-
   useEffect(() => {
     if (!enableCustomization || !widgetConfig.customizations) {
       setConfigInternal({
@@ -53,6 +37,22 @@ const AppWrapper: FC<AppProps> = ({
         customizations: defaultCustomizations,
       });
     }
+
+    widgetClient.registerConfigUpdater((configOverride, isPartial) => {
+      if (!enableCustomization) {
+        return;
+      }
+      if (configOverride) {
+        if (isPartial) {
+          setConfigInternal(deepMerge(configOverride, widgetConfig));
+        } else {
+          setConfigInternal((c) => ({
+            ...c,
+            customizations: configOverride.customizations,
+          }));
+        }
+      }
+    });
   }, []);
 
   useEffect(() => {

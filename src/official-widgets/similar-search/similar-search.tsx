@@ -166,9 +166,13 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
     }
   }, [dialogVisible]);
 
-  widgetClient.openWidget = (): void => {
-    setDialogVisible(true);
-  };
+  useEffect(() => {
+    widgetClient.registerWidgetOpener((id, bypassIdCheck) => {
+      if (id === imUrl || bypassIdCheck) {
+        setDialogVisible(true);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     (async (): Promise<void> => {

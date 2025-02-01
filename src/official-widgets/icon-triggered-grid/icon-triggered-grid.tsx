@@ -106,9 +106,13 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
     return cssConfig;
   };
 
-  widgetClient.openWidget = (): void => {
-    setDialogVisible(true);
-  };
+  useEffect(() => {
+    widgetClient.registerWidgetOpener((id, bypassIdCheck) => {
+      if (id === productId || bypassIdCheck) {
+        setDialogVisible(true);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (error) {

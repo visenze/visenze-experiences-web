@@ -9,7 +9,7 @@ import type {
   ColoredInterface,
 } from '../wigmix-core';
 import { DEFAULT_CONFIGS } from '../default-configs';
-import getWidgetClient from './product-search';
+import getWidgetClient from './widget-client';
 import { DEFAULT_ENDPOINT } from '../constants';
 
 export interface WidgetInitResult {

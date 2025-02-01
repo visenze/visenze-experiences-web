@@ -160,6 +160,13 @@ To open the popup containing the widget from anywhere, you can use the `openWidg
 visenzeWidget.openWidget();
 ```
 
+If the widget is rendered in multiple places, such as icon triggers over a list of product images,
+you need to specify the product ID or URL to identify which popup needs to be opened:
+
+```ts
+visenzeWidget.openWidget('<PRODUCT_ID_OR_URL>');
+```
+
 ### Sending custom events
 
 ViSenze widgets by default send pre-defined events such as result load, product view, and product click in relevant situations.

@@ -43,12 +43,14 @@ const wrapCallbacks = (
   return [newOnSuccess, newOnError];
 };
 
-export default function getWidgetClient(config: WidgetConfig, widgetType: string, widgetVersion: string): WidgetClient {
+const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion: string): WidgetClient => {
   const { disableAnalytics } = config;
   const { placementId, appKey, strategyId, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
   const { onSearchCallback } = config.callbacks;
   let renderStatus: WidgetRenderStatus = 'UNRENDERED';
   let roots: Root[] = [];
+  let widgetOpeners: ((id: string, bypassIdCheck: boolean) => void)[] = [];
+  let configUpdaters: ((configOverride: WidgetConfig, isPartial: boolean) => void)[] = [];
   let lastTrackingMetadata: Record<string, Primitive> = {};
   let lastReference = '';
 
@@ -208,6 +210,8 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
       root.render(null);
     });
     renderStatus = 'HIDDEN';
+    widgetOpeners = [];
+    configUpdaters = [];
   };
 
   const disposeWidget = (): void => {
@@ -240,6 +244,22 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     return renderStatus;
   };
 
+  const registerWidgetOpener = (fn: (id: string, bypassIdCheck: boolean) => void): void => {
+    widgetOpeners.push(fn);
+  };
+
+  const openWidget = (id: string): void => {
+    widgetOpeners.forEach((fn) => fn(id, widgetOpeners.length <= 1));
+  };
+
+  const registerConfigUpdater = (fn: (configOverride: WidgetConfig, isPartial: boolean) => void): void => {
+    configUpdaters.push(fn);
+  };
+
+  const updateConfig = (configOverride: WidgetConfig, isPartial: boolean): void => {
+    configUpdaters.forEach((fn) => fn(configOverride, isPartial));
+  };
+
   return {
     visearch,
     widgetType,
@@ -260,9 +280,13 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     multisearchAutocomplete,
     setRenderRoots,
     rerender: (): void => {},
-    openWidget: (): void => {},
+    openWidget,
+    registerWidgetOpener,
     hideWidget,
     disposeWidget,
-    updateConfig: (): void => {},
+    updateConfig,
+    registerConfigUpdater,
   };
-}
+};
+
+export default getWidgetClient;

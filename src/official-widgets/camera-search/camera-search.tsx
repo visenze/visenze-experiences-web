@@ -165,10 +165,6 @@ const CameraSearch: FC<CameraSearchProps> = () => {
     }
   };
 
-  widgetClient.openWidget = (): void => {
-    setDialogVisible(true);
-  };
-
   useEffect(() => {
     (async (): Promise<void> => {
       if (image && isImageDataUrl(image)) {
@@ -194,6 +190,9 @@ const CameraSearch: FC<CameraSearchProps> = () => {
     widgetClient.sendEvent(Actions.LOAD, {
       cat: Category.ENTRANCE,
       label: Labels.PAGE,
+    });
+    widgetClient.registerWidgetOpener(() => {
+      setDialogVisible(true);
     });
   }, []);
 

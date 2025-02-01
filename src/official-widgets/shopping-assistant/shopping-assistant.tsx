@@ -361,13 +361,15 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
       </div>
   );
 
-  widgetClient.openWidget = (params: any): void => {
-    let initialMessages = defaultInitialMessages;
-    if (params && params.initial_messages) {
-      initialMessages = params.initial_messages;
-    }
-    openDialog(initialMessages);
-  };
+  useEffect(() => {
+    widgetClient.registerWidgetOpener(() => {
+      const initialMessages = defaultInitialMessages;
+      // if (params && params.initial_messages) {
+      //   initialMessages = params.initial_messages;
+      // }
+      openDialog(initialMessages);
+    });
+  }, []);
 
   if (!root) {
     return <></>;

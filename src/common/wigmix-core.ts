@@ -225,9 +225,17 @@ export interface WidgetClient {
   /**
    * Opens the widget popup; applicable only for widget types that have popup behavior.
    *
+   * @param id Identifier to differentiate widgets that are rendered over multiple selectors
+   *
    * @since 1.0.0
    */
-  openWidget: (params: any) => void;
+  openWidget: (id: string) => void;
+  /**
+   * @internal
+   *
+   * @since 1.0.0
+   */
+  registerWidgetOpener: (fn: (id: string, bypassIdCheck: boolean) => void) => void;
   /**
    * Hides the widget from view.
    *
@@ -251,6 +259,12 @@ export interface WidgetClient {
    * @since 1.0.0
    */
   updateConfig: (configOverride: WidgetConfig, isPartial: boolean) => void;
+  /**
+   * @internal
+   *
+   * @since 1.0.0
+   */
+  registerConfigUpdater: (fn: (configOverride: WidgetConfig, isPartial: boolean) => void) => void;
 }
 
 type ViewportType = 'mobile' | 'tablet' | 'desktop';
