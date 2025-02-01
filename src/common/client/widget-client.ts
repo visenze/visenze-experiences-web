@@ -50,6 +50,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
   let renderStatus: WidgetRenderStatus = 'UNRENDERED';
   let roots: Root[] = [];
   let widgetOpeners: ((id: string, bypassIdCheck: boolean) => void)[] = [];
+  let darkModeTogglers: (() => void)[] = [];
   let configUpdaters: ((configOverride: WidgetConfig, isPartial: boolean) => void)[] = [];
   let lastTrackingMetadata: Record<string, Primitive> = {};
   let lastReference = '';
@@ -211,6 +212,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     });
     renderStatus = 'HIDDEN';
     widgetOpeners = [];
+    darkModeTogglers = [];
     configUpdaters = [];
   };
 
@@ -252,6 +254,14 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     widgetOpeners.forEach((fn) => fn(id, widgetOpeners.length <= 1));
   };
 
+  const registerDarkModeToggler = (fn: () => void): void => {
+    darkModeTogglers.push(fn);
+  };
+
+  const toggleDarkMode = (): void => {
+    darkModeTogglers.forEach((fn) => fn());
+  };
+
   const registerConfigUpdater = (fn: (configOverride: WidgetConfig, isPartial: boolean) => void): void => {
     configUpdaters.push(fn);
   };
@@ -284,6 +294,8 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     registerWidgetOpener,
     hideWidget,
     disposeWidget,
+    toggleDarkMode,
+    registerDarkModeToggler,
     updateConfig,
     registerConfigUpdater,
   };

@@ -45,6 +45,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
         },
       },
       fontColor: '#EF4444',
+      fontColorDark: '#EF4444',
     },
     originalPrice: {
       show: true,
@@ -63,6 +64,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
         },
       },
       fontColor: '#9CA3AF',
+      fontColorDark: '#9CA3AF',
     },
     title: {
       show: true,
@@ -104,11 +106,15 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   buttons: {
     primary: {
       fontColor: '#FFFFFF',
+      fontColorDark: '#616161',
       backgroundColor: '#616161',
+      backgroundColorDark: '#FFFFFF',
     },
     secondary: {
       fontColor: '#FFFFFF',
+      fontColorDark: '#000000',
       backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
     },
   },
   generalLayout: {
@@ -142,8 +148,11 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
     fontFamily: '',
     fontColor: '#000000',
+    fontColorDark: '#FFFFFF',
     backgroundColor: '#FFFFFF',
+    backgroundColorDark: '#000000',
     showWidgetTitle: true,
     showViSenzeLogo: false,
+    darkModeDefault: false,
   },
 };

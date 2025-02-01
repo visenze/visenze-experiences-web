@@ -249,6 +249,20 @@ export interface WidgetClient {
    */
   disposeWidget: () => void;
   /**
+   * Toggles dark mode on/off.
+   *
+   * @internal
+   *
+   * @since 1.0.0
+   */
+  toggleDarkMode: () => void;
+  /**
+   * @internal
+   *
+   * @since 1.0.0
+   */
+  registerDarkModeToggler: (fn: () => void) => void;
+  /**
    * Updates the widget config.
    *
    * @param configOverride The new configuration object
@@ -307,6 +321,14 @@ interface Icon {
    * @since 1.0.0
    */
   color: string;
+  /**
+   * Color of the icon in dark mode.
+   *
+   * @internal
+   *
+   * @since 1.0.0
+   */
+  colorDark: string;
 }
 
 /**
@@ -385,11 +407,27 @@ export interface ColoredInterface {
    */
   fontColor: string;
   /**
+   * Font color of the interface in dark mode.
+   *
+   * @internal
+   *
+   * @since 1.0.0
+   */
+  fontColorDark: string;
+  /**
    * Background color of the interface.
    *
    * @since 1.0.0
    */
   backgroundColor: string;
+  /**
+   * Background color of the interface in dark mode.
+   *
+   * @internal
+   *
+   * @since 1.0.0
+   */
+  backgroundColorDark: string;
 }
 
 /**
@@ -624,6 +662,14 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       showViSenzeLogo: boolean;
+      /**
+       * Whether to use dark mode theme by default.
+       *
+       * @internal
+       *
+       * @since 1.0.0
+       */
+      darkModeDefault: boolean;
     };
     /**
      * Popup-related settings. This section is relevant only for widgets that have popup behavior.
@@ -781,6 +827,14 @@ export interface WidgetConfig {
          * @since 1.0.0
          */
         fontColor: string;
+        /**
+         * Font color for the price field in dark mode.
+         *
+         * @internal
+         *
+         * @since 1.0.0
+         */
+        fontColorDark: string;
       };
       /**
        * Configuration for original price (i.e. before discount) field.
@@ -794,6 +848,14 @@ export interface WidgetConfig {
          * @since 1.0.0
          */
         fontColor: string;
+        /**
+         * Font color for the original price field in dark mode.
+         *
+         * @internal
+         *
+         * @since 1.0.0
+         */
+        fontColorDark: string;
       };
       /**
        * Configuration for primary title field.
