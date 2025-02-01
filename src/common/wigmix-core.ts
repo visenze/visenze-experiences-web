@@ -4,8 +4,6 @@ import type { ErrorHandler, SuccessHandler } from './types/function';
 import type { SearchImage } from './types/image';
 import type { LanguagePack } from './locales/locale';
 
-// model
-
 export type Primitive = boolean | string | number;
 
 export type WidgetRenderStatus = 'UNRENDERED' | 'HIDDEN' | 'RENDERED';
@@ -27,35 +25,49 @@ export enum WidgetType {
 }
 
 /**
- * Widget client for ViSenze widgets.
+ * Client for programmatic access to ViSenze widgets.
  */
 export interface WidgetClient {
   /**
-   * Widget type
+   * Widget type.
+   *
+   * @since 1.0.0
    */
   widgetType: string;
   /**
-   * Widget version
+   * Widget version.
+   *
+   * @since 1.0.0
    */
   widgetVersion: string;
   /**
    * Widget placement ID.
+   *
+   * @since 1.0.0
    */
   placementId: string | number;
   /**
-   * Gets the query id of the API call results in the last click event
+   * Gets the query ID of the API call that results in the last click event.
+   *
+   * @since 1.0.0
    */
   getLastClickQueryId: () => string;
   /**
-   * Gets the last API call query id.
+   * Gets the last API call query ID.
+   *
+   * @since 1.0.0
    */
   getLastQueryId: () => Promise<string>;
   /**
    * Gets the last successful search tracking metadata.
+   *
+   * @since 1.0.0
    */
   getLastTrackingMeta: () => Record<string, Primitive> | undefined;
   /**
-   * Gets last reference id or product id used for search/recommendations
+   * Gets last reference ID or product ID used for search/recommendations.
+   *
+   * @since 1.0.0
    */
   getLastReference: () => any;
   /**
@@ -71,20 +83,25 @@ export interface WidgetClient {
    *   - The widget is placed under a reference element that is not visible in the page.
    *   - There are some styling rules in the page that prevents the widget from being visible.
    *   - The widget has been removed from view by other scripts in the page, or by navigation in SPAs.
+   *
+   * @since 1.0.0
    */
   getRenderStatus: () => WidgetRenderStatus;
   /**
-   * Sends an event to ViSenze Analytics
-   * @param action - action name
-   * @param params - query parameters
-   * @param callback - callback to be executed upon event sent
-   * @param failure - callback to be executed upon event sent failure
+   * Sends an event to ViSenze Analytics.
+   *
+   * @param action Action name
+   * @param params Query parameters
+   * @param callback Callback to be executed upon event sent success
+   * @param failure Callback to be executed upon event sent failure
    *
    * @example
+   * ```
    * // Sends an add to cart event.
+   * widgetClient.sendEvent('add_to_cart', { pid: 'my_product_id' });
    * ```
-   * widgetClient.sendEvent('add_to_cart', {pid: 'my_product_id'});
-   * ```
+   *
+   * @since 1.0.0
    */
   sendEvent: (
     action: string,
@@ -93,20 +110,23 @@ export interface WidgetClient {
     failure?: ErrorHandler,
   ) => Promise<void>;
   /**
-   * Sends batch events to ViSenze Analytics
-   * @param action - action name
-   * @param params - list of query parameters for events
-   * @param callback - callback to be executed upon event sent
-   * @param failure - callback to be executed upon event sent failure
+   * Sends a list of events to ViSenze Analytics.
+   *
+   * @param action Action name
+   * @param params List of query parameters for events
+   * @param callback Callback to be executed upon event sent success
+   * @param failure Callback to be executed upon event sent failure
    *
    * @example
-   * // Sends transaction batch events.
    * ```
+   * // Sends transaction batch events
    * widgetClient.sendEvents('transaction', [
-   *   {pid: 'my_product_id', value: 50},
-   *   {pid: 'my_product_id_2', value: 100}
+   *   { pid: 'my_product_id', value: 50 },
+   *   { pid: 'my_product_id_2', value: 100 },
    * ]);
    * ```
+   *
+   * @since 1.0.0
    */
   sendEvents: (
     action: string,
@@ -115,31 +135,52 @@ export interface WidgetClient {
     failure?: ErrorHandler,
   ) => Promise<void>;
   /**
-   * Visearch client.
+   * ViSearch client, as defined in ViSenze JavaScript SDK.
+   *
+   * @since 1.0.0
    */
   visearch: ViSearchClient;
   /**
-   * Tracking metadata from the last search result.
+   * Sets tracking metadata from the last search result.
+   *
+   * @internal
+   *
+   * @since 1.0.0
    */
   setLastTrackingMeta: (metadata: Record<string, Primitive> | undefined) => void;
   /**
-   * Sets the render roots for the widget. Used internally.
+   * Sets the render roots for the widget.
+   *
+   * @internal
+   *
+   * @since 1.0.0
    */
   setRenderRoots: (roots: Root[]) => void;
   /**
-   * Gets the render roots of the widget. Used internally.
+   * Gets the render roots of the widget.
+   *
+   * @internal
+   *
+   * @since 1.0.0
    */
   getRenderRoots: () => Root[];
   /**
-   * Marks the widget as rendered or unrendered. Used internally.
+   * Marks the widget as rendered or unrendered.
+   *
+   * @internal
+   *
+   * @since 1.0.0
    */
   markAsRendered: (isRendered: boolean) => void;
   /**
-   * Search by product id.
-   * @param pid - product id
-   * @param params - search query parameters
-   * @param handleSuccess - callback to be executed upon search success
-   * @param handleError - callback to be executed upon search failure
+   * Search by product ID; also known as recommendations.
+   *
+   * @param pid Product ID
+   * @param params Query parameters to be used for searching
+   * @param handleSuccess Callback to be executed upon search success
+   * @param handleError Callback to be executed upon search failure
+   *
+   * @since 1.0.0
    */
   searchById: (
     pid: string,
@@ -149,16 +190,22 @@ export interface WidgetClient {
   ) => void;
   /**
    * Multisearch by product image.
-   * @param params - search query parameters
-   * @param handleSuccess - callback to be executed upon search success
-   * @param handleError - callback to be executed upon search failure
+   *
+   * @param params Query parameters to be used for searching
+   * @param handleSuccess Callback to be executed upon search success
+   * @param handleError Callback to be executed upon search failure
+   *
+   * @since 1.0.0
    */
   multisearchByImage: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
   /**
    * Multisearch autocomplete.
-   * @param params - search query parameters
-   * @param handleSuccess - callback to be executed upon search success
-   * @param handleError - callback to be executed upon search failure
+   *
+   * @param params Query parameters to be used for searching
+   * @param handleSuccess Callback to be executed upon search success
+   * @param handleError Callback to be executed upon search failure
+   *
+   * @since 1.0.0
    */
   multisearchAutocomplete: (
     params: Record<string, any>,
@@ -168,57 +215,166 @@ export interface WidgetClient {
   /**
    * Triggers rendering for the widgets.
    *
-   * For recommendations widget, this will also trigger a search.
+   * For recommendations widget, this will also trigger a new call to ViSenze API.
+   *
+   * @param selector (optional) New selector to render the widget on
+   *
+   * @since 1.0.0
    */
-  rerender: (selector?: string, ...args: any) => void;
+  rerender: (selector?: string) => void;
   /**
    * Opens the widget popup; applicable only for widget types that have popup behavior.
+   *
+   * @since 1.0.0
    */
-  openWidget: ((params: any) => void) | undefined;
+  openWidget: (params: any) => void;
   /**
    * Hides the widget from view.
+   *
+   * @since 1.0.0
    */
   hideWidget: () => void;
   /**
    * Destroys the widget object and reference.
+   *
+   * @since 1.0.0
    */
   disposeWidget: () => void;
+  /**
+   * Updates the widget config.
+   *
+   * @param configOverride The new configuration object
+   * @param isPartial Indicates whether to apply the config partially (patching) or fully (replacing)
+   *
+   * @internal
+   *
+   * @since 1.0.0
+   */
   updateConfig: (configOverride: WidgetConfig, isPartial: boolean) => void;
 }
 
-type DeviceType = 'mobile' | 'tablet' | 'desktop';
+type ViewportType = 'mobile' | 'tablet' | 'desktop';
 
+/**
+ * A URL-based image with accompanying label.
+ *
+ * @since 1.0.0
+ */
 interface ImageWithLabel {
+  /**
+   * URL source of the image.
+   *
+   * @since 1.0.0
+   */
   url: string;
+  /**
+   * Label of the image.
+   *
+   * @since 1.0.0
+   */
   label: string;
 }
 
-export interface Icon {
+/**
+ * A colorable icon.
+ *
+ * @since 1.0.0
+ */
+interface Icon {
+  /**
+   * URL source of the icon.
+   *
+   * @since 1.0.0
+   */
   url?: string;
+  /**
+   * Color of the icon.
+   *
+   * @since 1.0.0
+   */
   color: string;
 }
 
-export interface Font {
+/**
+ * A minimalistic font settings.
+ *
+ * @since 1.0.0
+ */
+interface Font {
+  /**
+   * Font size in px.
+   *
+   * @since 1.0.0
+   */
   size: number;
+  /**
+   * Font weight.
+   *
+   * @since 1.0.0
+   */
   weight: number;
 }
 
-interface MultiDeviceFont {
-  font: {
-    [D in DeviceType]: Font;
-  };
-}
+/**
+ * Font settings for different viewports.
+ *
+ * @since 1.0.0
+ */
+export type MultiViewportFont = {
+  [V in ViewportType]: Font;
+};
 
-interface HideableText extends MultiDeviceFont {
+/**
+ * A text that can be hidden.
+ *
+ * @since 1.0.0
+ */
+interface HideableText {
+  /**
+   * Font settings.
+   *
+   * @since 1.0.0
+   */
+  font: MultiViewportFont;
+  /**
+   * Whether to show the text.
+   *
+   * @since 1.0.0
+   */
   show: boolean;
 }
 
+/**
+ * A text taken from field source that can be hidden.
+ *
+ * @since 1.0.0
+ */
 interface HideableField extends HideableText {
+  /**
+   * Field source of the displayed text.
+   *
+   * @since 1.0.0
+   */
   fieldSource: string;
 }
 
-interface ColoredInterface {
+/**
+ * An interface (roughly speaking: a bounded area) that has a defined color set.
+ *
+ * @since 1.0.0
+ */
+export interface ColoredInterface {
+  /**
+   * Font color of the interface.
+   *
+   * @since 1.0.0
+   */
   fontColor: string;
+  /**
+   * Background color of the interface.
+   *
+   * @since 1.0.0
+   */
   backgroundColor: string;
 }
 
@@ -226,72 +382,137 @@ interface ColoredInterface {
  * Configuration for ViSenze widgets.
  */
 export interface WidgetConfig {
+  /**
+   * Search/Recommendation API- and tracking-related settings.
+   *
+   * @since 1.0.0
+   */
   appSettings: {
     /**
      * ViSenze app key; obtainable from Discovery Suite console.
+     *
+     * @since 1.0.0
      */
     appKey: string;
     /**
      * ViSenze placement ID; obtainable from Discovery Suite console.
+     *
+     * @since 1.0.0
      */
     placementId: string | number;
     /**
      * (optional) ViSenze strategy ID; obtainable from Discovery Suite console.
+     *
+     * @since 1.0.0
      */
     strategyId?: string | number;
     /**
      * UID used to override ViSenze tracking parameter.
+     *
+     * @since 1.0.0
      */
     uid?: string;
     /**
      * If true, the widget will push result_load event to GTM (Google Tag Manager) objects.
+     *
+     * @since 1.0.0
      */
     gtmTracking?: boolean;
     /**
      * ViSenze search/recommendations API endpoint.
+     *
+     * @since 1.0.0
      */
     endpoint?: string;
+    /**
+     * Dimensions of the image to be considered for the algorithm.
+     *
+     * The ViSearch SDK by default resize image uploaded to 512x512;
+     * on larger image with very fine details, this downsizing may cause some loss of details
+     * resulting in algorithm not being able to process the image to the best of its capabilities.
+     *
+     * @since 1.0.0
+     */
     resizeSettings?: {
+      /**
+       * Maximum resize width of the image.
+       *
+       * @since 1.0.0
+       */
       maxWidth: number;
+      /**
+       * Maximum resize height of the image.
+       *
+       * @since 1.0.0
+       */
       maxHeight: number;
     };
   };
+  /**
+   * Display-related settings.
+   *
+   * This field is defined for backward-compatibility with legacy widgets.
+   * All the look-and-feel customizations have been moved to a separate field.
+   *
+   * @since 1.0.0
+   */
   displaySettings: {
     /**
      * CSS selector on which the widget will be rendered on.
+     *
+     * @since 1.0.0
      */
     cssSelector: string;
     /**
      * Field mapping for product card. The fields are based on the schema of the Discovery Suite catalog.
+     *
+     * @since 1.0.0
      */
-    productDetails: {
-      main_image_url: string;
-      product_url: string;
-      title: string;
-      price: string;
-      original_price: string;
-      category: string;
-      brand: string;
-      gender: string;
-      sizes: string;
-      colors: string;
-      [key: string]: string;
-    };
+    productDetails: Record<string, string>;
   };
   /**
    * Additional key-value parameters that will be sent to ViSenze search/recommendation APIs.
+   *
+   * @since 1.0.0
    */
   searchSettings: Record<string, any>;
+  /**
+   * Localization- and internationalization-related settings.
+   *
+   * @since 1.0.0
+   */
   languageSettings: {
+    /**
+     * Locale to be used by the widget.
+     *
+     * This will override the locale set in the customization object.
+     *
+     * @since 1.0.0
+     */
     locale: string;
+    /**
+     * Currency to be used by the widget.
+     *
+     * This will override the currency set in the customization object,
+     * but will not override the currency from the product metadata.
+     *
+     * @since 1.0.0
+     */
     currency: string;
   };
+  /**
+   * Callbacks settings.
+   *
+   * @since 1.0.0
+   */
   callbacks: {
     /**
      * Pre-processes API response before being passed further down into the components.
      * The modification is expected to happen in-place.
      *
      * @param resp The original API response.
+     *
+     * @since 1.0.0
      */
     preprocessResponse?: (resp: ProductSearchResponseSuccess) => void;
     /**
@@ -299,30 +520,36 @@ export interface WidgetConfig {
      *
      * @param action The action that is being recorded
      * @param params The attached metadata related to the action
+     *
+     * @since 1.0.0
      */
     trackingCallback?: (action: string, params: Record<string, any>) => void;
     /**
      * Fires whenever a product card is clicked on.
      *
      * If this function is defined, clicking on the product will not redirect to the product URL.
-     * If such behaviour is still needed, the following callback function can be used:
+     * If such behavior is still needed, the following callback function can be used:
      * ```
      * onProductClick: (productDetails, trackingMeta, productUrl) => {
-     *   // ... enter custom behaviour ...
+     *   // ... enter custom behavior ...
      *
-     *   window.open(productUrl); // this line restores the redirect behaviour
+     *   window.open(productUrl); // this line restores the redirect behavior
      * },
      * ```
      *
      * @param productDetails The details of the product
      * @param trackingMeta Relevant metadata attached to the action
      * @param productUrl The URL of the product
+     *
+     * @since 1.0.0
      */
     onProductClick?: (productDetails: Record<string, any>, trackingMeta: Record<string, any>, productUrl: string) => void;
     /**
      * Fires whenever response from a search/recommendation API result is returned.
      *
-     * @param apiResponse Response from ViSenze search/recommendation API.
+     * @param apiResponse Response from ViSenze search/recommendation API
+     *
+     * @since 1.0.0
      */
     onSearchCallback?: (apiResponse: ProductSearchResponse) => void;
     /**
@@ -331,147 +558,335 @@ export interface WidgetConfig {
      *
      * @param text Text query of the search bar
      * @param image Image query of the search bar
+     *
+     * @since 1.0.0
      */
     onSearchBarInput?: (text: string | undefined, image: SearchImage | undefined) => void;
   };
   /**
    * Widget look-and-feel customization. The values for this section is set
    * through configurations within the Discovery Suite console.
+   *
+   * @internal While it is technically possible to set overriding customization parameters
+   * in the configuration object, it is not recommended to do such as this section
+   * can and should be configured entirely from the Discovery Suite console.
+   *
+   * @since 1.0.0
    */
   customizations: {
+    /**
+     * General look-and-feel and layout.
+     *
+     * @since 1.0.0
+     */
     generalLayout: ColoredInterface & {
+      /**
+       * Font family of the widget.
+       *
+       * @since 1.0.0
+       */
       fontFamily: string;
-      headingFont: {
-        [D in DeviceType]: Font;
-      };
-      bodyFont: {
-        [D in DeviceType]: Font;
-      };
+      /**
+       * Settings for heading font.
+       *
+       * @since 1.0.0
+       */
+      headingFont: MultiViewportFont;
+      /**
+       * Settings for body font.
+       *
+       * @since 1.0.0
+       */
+      bodyFont: MultiViewportFont;
       /**
        * Whether to show the widget title.
+       *
+       * @since 1.0.0
        */
       showWidgetTitle: boolean;
       /**
        * Whether to show "Powered by ViSenze" footer in appropriate places.
+       *
+       * @since 1.0.0
        */
       showViSenzeLogo: boolean;
     };
     /**
      * Popup-related settings. This section is relevant only for widgets that have popup behavior.
+     *
+     * @since 1.0.0
      */
     popup?: {
       /**
        * Popup position on the screen.
+       *
+       * @since 1.0.0
        */
       position: 'left' | 'center' | 'right';
       /**
        * Configurations for the icon that triggers the popup.
+       *
+       * @since 1.0.0
        */
       triggerIcon: Icon;
     };
+    /**
+     * Buttons configuration.
+     *
+     * @since 1.0.0
+     */
     buttons?: {
+      /**
+       * Primary button configuration.
+       *
+       * @since 1.0.0
+       */
       primary: ColoredInterface;
+      /**
+       * Secondary button configuration.
+       *
+       * @since 1.0.0
+       */
       secondary: ColoredInterface;
     };
+    /**
+     * Breakpoints configuration.
+     *
+     * NOTE: customizable breakpoint is not currently effective as Tailwind builds code based on preset breakpoints,
+     * i.e. classes such as `md:*`, `lg:*` will follow Tailwind's preset instead of the values from here.
+     * Although Tailwind preset can be customized, it cannot be updated on runtime -- this configuration object
+     * would need to pass in the values during runtime after the bundle has been built.
+     *
+     * @internal
+     *
+     * @since 1.0.0
+     */
     breakpoints: {
+      /**
+       * Mobile breakpoint settings.
+       *
+       * @since 1.0.0
+       */
       mobile: ViewportWidth;
+      /**
+       * Tablet breakpoint settings.
+       *
+       * @since 1.0.0
+       */
       tablet: ViewportWidth;
     };
     /**
      * Additional custom CSS to be applied to the widget.
+     *
+     * @since 1.0.0
      */
     customCss?: string;
+    /**
+     * Localization- and internationalization-related settings.
+     *
+     * @since 1.0.0
+     */
     localization?: {
+      /**
+       * Default locale to be used by the widget.
+       *
+       * @since 1.0.0
+       */
       defaultLocale: string;
+      /**
+       * Default currency to be used by the widget, if not present in the product metadata.
+       *
+       * @since 1.0.0
+       */
       defaultCurrency: string;
+      /**
+       * Mapping of locale to displayable texts.
+       *
+       * @since 1.0.0
+       */
       text: LanguagePack;
     };
     /**
      * Product grid- or slider-related settings.
+     *
+     * @since 1.0.0
      */
     productGrid?: {
-      [D in DeviceType]: {
+      [V in ViewportType]: {
+        /**
+         * Number of products shown per row in grid or per slide in slider.
+         *
+         * @since 1.0.0
+         */
         productsPerRow: number;
+        /**
+         * Vertical margin between each row of product cards in a grid.
+         *
+         * @since 1.0.0
+         */
         marginVertical: number | undefined;
+        /**
+         * Horizontal margin between each product card in a row or slide.
+         *
+         * @since 1.0.0
+         */
         marginHorizontal: number | undefined;
       };
     };
     /**
      * Product card-related settings.
+     *
+     * @since 1.0.0
      */
     productCard?: {
       /**
        * Indicates whether clicking a product card opens the link in the same or different browser tab.
+       *
+       * @since 1.0.0
        */
       openLinksInNewTab: boolean;
       /**
        * Configuration for price field.
+       *
+       * @since 1.0.0
        */
       price: HideableText & {
+        /**
+         * Font color for the price field.
+         *
+         * @since 1.0.0
+         */
         fontColor: string;
       };
       /**
        * Configuration for original price (i.e. before discount) field.
+       *
+       * @since 1.0.0
        */
       originalPrice: HideableText & {
+        /**
+         * Font color for the original price field.
+         *
+         * @since 1.0.0
+         */
         fontColor: string;
       };
       /**
        * Configuration for primary title field.
+       *
+       * @since 1.0.0
        */
       title: HideableField;
       /**
        * Configuration for secondary title field.
+       *
+       * @since 1.0.0
        */
       secondaryTitle: HideableField;
       /**
        * Configuration for the "find similar" feature within a product card image.
+       *
+       * @since 1.0.0
        */
       findSimilar?: {
         /**
          * Whether the "find similar" feature is enabled or not.
+         *
+         * @since 1.0.0
          */
         enable: boolean;
         /**
          * Position of the "find similar" icon relative to the product card image.
+         *
+         * @since 1.0.0
          */
         position: 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right';
         /**
          * Configurations for the find similar icon.
+         *
+         * @since 1.0.0
          */
         icon: Icon;
       };
     };
     /**
      * Image upload-related settings. This section is relevant only for widgets that intend to support image upload.
+     *
+     * @since 1.0.0
      */
     imageUpload?: {
       /**
        * Whether the "image upload" feature is enabled or not.
+       *
+       * @since 1.0.0
        */
       enable: boolean;
+      /**
+       * Configurations for the "upload image" icon.
+       *
+       * @since 1.0.0
+       */
       icon: Icon;
       /**
        * List of images which will be used as a gallery of images for quick upload.
+       *
+       * @since 1.0.0
        */
       images: ImageWithLabel[];
     };
   };
+  /**
+   * Additional settings to be applied to the widget that are set from external platforms,
+   * such as e-commerce connectors.
+   *
+   * @internal
+   *
+   * @since 1.0.0
+   */
   platformSettings?: {
+    /**
+     * The name of the platform.
+     *
+     * @since 1.0.0
+     */
     platformName: string;
+    /**
+     * Custom CSS set by the platform.
+     *
+     * @since 1.0.0
+     */
     customCss: string;
   };
   /**
    * Set to true to disable sending of events to ViSenze Analytics.
-   * Mainly used for development purpose.
    *
    * Note that setting this to true does NOT disable the trackingCallback event.
+   *
+   * @internal
+   *
+   * @since 1.0.0
    */
   disableAnalytics: boolean;
 }
 
+/**
+ * Represents a viewport width.
+ *
+ * This interface is actually a very small subset of MediaQueryFeatures from react-responsive,
+ * used to determine a viewport based on width only.
+ */
 interface ViewportWidth {
+  /**
+   * Minimum width of the viewport. Not currently used.
+   *
+   * @since 1.0.0
+   */
   minWidth?: number;
+  /**
+   * Maximum width of the viewport.
+   *
+   * @since 1.0.0
+   */
   maxWidth?: number;
 }
 

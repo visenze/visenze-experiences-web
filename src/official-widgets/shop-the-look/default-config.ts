@@ -6,7 +6,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       maxWidth: 767,
     },
     tablet: {
-      maxWidth: 0,
+      maxWidth: 1023,
     },
   },
   productGrid: {

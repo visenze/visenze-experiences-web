@@ -26,15 +26,18 @@ to the page(s) in which you would like for the widgets to appear.
    While you're welcome to copy the above code and populate the fields accordingly,
    the above code snippet is available in the Discovery Suite console and is pre-filled with the relevant information.
 
-**Q:** What if there are multiple elements whose selector match the code snippet?<br>
-**A:** In most cases, the widget will be populated only to the first instance of matched element.
-   However, there are some widget types, in particular icon-triggered popups,
-   in which the icon trigger will be populated to all matched elements.
+<details>
+  <summary>What if there are multiple elements whose selector match the code snippet?</summary>
+
+  In most cases, the widget will be populated only to the first instance of matched element.
+  However, there are some widget types, in particular icon-triggered popups,
+  in which the icon trigger will be populated to all matched elements.
+</details>
 
 ## Additional Configuration
 
 The code snippet is designed to make use of the following information in order to render the widget:
-- App key and placement ID (specified in the code snippet)
+- App key, placement ID, and CSS selector (specified in the code snippet)
 - Catalog field mappings (fetched from database)
 - Widget customization (fetched from database)
 
@@ -58,7 +61,8 @@ window.visenzeConfigs[5000] = {
 Note that the configuration object has to be defined BEFORE the widget code snippet is inserted to the page
 in order for the settings to be properly overridden.
 
-<!-- TODO add section on params explanation -->
+The full list of available parameters can be seen in the `WidgetConfig` object in `wigmix-core.ts`.
+Parameters marked as `@internal` are only for internal usage and not recommended to be set within the configuration object.
 
 ## Callbacks
 
@@ -76,6 +80,9 @@ window.visenzeConfigs[5000] = {
 };
 ```
 
+The full list of available callbacks can be seen in the `WidgetConfig` object in `wigmix-core.ts`
+under the `callbacks` field.
+
 ## Localization and Internationalization
 
 ### Locale
@@ -85,7 +92,7 @@ The locale is determined through the following hierarchy:
 - The default locale set within the widget customization interface.
 - Default value (`en`).
 
-At the moment, ViSenze widgets only support one language pack.
+At the moment, ViSenze widgets only support one language pack out-of-the-box.
 As the result, the effect of setting locale is limited to changing how currencies are shown.
 
 ### Currency
@@ -99,4 +106,93 @@ The currency is determined through the following hierarchy:
 The [Intl.NumberFormat API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat)
 is used to display the currency in the specified locale.
 
-<!-- TODO add section on widget client -->
+## Programmatic Access
+
+ViSenze widgets can be accessed from the web page's `window` object for the purpose of
+debugging, accessing certain metadata, or programmatically controlling the widget (e.g. opening or hiding).
+
+```ts
+// e.g. for placement ID 5000
+const visenzeWidget = window.visenzeWidget5000;
+// alternatively
+const visenzeWidget = window.visenzeWidgets[5000];
+```
+
+The full list of available methods can be seen in the `WidgetClient` object in `wigmix-core.ts`.
+Methods marked as `@internal` are only for internal usage and not recommended to be used via the widget client.
+
+The following are some common use cases for some of the provided methods.
+
+### Re-rendering the widget
+
+If your page is an SPA, the widget may be removed from view when the page navigates internally (soft navigation)
+but not automatically re-rendered.
+In order to re-render the widget, you can use the `rerender` method:
+
+```ts
+visenzeWidget.rerender();
+```
+
+You can additionally specify the new selector in which the widget will be re-rendered on:
+
+```ts
+visenzeWidget.rerender('.new-selector');
+```
+
+### Hiding the widget
+
+To hide the widget from the user view, you can use the `hideWidget` method:
+
+```ts
+visenzeWidget.hideWidget();
+```
+
+The reference to the widget will stay and further programmatic access is possible;
+for example, the widget can be re-rendered by using the same `rerender` method from the previous section.
+
+### Opening the widget popup
+
+For widgets that have popup behavior, you may require a different way to open the popup
+from the existing click-on-provided-icon behavior.
+To open the popup containing the widget from anywhere, you can use the `openWidget` method:
+
+```ts
+visenzeWidget.openWidget();
+```
+
+### Sending custom events
+
+ViSenze widgets by default send pre-defined events such as result load, product view, and product click in relevant situations.
+Additional events can be sent from anywhere by using the `sendEvent` or `sendEvents` method of the widget client.
+
+To send `add_to_cart` event when a product is added to the shopping cart:
+
+```ts
+visenzeWidget.sendEvent('add_to_cart', {
+  pid: '<PRODUCT_ID>',
+});
+```
+
+To send `transaction` event when a user makes a purchase:
+
+```ts
+visenzeWidget.sendEvents('transaction', [
+  {
+    pid: '<PRODUCT_ID_1>',
+    value: VALUE_1,
+  },
+  {
+    pid: '<PRODUCT_ID_2>',
+    value: VALUE_2,
+  },
+]);
+```
+
+To send other custom events:
+
+```ts
+visenzeWidget.sendEvent('event_name', {
+  key1: 'value1',
+  key2: 'value2',
+});
+```

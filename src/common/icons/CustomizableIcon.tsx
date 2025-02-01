@@ -1,7 +1,8 @@
 import type { FC, ReactElement } from 'react';
-import type { Icon } from '../wigmix-core';
 
-interface CustomizableIconProps extends Icon {
+interface CustomizableIconProps {
+  url: string;
+  color?: string;
   height?: number;
   width?: number;
   className?: string;

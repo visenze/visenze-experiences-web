@@ -10,9 +10,7 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
     uid: '',
     endpoint: '', // populated by widget-init API
     gtmTracking: false,
-    // The visearch SDK by default resize image uploaded to 512 x 512
-    // To change the max dimension of image, fill this params with {maxWidth: ${width value in px}, maxHeight: ${height value in px}}
-    // eg: resizeSettings: {maxWidth: 1024, maxHeight: 1024},
+    // Set the values to very large numbers so that the full size of the image is returned.
     resizeSettings: {
       maxHeight: 100000,
       maxWidth: 100000,
@@ -23,18 +21,7 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
   },
   displaySettings: {
     cssSelector: '', // populated by widget-init API
-    productDetails: {
-      main_image_url: '',
-      product_url: '',
-      title: '',
-      price: '',
-      original_price: '',
-      category: '',
-      brand: '',
-      gender: '',
-      sizes: '',
-      colors: '',
-    },
+    productDetails: {}, // populated by widget-init API
   },
   languageSettings: {
     locale: '',

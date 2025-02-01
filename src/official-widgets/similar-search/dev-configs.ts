@@ -16,13 +16,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
   },
   displaySettings: {
     cssSelector: '.similar-search-widget',
-    productDetails: {
-      mainImageUrl: '',
-      productUrl: '',
-      title: '',
-      price: '',
-      originalPrice: '',
-    },
+    productDetails: {},
   },
   customizations: {
     customCss,

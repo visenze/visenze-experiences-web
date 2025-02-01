@@ -38,15 +38,15 @@ const getFontObj = (configName) => {
   return fontSizeObj;
 };
 
-const getColourObj = (configName) => {
-  const colourNames = ['primary', 'buttonPrimary', 'buttonSecondary'];
-  const colourObj = {};
+const getColorObj = (configName) => {
+  const colorNames = ['primary', 'buttonPrimary', 'buttonSecondary'];
+  const colorObj = {};
 
-  colourNames.forEach(colourName => {
-    colourObj[`${colourName}`] = `var(--wigmix-${configName}-${colourName})`;
+  colorNames.forEach(colorName => {
+    colorObj[`${colorName}`] = `var(--wigmix-${configName}-${colorName})`;
   });
 
-  return colourObj;
+  return colorObj;
 };
 
 // Convert all rem units to px units
@@ -88,8 +88,8 @@ module.exports = {
   theme: {
     ...remToPx(defaultTheme),
     extend: {
-      textColor: getColourObj('text'),
-      backgroundColor: getColourObj('background'),
+      textColor: getColorObj('text'),
+      backgroundColor: getColorObj('background'),
       fontSize: getFontObj('fontSize'),
       fontWeight: getFontObj('fontWeight'),
       height: {
