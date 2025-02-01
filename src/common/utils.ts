@@ -117,22 +117,22 @@ export const getFilterQueries = (productDetails: WidgetConfig['displaySettings']
   };
 
   if (filters.price.length > 0) {
-    filterQueries.push(`${productDetails.price}:${filters.price[0]},${filters.price[1]}`);
+    filterQueries.push(`${productDetails['price']}:${filters.price[0]},${filters.price[1]}`);
   }
   if (filters.category.size > 0) {
-    filterQueries.push(`${productDetails.category}:${Array.from(addQuotesToStrings(filters.category)).join(' OR ')}`);
+    filterQueries.push(`${productDetails['category']}:${Array.from(addQuotesToStrings(filters.category)).join(' OR ')}`);
   }
   if (filters.gender.size > 0) {
-    filterQueries.push(`${productDetails.gender}:${Array.from(addQuotesToStrings(filters.gender)).join(' OR ')}`);
+    filterQueries.push(`${productDetails['gender']}:${Array.from(addQuotesToStrings(filters.gender)).join(' OR ')}`);
   }
   if (filters.brand.size > 0) {
-    filterQueries.push(`${productDetails.brand}:${Array.from(addQuotesToStrings(filters.brand)).join(' OR ')}`);
+    filterQueries.push(`${productDetails['brand']}:${Array.from(addQuotesToStrings(filters.brand)).join(' OR ')}`);
   }
   if (filters.colors.size > 0) {
-    filterQueries.push(`${productDetails.colors}:${Array.from(addQuotesToStrings(filters.colors)).join(' OR ')}`);
+    filterQueries.push(`${productDetails['colors']}:${Array.from(addQuotesToStrings(filters.colors)).join(' OR ')}`);
   }
   if (filters.sizes.size > 0) {
-    filterQueries.push(`${productDetails.sizes}:${Array.from(addQuotesToStrings(filters.sizes)).join(' OR ')}`);
+    filterQueries.push(`${productDetails['sizes']}:${Array.from(addQuotesToStrings(filters.sizes)).join(' OR ')}`);
   }
 
   return filterQueries;

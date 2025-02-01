@@ -26,7 +26,7 @@ const DEFAULT_TEXTS: LanguagePack = {
 const ENABLE_CUSTOMIZATION = true;
 
 const App: FC<AppProps> = ({ widgetConfig, fieldMappings, widgetClient, element }) => {
-  const imUrl = element.dataset.url ?? '';
+  const imUrl = element.dataset['url'] ?? '';
 
   return (
     <AppWrapper widgetConfig={widgetConfig}

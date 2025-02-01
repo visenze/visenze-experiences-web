@@ -179,12 +179,12 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     };
 
     if (text) {
-      params.q = text;
+      params['q'] = text;
     }
     if (imgUrl) {
-      params.im_url = imgUrl;
+      params['im_url'] = imgUrl;
     }
-    params.limit = 24; // hardcode for now
+    params['limit'] = 24; // hardcode for now
 
     widgetClient.multisearchByImage(params, handleSuccess, handleError);
 

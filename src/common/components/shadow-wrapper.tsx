@@ -1,4 +1,5 @@
-import { createContext, type CSSProperties, type FC, type ReactNode, useCallback, useContext, useState } from 'react';
+import type { CSSProperties, FC, HTMLProps, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 import root from 'react-shadow';
 import { HeroUIProvider } from '@heroui/system';
 import useStyles from './hooks/use-styles';
@@ -47,8 +48,10 @@ const ShadowWrapper: FC<{ fontFamily: string; children: ReactNode }> = ({ fontFa
     }
   }, []);
 
+  const ShadowRootHost = root['div'] as FC<HTMLProps<HTMLDivElement>>;
+
   return (
-    <root.div style={rootContainerStyle}>
+    <ShadowRootHost style={rootContainerStyle}>
       <Style></Style>
       <div className='wigmix-shadow-root' ref={onRefChange} style={createRootStyle(fontFamily)}>
         <RootContext.Provider value={rootNode}>
@@ -57,7 +60,7 @@ const ShadowWrapper: FC<{ fontFamily: string; children: ReactNode }> = ({ fontFa
           </StyleLoader>
         </RootContext.Provider>
       </div>
-    </root.div>
+    </ShadowRootHost>
   );
 };
 

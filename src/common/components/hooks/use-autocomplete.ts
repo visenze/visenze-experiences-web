@@ -67,14 +67,14 @@ const useAutocomplete = ({
       ...searchSettings,
       return_query_temp_url: true,
     };
-    params.q = query;
+    params['q'] = query;
 
     if (image) {
       if (isImageUrl(image)) {
-        params.im_url = image.imgUrl;
+        params['im_url'] = image.imgUrl;
       } else if (isImageFile(image)) {
         const [file] = image.files;
-        params.image = file;
+        params['image'] = file;
       }
     }
 

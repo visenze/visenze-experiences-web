@@ -30,7 +30,7 @@ const DEFAULT_TEXTS: LanguagePack = {
 const ENABLE_CUSTOMIZATION = true;
 
 const App: FC<AppProps> = ({ widgetConfig, fieldMappings, widgetClient, element }) => {
-  const productId = element.dataset.pid ?? '';
+  const productId = element.dataset['pid'] ?? '';
 
   return (
     <AppWrapper widgetConfig={widgetConfig}

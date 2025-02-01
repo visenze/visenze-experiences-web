@@ -139,11 +139,11 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
 
     const analyticsParams = params;
 
-    if (!analyticsParams.queryId) {
-      analyticsParams.queryId = getLastClickQueryId();
+    if (!analyticsParams['queryId']) {
+      analyticsParams['queryId'] = getLastClickQueryId();
     }
-    if (!analyticsParams.widgetVersion) {
-      analyticsParams.widgetVersion = `${widgetType}.${widgetVersion}.js`;
+    if (!analyticsParams['widgetVersion']) {
+      analyticsParams['widgetVersion'] = `${widgetType}.${widgetVersion}.js`;
     }
 
     visearch.sendEvent(action, analyticsParams, callback, failure);
@@ -164,8 +164,8 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
 
     visearch.generateUuid((batchId) => {
       events.forEach((event) => {
-        if (action.toLowerCase() === 'transaction' && !event.transId) {
-          event.transId = batchId;
+        if (action.toLowerCase() === 'transaction' && !event['transId']) {
+          event['transId'] = batchId;
         }
         sendEvent(action, event, callback, failure);
       });

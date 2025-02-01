@@ -50,7 +50,7 @@ const useRecommendMe = ({
       q: query,
       va_uid: visenzeUserId,
       va_sid: visenzeSessionId,
-      attrs_to_get: widgetConfig.searchSettings.attrs_to_get.join(','),
+      attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
     });
 
     // Listen to the event stream and retrieve relevant data based on the event type

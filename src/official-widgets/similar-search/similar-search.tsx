@@ -101,15 +101,15 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
       q: query,
       im_id: imageId,
       page: 1,
-      limit: searchSettings.limit,
+      limit: searchSettings['limit'],
       get_all_fl: true,
     };
     const product = boxData?.index ? productTypes[boxData.index] : boxData;
 
     if (product) {
-      params.box = parseBox(product.box);
+      params['box'] = parseBox(product.box);
       if ('type' in product) {
-        params.detection = product.type;
+        params['detection'] = product.type;
       }
     }
 

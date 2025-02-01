@@ -25,17 +25,17 @@ const getSearchParams = (
   const params = { ...searchSettings };
 
   if (isImageUrl(img)) {
-    params.im_url = img.imgUrl;
+    params['im_url'] = img.imgUrl;
   } else if (isImageFile(img)) {
-    params.image = img.files[0];
+    params['image'] = img.files[0];
   } else {
-    params.im_id = imageId;
+    params['im_id'] = imageId;
   }
 
   if (product) {
-    params.box = parseBox(product.box);
+    params['box'] = parseBox(product.box);
     if ('type' in product) {
-      params.detection = product.type;
+      params['detection'] = product.type;
     }
   }
 

@@ -61,9 +61,9 @@ const getPrice = (
   if (!customizations.productCard?.price?.show) {
     return '';
   }
-  if (result[productDetails.price]) {
-    const priceNumber = +result[productDetails.price].value;
-    const currencyFormatter = currencyFormatterFactory(languageSettings, customizations, result[productDetails.price].currency);
+  if (result[productDetails['price']]) {
+    const priceNumber = +result[productDetails['price']].value;
+    const currencyFormatter = currencyFormatterFactory(languageSettings, customizations, result[productDetails['price']].currency);
     return currencyFormatter.format(priceNumber);
   }
   return '';
@@ -78,9 +78,9 @@ const getOriginalPrice = (
   if (!customizations.productCard?.originalPrice?.show || !customizations.productCard?.price?.show) {
     return '';
   }
-  if (result[productDetails.original_price]) {
-    const priceNumber = +result[productDetails.original_price].value;
-    const currencyFormatter = currencyFormatterFactory(languageSettings, customizations, result[productDetails.original_price].currency);
+  if (result[productDetails['original_price']]) {
+    const priceNumber = +result[productDetails['original_price']].value;
+    const currencyFormatter = currencyFormatterFactory(languageSettings, customizations, result[productDetails['original_price']].currency);
     return currencyFormatter.format(priceNumber);
   }
   return '';
@@ -98,9 +98,9 @@ const getProductUrlWithTrackingParams = (
   // For recommendation widgets, we set the query ID, product ID, and position in the URL.
   // This allows other recommendation widgets on the page to use these values as the source for their tracking events.
   if (isRecommendation) {
-    url.searchParams.set('vsFromReqId', trackingMeta.queryId);
-    url.searchParams.set('vsFromPid', trackingMeta.pid);
-    url.searchParams.set('vsFromPos', trackingMeta.pos);
+    url.searchParams.set('vsFromReqId', trackingMeta['queryId']);
+    url.searchParams.set('vsFromPid', trackingMeta['pid']);
+    url.searchParams.set('vsFromPos', trackingMeta['pos']);
   }
   return url.toString();
 };
@@ -189,7 +189,7 @@ const ProductCard: FC<ProductCardProps> = ({
 
   const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
   const price = getPrice(customizations, languageSettings, productDetails, result);
-  const productUrl = getProductUrlWithTrackingParams(result[productDetails.product_url], productTrackingMeta, isRecommendation);
+  const productUrl = getProductUrlWithTrackingParams(result[productDetails['product_url']], productTrackingMeta, isRecommendation);
 
   return (
     <div className='wigmix-product-card'>

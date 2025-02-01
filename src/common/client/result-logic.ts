@@ -34,12 +34,12 @@ const ResultLogicImpl = ({
       'visenze_widget_last_click',
       JSON.stringify({
         placement_id: placementId,
-        queryId: productTrackingMeta.queryId,
+        queryId: productTrackingMeta['queryId'],
       }),
     );
     localStorage.setItem(
       `visenze_last_click_query_id_${placementId}`,
-      productTrackingMeta.queryId,
+      productTrackingMeta['queryId'],
     );
     widgetClient.sendEvent(Actions.PRODUCT_CLICK, productTrackingMeta);
     if (onProductClick && typeof onProductClick === 'function') {

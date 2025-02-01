@@ -81,17 +81,17 @@ const useRecommendationSearch = ({
     params['return_product_info'] = true;
     params['show_best_product_images'] = true;
     params['sort_by'] = '';
-    params.facets = getFacets(productDetails);
-    params.facets_show_count = true;
+    params['facets'] = getFacets(productDetails);
+    params['facets_show_count'] = true;
 
     if (sortType === SortType.PRICE_HTL) {
-      params['sort_by'] = `${productDetails.price}:desc`;
+      params['sort_by'] = `${productDetails['price']}:desc`;
     } else if (sortType === SortType.PRICE_LTH) {
-      params['sort_by'] = `${productDetails.price}:asc`;
+      params['sort_by'] = `${productDetails['price']}:asc`;
     }
 
     if (filters) {
-      params.filters = getFilterQueries(productDetails, filters);
+      params['filters'] = getFilterQueries(productDetails, filters);
     }
 
     if (additionalParams) {
@@ -158,7 +158,7 @@ const useRecommendationSearch = ({
       }
 
       // Model Outfit should be the reference image if strategy is STL
-      const strategy: any = response.strategy;
+      const strategy: any = response['strategy'];
       if (strategy.algorithm === 'STL') {
         setModelOutfitAsReference();
       }
