@@ -13,7 +13,8 @@ import Footer from '../../../common/components/Footer';
 import Header from '../components/Header';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
+import ChevronUpIcon from '../../../common/icons/ChevronUpIcon';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -167,7 +168,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {searchHistory?.map((searchImage, index) => (
               <img
                 key={`image-history-${index}`}
-                className='wigmix-search-history-image aspect-square w-1/5 object-cover'
+                className='aspect-square w-1/5 object-cover'
                 src={getFile(searchImage)}
                 onClick={() => onFindSimilar(searchImage)}
                 data-pw={`ss-previous-views-image-${index + 1}`}
@@ -187,13 +188,13 @@ const ResultScreen: FC<ResultScreenProps> = ({
                  onClick={(): void => toggleFullResults()}
                  data-pw='ss-arrow-button'
             >
-              <CustomizableIcon
-                  height={24}
-                  width={24}
-                  url={`https://cdn.visenze.com/images/arrow-${showFullResults ? 'down' : 'up'}-icon.svg`}
-                  color={customizations.buttons?.primary?.fontColor || ''}
-                  className='cursor-pointer'
-              />
+              {showFullResults ? (
+                  <ChevronDownIcon color={customizations.buttons?.primary?.fontColor || ''}
+                                   className='cursor-pointer size-6' />
+              ) : (
+                  <ChevronUpIcon color={customizations.buttons?.primary?.fontColor || ''}
+                                 className='cursor-pointer size-6' />
+              )}
             </div>
           </div>
 

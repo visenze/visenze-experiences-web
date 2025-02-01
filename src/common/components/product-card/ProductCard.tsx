@@ -8,6 +8,7 @@ import CustomizableIcon from '../../icons/CustomizableIcon';
 import type { WidgetConfig } from '../../wigmix-core';
 import { getCurrencyFormatter } from '../../locales/locale';
 import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../default-configs';
+import MagnifyingGlassIcon from '../../icons/MagnifyingGlassIcon';
 
 interface ProductCardProps {
   result: ProcessedProduct;
@@ -224,13 +225,19 @@ const ProductCard: FC<ProductCardProps> = ({
                     }}
                     data-pw={`${pwPrefix}-more-like-this-button`}
                 >
-                  <CustomizableIcon
-                      height={20}
-                      width={20}
-                      className='wigmix-find-similar-icon'
-                      url={customizations.productCard?.findSimilar?.icon?.url || 'https://cdn.visenze.com/images/magnifying-glass-icon.svg'}
-                      color={customizations.productCard?.findSimilar?.icon?.color || ''}
-                  />
+                  {customizations.productCard?.findSimilar?.icon?.url ? (
+                      <CustomizableIcon
+                          height={20}
+                          width={20}
+                          className='wigmix-find-similar-icon'
+                          url={customizations.productCard?.findSimilar?.icon?.url}
+                          color={customizations.productCard?.findSimilar?.icon?.color || ''}
+                      />
+                  ) : (
+                      <MagnifyingGlassIcon
+                          className='wigmix-find-similar-icon size-5'
+                          color={customizations.productCard?.findSimilar?.icon?.color || ''} />
+                  )}
                 </div>
             )}
           </div>

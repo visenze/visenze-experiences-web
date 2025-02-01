@@ -17,6 +17,7 @@ import LoadingIcon from './icons/LoadingIcon';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import CameraIcon from '../../common/icons/CameraIcon';
 
 interface CameraSearchProps {
   // no properties at the moment
@@ -212,15 +213,20 @@ const CameraSearch: FC<CameraSearchProps> = () => {
       }}>
       <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
         {!customizations.popup?.triggerIcon?.hide && (
-            <div className='wigmix-popup-trigger-button w-fit cursor-pointer'>
-              <CustomizableIcon
-                  height={28}
-                  width={28}
-                  url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/camera-icon.svg'}
-                  color={customizations.popup?.triggerIcon?.color || ''}
-                  className='wigmix-popup-trigger-icon'
-                  onClickHandler={onCameraButtonClick}
-              />
+            <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+                 onClick={onCameraButtonClick}>
+              {customizations.popup?.triggerIcon?.url ? (
+                  <CustomizableIcon
+                      height={24}
+                      width={24}
+                      url={customizations.popup.triggerIcon.url}
+                      color={customizations.popup?.triggerIcon?.color || ''}
+                      className='wigmix-popup-trigger-icon'
+                  />
+              ) : (
+                  <CameraIcon color={customizations.popup?.triggerIcon?.color || ''}
+                              className='wigmix-popup-trigger-icon size-6' />
+              )}
             </div>
         )}
         <ViSenzeModal

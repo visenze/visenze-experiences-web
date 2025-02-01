@@ -14,7 +14,7 @@ import type { BoxData, ProcessedProduct } from '../../common/types/product';
 import { getFlattenProducts } from '../../common/utils';
 import HotspotRecommendations from './components/HotspotRecommendations';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
-import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import CloseIcon from '../../common/icons/CloseIcon';
 
 interface ShoppableGalleryProps {
   // no properties at the moment
@@ -160,12 +160,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
                 className='absolute right-2 top-2 bg-transparent rounded-full p-1 hover:opacity-90 cursor-pointer'
                 onClick={onCloseHandler}
                 data-pw='sg-modal-close-button'>
-                <CustomizableIcon
-                    height={24}
-                    width={24}
-                    url={'https://cdn.visenze.com/images/close-icon.svg'}
-                    color={customizations.generalLayout?.fontColor}
-                />
+                <CloseIcon className='size-6' color={customizations.generalLayout?.fontColor} />
               </div>
               {productTypes.length > 0 && (
                 <HotspotContainer

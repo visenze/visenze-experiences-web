@@ -1,6 +1,6 @@
 import type { FC, ReactElement } from 'react';
 import { useIntl } from 'react-intl';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import CloseIcon from '../../../common/icons/CloseIcon';
 
 interface HeaderProps {
   onCloseHandler: () => void;
@@ -22,13 +22,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, showTitle, iconColor }): Reac
       <div className='absolute right-4 top-2 bg-transparent md:right-5 md:top-4 rounded-full p-1 hover:opacity-90'
            onClick={onCloseHandler}
            data-pw='ss-close-button'>
-        <CustomizableIcon
-            height={24}
-            width={24}
-            url={'https://cdn.visenze.com/images/close-icon.svg'}
-            color={iconColor}
-            className='wigmix-close-popup-icon cursor-pointer'
-        />
+        <CloseIcon className='size-6 cursor-pointer' color={iconColor} />
       </div>
     </div>
   );

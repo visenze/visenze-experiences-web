@@ -6,7 +6,7 @@ import { Checkbox } from '@heroui/checkbox';
 import type { FacetType } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { getFacetNameByKey, getTitleCase } from '../../../common/utils';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 
 interface FilterOptionsProps {
   facets: Facet[];
@@ -155,12 +155,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
               key={facet.key}
               title={getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
               indicator={
-                <CustomizableIcon
-                    height={20}
-                    width={20}
-                    url={'https://cdn.visenze.com/images/chevron-left-icon.svg'}
-                    color={customizations.generalLayout?.fontColor}
-                />
+                <ChevronLeftIcon className='size-5' color={customizations.generalLayout?.fontColor} />
               }
             >
               <div className='flex flex-col gap-y-2 px-4 pb-4'>

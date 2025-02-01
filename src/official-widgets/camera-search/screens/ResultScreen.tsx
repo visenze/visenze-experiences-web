@@ -17,7 +17,8 @@ import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import HotspotContainer from '../../../common/components/hotspots/hotspot-container';
 import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
+import ChevronUpIcon from '../../../common/icons/ChevronUpIcon';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -199,13 +200,13 @@ const ResultScreen: FC<ResultScreenProps> = ({
             <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
                  onClick={(): void => toggleFullResults()}
                  data-pw='cs-arrow-button'>
-              <CustomizableIcon
-                  height={24}
-                  width={24}
-                  url={`https://cdn.visenze.com/images/arrow-${showFullResults ? 'down' : 'up'}-icon.svg`}
-                  color={customizations.buttons?.primary?.fontColor || ''}
-                  className='cursor-pointer'
-              />
+              {showFullResults ? (
+                  <ChevronDownIcon color={customizations.buttons?.primary?.fontColor || ''}
+                                   className='cursor-pointer size-6' />
+              ) : (
+                  <ChevronUpIcon color={customizations.buttons?.primary?.fontColor || ''}
+                                 className='cursor-pointer size-6' />
+              )}
             </div>
           </div>
 
@@ -362,7 +363,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       setSearch('');
                       onTextSearch('');
                     }}
-                    data-pw='ss-refinement-text-bar'
+                    data-pw='cs-refinement-text-bar'
                   />
                 </div>
               </div>

@@ -15,6 +15,8 @@ import SortOptions from './components/SortOptions';
 import FilterOptions from './components/FilterOptions';
 import { getSortTypeIntlId } from '../../common/utils';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import CloseIcon from '../../common/icons/CloseIcon';
+import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 
 export enum ScreenType {
   SORT = 'sort',
@@ -125,15 +127,20 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
         metadata,
       }}>
       {!customizations.popup?.triggerIcon?.hide && (
-          <div className='wigmix-popup-trigger-button w-fit cursor-pointer'>
-            <CustomizableIcon
-                height={24}
-                width={24}
-                url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
-                color={customizations.popup?.triggerIcon?.color || ''}
-                className='wigmix-popup-trigger-icon'
-                onClickHandler={onPopupIconClick}
-            />
+          <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+               onClick={onPopupIconClick}>
+            {customizations.popup?.triggerIcon?.url ? (
+                <CustomizableIcon
+                    height={24}
+                    width={24}
+                    url={customizations.popup.triggerIcon.url}
+                    color={customizations.popup?.triggerIcon?.color || ''}
+                    className='wigmix-popup-trigger-icon'
+                />
+            ) : (
+                <MagnifyingGlassIcon color={customizations.popup?.triggerIcon?.color || ''}
+                                     className='wigmix-popup-trigger-icon size-6' />
+            )}
           </div>
       )}
 
@@ -150,12 +157,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
             className='absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90'
             onClick={onModalClose}
             data-pw='itg-close-button'>
-            <CustomizableIcon
-                height={24}
-                width={24}
-                url={'https://cdn.visenze.com/images/close-icon.svg'}
-                color={customizations.generalLayout?.fontColor}
-            />
+            <CloseIcon className='size-6' color={customizations.generalLayout?.fontColor} />
           </div>
 
           <div className='flex flex-col border-none p-4 md:w-3/10 md:px-10 md:py-6'>

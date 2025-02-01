@@ -15,6 +15,7 @@ import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import LoadingIcon from './icons/LoadingIcon';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 
 interface SimilarSearchProps {
   imUrl: string;
@@ -204,15 +205,20 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
         metadata,
       }}>
       {!customizations.popup?.triggerIcon?.hide && (
-          <div className='wigmix-popup-trigger-button w-fit cursor-pointer'>
-            <CustomizableIcon
-                height={24}
-                width={24}
-                url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/similar-search-icon.svg'}
-                color={customizations.popup?.triggerIcon?.color || ''}
-                className='wigmix-popup-trigger-icon'
-                onClickHandler={onPopupIconClick}
-            />
+          <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+               onClick={onPopupIconClick}>
+            {customizations.popup?.triggerIcon?.url ? (
+                <CustomizableIcon
+                    height={24}
+                    width={24}
+                    url={customizations.popup.triggerIcon.url}
+                    color={customizations.popup?.triggerIcon?.color || ''}
+                    className='wigmix-popup-trigger-icon'
+                />
+            ) : (
+                <MagnifyingGlassIcon color={customizations.popup?.triggerIcon?.color || ''}
+                                     className='wigmix-popup-trigger-icon size-6' />
+            )}
           </div>
       )}
 

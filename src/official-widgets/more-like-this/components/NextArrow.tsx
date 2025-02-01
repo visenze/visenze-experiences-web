@@ -1,6 +1,6 @@
 import type { FC, MouseEventHandler } from 'react';
 import { cn } from '@heroui/theme';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 
 interface NextArrowProps {
   className?: string;
@@ -17,12 +17,7 @@ const NextArrow: FC<NextArrowProps> = ({ className, onClick, iconColor }) => (
     onClick={onClick}
     data-pw='mlt-next-arrow'
   >
-    <CustomizableIcon
-        height={24}
-        width={24}
-        url={'https://cdn.visenze.com/images/chevron-right-icon.svg'}
-        color={iconColor}
-    />
+    <ChevronLeftIcon className='size-6 rotate-180' color={iconColor} />
   </div>
 );
 

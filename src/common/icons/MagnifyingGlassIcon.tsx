@@ -1,8 +1,19 @@
 import type { FC, ReactElement } from 'react';
 
-const MagnifyingGlassIcon: FC<{ className?: string }> = ({ className }): ReactElement => (
-  <div className={className}>
-    <img src='https://cdn.visenze.com/images/magnifying-glass-icon.svg'/>
+const MagnifyingGlassIcon: FC<{ className?: string; color?: string }> = ({ className, color }): ReactElement => (
+  <div className={className} style={{ color }}>
+    <svg className='size-full' viewBox='0 0 60 60' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path fillRule='evenodd' clipRule='evenodd'
+            d='M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222
+            10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719
+            25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825
+            40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275
+            -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087
+            47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887
+            59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04
+            59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z'
+            fill='currentColor' />
+    </svg>
   </div>
 );
 

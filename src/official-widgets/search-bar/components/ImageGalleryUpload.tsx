@@ -11,6 +11,7 @@ import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import CloseIcon from '../../../common/icons/CloseIcon';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import UploadIcon from '../../../common/icons/UploadIcon';
 
 interface ImageGalleryUploadProps {
   imageUploadHandler: (image: SearchImage) => void;
@@ -136,12 +137,16 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
               <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload'>
                 <div
                   className='wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center'>
-                  <CustomizableIcon
-                      height={80}
-                      width={80}
-                      url={customizations.imageUpload?.icon?.url || 'https://cdn.visenze.com/images/upload-icon.svg'}
-                      color={customizations.imageUpload?.icon?.color || ''}
-                  />
+                  {customizations.imageUpload?.icon?.url ? (
+                      <CustomizableIcon
+                          height={80}
+                          width={80}
+                          url={customizations.imageUpload.icon.url}
+                          color={customizations.imageUpload.icon.color || ''}
+                      />
+                  ) : (
+                      <UploadIcon className='size-20' color={customizations.imageUpload?.icon?.color || ''} />
+                  )}
 
                   <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
                     {intl.formatMessage({ id: 'dragImageToSearch' })}

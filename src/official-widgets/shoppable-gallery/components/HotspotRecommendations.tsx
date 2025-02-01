@@ -8,7 +8,7 @@ import { getFlattenProducts } from '../../../common/utils';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import ImageCropThumbnail from './ImageCropThumbnail';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import CloseIcon from '../../../common/icons/CloseIcon';
 
 /**
  * This component displays a drawer with product recommendations based on selected hotspots in an image.
@@ -94,12 +94,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
         <div className='absolute right-3 top-2 hidden bg-transparent md:flex rounded-full p-1 hover:opacity-90 cursor-pointer'
              onClick={closeDrawerHandler}
              data-pw='sg-drawer-close-button-desktop'>
-          <CustomizableIcon
-              height={24}
-              width={24}
-              url={'https://cdn.visenze.com/images/close-icon.svg'}
-              color={customizations.generalLayout?.fontColor}
-          />
+          <CloseIcon className='size-6' color={customizations.generalLayout?.fontColor} />
         </div>
 
         {/* Close Button Mobile */}
