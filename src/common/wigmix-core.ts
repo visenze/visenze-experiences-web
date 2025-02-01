@@ -628,7 +628,17 @@ export interface WidgetConfig {
        *
        * @since 1.0.0
        */
-      triggerIcon: Icon;
+      triggerIcon: Icon & {
+        /**
+         * Whether to hide the trigger icon.
+         *
+         * Without the provided trigger icon, the only way to open the widget popup is
+         * to use the openWidget function of the widget client.
+         *
+         * @since 1.0.0
+         */
+        hide: boolean;
+      };
     };
     /**
      * Buttons configuration.

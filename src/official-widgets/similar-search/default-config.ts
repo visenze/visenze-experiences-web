@@ -157,6 +157,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     position: 'right',
     triggerIcon: {
       color: '#000000',
+      hide: false,
     },
   },
 };

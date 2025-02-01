@@ -375,14 +375,16 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
 
   return (
       <>
-        <CustomizableIcon
-            height={28}
-            width={28}
-            url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/new-chat-icon.svg'}
-            color={customizations.popup?.triggerIcon?.color || ''}
-            className='wigmix-popup-trigger-icon cursor-pointer'
-            onClickHandler={onChatButtonClick}
-        />
+        {!customizations.popup?.triggerIcon?.hide && (
+            <CustomizableIcon
+                height={28}
+                width={28}
+                url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/new-chat-icon.svg'}
+                color={customizations.popup?.triggerIcon?.color || ''}
+                className='wigmix-popup-trigger-icon cursor-pointer'
+                onClickHandler={onChatButtonClick}
+            />
+        )}
         <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
                       position={customizations.popup?.position || 'center'}
                       fontFamily={customizations.generalLayout?.fontFamily}

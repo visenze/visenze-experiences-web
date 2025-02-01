@@ -124,16 +124,18 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
         productResults,
         metadata,
       }}>
-      <div className='wigmix-popup-trigger-button w-fit cursor-pointer'>
-        <CustomizableIcon
-            height={24}
-            width={24}
-            url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
-            color={customizations.popup?.triggerIcon?.color || ''}
-            className='wigmix-popup-trigger-icon'
-            onClickHandler={onPopupIconClick}
-        />
-      </div>
+      {!customizations.popup?.triggerIcon?.hide && (
+          <div className='wigmix-popup-trigger-button w-fit cursor-pointer'>
+            <CustomizableIcon
+                height={24}
+                width={24}
+                url={customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
+                color={customizations.popup?.triggerIcon?.color || ''}
+                className='wigmix-popup-trigger-icon'
+                onClickHandler={onPopupIconClick}
+            />
+          </div>
+      )}
 
       <ViSenzeModal
         open={dialogVisible}
