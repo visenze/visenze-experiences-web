@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react';
+import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
+import { cn } from '@heroui/theme';
 import DownArrowIcon from '../icons/DownArrowIcon';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
-import type { Product } from './ProductCard';
-import ProductCard from './ProductCard';
+import type { ProcessedProduct } from '../../../common/types/product';
+import ProductCard from '../../../common/components/product-card/ProductCard';
+import { WidgetDataContext } from '../../../common/types/contexts';
 
 export interface Chat {
   chatId: string;
   requestId: string;
   author: 'user' | 'bot' | 'products';
   messages: string[];
-  products?: Product[];
+  products?: ProcessedProduct[];
 }
 
 interface ChatWindowProps {
@@ -18,7 +20,9 @@ interface ChatWindowProps {
   latestMessage: string;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) => {
+const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) => {
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const [messageBottomRef, setMessageBottomRef] = useState<HTMLDivElement>();
@@ -49,32 +53,60 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage
       // bold texts wrapped **like this**
       .replaceAll(/\*\*(.*?)\*\*/g, '<b>$1</b>');
 
+  const getProductGridCssClasses = (defaultGapX: string): string => {
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push(defaultGapX);
+      }
+      return classes.join(' ');
+    }
+    return [defaultGapX].join(' ');
+  };
+
+  const getProductGridCssConfig = (needed = false): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    if (!needed) {
+      return cssConfig;
+    }
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+      }
+    }
+    return cssConfig;
+  };
+
   return (
       <>
-        <div onScroll={handleScroll} className={`vi-shopping-assistant-messages ${breakpoint}`}>
+        <div className='overflow-scroll' onScroll={handleScroll}>
           {chats.map((chat, idx) => (
-              <div className={`chat-row ${chat.author}`}
+              <div className={cn(
+                  'w-full mb-2',
+                  chat.author === 'products' ? `grid grid-cols-3 md:max-w-9/10 lg:max-w-7/10 ${getProductGridCssClasses('gap-x-1')}` : 'flex flex-col',
+                  chat.author === 'user' ? 'items-end' : '',
+              )}
+                   style={getProductGridCssConfig(chat.author === 'products')}
                    key={`chat-row-${idx}`}>
                 {chat.author === 'user' && chat.messages.map((message, cidx) => (
-                    <div className='chat-message user' tabIndex={0} key={`chat-user-message-${cidx}`}>
+                    <div className='bg-buttonPrimary text-buttonPrimary w-fit max-w-7/10 px-4 py-2 mb-1' tabIndex={0} key={`chat-user-message-${cidx}`}>
                       {message}
                     </div>
                 ))}
                 {chat.author === 'bot' && chat.messages.map((message, cidx) => (
-                    <div className='chat-message bot' tabIndex={0} key={`chat-bot-message-${cidx}`}
+                    <div className='bg-buttonPrimary text-buttonPrimary w-fit max-w-7/10 px-4 py-2 mb-1' tabIndex={0} key={`chat-bot-message-${cidx}`}
                          dangerouslySetInnerHTML={{
                            __html: processMessageForDisplay(message),
                          }} />
                 ))}
                 {chat.author === 'products' && (chat.products || []).map((product, pidx) => (
                     <>
-                      <div className='product' key={`product-${pidx}`}>
-                        <ProductCard key={`product-card-${pidx}`} product={product} index={pidx}
-                                     queryId={chat.requestId}/>
+                      <div key={`product-${pidx}`}>
+                        <ProductCard key={`product-card-${pidx}`} result={product} index={pidx}
+                                     pwPrefix='sa' isRecommendation={false} hasFindSimilar={false} />
                       </div>
-                      {pidx !== (chat.products || []).length - 1 && (
-                          <hr />
-                      )}
                     </>
                 ))}
               </div>
@@ -82,14 +114,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage
           {(isWaiting || latestMessage) && (
               <div className='chat-row'>
                 {isWaiting && (
-                    <div className='loading-container'>
-                      <div className='loading-dot' />
-                      <div className='loading-dot' />
-                      <div className='loading-dot' />
+                    <div className='p-3 flex gap-2 bg-buttonPrimary w-fit'>
+                      {[0, 1, 2].map((i) => (
+                          <div key={`loading-dot-${i}`}
+                               className='loading-dot rounded-full'
+                               style={{ backgroundColor: customizations.buttons?.primary?.fontColor }} />
+                      ))}
                     </div>
                 )}
                 {latestMessage && (
-                    <div className='chat-message bot'
+                    <div className='bg-buttonPrimary text-buttonPrimary w-fit max-w-7/10 px-4 py-2 mb-1'
                          dangerouslySetInnerHTML={{
                            __html: processMessageForDisplay(latestMessage),
                          }} />
@@ -102,10 +136,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage
             }
           }}></div>
         </div>
-        <div style={{ flexGrow: 1 }}></div>
-        <div className={`vi-shopping-assistant-arrow-container ${breakpoint}`} style={{ position: 'relative' }}>
+        <div className='flex-grow'></div>
+        <div className='relative'>
           {showBottomArrow && (
-              <div className='arrow' onClick={scrollToBottom}>
+              <div className='absolute bottom-1 right-1 cursor-pointer' onClick={scrollToBottom}>
                 <DownArrowIcon />
               </div>
           )}

@@ -13,7 +13,11 @@ interface AppProps {
 }
 
 const DEFAULT_TEXTS: LanguagePack = {
-  // nothing yet
+  en: {
+    openingMessage1: 'Let\'s get started',
+    openingMessage2: 'Tell us about what your styling needs and we will help you find the perfect item for you',
+    chatBoxPlaceholder: 'Type your message',
+  },
 };
 
 // Set to true to enable customization via WidgetConfig
