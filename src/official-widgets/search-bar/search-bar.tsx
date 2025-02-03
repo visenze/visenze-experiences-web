@@ -1,22 +1,22 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useContext, useState } from 'react';
-import { Listbox, ListboxItem, ListboxSection } from '@nextui-org/listbox';
-import { cn } from '@nextui-org/theme';
+import { Listbox, ListboxItem, ListboxSection } from '@heroui/listbox';
+import { cn } from '@heroui/theme';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import type { SearchImage } from '../../common/types/image';
 import { isImageFile } from '../../common/types/image';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 import SearchBarInput from './components/SearchBarInput';
 import useAutocomplete from '../../common/components/hooks/use-autocomplete';
-import type { WidgetConfig } from '../../common/visenze-core';
+import { WidgetDataContext } from '../../common/types/contexts';
 
 interface SearchBarResultProps {
-  config: WidgetConfig;
   textQuery: string;
   imUrl: string;
 }
 
-const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): ReactElement => {
+const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement => {
+  const { widgetConfig } = useContext(WidgetDataContext);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
@@ -43,8 +43,8 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
   }, []);
 
   const emitSearchBarCallback = (t: string | undefined, i: SearchImage | undefined): void => {
-    if (config.callbacks?.onSearchBarInput && typeof config.callbacks.onSearchBarInput === 'function') {
-      config.callbacks.onSearchBarInput(t, i);
+    if (widgetConfig.callbacks?.onSearchBarInput && typeof widgetConfig.callbacks.onSearchBarInput === 'function') {
+      widgetConfig.callbacks.onSearchBarInput(t, i);
     }
   };
 
@@ -114,7 +114,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
                             emitSearchBarCallback(query, image);
                           }}
                           setShowDropdown={setShowDropdown}
-                          placementId={`${config.appSettings.placementId}`} />
+                          placementId={`${widgetConfig.appSettings.placementId}`} />
           {/* Autocomplete dropdown */}
           {
             <Listbox

@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useContext, memo, useRef } from 'react';
-import { Input } from '@nextui-org/input';
+import { Input } from '@heroui/input';
 import { useIntl } from 'react-intl';
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import ImageGalleryUpload from './ImageGalleryUpload';
 import type { SearchImage } from '../../../common/types/image';
@@ -19,7 +19,15 @@ interface SearchBarInputProps {
   placementId: string;
 }
 
-const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, emitSearchBarCallback, imageUploadHandler, setShowDropdown, placementId, image }) => {
+const SearchBarInput: FC<SearchBarInputProps> = ({
+  query,
+  setQuery,
+  emitSearchBarCallback,
+  imageUploadHandler,
+  setShowDropdown,
+  placementId,
+  image,
+}) => {
   const { widgetConfig } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const searchBarRef = useRef<HTMLInputElement>(null);
@@ -34,7 +42,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, emitSearchBa
     <Input
       data-pw='sb-search-bar-input'
       ref={searchBarRef}
-      className='z-30'
+      className='z-5'
       classNames={{
         inputWrapper: cn('rounded-md bg-white w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
       }}

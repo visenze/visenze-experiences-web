@@ -1,16 +1,16 @@
 import type { ChangeEvent, FC, ReactElement } from 'react';
 import { useContext } from 'react';
-import { Accordion, AccordionItem } from '@nextui-org/accordion';
-import { Checkbox } from '@nextui-org/checkbox';
-import { Slider } from '@nextui-org/slider';
+import { Accordion, AccordionItem } from '@heroui/accordion';
+import { Checkbox } from '@heroui/checkbox';
+import { Slider } from '@heroui/slider';
 import type { Facet } from 'visearch-javascript-sdk';
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/button';
 import { useIntl } from 'react-intl';
 import type { FacetType } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { getFacetNameByKey, getTitleCase } from '../../../common/utils';
 import type { ScreenType } from '../icon-triggered-grid';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 
 /**
  * A component for selecting and applying product result filtering options.
@@ -25,7 +25,7 @@ interface FilterOptionsProps {
 }
 
 const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilters, setSelectedFilters, setScreen }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, customizations } = widgetConfig;
   const intl = useIntl();
 
@@ -94,12 +94,10 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
               key={facet.key}
               title={getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
               indicator={
-                <CustomizableIcon
-                    height={20}
-                    width={20}
-                    url={'https://cdn.visenze.com/images/chevron-left-icon.svg'}
-                    color={customizations.generalLayout?.fontColor}
-                />
+                <ChevronLeftIcon className='size-5'
+                                 color={darkMode
+                                   ? customizations.generalLayout?.fontColorDark
+                                   : customizations.generalLayout?.fontColor} />
               }
             >
               <div className='flex flex-col gap-y-2 px-4 pb-4'>

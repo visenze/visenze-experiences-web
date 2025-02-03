@@ -5,9 +5,9 @@ const { HotModuleReplacementPlugin } = require('webpack');
 const { env } = require('process');
 const getWebpackModule = require('./webpack.util');
 
-module.exports = (config) => {
-	const dir = config.dir;
-	const version = require(`./src/version`);
+module.exports = () => {
+	const dir = env.widget_dir;
+	const version = require('./src/version');
 	const packageName = dir.split('/').pop().replaceAll('-', '_');
 	const directory = `src/${dir}`;
 	return {

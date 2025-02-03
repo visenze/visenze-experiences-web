@@ -1,4 +1,4 @@
-import type { RecursivePartial, WidgetConfig } from '../../common/visenze-core';
+import type { RecursivePartial, WidgetConfig } from '../../common/wigmix-core';
 
 const customCss = `
 /* Insert the custom CSS here */
@@ -11,19 +11,12 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     endpoint: '',
   },
   searchSettings: {
-    attrs_to_get: [],
     facets_limit: 10,
     limit: 20,
   },
   displaySettings: {
     cssSelector: '.embedded-search-results-widget',
-    productDetails: {
-      mainImageUrl: '',
-      productUrl: '',
-      title: '',
-      price: '',
-      originalPrice: '',
-    },
+    productDetails: {},
   },
   customizations: {
     customCss,
@@ -33,7 +26,12 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
       console.log(`Successfully send event: ${action}`, params);
     },
   },
+  disableAnalytics: true,
 };
+
+// Set to true to retrieve the fields mappings from the backend.
+// If this is set to true, the subsequent devFieldMappings variable needs not be set.
+export const shouldRetrieveFieldsMapping = true;
 
 // Update according to your catalog's field mappings
 export const devFieldMappings: Record<string, string> = {
@@ -42,5 +40,4 @@ export const devFieldMappings: Record<string, string> = {
   title: 'title',
   price: 'price',
   original_price: 'original_price',
-  category: 'category',
 };

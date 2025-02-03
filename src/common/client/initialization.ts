@@ -1,8 +1,15 @@
 import type { ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import type { WidgetType, WidgetClient, WidgetConfig, RecursivePartial, Font } from '../visenze-core';
+import type {
+  WidgetType,
+  WidgetClient,
+  WidgetConfig,
+  RecursivePartial,
+  MultiViewportFont,
+  ColoredInterface,
+} from '../wigmix-core';
 import { DEFAULT_CONFIGS } from '../default-configs';
-import getWidgetClient from './product-search';
+import getWidgetClient from './widget-client';
 import { DEFAULT_ENDPOINT } from '../constants';
 
 export interface WidgetInitResult {
@@ -57,13 +64,9 @@ const isPlacementSkippable = (placementId: number | string | undefined): boolean
   return placementsToSkip.includes(placementId.toString());
 };
 
-export const setCssVariables = (config: WidgetConfig): void => {
+export const setCssVariables = (config: WidgetConfig, darkMode: boolean): void => {
   if (config.customizations) {
-    const fontCustomizations: Record<string, {
-      mobile: Font,
-      tablet: Font,
-      desktop: Font,
-    } | undefined> = {
+    const fontCustomizations: Record<string, MultiViewportFont | undefined> = {
       heading: config.customizations.generalLayout?.headingFont,
       body: config.customizations.generalLayout?.bodyFont,
       productCardTitle: config.customizations.productCard?.title?.font,
@@ -71,10 +74,7 @@ export const setCssVariables = (config: WidgetConfig): void => {
       productCardPrice: config.customizations.productCard?.price?.font,
       productCardOriginalPrice: config.customizations.productCard?.originalPrice?.font,
     };
-    const colourCustomizations: Record<string, {
-      fontColor: string,
-      backgroundColor: string,
-    } | undefined> = {
+    const colorCustomizations: Record<string, ColoredInterface | undefined> = {
       primary: config.customizations.generalLayout,
       buttonPrimary: config.customizations.buttons?.primary,
       buttonSecondary: config.customizations.buttons?.secondary,
@@ -85,28 +85,36 @@ export const setCssVariables = (config: WidgetConfig): void => {
       if (!obj) {
         continue;
       }
-      for (const [deviceType, font] of Object.entries(obj)) {
+      for (const [viewportType, font] of Object.entries(obj)) {
         root.style.setProperty(
-          `--wigmix-${deviceType}-${targetElement}-fontSize`,
+          `--wigmix-${viewportType}-${targetElement}-fontSize`,
           font.size.toString() + 'px',
         );
-        root.style.setProperty(`--wigmix-${deviceType}-${targetElement}-fontWeight`, font.weight.toString());
+        root.style.setProperty(`--wigmix-${viewportType}-${targetElement}-fontWeight`, font.weight.toString());
       }
     }
 
-    for (const [colourType, obj] of Object.entries(colourCustomizations)) {
+    for (const [colorType, obj] of Object.entries(colorCustomizations)) {
       if (!obj) {
         continue;
       }
-      for (const [colourFieldName, colourNameValue] of Object.entries(obj)) {
-        let colourName = '';
-        if (colourFieldName === 'fontColor') {
-          colourName = 'text';
-        } else if (colourFieldName === 'backgroundColor') {
-          colourName = 'background';
+      for (const [colorFieldName, colorNameValue] of Object.entries(obj)) {
+        let colorName = '';
+        if (darkMode) {
+          if (colorFieldName === 'fontColorDark') {
+            colorName = 'text';
+          } else if (colorFieldName === 'backgroundColorDark') {
+            colorName = 'background';
+          }
+        } else {
+          if (colorFieldName === 'fontColor') {
+            colorName = 'text';
+          } else if (colorFieldName === 'backgroundColor') {
+            colorName = 'background';
+          }
         }
-        if (colourName) {
-          root.style.setProperty(`--wigmix-${colourName}-${colourType}`, colourNameValue);
+        if (colorName) {
+          root.style.setProperty(`--wigmix-${colorName}-${colorType}`, colorNameValue);
         }
       }
     }
@@ -114,10 +122,16 @@ export const setCssVariables = (config: WidgetConfig): void => {
 };
 
 /*
- * Populate product details with alias names in field mappings
- * Assign the alias names to attrs_to_get in searchSettings
+ * Populates product details with alias names in field mappings and
+ * assigns the alias names to attrs_to_get in searchSettings
  */
 const populateProductDetailsAndAttrsToGet = (config: WidgetConfig, fieldMappings: Record<string, string>): WidgetConfig => {
+  const productDetailsToOverride: Record<string, string> = {};
+  Object.keys(config.displaySettings.productDetails || {}).forEach((key) => {
+    if (config.displaySettings.productDetails[key]) {
+      productDetailsToOverride[key] = config.displaySettings.productDetails[key];
+    }
+  });
   config.displaySettings.productDetails = {
     ...fieldMappings,
     main_image_url: fieldMappings['main_image_url'] || '',
@@ -130,25 +144,32 @@ const populateProductDetailsAndAttrsToGet = (config: WidgetConfig, fieldMappings
     gender: fieldMappings['gender'] || '',
     sizes: fieldMappings['sizes'] || '',
     colors: fieldMappings['colors'] || '',
+    ...productDetailsToOverride,
   };
-  config.searchSettings.attrs_to_get = Object.values(config.displaySettings.productDetails).filter(value => Boolean(value));
+  if (!config.searchSettings['attrs_to_get'] || config.searchSettings['attrs_to_get'].length === 0) {
+    config.searchSettings['attrs_to_get'] = Object.values(config.displaySettings.productDetails).filter(value => Boolean(value));
+  }
 
   return config;
 };
 
 
-export const init = (
+const init = (
   initConfig: WidgetConfig,
   fieldMappings: Record<string, string>,
   widgetType: WidgetType,
   widgetVersion: string,
+  customizations: WidgetConfig['customizations'],
 ): WidgetInitResult | undefined => {
   if (isPlacementSkippable(initConfig.appSettings.placementId)) {
     return;
   }
 
-  let config = deepMerge(initConfig, DEFAULT_CONFIGS);
-  setCssVariables(config);
+  let config = deepMerge(initConfig, {
+    ...DEFAULT_CONFIGS,
+    customizations,
+  });
+  setCssVariables(config, config.customizations.generalLayout.darkModeDefault);
   config = populateProductDetailsAndAttrsToGet(config, fieldMappings);
   const widgetClient = getWidgetClient(config, widgetType, widgetVersion);
   return { widgetClient, fieldMappings, config };
@@ -183,6 +204,9 @@ const render = (
     renderer: WidgetRenderer,
     isMultiRender: boolean,
 ): void => {
+  // Clear all existing render roots
+  client.getRenderRoots().forEach((r) => r.unmount());
+
   const roots: Root[] = [];
 
   if (isMultiRender) {
@@ -194,15 +218,15 @@ const render = (
     });
   } else {
     const element = getRenderElement(config);
-    if (!element) {
-      throw new Error('Element not found');
+    if (element) {
+      const root = createRoot(element);
+      root.render(renderer({ config, fieldMappings, client, index: 0, element }));
+      roots.push(root);
     }
-    const root = createRoot(element);
-    root.render(renderer({ config, fieldMappings, client, index: 0, element }));
-    roots.push(root);
   }
 
   client.setRenderRoots(roots);
+  client.markAsRendered(roots.length > 0);
 };
 
 export const initWidgetFactory = (
@@ -210,9 +234,10 @@ export const initWidgetFactory = (
     widgetVersion: string,
     renderer: WidgetRenderer,
     isMultiRender: boolean,
+    customizations: WidgetConfig['customizations'],
 ): WidgetInitializer => {
   return (initConfig, fieldMappings, skipRender) => {
-    const result = init(initConfig, fieldMappings, widgetType, widgetVersion);
+    const result = init(initConfig, fieldMappings, widgetType, widgetVersion, customizations);
     if (!result) {
       return undefined;
     }
@@ -243,6 +268,7 @@ export const devInitWidget = async (
     fieldsMappingParam: Record<string, string>,
     shouldRetrieveFieldsMapping: boolean,
     window: Window,
+    customizations: WidgetConfig['customizations'],
 ): Promise<void> => {
   let fieldsMapping = fieldsMappingParam;
   if (shouldRetrieveFieldsMapping) {
@@ -253,7 +279,7 @@ export const devInitWidget = async (
     fieldsMapping = widgetConfigObject.fields_mappings;
   }
 
-  const result = init(devConfigs as WidgetConfig, fieldsMapping, widgetType, widgetVersion);
+  const result = init(devConfigs as WidgetConfig, fieldsMapping, widgetType, widgetVersion, customizations);
   if (!result) {
     return;
   }
@@ -267,5 +293,5 @@ export const devInitWidget = async (
     }
     render(widgetClient, fieldsMapping, config, renderer, isMultiRender);
   };
-  window.widget = widgetClient;
+  window['widget'] = widgetClient;
 };

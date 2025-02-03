@@ -1,12 +1,12 @@
 import React, { useContext, type ChangeEvent, type FC, type ReactElement, useState, useEffect, useRef } from 'react';
-import { Accordion, AccordionItem } from '@nextui-org/accordion';
+import { Accordion, AccordionItem } from '@heroui/accordion';
 import type { Facet } from 'visearch-javascript-sdk';
-import { Slider } from '@nextui-org/slider';
-import { Checkbox } from '@nextui-org/checkbox';
+import { Slider } from '@heroui/slider';
+import { Checkbox } from '@heroui/checkbox';
 import type { FacetType } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { getFacetNameByKey, getTitleCase } from '../../../common/utils';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 
 interface FilterOptionsProps {
   facets: Facet[];
@@ -27,7 +27,7 @@ const ChevronDownIcon = (): ReactElement => (
   );
 
 const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSelectedFilters, displayAsDropdown }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, customizations } = widgetConfig;
   const [shownFacets, setShownFacets] = useState<Record<string, boolean>>({});
 
@@ -155,12 +155,10 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
               key={facet.key}
               title={getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
               indicator={
-                <CustomizableIcon
-                    height={20}
-                    width={20}
-                    url={'https://cdn.visenze.com/images/chevron-left-icon.svg'}
-                    color={customizations.generalLayout?.fontColor}
-                />
+                <ChevronLeftIcon className='size-5'
+                                 color={darkMode
+                                   ? customizations.generalLayout?.fontColorDark
+                                   : customizations.generalLayout?.fontColor} />
               }
             >
               <div className='flex flex-col gap-y-2 px-4 pb-4'>

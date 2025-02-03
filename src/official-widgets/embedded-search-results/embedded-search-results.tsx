@@ -1,18 +1,16 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useEffect, useRef, useContext, useState, useLayoutEffect } from 'react';
 import type { ProductSearchResponse, Facet } from 'visearch-javascript-sdk';
-import { Button } from '@nextui-org/button';
 import { useIntl } from 'react-intl';
-import { Spinner } from '@nextui-org/spinner';
-import { cn } from '@nextui-org/theme';
+import { Spinner } from '@heroui/spinner';
+import { cn } from '@heroui/theme';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { getFacets, getFilterQueries, getFlattenProducts } from '../../common/utils';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Category } from '../../common/types/tracking-constants';
-import Result from './components/Result';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import type { FacetType } from '../../common/types/constants';
-import type { WidgetConfig } from '../../common/visenze-core';
 import FilterOptions from './components/FilterOptions';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import FilterIcon from '../../common/icons/FilterIcon';
@@ -23,14 +21,13 @@ import type { SearchHistoryEntry } from './components/SearchHistory';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface EmbeddedSearchResultProps {
-  config: WidgetConfig;
   textQuery: string;
   imUrl: string;
 }
 
-const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuery, imUrl }): ReactElement => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
-  const { displaySettings, searchSettings } = widgetConfig;
+const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl }): ReactElement => {
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
@@ -131,7 +128,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.productsPerRow) {
@@ -150,7 +147,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
 
   const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
         cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
@@ -182,12 +179,12 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
     };
 
     if (text) {
-      params.q = text;
+      params['q'] = text;
     }
     if (imgUrl) {
-      params.im_url = imgUrl;
+      params['im_url'] = imgUrl;
     }
-    params.limit = 24; // hardcode for now
+    params['limit'] = 24; // hardcode for now
 
     widgetClient.multisearchByImage(params, handleSuccess, handleError);
 
@@ -376,30 +373,29 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
 
         <div className='flex size-full flex-col justify-center md:flex-row'>
           {/* Filter Section Mobile */}
-          <div className='w-full bg-white px-2 py-1 md:hidden md:px-0'>
-            <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowMobileFilterOptions(true)}>
-              <FilterIcon className='size-5'/>
-              <span className='text-black'>
-                {intl.formatMessage({ id: 'filter' })}
-              </span>
-            </Button>
-
-            <ViSenzeModal
+          <div className='w-full bg-white p-2 md:hidden md:px-0 cursor-pointer flex gap-2 mb-2 items-center'
+               onClick={() => setShowMobileFilterOptions(true)}>
+            <FilterIcon className='size-5'/>
+            <span className='text-black'>
+              {intl.formatMessage({ id: 'filter' })}
+            </span>
+          </div>
+          <ViSenzeModal
               className='bottom-0 top-[unset] h-4/5'
               open={showMobileFilterOptions} layout='mobile'
               onClose={() => setShowMobileFilterOptions(false)}
               position='center'
-              placementId={`${config.appSettings.placementId}`}
-              fontFamily={config.customizations.generalLayout?.fontFamily}
-            >
-              <FilterOptions
+              placementId={`${appSettings.placementId}`}
+              darkMode={darkMode}
+              fontFamily={customizations.generalLayout?.fontFamily}
+          >
+            <FilterOptions
                 displayAsDropdown={false}
                 facets={facets}
                 selectedFilters={selectedFilters}
                 setSelectedFilters={setSelectedFilters}
-              />
-            </ViSenzeModal>
-          </div>
+            />
+          </ViSenzeModal>
 
           <div className='flex w-full flex-col'>
             {/* Product Result Grid */}
@@ -425,17 +421,16 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
                             </div>
                           )}
                           {productResults.map((result, index) => (
-                            <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
-                              <Result
-                                index={index}
-                                result={result}
-                                findSimilarClickHandler={(imgUrl) => {
-                                  if (!isLoading) {
-                                    findSimilarClickHandler(imgUrl);
-                                  }
-                                }}
-                              />
-                            </div>
+                              <ProductCard key={`${result.product_id}-${index}`} index={index}
+                                           result={result}
+                                           onFindSimilar={(data) => {
+                                             if (!isLoading) {
+                                               findSimilarClickHandler(data.im_url);
+                                             }
+                                           }}
+                                           isRecommendation={true}
+                                           hasFindSimilar={true}
+                                           pwPrefix='esr' />
                           ))}
                         </div>
                         : <div className={cn(

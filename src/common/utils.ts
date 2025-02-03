@@ -2,7 +2,7 @@ import type { Product, ProductSearchResponseSuccess, ProductType } from 'visearc
 import type { CroppedBox } from './types/box';
 import type { ProcessedProduct } from './types/product';
 import { FacetType, SortType } from './types/constants';
-import type { WidgetConfig } from './visenze-core';
+import type { WidgetConfig } from './wigmix-core';
 
 export const getFlattenProduct = (result: Product): ProcessedProduct => {
   return {
@@ -38,25 +38,6 @@ const removeDecimalPlace = (value: number): string => {
   return value.toString().split('.')[0];
 };
 
-export const getURL = (
-  productUrl: string | null | undefined,
-  trackingMeta: Record<string, any>,
-  isRecommendation: boolean,
-): URL | null => {
-  if (!productUrl) {
-    return null;
-  }
-  const url = new URL(String(productUrl));
-  // For recommendation widgets, we set the query ID, product ID, and position in the URL.
-  // This allows other recommendation widgets on the page to use these values as the source for their tracking events.
-  if (isRecommendation) {
-    url.searchParams.set('vsFromReqId', trackingMeta.queryId);
-    url.searchParams.set('vsFromPid', trackingMeta.pid);
-    url.searchParams.set('vsFromPos', trackingMeta.pos);
-  }
-  return url;
-};
-
 export const parseToProductTypes = (res: ProductSearchResponseSuccess): ProductType[] => {
   if (res.product_types?.length) {
     return res.product_types;
@@ -90,7 +71,9 @@ export const getSortTypeIntlId = (sortType: SortType): string => {
 };
 
 export const getTitleCase = (text: string): string => {
-  if (!text) return '';
+  if (!text) {
+    return '';
+  }
 
   const textLowerCase = text.toLowerCase();
   return textLowerCase.charAt(0).toUpperCase() + textLowerCase.slice(1);
@@ -134,22 +117,22 @@ export const getFilterQueries = (productDetails: WidgetConfig['displaySettings']
   };
 
   if (filters.price.length > 0) {
-    filterQueries.push(`${productDetails.price}:${filters.price[0]},${filters.price[1]}`);
+    filterQueries.push(`${productDetails['price']}:${filters.price[0]},${filters.price[1]}`);
   }
   if (filters.category.size > 0) {
-    filterQueries.push(`${productDetails.category}:${Array.from(addQuotesToStrings(filters.category)).join(' OR ')}`);
+    filterQueries.push(`${productDetails['category']}:${Array.from(addQuotesToStrings(filters.category)).join(' OR ')}`);
   }
   if (filters.gender.size > 0) {
-    filterQueries.push(`${productDetails.gender}:${Array.from(addQuotesToStrings(filters.gender)).join(' OR ')}`);
+    filterQueries.push(`${productDetails['gender']}:${Array.from(addQuotesToStrings(filters.gender)).join(' OR ')}`);
   }
   if (filters.brand.size > 0) {
-    filterQueries.push(`${productDetails.brand}:${Array.from(addQuotesToStrings(filters.brand)).join(' OR ')}`);
+    filterQueries.push(`${productDetails['brand']}:${Array.from(addQuotesToStrings(filters.brand)).join(' OR ')}`);
   }
   if (filters.colors.size > 0) {
-    filterQueries.push(`${productDetails.colors}:${Array.from(addQuotesToStrings(filters.colors)).join(' OR ')}`);
+    filterQueries.push(`${productDetails['colors']}:${Array.from(addQuotesToStrings(filters.colors)).join(' OR ')}`);
   }
   if (filters.sizes.size > 0) {
-    filterQueries.push(`${productDetails.sizes}:${Array.from(addQuotesToStrings(filters.sizes)).join(' OR ')}`);
+    filterQueries.push(`${productDetails['sizes']}:${Array.from(addQuotesToStrings(filters.sizes)).join(' OR ')}`);
   }
 
   return filterQueries;

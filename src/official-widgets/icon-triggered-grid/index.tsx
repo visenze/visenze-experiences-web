@@ -1,7 +1,8 @@
 import version from '../../version';
 import { deepMerge, initWidgetFactory } from '../../common/client/initialization';
-import { WidgetType } from '../../common/visenze-core';
+import { WidgetType } from '../../common/wigmix-core';
 import App from './app';
+import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 
 // eslint-disable-next-line func-names
 (function (context: Window): void {
@@ -12,8 +13,11 @@ import App from './app';
     initWidget: initWidgetFactory(
         WidgetType.ICON_TRIGGERED_GRID,
         version,
-        ({ config, client, index, element, fieldMappings }) => <App config={config} fieldMappings={fieldMappings} widgetClient={client} index={index} element={element}></App>,
+        ({ config, client, index, element, fieldMappings }) => (
+            <App widgetConfig={config} fieldMappings={fieldMappings} widgetClient={client} index={index} element={element} />
+        ),
         true,
+        DEFAULT_CUSTOMIZATIONS,
     ),
     deepMerge,
   };

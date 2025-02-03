@@ -1,7 +1,7 @@
 import type { FC, ReactElement } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import ReactModal from 'react-modal';
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 import ShadowWrapper, { RootContext } from '../shadow-wrapper';
 import Portal from '../portal';
 import './modal.scss';
@@ -67,12 +67,13 @@ interface VisenzeModalProps {
   className?: string;
   placementId: string;
   idSuffix?: string;
+  darkMode: boolean;
   fontFamily: string;
 }
 
 const ViSenzeModal: FC<VisenzeModalProps> = (props) => (
     <Portal idName={`visenze-widget-modal-portal-${props.placementId}${props.idSuffix ? `-${props.idSuffix}` : ''}`}>
-      <ShadowWrapper fontFamily={props.fontFamily}>
+      <ShadowWrapper darkMode={props.darkMode} fontFamily={props.fontFamily}>
         <Modal {...props} />
       </ShadowWrapper>
     </Portal>

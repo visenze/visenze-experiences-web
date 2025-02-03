@@ -24,7 +24,7 @@ Using version number `x.y.z` as example:
 The following internal implementations are covered under versioning policy:
 
 - `wigmix-*` class names.
-- All fields under `WidgetConfig` structure.
+- All fields under `WidgetClient` and `WidgetConfig` structures, except those marked as `@internal`.
 
 The following internal implementations are not covered under versioning policy and can change anytime:
 

@@ -1,10 +1,11 @@
 import type { FC, ReactElement } from 'react';
-import type { Icon } from '../visenze-core';
 
-interface CustomizableIconProps extends Icon {
+interface CustomizableIconProps {
+  url: string;
+  color?: string;
   height?: number;
   width?: number;
-  className?: string
+  className?: string;
   onClickHandler?: (event: any) => void;
 }
 

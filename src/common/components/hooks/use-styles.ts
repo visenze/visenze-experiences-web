@@ -17,18 +17,18 @@ const useStyles = (root: HTMLElement | null): void => {
         style.innerHTML = styleTag.innerHTML;
         root.appendChild(style);
       }
+      if (platformSettings && platformSettings.customCss) {
+        const platformCustomCss = document.createElement('style');
+        platformCustomCss.id = `wigmix-custom-css-platform-${platformSettings.platformName.toLowerCase()}`;
+        platformCustomCss.innerHTML = platformSettings.customCss;
+        root.appendChild(platformCustomCss);
+      }
       if (customizations && customizations.customCss) {
         const customCss = document.createElement('style');
         customCss.id = 'wigmix-custom-css-user';
         customCss.innerHTML = customizations.customCss;
         root.appendChild(customCss);
         setCustomCssElement(customCss);
-      }
-      if (platformSettings && platformSettings.customCss) {
-        const platformCustomCss = document.createElement('style');
-        platformCustomCss.id = `wigmix-custom-css-platform-${platformSettings.platformName.toLowerCase()}`;
-        platformCustomCss.innerHTML = platformSettings.customCss;
-        root.appendChild(platformCustomCss);
       }
     }
   }, [root]);

@@ -36,6 +36,9 @@ const useAutocomplete = ({
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else if (res?.status === 'OK') {
+      if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+        widgetConfig.callbacks.preprocessResponse(res);
+      }
       setError('');
       const newMetadata = {
         cat: Category.RESULT,
@@ -64,14 +67,14 @@ const useAutocomplete = ({
       ...searchSettings,
       return_query_temp_url: true,
     };
-    params.q = query;
+    params['q'] = query;
 
     if (image) {
       if (isImageUrl(image)) {
-        params.im_url = image.imgUrl;
+        params['im_url'] = image.imgUrl;
       } else if (isImageFile(image)) {
         const [file] = image.files;
-        params.image = file;
+        params['image'] = file;
       }
     }
 

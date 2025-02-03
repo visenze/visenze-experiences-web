@@ -1,24 +1,24 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { Button } from '@nextui-org/button';
-import { Input } from '@nextui-org/input';
-import { Listbox, ListboxItem } from '@nextui-org/listbox';
+import { Input } from '@heroui/input';
+import { Listbox, ListboxItem } from '@heroui/listbox';
 import { useSwipeable } from 'react-swipeable';
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import FileDropzone from '../../../common/components/FileDropzone';
 import { ScreenType } from '../../../common/types/constants';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
-import Result from '../components/Result';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import Footer from '../../../common/components/Footer';
 import Header from '../components/Header';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import HotspotContainer from '../../../common/components/hotspots/hotspot-container';
 import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
+import ChevronUpIcon from '../../../common/icons/ChevronUpIcon';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -35,7 +35,7 @@ interface ResultScreenProps {
   searchHistory: SearchImage[];
   setSearchHistory: (searchHistory: SearchImage[]) => void;
   onTextSearch: (text: string) => void;
-  onImageSearch: (data: SearchImage) => void;
+  onFindSimilar: (data: SearchImage) => void;
   onImageUpload: (img: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
 }
@@ -44,13 +44,13 @@ const ResultScreen: FC<ResultScreenProps> = ({
   onModalClose,
   setScreen,
   onTextSearch = (): void => {},
-  onImageSearch = (): void => {},
+  onFindSimilar = (): void => {},
   onImageUpload,
   onKeywordUpdate,
   searchHistory,
   setSearchHistory,
 }) => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const { productResults, autocompleteResults } = useContext(WidgetResultContext);
   const [search, setSearch] = useState<string>('');
@@ -83,10 +83,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
       return image.file;
     }
     return '';
-  };
-
-  const clearSearch = (): void => {
-    setSearch('');
   };
 
   const getReferenceImage = (): string => {
@@ -131,10 +127,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
     setScreen(ScreenType.UPLOAD);
   };
 
-  const onClickMoreLikeThisHandler = (queryImage: SearchImage): void => {
-    onImageSearch(queryImage);
-  };
-
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
     const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
@@ -174,7 +166,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
     <div className='flex h-full flex-col gap-8 md:hidden'>
       <Header onCloseHandler={onModalClose} onBackHandler={onBackHandler} isResultScreen={true}
               showTitle={customizations.generalLayout?.showWidgetTitle}
-              iconColor={customizations.generalLayout?.fontColor} />
+              iconColor={darkMode
+                ? customizations.generalLayout?.fontColorDark
+                : customizations.generalLayout?.fontColor} />
       <div className='relative h-screen grow overflow-hidden'>
         <div className='flex justify-center'
           {...minimizedDrawerHandler}
@@ -191,7 +185,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 key={`image-history-${index}`}
                 className='aspect-square w-1/5 object-cover'
                 src={getFile(searchImage)}
-                onClick={() => onClickMoreLikeThisHandler(searchImage)}
+                onClick={() => onFindSimilar(searchImage)}
                 data-pw={`cs-previous-views-image-${index + 1}`}
               />
             ))}
@@ -205,20 +199,21 @@ const ResultScreen: FC<ResultScreenProps> = ({
           )}
           {...minimizedDrawerHandler}>
           <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
-            <Button
-              isIconOnly
-              radius='full'
-              className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary'
-              onClick={(): void => toggleFullResults()}
-              data-pw='cs-arrow-button'>
-              <CustomizableIcon
-                  height={24}
-                  width={24}
-                  url={`https://cdn.visenze.com/images/arrow-${showFullResults ? 'down' : 'up'}-icon.svg`}
-                  color={customizations.buttons?.primary?.fontColor}
-                  className='cursor-pointer'
-              />
-            </Button>
+            <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
+                 onClick={(): void => toggleFullResults()}
+                 data-pw='cs-arrow-button'>
+              {showFullResults ? (
+                  <ChevronDownIcon color={darkMode
+                                     ? (customizations.buttons?.primary?.fontColorDark || '')
+                                     : (customizations.buttons?.primary?.fontColor || '')}
+                                   className='cursor-pointer size-6' />
+              ) : (
+                  <ChevronUpIcon color={darkMode
+                                   ? (customizations.buttons?.primary?.fontColorDark || '')
+                                   : (customizations.buttons?.primary?.fontColor || '')}
+                                 className='cursor-pointer size-6' />
+              )}
+            </div>
           </div>
 
           <div ref={resultsRef} className='no-scrollbar flex size-full justify-center overflow-y-auto md:hidden'>
@@ -227,9 +222,16 @@ const ResultScreen: FC<ResultScreenProps> = ({
               style={getProductGridCssConfig()}
               data-pw='cs-product-result-grid'>
               {productResults.map((result, index) => (
-                <div key={result.product_id} className='border-gray-300'>
-                  <Result onImageSearch={onImageSearch} clearSearch={clearSearch} index={index} result={result} />
-                </div>
+                  <ProductCard key={`${result.product_id}-${index}`}
+                               onFindSimilar={(data) => {
+                                 setSearch('');
+                                 return onFindSimilar({ imgUrl: data.im_url });
+                               }}
+                               index={index}
+                               result={result}
+                               isRecommendation={false}
+                               hasFindSimilar={true}
+                               pwPrefix='cs' />
               ))}
             </div>
           </div>
@@ -278,12 +280,14 @@ const ResultScreen: FC<ResultScreenProps> = ({
     <div className='hidden md:block md:overflow-hidden lg:rounded-t-3xl'>
       <Header onCloseHandler={onModalClose} onBackHandler={onBackHandler} isResultScreen={true}
               showTitle={customizations.generalLayout?.showWidgetTitle}
-              iconColor={customizations.generalLayout?.fontColor} />
+              iconColor={darkMode
+                ? customizations.generalLayout?.fontColorDark
+                : customizations.generalLayout?.fontColor} />
       <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
           <div className='relative left-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8'>
             <div className='flex h-9/10 flex-col justify-between px-2'>
-              <div className='wigmix-reference-image flex w-full flex-col items-center rounded-3xl border border-gray-300 pt-2 text-center'>
+              <div className='wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 pt-2 text-center'>
                 <HotspotContainer className='w-3/5' referenceImage={getReferenceImage()} />
 
                 <FileDropzone onImageUpload={onImageUpload} name='upload-icon'>
@@ -308,7 +312,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                           key={`image-history-${index}`}
                           className='aspect-square w-1/3 cursor-pointer rounded-lg object-cover'
                           src={getFile(searchImage)}
-                          onClick={() => onClickMoreLikeThisHandler(searchImage)}
+                          onClick={() => onFindSimilar(searchImage)}
                           data-pw={`cs-previous-views-image-${index + 1}`}
                         />
                       ))}
@@ -367,7 +371,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       setSearch('');
                       onTextSearch('');
                     }}
-                    data-pw='ss-refinement-text-bar'
+                    data-pw='cs-refinement-text-bar'
                   />
                 </div>
               </div>
@@ -378,10 +382,16 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    style={getProductGridCssConfig()}
                    data-pw='cs-product-result-grid'>
                 {productResults.map((result, index) => (
-                  <div key={result.product_id}>
-                    <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
-                            result={result}/>
-                  </div>
+                    <ProductCard key={`${result.product_id}-${index}`}
+                                 onFindSimilar={(data) => {
+                                   setSearch('');
+                                   return onFindSimilar({ imgUrl: data.im_url });
+                                 }}
+                                 index={index}
+                                 result={result}
+                                 isRecommendation={false}
+                                 hasFindSimilar={true}
+                                 pwPrefix='cs' />
                 ))}
               </div>
             </div>

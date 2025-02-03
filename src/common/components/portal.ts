@@ -1,9 +1,9 @@
-import * as ReactDOM from 'react-dom';
-import type { FC } from 'react';
+import { createPortal } from 'react-dom';
+import type { FC, ReactElement } from 'react';
 import { useState, useEffect } from 'react';
 
 interface PortalProps {
-  children: JSX.Element | JSX.Element[];
+  children: ReactElement | ReactElement[];
   className?: string;
   idName?: string;
   element?: string;
@@ -31,7 +31,7 @@ const Portal: FC<PortalProps> = ({ children, className, idName, element = 'div' 
     };
   }, []);
 
-  return ReactDOM.createPortal(children, container);
+  return createPortal(children, container);
 };
 
 export default Portal;

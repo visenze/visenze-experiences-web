@@ -1,20 +1,20 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useSwipeable } from 'react-swipeable';
-import { Button } from '@nextui-org/button';
-import { Input } from '@nextui-org/input';
-import { Listbox, ListboxItem } from '@nextui-org/listbox';
-import { cn } from '@nextui-org/theme';
+import { Input } from '@heroui/input';
+import { Listbox, ListboxItem } from '@heroui/listbox';
+import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
-import Result from '../components/Result';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import Footer from '../../../common/components/Footer';
 import Header from '../components/Header';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
+import ChevronUpIcon from '../../../common/icons/ChevronUpIcon';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -28,7 +28,7 @@ const swipeConfig = {
 interface ResultScreenProps {
   onModalClose: () => void;
   onTextSearch: (text: string) => void;
-  onImageSearch: (data: SearchImage) => void;
+  onFindSimilar: (data: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
   searchHistory: SearchImage[];
 }
@@ -36,11 +36,11 @@ interface ResultScreenProps {
 const ResultScreen: FC<ResultScreenProps> = ({
   onModalClose,
   onTextSearch = (): void => {},
-  onImageSearch = (): void => {},
+  onFindSimilar = (): void => {},
   onKeywordUpdate,
   searchHistory,
 }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const { productResults, image, autocompleteResults } = useContext(WidgetResultContext);
   const [search, setSearch] = useState<string>('');
@@ -117,10 +117,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
     return cssConfig;
   };
 
-  const onClickMoreLikeThisHandler = (queryImage: SearchImage): void => {
-    onImageSearch(queryImage);
-  };
-
   const minimizedDrawerHandler = useSwipeable({
     onSwipedUp: () => setShowFullResults(true),
     ...swipeConfig,
@@ -154,7 +150,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
     <div className='flex h-full flex-col gap-8 md:hidden'>
       <Header onCloseHandler={onModalClose}
               showTitle={customizations.generalLayout?.showWidgetTitle}
-              iconColor={customizations.generalLayout?.fontColor} />
+              iconColor={darkMode
+                ? customizations.generalLayout?.fontColorDark
+                : customizations.generalLayout?.fontColor} />
       <div className='relative h-screen grow overflow-hidden'>
         <div className='flex justify-center'
           {...minimizedDrawerHandler}
@@ -172,9 +170,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {searchHistory?.map((searchImage, index) => (
               <img
                 key={`image-history-${index}`}
-                className='wigmix-search-history-image aspect-square w-1/5 object-cover'
+                className='aspect-square w-1/5 object-cover'
                 src={getFile(searchImage)}
-                onClick={() => onClickMoreLikeThisHandler(searchImage)}
+                onClick={() => onFindSimilar(searchImage)}
                 data-pw={`ss-previous-views-image-${index + 1}`}
               />
             ))}
@@ -188,21 +186,22 @@ const ResultScreen: FC<ResultScreenProps> = ({
           )}
           {...minimizedDrawerHandler}>
           <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
-            <Button
-              isIconOnly
-              radius='full'
-              className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary'
-              onClick={(): void => toggleFullResults()}
-              data-pw='ss-arrow-button'
+            <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
+                 onClick={(): void => toggleFullResults()}
+                 data-pw='ss-arrow-button'
             >
-              <CustomizableIcon
-                  height={24}
-                  width={24}
-                  url={`https://cdn.visenze.com/images/arrow-${showFullResults ? 'down' : 'up'}-icon.svg`}
-                  color={customizations.buttons?.primary?.fontColor}
-                  className='cursor-pointer'
-              />
-            </Button>
+              {showFullResults ? (
+                  <ChevronDownIcon color={darkMode
+                                     ? (customizations.buttons?.primary?.fontColorDark || '')
+                                     : (customizations.buttons?.primary?.fontColor || '')}
+                                   className='cursor-pointer size-6' />
+              ) : (
+                  <ChevronUpIcon color={darkMode
+                                   ? (customizations.buttons?.primary?.fontColorDark || '')
+                                   : (customizations.buttons?.primary?.fontColor || '')}
+                                 className='cursor-pointer size-6' />
+              )}
+            </div>
           </div>
 
           <div ref={resultsRef} className='no-scrollbar flex size-full justify-center overflow-y-auto'>
@@ -212,14 +211,16 @@ const ResultScreen: FC<ResultScreenProps> = ({
               data-pw='ss-product-result-grid'
             >
               {productResults.map((result, index) => (
-                <div key={result.product_id} className='border-gray-300'>
-                  <Result
-                    onImageSearch={onImageSearch}
-                    clearSearch={() => setSearch('')}
-                    index={index}
-                    result={result}
-                  />
-                </div>
+                  <ProductCard key={`${result.product_id}-${index}`}
+                               onFindSimilar={(data) => {
+                                 setSearch('');
+                                 return onFindSimilar({ imgUrl: data.im_url });
+                               }}
+                               index={index}
+                               result={result}
+                               isRecommendation={false}
+                               hasFindSimilar={true}
+                               pwPrefix='ss' />
               ))}
             </div>
           </div>
@@ -268,7 +269,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
     <div className='hidden md:block'>
       <Header onCloseHandler={onModalClose}
               showTitle={customizations.generalLayout?.showWidgetTitle}
-              iconColor={customizations.generalLayout?.fontColor} />
+              iconColor={darkMode
+                ? customizations.generalLayout?.fontColorDark
+                : customizations.generalLayout?.fontColor} />
       <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
           <div className='relative left-0 row-span-1 h-full w-1/4 py-4'>
@@ -291,7 +294,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                           key={`image-history-${index}`}
                           className='aspect-square w-1/3 cursor-pointer rounded-lg object-cover'
                           src={getFile(searchImage)}
-                          onClick={() => onClickMoreLikeThisHandler(searchImage)}
+                          onClick={() => onFindSimilar(searchImage)}
                           data-pw={`ss-previous-views-image-${index + 1}`}
                         />
                       ))}
@@ -361,10 +364,16 @@ const ResultScreen: FC<ResultScreenProps> = ({
                    style={getProductGridCssConfig()}
                    data-pw='ss-product-result-grid'>
                 {productResults.map((result, index) => (
-                  <div key={result.product_id}>
-                    <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
-                            result={result}/>
-                  </div>
+                    <ProductCard key={`${result.product_id}-${index}`}
+                                 onFindSimilar={(data) => {
+                                   setSearch('');
+                                   return onFindSimilar({ imgUrl: data.im_url });
+                                 }}
+                                 index={index}
+                                 result={result}
+                                 isRecommendation={false}
+                                 hasFindSimilar={true}
+                                 pwPrefix='ss' />
                 ))}
               </div>
             </div>

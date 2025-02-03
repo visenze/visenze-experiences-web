@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { WidgetClient } from '../src/common/visenze-core';
-import getWidgetClient from '../src/common/client/product-search';
+import { WidgetClient } from '../src/common/wigmix-core';
+import getWidgetClient from '../src/common/client/widget-client';
 import DEFAULT_CONFIGS from '../src/default-configs';
 
 let mockCallback: jest.Mock;

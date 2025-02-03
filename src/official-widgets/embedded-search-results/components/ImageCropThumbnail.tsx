@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 
 export default function ImageCropThumbnail({
   imageSrc,
@@ -48,7 +48,9 @@ export default function ImageCropThumbnail({
             canvas.height = parentRect.height;
           }
           const ctx = canvas.getContext('2d');
-          if (!ctx) return;
+          if (!ctx) {
+            return;
+          }
 
           ctx.drawImage(croppedImage, 0, 0, canvas.width, canvas.height);
         }

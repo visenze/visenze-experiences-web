@@ -1,10 +1,9 @@
 import type { CSSProperties, FC, ReactElement } from 'react';
 import { useContext, useRef, useState } from 'react';
-import { Button } from '@nextui-org/button';
-import { Image } from '@nextui-org/image';
-import { cn } from '@nextui-org/theme';
+import { Button } from '@heroui/button';
+import { cn } from '@heroui/theme';
 import type { ProcessedProduct } from '../../../common/types/product';
-import Result from './Result';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import CloseIcon from '../../../common/icons/CloseIcon';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { WidgetDataContext } from '../../../common/types/contexts';
@@ -79,7 +78,7 @@ const ResultsPage: FC<ResultsPageProps> = ({
     return cssConfig;
   };
 
-  const onClickMoreLikeThisHandler = (product: ProcessedProduct): void => {
+  const onFindSimilar = (product: ProcessedProduct): void => {
     handleMultisearchWithProduct(product);
     const isProductInHistory = productHistory.some((item) => item.product_id === product.product_id);
 
@@ -118,12 +117,9 @@ const ResultsPage: FC<ResultsPageProps> = ({
                 scrollToResultsTop();
               }}
               data-pw={`srp-${product.product_id === activeProduct?.product_id ? 'active-product' : 'inactive-product'}`}>
-              <Image
-                classNames={{ wrapper: 'h-full' }}
-                className='object-fit h-full rounded-none'
-                src={product.im_url}
-                data-pw={`srp-product-history-image-${index + 1}`}
-              />
+              <img className='h-full rounded-none object-fit'
+                   src={product.im_url}
+                   data-pw={`srp-product-history-image-${index + 1}`} />
               <button
                 className='absolute right-1 top-1 z-10 rounded-full bg-white p-1'
                 onClick={(event) => {
@@ -165,14 +161,13 @@ const ResultsPage: FC<ResultsPageProps> = ({
         overflow-y-auto px-3 py-4 md:gap-x-4 md:px-4`}
         style={getProductGridCssConfig()}>
         {results.map((result, index) => (
-          <div key={`${result.product_id}-${index}`} data-pw={`srp-product-result-card-${index + 1}`}>
-            <Result
-              key={result.product_id}
-              index={index}
-              result={result}
-              onClickMoreLikeThisHandler={onClickMoreLikeThisHandler}
-            />
-          </div>
+            <ProductCard key={`${result.product_id}-${index}`}
+                         index={index}
+                         result={result}
+                         isRecommendation={false}
+                         onFindSimilar={onFindSimilar}
+                         hasFindSimilar={true}
+                         pwPrefix='srp' />
         ))}
       </div>
     </div>

@@ -1,21 +1,22 @@
 import type { CSSProperties, FC } from 'react';
 import { useEffect, useCallback, useContext, useState } from 'react';
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/button';
 import { useIntl } from 'react-intl';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
-import { WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { type FacetType, SortType, WidgetBreakpoint } from '../../common/types/constants';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import Footer from '../../common/components/Footer';
-import Result from './components/Result';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import SortOptions from './components/SortOptions';
 import FilterOptions from './components/FilterOptions';
 import { getSortTypeIntlId } from '../../common/utils';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import CloseIcon from '../../common/icons/CloseIcon';
+import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 
 export enum ScreenType {
   SORT = 'sort',
@@ -23,15 +24,14 @@ export enum ScreenType {
 }
 
 interface IconTriggeredGridProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
   productId: string;
 }
 
-const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, productId }) => {
+const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
   const [screen, setScreen] = useState<ScreenType | null>(null);
   const [sortType, setSortType] = useState<SortType>(SortType.RELEVANCE);
   const defaultFilters = {
@@ -47,10 +47,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
   const intl = useIntl();
 
   const { productInfo, productResults, facets, metadata, error } = useRecommendationSearch({
-    widgetClient,
-    config,
     productId,
-    retryCount,
     sortType,
     filters: selectedFilters,
   });
@@ -58,7 +55,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
   const onModalClose = useCallback((): void => {
     setDialogVisible(false);
     setSortType(SortType.RELEVANCE);
-    setRetryCount(0);
     if (productResults.length > 0) {
       widgetClient.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
@@ -76,7 +72,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.productsPerRow) {
@@ -95,7 +91,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
 
   const getProductGridCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
         cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
@@ -110,9 +106,13 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
     return cssConfig;
   };
 
-  widgetClient.openWidget = (): void => {
-    setDialogVisible(true);
-  };
+  useEffect(() => {
+    widgetClient.registerWidgetOpener((id, bypassIdCheck) => {
+      if (id === productId || bypassIdCheck) {
+        setDialogVisible(true);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -130,52 +130,67 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
         productResults,
         metadata,
       }}>
-      <CustomizableIcon
-          height={24}
-          width={24}
-          url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/grid-trigger-icon.svg'}
-          color={config.customizations.popup?.triggerIcon?.color || ''}
-          className='wigmix-popup-trigger-icon cursor-pointer'
-          onClickHandler={onPopupIconClick}
-      />
+      {!customizations.popup?.triggerIcon?.hide && (
+          <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+               onClick={onPopupIconClick}>
+            {customizations.popup?.triggerIcon?.url ? (
+                <CustomizableIcon
+                    height={24}
+                    width={24}
+                    url={customizations.popup.triggerIcon.url}
+                    color={darkMode
+                      ? (customizations.popup?.triggerIcon?.colorDark || '')
+                      : (customizations.popup?.triggerIcon?.color || '')}
+                    className='wigmix-popup-trigger-icon'
+                />
+            ) : (
+                <MagnifyingGlassIcon color={darkMode
+                                       ? (customizations.popup?.triggerIcon?.colorDark || '')
+                                       : (customizations.popup?.triggerIcon?.color || '')}
+                                     className='wigmix-popup-trigger-icon size-6' />
+            )}
+          </div>
+      )}
 
       <ViSenzeModal
         open={dialogVisible}
         layout={breakpoint}
         onClose={onModalClose}
-        position={config.customizations.popup?.position || 'center'}
-        fontFamily={config.customizations.generalLayout?.fontFamily}
-        placementId={`${config.appSettings.placementId}`}>
+        position={customizations.popup?.position || 'center'}
+        darkMode={darkMode}
+        fontFamily={customizations.generalLayout?.fontFamily}
+        placementId={`${appSettings.placementId}`}>
         <div className='relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1'>
           {/* Close Button */}
-          <Button
-            isIconOnly
-            className='absolute right-3 top-3 z-10 border-none bg-transparent'
+          <div
+            className='absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90'
             onClick={onModalClose}
             data-pw='itg-close-button'>
-            <CustomizableIcon
-                height={24}
-                width={24}
-                url={'https://cdn.visenze.com/images/close-icon.svg'}
-                color={config.customizations.generalLayout?.fontColor}
-            />
-          </Button>
+            <CloseIcon className='size-6'
+                       color={darkMode
+                         ? customizations.generalLayout?.fontColorDark
+                         : customizations.generalLayout?.fontColor} />
+          </div>
 
           <div className='flex flex-col border-none p-4 md:w-3/10 md:px-10 md:py-6'>
             {/* Widget Title */}
-            {config.customizations.generalLayout?.showWidgetTitle && (
+            {customizations.generalLayout?.showWidgetTitle && (
               <div className='wigmix-widget-title text-primary' data-pw='itg-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
             )}
 
             {/* Reference Product */}
             {productInfo && (
-              <div className='wigmix-reference-image pt-4 md:pt-8' data-pw='itg-reference-product'>
-                <Result index={0} result={productInfo} isReferenceProduct={true} />
+              <div className='wigmix-reference-image-container pt-4 md:pt-8' data-pw='itg-reference-product'>
+                <img
+                    className='wigmix-reference-image size-full object-cover'
+                    src={productInfo.im_url}
+                    data-pw='itg-reference-image'
+                />
               </div>
             )}
 
             {/* ViSenze Footer desktop */}
-            {config.customizations.generalLayout?.showViSenzeLogo && (
+            {customizations.generalLayout?.showViSenzeLogo && (
               <Footer className='mt-auto hidden bg-transparent md:flex' dataPw='itg-visenze-footer-desktop' />
             )}
           </div>
@@ -218,9 +233,12 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
               style={getProductGridCssConfig()}
               data-pw='itg-product-result-grid'>
               {productResults.map((result, index) => (
-                <div key={`${result.product_id}-${index}`} data-pw={`itg-product-result-card-${index + 1}`}>
-                  <Result index={index} result={result} isReferenceProduct={false} />
-                </div>
+                  <ProductCard key={`${result.product_id}-${index}`}
+                               index={index}
+                               result={result}
+                               hasFindSimilar={false}
+                               isRecommendation={true}
+                               pwPrefix='itg' />
               ))}
             </div>
 
@@ -228,7 +246,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
             <Footer className='mt-auto bg-transparent pt-4 md:hidden' dataPw='itg-visenze-footer-mobile' />
 
             {/* Sort Options Desktop */}
-            {screen === ScreenType.SORT && breakpoint === WidgetBreakpoint.DESKTOP && (
+            {screen === ScreenType.SORT && (breakpoint === WidgetBreakpoint.DESKTOP || breakpoint === WidgetBreakpoint.TABLET) && (
               <SortOptions
                 className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 px-8 pb-8 pt-4 text-primary md:flex'
                 sortType={sortType}
@@ -237,7 +255,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
               />
             )}
             {/* Filter Options Desktop */}
-            {screen === ScreenType.FILTER && breakpoint === WidgetBreakpoint.DESKTOP && (
+            {screen === ScreenType.FILTER && (breakpoint === WidgetBreakpoint.DESKTOP || breakpoint === WidgetBreakpoint.TABLET) && (
               <FilterOptions
                 className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 bg-primary px-4 pb-8 pt-4 text-primary md:flex'
                 facets={facets}
@@ -256,8 +274,9 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ config, widgetClient, p
               layout='nested_mobile'
               onClose={() => setScreen(null)}
               position='center'
-              fontFamily={config.customizations.generalLayout?.fontFamily}
-              placementId={`${config.appSettings.placementId}`}>
+              darkMode={darkMode}
+              fontFamily={customizations.generalLayout?.fontFamily}
+              placementId={`${appSettings.placementId}`}>
               <>
                 {screen === ScreenType.SORT && (
                   <SortOptions

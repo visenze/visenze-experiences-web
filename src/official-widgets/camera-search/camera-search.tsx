@@ -1,7 +1,7 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useCallback, useContext, useState } from 'react';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
-import { WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
 import { isImageDataUrl } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
@@ -10,7 +10,6 @@ import { parseBox } from '../../common/utils';
 import UploadScreen from './screens/UploadScreen';
 import ResultScreen from './screens/ResultScreen';
 import { ScreenType } from '../../common/types/constants';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
@@ -18,13 +17,15 @@ import LoadingIcon from './icons/LoadingIcon';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import CameraIcon from '../../common/icons/CameraIcon';
 
 interface CameraSearchProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
+  // no properties at the moment
 }
 
-const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
+const CameraSearch: FC<CameraSearchProps> = () => {
+  const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
+  const { appSettings, customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [image, setImage] = useState<SearchImage | undefined>();
@@ -47,8 +48,6 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
   } = useImageMultisearch({
     image,
     boxData,
-    config,
-    widgetClient,
   });
 
   const resetData = (): void => {
@@ -86,7 +85,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
     setImage(data);
   };
 
-  const onImageSearch = (data: SearchImage): void => {
+  const onFindSimilar = (data: SearchImage): void => {
     appendSearchHistory(data);
     if (image === data) {
       // Fake the search if same image
@@ -113,15 +112,15 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
       q: query,
       im_id: imageId,
       page: 1,
-      limit: config.searchSettings.limit,
+      limit: searchSettings['limit'],
       get_all_fl: true,
     };
     const product = boxData?.index ? productTypes[boxData.index] : boxData;
 
     if (product) {
-      params.box = parseBox(product.box);
+      params['box'] = parseBox(product.box);
       if ('type' in product) {
-        params.detection = product.type;
+        params['detection'] = product.type;
       }
     }
 
@@ -148,7 +147,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
             onModalClose={onModalClose}
             setScreen={setScreen}
             onTextSearch={onTextSearch}
-            onImageSearch={onImageSearch}
+            onFindSimilar={onFindSimilar}
             onImageUpload={onImageUpload}
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
@@ -166,14 +165,10 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
     }
   };
 
-  widgetClient.openWidget = (): void => {
-    setDialogVisible(true);
-  };
-
   useEffect(() => {
     (async (): Promise<void> => {
       if (image && isImageDataUrl(image)) {
-        await widgetClient.visearch.resizeImage(image.file, config.appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
+        await widgetClient.visearch.resizeImage(image.file, appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
       }
     })();
   }, [image]);
@@ -196,6 +191,9 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
       cat: Category.ENTRANCE,
       label: Labels.PAGE,
     });
+    widgetClient.registerWidgetOpener(() => {
+      setDialogVisible(true);
+    });
   }, []);
 
   if (!root) {
@@ -213,22 +211,35 @@ const CameraSearch: FC<CameraSearchProps> = ({ config, widgetClient }) => {
         metadata,
       }}>
       <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
-        <div className='wigmix-popup-trigger w-fit cursor-pointer'>
-          <CustomizableIcon
-              height={28}
-              width={28}
-              url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/camera-icon.svg'}
-              color={config.customizations.popup?.triggerIcon?.color || ''}
-              onClickHandler={onCameraButtonClick}
-          />
-        </div>
+        {!customizations.popup?.triggerIcon?.hide && (
+            <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+                 onClick={onCameraButtonClick}>
+              {customizations.popup?.triggerIcon?.url ? (
+                  <CustomizableIcon
+                      height={24}
+                      width={24}
+                      url={customizations.popup.triggerIcon.url}
+                      color={darkMode
+                          ? (customizations.popup?.triggerIcon?.colorDark || '')
+                          : (customizations.popup?.triggerIcon?.color || '')}
+                      className='wigmix-popup-trigger-icon'
+                  />
+              ) : (
+                  <CameraIcon color={darkMode
+                                ? (customizations.popup?.triggerIcon?.colorDark || '')
+                                : (customizations.popup?.triggerIcon?.color || '')}
+                              className='wigmix-popup-trigger-icon size-6' />
+              )}
+            </div>
+        )}
         <ViSenzeModal
           open={dialogVisible}
           layout={breakpoint}
           onClose={onModalClose}
-          position={config.customizations.popup?.position || 'center'}
-          fontFamily={config.customizations.generalLayout?.fontFamily}
-          placementId={`${config.appSettings.placementId}`}>
+          position={customizations.popup?.position || 'center'}
+          darkMode={darkMode}
+          fontFamily={customizations.generalLayout?.fontFamily}
+          placementId={`${appSettings.placementId}`}>
           {getScreen()}
         </ViSenzeModal>
       </CroppingProvider>
