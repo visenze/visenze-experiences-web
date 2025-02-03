@@ -184,7 +184,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                 <img
                     className='wigmix-reference-image size-full object-cover'
                     src={productInfo.im_url}
-                    data-pw='sl-reference-image'
+                    data-pw='itg-reference-image'
                 />
               </div>
             )}
