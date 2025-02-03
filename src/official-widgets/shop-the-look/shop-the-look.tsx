@@ -27,7 +27,7 @@ interface ObjectDot {
 }
 
 const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -78,8 +78,8 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
       initialSlide: 0,
       slidesToScroll,
       slidesToShow,
-      prevArrow: isDesktop ? <PrevArrow iconColor={customizations.generalLayout?.fontColor} /> : <></>,
-      nextArrow: isDesktop ? <NextArrow iconColor={customizations.generalLayout?.fontColor} /> : <></>,
+      prevArrow: isDesktop ? <PrevArrow iconColor={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor} /> : <></>,
+      nextArrow: isDesktop ? <NextArrow iconColor={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor} /> : <></>,
       variableWidth: false,
     };
   };

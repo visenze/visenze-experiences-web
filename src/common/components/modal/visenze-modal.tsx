@@ -67,12 +67,13 @@ interface VisenzeModalProps {
   className?: string;
   placementId: string;
   idSuffix?: string;
+  darkMode: boolean;
   fontFamily: string;
 }
 
 const ViSenzeModal: FC<VisenzeModalProps> = (props) => (
     <Portal idName={`visenze-widget-modal-portal-${props.placementId}${props.idSuffix ? `-${props.idSuffix}` : ''}`}>
-      <ShadowWrapper fontFamily={props.fontFamily}>
+      <ShadowWrapper darkMode={props.darkMode} fontFamily={props.fontFamily}>
         <Modal {...props} />
       </ShadowWrapper>
     </Portal>

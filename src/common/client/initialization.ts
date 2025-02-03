@@ -64,7 +64,7 @@ const isPlacementSkippable = (placementId: number | string | undefined): boolean
   return placementsToSkip.includes(placementId.toString());
 };
 
-export const setCssVariables = (config: WidgetConfig): void => {
+export const setCssVariables = (config: WidgetConfig, darkMode: boolean): void => {
   if (config.customizations) {
     const fontCustomizations: Record<string, MultiViewportFont | undefined> = {
       heading: config.customizations.generalLayout?.headingFont,
@@ -100,10 +100,18 @@ export const setCssVariables = (config: WidgetConfig): void => {
       }
       for (const [colorFieldName, colorNameValue] of Object.entries(obj)) {
         let colorName = '';
-        if (colorFieldName === 'fontColor') {
-          colorName = 'text';
-        } else if (colorFieldName === 'backgroundColor') {
-          colorName = 'background';
+        if (darkMode) {
+          if (colorFieldName === 'fontColorDark') {
+            colorName = 'text';
+          } else if (colorFieldName === 'backgroundColorDark') {
+            colorName = 'background';
+          }
+        } else {
+          if (colorFieldName === 'fontColor') {
+            colorName = 'text';
+          } else if (colorFieldName === 'backgroundColor') {
+            colorName = 'background';
+          }
         }
         if (colorName) {
           root.style.setProperty(`--wigmix-${colorName}-${colorType}`, colorNameValue);
@@ -161,7 +169,7 @@ const init = (
     ...DEFAULT_CONFIGS,
     customizations,
   });
-  setCssVariables(config);
+  setCssVariables(config, config.customizations.generalLayout.darkModeDefault);
   config = populateProductDetailsAndAttrsToGet(config, fieldMappings);
   const widgetClient = getWidgetClient(config, widgetType, widgetVersion);
   return { widgetClient, fieldMappings, config };

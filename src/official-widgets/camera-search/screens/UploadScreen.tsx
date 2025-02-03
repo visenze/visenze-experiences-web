@@ -16,7 +16,7 @@ interface UploadScreenProps {
 }
 
 const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const intl = useIntl();
 
@@ -85,7 +85,9 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
     <div className='w-full md:overflow-hidden'>
       <Header onCloseHandler={onModalClose} isResultScreen={false} onBackHandler={() => {}}
               showTitle={customizations.generalLayout?.showWidgetTitle}
-              iconColor={customizations.generalLayout?.fontColor} />
+              iconColor={darkMode
+                ? customizations.generalLayout?.fontColorDark
+                : customizations.generalLayout?.fontColor} />
       <div className='size-full'>
         <div className='flex flex-col pb-5 md:flex-row'>
           <div className='px-1/5 md:w-1/3 md:px-10'>
@@ -97,10 +99,15 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                         height={80}
                         width={80}
                         url={customizations.imageUpload.icon.url}
-                        color={customizations.imageUpload.icon.color || ''}
+                        color={darkMode
+                          ? (customizations.imageUpload.icon.colorDark || '')
+                          : (customizations.imageUpload.icon.color || '')}
                     />
                 ) : (
-                    <UploadIcon className='size-20' color={customizations.imageUpload?.icon?.color || ''} />
+                    <UploadIcon className='size-20'
+                                color={darkMode
+                                    ? (customizations.imageUpload?.icon?.colorDark || '')
+                                    : (customizations.imageUpload?.icon?.color || '')} />
                 )}
 
                 <p className='hidden px-3 py-2 leading-6 md:block'>

@@ -27,7 +27,7 @@ const ChevronDownIcon = (): ReactElement => (
   );
 
 const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSelectedFilters, displayAsDropdown }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, customizations } = widgetConfig;
   const [shownFacets, setShownFacets] = useState<Record<string, boolean>>({});
 
@@ -155,7 +155,10 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
               key={facet.key}
               title={getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
               indicator={
-                <ChevronLeftIcon className='size-5' color={customizations.generalLayout?.fontColor} />
+                <ChevronLeftIcon className='size-5'
+                                 color={darkMode
+                                   ? customizations.generalLayout?.fontColorDark
+                                   : customizations.generalLayout?.fontColor} />
               }
             >
               <div className='flex flex-col gap-y-2 px-4 pb-4'>

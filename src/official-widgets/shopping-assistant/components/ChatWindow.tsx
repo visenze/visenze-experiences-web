@@ -21,7 +21,7 @@ interface ChatWindowProps {
 }
 
 const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
@@ -118,7 +118,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
                       {[0, 1, 2].map((i) => (
                           <div key={`loading-dot-${i}`}
                                className='loading-dot rounded-full'
-                               style={{ backgroundColor: customizations.buttons?.primary?.fontColor }} />
+                               style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }} />
                       ))}
                     </div>
                 )}

@@ -9,7 +9,8 @@ import type { BoxData, ProcessedProduct } from './product';
 interface WidgetData {
   widgetConfig: WidgetConfig;
   widgetClient: WidgetClient;
-  fieldMappings?: Record<string, string>;
+  fieldMappings: Record<string, string>;
+  darkMode: boolean;
 }
 
 interface WidgetResultContextValue {
@@ -33,6 +34,8 @@ interface CroppingContextValue {
 export const WidgetDataContext = createContext<WidgetData>({
   widgetConfig: DEFAULT_CONFIGS,
   widgetClient: getWidgetClient(DEFAULT_CONFIGS, WidgetType.CAMERA_SEARCH, '0.0.0'),
+  fieldMappings: {},
+  darkMode: false,
 });
 
 export const WidgetResultContext = createContext<WidgetResultContextValue>({

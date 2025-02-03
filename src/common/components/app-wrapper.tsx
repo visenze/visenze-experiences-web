@@ -29,14 +29,20 @@ const AppWrapper: FC<AppProps> = ({
   const [configInternal, setConfigInternal] = useState(widgetConfig);
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
   const [messages, setMessages] = useState(defaultTexts[DEFAULT_LOCALE]);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    if (!enableCustomization || !widgetConfig.customizations) {
-      setConfigInternal({
-        ...widgetConfig,
-        customizations: defaultCustomizations,
-      });
+    let { customizations } = widgetConfig;
+    if (!enableCustomization || !customizations) {
+      customizations = defaultCustomizations;
     }
+    if (customizations?.generalLayout?.darkModeDefault) {
+      setDarkMode(true);
+    }
+    setConfigInternal({
+      ...widgetConfig,
+      customizations,
+    });
 
     widgetClient.registerConfigUpdater((configOverride, isPartial) => {
       if (!enableCustomization) {
@@ -53,18 +59,24 @@ const AppWrapper: FC<AppProps> = ({
         }
       }
     });
+    widgetClient.registerDarkModeToggler(() => {
+      setDarkMode((dm) => {
+        setCssVariables(configInternal, !dm);
+        return !dm;
+      });
+    });
   }, []);
 
   useEffect(() => {
     const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.localization?.defaultLocale || DEFAULT_LOCALE;
     setLocale(localeFromConfig);
     setMessages(getLocaleTexts(localeFromConfig, defaultTexts, configInternal.customizations.localization?.text));
-    setCssVariables(configInternal);
+    setCssVariables(configInternal, darkMode);
   }, [configInternal]);
 
   return (
-      <WidgetDataContext.Provider value={{ widgetConfig: configInternal, fieldMappings, widgetClient }}>
-        <ShadowWrapper fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
+      <WidgetDataContext.Provider value={{ widgetConfig: configInternal, fieldMappings, widgetClient, darkMode }}>
+        <ShadowWrapper darkMode={darkMode} fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
           <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
             {children}
           </IntlProvider>

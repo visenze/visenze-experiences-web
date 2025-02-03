@@ -1,5 +1,5 @@
 import type { CSSProperties, FC, HTMLProps, ReactNode } from 'react';
-import { createContext, useCallback, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import root from 'react-shadow';
 import { HeroUIProvider } from '@heroui/system';
 import useStyles from './hooks/use-styles';
@@ -36,19 +36,44 @@ const Style: FC = () => {
   return <style ref={onRefChange}></style>;
 };
 
-const ShadowWrapper: FC<{ fontFamily: string; children: ReactNode }> = ({ fontFamily, children }) => {
+interface ShadowWrapperProps {
+  darkMode: boolean;
+  fontFamily: string;
+  children: ReactNode;
+}
+
+const ShadowWrapper: FC<ShadowWrapperProps> = ({ darkMode, fontFamily, children }) => {
   const [rootNode, setRootNode] = useState<HTMLElement | null>(null);
 
   const onRefChange = useCallback((ref: HTMLElement | null) => {
     if (ref) {
       setRootNode(ref);
 
-      ref.classList.add('light');
-      ref.style.colorScheme = 'light';
+      if (darkMode) {
+        ref.classList.add('dark');
+        ref.style.colorScheme = 'dark';
+      } else {
+        ref.classList.add('light');
+        ref.style.colorScheme = 'light';
+      }
     }
   }, []);
 
   const ShadowRootHost = root['div'] as FC<HTMLProps<HTMLDivElement>>;
+
+  useEffect(() => {
+    if (rootNode) {
+      if (darkMode) {
+        rootNode.classList.remove('light');
+        rootNode.classList.add('dark');
+        rootNode.style.colorScheme = 'dark';
+      } else {
+        rootNode.classList.remove('dark');
+        rootNode.classList.add('light');
+        rootNode.style.colorScheme = 'light';
+      }
+    }
+  }, [darkMode]);
 
   return (
     <ShadowRootHost style={rootContainerStyle}>

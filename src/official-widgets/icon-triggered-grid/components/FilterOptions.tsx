@@ -25,7 +25,7 @@ interface FilterOptionsProps {
 }
 
 const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilters, setSelectedFilters, setScreen }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, customizations } = widgetConfig;
   const intl = useIntl();
 
@@ -94,7 +94,10 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
               key={facet.key}
               title={getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
               indicator={
-                <ChevronLeftIcon className='size-5' color={customizations.generalLayout?.fontColor} />
+                <ChevronLeftIcon className='size-5'
+                                 color={darkMode
+                                   ? customizations.generalLayout?.fontColorDark
+                                   : customizations.generalLayout?.fontColor} />
               }
             >
               <div className='flex flex-col gap-y-2 px-4 pb-4'>

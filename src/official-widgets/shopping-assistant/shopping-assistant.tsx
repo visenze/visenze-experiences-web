@@ -31,7 +31,7 @@ interface ShoppingAssistantProps {
 }
 
 const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
-  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -321,17 +321,22 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
                       height={24}
                       width={24}
                       url={customizations.popup.triggerIcon.url}
-                      color={customizations.popup?.triggerIcon?.color || ''}
+                      color={darkMode
+                          ? (customizations.popup?.triggerIcon?.colorDark || '')
+                          : (customizations.popup?.triggerIcon?.color || '')}
                       className='wigmix-popup-trigger-icon'
                   />
               ) : (
-                  <NewChatIcon color={customizations.popup?.triggerIcon?.color || ''}
+                  <NewChatIcon color={darkMode
+                                 ? (customizations.popup?.triggerIcon?.colorDark || '')
+                                 : (customizations.popup?.triggerIcon?.color || '')}
                                className='wigmix-popup-trigger-icon size-6' />
               )}
             </div>
         )}
         <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
                       position={customizations.popup?.position || 'center'}
+                      darkMode={darkMode}
                       fontFamily={customizations.generalLayout?.fontFamily}
                       placementId={`${appSettings.placementId}`}>
           {getScreen()}

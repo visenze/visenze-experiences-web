@@ -115,7 +115,7 @@ const ProductCard: FC<ProductCardProps> = ({
   pwPrefix,
   imageClasses,
 }) => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const { metadata } = useContext(WidgetResultContext);
@@ -174,16 +174,20 @@ const ProductCard: FC<ProductCardProps> = ({
 
   const getProductPriceColorStyle = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (customizations.productCard?.price?.fontColor) {
-      cssConfig.color = customizations.productCard?.price?.fontColor;
+    if (!darkMode && customizations.productCard?.price?.fontColor) {
+      cssConfig.color = customizations.productCard.price.fontColor;
+    } else if (darkMode && customizations.productCard?.price?.fontColorDark) {
+      cssConfig.color = customizations.productCard.price.fontColorDark;
     }
     return cssConfig;
   };
 
   const getProductOriginalPriceColorStyle = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (customizations.productCard?.originalPrice?.fontColor) {
-      cssConfig.color = customizations.productCard?.originalPrice?.fontColor;
+    if (!darkMode && customizations.productCard?.originalPrice?.fontColor) {
+      cssConfig.color = customizations.productCard.originalPrice.fontColor;
+    } else if (darkMode && customizations.productCard?.originalPrice?.fontColorDark) {
+      cssConfig.color = customizations.productCard.originalPrice.fontColorDark;
     }
     return cssConfig;
   };
@@ -231,12 +235,17 @@ const ProductCard: FC<ProductCardProps> = ({
                           width={20}
                           className='wigmix-find-similar-icon'
                           url={customizations.productCard?.findSimilar?.icon?.url}
-                          color={customizations.productCard?.findSimilar?.icon?.color || ''}
+                          color={darkMode
+                              ? (customizations.productCard?.findSimilar?.icon?.colorDark || '')
+                              : (customizations.productCard?.findSimilar?.icon?.color || '')}
                       />
                   ) : (
                       <MagnifyingGlassIcon
                           className='wigmix-find-similar-icon size-5'
-                          color={customizations.productCard?.findSimilar?.icon?.color || ''} />
+                          color={darkMode
+                              ? (customizations.productCard?.findSimilar?.icon?.colorDark || '')
+                              : (customizations.productCard?.findSimilar?.icon?.color || '')}
+                      />
                   )}
                 </div>
             )}

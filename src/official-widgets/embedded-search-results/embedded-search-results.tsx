@@ -26,7 +26,7 @@ interface EmbeddedSearchResultProps {
 }
 
 const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl }): ReactElement => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
@@ -386,6 +386,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
               onClose={() => setShowMobileFilterOptions(false)}
               position='center'
               placementId={`${appSettings.placementId}`}
+              darkMode={darkMode}
               fontFamily={customizations.generalLayout?.fontFamily}
           >
             <FilterOptions

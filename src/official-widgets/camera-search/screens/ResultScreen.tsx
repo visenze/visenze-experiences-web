@@ -50,7 +50,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   searchHistory,
   setSearchHistory,
 }) => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const { productResults, autocompleteResults } = useContext(WidgetResultContext);
   const [search, setSearch] = useState<string>('');
@@ -166,7 +166,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
     <div className='flex h-full flex-col gap-8 md:hidden'>
       <Header onCloseHandler={onModalClose} onBackHandler={onBackHandler} isResultScreen={true}
               showTitle={customizations.generalLayout?.showWidgetTitle}
-              iconColor={customizations.generalLayout?.fontColor} />
+              iconColor={darkMode
+                ? customizations.generalLayout?.fontColorDark
+                : customizations.generalLayout?.fontColor} />
       <div className='relative h-screen grow overflow-hidden'>
         <div className='flex justify-center'
           {...minimizedDrawerHandler}
@@ -201,10 +203,14 @@ const ResultScreen: FC<ResultScreenProps> = ({
                  onClick={(): void => toggleFullResults()}
                  data-pw='cs-arrow-button'>
               {showFullResults ? (
-                  <ChevronDownIcon color={customizations.buttons?.primary?.fontColor || ''}
+                  <ChevronDownIcon color={darkMode
+                                     ? (customizations.buttons?.primary?.fontColorDark || '')
+                                     : (customizations.buttons?.primary?.fontColor || '')}
                                    className='cursor-pointer size-6' />
               ) : (
-                  <ChevronUpIcon color={customizations.buttons?.primary?.fontColor || ''}
+                  <ChevronUpIcon color={darkMode
+                                   ? (customizations.buttons?.primary?.fontColorDark || '')
+                                   : (customizations.buttons?.primary?.fontColor || '')}
                                  className='cursor-pointer size-6' />
               )}
             </div>
@@ -274,7 +280,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
     <div className='hidden md:block md:overflow-hidden lg:rounded-t-3xl'>
       <Header onCloseHandler={onModalClose} onBackHandler={onBackHandler} isResultScreen={true}
               showTitle={customizations.generalLayout?.showWidgetTitle}
-              iconColor={customizations.generalLayout?.fontColor} />
+              iconColor={darkMode
+                ? customizations.generalLayout?.fontColorDark
+                : customizations.generalLayout?.fontColor} />
       <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
           <div className='relative left-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8'>

@@ -24,7 +24,7 @@ interface CameraSearchProps {
 }
 
 const CameraSearch: FC<CameraSearchProps> = () => {
-  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -219,11 +219,15 @@ const CameraSearch: FC<CameraSearchProps> = () => {
                       height={24}
                       width={24}
                       url={customizations.popup.triggerIcon.url}
-                      color={customizations.popup?.triggerIcon?.color || ''}
+                      color={darkMode
+                          ? (customizations.popup?.triggerIcon?.colorDark || '')
+                          : (customizations.popup?.triggerIcon?.color || '')}
                       className='wigmix-popup-trigger-icon'
                   />
               ) : (
-                  <CameraIcon color={customizations.popup?.triggerIcon?.color || ''}
+                  <CameraIcon color={darkMode
+                                ? (customizations.popup?.triggerIcon?.colorDark || '')
+                                : (customizations.popup?.triggerIcon?.color || '')}
                               className='wigmix-popup-trigger-icon size-6' />
               )}
             </div>
@@ -233,6 +237,7 @@ const CameraSearch: FC<CameraSearchProps> = () => {
           layout={breakpoint}
           onClose={onModalClose}
           position={customizations.popup?.position || 'center'}
+          darkMode={darkMode}
           fontFamily={customizations.generalLayout?.fontFamily}
           placementId={`${appSettings.placementId}`}>
           {getScreen()}

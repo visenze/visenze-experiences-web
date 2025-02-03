@@ -22,7 +22,7 @@ interface SimilarSearchProps {
 }
 
 const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
-  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -216,11 +216,15 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
                     height={24}
                     width={24}
                     url={customizations.popup.triggerIcon.url}
-                    color={customizations.popup?.triggerIcon?.color || ''}
+                    color={darkMode
+                      ? (customizations.popup?.triggerIcon?.colorDark || '')
+                      : (customizations.popup?.triggerIcon?.color || '')}
                     className='wigmix-popup-trigger-icon'
                 />
             ) : (
-                <MagnifyingGlassIcon color={customizations.popup?.triggerIcon?.color || ''}
+                <MagnifyingGlassIcon color={darkMode
+                                       ? (customizations.popup?.triggerIcon?.colorDark || '')
+                                       : (customizations.popup?.triggerIcon?.color || '')}
                                      className='wigmix-popup-trigger-icon size-6' />
             )}
           </div>
@@ -228,6 +232,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
 
       <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
                     position={customizations.popup?.position || 'right'}
+                    darkMode={darkMode}
                     fontFamily={customizations.generalLayout?.fontFamily}
                     placementId={`${appSettings.placementId}`}>
         {getScreen()}

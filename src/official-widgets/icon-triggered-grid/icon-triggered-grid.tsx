@@ -28,7 +28,7 @@ interface IconTriggeredGridProps {
 }
 
 const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -138,11 +138,15 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                     height={24}
                     width={24}
                     url={customizations.popup.triggerIcon.url}
-                    color={customizations.popup?.triggerIcon?.color || ''}
+                    color={darkMode
+                      ? (customizations.popup?.triggerIcon?.colorDark || '')
+                      : (customizations.popup?.triggerIcon?.color || '')}
                     className='wigmix-popup-trigger-icon'
                 />
             ) : (
-                <MagnifyingGlassIcon color={customizations.popup?.triggerIcon?.color || ''}
+                <MagnifyingGlassIcon color={darkMode
+                                       ? (customizations.popup?.triggerIcon?.colorDark || '')
+                                       : (customizations.popup?.triggerIcon?.color || '')}
                                      className='wigmix-popup-trigger-icon size-6' />
             )}
           </div>
@@ -153,6 +157,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
         layout={breakpoint}
         onClose={onModalClose}
         position={customizations.popup?.position || 'center'}
+        darkMode={darkMode}
         fontFamily={customizations.generalLayout?.fontFamily}
         placementId={`${appSettings.placementId}`}>
         <div className='relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1'>
@@ -161,7 +166,10 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
             className='absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90'
             onClick={onModalClose}
             data-pw='itg-close-button'>
-            <CloseIcon className='size-6' color={customizations.generalLayout?.fontColor} />
+            <CloseIcon className='size-6'
+                       color={darkMode
+                         ? customizations.generalLayout?.fontColorDark
+                         : customizations.generalLayout?.fontColor} />
           </div>
 
           <div className='flex flex-col border-none p-4 md:w-3/10 md:px-10 md:py-6'>
@@ -266,6 +274,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
               layout='nested_mobile'
               onClose={() => setScreen(null)}
               position='center'
+              darkMode={darkMode}
               fontFamily={customizations.generalLayout?.fontFamily}
               placementId={`${appSettings.placementId}`}>
               <>

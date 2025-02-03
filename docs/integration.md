@@ -203,3 +203,12 @@ visenzeWidget.sendEvent('event_name', {
   key2: 'value2',
 });
 ```
+
+### Toggling dark mode
+
+ViSenze widgets support dark mode theming. If your website has toggles between light and dark mode,
+you can make the widgets follow suit by using the `toggleDarkMode` method:
+
+```ts
+visenzeWidget.toggleDarkMode();
+```

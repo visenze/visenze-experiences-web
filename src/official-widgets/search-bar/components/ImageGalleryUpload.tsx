@@ -20,7 +20,7 @@ interface ImageGalleryUploadProps {
 }
 
 const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, placementId, image }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [openModal, setOpenModal] = useState(false);
   const [searchImage, setSearchImage] = useState<SearchImage>();
@@ -119,6 +119,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
       </Button>
 
       <VisenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint} position='center'
+                    darkMode={darkMode}
                     fontFamily={customizations.generalLayout?.fontFamily}
                     placementId={placementId} idSuffix='image-gallery-upload'>
         <div className='relative flex size-full flex-col bg-primary'>
@@ -142,10 +143,15 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
                           height={80}
                           width={80}
                           url={customizations.imageUpload.icon.url}
-                          color={customizations.imageUpload.icon.color || ''}
+                          color={darkMode
+                            ? (customizations.imageUpload.icon.colorDark || '')
+                            : (customizations.imageUpload.icon.color || '')}
                       />
                   ) : (
-                      <UploadIcon className='size-20' color={customizations.imageUpload?.icon?.color || ''} />
+                      <UploadIcon className='size-20'
+                                  color={darkMode
+                                    ? (customizations.imageUpload?.icon?.colorDark || '')
+                                    : (customizations.imageUpload?.icon?.color || '')} />
                   )}
 
                   <p className='hidden px-3 py-2 leading-6 text-primary md:block'>

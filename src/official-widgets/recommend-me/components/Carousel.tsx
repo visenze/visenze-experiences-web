@@ -17,7 +17,7 @@ interface CarouselProps {
 }
 
 const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [isLoading, setIsLoading] = useState(true);
   const breakpoint = useBreakpoint();
@@ -59,7 +59,10 @@ const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }
         </div>
         {!isLoading && (
           <div className='absolute right-0 top-4 cursor-pointer' onClick={removeFromHistory}>
-            <TrashIcon className='size-5' color={customizations.generalLayout?.fontColor} />
+            <TrashIcon className='size-5'
+                       color={darkMode
+                         ? customizations.generalLayout?.fontColorDark
+                         : customizations.generalLayout?.fontColor} />
           </div>
         )}
       </div>

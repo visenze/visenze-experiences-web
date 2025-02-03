@@ -21,7 +21,7 @@ interface ShoppableGalleryProps {
 }
 
 const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
@@ -152,6 +152,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
             onClose={onCloseHandler}
             layout={breakpoint}
             position='center'
+            darkMode={darkMode}
             fontFamily={customizations.generalLayout?.fontFamily}
             placementId={`${appSettings.placementId}`}
             className='left-[unset] top-[unset] h-[500px] w-[300px] rounded-xl'>
@@ -160,7 +161,10 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
                 className='absolute right-2 top-2 bg-transparent rounded-full p-1 hover:opacity-90 cursor-pointer'
                 onClick={onCloseHandler}
                 data-pw='sg-modal-close-button'>
-                <CloseIcon className='size-6' color={customizations.generalLayout?.fontColor} />
+                <CloseIcon className='size-6'
+                           color={darkMode
+                             ? customizations.generalLayout?.fontColorDark
+                             : customizations.generalLayout?.fontColor} />
               </div>
               {productTypes.length > 0 && (
                 <HotspotContainer

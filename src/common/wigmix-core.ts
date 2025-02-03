@@ -251,8 +251,6 @@ export interface WidgetClient {
   /**
    * Toggles dark mode on/off.
    *
-   * @internal
-   *
    * @since 1.0.0
    */
   toggleDarkMode: () => void;
@@ -323,8 +321,6 @@ interface Icon {
   color: string;
   /**
    * Color of the icon in dark mode.
-   *
-   * @internal
    *
    * @since 1.0.0
    */
@@ -409,8 +405,6 @@ export interface ColoredInterface {
   /**
    * Font color of the interface in dark mode.
    *
-   * @internal
-   *
    * @since 1.0.0
    */
   fontColorDark: string;
@@ -422,8 +416,6 @@ export interface ColoredInterface {
   backgroundColor: string;
   /**
    * Background color of the interface in dark mode.
-   *
-   * @internal
    *
    * @since 1.0.0
    */
@@ -665,8 +657,6 @@ export interface WidgetConfig {
       /**
        * Whether to use dark mode theme by default.
        *
-       * @internal
-       *
        * @since 1.0.0
        */
       darkModeDefault: boolean;
@@ -830,8 +820,6 @@ export interface WidgetConfig {
         /**
          * Font color for the price field in dark mode.
          *
-         * @internal
-         *
          * @since 1.0.0
          */
         fontColorDark: string;
@@ -850,8 +838,6 @@ export interface WidgetConfig {
         fontColor: string;
         /**
          * Font color for the original price field in dark mode.
-         *
-         * @internal
          *
          * @since 1.0.0
          */
