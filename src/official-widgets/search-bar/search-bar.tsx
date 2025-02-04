@@ -1,7 +1,6 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useContext, useState } from 'react';
 import { Listbox, ListboxItem, ListboxSection } from '@nextui-org/listbox';
-import { cn } from '@nextui-org/theme';
 import { Button } from '@nextui-org/button';
 import { useIntl } from 'react-intl';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
@@ -42,7 +41,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [, setShowDropdown] = useState(false);
   const [searchHistory] = useState<SearchHistoryEntry[]>([]);
   const [suggestionMax, setSuggestionMax] = useState(6);
   const [relatedMax, setRelatedMax] = useState(8);
@@ -178,12 +177,6 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
                               onAction={(key) => {
                                 setQuery(String(key));
                                 emitSearchBarCallback(String(key), image);
-                              }}
-                              classNames={{
-                                base: cn(
-                                    'absolute top-12 rounded-b-md max-h-52 w-full overflow-y-auto border-gray-200 bg-white transition-all z-20',
-                                    showDropdown && autocompleteResults.length > 0 ? 'border-b-1 border-x-1' : 'border-none hidden',
-                                ),
                               }}
                               aria-label='Autocomplete Dropdown'
                           >
