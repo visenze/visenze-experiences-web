@@ -140,7 +140,10 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
       return;
     }
 
-    const analyticsParams = params;
+    const analyticsParams = {
+      ...params,
+      ...(config.trackingSettings || {}),
+    };
 
     if (!analyticsParams['queryId']) {
       analyticsParams['queryId'] = getLastClickQueryId();

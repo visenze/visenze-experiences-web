@@ -521,6 +521,12 @@ export interface WidgetConfig {
    */
   searchSettings: Record<string, any>;
   /**
+   * Additional key-value parameters that will be sent to ViSenze analytics API.
+   *
+   * @since 1.0.0
+   */
+  trackingSettings: Record<string, any>;
+  /**
    * Localization- and internationalization-related settings.
    *
    * @since 1.0.0
