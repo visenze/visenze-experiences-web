@@ -324,13 +324,13 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
                       color={darkMode
                           ? (customizations.popup?.triggerIcon?.colorDark || '')
                           : (customizations.popup?.triggerIcon?.color || '')}
-                      className='wigmix-popup-trigger-icon'
+                      className='wigmix-popup-trigger-icon custom'
                   />
               ) : (
                   <NewChatIcon color={darkMode
                                  ? (customizations.popup?.triggerIcon?.colorDark || '')
                                  : (customizations.popup?.triggerIcon?.color || '')}
-                               className='wigmix-popup-trigger-icon size-6' />
+                               className='wigmix-popup-trigger-icon default size-6' />
               )}
             </div>
         )}
