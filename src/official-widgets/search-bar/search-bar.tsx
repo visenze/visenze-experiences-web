@@ -44,7 +44,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
   const [, setShowDropdown] = useState(false);
   const [searchHistory] = useState<SearchHistoryEntry[]>([]);
   const [suggestionMax, setSuggestionMax] = useState(6);
-  const [relatedMax, setRelatedMax] = useState(8);
+  const [relatedMax] = useState(8);
   const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
   const intl = useIntl();
@@ -85,7 +85,6 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
   useEffect(() => {
     if (breakpoint === WidgetBreakpoint.MOBILE) {
       setSuggestionMax(4);
-      setRelatedMax(4);
     }
   }, [breakpoint]);
 
