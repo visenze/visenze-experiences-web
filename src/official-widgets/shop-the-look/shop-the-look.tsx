@@ -162,66 +162,65 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
   }
 
   if (error) {
-    return (
-      <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorDescription' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'errorResolution' })}</span>
-      </div>
-    );
+    return <></>;
   }
 
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        {/* Widget Title */}
-        {customizations.generalLayout?.showWidgetTitle && (
-          <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='stl-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
-        )}
+        {productResults.length > 0 && (
+            <>
+              {/* Widget Title */}
+              {customizations.generalLayout?.showWidgetTitle && (
+                  <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='stl-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+              )}
 
-        <div className='items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0'>
-          {/* Reference Image */}
-          <div className='px-1 md:w-7/20 lg:w-3/10'>
-            <div className='relative'>
-              {objectDots.map((obj, index) => (
-                <button
-                  data-pw='stl-hotspot-dot'
-                  className={
-                    `group absolute z-10 flex items-center justify-center rounded-full bg-[#515151] transition-all 
+              <div className='items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0'>
+                {/* Reference Image */}
+                <div className='px-1 md:w-7/20 lg:w-3/10'>
+                  <div className='relative'>
+                    {objectDots.map((obj, index) => (
+                        <button
+                            data-pw='stl-hotspot-dot'
+                            className={
+                              `group absolute z-10 flex items-center justify-center rounded-full bg-[#515151] transition-all 
                     duration-300 hover:size-6 hover:-translate-x-3 hover:-translate-y-3 hover:ring-1 hover:ring-white
                     ${objectIndex === index ? 'size-6 -translate-x-3 -translate-y-3 ring-1 ring-white' : 'size-4 -translate-x-2 -translate-y-2'}`
-                  }
-                  style={{ top: obj.top, left: obj.left }}
-                  key={obj.index}
-                  onClick={(): void => setObjectIndex(index)}>
-                  <div className={`rounded-full bg-white transition-all duration-300 group-hover:size-4 ${objectIndex === index ? 'size-4' : 'size-2'}`}></div>
-                </button>
-              ))}
-              {!referenceImageUrl && <Skeleton className='aspect-square' />}
-              {referenceImageUrl && (
-                <img
-                  ref={imageRef}
-                  className='wigmix-reference-image size-full object-cover'
-                  src={referenceImageUrl}
-                  onLoad={onImageLoad}
-                  data-pw='stl-reference-image'
-                />
-              )}
-              {/* Product Result Carousel */}
-              {breakpoint === 'mobile' && (
-                <div className='absolute bottom-4 w-full bg-primary'>
-                  {getProductCarouselView()}
+                            }
+                            style={{ top: obj.top, left: obj.left }}
+                            key={obj.index}
+                            onClick={(): void => setObjectIndex(index)}>
+                          <div className={`rounded-full bg-white transition-all duration-300 group-hover:size-4 ${objectIndex === index ? 'size-4' : 'size-2'}`}></div>
+                        </button>
+                    ))}
+                    {!referenceImageUrl && <Skeleton className='aspect-square' />}
+                    {referenceImageUrl && (
+                        <img
+                            ref={imageRef}
+                            className='wigmix-reference-image size-full object-cover'
+                            src={referenceImageUrl}
+                            onLoad={onImageLoad}
+                            data-pw='stl-reference-image'
+                        />
+                    )}
+                    {/* Product Result Carousel */}
+                    {breakpoint === 'mobile' && (
+                        <div className='absolute bottom-4 w-full bg-primary'>
+                          {getProductCarouselView()}
+                        </div>
+                    )}
+                  </div>
                 </div>
+
+                {/* Product Result Carousel */}
+                {(breakpoint === 'tablet' || breakpoint === 'desktop') && getProductCarouselView()}
+              </div>
+
+              {/* ViSenze Footer */}
+              {customizations.generalLayout?.showViSenzeLogo && (
+                  <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='stl-visenze-footer'/>
               )}
-            </div>
-          </div>
-
-          {/* Product Result Carousel */}
-          {(breakpoint === 'tablet' || breakpoint === 'desktop') && getProductCarouselView()}
-        </div>
-
-        {/* ViSenze Footer */}
-        {customizations.generalLayout?.showViSenzeLogo && (
-          <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='stl-visenze-footer'/>
+            </>
         )}
       </WidgetResultContext.Provider>
     </>

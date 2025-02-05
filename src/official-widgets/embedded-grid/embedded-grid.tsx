@@ -68,43 +68,40 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
   }
 
   if (error) {
-    return (
-      <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorDescription' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'errorResolution' })}</span>
-      </div>
-    );
+    return <></>;
   }
 
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        <div>
-          {/* Widget Title */}
-          {customizations.generalLayout?.showWidgetTitle && (
-            <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='eg-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
-          )}
+        {productResults.length > 0 && (
+            <>
+              {/* Widget Title */}
+              {customizations.generalLayout?.showWidgetTitle && (
+                  <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='eg-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+              )}
 
-          {/* Product result grid */}
-          <div
-            className={`wigmix-product-grid grid text-primary ${getProductGridCssClasses('grid-cols-2 md:grid-cols-5', 'gap-x-2', 'gap-y-4')}`}
-            style={getProductGridCssConfig()}
-            data-pw='eg-product-result-grid'>
-            {productResults.map((result, index) => (
-                <ProductCard key={`${result.product_id}-${index}`}
-                             index={index}
-                             result={result}
-                             hasFindSimilar={false}
-                             isRecommendation={true}
-                             pwPrefix='eg' />
-            ))}
-          </div>
+              {/* Product result grid */}
+              <div
+                  className={`wigmix-product-grid grid text-primary ${getProductGridCssClasses('grid-cols-2 md:grid-cols-5', 'gap-x-2', 'gap-y-4')}`}
+                  style={getProductGridCssConfig()}
+                  data-pw='eg-product-result-grid'>
+                {productResults.map((result, index) => (
+                    <ProductCard key={`${result.product_id}-${index}`}
+                                 index={index}
+                                 result={result}
+                                 hasFindSimilar={false}
+                                 isRecommendation={true}
+                                 pwPrefix='eg' />
+                ))}
+              </div>
 
-          {/* ViSenze Footer */}
-          {customizations.generalLayout?.showViSenzeLogo && (
-            <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='eg-visenze-footer' />
-          )}
-        </div>
+              {/* ViSenze Footer */}
+              {customizations.generalLayout?.showViSenzeLogo && (
+                  <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='eg-visenze-footer' />
+              )}
+            </>
+        )}
       </WidgetResultContext.Provider>
     </>
   );
