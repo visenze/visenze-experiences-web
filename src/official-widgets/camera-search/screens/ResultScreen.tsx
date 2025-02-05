@@ -53,7 +53,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const { productResults, autocompleteResults } = useContext(WidgetResultContext);
-  const [search, setSearch] = useState<string>('');
+  const [search, setSearch] = useState('');
+  const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
   const [showFullResults, setShowFullResults] = useState(false);
   const [showInputSuggest, setShowInputSuggest] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState<string[]>([]);
@@ -161,6 +162,18 @@ const ResultScreen: FC<ResultScreenProps> = ({
     }
     return cssConfig;
   };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (debouncedOnKeywordUpdate != null) {
+        onKeywordUpdate(debouncedOnKeywordUpdate);
+      }
+    }, 300);
+
+    return (): void => {
+      clearTimeout(handler);
+    };
+  }, [debouncedOnKeywordUpdate]);
 
   const getMobileView = (): ReactElement => (
     <div className='flex h-full flex-col gap-8 md:hidden'>
@@ -359,7 +372,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     onBlur={() => setTimeout(() => setShowInputSuggest(false), 100)}
                     onValueChange={(input): void => {
                       setSearch(input);
-                      onKeywordUpdate(input);
+                      setDebouncedOnKeywordUpdate(input);
                     }}
                     onKeyDown={(event): void => {
                       if (event.nativeEvent.code === 'Enter') {

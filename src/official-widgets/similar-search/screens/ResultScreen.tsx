@@ -43,7 +43,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const { productResults, image, autocompleteResults } = useContext(WidgetResultContext);
-  const [search, setSearch] = useState<string>('');
+  const [search, setSearch] = useState('');
+  const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
   const [showFullResults, setShowFullResults] = useState(false);
   const [showInputSuggest, setShowInputSuggest] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState<string[]>([]);
@@ -145,6 +146,18 @@ const ResultScreen: FC<ResultScreenProps> = ({
       behavior: 'smooth',
     });
   };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (debouncedOnKeywordUpdate != null) {
+        onKeywordUpdate(debouncedOnKeywordUpdate);
+      }
+    }, 300);
+
+    return (): void => {
+      clearTimeout(handler);
+    };
+  }, [debouncedOnKeywordUpdate]);
 
   const getMobileView = (): ReactElement => (
     <div className='flex h-full flex-col gap-8 md:hidden'>
@@ -321,7 +334,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                           setShowInputSuggest(false);
                         });
                       }}>
-                    {['dress', 'red', 'blue'].map((keyword, index) => (
+                    {inputSuggestions.map((keyword, index) => (
                       <ListboxItem key={keyword} className={cn(keyword === search ? 'bg-gray' : '', 'pl-8')}>
                         <span className='text-base' data-pw={`ss-autocomplete-suggestion-${index + 1}`}>{keyword}</span>
                       </ListboxItem>
@@ -341,7 +354,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     onBlur={() => setTimeout(() => setShowInputSuggest(false), 100)}
                     onValueChange={(input): void => {
                       setSearch(input);
-                      onKeywordUpdate(input);
+                      setDebouncedOnKeywordUpdate(input);
                     }}
                     onKeyDown={(event): void => {
                       if (event.nativeEvent.code === 'Enter') {
