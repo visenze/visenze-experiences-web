@@ -31,6 +31,19 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
   const { displaySettings, customizations } = widgetConfig;
   const [shownFacets, setShownFacets] = useState<Record<string, boolean>>({});
 
+  const showFacet = (facet: Facet): boolean => {
+    if (!facet.range && !facet.items) {
+      return false;
+    }
+    if (facet.range && facet.range.min === facet.range.max) {
+      return false;
+    }
+    if (facet.items && !facet.items.filter((i) => i.value).length) {
+      return false;
+    }
+    return true;
+  };
+
   const showFacetValues = (facet: Facet, coloredText: boolean): ReactElement | ReactElement[] => {
     const priceRangeChangeHandler = (value: number | number[]): void => {
       setSelectedFilters((currentFilters: Record<FacetType, any>) => {
@@ -69,7 +82,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
       });
     };
 
-    return facet.items.map((item) => (
+    return facet.items.filter((i) => i.value).map((item) => (
       <div className='flex w-full justify-between' key={item.value}>
         <Checkbox
           radius='none'
@@ -112,7 +125,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
   if (displayAsDropdown) {
     return (
         <div className='flex w-8/12'>
-          {facets.map((facet) => (
+          {facets.map((facet) => (showFacet(facet) ? (
               <div key={facet.key} className='w-2/6 p-1'>
                 <div className='w-full border-y border-y-gray-300 py-2'
                      onClick={() => {
@@ -141,7 +154,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
                     </OutsideAlerter>
                 )}
               </div>
-          ))}
+          ) : <></>))}
         </div>
     );
   }

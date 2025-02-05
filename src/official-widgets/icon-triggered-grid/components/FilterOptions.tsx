@@ -24,10 +24,23 @@ interface FilterOptionsProps {
   setScreen: (screen: ScreenType | null) => void;
 }
 
-const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilters, setSelectedFilters, setScreen }) => {
+const FilterOptions: FC<FilterOptionsProps> = ({ className, facets, selectedFilters, setSelectedFilters, setScreen }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, customizations } = widgetConfig;
   const intl = useIntl();
+
+  const showFacet = (facet: Facet): boolean => {
+    if (!facet.range && !facet.items) {
+      return false;
+    }
+    if (facet.range && facet.range.min === facet.range.max) {
+      return false;
+    }
+    if (facet.items && !facet.items.filter((i) => i.value).length) {
+      return false;
+    }
+    return true;
+  };
 
   const showFacetValues = (facet: Facet): ReactElement | ReactElement[] => {
     const priceRangeChangeHandler = (value: number | number[]): void => {
@@ -67,10 +80,9 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
       });
     };
 
-    return facet.items.map((item, index) => (
+    return facet.items.filter((i) => i.value).map((item) => (
       <div className='flex w-full justify-between' key={item.value}>
         <Checkbox
-          data-pw={`itg-${facet.key}-filter-${index}`}
           radius='none'
           value={item.value}
           color='secondary'
@@ -88,7 +100,7 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
     <div className={className}>
       <Accordion className='divide-y-1 overflow-y-auto' selectionMode='multiple'>
         {
-          facets.map((facet) => (
+          facets.map((facet) => (showFacet(facet) ? (
             <AccordionItem
               classNames={{ title: 'font-bold text-primary' }}
               key={facet.key}
@@ -104,7 +116,7 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
                 {showFacetValues(facet)}
               </div>
             </AccordionItem>
-          ))
+          ) : <></>))
         }
       </Accordion>
 
