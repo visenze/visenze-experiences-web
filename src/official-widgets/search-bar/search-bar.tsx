@@ -44,7 +44,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
   const [, setShowDropdown] = useState(false);
   const [searchHistory] = useState<SearchHistoryEntry[]>([]);
   const [suggestionMax, setSuggestionMax] = useState(6);
-  const [relatedMax, setRelatedMax] = useState(8);
+  const [relatedMax] = useState(8);
   const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
   const intl = useIntl();
@@ -85,7 +85,6 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
   useEffect(() => {
     if (breakpoint === WidgetBreakpoint.MOBILE) {
       setSuggestionMax(4);
-      setRelatedMax(2);
     }
   }, [breakpoint]);
 
@@ -165,10 +164,10 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
           {/* Autocomplete dropdown */}
           {query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
               ? (<div
-                      className='absolute top-12 z-20 w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
+                      className='absolute top-12 z-20 h-[80vh] w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all md:h-auto'
                       aria-label='Drag or upload image'
                   >
-                    <div className='flex flex-col divide-x divide-gray-200 py-1 md:flex-row'>
+                    <div className='relative flex flex-col divide-x divide-gray-200 py-1 md:flex-row'>
                       <div className='flex flex-col justify-between md:w-2/5'>
                         <div className='flex flex-col gap-2 px-4 py-1'>
                           <p className='text-large font-semibold leading-6 text-primary'>Suggestions</p>
@@ -232,7 +231,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
                         </div>
                       </div>
 
-                      <div className='flex px-4 pb-4 md:hidden'>
+                      <div className='sticky bottom-0 flex px-4 md:hidden'>
                         <Button
                             className='w-full rounded bg-buttonPrimary py-2 font-semibold text-white'
                             radius='none'
