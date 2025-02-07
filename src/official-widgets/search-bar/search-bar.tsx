@@ -150,7 +150,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
         <div className='relative flex w-full flex-col items-center'>
           {/* Search bar */}
           <SearchBarInput query={query} setQuery={setQuery} image={image}
-                          imageUploadHandler={(img: SearchImage) => {
+                          imageUploadHandler={(img: SearchImage | undefined) => {
                             setImage(img);
                             if (img && !isImageFile(img)) {
                               emitSearchBarCallback(query, img);
