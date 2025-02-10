@@ -87,26 +87,25 @@ const useImageMultisearch = ({
   const [autocompleteResults, setAutocompleteResults] = useState<string[]>([]);
 
   const handleImageSuccess = (res: ProductSearchResponse): void => {
+    if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+      widgetConfig.callbacks.preprocessResponse(res);
+    }
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else {
       setError('');
-      if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
-        widgetConfig.callbacks.preprocessResponse(res);
-      }
       setResponse(res);
     }
   };
 
   const handleAutocompleteSuccess = (res: ProductSearchResponse): void => {
+    if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+      widgetConfig.callbacks.preprocessResponse(res);
+    }
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else {
       setError('');
-
-      if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
-        widgetConfig.callbacks.preprocessResponse(res);
-      }
       const newAutocompleteResults = (res.result || []).map((r: any) => r.text);
       setAutocompleteResults(newAutocompleteResults);
     }
