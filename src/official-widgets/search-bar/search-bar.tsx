@@ -165,8 +165,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
           {/* Autocomplete dropdown */}
           {query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
               ? (<div
-                      className='absolute top-12 z-20 h-[80vh] w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all md:h-auto'
-                      aria-label='Drag or upload image'
+                      className='absolute top-12 z-20 h-[80vh] w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all md:h-auto'
                   >
                     <div className='relative flex flex-col divide-x divide-gray-200 py-1 md:flex-row'>
                       <div className='flex flex-col justify-between md:w-2/5'>
@@ -187,7 +186,12 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                                       tabIndex={0}
                                       className='pr-4'
                                       key={result}
-                                      endContent={<MagnifyingGlassIcon className='size-4'/>}
+                                      endContent={(
+                                          <MagnifyingGlassIcon color={darkMode
+                                                                 ? (customizations.generalLayout?.fontColorDark || '')
+                                                                 : (customizations.generalLayout?.fontColor || '')}
+                                                               className='size-4' />
+                                      )}
                                       textValue={result}
                                   >
                             <span className='pl-2 text-primary'
@@ -200,7 +204,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
 
                         <div className='hidden px-4 pb-4 md:flex'>
                           <Button
-                              className='w-full rounded bg-buttonPrimary py-2 font-semibold text-white'
+                              className='w-full rounded bg-buttonPrimary py-2 font-semibold text-buttonPrimary'
                               radius='none'
                               onClick={() => {
                                 if (query) {
@@ -227,7 +231,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                               data-pw='sb-product-result-grid'
                           >
                             {searchAsYouTypeResults.slice(0, relatedMax).map((result, index) => (
-                                <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
+                                <div key={`${result.product_id}-${index}`} data-pw={`sb-product-result-card-${index + 1}`}>
                                   <ProductCard key={`${result.product_id}-${index}`}
                                                index={index}
                                                result={result}
@@ -242,7 +246,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
 
                       <div className='sticky bottom-0 flex px-4 md:hidden'>
                         <Button
-                            className='w-full rounded bg-buttonPrimary py-2 font-semibold text-white'
+                            className='w-full rounded bg-buttonPrimary py-2 font-semibold text-buttonPrimary'
                             radius='none'
                             onClick={() => {
                               if (query) {
@@ -257,7 +261,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                   </div>
               )
               : <div
-                  className='absolute top-12 z-20 w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-white transition-all'
+                  className='absolute top-12 z-20 w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all'
                   aria-label='Drag or upload image'
               >
                 <div className='flex divide-x divide-gray-200 py-1'>
@@ -279,7 +283,12 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                                   tabIndex={0}
                                   className='pr-4'
                                   key={String(entry.query)}
-                                  endContent={<MagnifyingGlassIcon className='size-4'/>}
+                                  endContent={(
+                                      <MagnifyingGlassIcon color={darkMode
+                                                             ? (customizations.generalLayout?.fontColorDark || '')
+                                                             : (customizations.generalLayout?.fontColor || '')}
+                                                           className='size-4' />
+                                  )}
                                   textValue={entry.query}
                               >
                             <span className='pl-2 text-primary'
