@@ -45,6 +45,8 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
   };
 
   const showFacetValues = (facet: Facet, coloredText: boolean): ReactElement | ReactElement[] => {
+    const facetName = getFacetNameByKey(displaySettings.productDetails, facet.key) as FacetType;
+
     const priceRangeChangeHandler = (value: number | number[]): void => {
       setSelectedFilters((currentFilters: Record<FacetType, any>) => {
         let newPriceRange: number[] = [];
@@ -63,12 +65,11 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
         color='secondary'
         minValue={facet.range.min}
         maxValue={facet.range.max}
-        defaultValue={[facet.range.min, facet.range.max]}
+        defaultValue={selectedFilters[facetName]?.length ? selectedFilters[facetName] : [facet.range.min, facet.range.max]}
         onChangeEnd={priceRangeChangeHandler}
       />;
     }
 
-    const facetName = getFacetNameByKey(displaySettings.productDetails, facet.key) as FacetType;
     const updateFiltersHandler = (event: ChangeEvent<HTMLInputElement>): void => {
       setSelectedFilters((currentFilters: Record<FacetType, any>) => {
         const newSet = new Set(currentFilters[facetName]);
