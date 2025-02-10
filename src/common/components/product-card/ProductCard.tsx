@@ -81,6 +81,9 @@ const getOriginalPrice = (
   }
   if (result[productDetails['original_price']]) {
     const priceNumber = +result[productDetails['original_price']].value;
+    if (priceNumber === 0) {
+      return '';
+    }
     const currencyFormatter = currencyFormatterFactory(languageSettings, customizations, result[productDetails['original_price']].currency);
     return currencyFormatter.format(priceNumber);
   }
