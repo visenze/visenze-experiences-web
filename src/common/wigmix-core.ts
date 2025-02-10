@@ -445,11 +445,15 @@ export interface WidgetConfig {
     /**
      * ViSenze app key; obtainable from Discovery Suite console.
      *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
+     *
      * @since 1.0.0
      */
     appKey: string;
     /**
      * ViSenze placement ID; obtainable from Discovery Suite console.
+     *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
      *
      * @since 1.0.0
      */
@@ -461,7 +465,7 @@ export interface WidgetConfig {
      */
     strategyId?: string | number;
     /**
-     * UID used to override ViSenze tracking parameter.
+     * (optional) UID used to override ViSenze tracking parameter.
      *
      * @since 1.0.0
      */
@@ -474,6 +478,8 @@ export interface WidgetConfig {
     gtmTracking?: boolean;
     /**
      * ViSenze search/recommendations API endpoint.
+     *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
      *
      * @since 1.0.0
      */
@@ -514,11 +520,15 @@ export interface WidgetConfig {
     /**
      * CSS selector on which the widget will be rendered on.
      *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
+     *
      * @since 1.0.0
      */
     cssSelector: string;
     /**
      * Field mapping for product card. The fields are based on the schema of the Discovery Suite catalog.
+     *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
      *
      * @since 1.0.0
      */
@@ -576,7 +586,7 @@ export interface WidgetConfig {
      */
     preprocessResponse?: (resp: ProductSearchResponse) => void;
     /**
-     * Fires whenever an event is sent to ViSenze Analytics, or when `sendEvent` is called.
+     * Fires whenever an event is sent to ViSenze Analytics (precisely: when `sendEvent` is called).
      *
      * @param action The action that is being recorded
      * @param params The attached metadata related to the action

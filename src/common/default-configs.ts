@@ -7,9 +7,7 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
   appSettings: {
     appKey: '', // populated by widget-init API
     placementId: '', // populated by widget-init API
-    uid: '',
     endpoint: '', // populated by widget-init API
-    gtmTracking: false,
     // Set the values to very large numbers so that the full size of the image is returned.
     resizeSettings: {
       maxHeight: 100000,
