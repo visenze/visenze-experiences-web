@@ -16,6 +16,7 @@ import { WidgetDataContext } from '../../common/types/contexts';
 import FileDropzone from '../../common/components/FileDropzone';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import ProductCard from '../../common/components/product-card/ProductCard';
+import UploadIcon from '../../common/icons/UploadIcon';
 
 interface SearchHistoryEntry {
   id: string; // Unique identifier for deduplication
@@ -34,7 +35,7 @@ interface SearchBarResultProps {
 }
 
 const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
@@ -289,12 +290,21 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                         <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload-dropdown'>
                           <div
                               className='flex flex-col items-center gap-6 py-1 text-center text-medium'>
-                            <CustomizableIcon
-                                height={80}
-                                width={80}
-                                url={customizations.imageUpload?.icon?.url || 'https://cdn.visenze.com/images/upload-icon.svg'}
-                                color={customizations.imageUpload?.icon?.color || ''}
-                            />
+                            {customizations.imageUpload?.icon?.url ? (
+                                <CustomizableIcon
+                                    height={80}
+                                    width={80}
+                                    url={customizations.imageUpload.icon.url}
+                                    color={darkMode
+                                      ? (customizations.imageUpload.icon.colorDark || '')
+                                      : (customizations.imageUpload.icon.color || '')}
+                                />
+                            ) : (
+                                <UploadIcon className='size-20'
+                                            color={darkMode
+                                              ? (customizations.imageUpload?.icon?.colorDark || '')
+                                              : (customizations.imageUpload?.icon?.color || '')} />
+                            )}
 
                             <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
                               {intl.formatMessage({ id: 'dragImageToSearch' })}
