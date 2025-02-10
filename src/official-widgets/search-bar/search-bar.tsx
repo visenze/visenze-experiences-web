@@ -168,8 +168,9 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                     <div className='relative flex flex-col divide-x divide-gray-200 py-1 md:flex-row'>
                       <div className='flex flex-col justify-between md:w-2/5'>
                         <div className='flex flex-col gap-2 px-4 py-1'>
-                          <p className='text-large font-semibold leading-6 text-primary'>Suggestions</p>
-
+                          <p className='text-large font-semibold leading-6 text-primary'>
+                            {intl.formatMessage({ id: 'suggestions' })}
+                          </p>
                           <Listbox
                               onAction={(key) => {
                                 setQuery(String(key));
@@ -204,15 +205,16 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                                 }
                               }}
                           >
-                            View all {productCount} products
+                            {intl.formatMessage({ id: 'viewAllProducts' }).replace('{productCount}', `${productCount}`)}
                           </Button>
                         </div>
                       </div>
 
                       <div className='flex w-full justify-center md:w-3/5'>
                         <div className='flex flex-col gap-2 px-4 py-1'>
-                          <p className='text-large font-semibold leading-6 text-primary'>Related products</p>
-
+                          <p className='text-large font-semibold leading-6 text-primary'>
+                            {intl.formatMessage({ id: 'relatedProducts' })}
+                          </p>
                           <div
                               className='grid w-full grid-cols-2 gap-x-2 gap-y-4 pb-2 md:grid-cols-4'
                               data-pw='esr-product-result-grid'
@@ -241,7 +243,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                               }
                             }}
                         >
-                          View all {productCount} products
+                          {intl.formatMessage({ id: 'viewAllProducts' }).replace('{productCount}', `${productCount}`)}
                         </Button>
                       </div>
                     </div>
@@ -254,8 +256,9 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                 <div className='flex divide-x divide-gray-200 py-1'>
                   <div className='flex-1'>
                     <div className='flex flex-col gap-2 px-4 py-1'>
-                      <p className='text-large font-semibold leading-6 text-primary'>Recent searches</p>
-
+                      <p className='text-large font-semibold leading-6 text-primary'>
+                        {intl.formatMessage({ id: 'recentSearches' })}
+                      </p>
                       <Listbox
                           onAction={(key) => {
                             setQuery(String(key));

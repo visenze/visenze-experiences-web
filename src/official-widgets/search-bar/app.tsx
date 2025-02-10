@@ -20,6 +20,10 @@ const DEFAULT_TEXTS: LanguagePack = {
     dragImageToSearch: 'drag an image to search or click to browse',
     tapToSearchImage: 'tap here to search an image',
     tapProductGallery: 'or tap our trending product gallery below',
+    relatedProducts: 'Related products',
+    recentSearches: 'Recent searches',
+    suggestions: 'Suggestions',
+    viewAllProducts: 'View all {productCount} products',
   },
 };
 
