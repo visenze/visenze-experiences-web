@@ -2,6 +2,7 @@ import type { FC, ReactElement } from 'react';
 import { useEffect, useContext, useState } from 'react';
 import { Listbox, ListboxItem, ListboxSection } from '@heroui/listbox';
 import { Button } from '@heroui/button';
+import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { WidgetBreakpoint } from '../../common/types/constants';
@@ -17,6 +18,7 @@ import FileDropzone from '../../common/components/FileDropzone';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import UploadIcon from '../../common/icons/UploadIcon';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 
 interface SearchHistoryEntry {
   id: string; // Unique identifier for deduplication
@@ -217,8 +219,12 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                             {intl.formatMessage({ id: 'relatedProducts' })}
                           </p>
                           <div
-                              className='grid w-full grid-cols-2 gap-x-2 gap-y-4 pb-2 md:grid-cols-4'
-                              data-pw='esr-product-result-grid'
+                              className={cn(
+                                  'wigmix-product-grid grid text-primary w-full',
+                                  getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 md:grid-cols-4', 'gap-x-2', 'gap-y-4'),
+                              )}
+                              style={getProductGridCssConfig(customizations, breakpoint)}
+                              data-pw='sb-product-result-grid'
                           >
                             {searchAsYouTypeResults.slice(0, relatedMax).map((result, index) => (
                                 <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
