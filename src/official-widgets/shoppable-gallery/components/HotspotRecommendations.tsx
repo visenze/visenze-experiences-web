@@ -1,10 +1,11 @@
-import type { CSSProperties, FC } from 'react';
+import type { FC } from 'react';
 import { memo, useContext, useMemo } from 'react';
 import type { ObjectProductResponse } from 'visearch-javascript-sdk';
 import { useIntl } from 'react-intl';
+import { cn } from '@heroui/theme';
 import ViSenzeModal from '../../../common/components/modal/visenze-modal';
 import { CroppingContext, WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
-import { getFlattenProducts } from '../../../common/utils';
+import { getFlattenProducts, getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import ImageCropThumbnail from './ImageCropThumbnail';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
@@ -50,41 +51,6 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
     return getFlattenProducts(objects[selectedHotspot].result);
   }, [objects, selectedHotspot]);
 
-  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
-      }
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
-        classes.push(defaultGapY);
-      }
-      return classes.join(' ');
-    }
-    return [defaultCols, defaultGapX, defaultGapY].join(' ');
-  };
-
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
-  };
-
   return (
     <ViSenzeModal open={openDrawer} onClose={closeDrawerHandler} layout='mobile' className='bottom-0 top-[unset] h-9/10 w-full rounded-t-xl' position='center'
                   darkMode={darkMode}
@@ -120,8 +86,11 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
         </div>
 
         {/* Product Result Grid */}
-        <div className={`wigmix-product-grid grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3 lg:grid-cols-4', 'gap-x-2', 'gap-y-4')} overflow-y-auto px-2 pb-4`}
-             style={getProductGridCssConfig()}
+        <div className={cn(
+            'wigmix-product-grid grid overflow-y-auto px-2 pb-4',
+            getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4', 'gap-x-2', 'gap-y-4'),
+        )}
+             style={getProductGridCssConfig(customizations, breakpoint)}
              data-pw='sg-product-result-grid'>
           {
             results.map((result, index) => (

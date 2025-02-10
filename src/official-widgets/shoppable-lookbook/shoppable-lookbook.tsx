@@ -1,4 +1,4 @@
-import type { CSSProperties, FC } from 'react';
+import type { FC } from 'react';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { Skeleton } from '@heroui/skeleton';
 import { useIntl } from 'react-intl';
@@ -8,6 +8,7 @@ import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 
 interface ShoppableLookbookProps {
   productId: string;
@@ -60,41 +61,6 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
       });
       setObjectDots(normalizedObjs);
     }
-  };
-
-  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
-      }
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
-        classes.push(defaultGapY);
-      }
-      return classes.join(' ');
-    }
-    return [defaultCols, defaultGapX, defaultGapY].join(' ');
-  };
-
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
   };
 
   const onImageLoad = (e: any): void => {
@@ -166,9 +132,9 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
 
                 {/* Product card grid */}
                 <div
-                    className={`wigmix-product-grid grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-4')} 
+                    className={`wigmix-product-grid grid ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-4')} 
               md:absolute md:right-0 md:top-0 md:h-full md:w-[59%] md:overflow-y-scroll`}
-                    style={getProductGridCssConfig()}
+                    style={getProductGridCssConfig(customizations, breakpoint)}
                     data-pw='sl-product-result-grid'>
                   {productResults.map((result, index) => (
                       <ProductCard key={`${result.product_id}-${index}`}

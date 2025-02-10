@@ -1,7 +1,8 @@
+import type { CSSProperties } from 'react';
 import type { Product, ProductSearchResponseSuccess, ProductType } from 'visearch-javascript-sdk';
 import type { CroppedBox } from './types/box';
 import type { ProcessedProduct } from './types/product';
-import { FacetType, SortType } from './types/constants';
+import { FacetType, SortType, type WidgetBreakpoint } from './types/constants';
 import type { WidgetConfig } from './wigmix-core';
 
 export const getFlattenProduct = (result: Product): ProcessedProduct => {
@@ -132,4 +133,48 @@ export const getFilterQueries = (productDetails: WidgetConfig['displaySettings']
   }
 
   return filterQueries;
+};
+
+export const getProductGridCssClasses = (
+  customizations: WidgetConfig['customizations'],
+  breakpoint: WidgetBreakpoint,
+  defaultCols: string,
+  defaultGapX: string,
+  defaultGapY: string,
+): string => {
+  const cssConfigSrc = customizations.productGrid?.[breakpoint];
+  const classes = [];
+  if (cssConfigSrc) {
+    if (!cssConfigSrc.productsPerRow) {
+      classes.push(defaultCols);
+    }
+    if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+      classes.push(defaultGapX);
+    }
+    if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
+      classes.push(defaultGapY);
+    }
+    return classes.join(' ');
+  }
+  return [defaultCols, defaultGapX, defaultGapY].join(' ');
+};
+
+export const getProductGridCssConfig = (
+  customizations: WidgetConfig['customizations'],
+  breakpoint: WidgetBreakpoint,
+): CSSProperties => {
+  const cssConfig = {} as CSSProperties;
+  const cssConfigSrc = customizations.productGrid?.[breakpoint];
+  if (cssConfigSrc) {
+    if (cssConfigSrc.productsPerRow) {
+      cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
+    }
+    if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
+      cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
+    }
+    if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+      cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
+    }
+  }
+  return cssConfig;
 };

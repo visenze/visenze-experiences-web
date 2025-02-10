@@ -1,6 +1,7 @@
-import type { CSSProperties, FC } from 'react';
+import type { FC } from 'react';
 import { useEffect, useCallback, useContext, useState } from 'react';
 import { Button } from '@heroui/button';
+import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
@@ -13,7 +14,7 @@ import Footer from '../../common/components/Footer';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import SortOptions from './components/SortOptions';
 import FilterOptions, { showFacet } from './components/FilterOptions';
-import { getSortTypeIntlId } from '../../common/utils';
+import { getProductGridCssClasses, getProductGridCssConfig, getSortTypeIntlId } from '../../common/utils';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import CloseIcon from '../../common/icons/CloseIcon';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
@@ -79,41 +80,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
       label: Labels.ICON,
     });
     openWidgetPopup();
-  };
-
-  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
-      }
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
-        classes.push(defaultGapY);
-      }
-      return classes.join(' ');
-    }
-    return [defaultCols, defaultGapX, defaultGapY].join(' ');
-  };
-
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
   };
 
   useEffect(() => {
@@ -251,8 +217,11 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
 
                 {/* Product Result Grid */}
                 <div
-                    className={`wigmix-product-grid grid ${getProductGridCssClasses('grid-cols-2 lg:grid-cols-3', 'gap-x-2', 'gap-y-4')} overflow-y-auto`}
-                    style={getProductGridCssConfig()}
+                    className={cn(
+                        'wigmix-product-grid grid overflow-y-auto',
+                        getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 lg:grid-cols-3', 'gap-x-2', 'gap-y-4'),
+                    )}
+                    style={getProductGridCssConfig(customizations, breakpoint)}
                     data-pw='itg-product-result-grid'>
                   {productResults.map((result, index) => (
                     <ProductCard key={`${result.product_id}-${index}`}

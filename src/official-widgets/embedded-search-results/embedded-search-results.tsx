@@ -1,4 +1,4 @@
-import type { CSSProperties, FC, ReactElement } from 'react';
+import type { FC, ReactElement } from 'react';
 import { useEffect, useRef, useContext, useState, useLayoutEffect } from 'react';
 import type { ProductSearchResponse, Facet } from 'visearch-javascript-sdk';
 import { useIntl } from 'react-intl';
@@ -6,7 +6,13 @@ import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { getFacets, getFilterQueries, getFlattenProducts } from '../../common/utils';
+import {
+  getFacets,
+  getFilterQueries,
+  getFlattenProducts,
+  getProductGridCssClasses,
+  getProductGridCssConfig,
+} from '../../common/utils';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Category } from '../../common/types/tracking-constants';
 import ProductCard from '../../common/components/product-card/ProductCard';
@@ -90,41 +96,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     setSearchHistory((prevHistory) => [newEntry, ...prevHistory].slice(0, MAX_HISTORY_ITEMS));
 
     setActiveHistory(newEntry);
-  };
-
-  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
-      }
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
-        classes.push(defaultGapY);
-      }
-      return classes.join(' ');
-    }
-    return [defaultCols, defaultGapX, defaultGapY].join(' ');
-  };
-
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
   };
 
   const multisearchWithSearchBarDetails = (imgUrl?: string, text?: string, currentPage?: number, shouldResetFacets = true): void => {
@@ -387,10 +358,10 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                     {
                       productResults.length > 0
                         ? <div className={cn(
-                            `wigmix-product-grid grid w-full ${getProductGridCssClasses('grid-cols-2 md:grid-cols-4', 'gap-x-2', 'gap-y-4')}`,
+                            `wigmix-product-grid grid w-full ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 md:grid-cols-4', 'gap-x-2', 'gap-y-4')}`,
                             isLoading && 'opacity-50',
                             )}
-                            style={getProductGridCssConfig()}
+                            style={getProductGridCssConfig(customizations, breakpoint)}
                             data-pw='esr-product-result-grid'
                           >
                           {isLoading && (

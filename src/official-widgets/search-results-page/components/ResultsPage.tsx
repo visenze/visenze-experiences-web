@@ -1,4 +1,4 @@
-import type { CSSProperties, FC, ReactElement } from 'react';
+import type { FC, ReactElement } from 'react';
 import { useContext, useRef, useState } from 'react';
 import { Button } from '@heroui/button';
 import { cn } from '@heroui/theme';
@@ -7,6 +7,7 @@ import ProductCard from '../../../common/components/product-card/ProductCard';
 import CloseIcon from '../../../common/icons/CloseIcon';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { WidgetDataContext } from '../../../common/types/contexts';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 
 /**
  * Component which displays the search results
@@ -41,41 +42,6 @@ const ResultsPage: FC<ResultsPageProps> = ({
       left: 0,
       behavior: 'smooth',
     });
-  };
-
-  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
-      }
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
-        classes.push(defaultGapY);
-      }
-      return classes.join(' ');
-    }
-    return [defaultCols, defaultGapX, defaultGapY].join(' ');
-  };
-
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
   };
 
   const onFindSimilar = (product: ProcessedProduct): void => {
@@ -157,9 +123,9 @@ const ResultsPage: FC<ResultsPageProps> = ({
 
       <div
         ref={resultsRef}
-        className={`wigmix-product-grid grid h-full ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-4')} 
+        className={`wigmix-product-grid grid h-full ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 md:grid-cols-3', 'gap-x-2', 'gap-y-4')} 
         overflow-y-auto px-3 py-4 md:gap-x-4 md:px-4`}
-        style={getProductGridCssConfig()}>
+        style={getProductGridCssConfig(customizations, breakpoint)}>
         {results.map((result, index) => (
             <ProductCard key={`${result.product_id}-${index}`}
                          index={index}

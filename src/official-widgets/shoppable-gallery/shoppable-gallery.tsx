@@ -1,4 +1,4 @@
-import type { CSSProperties, FC } from 'react';
+import type { FC } from 'react';
 import { useEffect, useState, useContext } from 'react';
 import { Spinner } from '@heroui/spinner';
 import { useIntl } from 'react-intl';
@@ -11,7 +11,7 @@ import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import HotspotContainer from '../../common/components/hotspots/hotspot-container';
 import type { BoxData, ProcessedProduct } from '../../common/types/product';
-import { getFlattenProducts } from '../../common/utils';
+import { getFlattenProducts, getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 import HotspotRecommendations from './components/HotspotRecommendations';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
 import CloseIcon from '../../common/icons/CloseIcon';
@@ -50,36 +50,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
     setActiveProductId('');
   };
 
-  const getProductGridCssClasses = (defaultCols: string): string => {
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
-      }
-      return classes.join(' ');
-    }
-    return defaultCols;
-  };
-
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
-  };
-
-  // Retrieve gallery products
+ // Retrieve gallery products
   useEffect(() => {
     const fetchGalleryProducts = async (): Promise<void> => {
       const response = await fetch(
@@ -129,8 +100,8 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
         <div>
           {/* Gallery Products Grid */}
           <div
-            className={`wigmix-product-grid grid ${getProductGridCssClasses('grid-cols-3')} gap-0.5`}
-            style={getProductGridCssConfig()}
+            className={`wigmix-product-grid grid ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-3', 'gap-x-0.5', 'gap-y-0.5')}`}
+            style={getProductGridCssConfig(customizations, breakpoint)}
             data-pw='sg-gallery-products-grid'>
             {galleryProducts.slice(0, page * 20).map((result, index) => (
               <div key={`${result.im_url}-${index}`} data-pw={`sg-gallery-product-${index + 1}`}>
