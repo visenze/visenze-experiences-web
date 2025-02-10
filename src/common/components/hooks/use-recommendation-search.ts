@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import type {
   Facet,
   ObjectProductResponse,
@@ -6,17 +6,14 @@ import type {
   ProductSearchResponseSuccess,
   ProductType,
 } from 'visearch-javascript-sdk';
-import type { WidgetClient, WidgetConfig } from '../../visenze-core';
-import {type FacetType, SortType} from '../../types/constants';
+import { WidgetDataContext } from '../../types/contexts';
+import { type FacetType, SortType } from '../../types/constants';
 import { Actions, Category } from '../../types/tracking-constants';
 import type { ProcessedProduct } from '../../types/product';
-import {getFacets, getFilterQueries, getFlattenProduct, getFlattenProducts, parseToProductTypes} from '../../utils';
+import { getFacets, getFilterQueries, getFlattenProduct, getFlattenProducts, parseToProductTypes } from '../../utils';
 
 interface RecommendationSearchProps {
-  widgetClient: WidgetClient;
-  config: WidgetConfig;
   productId: string;
-  retryCount: number;
   sortType?: SortType;
   filters?: Record<FacetType, any>;
   additionalParams?: Record<string, any>;
@@ -37,14 +34,12 @@ export interface RecommendationSearch {
 }
 
 const useRecommendationSearch = ({
-  widgetClient,
-  config,
   productId,
-  retryCount,
   sortType,
   filters,
   additionalParams,
 }: RecommendationSearchProps): RecommendationSearch => {
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
@@ -55,10 +50,12 @@ const useRecommendationSearch = ({
   const [productTypes, setProductTypes] = useState<ProductType[]>([]);
   const [objectIndex, setObjectIndex] = useState<number>(0);
   const [error, setError] = useState<string>('');
-  const productDetails = config.displaySettings.productDetails;
-  const MAX_RETRY_COUNT = config.maxRetryCount;
+  const productDetails = widgetConfig.displaySettings.productDetails;
 
   const handleSuccess = (res: ProductSearchResponse): void => {
+    if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+      widgetConfig.callbacks.preprocessResponse(res);
+    }
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else {
@@ -80,21 +77,21 @@ const useRecommendationSearch = ({
   };
 
   const searchById = (): void => {
-    const params = config.searchSettings;
+    const params = widgetConfig.searchSettings;
     params['return_product_info'] = true;
     params['show_best_product_images'] = true;
     params['sort_by'] = '';
-    params.facets = getFacets(productDetails);
-    params.facets_show_count = true;
+    params['facets'] = getFacets(productDetails);
+    params['facets_show_count'] = true;
 
     if (sortType === SortType.PRICE_HTL) {
-      params['sort_by'] = `${productDetails.price}:desc`;
+      params['sort_by'] = `${productDetails['price']}:desc`;
     } else if (sortType === SortType.PRICE_LTH) {
-      params['sort_by'] = `${productDetails.price}:asc`;
+      params['sort_by'] = `${productDetails['price']}:asc`;
     }
 
     if (filters) {
-      params.filters = getFilterQueries(productDetails, filters);
+      params['filters'] = getFilterQueries(productDetails, filters);
     }
 
     if (additionalParams) {
@@ -161,7 +158,7 @@ const useRecommendationSearch = ({
       }
 
       // Model Outfit should be the reference image if strategy is STL
-      const strategy: any = response.strategy;
+      const strategy: any = response['strategy'];
       if (strategy.algorithm === 'STL') {
         setModelOutfitAsReference();
       }
@@ -182,13 +179,6 @@ const useRecommendationSearch = ({
       resetSearch();
     }
   }, [productId, sortType, filters]);
-
-  // Attempt the API call again up to the maximum allowed retries
-  useEffect(() => {
-    if (retryCount && retryCount <= MAX_RETRY_COUNT) {
-      searchById();
-    }
-  }, [retryCount]);
 
   // Update product results when objectIndex changes
   useEffect(() => {

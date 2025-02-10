@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { memo, useEffect, useState } from 'react';
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 import type { CroppedBox } from '../../types/box';
 
 interface HotspotProps {
@@ -47,7 +47,7 @@ const Hotspot: FC<HotspotProps> = ({
       className={cn('duration-200', isSelected
         ? 'rounded-sm border-2 border-white bg-transparent absolute z-0 shadow-around box-border transition-[border-radius] ease-in-out'
         : 'md:w-3 md:h-3 w-4 h-4 bg-white hover:bg-opacity-100 bg-opacity-50 border-2 border-white rounded-3xl '
-        + 'transition-none flex justify-center items-center absolute z-10 cursor-pointer')}
+        + 'transition-none flex justify-center items-center absolute z-5 cursor-pointer')}
       style={isSelected ? boxStyle : dotStyle}
       onClick={() => handleHotspotClick(index)}
       onKeyDown={(event): void => {

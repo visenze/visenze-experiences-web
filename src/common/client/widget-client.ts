@@ -1,6 +1,6 @@
 import type { Root } from 'react-dom/client';
 import ViSearch, { type ProductSearchResponse } from 'visearch-javascript-sdk';
-import type { Primitive, WidgetClient, WidgetConfig } from '../visenze-core';
+import type { Primitive, WidgetClient, WidgetConfig, WidgetRenderStatus } from '../wigmix-core';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
 import { DEFAULT_ENDPOINT } from '../constants';
 
@@ -43,11 +43,15 @@ const wrapCallbacks = (
   return [newOnSuccess, newOnError];
 };
 
-export default function getWidgetClient(config: WidgetConfig, widgetType: string, widgetVersion: string): WidgetClient {
+const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion: string): WidgetClient => {
   const { disableAnalytics } = config;
   const { placementId, appKey, strategyId, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
   const { onSearchCallback } = config.callbacks;
+  let renderStatus: WidgetRenderStatus = 'UNRENDERED';
   let roots: Root[] = [];
+  let widgetOpeners: ((id: string, bypassIdCheck: boolean) => void)[] = [];
+  let darkModeTogglers: (() => void)[] = [];
+  let configUpdaters: ((configOverride: WidgetConfig, isPartial: boolean) => void)[] = [];
   let lastTrackingMetadata: Record<string, Primitive> = {};
   let lastReference = '';
 
@@ -127,22 +131,25 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     callback?: (...args: any) => any,
     failure?: (err: any) => void,
   ): Promise<void> => {
-    if (disableAnalytics) {
-      return;
-    }
-
     const trackingCallback = config?.callbacks.trackingCallback;
     if (trackingCallback && typeof trackingCallback === 'function') {
       trackingCallback(action, params);
     }
 
-    const analyticsParams = params;
-
-    if (!analyticsParams.queryId) {
-      analyticsParams.queryId = getLastClickQueryId();
+    if (disableAnalytics) {
+      return;
     }
-    if (!analyticsParams.widgetVersion) {
-      analyticsParams.widgetVersion = `${widgetType}.${widgetVersion}.js`;
+
+    const analyticsParams = {
+      ...params,
+      ...(config.trackingSettings || {}),
+    };
+
+    if (!analyticsParams['queryId']) {
+      analyticsParams['queryId'] = getLastClickQueryId();
+    }
+    if (!analyticsParams['widgetVersion']) {
+      analyticsParams['widgetVersion'] = `${widgetType}.${widgetVersion}.js`;
     }
 
     visearch.sendEvent(action, analyticsParams, callback, failure);
@@ -157,18 +164,14 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     callback?: (...args: any) => any,
     failure?: (err: any) => void,
   ): Promise<void> => {
-    if (disableAnalytics) {
-      return;
-    }
-
     if (!validateBatchEvents(events, failure)) {
       return;
     }
 
     visearch.generateUuid((batchId) => {
       events.forEach((event) => {
-        if (action.toLowerCase() === 'transaction' && !event.transId) {
-          event.transId = batchId;
+        if (action.toLowerCase() === 'transaction' && !event['transId']) {
+          event['transId'] = batchId;
         }
         sendEvent(action, event, callback, failure);
       });
@@ -210,6 +213,10 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     roots.forEach((root) => {
       root.render(null);
     });
+    renderStatus = 'HIDDEN';
+    widgetOpeners = [];
+    darkModeTogglers = [];
+    configUpdaters = [];
   };
 
   const disposeWidget = (): void => {
@@ -228,7 +235,43 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     roots = renderRoots;
   };
 
+  const getRenderRoots = (): Root[]  => {
+    return roots;
+  };
+
   const getLastReference = (): any => lastReference;
+
+  const markAsRendered = (isRendered: boolean): void => {
+    renderStatus = isRendered ? 'RENDERED' : 'UNRENDERED';
+  };
+
+  const getRenderStatus = (): WidgetRenderStatus => {
+    return renderStatus;
+  };
+
+  const registerWidgetOpener = (fn: (id: string, bypassIdCheck: boolean) => void): void => {
+    widgetOpeners.push(fn);
+  };
+
+  const openWidget = (id: string): void => {
+    widgetOpeners.forEach((fn) => fn(id, widgetOpeners.length <= 1));
+  };
+
+  const registerDarkModeToggler = (fn: () => void): void => {
+    darkModeTogglers.push(fn);
+  };
+
+  const toggleDarkMode = (): void => {
+    darkModeTogglers.forEach((fn) => fn());
+  };
+
+  const registerConfigUpdater = (fn: (configOverride: WidgetConfig, isPartial: boolean) => void): void => {
+    configUpdaters.push(fn);
+  };
+
+  const updateConfig = (configOverride: WidgetConfig, isPartial: boolean): void => {
+    configUpdaters.forEach((fn) => fn(configOverride, isPartial));
+  };
 
   return {
     visearch,
@@ -238,18 +281,28 @@ export default function getWidgetClient(config: WidgetConfig, widgetType: string
     setLastTrackingMeta,
     sendEvent,
     sendEvents,
+    markAsRendered,
     getLastClickQueryId,
     getLastQueryId,
     getLastTrackingMeta,
     getLastReference,
+    getRenderStatus,
+    getRenderRoots,
     searchById,
     multisearchByImage,
     multisearchAutocomplete,
     setRenderRoots,
-    rerender: (): void => {},
-    openWidget: (): void => {},
+    rerender: (): void => {}, // implemented in initialization.ts
+    openWidget,
+    registerWidgetOpener,
     hideWidget,
     disposeWidget,
-    updateConfig: (): void => {},
+    toggleDarkMode,
+    registerDarkModeToggler,
+    updateConfig,
+    registerConfigUpdater,
+    forceErrorState: (): void => {}, // implemented in individual widgets
   };
-}
+};
+
+export default getWidgetClient;

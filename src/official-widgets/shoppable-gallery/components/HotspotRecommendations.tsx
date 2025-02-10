@@ -1,15 +1,15 @@
-import type { CSSProperties, FC } from 'react';
+import type { FC } from 'react';
 import { memo, useContext, useMemo } from 'react';
-import { Button } from '@nextui-org/button';
 import type { ObjectProductResponse } from 'visearch-javascript-sdk';
 import { useIntl } from 'react-intl';
+import { cn } from '@heroui/theme';
 import ViSenzeModal from '../../../common/components/modal/visenze-modal';
 import { CroppingContext, WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
-import { getFlattenProducts } from '../../../common/utils';
-import Result from './Result';
+import { getFlattenProducts, getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import ImageCropThumbnail from './ImageCropThumbnail';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import CloseIcon from '../../../common/icons/CloseIcon';
 
 /**
  * This component displays a drawer with product recommendations based on selected hotspots in an image.
@@ -29,7 +29,7 @@ interface HotspotRecommendationsProps {
 }
 
 const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, openDrawer, setOpenDrawer, activeImageUrl, placementId }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const { productTypes } = useContext(WidgetResultContext);
   const { selectedHotspot, setSelectedHotspot } = useContext(CroppingContext) ?? {};
@@ -45,64 +45,33 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
   };
 
   const results = useMemo(() => {
-    if (selectedHotspot === -1 || objects.length === 0) return [];
+    if (selectedHotspot === -1 || objects.length === 0) {
+      return [];
+    }
     return getFlattenProducts(objects[selectedHotspot].result);
   }, [objects, selectedHotspot]);
 
-  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = customizations?.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
-      }
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
-        classes.push(defaultGapY);
-      }
-      return classes.join(' ');
-    }
-    return [defaultCols, defaultGapX, defaultGapY].join(' ');
-  };
-
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations?.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
-  };
-
   return (
     <ViSenzeModal open={openDrawer} onClose={closeDrawerHandler} layout='mobile' className='bottom-0 top-[unset] h-9/10 w-full rounded-t-xl' position='center'
+                  darkMode={darkMode}
                   fontFamily={customizations.generalLayout?.fontFamily}
                   placementId={placementId} idSuffix='hotspot' >
-      <div className='flex size-full flex-col bg-primary' data-pw='sif-hotspot-recommendations'>
+      <div className='flex size-full flex-col bg-primary' data-pw='sg-hotspot-recommendations'>
         {/* Close Button Tablet/Desktop */}
-        <Button isIconOnly className='absolute right-3 top-2 hidden bg-transparent md:flex' onClick={closeDrawerHandler} data-pw='sif-drawer-close-button-desktop'>
-          <CustomizableIcon
-              height={24}
-              width={24}
-              url={'https://cdn.visenze.com/images/close-icon.svg'}
-              color={customizations.generalLayout?.fontColor}
-          />
-        </Button>
+        <div className='absolute right-3 top-2 hidden bg-transparent md:flex rounded-full p-1 hover:opacity-90 cursor-pointer'
+             onClick={closeDrawerHandler}
+             data-pw='sg-drawer-close-button-desktop'>
+          <CloseIcon className='size-6'
+                     color={darkMode
+                       ? customizations.generalLayout?.fontColorDark
+                       : customizations.generalLayout?.fontColor} />
+        </div>
 
         {/* Close Button Mobile */}
-        <Button className='flex flex-shrink-0 justify-center bg-primary md:hidden' size='sm' onClick={closeDrawerHandler} data-pw='sif-drawer-close-button-mobile'>
+        <div className='flex flex-shrink-0 justify-center bg-buttonPrimary md:hidden rounded-full p-1 hover:opacity-90 w-full cursor-pointer'
+             onClick={closeDrawerHandler} data-pw='sg-drawer-close-button-mobile'>
           <div className='h-1 w-12 bg-gray-400'></div>
-        </Button>
+        </div>
 
         {/* Image Crop Thumbnails */}
         <span className='text-center font-bold text-primary md:pt-3'>{intl.formatMessage({ id: 'hotspotRecommendationsTitle' })}</span>
@@ -117,17 +86,20 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
         </div>
 
         {/* Product Result Grid */}
-        <div className={`grid ${getProductGridCssClasses('grid-cols-2 md:grid-cols-3 lg:grid-cols-4', 'gap-x-2', 'gap-y-4')} overflow-y-auto px-2 pb-4`}
-             style={getProductGridCssConfig()}
-             data-pw='sif-product-result-grid'>
+        <div className={cn(
+            'wigmix-product-grid grid overflow-y-auto px-2 pb-4',
+            getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4', 'gap-x-2', 'gap-y-4'),
+        )}
+             style={getProductGridCssConfig(customizations, breakpoint)}
+             data-pw='sg-product-result-grid'>
           {
             results.map((result, index) => (
-              <div key={`${result.product_id}-${index}`} data-pw={`sif-product-result-card-${index + 1}`}>
-                <Result
-                  index={index}
-                  result={result}
-                />
-              </div>
+                <ProductCard key={`${result.product_id}-${index}`}
+                             index={index}
+                             result={result}
+                             hasFindSimilar={false}
+                             isRecommendation={true}
+                             pwPrefix='sg' />
             ))
           }
         </div>

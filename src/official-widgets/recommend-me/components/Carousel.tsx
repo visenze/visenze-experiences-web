@@ -1,10 +1,10 @@
 import type { CSSProperties, FC } from 'react';
 import { useContext, memo, useEffect, useState } from 'react';
 import type { ProcessedProduct } from '../../../common/types/product';
-import Result from './Result';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { WidgetDataContext } from '../../../common/types/contexts';
+import TrashIcon from '../../../common/icons/TrashIcon';
 
 /**
  * An individual carousel of product cards based on a search query
@@ -17,7 +17,7 @@ interface CarouselProps {
 }
 
 const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [isLoading, setIsLoading] = useState(true);
   const breakpoint = useBreakpoint();
@@ -58,25 +58,23 @@ const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }
           <span>&quot;</span>
         </div>
         {!isLoading && (
-          <CustomizableIcon
-              height={20}
-              width={20}
-              url={'https://cdn.visenze.com/images/trash-icon.svg'}
-              color={customizations.generalLayout?.fontColor}
-              onClickHandler={removeFromHistory}
-              className='absolute right-0 top-4 cursor-pointer'
-          />
+          <div className='absolute right-0 top-4 cursor-pointer' onClick={removeFromHistory}>
+            <TrashIcon className='size-5'
+                       color={darkMode
+                         ? customizations.generalLayout?.fontColorDark
+                         : customizations.generalLayout?.fontColor} />
+          </div>
         )}
       </div>
-      <div className={`no-scrollbar flex w-full items-end text-primary ${getProductGridCssClasses('gap-x-4')} overflow-scroll`}
+      <div className={`no-scrollbar grid grid-cols-5 w-full items-end text-primary ${getProductGridCssClasses('gap-x-4')} overflow-scroll`}
            style={getProductGridCssConfig()}>
-        {results.map((result, i) => (
-          <div key={result.product_id}>
-            <Result
-              index={i}
-              result={result}
-            />
-          </div>
+        {results.map((result, index) => (
+            <ProductCard key={`${result.product_id}-${index}`}
+                         index={index}
+                         result={result}
+                         hasFindSimilar={false}
+                         isRecommendation={false}
+                         pwPrefix='rm' />
         ))}
       </div>
     </div>

@@ -1,83 +1,38 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { type FC, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { type FC, type ReactElement, useCallback, useContext, useEffect, useState } from 'react';
+import { Textarea } from '@heroui/input';
+import { useIntl } from 'react-intl';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
+import { WidgetDataContext } from '../../common/types/contexts';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import CloseIcon from '../../common/icons/CloseIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
 import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
-import type { Product } from './components/ProductCard';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
-
-const defaultInitialMessages = [
-    'Let\'s get started',
-    'Tell us about what your styling needs and we will help you find the perfect item for you',
-];
-
-interface ChatAreaProps {
-  message: string;
-  onMessageChange: (message: string) => void;
-  onOverflowChange: (overflow: boolean) => void;
-  onEnter: () => void;
-}
+import { DEFAULT_ENDPOINT } from '../../common/constants';
+import type { ProcessedProduct } from '../../common/types/product';
+import NewChatIcon from './icons/NewChatIcon';
+import { getFlattenProduct } from '../../common/utils';
 
 // Product line can look like one of these:
 // [[pid]] **title** - ...
+// - [[pid]] **title** - ...
 // 1. [[pid]] **title** - ...
-const PRODUCT_LINE_REGEX = /^(?:\d+\.? )?\[\[(.*)]]/;
+const PRODUCT_LINE_REGEX = /^(?:\d+\.? |- )?\[\[(.*)]]/;
 
 // Sometimes an image can be returned by the bot, in a markdown-compatible format:
 //     ![title](im_url)
 const IMAGE_LINE_REGEX = /^ *!\[/;
 
-const ChatArea: React.FC<ChatAreaProps> = ({ message, onMessageChange, onOverflowChange, onEnter }) => {
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const [overflow, setOverflow] = useState(false);
-  const unitHeight = 24;
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, []);
-
-  useEffect(() => {
-    onOverflowChange(overflow);
-  }, [overflow]);
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '0px';
-      const maxHeight = Math.min(textareaRef.current.scrollHeight, 5 * unitHeight);
-
-      textareaRef.current.style.height = `${maxHeight}px`;
-      setOverflow(textareaRef.current.scrollHeight >= 5 * unitHeight);
-    }
-  }, [textareaRef, message]);
-
-  return (
-      <textarea value={message}
-                placeholder='Type your message'
-                ref={textareaRef}
-                style={{ height: `${unitHeight}px` }}
-                onChange={(e) => onMessageChange(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.code === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    onEnter();
-                  }
-                }}/>
-  );
-};
-
 interface ShoppingAssistantProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
+  // no properties at the moment
 }
 
-const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient }) => {
+const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
+  const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
+  const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
@@ -87,7 +42,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
   const [isWaiting, setIsWaiting] = useState(true);
   const [allowUserInput, setAllowUserInput] = useState(false);
   const [latestMessage, setLatestMessage] = useState('');
-  const [chatBoxOverflow, setChatBoxOverflow] = useState(false);
+  const intl = useIntl();
+  const openingMessages = [
+    intl.formatMessage({ id: 'openingMessage1' }),
+    intl.formatMessage({ id: 'openingMessage2' }),
+  ];
 
   const startNewChat = (): void => {
     setChatId('');
@@ -109,10 +68,6 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
     chatIdParam = '',
   ): Promise<void> => {
     if (!messageToSend) {
-      return;
-    }
-    if (!config.appSettings.appKey || !config.appSettings.placementId) {
-      console.error('App Key or Placement ID not found');
       return;
     }
     setIsWaiting(true);
@@ -137,7 +92,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
     let isFetchingProduct = false;
     let hasReceivedFirstToken = false;
     const chatIdToUse = chatIdParam || chatId;
-    const products: Product[] = [];
+    const products: ProcessedProduct[] = [];
     // Retrieve user id and session id from ViSearch client
     let uid = '';
     let sid = '';
@@ -149,14 +104,15 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
     });
     setAllowUserInput(false);
     const params = new URLSearchParams({
-      app_key: config.appSettings.appKey,
-      placement_id: config.appSettings.placementId.toString(),
+      app_key: appSettings.appKey,
+      placement_id: appSettings.placementId.toString(),
       chat_id: chatIdToUse,
       q: messageToSend,
       va_uid: uid,
       va_sid: sid,
+      attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
     });
-    fetchEventSource(`${config.appSettings.endpoint}/v1/product/multisearch/chat/shopping-assistant?${params.toString()}`, {
+    fetchEventSource(`${appSettings.endpoint || DEFAULT_ENDPOINT}/v1/product/multisearch/chat/shopping-assistant?${params.toString()}`, {
       openWhenHidden: true,
       onmessage: (ev) => {
         if (ev.event === 'chat_id') {
@@ -175,14 +131,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
           const currentTokensSplit = currentTokens.split('\n');
           if (newlines && currentLine === lastLineWithProduct) {
             currentLine += newlines;
-            const productToDisplay = products.filter((prod) => prod.pid === latestPid);
+            const productToDisplay = products.filter((prod) => prod.product_id === latestPid);
             if (productToDisplay.length) {
-              const parts = currentTokensSplit[lastLineWithProduct].match(
-                  /\*\*.*\*\* - (.*)/,
-              );
-              if (parts?.length) {
-                [, productToDisplay[0].description] = parts;
-              }
               setChats((chats1) => {
                 if (chats1[chats1.length - 1].author !== 'products') {
                   return [
@@ -243,16 +193,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
           setLatestMessage(messageToDisplay);
         } else if (ev.event === 'product') {
           const data = JSON.parse(ev.data);
-          products.push({
-            pid: data.product_id,
-            title: data.data.title,
-            description: '',
-            image_url: data.main_image_url,
-            price: data.data.price.currency + data.data.price.value,
-            product_url: data.data.product_url,
-            review_rating: data.data.review_rating,
-            review_count: data.data.review_count,
-          });
+          products.push(getFlattenProduct(data));
         }
       },
       onclose: () => {
@@ -294,12 +235,12 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
     });
   };
 
-  const openDialog = (initialMessages: string[]): void => {
+  const openDialog = (): void => {
     if (dialogVisible) {
       return;
     }
     const renderChat = (idx: number, cId: string): void => {
-      if (idx > initialMessages.length) {
+      if (idx > openingMessages.length) {
         setIsWaiting(false);
         setAllowUserInput(true);
         return;
@@ -309,7 +250,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
           chatId: cId,
           requestId: '',
           author: 'bot',
-          messages: initialMessages.slice(0, idx),
+          messages: openingMessages.slice(0, idx),
         }]);
         renderChat(idx + 1, cId);
       }, 2000);
@@ -322,50 +263,49 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
   };
 
   const onChatButtonClick = useCallback((): void => {
-    openDialog(defaultInitialMessages);
+    openDialog();
   }, []);
 
   const getScreen = (): ReactElement => (
-      <div className={`vi-shopping-assistant-container ${breakpoint}`}>
-        <div className={`vi-shopping-assistant-header ${breakpoint}`}>
-          <div className='close-icon' onClick={onModalClose}>
-            <CloseIcon />
+      <div className='p-6 flex flex-col h-full'>
+        <div className='flex w-full justify-end'>
+          <div onClick={() => setDialogVisible(false)}>
+            <CloseIcon className='size-6 cursor-pointer' />
           </div>
         </div>
         <ChatWindow isWaiting={isWaiting} chats={chats} latestMessage={latestMessage} />
-        <div className={`vi-shopping-assistant-chat ${breakpoint}`}>
-          <div className={`vi-shopping-assistant-chatbox ${chatBoxOverflow ? 'compact-vertical-padding' : ''}`}>
-            <ChatArea message={message}
-                      onMessageChange={setMessage}
-                      onOverflowChange={(overflow) => {
-                        setChatBoxOverflow(overflow);
-                      }}
-                      onEnter={() => {
+        <div className='mt-2'>
+          <Textarea value={message}
+                    placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
+                    minRows={1}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.code === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        if (!allowUserInput) {
+                          return;
+                        }
+                        sendMessage(message);
+                      }
+                    }}
+                    endContent={
+                      <SubmitChatIcon onClickHandler={() => {
                         if (!allowUserInput) {
                           return;
                         }
                         sendMessage(message);
                       }} />
-            <div className={`submit-icon ${allowUserInput ? '' : 'disabled'}`}>
-              <SubmitChatIcon onClickHandler={() => {
-                if (!allowUserInput) {
-                  return;
-                }
-                sendMessage(message);
-              }} />
-            </div>
-          </div>
+                    }
+          />
         </div>
       </div>
   );
 
-  widgetClient.openWidget = (params: any): void => {
-    let initialMessages = defaultInitialMessages;
-    if (params && params.initial_messages) {
-      initialMessages = params.initial_messages;
-    }
-    openDialog(initialMessages);
-  };
+  useEffect(() => {
+    widgetClient.registerWidgetOpener(() => {
+      openDialog();
+    });
+  }, []);
 
   if (!root) {
     return <></>;
@@ -373,22 +313,32 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ config, widgetClient })
 
   return (
       <>
-        {!config.hideTrigger && (
-            <>
-              <CustomizableIcon
-                  height={28}
-                  width={28}
-                  url={config.customizations.popup?.triggerIcon?.url || 'https://cdn.visenze.com/images/new-chat-icon.svg'}
-                  color={config.customizations.popup?.triggerIcon?.color || ''}
-                  className='wigmix-popup-trigger-icon cursor-pointer'
-                  onClickHandler={onChatButtonClick}
-              />
-            </>
+        {!customizations.popup?.triggerIcon?.hide && (
+            <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+                 onClick={onChatButtonClick}>
+              {customizations.popup?.triggerIcon?.url ? (
+                  <CustomizableIcon
+                      height={24}
+                      width={24}
+                      url={customizations.popup.triggerIcon.url}
+                      color={darkMode
+                          ? (customizations.popup?.triggerIcon?.colorDark || '')
+                          : (customizations.popup?.triggerIcon?.color || '')}
+                      className='wigmix-popup-trigger-icon custom'
+                  />
+              ) : (
+                  <NewChatIcon color={darkMode
+                                 ? (customizations.popup?.triggerIcon?.colorDark || '')
+                                 : (customizations.popup?.triggerIcon?.color || '')}
+                               className='wigmix-popup-trigger-icon default size-6' />
+              )}
+            </div>
         )}
         <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
-                      position={config.customizations.popup?.position || 'center'}
-                      fontFamily={config.customizations.generalLayout?.fontFamily}
-                      placementId={`${config.appSettings.placementId}`}>
+                      position={customizations.popup?.position || 'center'}
+                      darkMode={darkMode}
+                      fontFamily={customizations.generalLayout?.fontFamily}
+                      placementId={`${appSettings.placementId}`}>
           {getScreen()}
         </ViSenzeModal>
       </>

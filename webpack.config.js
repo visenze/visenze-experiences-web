@@ -9,9 +9,9 @@ const { env } = require('process');
 const getWebpackModule = require('./webpack.util');
 const getS3Plugin = require('./webpack.s3');
 
-const getWebpackConfig = (config) => {
-  const dir = config.dir;
-  const version = require(`./src/version`);
+const getWebpackConfig = () => {
+  const dir = env.widget_dir;
+  const version = require('./src/version');
   const packageName = dir.split('/').pop().replaceAll('-', '_');
   const buildEnv = env.build || 'production';
   const isPublish = env.publish === 'true';

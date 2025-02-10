@@ -1,9 +1,7 @@
-import type { CSSProperties, FC } from 'react';
+import type { FC } from 'react';
 import { useEffect, useState, useContext } from 'react';
-import { Button } from '@nextui-org/button';
-import { Spinner } from '@nextui-org/spinner';
+import { Spinner } from '@heroui/spinner';
 import { useIntl } from 'react-intl';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { WidgetResultContext, WidgetDataContext } from '../../common/types/contexts';
 import GalleryImage from './components/GalleryImage';
@@ -13,20 +11,20 @@ import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import HotspotContainer from '../../common/components/hotspots/hotspot-container';
 import type { BoxData, ProcessedProduct } from '../../common/types/product';
-import { getFlattenProducts } from '../../common/utils';
+import { getFlattenProducts, getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 import HotspotRecommendations from './components/HotspotRecommendations';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
-import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import CloseIcon from '../../common/icons/CloseIcon';
 
 interface ShoppableGalleryProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
+  // no properties at the moment
 }
 
-const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) => {
+const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
-  const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [activeProductId, setActiveProductId] = useState('');
@@ -35,14 +33,9 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
   const [galleryProducts, setGalleryProducts] = useState<ProcessedProduct[]>([]);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [page, setPage] = useState(1);
-  const { widgetConfig } = useContext(WidgetDataContext);
-  const { appSettings } = widgetConfig;
   const intl = useIntl();
 
   const { objects, productResults, productTypes, metadata, error } = useRecommendationSearch({
-    widgetClient,
-    config,
-    retryCount,
     productId: activeProductId,
   });
 
@@ -57,44 +50,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
     setActiveProductId('');
   };
 
-  const getProductGridCssClasses = (defaultCols: string): string => {
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
-      }
-      return classes.join(' ');
-    }
-    return defaultCols;
-  };
-
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
-  };
-
-  useEffect(() => {
-    if (error) {
-      setRetryCount(retryCount + 1);
-    } else {
-      setRetryCount(0);
-    }
-  }, [error]);
-
-  // Retrieve gallery products
+ // Retrieve gallery products
   useEffect(() => {
     const fetchGalleryProducts = async (): Promise<void> => {
       const response = await fetch(
@@ -144,19 +100,19 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
         <div>
           {/* Gallery Products Grid */}
           <div
-            className={`grid ${getProductGridCssClasses('grid-cols-3')} gap-0.5`}
-            style={getProductGridCssConfig()}
-            data-pw='sif-gallery-products-grid'>
+            className={`wigmix-product-grid grid ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-3', 'gap-x-0.5', 'gap-y-0.5')}`}
+            style={getProductGridCssConfig(customizations, breakpoint)}
+            data-pw='sg-gallery-products-grid'>
             {galleryProducts.slice(0, page * 20).map((result, index) => (
-              <div key={`${result.im_url}-${index}`} data-pw={`sif-gallery-product-${index + 1}`}>
+              <div key={`${result.im_url}-${index}`} data-pw={`sg-gallery-product-${index + 1}`}>
                 <GalleryImage index={index} result={result} onClickHandler={galleryImageClickHandler} />
               </div>
             ))}
           </div>
 
           {/* ViSenze Footer */}
-          {config.customizations.generalLayout?.showViSenzeLogo && (
-            <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='sif-visenze-footer'/>
+          {customizations.generalLayout?.showViSenzeLogo && (
+            <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='sg-visenze-footer'/>
           )}
         </div>
 
@@ -167,22 +123,20 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
             onClose={onCloseHandler}
             layout={breakpoint}
             position='center'
-            fontFamily={config.customizations.generalLayout?.fontFamily}
-            placementId={`${config.appSettings.placementId}`}
+            darkMode={darkMode}
+            fontFamily={customizations.generalLayout?.fontFamily}
+            placementId={`${appSettings.placementId}`}
             className='left-[unset] top-[unset] h-[500px] w-[300px] rounded-xl'>
-            <div className='flex size-full flex-col bg-primary pt-1/5' data-pw='sif-image-hotspot-modal'>
-              <Button
-                isIconOnly
-                className='absolute right-2 top-2 bg-transparent'
+            <div className='flex size-full flex-col bg-primary pt-1/5' data-pw='sg-image-hotspot-modal'>
+              <div
+                className='absolute right-2 top-2 bg-transparent rounded-full p-1 hover:opacity-90 cursor-pointer'
                 onClick={onCloseHandler}
-                data-pw='sif-modal-close-button'>
-                <CustomizableIcon
-                    height={24}
-                    width={24}
-                    url={'https://cdn.visenze.com/images/close-icon.svg'}
-                    color={config.customizations.generalLayout?.fontColor}
-                />
-              </Button>
+                data-pw='sg-modal-close-button'>
+                <CloseIcon className='size-6'
+                           color={darkMode
+                             ? customizations.generalLayout?.fontColorDark
+                             : customizations.generalLayout?.fontColor} />
+              </div>
               {productTypes.length > 0 && (
                 <HotspotContainer
                   referenceImage={activeImageUrl}
@@ -200,7 +154,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ config, widgetClient }) =
             setOpenDrawer={setOpenDrawer}
             objects={objects}
             activeImageUrl={activeImageUrl}
-            placementId={`${config.appSettings.placementId}`}
+            placementId={`${appSettings.placementId}`}
           />
         </CroppingProvider>
       </WidgetResultContext.Provider>

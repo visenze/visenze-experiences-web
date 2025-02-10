@@ -1,7 +1,7 @@
-import { Button } from '@nextui-org/button';
 import type { FC, ReactElement } from 'react';
 import { useIntl } from 'react-intl';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
+import CloseIcon from '../../../common/icons/CloseIcon';
 
 interface HeaderProps {
   onCloseHandler: () => void;
@@ -20,15 +20,11 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
         isResultScreen
         ? (
           <>
-            <Button isIconOnly className='absolute left-5 top-3 bg-transparent' onClick={onBackHandler} data-pw='cs-back-button'>
-              <CustomizableIcon
-                  height={24}
-                  width={24}
-                  url={'https://cdn.visenze.com/images/back-icon.svg'}
-                  color={iconColor}
-                  className='cursor-pointer'
-              />
-            </Button>
+            <div className='absolute left-5 top-3 bg-transparent rounded-full p-1 hover:opacity-90'
+                 onClick={onBackHandler}
+                 data-pw='cs-back-button'>
+              <ChevronLeftIcon color={iconColor} className='cursor-pointer size-6' />
+            </div>
             {showTitle && (
               <div className='wigmix-widget-title hidden md:block' data-pw='cs-widget-title'>
                 {intl.formatMessage({ id: 'resultScreenTitle' })}
@@ -47,15 +43,11 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
         )
       }
 
-      <Button isIconOnly className='absolute right-5 top-3 bg-transparent' onClick={onCloseHandler} data-pw='cs-close-button'>
-        <CustomizableIcon
-            height={24}
-            width={24}
-            url={'https://cdn.visenze.com/images/close-icon.svg'}
-            color={iconColor}
-            className='wigmix-close-popup-icon cursor-pointer'
-        />
-      </Button>
+      <div className='absolute right-5 top-3 bg-transparent rounded-full p-1 hover:opacity-90'
+           onClick={onCloseHandler}
+           data-pw='cs-close-button'>
+        <CloseIcon color={iconColor} className='cursor-pointer size-6' />
+      </div>
     </div>
   );
 };

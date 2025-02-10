@@ -1,13 +1,12 @@
 import React, { useContext, type ChangeEvent, type FC, type ReactElement, useState, useEffect, useRef } from 'react';
-import { Accordion, AccordionItem } from '@nextui-org/accordion';
-import { Button } from '@nextui-org/button';
+import { Accordion, AccordionItem } from '@heroui/accordion';
 import type { Facet } from 'visearch-javascript-sdk';
-import { Slider } from '@nextui-org/slider';
-import { Checkbox } from '@nextui-org/checkbox';
+import { Slider } from '@heroui/slider';
+import { Checkbox } from '@heroui/checkbox';
 import type { FacetType } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { getFacetNameByKey, getTitleCase } from '../../../common/utils';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 
 interface FilterOptionsProps {
   facets: Facet[];
@@ -27,12 +26,27 @@ const ChevronDownIcon = (): ReactElement => (
       </svg>
   );
 
+export const showFacet = (facet: Facet): boolean => {
+  if (!facet.range && !facet.items) {
+    return false;
+  }
+  if (facet.range && facet.range.min === facet.range.max) {
+    return false;
+  }
+  if (facet.items && !facet.items.filter((i) => i.value).length) {
+    return false;
+  }
+  return true;
+};
+
 const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSelectedFilters, displayAsDropdown }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, customizations } = widgetConfig;
   const [shownFacets, setShownFacets] = useState<Record<string, boolean>>({});
 
   const showFacetValues = (facet: Facet, coloredText: boolean): ReactElement | ReactElement[] => {
+    const facetName = getFacetNameByKey(displaySettings.productDetails, facet.key) as FacetType;
+
     const priceRangeChangeHandler = (value: number | number[]): void => {
       setSelectedFilters((currentFilters: Record<FacetType, any>) => {
         let newPriceRange: number[] = [];
@@ -51,12 +65,11 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
         color='secondary'
         minValue={facet.range.min}
         maxValue={facet.range.max}
-        defaultValue={[facet.range.min, facet.range.max]}
+        defaultValue={selectedFilters[facetName]?.length ? selectedFilters[facetName] : [facet.range.min, facet.range.max]}
         onChangeEnd={priceRangeChangeHandler}
       />;
     }
 
-    const facetName = getFacetNameByKey(displaySettings.productDetails, facet.key) as FacetType;
     const updateFiltersHandler = (event: ChangeEvent<HTMLInputElement>): void => {
       setSelectedFilters((currentFilters: Record<FacetType, any>) => {
         const newSet = new Set(currentFilters[facetName]);
@@ -70,16 +83,19 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
       });
     };
 
-    return facet.items.map((item) => (
-      <div className='flex w-full justify-between' key={item.value}>
+    return facet.items.filter((i) => i.value).map((item) => (
+      <div className='flex w-full justify-between mb-1' key={item.value}>
         <Checkbox
           radius='none'
           value={item.value}
           color='secondary'
           onChange={updateFiltersHandler}
           isSelected={selectedFilters[facetName].has(item.value)}
+          classNames={{
+            base: 'w-full max-w-full',
+          }}
         >
-          <span className={`${coloredText ? 'text-primary' : ''}`}>{item.value}</span>
+          <span className={`${coloredText ? 'text-primary' : 'text-black'}`}>{item.value}</span>
         </Checkbox>
       </div>
     ));
@@ -112,26 +128,28 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
 
   if (displayAsDropdown) {
     return (
-        <div className='flex w-8/12'>
-          {facets.map((facet) => (
+        <div className='flex flex-wrap w-8/12'>
+          {facets.map((facet) => (showFacet(facet) ? (
               <div key={facet.key} className='w-2/6 p-1'>
-                <Button className='w-full text-primary'
-                        variant='bordered'
-                        radius='none'
-                        endContent={<ChevronDownIcon />}
-                        onClick={() => {
-                          setShownFacets((prev) => {
-                            const originalValueForFacet = prev[facet.key];
-                            const newState: Record<string, boolean> = {};
-                            Object.keys(prev).forEach((f) => {
-                              newState[f] = false;
-                            });
-                            newState[facet.key] = !originalValueForFacet;
-                            return newState;
-                          });
-                        }}>
-                  {getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
-                </Button>
+                <div className='w-full border-y border-y-gray-300 py-2'
+                     onClick={() => {
+                       setShownFacets((prev) => {
+                         const originalValueForFacet = prev[facet.key];
+                         const newState: Record<string, boolean> = {};
+                         Object.keys(prev).forEach((f) => {
+                           newState[f] = false;
+                         });
+                         newState[facet.key] = !originalValueForFacet;
+                         return newState;
+                       });
+                     }}>
+                  <div className='flex cursor-pointer items-center justify-between text-primary hover:opacity-80'>
+                    <span>
+                      {getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
+                    </span>
+                    <ChevronDownIcon />
+                  </div>
+                </div>
                 {shownFacets[facet.key] && (
                     <OutsideAlerter facet={facet.key}>
                       <div className='absolute z-20 mt-1 w-3/12 rounded border-gray-300 bg-gray-100 p-3 text-black'>
@@ -140,7 +158,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
                     </OutsideAlerter>
                 )}
               </div>
-          ))}
+          ) : <></>))}
         </div>
     );
   }
@@ -154,12 +172,10 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
               key={facet.key}
               title={getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
               indicator={
-                <CustomizableIcon
-                    height={20}
-                    width={20}
-                    url={'https://cdn.visenze.com/images/chevron-left-icon.svg'}
-                    color={customizations.generalLayout?.fontColor}
-                />
+                <ChevronLeftIcon className='size-5'
+                                 color={darkMode
+                                   ? customizations.generalLayout?.fontColorDark
+                                   : customizations.generalLayout?.fontColor} />
               }
             >
               <div className='flex flex-col gap-y-2 px-4 pb-4'>

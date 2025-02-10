@@ -1,7 +1,7 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useContext, useState } from 'react';
-import { Listbox, ListboxItem, ListboxSection } from '@nextui-org/listbox';
-import { Button } from '@nextui-org/button';
+import { Listbox, ListboxItem, ListboxSection } from '@heroui/listbox';
+import { Button } from '@heroui/button';
 import { useIntl } from 'react-intl';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { WidgetBreakpoint } from '../../common/types/constants';
@@ -13,10 +13,9 @@ import SearchBarInput from './components/SearchBarInput';
 import useAutocomplete from '../../common/components/hooks/use-autocomplete';
 import useSearchAsYouType from '../../common/components/hooks/use-search-as-you-type';
 import { WidgetDataContext } from '../../common/types/contexts';
-import type { WidgetConfig } from '../../common/visenze-core';
 import FileDropzone from '../../common/components/FileDropzone';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
-import Result from './components/Result';
+import ProductCard from '../../common/components/product-card/ProductCard';
 
 interface SearchHistoryEntry {
   id: string; // Unique identifier for deduplication
@@ -30,12 +29,11 @@ interface SearchHistoryEntry {
 }
 
 interface SearchBarResultProps {
-  config: WidgetConfig;
   textQuery: string;
   imUrl: string;
 }
 
-const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): ReactElement => {
+const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement => {
   const { widgetConfig } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [query, setQuery] = useState('');
@@ -89,8 +87,8 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
   }, [breakpoint]);
 
   const emitSearchBarCallback = (t: string | undefined, i: SearchImage | undefined): void => {
-    if (config.callbacks?.onSearchBarInput && typeof config.callbacks.onSearchBarInput === 'function') {
-      config.callbacks.onSearchBarInput(t, i);
+    if (widgetConfig.callbacks?.onSearchBarInput && typeof widgetConfig.callbacks.onSearchBarInput === 'function') {
+      widgetConfig.callbacks.onSearchBarInput(t, i);
     }
   };
 
@@ -160,7 +158,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
                             emitSearchBarCallback(query, image);
                           }}
                           setShowDropdown={setShowDropdown}
-                          placementId={`${config.appSettings.placementId}`} />
+                          placementId={`${widgetConfig.appSettings.placementId}`} />
           {/* Autocomplete dropdown */}
           {query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
               ? (<div
@@ -221,10 +219,12 @@ const SearchBar: FC<SearchBarResultProps> = ({ config, textQuery, imUrl }): Reac
                           >
                             {searchAsYouTypeResults.slice(0, relatedMax).map((result, index) => (
                                 <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
-                                  <Result
-                                      index={index}
-                                      result={result}
-                                  />
+                                  <ProductCard key={`${result.product_id}-${index}`}
+                                               index={index}
+                                               result={result}
+                                               hasFindSimilar={false}
+                                               isRecommendation={false}
+                                               pwPrefix='sb' />
                                 </div>
                             ))}
                           </div>

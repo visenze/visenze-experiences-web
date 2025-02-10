@@ -1,4 +1,4 @@
 export interface ResultLogic {
   productTrackingMeta: Record<string, any>;
-  onClick(event: any): void;
+  onClick(event: any, productUrl: string): void;
 }

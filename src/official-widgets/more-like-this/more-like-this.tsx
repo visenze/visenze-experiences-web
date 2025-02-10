@@ -5,10 +5,9 @@ import type { Settings } from 'react-slick';
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 import { useIntl } from 'react-intl';
-import type { WidgetClient, WidgetConfig } from '../../common/visenze-core';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetResultContext } from '../../common/types/contexts';
-import Result from './components/Result';
+import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import PrevArrow from './components/PrevArrow';
@@ -17,27 +16,28 @@ import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { WidgetBreakpoint } from '../../common/types/constants';
 
 interface MoreLikeThisProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
   productId: string;
 }
 
-const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, widgetClient, productId }) => {
+const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const root = useContext(RootContext);
-  const [retryCount, setRetryCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   const intl = useIntl();
   const breakpoint = useBreakpoint();
+
+  widgetClient.forceErrorState = (): void => {
+    setError('Sample error message here');
+  };
 
   const {
     productResults,
     metadata,
-    error,
+    error: errorFromApi,
   } = useRecommendationSearch({
-    widgetClient,
-    config,
     productId,
-    retryCount,
     additionalParams: {
       show_best_product_images: true,
     },
@@ -46,11 +46,11 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, widgetClient, productId }
   const useSlideSettings = (): Settings => {
     const isDesktop = breakpoint === WidgetBreakpoint.DESKTOP;
     const isTablet = breakpoint === WidgetBreakpoint.TABLET;
-    let slidesToShow = config.customizations.productGrid?.mobile?.productsPerRow || 2.5;
+    let slidesToShow = customizations.productGrid?.mobile?.productsPerRow || 2.5;
     if (isDesktop) {
-      slidesToShow = config.customizations.productGrid?.desktop?.productsPerRow || 4;
+      slidesToShow = customizations.productGrid?.desktop?.productsPerRow || 4;
     } else if (isTablet) {
-      slidesToShow = config.customizations.productGrid?.tablet?.productsPerRow || 3.5;
+      slidesToShow = customizations.productGrid?.tablet?.productsPerRow || 3.5;
     }
     const slidesToScroll = Math.floor(slidesToShow);
 
@@ -70,8 +70,8 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, widgetClient, productId }
       initialSlide: 0,
       slidesToScroll,
       slidesToShow,
-      prevArrow: isDesktop ? <PrevArrow iconColor={config.customizations?.generalLayout?.fontColor} /> : <></>,
-      nextArrow: isDesktop ? <NextArrow iconColor={config.customizations?.generalLayout?.fontColor} /> : <></>,
+      prevArrow: isDesktop ? <PrevArrow iconColor={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor} /> : <></>,
+      nextArrow: isDesktop ? <NextArrow iconColor={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor} /> : <></>,
       variableWidth: false,
     };
   };
@@ -79,7 +79,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, widgetClient, productId }
   const settings = useSlideSettings();
 
   const getProductCardCssClasses = (): string => {
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
       if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
@@ -92,7 +92,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, widgetClient, productId }
 
   const getProductCardCssConfig = (): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
         cssConfig.marginLeft = cssConfigSrc.marginHorizontal / 2;
@@ -103,54 +103,55 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ config, widgetClient, productId }
   };
 
   useEffect(() => {
-    if (error) {
-      setRetryCount(retryCount + 1);
-    } else {
-      setRetryCount(0);
-    }
-  }, [error]);
-
-  useEffect(() => {
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (errorFromApi) {
+      setError(errorFromApi);
+    }
+  }, [errorFromApi]);
 
   if (!root || isLoading) {
     return <></>;
   }
 
   if (error) {
-    return (
-      <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorDescription' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'errorResolution' })}</span>
-      </div>
-    );
+    return <></>;
   }
 
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        {/* Widget Title */}
-        {config.customizations.generalLayout?.showWidgetTitle && (
-          <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='mlt-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
-        )}
+        {productResults.length > 0 && (
+            <>
+              {/* Widget Title */}
+              {customizations.generalLayout?.showWidgetTitle && (
+                  <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='mlt-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+              )}
 
-        {/* Product Result Carousel */}
-        <div className='relative pr-1 text-primary lg:px-10' data-pw='mlt-product-result-carousel'>
-          <Slider {...settings}>
-            {productResults.map((result, index) => (
-              <div key={`${result.product_id}-${index}`} data-pw={`mlt-product-result-card-${index + 1}`}>
-                <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
-                  <Result index={index} result={result} />
-                </div>
+              {/* Product Result Carousel */}
+              <div className='relative pr-1 text-primary lg:px-10' data-pw='mlt-product-result-carousel'>
+                <Slider {...settings}>
+                  {productResults.map((result, index) => (
+                      <div key={`${result.product_id}-${index}`}>
+                        <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
+                          <ProductCard index={index}
+                                       result={result}
+                                       hasFindSimilar={false}
+                                       isRecommendation={true}
+                                       pwPrefix='mlt' />
+                        </div>
+                      </div>
+                  ))}
+                </Slider>
               </div>
-            ))}
-          </Slider>
-        </div>
 
-        {/* ViSenze Footer */}
-        {config.customizations.generalLayout?.showViSenzeLogo && (
-          <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='mlt-visenze-footer'/>
+              {/* ViSenze Footer */}
+              {customizations.generalLayout?.showViSenzeLogo && (
+                  <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='mlt-visenze-footer'/>
+              )}
+            </>
         )}
       </WidgetResultContext.Provider>
     </>

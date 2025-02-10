@@ -1,4 +1,4 @@
-import type { WidgetClient } from './common/visenze-core';
+import type { WidgetClient } from './common/wigmix-core';
 
 declare global {
   interface Window {

@@ -1,5 +1,29 @@
-const {nextui} = require('@nextui-org/theme');
+const { heroui } = require('@heroui/theme');
 const defaultTheme = require('tailwindcss/defaultTheme');
+const widgetType = process.env.widget_dir;
+
+// Here, the HeroUI packages needed by different widget types are specified
+// so that unused packages are not unnecessarily included and increasing bundle size.
+// skeleton is needed everywhere as it is part of product card.
+const herouiPackagesForOfficialWidgets = {
+  'official-widgets/camera-search': 'input|listbox|skeleton',
+  'official-widgets/similar-search': 'input|listbox|skeleton',
+  'official-widgets/search-results-page': 'button|input|listbox|skeleton',
+  'official-widgets/shopping-assistant': 'input|skeleton',
+  'official-widgets/recommend-me': 'input|skeleton',
+  'official-widgets/more-like-this': 'skeleton',
+  'official-widgets/shop-the-look': 'skeleton',
+  'official-widgets/embedded-grid': 'skeleton',
+  'official-widgets/shoppable-lookbook': 'skeleton',
+  'official-widgets/shoppable-gallery': 'skeleton|spinner',
+  'official-widgets/icon-triggered-grid': 'accordion|button|checkbox|radio|skeleton|slider|spinner',
+  'official-widgets/search-bar': 'button|input|listbox|skeleton',
+  'official-widgets/embedded-search-results': 'accordion|checkbox|input|skeleton|slider|spinner',
+};
+
+const herouiPackagesForWidget = herouiPackagesForOfficialWidgets[widgetType]
+  // If not found, bundle all available packages as fallback.
+  || 'accordion|button|checkbox|input|listbox|radio|skeleton|slider|spinner';
 
 const getFontObj = (configName) => {
   const deviceTypes = ['mobile', 'tablet', 'desktop'];
@@ -15,15 +39,15 @@ const getFontObj = (configName) => {
   return fontSizeObj;
 };
 
-const getColourObj = (configName) => {
-  const colourNames = ['primary', 'buttonPrimary', 'buttonSecondary'];
-  const colourObj = {};
+const getColorObj = (configName) => {
+  const colorNames = ['primary', 'buttonPrimary', 'buttonSecondary'];
+  const colorObj = {};
 
-  colourNames.forEach(colourName => {
-    colourObj[`${colourName}`] = `var(--wigmix-${configName}-${colourName})`;
+  colorNames.forEach(colorName => {
+    colorObj[`${colorName}`] = `var(--wigmix-${configName}-${colorName})`;
   });
 
-  return colourObj;
+  return colorObj;
 };
 
 // Convert all rem units to px units
@@ -60,13 +84,13 @@ function remToPx(input, fontSize = 16) {
 module.exports = {
   content: [
     './src/**/*.{html,js,ts,jsx,tsx}',
-    './node_modules/@nextui-org/theme/dist/components/(button|card|chip|image|input|listbox|pagination|popover|spacer|skeleton|accordion|checkbox|radio|spinner|slider).js',
+    `./node_modules/@heroui/theme/dist/components/(${herouiPackagesForWidget}).js`,
   ],
   theme: {
     ...remToPx(defaultTheme),
     extend: {
-      textColor: getColourObj('text'),
-      backgroundColor: getColourObj('background'),
+      textColor: getColorObj('text'),
+      backgroundColor: getColorObj('background'),
       fontSize: getFontObj('fontSize'),
       fontWeight: getFontObj('fontWeight'),
       height: {
@@ -90,5 +114,5 @@ module.exports = {
     },
   },
   darkMode: 'class',
-  plugins: [nextui()],
+  plugins: [heroui()],
 };

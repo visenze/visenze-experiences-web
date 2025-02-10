@@ -1,34 +1,20 @@
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 import { useEffect, useRef, useState, type ReactElement } from 'react';
-import { Image as NextImage } from '@nextui-org/image';
+import type { ProductType } from 'visearch-javascript-sdk';
 import ImageCropThumbnail from './ImageCropThumbnail';
 import CloseIcon from '../../../common/icons/CloseIcon';
 
-export interface ProductType {
-  type: string;
-  score?: number;
-  rerankScore?: number;
-  box: number[];
-  attributes: { [index: string]: string[] };
-  box_type: string;
-}
-
 export interface SearchHistoryEntry {
   id: string;
-  type: 'text' | 'image';
-  query?: string | null;
   imageUrl?: string | null;
-  imageId?: string | null;
   product_types?: ProductType[];
   box?: number[];
   timestamp: number;
-  filters?: Record<string, any>;
-  source: 'url' | 'user';
 }
 
 export const MAX_HISTORY_ITEMS = 20;
 
-export default function SearchHistory({
+const SearchHistory = ({
   activeHistory,
   history,
   onHistorySelect,
@@ -39,9 +25,9 @@ export default function SearchHistory({
   history: SearchHistoryEntry[];
   multisearchWithSearchBarDetails: (imgUrl?: string) => void;
   onHistorySelect: (entry: SearchHistoryEntry) => void;
-  onHistoryRemove: (entry: SearchHistoryEntry) => void;
-}): ReactElement {
-  const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number, height: number } }>({});
+  onHistoryRemove: (entry: SearchHistoryEntry, isActiveHistoryRemoved: boolean) => void;
+}): ReactElement => {
+  const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number; height: number } }>({});
   const activeItemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -74,6 +60,7 @@ export default function SearchHistory({
     if (activeHistory) {
       let baseId = activeHistory.id;
       if (activeHistory.product_types) {
+        // TODO refactor this to remove dependency to URL params
         const urlSearchParams = new URLSearchParams(window.location.search);
         const searchBarBox = urlSearchParams.get('box');
 
@@ -93,15 +80,13 @@ export default function SearchHistory({
       <div className='no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
         <div className='flex w-full flex-row gap-2 md:w-1/2'>
           {history
-            .filter((entry) => (entry.type === 'image'))
-            // eslint-disable-next-line no-confusing-arrow
-            .flatMap((entry) => (entry.product_types !== undefined)
+            .flatMap((entry) => (entry.product_types !== undefined
               ? entry.product_types.map((type) => ({
                   ...entry,
                   id: `${entry.id}-${type.box.join()}`,
                   box: type.box,
                 }))
-              : [entry])
+              : [entry]))
             .map((entry, index) => (
               <div
                 key={`${entry.id}-${index}`}
@@ -117,16 +102,14 @@ export default function SearchHistory({
                 }}
                 data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
               >
-                {entry.id !== getActiveHistoryId() && (
-                    <div className='absolute right-1 top-1 z-20 rounded-full bg-white'
-                         onClick={(event) => {
-                           event.preventDefault();
-                           event.stopPropagation();
-                           onHistoryRemove(entry);
-                         }}>
-                      <CloseIcon className='size-4'/>
-                    </div>
-                )}
+                <div className='absolute right-1 top-1 z-20 rounded-full bg-white'
+                     onClick={(event) => {
+                       event.preventDefault();
+                       event.stopPropagation();
+                       onHistoryRemove(entry, entry.id === getActiveHistoryId());
+                     }}>
+                  <CloseIcon className='size-4 text-black' />
+                </div>
                 {entry.box ? (
                   <div className='h-32 w-24 overflow-hidden'>
                     {entry.imageUrl && (
@@ -142,12 +125,9 @@ export default function SearchHistory({
                     )}
                   </div>
                 ) : (
-                  <NextImage
-                    classNames={{ wrapper: 'h-full' }}
-                    className='h-full rounded-none object-cover'
-                    src={entry.imageUrl ?? ''}
-                    data-pw={`esr-product-history-image-${index + 1}`}
-                  />
+                  <img className='h-full rounded-none object-cover'
+                       src={entry.imageUrl ?? ''}
+                       data-pw={`esr-product-history-image-${index + 1}`} />
                 )}
               </div>
             ))}
@@ -155,4 +135,6 @@ export default function SearchHistory({
       </div>
     </>
   );
-}
+};
+
+export default SearchHistory;

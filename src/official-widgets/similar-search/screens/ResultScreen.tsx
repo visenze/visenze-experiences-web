@@ -1,20 +1,21 @@
-import type { CSSProperties, FC, ReactElement } from 'react';
+import type { FC, ReactElement } from 'react';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useSwipeable } from 'react-swipeable';
-import { Button } from '@nextui-org/button';
-import { Input } from '@nextui-org/input';
-import { Listbox, ListboxItem } from '@nextui-org/listbox';
-import { cn } from '@nextui-org/theme';
+import { Input } from '@heroui/input';
+import { Listbox, ListboxItem } from '@heroui/listbox';
+import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
-import Result from '../components/Result';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import Footer from '../../../common/components/Footer';
 import Header from '../components/Header';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
+import ChevronUpIcon from '../../../common/icons/ChevronUpIcon';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -28,7 +29,7 @@ const swipeConfig = {
 interface ResultScreenProps {
   onModalClose: () => void;
   onTextSearch: (text: string) => void;
-  onImageSearch: (data: SearchImage) => void;
+  onFindSimilar: (data: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
   searchHistory: SearchImage[];
 }
@@ -36,14 +37,15 @@ interface ResultScreenProps {
 const ResultScreen: FC<ResultScreenProps> = ({
   onModalClose,
   onTextSearch = (): void => {},
-  onImageSearch = (): void => {},
+  onFindSimilar = (): void => {},
   onKeywordUpdate,
   searchHistory,
 }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const { productResults, image, autocompleteResults } = useContext(WidgetResultContext);
-  const [search, setSearch] = useState<string>('');
+  const [search, setSearch] = useState('');
+  const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
   const [showFullResults, setShowFullResults] = useState(false);
   const [showInputSuggest, setShowInputSuggest] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState<string[]>([]);
@@ -82,45 +84,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
     return '';
   };
 
-  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
-      }
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
-        classes.push(defaultGapY);
-      }
-      return classes.join(' ');
-    }
-    return [defaultCols, defaultGapX, defaultGapY].join(' ');
-  };
-
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
-  };
-
-  const onClickMoreLikeThisHandler = (queryImage: SearchImage): void => {
-    onImageSearch(queryImage);
-  };
-
   const minimizedDrawerHandler = useSwipeable({
     onSwipedUp: () => setShowFullResults(true),
     ...swipeConfig,
@@ -150,18 +113,31 @@ const ResultScreen: FC<ResultScreenProps> = ({
     });
   };
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (debouncedOnKeywordUpdate != null) {
+        onKeywordUpdate(debouncedOnKeywordUpdate);
+      }
+    }, 300);
+
+    return (): void => {
+      clearTimeout(handler);
+    };
+  }, [debouncedOnKeywordUpdate]);
+
   const getMobileView = (): ReactElement => (
     <div className='flex h-full flex-col gap-8 md:hidden'>
       <Header onCloseHandler={onModalClose}
               showTitle={customizations.generalLayout?.showWidgetTitle}
-              iconColor={customizations.generalLayout?.fontColor} />
+              iconColor={darkMode
+                ? customizations.generalLayout?.fontColorDark
+                : customizations.generalLayout?.fontColor} />
       <div className='relative h-screen grow overflow-hidden'>
         <div className='flex justify-center'
           {...minimizedDrawerHandler}
           {...mobileInputFocusHandler}>
           <img
-            className={cn(showFullResults ? 'opacity-0' : 'opacity-100 max-h-[50vh]', 'transition-all duration-500')}
-            alt='ViSenze Recommendations Reference Image'
+            className={cn(showFullResults ? 'opacity-0' : 'opacity-100 max-h-[50vh]', 'wigmix-reference-image transition-all duration-500')}
             src={getReferenceImage()}
             data-pw='ss-reference-image'
           />
@@ -173,9 +149,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {searchHistory?.map((searchImage, index) => (
               <img
                 key={`image-history-${index}`}
-                className='w-1/6'
+                className='aspect-square w-1/5 object-cover'
                 src={getFile(searchImage)}
-                onClick={() => onClickMoreLikeThisHandler(searchImage)}
+                onClick={() => onFindSimilar(searchImage)}
                 data-pw={`ss-previous-views-image-${index + 1}`}
               />
             ))}
@@ -189,38 +165,41 @@ const ResultScreen: FC<ResultScreenProps> = ({
           )}
           {...minimizedDrawerHandler}>
           <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
-            <Button
-              isIconOnly
-              radius='full'
-              className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary'
-              onClick={(): void => toggleFullResults()}
-              data-pw='ss-arrow-button'
+            <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
+                 onClick={(): void => toggleFullResults()}
+                 data-pw='ss-arrow-button'
             >
-              <CustomizableIcon
-                  height={24}
-                  width={24}
-                  url={`https://cdn.visenze.com/images/arrow-${showFullResults ? 'down' : 'up'}-icon.svg`}
-                  color={customizations.buttons?.primary?.fontColor}
-                  className='cursor-pointer'
-              />
-            </Button>
+              {showFullResults ? (
+                  <ChevronDownIcon color={darkMode
+                                     ? (customizations.buttons?.primary?.fontColorDark || '')
+                                     : (customizations.buttons?.primary?.fontColor || '')}
+                                   className='cursor-pointer size-6' />
+              ) : (
+                  <ChevronUpIcon color={darkMode
+                                   ? (customizations.buttons?.primary?.fontColorDark || '')
+                                   : (customizations.buttons?.primary?.fontColor || '')}
+                                 className='cursor-pointer size-6' />
+              )}
+            </div>
           </div>
 
           <div ref={resultsRef} className='no-scrollbar flex size-full justify-center overflow-y-auto'>
             <div
-              className={`wigmix-product-grid mx-2 grid h-full pb-20 pt-2 ${getProductGridCssClasses('grid-cols-2', 'gap-x-4', 'gap-y-2')}`}
-              style={getProductGridCssConfig()}
+              className={`wigmix-product-grid mx-2 grid h-full pb-20 pt-2 ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2', 'gap-x-4', 'gap-y-2')}`}
+              style={getProductGridCssConfig(customizations, breakpoint)}
               data-pw='ss-product-result-grid'
             >
               {productResults.map((result, index) => (
-                <div key={result.product_id} className='border-gray-300'>
-                  <Result
-                    onImageSearch={onImageSearch}
-                    clearSearch={() => setSearch('')}
-                    index={index}
-                    result={result}
-                  />
-                </div>
+                  <ProductCard key={`${result.product_id}-${index}`}
+                               onFindSimilar={(data) => {
+                                 setSearch('');
+                                 return onFindSimilar({ imgUrl: data.im_url });
+                               }}
+                               index={index}
+                               result={result}
+                               isRecommendation={false}
+                               hasFindSimilar={true}
+                               pwPrefix='ss' />
               ))}
             </div>
           </div>
@@ -235,9 +214,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
         <div className='px-3 pt-2'>
           {/* Refinement Text Bar */}
           <Input
-            classNames={{
-              input: '!text-mobile-searchBarText !font-mobile-searchBarText',
-            }}
             isClearable
             maxLength={QUERY_MAX_CHARACTER_LENGTH}
             type='filters'
@@ -272,7 +248,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
     <div className='hidden md:block'>
       <Header onCloseHandler={onModalClose}
               showTitle={customizations.generalLayout?.showWidgetTitle}
-              iconColor={customizations.generalLayout?.fontColor} />
+              iconColor={darkMode
+                ? customizations.generalLayout?.fontColorDark
+                : customizations.generalLayout?.fontColor} />
       <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
           <div className='relative left-0 row-span-1 h-full w-1/4 py-4'>
@@ -293,9 +271,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       .map((searchImage, index) => (
                         <img
                           key={`image-history-${index}`}
-                          className='w-1/3 cursor-pointer rounded-lg object-cover object-center'
+                          className='aspect-square w-1/3 cursor-pointer rounded-lg object-cover'
                           src={getFile(searchImage)}
-                          onClick={() => onClickMoreLikeThisHandler(searchImage)}
+                          onClick={() => onFindSimilar(searchImage)}
                           data-pw={`ss-previous-views-image-${index + 1}`}
                         />
                       ))}
@@ -322,7 +300,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                           setShowInputSuggest(false);
                         });
                       }}>
-                    {['dress', 'red', 'blue'].map((keyword, index) => (
+                    {inputSuggestions.map((keyword, index) => (
                       <ListboxItem key={keyword} className={cn(keyword === search ? 'bg-gray' : '', 'pl-8')}>
                         <span className='text-base' data-pw={`ss-autocomplete-suggestion-${index + 1}`}>{keyword}</span>
                       </ListboxItem>
@@ -333,9 +311,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 {/* Refinement Text Bar */}
                 <div className='relative z-20 px-2 pt-3'>
                   <Input
-                    classNames={{
-                      input: 'text-tablet-searchBarText lg:text-desktop-searchBarText font-tablet-searchBarText lg:font-desktop-searchBarText',
-                    }}
                     isClearable
                     maxLength={QUERY_MAX_CHARACTER_LENGTH}
                     type='filters'
@@ -345,7 +320,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     onBlur={() => setTimeout(() => setShowInputSuggest(false), 100)}
                     onValueChange={(input): void => {
                       setSearch(input);
-                      onKeywordUpdate(input);
+                      setDebouncedOnKeywordUpdate(input);
                     }}
                     onKeyDown={(event): void => {
                       if (event.nativeEvent.code === 'Enter') {
@@ -364,14 +339,20 @@ const ResultScreen: FC<ResultScreenProps> = ({
             </div>
 
             <div className='overflow-y-auto'>
-              <div className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses('grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
-                   style={getProductGridCssConfig()}
+              <div className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
+                   style={getProductGridCssConfig(customizations, breakpoint)}
                    data-pw='ss-product-result-grid'>
                 {productResults.map((result, index) => (
-                  <div key={result.product_id}>
-                    <Result onImageSearch={onImageSearch} clearSearch={() => setSearch('')} index={index}
-                            result={result}/>
-                  </div>
+                    <ProductCard key={`${result.product_id}-${index}`}
+                                 onFindSimilar={(data) => {
+                                   setSearch('');
+                                   return onFindSimilar({ imgUrl: data.im_url });
+                                 }}
+                                 index={index}
+                                 result={result}
+                                 isRecommendation={false}
+                                 hasFindSimilar={true}
+                                 pwPrefix='ss' />
                 ))}
               </div>
             </div>

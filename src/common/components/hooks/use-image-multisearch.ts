@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import type { ProductSearchResponse, ProductSearchResponseSuccess, ProductType } from 'visearch-javascript-sdk';
-import type { WidgetClient, WidgetConfig } from '../../visenze-core';
+import { WidgetDataContext } from '../../types/contexts';
 import { Actions, Category } from '../../types/tracking-constants';
 import type { SearchImage } from '../../types/image';
 import { isImageFile, isImageUrl } from '../../types/image';
@@ -19,23 +19,23 @@ const getMetadata = (
 const getSearchParams = (
   img: SearchImage,
   imageId: string,
-  config: WidgetConfig,
+  searchSettings: Record<string, any>,
   product: BoxData | ProductType | undefined,
 ): Record<string, any> => {
-  const params = { ...config.searchSettings };
+  const params = { ...searchSettings };
 
   if (isImageUrl(img)) {
-    params.im_url = img.imgUrl;
+    params['im_url'] = img.imgUrl;
   } else if (isImageFile(img)) {
-    params.image = img.files[0];
+    params['image'] = img.files[0];
   } else {
-    params.im_id = imageId;
+    params['im_id'] = imageId;
   }
 
   if (product) {
-    params.box = parseBox(product.box);
+    params['box'] = parseBox(product.box);
     if ('type' in product) {
-      params.detection = product.type;
+      params['detection'] = product.type;
     }
   }
 
@@ -56,10 +56,8 @@ const parseResults = (res: ProductSearchResponseSuccess, boxData?: BoxData): Pro
 };
 
 interface ImageMultisearchProps {
-  widgetClient: WidgetClient;
   image: SearchImage | undefined;
   boxData: BoxData | undefined;
-  config: WidgetConfig;
 }
 
 export interface ImageMultisearch {
@@ -77,9 +75,9 @@ export interface ImageMultisearch {
 const useImageMultisearch = ({
   image,
   boxData,
-  config,
-  widgetClient,
 }: ImageMultisearchProps): ImageMultisearch => {
+  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { searchSettings } = widgetConfig;
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
   const [imageId, setImageId] = useState<string>('');
   const [metadata, setMetadata] = useState<Record<string, any>>({});
@@ -89,6 +87,9 @@ const useImageMultisearch = ({
   const [autocompleteResults, setAutocompleteResults] = useState<string[]>([]);
 
   const handleImageSuccess = (res: ProductSearchResponse): void => {
+    if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+      widgetConfig.callbacks.preprocessResponse(res);
+    }
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else {
@@ -98,11 +99,13 @@ const useImageMultisearch = ({
   };
 
   const handleAutocompleteSuccess = (res: ProductSearchResponse): void => {
+    if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+      widgetConfig.callbacks.preprocessResponse(res);
+    }
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else {
       setError('');
-
       const newAutocompleteResults = (res.result || []).map((r: any) => r.text);
       setAutocompleteResults(newAutocompleteResults);
     }
@@ -132,7 +135,7 @@ const useImageMultisearch = ({
   const multisearch = (): void => {
     if (image) {
       const product = getProductType(boxData);
-      const params = getSearchParams(image, imageId, config, product);
+      const params = getSearchParams(image, imageId, searchSettings, product);
       widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
     } else {
       resetSearch();
@@ -140,7 +143,7 @@ const useImageMultisearch = ({
   };
 
   const multisearchWithParams = (params: Record<string, any>): void => {
-    params = {...params, ...config.searchSettings};
+    params = {...params, ...searchSettings };
     widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
   };
 
@@ -149,7 +152,7 @@ const useImageMultisearch = ({
 
     if (image) {
       const product = getProductType(boxData);
-      params = { q, ...getSearchParams(image, imageId, config, product) };
+      params = { q, ...getSearchParams(image, imageId, searchSettings, product) };
     } else if (!q) {
       return;
     }

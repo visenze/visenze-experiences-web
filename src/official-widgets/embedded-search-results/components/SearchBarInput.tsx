@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import { useContext, memo, useRef } from 'react';
-import { Input } from '@nextui-org/input';
+import { Input } from '@heroui/input';
 import { useIntl } from 'react-intl';
-import { cn } from '@nextui-org/theme';
+import { cn } from '@heroui/theme';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import MagnifyingGlassIcon from '../../../common/icons/MagnifyingGlassIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
@@ -27,11 +27,9 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
     <Input
       data-pw='esr-search-bar-input'
       ref={searchBarRef}
-      className='z-30'
+      className='z-5'
       classNames={{
-        inputWrapper: cn('rounded-md bg-white w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
-        input: 'text-mobile-searchBarText md:text-tablet-searchBarText lg:text-desktop-searchBarText font-mobile-searchBarText md:font-tablet-searchBarText '
-          + 'lg:font-desktop-searchBarText',
+        inputWrapper: cn('rounded-md w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
       }}
       autoCapitalize='off'
       autoComplete='off'

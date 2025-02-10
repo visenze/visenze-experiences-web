@@ -13,15 +13,6 @@ export enum FacetType {
   COLORS = 'colors',
 }
 
-export enum ScreenType {
-  LOADING = 'loading',
-  RETRYING = 'retrying',
-  UPLOAD = 'upload',
-  CROPPING = 'cropping',
-  RESULT = 'result',
-  NO_RESULTS = 'no_results',
-}
-
 export enum WidgetBreakpoint {
   DESKTOP = 'desktop',
   TABLET = 'tablet',

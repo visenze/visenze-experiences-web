@@ -1,8 +1,8 @@
 import type { FC, Key, ReactElement } from 'react';
 import { useRef } from 'react';
-import { Listbox, ListboxSection, ListboxItem } from '@nextui-org/listbox';
-import { Input } from '@nextui-org/input';
-import { cn } from '@nextui-org/theme';
+import { Listbox, ListboxSection, ListboxItem } from '@heroui/listbox';
+import { Input } from '@heroui/input';
+import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import MagnifyingGlassIcon from '../../../common/icons/MagnifyingGlassIcon';
 import type { ProcessedProduct } from '../../../common/types/product';
@@ -22,8 +22,15 @@ interface SearchBarWithDropdownProps {
   handleMultisearchWithProduct: (product?: ProcessedProduct) => void;
 }
 
-const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({ searchBarValue, setSearchBarValue, showDropdown, setShowDropdown, autocompleteResults,
-                                         handleMultisearchWithQuery, handleMultisearchWithProduct }): ReactElement => {
+const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({
+  searchBarValue,
+  setSearchBarValue,
+  showDropdown,
+  setShowDropdown,
+  autocompleteResults,
+  handleMultisearchWithQuery,
+  handleMultisearchWithProduct,
+}): ReactElement => {
   const searchBarInputRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
 
@@ -33,11 +40,9 @@ const SearchBarWithDropdown: FC<SearchBarWithDropdownProps> = ({ searchBarValue,
       {/* Search bar input */}
       <Input
         ref={searchBarInputRef}
-        className='z-30'
+        className='z-5'
         classNames={{
           inputWrapper: 'rounded-md bg-white w-full border border-gray-200',
-          input: 'text-mobile-searchBarText md:text-tablet-searchBarText lg:text-desktop-searchBarText font-mobile-searchBarText md:font-tablet-searchBarText '
-            + 'lg:font-desktop-searchBarText',
         }}
         autoCapitalize='off'
         autoComplete='off'

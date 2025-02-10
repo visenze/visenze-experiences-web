@@ -1,283 +1,65 @@
 @tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.vi-shopping-assistant-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-
-  &.desktop {
-    padding-bottom: 40px;
-    padding-top: 24px;
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
-
-  &.mobile {
-    padding-bottom: 24px;
-    padding-top: 24px;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 }
 
-
-.vi-shopping-assistant-messages {
-  overflow-y: scroll;
-
-  &.desktop .chat-row {
-    padding-left: 32px;
-    padding-right: 32px;
+@layer components {
+  .wigmix-widget-title {
+    @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
   }
-
-  &.mobile .chat-row {
-    padding-left: 24px;
-    padding-right: 24px;
+  .wigmix-product-card-title {
+    @apply text-mobile-productCardTitle md:text-tablet-productCardTitle lg:text-desktop-productCardTitle font-mobile-productCardTitle md:font-tablet-productCardTitle lg:font-desktop-productCardTitle;
   }
-
-  .chat-row {
-    font-size: 16px;
-
-    &.user {
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    &.products {
-      margin-top: 12px;
-      margin-bottom: 32px;
-
-      hr {
-        border-top: 1px solid #D9DBDD;
-        margin: 24px 0;
-      }
-    }
-
-    .chat-message {
-      overflow: hidden;
-      white-space: pre-line;
-      padding: 20px;
-      max-width: 375px;
-      width: fit-content;
-      margin-bottom: 10px;
-
-      &:last-child {
-        margin-bottom: 20px;
-      }
-
-      &.bot {
-        background-color: rgb(236 239 241 / 0.4);
-      }
-
-      &.user {
-        background-color: #D3D7DA;
-      }
-    }
-
-    .product {
-      .product-title {
-        font-weight: 700;
-        font-size: 16px;
-        margin-bottom: 8px;
-      }
-
-      .product-card {
-        display: flex;
-
-        .product-image {
-          position: relative;
-          width: 120px;
-        }
-
-        .product-bits {
-          font-size: 14px;
-          padding-left: 10px;
-
-          .product-bits-row {
-            &.stacked {
-              align-items: center;
-              display: flex;
-            }
-
-            &:not(:last-child) {
-              margin-bottom: 6px;
-            }
-          }
-        }
-      }
-
-      .bold {
-        font-weight: 700;
-      }
-    }
-
-    .loading-container {
-      padding: 12px;
-      display: flex;
-      gap: 7px;
-      background-color: #F5F5F5;
-      border-radius: 12px;
-      width: fit-content;
-
-      .loading-dot {
-        height: 7px;
-        width: 7px;
-        border-radius: 50%;
-        background-color: #D9DBDD;
-        animation-name: jumpingDots;
-        animation-duration: 2s;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
-
-        &:nth-child(2) {
-          animation-delay: 0.2s;
-        }
-
-        &:nth-child(3) {
-          animation-delay: 0.4s;
-        }
-      }
-
-      @keyframes jumpingDots {
-        10% {
-          transform: translateY(0);
-          background-color: #D9DBDD;
-        }
-        15% {
-          transform: translateY(-7px);
-          background-color: #929396;
-        }
-        20% {
-          transform: translateY(0);
-          background-color: #D9DBDD;
-        }
-      }
-    }
+  .wigmix-product-card-secondary-title {
+    @apply text-mobile-productCardSecondaryTitle md:text-tablet-productCardSecondaryTitle lg:text-desktop-productCardSecondaryTitle font-mobile-productCardSecondaryTitle md:font-tablet-productCardSecondaryTitle lg:font-desktop-productCardSecondaryTitle;
+  }
+  .wigmix-product-card-price {
+    @apply text-mobile-productCardPrice md:text-tablet-productCardPrice lg:text-desktop-productCardPrice font-mobile-productCardPrice md:font-tablet-productCardPrice lg:font-desktop-productCardPrice;
+  }
+  .wigmix-product-card-original-price {
+    @apply text-mobile-productCardOriginalPrice md:text-tablet-productCardOriginalPrice lg:text-desktop-productCardOriginalPrice font-mobile-productCardOriginalPrice md:font-tablet-productCardOriginalPrice lg:font-desktop-productCardOriginalPrice;
   }
 }
 
-.vi-shopping-assistant-header {
-  align-items: center;
-  display: flex;
-  font-size: 18px;
-  padding-bottom: 24px;
-  text-decoration: underline;
+.loading-dot {
+  height: 8px;
+  width: 8px;
+  animation-name: jumpingDots;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 
-  &.desktop {
-    padding-left: 32px;
-    padding-right: 32px;
+  &:nth-child(2) {
+    animation-delay: 0.2s;
   }
 
-  &.mobile {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
-  .close-icon {
-    cursor: pointer;
-    margin-left: auto;
-
-    &:hover {
-      color: #767677;
-    }
+  &:nth-child(3) {
+    animation-delay: 0.4s;
   }
 }
 
-.vi-shopping-assistant-chat {
-  &.desktop {
-    padding: 20px 32px 0 32px;
+@keyframes jumpingDots {
+  10% {
+    transform: translateY(0);
+    filter: brightness(100%);
   }
-
-  &.mobile {
-    padding: 20px 24px 0 24px;
+  15% {
+    transform: translateY(-8px);
+    filter: brightness(50%);
   }
-}
-
-.vi-shopping-assistant-chatbox {
-  border: 1px solid #767677;
-  border-radius: 0;
-  color: #767677;
-  display: flex;
-  padding: 12px;
-
-  &.compact-vertical-padding {
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-
-  &:focus-within {
-    border-color: black;
-    color: black;
-  }
-
-  textarea {
-    outline-color: transparent;
-    resize: none;
-    width: 100%;
-
-    &::placeholder {
-      color: #767677;
-    }
-
-    &:focus::placeholder {
-      color: black;
-    }
-
-    &:focus-visible {
-      outline: none;
-    }
-  }
-
-  .submit-icon {
-    align-items: flex-end;
-    cursor: pointer;
-    display: flex;
-    margin-left: 12px;
-
-    &.disabled {
-      color: #767677;
-      cursor: unset;
-    }
-  }
-}
-
-.vi-shopping-assistant-callout {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 40px;
-
-  .vi-shopping-assistant-callout-row {
-    text-align: center;
-  }
-
-  &.desktop {
-    padding-left: 32px;
-    padding-right: 32px;
-  }
-
-  &.mobile {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-}
-
-.vi-shopping-assistant-arrow-container {
-  position: relative;
-
-  .arrow {
-    background-color: white;
-    border: 1px solid black;
-    bottom: 0;
-    cursor: pointer;
-    padding: 12px;
-    position: absolute;
-
-    &:hover {
-      color: #767677;
-    }
-  }
-
-  &.desktop .arrow {
-    right: 32px;
-  }
-
-  &.mobile .arrow {
-    right: 24px;
+  20% {
+    transform: translateY(0);
+    filter: brightness(100%);
   }
 }

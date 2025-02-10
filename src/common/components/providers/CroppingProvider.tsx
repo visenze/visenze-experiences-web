@@ -4,7 +4,7 @@ import { CroppingContext } from '../../types/contexts';
 import type { BoxData } from '../../types/product';
 
 interface CroppingProviderProps {
-  children: ReactNode,
+  children: ReactNode;
   boxData?: BoxData;
   setBoxData?: (data: BoxData) => void;
 }

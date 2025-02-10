@@ -1,19 +1,23 @@
-import type { CSSProperties, FC, ReactElement } from 'react';
+import type { FC, ReactElement } from 'react';
 import { useEffect, useRef, useContext, useState, useLayoutEffect } from 'react';
 import type { ProductSearchResponse, Facet } from 'visearch-javascript-sdk';
-import { Button } from '@nextui-org/button';
 import { useIntl } from 'react-intl';
-import { Spinner } from '@nextui-org/spinner';
-import { cn } from '@nextui-org/theme';
+import { Spinner } from '@heroui/spinner';
+import { cn } from '@heroui/theme';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { getFacets, getFilterQueries, getFlattenProducts } from '../../common/utils';
+import {
+  getFacets,
+  getFilterQueries,
+  getFlattenProducts,
+  getProductGridCssClasses,
+  getProductGridCssConfig,
+} from '../../common/utils';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Category } from '../../common/types/tracking-constants';
-import Result from './components/Result';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import type { FacetType } from '../../common/types/constants';
-import type { WidgetConfig } from '../../common/visenze-core';
-import FilterOptions from './components/FilterOptions';
+import FilterOptions, { showFacet } from './components/FilterOptions';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import FilterIcon from '../../common/icons/FilterIcon';
 import type { ImageUrl } from '../../common/types/image';
@@ -23,14 +27,13 @@ import type { SearchHistoryEntry } from './components/SearchHistory';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface EmbeddedSearchResultProps {
-  config: WidgetConfig;
   textQuery: string;
   imUrl: string;
 }
 
-const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuery, imUrl }): ReactElement => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
-  const { displaySettings, searchSettings } = widgetConfig;
+const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl }): ReactElement => {
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
@@ -61,10 +64,9 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
 
   const handleError = (errorMsg: string): void => {
     setError(errorMsg);
-    console.error(errorMsg);
   };
 
-  const handleSuccess = (res: ProductSearchResponse): void => {
+  const handleSuccess = (res: ProductSearchResponse, shouldResetFacets: boolean): void => {
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else {
@@ -74,49 +76,15 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
         queryId: res.reqid,
       });
 
-      setSearchHistory((prevHistory) => {
-        const updatedHistory = prevHistory.map((item) => {
-          if (item.imageId && item.imageId === res.im_id && (!item.product_types || item.product_types?.length === 0)) {
-            const newItem = {
-              ...item,
-              imageUrl: res.query_tmp_url,
-              product_types: res.product_types,
-            };
-            setActiveHistory(newItem);
-            return newItem;
-          }
-          return item;
-        });
-
-        return updatedHistory;
-      });
-
       const newProducts = getFlattenProducts(res.result);
       setProductResults((prev) => ((res.page === 1) ? newProducts : [...prev, ...newProducts]));
-      // Only set facets once
-      if (facets.length === 0 && res.facets) {
-        const image: ImageUrl = {
-          imgUrl: res.query_tmp_url || '',
-        };
-        setImageUrl(image.imgUrl);
-        const event = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
-        document.dispatchEvent(event);
+      if (shouldResetFacets && res.facets) {
         setFacets(res.facets);
       }
     }
     setIsFirstLoad(false);
     setIsLoading(false);
     setIsLoadingMore(false);
-  };
-
-  // Function to generate unique ID for history entries
-  const generateHistoryId = (entry: Partial<SearchHistoryEntry>): string => {
-    // const base = entry.type === 'text' ? entry.query : entry.imageUrl || entry.imageId;
-    let base: string;
-    if (entry.imageId) base = entry.imageId;
-    else if (entry.imageUrl) base = entry.imageUrl;
-    else base = `${entry.query}`;
-    return `${entry.type}-${base}`;
   };
 
   const addToHistory = (entry: Omit<SearchHistoryEntry, 'timestamp'>): void => {
@@ -130,42 +98,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
     setActiveHistory(newEntry);
   };
 
-  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
-      }
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
-        classes.push(defaultGapY);
-      }
-      return classes.join(' ');
-    }
-    return [defaultCols, defaultGapX, defaultGapY].join(' ');
-  };
-
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = config.customizations?.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
-  };
-
-  const multisearchWithSearchBarDetails = (imgUrl?: string, text?: string, currentPage?: number): void => {
+  const multisearchWithSearchBarDetails = (imgUrl?: string, text?: string, currentPage?: number, shouldResetFacets = true): void => {
     if (currentPage && currentPage > 1) {
       setIsLoadingMore(true);
     } else {
@@ -174,57 +107,56 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
 
     const params: Record<string, any> = {
       ...searchSettings,
-      filters: getFilterQueries(productDetails, selectedFilters),
       facets: getFacets(productDetails),
       facets_show_count: true,
       page: currentPage ?? page,
       return_query_temp_url: true,
     };
+    if (shouldResetFacets) {
+      if (Object.keys(selectedFilters).length) {
+        setSelectedFilters(defaultFilters);
+      }
+    } else {
+      params['filters'] = getFilterQueries(productDetails, selectedFilters);
+    }
 
     if (text) {
-      params.q = text;
+      params['q'] = text;
     }
     if (imgUrl) {
-      params.im_url = imgUrl;
+      params['im_url'] = imgUrl;
     }
-    params.limit = 24; // hardcode for now
+    params['limit'] = 24; // hardcode for now
 
-    widgetClient.multisearchByImage(params, handleSuccess, handleError);
+    widgetClient.multisearchByImage(params, (res) => {
+      handleSuccess(res, shouldResetFacets);
 
-    // Only add to history if we have actual search parameters
-    if (text || imgUrl) {
-      const type = text && !imgUrl ? 'text' : 'image';
-      const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
-        id: generateHistoryId({ type, imageUrl: imgUrl, query: text }),
-        type,
-        source: 'url',
-        filters: selectedFilters,
-      };
-
-      if (text) {
-        historyEntry.query = text;
-      }
+      // Only add to history if image URL is used
       if (imgUrl) {
-        historyEntry.imageUrl = imgUrl;
-      }
+        const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
+          id: imgUrl,
+        };
 
-      setSearchHistory((prevHistory) => {
-        const isProductInHistory = prevHistory.find((item) => {
-          if (item.id === historyEntry.id) {
-            setActiveHistory(item);
-            return item;
-          }
-          return null;
-        });
-
-        if (!isProductInHistory) {
-          addToHistory(historyEntry);
+        if (imgUrl) {
+          historyEntry.imageUrl = imgUrl;
         }
-        return prevHistory;
-      });
-    }
 
-    widgetClient.multisearchByImage(params, handleSuccess, handleError);
+        setSearchHistory((prevHistory) => {
+          const isProductInHistory = prevHistory.find((item) => {
+            if (item.id === historyEntry.id) {
+              setActiveHistory(item);
+              return item;
+            }
+            return null;
+          });
+
+          if (!isProductInHistory) {
+            addToHistory(historyEntry);
+          }
+          return prevHistory;
+        });
+      }
+    }, handleError);
   };
 
   const searchFromHistory = (entry: SearchHistoryEntry): void => {
@@ -233,12 +165,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
       imgUrl = entry.imageUrl;
       setImageUrl(entry.imageUrl);
     }
-    let text: string | undefined;
-    if (entry.query) {
-      text = entry.query;
-      setQuery(entry.query);
-    }
-    multisearchWithSearchBarDetails(imgUrl, text, 1);
+    multisearchWithSearchBarDetails(imgUrl, query, 1);
     setIsLoading(true);
   };
 
@@ -256,8 +183,18 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
     }
   };
 
-  const onHistoryRemove = (entry: SearchHistoryEntry): void => {
+  const onHistoryRemove = (entry: SearchHistoryEntry, isActiveHistoryRemoved: boolean): void => {
     setSearchHistory((prev) => prev.filter((hist) => hist.id !== entry.id));
+    if (isActiveHistoryRemoved) {
+      setImageUrl('');
+      if (query) {
+        multisearchWithSearchBarDetails('', query, 1);
+      } else {
+        // empty input
+        setProductResults([]);
+        setFacets([]);
+      }
+    }
   };
 
   const findSimilarClickHandler = (imgUrl?: string): void => {
@@ -270,11 +207,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
     }
     multisearchWithSearchBarDetails(imgUrl, query, 1);
     setIsLoading(true);
-  };
-
-  const resetPagination = (): void => {
-    setPage(1);
-    setProductResults([]);
   };
 
   useLayoutEffect(() => {
@@ -304,9 +236,8 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
 
   useEffect(() => {
     if (!isLoading) {
-      resetPagination();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      multisearchWithSearchBarDetails(imageUrl, query);
+      multisearchWithSearchBarDetails(imageUrl, query, 1, false);
     }
   }, [selectedFilters]);
 
@@ -319,8 +250,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
   useEffect(() => {
     setQuery(textQuery);
     setImageUrl(imUrl);
-    multisearchWithSearchBarDetails(imUrl, textQuery);
+    if (imUrl || textQuery) {
+      multisearchWithSearchBarDetails(imUrl, textQuery);
+    } else {
+      setIsLoading(false);
+    }
   }, []);
+
+  const hasApplicableFacets = facets.filter((f) => showFacet(f)).length > 0;
 
   if (!root) {
     return <>Searching...</>;
@@ -343,9 +280,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
                 query={query}
                 setQuery={setQuery}
                 emitSearchBarCallback={() => {
-                  if (query) {
-                    setSearchHistory([]);
-                    findSimilarClickHandler();
+                  if (imageUrl) {
+                    findSimilarClickHandler(imageUrl);
+                  } else if (query) {
+                    multisearchWithSearchBarDetails(undefined, query);
+                  } else {
+                    // empty input
+                    setProductResults([]);
+                    setFacets([]);
                   }
                 }}
               />
@@ -375,36 +317,38 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
           </div>
         </div>
 
-        <div className='flex size-full flex-col justify-center bg-primary md:flex-row'>
+        <div className='flex size-full flex-col justify-center md:flex-row'>
           {/* Filter Section Mobile */}
-          <div className='w-full bg-white px-2 py-1 md:hidden md:px-0'>
-            <Button className='self-start bg-transparent px-2' data-pw='esr-filter-button' onClick={() => setShowMobileFilterOptions(true)}>
-              <FilterIcon className='size-5'/>
-              <span className='text-black'>
-                {intl.formatMessage({ id: 'filter' })}
-              </span>
-            </Button>
-
-            <ViSenzeModal
-              className='bottom-0 top-[unset] h-4/5'
-              open={showMobileFilterOptions} layout='mobile'
-              onClose={() => setShowMobileFilterOptions(false)}
-              position='center'
-              placementId={`${config.appSettings.placementId}`}
-              fontFamily={config.customizations.generalLayout?.fontFamily}
-            >
-              <FilterOptions
-                displayAsDropdown={false}
-                facets={facets}
-                selectedFilters={selectedFilters}
-                setSelectedFilters={setSelectedFilters}
-              />
-            </ViSenzeModal>
-          </div>
-
+          {hasApplicableFacets && (
+              <>
+                <div className='w-full bg-white p-2 md:hidden md:px-0 cursor-pointer flex gap-2 mb-2 items-center'
+                     onClick={() => setShowMobileFilterOptions(true)}>
+                  <FilterIcon className='size-5'/>
+                  <span className='text-black'>
+                    {intl.formatMessage({ id: 'filter' })}
+                  </span>
+                </div>
+                <ViSenzeModal
+                    className='bottom-0 top-[unset] h-4/5'
+                    open={showMobileFilterOptions} layout='mobile'
+                    onClose={() => setShowMobileFilterOptions(false)}
+                    position='center'
+                    placementId={`${appSettings.placementId}`}
+                    darkMode={darkMode}
+                    fontFamily={customizations.generalLayout?.fontFamily}
+                >
+                  <FilterOptions
+                      displayAsDropdown={false}
+                      facets={facets}
+                      selectedFilters={selectedFilters}
+                      setSelectedFilters={setSelectedFilters}
+                  />
+                </ViSenzeModal>
+              </>
+          )}
           <div className='flex w-full flex-col'>
             {/* Product Result Grid */}
-            <div className='flex flex-col items-center'>
+            <div className='flex flex-col items-center text-primary'>
               {
                 isLoading && isFirstLoad
                   ? <div className='flex w-full justify-center py-32'>
@@ -414,10 +358,10 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
                     {
                       productResults.length > 0
                         ? <div className={cn(
-                            `grid w-full ${getProductGridCssClasses('grid-cols-2 md:grid-cols-4', 'gap-x-2', 'gap-y-4')}`,
+                            `wigmix-product-grid grid w-full ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 md:grid-cols-4', 'gap-x-2', 'gap-y-4')}`,
                             isLoading && 'opacity-50',
                             )}
-                            style={getProductGridCssConfig()}
+                            style={getProductGridCssConfig(customizations, breakpoint)}
                             data-pw='esr-product-result-grid'
                           >
                           {isLoading && (
@@ -426,17 +370,16 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ config, textQuer
                             </div>
                           )}
                           {productResults.map((result, index) => (
-                            <div key={`${result.product_id}-${index}`} data-pw={`esr-product-result-card-${index + 1}`}>
-                              <Result
-                                index={index}
-                                result={result}
-                                findSimilarClickHandler={(imgUrl) => {
-                                  if (!isLoading) {
-                                    findSimilarClickHandler(imgUrl);
-                                  }
-                                }}
-                              />
-                            </div>
+                              <ProductCard key={`${result.product_id}-${index}`} index={index}
+                                           result={result}
+                                           onFindSimilar={(data) => {
+                                             if (!isLoading) {
+                                               findSimilarClickHandler(data.im_url);
+                                             }
+                                           }}
+                                           isRecommendation={true}
+                                           hasFindSimilar={true}
+                                           pwPrefix='esr' />
                           ))}
                         </div>
                         : <div className={cn(

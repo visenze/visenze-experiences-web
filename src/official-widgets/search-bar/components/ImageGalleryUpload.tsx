@@ -1,7 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { useContext, useEffect, useState } from 'react';
-import { Button } from '@nextui-org/button';
-import { Card, CardFooter } from '@nextui-org/card';
+import { Button } from '@heroui/button';
 import { useIntl } from 'react-intl';
 import PhotoIcon from '../../../common/icons/PhotoIcon';
 import VisenzeModal from '../../../common/components/modal/visenze-modal';
@@ -12,6 +11,7 @@ import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import CloseIcon from '../../../common/icons/CloseIcon';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import UploadIcon from '../../../common/icons/UploadIcon';
 
 interface ImageGalleryUploadProps {
   imageUploadHandler: (image: SearchImage) => void;
@@ -20,7 +20,7 @@ interface ImageGalleryUploadProps {
 }
 
 const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, placementId, image }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [openModal, setOpenModal] = useState(false);
   const [searchImage, setSearchImage] = useState<SearchImage>();
@@ -68,13 +68,13 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
   const getGalleryCards = (): ReactNode => {
     if (customizations) {
       return Object.entries(customizations.imageUpload?.images || []).map(([, imageWithLabel], index) => {
-        if (index === 0) return null;
+        if (index === 0) {
+          return null;
+        }
         return (
-          <Card
+          <div
             key={index}
-            isPressable
-            radius='lg'
-            className='row-span-1 border-none'
+            className='row-span-1 border-none relative'
             onClick={(): void => onGallerySelect(index)}
             onKeyDown={(evt): void => {
               if (evt.key === 'Enter') {
@@ -83,14 +83,13 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
             }}
           >
             <img className='h-full object-cover' src={imageWithLabel.url} data-pw={`sb-gallery-image-${index + 1}`}/>
-            {
-              imageWithLabel.label
-              && <CardFooter className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large
-            border-1 border-white/20 bg-gray-800 bg-opacity-80 py-1 shadow-small before:rounded-b-xl'>
-                <p className='text-primary'>{imageWithLabel.label}</p>
-              </CardFooter>
-            }
-          </Card>
+            {imageWithLabel.label && (
+              <div className='absolute bottom-0 z-10 w-full text-center overflow-hidden
+            border-1 border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small'>
+                <p>{imageWithLabel.label}</p>
+              </div>
+            )}
+          </div>
         );
       });
     }
@@ -120,6 +119,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
       </Button>
 
       <VisenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint} position='center'
+                    darkMode={darkMode}
                     fontFamily={customizations.generalLayout?.fontFamily}
                     placementId={placementId} idSuffix='image-gallery-upload'>
         <div className='relative flex size-full flex-col bg-primary'>
@@ -137,13 +137,22 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
             <div className='px-1/5 md:w-1/3 md:px-10'>
               <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload'>
                 <div
-                  className='wigmix-reference-image flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center'>
-                  <CustomizableIcon
-                      height={80}
-                      width={80}
-                      url={customizations.imageUpload?.icon?.url || 'https://cdn.visenze.com/images/upload-icon.svg'}
-                      color={customizations.imageUpload?.icon?.color || ''}
-                  />
+                  className='wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center'>
+                  {customizations.imageUpload?.icon?.url ? (
+                      <CustomizableIcon
+                          height={80}
+                          width={80}
+                          url={customizations.imageUpload.icon.url}
+                          color={darkMode
+                            ? (customizations.imageUpload.icon.colorDark || '')
+                            : (customizations.imageUpload.icon.color || '')}
+                      />
+                  ) : (
+                      <UploadIcon className='size-20'
+                                  color={darkMode
+                                    ? (customizations.imageUpload?.icon?.colorDark || '')
+                                    : (customizations.imageUpload?.icon?.color || '')} />
+                  )}
 
                   <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
                     {intl.formatMessage({ id: 'dragImageToSearch' })}
@@ -163,11 +172,8 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
 
               <div className='grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0'>
                 <div className='col-span-1'>
-                  <Card
-                    isFooterBlurred
-                    isPressable
-                    radius='lg'
-                    className='h-full'
+                  <div
+                    className='h-full relative'
                     onClick={(): void => onGallerySelect(0)}
                     onKeyDown={(evt): void => {
                       if (evt.key === 'Enter') {
@@ -176,17 +182,13 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
                     }}>
                     <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url}
                          data-pw='sb-gallery-image-1'/>
-                    {
-                      customizations.imageUpload?.images[0].label
-                      && <CardFooter
-                        className='absolute bottom-0 z-10 w-full justify-center overflow-hidden rounded-b-large border-1
-                    border-white/20 bg-gray-800 bg-opacity-80 py-1 shadow-small before:rounded-b-xl'>
-                        <p className='text-primary'>
-                          {customizations.imageUpload?.images[0].label}
-                        </p>
-                      </CardFooter>
-                    }
-                  </Card>
+                    {customizations.imageUpload?.images[0].label && (
+                      <div className='absolute bottom-0 z-10 w-full text-center overflow-hidden border-1
+                    border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small'>
+                        <p>{customizations.imageUpload?.images[0].label}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className='col-span-1'>
                   <div className='grid grid-cols-2 gap-2 md:gap-4'>

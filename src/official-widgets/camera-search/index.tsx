@@ -1,7 +1,8 @@
 import { deepMerge, initWidgetFactory } from '../../common/client/initialization';
 import version from '../../version';
-import { WidgetType } from '../../common/visenze-core';
+import { WidgetType } from '../../common/wigmix-core';
 import App from './app';
+import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 
 // eslint-disable-next-line func-names
 (function (context: Window): void {
@@ -12,8 +13,11 @@ import App from './app';
     initWidget: initWidgetFactory(
         WidgetType.CAMERA_SEARCH,
         version,
-        ({ config, client, fieldMappings }) => <App widgetClient={client} fieldMappings={fieldMappings} config={config}></App>,
+        ({ config, client, fieldMappings }) => (
+            <App widgetClient={client} fieldMappings={fieldMappings} widgetConfig={config} />
+        ),
         false,
+        DEFAULT_CUSTOMIZATIONS,
     ),
     deepMerge,
   };

@@ -18,22 +18,30 @@ This can be used alongside the previously mentioned look-and-feel customization.
 <!-- TODO add screenshot of custom CSS slot -->
 
 <details>
-  <summary>View the available `wigmix-*` class names here.</summary>
+  <summary>View the available <code>wigmix-*</code> class names here.</summary>
 
-  | Class name                            | HTML element |
-  |---------------------------------------|--------------|
-  | `wigmix-popup-trigger`                | `div`        |
-  | `wigmix-widget-title`                 | `div`        |
-  | `wigmix-reference-image`              | `div`        |
-  | `wigmix-product-grid`                 | `div`        |
-  | `wigmix-product-card-image`           | `img`        |
-  | `wigmix-product-card-title`           | `span`       |
-  | `wigmix-product-card-secondary-title` | `span`       |
-  | `wigmix-product-card-price`           | `span`       |
-  | `wigmix-product-card-original-price`  | `span`       |
-  | `wigmix-find-similar-button`          | `button`     |
-  | `wigmix-modal`                        | `div`        |
-  | `wigmix-modal-overlay`                | `div`        |
+  | Class name                            | HTML element | Available since | Explanation (if not apparent from the class name)    |
+  |---------------------------------------|--------------|-----------------|------------------------------------------------------|
+  | `wigmix-shadow-root`                  | `div`        | 1.0.0           |                                                      |
+  | `wigmix-popup-trigger-button`         | `div`        | 1.0.0           |                                                      |
+  | `wigmix-popup-trigger-icon`           | `div`        | 1.0.0           |                                                      |
+  | `wigmix-widget-title`                 | `div`        | 1.0.0           |                                                      |
+  | `wigmix-reference-image-container`    | `div`        | 1.0.0           |                                                      |
+  | `wigmix-reference-image`              | `img`        | 1.0.0           |                                                      |
+  | `wigmix-product-grid`                 | `div`        | 1.0.0           |                                                      |
+  | `wigmix-product-card`                 | `div`        | 1.0.0           |                                                      |
+  | `wigmix-product-card-image-container` | `div`        | 1.0.0           |                                                      |
+  | `wigmix-product-card-image`           | `img`        | 1.0.0           |                                                      |
+  | `wigmix-product-card-details`         | `div`        | 1.0.0           | Section containing product details e.g. title, price |
+  | `wigmix-product-card-title`           | `span`       | 1.0.0           |                                                      |
+  | `wigmix-product-card-secondary-title` | `span`       | 1.0.0           |                                                      |
+  | `wigmix-product-card-price-row`       | `div`        | 1.0.0           | Row containing both original and discounted prices   |
+  | `wigmix-product-card-price`           | `span`       | 1.0.0           |                                                      |
+  | `wigmix-product-card-original-price`  | `span`       | 1.0.0           |                                                      |
+  | `wigmix-find-similar-button`          | `button`     | 1.0.0           |                                                      |
+  | `wigmix-find-similar-icon`            | `div`        | 1.0.0           |                                                      |
+  | `wigmix-modal`                        | `div`        | 1.0.0           |                                                      |
+  | `wigmix-modal-overlay`                | `div`        | 1.0.0           |                                                      |
 
   Naturally, not all `wigmix-*` class names are available on all widgets;
   a class name is present only when the logical section it is representing is present in the widget.
@@ -56,6 +64,26 @@ Note: please do NOT file a pull request with the above changes.
 While we welcome external contributions, we will only accept changes which we deem to be beneficial
 in general use cases (as opposed to changes catered to display of widget in specific websites).
 
+<details>
+  <summary>How much can I customize the widget before it stops working?</summary>
+
+  In general, there is no limit to what you can change or add into the widgets,
+  but there are some files and interfaces that are not recommended to be changed
+  as they contain the core logic of the widget:
+  
+  - `index.tsx` file, i.e. the entrypoint of the widget: changing this file in any way is not recommended.
+  - Interfaces in `wigmix-core.ts`: adding new fields is fine, but removing or changing existing ones are not recommended.
+</details>
+
+<details>
+  <summary>I don't want to use Tailwind CSS. What should I do to remove the generated <code>tw-*</code> CSS definitions from my code bundle?</summary>
+
+  Note that the UI framework HeroUI has implicit dependency to Tailwind CSS. If you are sure of the decision:
+
+  - Remove all HeroUI component usages.
+  - In the `app.css` file of the widget, remove all definitions that start with `@tailwind` and `@layer`.
+</details>
+
 ### Common structure
 
 While the contents of each widget folder varies to some degree,
@@ -64,10 +92,10 @@ the following folder structure is expected to be common across all widgets:
 ```txt
 ├─ camera-search
    ├─ components          <- Folder containing some reusable components
-      ├─ Result.tsx       <- Product card component; exists in most (if not all) widgets
    ├─ app.css
    ├─ app.tsx             <- Wrapper component used to provide context and data, including localized texts
    ├─ camera-search.tsx   <- Main widget code consisting of the components and layout; will have the same name as the widget name
+   ├─ default-config.ts   <- Default widget customization configuration
    ├─ dev-configs.ts      <- Configuration object for development purpose; will not be used in the deployed widget (unless the code is edited as such)
    ├─ index.html          <- HTML file used for local testing
    ├─ index.tsx           <- Main entrypoint file
@@ -75,7 +103,24 @@ the following folder structure is expected to be common across all widgets:
    ├─ README.md
 ```
 
-In most cases, you can start your customization journey from the `camera-search.tsx` file.
+In most cases, you can start your customization journey from the `<widget-name>.tsx` file (in this example, `camera-search.tsx`).
+
+### Using own customization config
+
+By default, even if custom code bundle is used, the deployed widget will still make use of
+the look-and-feel customization and custom CSS that are configured through the Discovery Suite console.
+
+If you would like to control the customization config entirely within the code itself,
+i.e. rely entirely on `default-config.ts` (which you are free to customize),
+you need to change the following line in the relevant `app.tsx` file:
+
+```tsx
+// Change this
+const ENABLE_CUSTOMIZATION = true;
+
+// To
+const ENABLE_CUSTOMIZATION = false;
+```
 
 ### Custom events
 
@@ -83,11 +128,11 @@ ViSenze widgets by default send pre-defined events such as result load, product 
 Additional events can be sent from anywhere by adding a code snippet similar to the following:
 
 ```ts
-const { productSearch } = useContext(WidgetDataContext);
+const { widgetClient } = useContext(WidgetDataContext);
 
 // ...
 
-productSearch.sendEvent('event_name', {
+widgetClient.sendEvent('event_name', {
   key1: 'value1',
   key2: 'value2',
 });
@@ -98,7 +143,7 @@ productSearch.sendEvent('event_name', {
 ViSenze widgets provide some pre-defined callback events such as after tracking (`trackingCallback`), after product search (`onSearchCallback`), and after product click (`onProductClick`).
 Additional callback events can be added as follows:
 
-1. Add the callback definition under `WidgetConfig` interface in `visenze-core.ts`, e.g.:
+1. Add the callback definition under `WidgetConfig` interface in `wigmix-core.ts`, e.g.:
    ```ts
    export interface WidgetConfig {
      // ...

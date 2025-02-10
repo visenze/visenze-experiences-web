@@ -1,6 +1,6 @@
 # Shopping Assistant widget
 
-![status](https://img.shields.io/badge/status-alpha-red)
+![status](https://img.shields.io/badge/status-beta-yellow)
 
 This is the repository for ViSenze's Shopping Assistant widget.
 

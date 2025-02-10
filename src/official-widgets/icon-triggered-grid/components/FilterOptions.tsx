@@ -1,16 +1,16 @@
-import type { ChangeEvent, FC, ReactElement } from 'react';
+import React, { type ChangeEvent, type FC, type ReactElement } from 'react';
 import { useContext } from 'react';
-import { Accordion, AccordionItem } from '@nextui-org/accordion';
-import { Checkbox } from '@nextui-org/checkbox';
-import { Slider } from '@nextui-org/slider';
+import { Accordion, AccordionItem } from '@heroui/accordion';
+import { Checkbox } from '@heroui/checkbox';
+import { Slider } from '@heroui/slider';
 import type { Facet } from 'visearch-javascript-sdk';
-import { Button } from '@nextui-org/button';
+import { Button } from '@heroui/button';
 import { useIntl } from 'react-intl';
 import type { FacetType } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { getFacetNameByKey, getTitleCase } from '../../../common/utils';
-import type { ScreenType } from '../icon-triggered-grid';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import { ScreenType } from '../icon-triggered-grid';
+import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 
 /**
  * A component for selecting and applying product result filtering options.
@@ -20,16 +20,31 @@ interface FilterOptionsProps {
   className: string;
   facets: Facet[];
   selectedFilters: Record<FacetType, any>;
-  setSelectedFilters: (selectedFilters: any) => void;
-  setScreen: (screen: ScreenType | null) => void;
+  setSelectedFilters: React.Dispatch<React.SetStateAction<Record<FacetType, any>>>;
+  setScreen: (screen: ScreenType) => void;
 }
 
-const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilters, setSelectedFilters, setScreen }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+export const showFacet = (facet: Facet): boolean => {
+  if (!facet.range && !facet.items) {
+    return false;
+  }
+  if (facet.range && facet.range.min === facet.range.max) {
+    return false;
+  }
+  if (facet.items && !facet.items.filter((i) => i.value).length) {
+    return false;
+  }
+  return true;
+};
+
+const FilterOptions: FC<FilterOptionsProps> = ({ className, facets, selectedFilters, setSelectedFilters, setScreen }) => {
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, customizations } = widgetConfig;
   const intl = useIntl();
 
   const showFacetValues = (facet: Facet): ReactElement | ReactElement[] => {
+    const facetName = getFacetNameByKey(displaySettings.productDetails, facet.key) as FacetType;
+
     const priceRangeChangeHandler = (value: number | number[]): void => {
       setSelectedFilters((currentFilters: Record<FacetType, any>) => {
         let newPriceRange: number[] = [];
@@ -48,12 +63,11 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
         color='secondary'
         minValue={facet.range.min}
         maxValue={facet.range.max}
-        defaultValue={[facet.range.min, facet.range.max]}
+        defaultValue={selectedFilters[facetName]?.length ? selectedFilters[facetName] : [facet.range.min, facet.range.max]}
         onChangeEnd={priceRangeChangeHandler}
       />;
     }
 
-    const facetName = getFacetNameByKey(displaySettings.productDetails, facet.key) as FacetType;
     const updateFiltersHandler = (event: ChangeEvent<HTMLInputElement>): void => {
       setSelectedFilters((currentFilters: Record<FacetType, any>) => {
         const newSet = new Set(currentFilters[facetName]);
@@ -67,10 +81,9 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
       });
     };
 
-    return facet.items.map((item, index) => (
+    return facet.items.filter((i) => i.value).map((item) => (
       <div className='flex w-full justify-between' key={item.value}>
         <Checkbox
-          data-pw={`itg-${facet.key}-filter-${index}`}
           radius='none'
           value={item.value}
           color='secondary'
@@ -88,31 +101,29 @@ const FilterOptions:FC<FilterOptionsProps> = ({ className, facets, selectedFilte
     <div className={className}>
       <Accordion className='divide-y-1 overflow-y-auto' selectionMode='multiple'>
         {
-          facets.map((facet) => (
+          facets.map((facet) => (showFacet(facet) ? (
             <AccordionItem
               classNames={{ title: 'font-bold text-primary' }}
               key={facet.key}
               title={getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
               indicator={
-                <CustomizableIcon
-                    height={20}
-                    width={20}
-                    url={'https://cdn.visenze.com/images/chevron-left-icon.svg'}
-                    color={customizations.generalLayout?.fontColor}
-                />
+                <ChevronLeftIcon className='size-5'
+                                 color={darkMode
+                                   ? customizations.generalLayout?.fontColorDark
+                                   : customizations.generalLayout?.fontColor} />
               }
             >
               <div className='flex flex-col gap-y-2 px-4 pb-4'>
                 {showFacetValues(facet)}
               </div>
             </AccordionItem>
-          ))
+          ) : <></>))
         }
       </Accordion>
 
       {/* Back button */}
       <Button className='my-3 mr-3 w-1/4 flex-shrink-0 self-end rounded bg-buttonPrimary px-14'
-              radius='none' onClick={() => setScreen(null)} data-pw='itg-back-button'>
+              radius='none' onClick={() => setScreen(ScreenType.RESULT)} data-pw='itg-back-button'>
         <span className='text-buttonPrimary'>
           {intl.formatMessage({ id: 'back' })}
         </span>

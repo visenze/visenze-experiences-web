@@ -1,13 +1,11 @@
-import { useState } from 'react';
-import type { WidgetClient, WidgetConfig } from '../../visenze-core';
+import { useContext, useState } from 'react';
+import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 import { getFlattenProduct } from '../../utils';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { DEFAULT_ENDPOINT } from '../../constants';
 
 interface RecommendMeProps {
-  config: WidgetConfig;
-  widgetClient: WidgetClient;
   productId: string;
 }
 
@@ -20,11 +18,10 @@ export interface RecommendMe {
 }
 
 const useRecommendMe = ({
-  config,
-  widgetClient,
   productId,
 }: RecommendMeProps): RecommendMe => {
-  const { appKey, placementId, endpoint } = config.appSettings;
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { appKey, placementId, endpoint } = widgetConfig.appSettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [requestId, setRequestId] = useState('');
@@ -53,7 +50,7 @@ const useRecommendMe = ({
       q: query,
       va_uid: visenzeUserId,
       va_sid: visenzeSessionId,
-      attrs_to_get: config.searchSettings.attrs_to_get.join(','),
+      attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
     });
 
     // Listen to the event stream and retrieve relevant data based on the event type
