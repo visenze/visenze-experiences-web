@@ -292,7 +292,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     multisearchByImage,
     multisearchAutocomplete,
     setRenderRoots,
-    rerender: (): void => {},
+    rerender: (): void => {}, // implemented in initialization.ts
     openWidget,
     registerWidgetOpener,
     hideWidget,
@@ -301,6 +301,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     registerDarkModeToggler,
     updateConfig,
     registerConfigUpdater,
+    forceErrorState: (): void => {}, // implemented in individual widgets
   };
 };
 

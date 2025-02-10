@@ -24,6 +24,10 @@ export enum WidgetType {
   EMBEDDED_SEARCH_RESULTS = 'embedded_search_results',
 }
 
+export enum WidgetErrorState {
+  GENERIC_ERROR = 'generic_error',
+}
+
 /**
  * Client for programmatic access to ViSenze widgets.
  */
@@ -277,6 +281,12 @@ export interface WidgetClient {
    * @since 1.0.0
    */
   registerConfigUpdater: (fn: (configOverride: WidgetConfig, isPartial: boolean) => void) => void;
+  /**
+   * @internal
+   *
+   * @since 1.0.0
+   */
+  forceErrorState: (errorState: WidgetErrorState, errorMessage?: string) => void;
 }
 
 type ViewportType = 'mobile' | 'tablet' | 'desktop';

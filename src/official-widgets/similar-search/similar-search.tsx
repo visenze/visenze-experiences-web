@@ -1,5 +1,6 @@
 import type { FC, ReactElement } from 'react';
-import { useEffect, useState, useCallback, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { useIntl } from 'react-intl';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
@@ -9,13 +10,18 @@ import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
 import { parseBox } from '../../common/utils';
 import ResultScreen from './screens/ResultScreen';
-import { ScreenType } from '../../common/types/constants';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import LoadingIcon from './icons/LoadingIcon';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
+
+enum ScreenType {
+  LOADING = 'loading',
+  RESULT = 'result',
+  ERROR = 'error',
+}
 
 interface SimilarSearchProps {
   imUrl: string;
@@ -25,12 +31,15 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
+  const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [image, setImage] = useState<SearchImage | undefined>();
   const [resizedImage, setResizedImage] = useState<SearchImage | undefined>();
-  const [screen, setScreen] = useState<ScreenType>(ScreenType.UPLOAD);
+  const [error, setError] = useState('');
+  const [screen, setScreen] = useState(ScreenType.LOADING);
   const [boxData, setBoxData] = useState<BoxData | undefined>();
   const [searchHistory, setSearchHistory] = useState<SearchImage[]>([]);
+  const [lastSuccessfulImage, setLastSuccessfulImage] = useState<SearchImage | undefined>();
   const root = useContext(RootContext);
 
   const {
@@ -39,7 +48,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
     autocompleteResults,
     productTypes,
     metadata,
-    error,
+    error: errorFromApi,
     resetSearch,
     autocompleteWithQuery,
     multisearchWithParams,
@@ -48,15 +57,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
     boxData,
   });
 
-  const resetData = (): void => {
-    setSearchHistory([]);
-    setImage(undefined);
-    setResizedImage(undefined);
-    setBoxData(undefined);
-    resetSearch();
-  };
-
-  const onModalClose = useCallback((): void => {
+  const onModalClose = (): void => {
     setDialogVisible(false);
     if (productResults.length > 0) {
       widgetClient.sendEvent(Actions.CLOSE, {
@@ -66,9 +67,17 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
     }
 
     setTimeout(() => {
-      resetData();
+      if (error) {
+        setError('');
+        setScreen(ScreenType.LOADING);
+        if (lastSuccessfulImage) {
+          setImage(lastSuccessfulImage);
+        } else {
+          resetSearch();
+        }
+      }
     }, 300);
-  }, [productResults]);
+  };
 
   const appendSearchHistory = (searchImage: SearchImage): void => {
     const previousSearches = searchHistory.filter((prev) => prev !== searchImage);
@@ -76,7 +85,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
   };
 
   const onFindSimilar = (data: SearchImage): void => {
-    appendSearchHistory(data);
     if (image === data) {
       // Fake the search if same image
       setScreen(ScreenType.LOADING);
@@ -117,6 +125,13 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
     multisearchWithParams(params);
   };
 
+  const openWidgetPopup = (): void => {
+    setDialogVisible(true);
+    widgetClient.forceErrorState = (): void => {
+      setError('Sample error message here');
+    };
+  };
+
   const onPopupIconClick = (event: any): void => {
     event.stopPropagation();
     event.preventDefault();
@@ -124,12 +139,30 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
       cat: Category.ENTRANCE,
       label: Labels.ICON,
     });
-    setDialogVisible(true);
-    setScreen(ScreenType.LOADING);
+    openWidgetPopup();
   };
 
   const getScreen = (): ReactElement => {
     switch (screen) {
+      case ScreenType.ERROR:
+        return (
+            <div className='size-full flex flex-col text-center justify-center items-center gap-1'>
+              <div className='font-bold'>
+                {intl.formatMessage({ id: 'errorDescription' })}
+              </div>
+              <div>{error}</div>
+              {lastSuccessfulImage && (
+                  <button className='text-buttonPrimary bg-buttonPrimary px-5 py-2 rounded-md w-fit mt-3'
+                          onClick={() => {
+                            setError('');
+                            setImage(lastSuccessfulImage);
+                            setScreen(ScreenType.RESULT);
+                          }}>
+                    {intl.formatMessage({ id: 'back' })}
+                  </button>
+              )}
+            </div>
+        );
       case ScreenType.RESULT:
         return (
           <ResultScreen
@@ -161,7 +194,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
 
   useEffect(() => {
     if (!productResults.length && dialogVisible) {
-      appendSearchHistory({ imgUrl: imUrl });
       setImage({ imgUrl: imUrl });
     }
   }, [dialogVisible]);
@@ -169,7 +201,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
   useEffect(() => {
     widgetClient.registerWidgetOpener((id, bypassIdCheck) => {
       if (id === imUrl || bypassIdCheck) {
-        setDialogVisible(true);
+        openWidgetPopup();
       }
     });
   }, []);
@@ -184,15 +216,25 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
 
   useEffect(() => {
     if (productResults.length > 0) {
+      if (image) {
+        appendSearchHistory(image);
+      }
       setScreen(ScreenType.RESULT);
+      setLastSuccessfulImage(image);
     }
   }, [productResults]);
 
   useEffect(() => {
     if (error) {
-      console.error(error);
+      setScreen(ScreenType.ERROR);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (errorFromApi) {
+      setError(errorFromApi);
+    }
+  }, [errorFromApi]);
 
   if (!root) {
     return <></>;

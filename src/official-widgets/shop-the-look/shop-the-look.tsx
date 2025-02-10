@@ -27,20 +27,25 @@ interface ObjectDot {
 }
 
 const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
-  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   const intl = useIntl();
   const breakpoint = useBreakpoint();
+
+  widgetClient.forceErrorState = (): void => {
+    setError('Sample error message here');
+  };
 
   const {
     productResults,
     metadata,
     referenceImageUrl,
-    error,
+    error: errorFromApi,
     objectIndex,
     setObjectIndex,
     objects,
@@ -138,6 +143,12 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
   useEffect(() => {
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (errorFromApi) {
+      setError(errorFromApi);
+    }
+  }, [errorFromApi]);
 
   const getProductCarouselView = (): ReactElement => (
     <div className='relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10' data-pw='stl-product-result-carousel'>

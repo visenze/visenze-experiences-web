@@ -7,7 +7,6 @@ import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import FileDropzone from '../../../common/components/FileDropzone';
-import { ScreenType } from '../../../common/types/constants';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import ProductCard from '../../../common/components/product-card/ProductCard';
@@ -31,7 +30,7 @@ const swipeConfig = {
 
 interface ResultScreenProps {
   onModalClose: () => void;
-  setScreen: (screen: ScreenType) => void;
+  onBack: () => void;
   searchHistory: SearchImage[];
   setSearchHistory: (searchHistory: SearchImage[]) => void;
   onTextSearch: (text: string) => void;
@@ -42,7 +41,7 @@ interface ResultScreenProps {
 
 const ResultScreen: FC<ResultScreenProps> = ({
   onModalClose,
-  setScreen,
+  onBack,
   onTextSearch = (): void => {},
   onFindSimilar = (): void => {},
   onImageUpload,
@@ -125,7 +124,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   const onBackHandler = (): void => {
     setSearch('');
     setSearchHistory([]);
-    setScreen(ScreenType.UPLOAD);
+    onBack();
   };
 
   const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {

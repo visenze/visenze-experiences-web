@@ -20,17 +20,22 @@ interface MoreLikeThisProps {
 }
 
 const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
-  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   const intl = useIntl();
   const breakpoint = useBreakpoint();
+
+  widgetClient.forceErrorState = (): void => {
+    setError('Sample error message here');
+  };
 
   const {
     productResults,
     metadata,
-    error,
+    error: errorFromApi,
   } = useRecommendationSearch({
     productId,
     additionalParams: {
@@ -100,6 +105,12 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
   useEffect(() => {
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (errorFromApi) {
+      setError(errorFromApi);
+    }
+  }, [errorFromApi]);
 
   if (!root || isLoading) {
     return <></>;

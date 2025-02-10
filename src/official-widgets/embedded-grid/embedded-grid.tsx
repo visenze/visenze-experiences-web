@@ -13,14 +13,19 @@ interface EmbeddedGridProps {
 }
 
 const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   const intl = useIntl();
   const breakpoint = useBreakpoint();
 
-  const { productResults, metadata, error } = useRecommendationSearch({
+  widgetClient.forceErrorState = (): void => {
+    setError('Sample error message here');
+  };
+
+  const { productResults, metadata, error: errorFromApi } = useRecommendationSearch({
     productId,
   });
 
@@ -62,6 +67,12 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
   useEffect(() => {
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (errorFromApi) {
+      setError(errorFromApi);
+    }
+  }, [errorFromApi]);
 
   if (!root || isLoading) {
     return <></>;

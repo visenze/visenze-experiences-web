@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 import type { FacetType } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { getFacetNameByKey, getTitleCase } from '../../../common/utils';
-import type { ScreenType } from '../icon-triggered-grid';
+import { ScreenType } from '../icon-triggered-grid';
 import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 
 /**
@@ -21,7 +21,7 @@ interface FilterOptionsProps {
   facets: Facet[];
   selectedFilters: Record<FacetType, any>;
   setSelectedFilters: (selectedFilters: any) => void;
-  setScreen: (screen: ScreenType | null) => void;
+  setScreen: (screen: ScreenType) => void;
 }
 
 const FilterOptions: FC<FilterOptionsProps> = ({ className, facets, selectedFilters, setSelectedFilters, setScreen }) => {
@@ -122,7 +122,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ className, facets, selectedFilt
 
       {/* Back button */}
       <Button className='my-3 mr-3 w-1/4 flex-shrink-0 self-end rounded bg-buttonPrimary px-14'
-              radius='none' onClick={() => setScreen(null)} data-pw='itg-back-button'>
+              radius='none' onClick={() => setScreen(ScreenType.RESULT)} data-pw='itg-back-button'>
         <span className='text-buttonPrimary'>
           {intl.formatMessage({ id: 'back' })}
         </span>

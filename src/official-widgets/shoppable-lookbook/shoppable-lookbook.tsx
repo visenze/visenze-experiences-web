@@ -20,16 +20,29 @@ interface ObjectDot {
 }
 
 const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   const intl = useIntl();
   const breakpoint = useBreakpoint();
 
-  const { productResults, metadata, referenceImageUrl, error, objectIndex, setObjectIndex, objects } = useRecommendationSearch({
+  widgetClient.forceErrorState = (): void => {
+    setError('Sample error message here');
+  };
+
+  const {
+    productResults,
+    metadata,
+    referenceImageUrl,
+    error: errorFromApi,
+    objectIndex,
+    setObjectIndex,
+    objects,
+  } = useRecommendationSearch({
     productId,
   });
 
@@ -97,6 +110,12 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
   useEffect(() => {
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (errorFromApi) {
+      setError(errorFromApi);
+    }
+  }, [errorFromApi]);
 
   if (!root || isLoading) {
     return <></>;

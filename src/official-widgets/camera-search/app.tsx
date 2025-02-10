@@ -22,6 +22,8 @@ const DEFAULT_TEXTS: LanguagePack = {
     useCamera: 'USE CAMERA',
     searchBarPlaceholder: 'Type here to refine your results...',
     previousViews: 'Previous views',
+    errorDescription: 'Sorry, something went wrong',
+    back: 'Back',
   },
 };
 

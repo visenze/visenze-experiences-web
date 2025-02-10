@@ -5,7 +5,7 @@ import { cn } from '@heroui/theme';
 import { Radio, RadioGroup } from '@heroui/radio';
 import { useIntl } from 'react-intl';
 import { SortType } from '../../../common/types/constants';
-import type { ScreenType } from '../icon-triggered-grid';
+import { ScreenType } from '../icon-triggered-grid';
 import { getSortTypeIntlId } from '../../../common/utils';
 
 /**
@@ -15,7 +15,7 @@ import { getSortTypeIntlId } from '../../../common/utils';
 interface SortOptionsProps {
   sortType: SortType;
   setSortType: (selectedOption: SortType) => void;
-  setScreen: (screen: ScreenType | null) => void;
+  setScreen: (screen: ScreenType) => void;
   className: string;
 }
 
@@ -51,7 +51,7 @@ const SortOptions: FC<SortOptionsProps> = ({ sortType, setSortType, setScreen, c
 
       {/* Back button */}
       <Button className='my-3 mr-3 w-1/4 flex-shrink-0 self-end rounded bg-buttonPrimary px-14'
-              radius='none' onClick={() => setScreen(null)} data-pw='itg-back-button'>
+              radius='none' onClick={() => setScreen(ScreenType.RESULT)} data-pw='itg-back-button'>
         <span className='text-buttonPrimary'>
           {intl.formatMessage({ id: 'back' })}
         </span>
