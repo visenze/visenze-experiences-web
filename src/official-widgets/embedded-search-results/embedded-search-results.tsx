@@ -11,7 +11,7 @@ import type { ProcessedProduct } from '../../common/types/product';
 import { Category } from '../../common/types/tracking-constants';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import type { FacetType } from '../../common/types/constants';
-import FilterOptions from './components/FilterOptions';
+import FilterOptions, { showFacet } from './components/FilterOptions';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import FilterIcon from '../../common/icons/FilterIcon';
 import type { ImageUrl } from '../../common/types/image';
@@ -58,10 +58,9 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
 
   const handleError = (errorMsg: string): void => {
     setError(errorMsg);
-    console.error(errorMsg);
   };
 
-  const handleSuccess = (res: ProductSearchResponse): void => {
+  const handleSuccess = (res: ProductSearchResponse, shouldResetFacets: boolean): void => {
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else {
@@ -71,49 +70,15 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
         queryId: res.reqid,
       });
 
-      setSearchHistory((prevHistory) => {
-        const updatedHistory = prevHistory.map((item) => {
-          if (item.imageId && item.imageId === res.im_id && (!item.product_types || item.product_types?.length === 0)) {
-            const newItem = {
-              ...item,
-              imageUrl: res.query_tmp_url,
-              product_types: res.product_types,
-            };
-            setActiveHistory(newItem);
-            return newItem;
-          }
-          return item;
-        });
-
-        return updatedHistory;
-      });
-
       const newProducts = getFlattenProducts(res.result);
       setProductResults((prev) => ((res.page === 1) ? newProducts : [...prev, ...newProducts]));
-      // Only set facets once
-      if (facets.length === 0 && res.facets) {
-        const image: ImageUrl = {
-          imgUrl: res.query_tmp_url || '',
-        };
-        setImageUrl(image.imgUrl);
-        const event = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
-        document.dispatchEvent(event);
+      if (shouldResetFacets && res.facets) {
         setFacets(res.facets);
       }
     }
     setIsFirstLoad(false);
     setIsLoading(false);
     setIsLoadingMore(false);
-  };
-
-  // Function to generate unique ID for history entries
-  const generateHistoryId = (entry: Partial<SearchHistoryEntry>): string => {
-    // const base = entry.type === 'text' ? entry.query : entry.imageUrl || entry.imageId;
-    let base: string;
-    if (entry.imageId) base = entry.imageId;
-    else if (entry.imageUrl) base = entry.imageUrl;
-    else base = `${entry.query}`;
-    return `${entry.type}-${base}`;
   };
 
   const addToHistory = (entry: Omit<SearchHistoryEntry, 'timestamp'>): void => {
@@ -162,7 +127,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     return cssConfig;
   };
 
-  const multisearchWithSearchBarDetails = (imgUrl?: string, text?: string, currentPage?: number): void => {
+  const multisearchWithSearchBarDetails = (imgUrl?: string, text?: string, currentPage?: number, shouldResetFacets = true): void => {
     if (currentPage && currentPage > 1) {
       setIsLoadingMore(true);
     } else {
@@ -171,12 +136,18 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
 
     const params: Record<string, any> = {
       ...searchSettings,
-      filters: getFilterQueries(productDetails, selectedFilters),
       facets: getFacets(productDetails),
       facets_show_count: true,
       page: currentPage ?? page,
       return_query_temp_url: true,
     };
+    if (shouldResetFacets) {
+      if (Object.keys(selectedFilters).length) {
+        setSelectedFilters(defaultFilters);
+      }
+    } else {
+      params['filters'] = getFilterQueries(productDetails, selectedFilters);
+    }
 
     if (text) {
       params['q'] = text;
@@ -186,42 +157,35 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     }
     params['limit'] = 24; // hardcode for now
 
-    widgetClient.multisearchByImage(params, handleSuccess, handleError);
+    widgetClient.multisearchByImage(params, (res) => {
+      handleSuccess(res, shouldResetFacets);
 
-    // Only add to history if we have actual search parameters
-    if (text || imgUrl) {
-      const type = text && !imgUrl ? 'text' : 'image';
-      const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
-        id: generateHistoryId({ type, imageUrl: imgUrl, query: text }),
-        type,
-        source: 'url',
-        filters: selectedFilters,
-      };
-
-      if (text) {
-        historyEntry.query = text;
-      }
+      // Only add to history if image URL is used
       if (imgUrl) {
-        historyEntry.imageUrl = imgUrl;
-      }
+        const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
+          id: imgUrl,
+        };
 
-      setSearchHistory((prevHistory) => {
-        const isProductInHistory = prevHistory.find((item) => {
-          if (item.id === historyEntry.id) {
-            setActiveHistory(item);
-            return item;
-          }
-          return null;
-        });
-
-        if (!isProductInHistory) {
-          addToHistory(historyEntry);
+        if (imgUrl) {
+          historyEntry.imageUrl = imgUrl;
         }
-        return prevHistory;
-      });
-    }
 
-    widgetClient.multisearchByImage(params, handleSuccess, handleError);
+        setSearchHistory((prevHistory) => {
+          const isProductInHistory = prevHistory.find((item) => {
+            if (item.id === historyEntry.id) {
+              setActiveHistory(item);
+              return item;
+            }
+            return null;
+          });
+
+          if (!isProductInHistory) {
+            addToHistory(historyEntry);
+          }
+          return prevHistory;
+        });
+      }
+    }, handleError);
   };
 
   const searchFromHistory = (entry: SearchHistoryEntry): void => {
@@ -230,12 +194,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       imgUrl = entry.imageUrl;
       setImageUrl(entry.imageUrl);
     }
-    let text: string | undefined;
-    if (entry.query) {
-      text = entry.query;
-      setQuery(entry.query);
-    }
-    multisearchWithSearchBarDetails(imgUrl, text, 1);
+    multisearchWithSearchBarDetails(imgUrl, query, 1);
     setIsLoading(true);
   };
 
@@ -253,8 +212,18 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     }
   };
 
-  const onHistoryRemove = (entry: SearchHistoryEntry): void => {
+  const onHistoryRemove = (entry: SearchHistoryEntry, isActiveHistoryRemoved: boolean): void => {
     setSearchHistory((prev) => prev.filter((hist) => hist.id !== entry.id));
+    if (isActiveHistoryRemoved) {
+      setImageUrl('');
+      if (query) {
+        multisearchWithSearchBarDetails('', query, 1);
+      } else {
+        // empty input
+        setProductResults([]);
+        setFacets([]);
+      }
+    }
   };
 
   const findSimilarClickHandler = (imgUrl?: string): void => {
@@ -267,11 +236,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     }
     multisearchWithSearchBarDetails(imgUrl, query, 1);
     setIsLoading(true);
-  };
-
-  const resetPagination = (): void => {
-    setPage(1);
-    setProductResults([]);
   };
 
   useLayoutEffect(() => {
@@ -301,9 +265,8 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
 
   useEffect(() => {
     if (!isLoading) {
-      resetPagination();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      multisearchWithSearchBarDetails(imageUrl, query);
+      multisearchWithSearchBarDetails(imageUrl, query, 1, false);
     }
   }, [selectedFilters]);
 
@@ -316,8 +279,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   useEffect(() => {
     setQuery(textQuery);
     setImageUrl(imUrl);
-    multisearchWithSearchBarDetails(imUrl, textQuery);
+    if (imUrl || textQuery) {
+      multisearchWithSearchBarDetails(imUrl, textQuery);
+    } else {
+      setIsLoading(false);
+    }
   }, []);
+
+  const hasApplicableFacets = facets.filter((f) => showFacet(f)).length > 0;
 
   if (!root) {
     return <>Searching...</>;
@@ -340,8 +309,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                 query={query}
                 setQuery={setQuery}
                 emitSearchBarCallback={() => {
-                  if (query) {
+                  if (imageUrl) {
                     findSimilarClickHandler(imageUrl);
+                  } else if (query) {
+                    multisearchWithSearchBarDetails(undefined, query);
+                  } else {
+                    // empty input
+                    setProductResults([]);
+                    setFacets([]);
                   }
                 }}
               />
@@ -373,30 +348,33 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
 
         <div className='flex size-full flex-col justify-center md:flex-row'>
           {/* Filter Section Mobile */}
-          <div className='w-full bg-white p-2 md:hidden md:px-0 cursor-pointer flex gap-2 mb-2 items-center'
-               onClick={() => setShowMobileFilterOptions(true)}>
-            <FilterIcon className='size-5'/>
-            <span className='text-black'>
-              {intl.formatMessage({ id: 'filter' })}
-            </span>
-          </div>
-          <ViSenzeModal
-              className='bottom-0 top-[unset] h-4/5'
-              open={showMobileFilterOptions} layout='mobile'
-              onClose={() => setShowMobileFilterOptions(false)}
-              position='center'
-              placementId={`${appSettings.placementId}`}
-              darkMode={darkMode}
-              fontFamily={customizations.generalLayout?.fontFamily}
-          >
-            <FilterOptions
-                displayAsDropdown={false}
-                facets={facets}
-                selectedFilters={selectedFilters}
-                setSelectedFilters={setSelectedFilters}
-            />
-          </ViSenzeModal>
-
+          {hasApplicableFacets && (
+              <>
+                <div className='w-full bg-white p-2 md:hidden md:px-0 cursor-pointer flex gap-2 mb-2 items-center'
+                     onClick={() => setShowMobileFilterOptions(true)}>
+                  <FilterIcon className='size-5'/>
+                  <span className='text-black'>
+                    {intl.formatMessage({ id: 'filter' })}
+                  </span>
+                </div>
+                <ViSenzeModal
+                    className='bottom-0 top-[unset] h-4/5'
+                    open={showMobileFilterOptions} layout='mobile'
+                    onClose={() => setShowMobileFilterOptions(false)}
+                    position='center'
+                    placementId={`${appSettings.placementId}`}
+                    darkMode={darkMode}
+                    fontFamily={customizations.generalLayout?.fontFamily}
+                >
+                  <FilterOptions
+                      displayAsDropdown={false}
+                      facets={facets}
+                      selectedFilters={selectedFilters}
+                      setSelectedFilters={setSelectedFilters}
+                  />
+                </ViSenzeModal>
+              </>
+          )}
           <div className='flex w-full flex-col'>
             {/* Product Result Grid */}
             <div className='flex flex-col items-center text-primary'>

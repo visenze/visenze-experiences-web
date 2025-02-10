@@ -1,4 +1,4 @@
-import type { ChangeEvent, FC, ReactElement } from 'react';
+import React, { type ChangeEvent, type FC, type ReactElement } from 'react';
 import { useContext } from 'react';
 import { Accordion, AccordionItem } from '@heroui/accordion';
 import { Checkbox } from '@heroui/checkbox';
@@ -20,27 +20,27 @@ interface FilterOptionsProps {
   className: string;
   facets: Facet[];
   selectedFilters: Record<FacetType, any>;
-  setSelectedFilters: (selectedFilters: any) => void;
+  setSelectedFilters: React.Dispatch<React.SetStateAction<Record<FacetType, any>>>;
   setScreen: (screen: ScreenType) => void;
 }
+
+export const showFacet = (facet: Facet): boolean => {
+  if (!facet.range && !facet.items) {
+    return false;
+  }
+  if (facet.range && facet.range.min === facet.range.max) {
+    return false;
+  }
+  if (facet.items && !facet.items.filter((i) => i.value).length) {
+    return false;
+  }
+  return true;
+};
 
 const FilterOptions: FC<FilterOptionsProps> = ({ className, facets, selectedFilters, setSelectedFilters, setScreen }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, customizations } = widgetConfig;
   const intl = useIntl();
-
-  const showFacet = (facet: Facet): boolean => {
-    if (!facet.range && !facet.items) {
-      return false;
-    }
-    if (facet.range && facet.range.min === facet.range.max) {
-      return false;
-    }
-    if (facet.items && !facet.items.filter((i) => i.value).length) {
-      return false;
-    }
-    return true;
-  };
 
   const showFacetValues = (facet: Facet): ReactElement | ReactElement[] => {
     const facetName = getFacetNameByKey(displaySettings.productDetails, facet.key) as FacetType;

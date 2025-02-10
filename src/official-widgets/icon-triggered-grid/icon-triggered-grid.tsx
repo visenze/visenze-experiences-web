@@ -12,7 +12,7 @@ import useRecommendationSearch from '../../common/components/hooks/use-recommend
 import Footer from '../../common/components/Footer';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import SortOptions from './components/SortOptions';
-import FilterOptions from './components/FilterOptions';
+import FilterOptions, { showFacet } from './components/FilterOptions';
 import { getSortTypeIntlId } from '../../common/utils';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import CloseIcon from '../../common/icons/CloseIcon';
@@ -136,6 +136,8 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
     }
   }, [errorFromApi]);
 
+  const hasApplicableFacets = facets.filter((f) => showFacet(f)).length > 0;
+
   if (!root) {
     return <></>;
   }
@@ -228,21 +230,23 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                         radius='none'
                         onClick={() => setScreen(ScreenType.SORT)}
                         data-pw='itg-sort-button'>
-                <span className='text-buttonPrimary'>
-                  {intl.formatMessage({ id: 'sort' })}
-                </span>
+                      <span className='text-buttonPrimary'>
+                        {intl.formatMessage({ id: 'sort' })}
+                      </span>
                     </Button>
-                    <Button
-                        className='rounded bg-black bg-buttonPrimary'
-                        size='sm'
-                        radius='none'
-                        onClick={() => setScreen(ScreenType.FILTER)}
-                        data-pw='itg-filter-button'>
-                <span className='text-buttonPrimary'>
-                  {intl.formatMessage({ id: 'filter' })}
-                </span>
-                    </Button>
-                  </div>
+                    {hasApplicableFacets && (
+                        <Button
+                            className='rounded bg-black bg-buttonPrimary'
+                            size='sm'
+                            radius='none'
+                            onClick={() => setScreen(ScreenType.FILTER)}
+                            data-pw='itg-filter-button'>
+                          <span className='text-buttonPrimary'>
+                            {intl.formatMessage({ id: 'filter' })}
+                          </span>
+                        </Button>
+                    )}
+                   </div>
                 </div>
 
                 {/* Product Result Grid */}
