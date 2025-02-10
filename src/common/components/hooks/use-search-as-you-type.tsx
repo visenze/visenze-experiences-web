@@ -33,6 +33,9 @@ const useSearchAsYouType = ({
   };
 
   const handleSearchAsYouTypeSuccess = (res: ProductSearchResponse): void => {
+    if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+      widgetConfig.callbacks.preprocessResponse(res);
+    }
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else if (res?.status === 'OK') {
