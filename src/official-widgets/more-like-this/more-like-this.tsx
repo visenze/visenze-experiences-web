@@ -20,17 +20,22 @@ interface MoreLikeThisProps {
 }
 
 const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
-  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
   const intl = useIntl();
   const breakpoint = useBreakpoint();
+
+  widgetClient.forceErrorState = (): void => {
+    setError('Sample error message here');
+  };
 
   const {
     productResults,
     metadata,
-    error,
+    error: errorFromApi,
   } = useRecommendationSearch({
     productId,
     additionalParams: {
@@ -101,47 +106,52 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    if (errorFromApi) {
+      setError(errorFromApi);
+    }
+  }, [errorFromApi]);
+
   if (!root || isLoading) {
     return <></>;
   }
 
   if (error) {
-    return (
-      <div className='flex h-60 flex-col items-center justify-center gap-4'>
-        <span className='text-md font-bold'>{intl.formatMessage({ id: 'errorDescription' })}</span>
-        <span className='text-sm'>{intl.formatMessage({ id: 'errorResolution' })}</span>
-      </div>
-    );
+    return <></>;
   }
 
   return (
     <>
       <WidgetResultContext.Provider value={{ metadata, productResults }}>
-        {/* Widget Title */}
-        {customizations.generalLayout?.showWidgetTitle && (
-          <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='mlt-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
-        )}
+        {productResults.length > 0 && (
+            <>
+              {/* Widget Title */}
+              {customizations.generalLayout?.showWidgetTitle && (
+                  <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='mlt-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
+              )}
 
-        {/* Product Result Carousel */}
-        <div className='relative pr-1 text-primary lg:px-10' data-pw='mlt-product-result-carousel'>
-          <Slider {...settings}>
-            {productResults.map((result, index) => (
-              <div key={`${result.product_id}-${index}`}>
-                <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
-                  <ProductCard index={index}
-                               result={result}
-                               hasFindSimilar={false}
-                               isRecommendation={true}
-                               pwPrefix='mlt' />
-                </div>
+              {/* Product Result Carousel */}
+              <div className='relative pr-1 text-primary lg:px-10' data-pw='mlt-product-result-carousel'>
+                <Slider {...settings}>
+                  {productResults.map((result, index) => (
+                      <div key={`${result.product_id}-${index}`}>
+                        <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
+                          <ProductCard index={index}
+                                       result={result}
+                                       hasFindSimilar={false}
+                                       isRecommendation={true}
+                                       pwPrefix='mlt' />
+                        </div>
+                      </div>
+                  ))}
+                </Slider>
               </div>
-            ))}
-          </Slider>
-        </div>
 
-        {/* ViSenze Footer */}
-        {customizations.generalLayout?.showViSenzeLogo && (
-          <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='mlt-visenze-footer'/>
+              {/* ViSenze Footer */}
+              {customizations.generalLayout?.showViSenzeLogo && (
+                  <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='mlt-visenze-footer'/>
+              )}
+            </>
         )}
       </WidgetResultContext.Provider>
     </>

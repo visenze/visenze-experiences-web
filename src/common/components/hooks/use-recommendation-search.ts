@@ -53,13 +53,13 @@ const useRecommendationSearch = ({
   const productDetails = widgetConfig.displaySettings.productDetails;
 
   const handleSuccess = (res: ProductSearchResponse): void => {
+    if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+      widgetConfig.callbacks.preprocessResponse(res);
+    }
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else {
       setError('');
-      if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
-        widgetConfig.callbacks.preprocessResponse(res);
-      }
       setResponse(res);
     }
   };

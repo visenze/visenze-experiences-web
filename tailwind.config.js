@@ -23,7 +23,7 @@ const herouiPackagesForOfficialWidgets = {
 
 const herouiPackagesForWidget = herouiPackagesForOfficialWidgets[widgetType]
   // If not found, bundle all available packages as fallback.
-  || 'accordion|button|card|checkbox|image|input|listbox|radio|skeleton|slider|spinner';
+  || 'accordion|button|checkbox|input|listbox|radio|skeleton|slider|spinner';
 
 const getFontObj = (configName) => {
   const deviceTypes = ['mobile', 'tablet', 'desktop'];

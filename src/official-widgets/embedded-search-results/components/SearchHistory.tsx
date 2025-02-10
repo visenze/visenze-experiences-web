@@ -1,28 +1,15 @@
 import { cn } from '@heroui/theme';
 import { useEffect, useRef, useState, type ReactElement } from 'react';
+import type { ProductType } from 'visearch-javascript-sdk';
 import ImageCropThumbnail from './ImageCropThumbnail';
 import CloseIcon from '../../../common/icons/CloseIcon';
 
-export interface ProductType {
-  type: string;
-  score?: number;
-  rerankScore?: number;
-  box: number[];
-  attributes: { [index: string]: string[] };
-  box_type: string;
-}
-
 export interface SearchHistoryEntry {
   id: string;
-  type: 'text' | 'image';
-  query?: string | null;
   imageUrl?: string | null;
-  imageId?: string | null;
   product_types?: ProductType[];
   box?: number[];
   timestamp: number;
-  filters?: Record<string, any>;
-  source: 'url' | 'user';
 }
 
 export const MAX_HISTORY_ITEMS = 20;
@@ -38,7 +25,7 @@ const SearchHistory = ({
   history: SearchHistoryEntry[];
   multisearchWithSearchBarDetails: (imgUrl?: string) => void;
   onHistorySelect: (entry: SearchHistoryEntry) => void;
-  onHistoryRemove: (entry: SearchHistoryEntry) => void;
+  onHistoryRemove: (entry: SearchHistoryEntry, isActiveHistoryRemoved: boolean) => void;
 }): ReactElement => {
   const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number; height: number } }>({});
   const activeItemRef = useRef<HTMLDivElement>(null);
@@ -73,6 +60,7 @@ const SearchHistory = ({
     if (activeHistory) {
       let baseId = activeHistory.id;
       if (activeHistory.product_types) {
+        // TODO refactor this to remove dependency to URL params
         const urlSearchParams = new URLSearchParams(window.location.search);
         const searchBarBox = urlSearchParams.get('box');
 
@@ -92,15 +80,13 @@ const SearchHistory = ({
       <div className='no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
         <div className='flex w-full flex-row gap-2 md:w-1/2'>
           {history
-            .filter((entry) => (entry.type === 'image'))
-            // eslint-disable-next-line no-confusing-arrow
-            .flatMap((entry) => (entry.product_types !== undefined)
+            .flatMap((entry) => (entry.product_types !== undefined
               ? entry.product_types.map((type) => ({
                   ...entry,
                   id: `${entry.id}-${type.box.join()}`,
                   box: type.box,
                 }))
-              : [entry])
+              : [entry]))
             .map((entry, index) => (
               <div
                 key={`${entry.id}-${index}`}
@@ -120,7 +106,7 @@ const SearchHistory = ({
                      onClick={(event) => {
                        event.preventDefault();
                        event.stopPropagation();
-                       onHistoryRemove(entry);
+                       onHistoryRemove(entry, entry.id === getActiveHistoryId());
                      }}>
                   <CloseIcon className='size-4 text-black' />
                 </div>

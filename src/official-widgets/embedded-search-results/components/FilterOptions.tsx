@@ -26,12 +26,27 @@ const ChevronDownIcon = (): ReactElement => (
       </svg>
   );
 
+export const showFacet = (facet: Facet): boolean => {
+  if (!facet.range && !facet.items) {
+    return false;
+  }
+  if (facet.range && facet.range.min === facet.range.max) {
+    return false;
+  }
+  if (facet.items && !facet.items.filter((i) => i.value).length) {
+    return false;
+  }
+  return true;
+};
+
 const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSelectedFilters, displayAsDropdown }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, customizations } = widgetConfig;
   const [shownFacets, setShownFacets] = useState<Record<string, boolean>>({});
 
   const showFacetValues = (facet: Facet, coloredText: boolean): ReactElement | ReactElement[] => {
+    const facetName = getFacetNameByKey(displaySettings.productDetails, facet.key) as FacetType;
+
     const priceRangeChangeHandler = (value: number | number[]): void => {
       setSelectedFilters((currentFilters: Record<FacetType, any>) => {
         let newPriceRange: number[] = [];
@@ -50,12 +65,11 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
         color='secondary'
         minValue={facet.range.min}
         maxValue={facet.range.max}
-        defaultValue={[facet.range.min, facet.range.max]}
+        defaultValue={selectedFilters[facetName]?.length ? selectedFilters[facetName] : [facet.range.min, facet.range.max]}
         onChangeEnd={priceRangeChangeHandler}
       />;
     }
 
-    const facetName = getFacetNameByKey(displaySettings.productDetails, facet.key) as FacetType;
     const updateFiltersHandler = (event: ChangeEvent<HTMLInputElement>): void => {
       setSelectedFilters((currentFilters: Record<FacetType, any>) => {
         const newSet = new Set(currentFilters[facetName]);
@@ -69,16 +83,19 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
       });
     };
 
-    return facet.items.map((item) => (
-      <div className='flex w-full justify-between' key={item.value}>
+    return facet.items.filter((i) => i.value).map((item) => (
+      <div className='flex w-full justify-between mb-1' key={item.value}>
         <Checkbox
           radius='none'
           value={item.value}
           color='secondary'
           onChange={updateFiltersHandler}
           isSelected={selectedFilters[facetName].has(item.value)}
+          classNames={{
+            base: 'w-full max-w-full',
+          }}
         >
-          <span className={`${coloredText ? 'text-primary' : ''}`}>{item.value}</span>
+          <span className={`${coloredText ? 'text-primary' : 'text-black'}`}>{item.value}</span>
         </Checkbox>
       </div>
     ));
@@ -111,8 +128,8 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
 
   if (displayAsDropdown) {
     return (
-        <div className='flex w-8/12'>
-          {facets.map((facet) => (
+        <div className='flex flex-wrap w-8/12'>
+          {facets.map((facet) => (showFacet(facet) ? (
               <div key={facet.key} className='w-2/6 p-1'>
                 <div className='w-full border-y border-y-gray-300 py-2'
                      onClick={() => {
@@ -141,7 +158,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
                     </OutsideAlerter>
                 )}
               </div>
-          ))}
+          ) : <></>))}
         </div>
     );
   }

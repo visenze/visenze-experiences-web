@@ -19,6 +19,8 @@ const DEFAULT_TEXTS: LanguagePack = {
     widgetTitle: 'MORE LIKE THIS',
     searchBarPlaceholder: 'Type here to refine your results...',
     previousViews: 'Previous views',
+    errorDescription: 'Sorry, something went wrong',
+    back: 'Back',
   },
 };
 

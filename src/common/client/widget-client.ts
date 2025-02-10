@@ -140,7 +140,10 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
       return;
     }
 
-    const analyticsParams = params;
+    const analyticsParams = {
+      ...params,
+      ...(config.trackingSettings || {}),
+    };
 
     if (!analyticsParams['queryId']) {
       analyticsParams['queryId'] = getLastClickQueryId();
@@ -289,7 +292,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     multisearchByImage,
     multisearchAutocomplete,
     setRenderRoots,
-    rerender: (): void => {},
+    rerender: (): void => {}, // implemented in initialization.ts
     openWidget,
     registerWidgetOpener,
     hideWidget,
@@ -298,6 +301,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     registerDarkModeToggler,
     updateConfig,
     registerConfigUpdater,
+    forceErrorState: (): void => {}, // implemented in individual widgets
   };
 };
 

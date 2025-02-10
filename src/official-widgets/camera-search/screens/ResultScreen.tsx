@@ -1,4 +1,4 @@
-import type { CSSProperties, FC, ReactElement } from 'react';
+import type { FC, ReactElement } from 'react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Input } from '@heroui/input';
 import { Listbox, ListboxItem } from '@heroui/listbox';
@@ -7,7 +7,6 @@ import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
 import FileDropzone from '../../../common/components/FileDropzone';
-import { ScreenType } from '../../../common/types/constants';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import ProductCard from '../../../common/components/product-card/ProductCard';
@@ -19,6 +18,7 @@ import { Actions, Category, Labels } from '../../../common/types/tracking-consta
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
 import ChevronUpIcon from '../../../common/icons/ChevronUpIcon';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -31,7 +31,7 @@ const swipeConfig = {
 
 interface ResultScreenProps {
   onModalClose: () => void;
-  setScreen: (screen: ScreenType) => void;
+  onBack: () => void;
   searchHistory: SearchImage[];
   setSearchHistory: (searchHistory: SearchImage[]) => void;
   onTextSearch: (text: string) => void;
@@ -42,7 +42,7 @@ interface ResultScreenProps {
 
 const ResultScreen: FC<ResultScreenProps> = ({
   onModalClose,
-  setScreen,
+  onBack,
   onTextSearch = (): void => {},
   onFindSimilar = (): void => {},
   onImageUpload,
@@ -53,7 +53,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const { productResults, autocompleteResults } = useContext(WidgetResultContext);
-  const [search, setSearch] = useState<string>('');
+  const [search, setSearch] = useState('');
+  const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
   const [showFullResults, setShowFullResults] = useState(false);
   const [showInputSuggest, setShowInputSuggest] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState<string[]>([]);
@@ -124,43 +125,20 @@ const ResultScreen: FC<ResultScreenProps> = ({
   const onBackHandler = (): void => {
     setSearch('');
     setSearchHistory([]);
-    setScreen(ScreenType.UPLOAD);
+    onBack();
   };
 
-  const getProductGridCssClasses = (defaultCols: string, defaultGapX: string, defaultGapY: string): string => {
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.productsPerRow) {
-        classes.push(defaultCols);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (debouncedOnKeywordUpdate != null) {
+        onKeywordUpdate(debouncedOnKeywordUpdate);
       }
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      if (!cssConfigSrc.marginVertical && cssConfigSrc.marginVertical !== 0) {
-        classes.push(defaultGapY);
-      }
-      return classes.join(' ');
-    }
-    return [defaultCols, defaultGapX, defaultGapY].join(' ');
-  };
+    }, 300);
 
-  const getProductGridCssConfig = (): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
-      }
-      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
-        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
-      }
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
-  };
+    return (): void => {
+      clearTimeout(handler);
+    };
+  }, [debouncedOnKeywordUpdate]);
 
   const getMobileView = (): ReactElement => (
     <div className='flex h-full flex-col gap-8 md:hidden'>
@@ -218,8 +196,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
           <div ref={resultsRef} className='no-scrollbar flex size-full justify-center overflow-y-auto md:hidden'>
             <div
-              className={`wigmix-product-grid mx-2 grid h-full pb-20 pt-2 ${getProductGridCssClasses('grid-cols-2', 'gap-x-4', 'gap-y-2')}`}
-              style={getProductGridCssConfig()}
+              className={`wigmix-product-grid mx-2 grid h-full pb-20 pt-2 ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2', 'gap-x-4', 'gap-y-2')}`}
+              style={getProductGridCssConfig(customizations, breakpoint)}
               data-pw='cs-product-result-grid'>
               {productResults.map((result, index) => (
                   <ProductCard key={`${result.product_id}-${index}`}
@@ -359,7 +337,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     onBlur={() => setTimeout(() => setShowInputSuggest(false), 100)}
                     onValueChange={(input): void => {
                       setSearch(input);
-                      onKeywordUpdate(input);
+                      setDebouncedOnKeywordUpdate(input);
                     }}
                     onKeyDown={(event): void => {
                       if (event.nativeEvent.code === 'Enter') {
@@ -378,8 +356,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
             </div>
 
             <div className='overflow-y-auto'>
-              <div className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses('grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
-                   style={getProductGridCssConfig()}
+              <div className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
+                   style={getProductGridCssConfig(customizations, breakpoint)}
                    data-pw='cs-product-result-grid'>
                 {productResults.map((result, index) => (
                     <ProductCard key={`${result.product_id}-${index}`}

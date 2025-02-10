@@ -81,6 +81,9 @@ const getOriginalPrice = (
   }
   if (result[productDetails['original_price']]) {
     const priceNumber = +result[productDetails['original_price']].value;
+    if (priceNumber === 0) {
+      return '';
+    }
     const currencyFormatter = currencyFormatterFactory(languageSettings, customizations, result[productDetails['original_price']].currency);
     return currencyFormatter.format(priceNumber);
   }
@@ -233,15 +236,15 @@ const ProductCard: FC<ProductCardProps> = ({
                       <CustomizableIcon
                           height={20}
                           width={20}
-                          className='wigmix-find-similar-icon'
-                          url={customizations.productCard?.findSimilar?.icon?.url}
+                          className='wigmix-find-similar-icon custom'
+                          url={customizations.productCard.findSimilar.icon.url}
                           color={darkMode
-                              ? (customizations.productCard?.findSimilar?.icon?.colorDark || '')
-                              : (customizations.productCard?.findSimilar?.icon?.color || '')}
+                              ? (customizations.productCard.findSimilar.icon.colorDark || '')
+                              : (customizations.productCard.findSimilar.icon.color || '')}
                       />
                   ) : (
                       <MagnifyingGlassIcon
-                          className='wigmix-find-similar-icon size-5'
+                          className='wigmix-find-similar-icon default size-5'
                           color={darkMode
                               ? (customizations.productCard?.findSimilar?.icon?.colorDark || '')
                               : (customizations.productCard?.findSimilar?.icon?.color || '')}

@@ -29,7 +29,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       ref={searchBarRef}
       className='z-5'
       classNames={{
-        inputWrapper: cn('rounded-md bg-white w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
+        inputWrapper: cn('rounded-md w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
       }}
       autoCapitalize='off'
       autoComplete='off'

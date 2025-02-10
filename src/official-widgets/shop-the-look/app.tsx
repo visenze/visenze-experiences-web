@@ -16,8 +16,6 @@ interface AppProps {
 const DEFAULT_TEXTS: LanguagePack = {
   en: {
     widgetTitle: 'Get The Look',
-    errorDescription: 'Sorry, something went wrong',
-    errorResolution: 'Please refresh to try again',
   },
 };
 

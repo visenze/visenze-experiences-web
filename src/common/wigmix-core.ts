@@ -1,5 +1,5 @@
 import type { Root } from 'react-dom/client';
-import type { ProductSearchResponse, ProductSearchResponseSuccess, ViSearchClient } from 'visearch-javascript-sdk';
+import type { ProductSearchResponse, ViSearchClient } from 'visearch-javascript-sdk';
 import type { ErrorHandler, SuccessHandler } from './types/function';
 import type { SearchImage } from './types/image';
 import type { LanguagePack } from './locales/locale';
@@ -22,6 +22,10 @@ export enum WidgetType {
   ICON_TRIGGERED_GRID = 'icon_triggered_grid',
   SEARCH_BAR = 'search_bar',
   EMBEDDED_SEARCH_RESULTS = 'embedded_search_results',
+}
+
+export enum WidgetErrorState {
+  GENERIC_ERROR = 'generic_error',
 }
 
 /**
@@ -277,6 +281,12 @@ export interface WidgetClient {
    * @since 1.0.0
    */
   registerConfigUpdater: (fn: (configOverride: WidgetConfig, isPartial: boolean) => void) => void;
+  /**
+   * @internal
+   *
+   * @since 1.0.0
+   */
+  forceErrorState: (errorState: WidgetErrorState, errorMessage?: string) => void;
 }
 
 type ViewportType = 'mobile' | 'tablet' | 'desktop';
@@ -435,11 +445,15 @@ export interface WidgetConfig {
     /**
      * ViSenze app key; obtainable from Discovery Suite console.
      *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
+     *
      * @since 1.0.0
      */
     appKey: string;
     /**
      * ViSenze placement ID; obtainable from Discovery Suite console.
+     *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
      *
      * @since 1.0.0
      */
@@ -451,7 +465,7 @@ export interface WidgetConfig {
      */
     strategyId?: string | number;
     /**
-     * UID used to override ViSenze tracking parameter.
+     * (optional) UID used to override ViSenze tracking parameter.
      *
      * @since 1.0.0
      */
@@ -464,6 +478,8 @@ export interface WidgetConfig {
     gtmTracking?: boolean;
     /**
      * ViSenze search/recommendations API endpoint.
+     *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
      *
      * @since 1.0.0
      */
@@ -504,11 +520,15 @@ export interface WidgetConfig {
     /**
      * CSS selector on which the widget will be rendered on.
      *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
+     *
      * @since 1.0.0
      */
     cssSelector: string;
     /**
      * Field mapping for product card. The fields are based on the schema of the Discovery Suite catalog.
+     *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
      *
      * @since 1.0.0
      */
@@ -520,6 +540,12 @@ export interface WidgetConfig {
    * @since 1.0.0
    */
   searchSettings: Record<string, any>;
+  /**
+   * Additional key-value parameters that will be sent to ViSenze analytics API.
+   *
+   * @since 1.0.0
+   */
+  trackingSettings: Record<string, any>;
   /**
    * Localization- and internationalization-related settings.
    *
@@ -558,9 +584,9 @@ export interface WidgetConfig {
      *
      * @since 1.0.0
      */
-    preprocessResponse?: (resp: ProductSearchResponseSuccess) => void;
+    preprocessResponse?: (resp: ProductSearchResponse) => void;
     /**
-     * Fires whenever an event is sent to ViSenze Analytics, or when `sendEvent` is called.
+     * Fires whenever an event is sent to ViSenze Analytics (precisely: when `sendEvent` is called).
      *
      * @param action The action that is being recorded
      * @param params The attached metadata related to the action
