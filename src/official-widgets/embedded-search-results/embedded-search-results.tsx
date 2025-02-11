@@ -67,6 +67,9 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   };
 
   const handleSuccess = (res: ProductSearchResponse, shouldResetFacets: boolean): void => {
+    if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+      widgetConfig.callbacks.preprocessResponse(res);
+    }
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else {
