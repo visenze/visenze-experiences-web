@@ -100,7 +100,7 @@ export interface WidgetClient {
    * @param failure Callback to be executed upon event sent failure
    *
    * @example
-   * ```
+   * ```ts
    * // Sends an add to cart event.
    * widgetClient.sendEvent('add_to_cart', { pid: 'my_product_id' });
    * ```
@@ -122,7 +122,7 @@ export interface WidgetClient {
    * @param failure Callback to be executed upon event sent failure
    *
    * @example
-   * ```
+   * ```ts
    * // Sends transaction batch events
    * widgetClient.sendEvents('transaction', [
    *   { pid: 'my_product_id', value: 50 },
@@ -580,6 +580,20 @@ export interface WidgetConfig {
      * Pre-processes API response before being passed further down into the components.
      * The modification is expected to happen in-place.
      *
+     * The callback will be applied uniformly to all API responses regardless of the exact method being called.
+     * If different processing is required for different API methods, the field `method` of the response
+     * can be used to differentiate:
+     * ```ts
+     * preprocessResponse: (resp) => {
+     *   if (resp.method === 'product/multisearch') {
+     *     // preprocess multisearch API response
+     *   } else if (resp.method === 'product/recommendations') {
+     *     // preprocess recommendations API response
+     *   }
+     *   // etc.
+     * },
+     * ```
+     *
      * @param resp The original API response.
      *
      * @since 1.0.0
@@ -599,7 +613,7 @@ export interface WidgetConfig {
      *
      * If this function is defined, clicking on the product will not redirect to the product URL.
      * If such behavior is still needed, the following callback function can be used:
-     * ```
+     * ```ts
      * onProductClick: (productDetails, trackingMeta, productUrl) => {
      *   // ... enter custom behavior ...
      *
@@ -617,11 +631,28 @@ export interface WidgetConfig {
     /**
      * Fires whenever response from a search/recommendation API result is returned.
      *
-     * @param apiResponse Response from ViSenze search/recommendation API
+     * If `preprocessResponse` is defined, the `resp` parameter of this callback will be the object
+     * AFTER the pre-processing has been applied.
+     *
+     * The callback will be applied uniformly to all API responses regardless of the exact method being called.
+     * If different processing is required for different API methods, the field `method` of the response
+     * can be used to differentiate:
+     * ```ts
+     * onSearchCallback: (resp) => {
+     *   if (resp.method === 'product/multisearch') {
+     *     // preprocess multisearch API response
+     *   } else if (resp.method === 'product/recommendations') {
+     *     // preprocess recommendations API response
+     *   }
+     *   // etc.
+     * },
+     * ```
+     *
+     * @param resp Response from ViSenze search/recommendation API
      *
      * @since 1.0.0
      */
-    onSearchCallback?: (apiResponse: ProductSearchResponse) => void;
+    onSearchCallback?: (resp: ProductSearchResponse) => void;
     /**
      * Fires when there is an input change within the search bar (when exists),
      * such as clicking enter in search bar, selecting an autocomplete option, or uploading a new image.
@@ -738,12 +769,10 @@ export interface WidgetConfig {
     /**
      * Breakpoints configuration.
      *
-     * NOTE: customizable breakpoint is not currently effective as Tailwind builds code based on preset breakpoints,
+     * @internal Customizable breakpoint is not currently effective as Tailwind builds code based on preset breakpoints,
      * i.e. classes such as `md:*`, `lg:*` will follow Tailwind's preset instead of the values from here.
      * Although Tailwind preset can be customized, it cannot be updated on runtime -- this configuration object
      * would need to pass in the values during runtime after the bundle has been built.
-     *
-     * @internal
      *
      * @since 1.0.0
      */
