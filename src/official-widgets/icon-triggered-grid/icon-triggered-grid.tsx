@@ -32,7 +32,8 @@ interface IconTriggeredGridProps {
 
 const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations } = widgetConfig;
+  const { appSettings, displaySettings, customizations } = widgetConfig;
+  const { productDetails } = displaySettings;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [error, setError] = useState('');
@@ -182,24 +183,30 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
               </div>
 
               <div className='relative flex w-full flex-col bg-primary px-6 pb-4 md:w-7/10 md:pt-[6.5%]'>
-                <div className='flex items-center pb-4' style={{ display: screen === ScreenType.RESULT ? '' : 'hidden' }}>
+                <div className='flex items-center pb-4' style={{ display: screen === ScreenType.RESULT ? '' : 'none' }}>
                   {/* Sort Type */}
-                  <div className='text-lg text-primary'>
-                    {intl.formatMessage({ id: 'sort' })}:&nbsp;
-                    {intl.formatMessage({ id: getSortTypeIntlId(sortType) })}
-                  </div>
+                  {!!productDetails['price'] && (
+                      // Only show sort type if there is product price defined;
+                      // without product price, sorting can only be done by relevance.
+                      <div className='text-lg text-primary'>
+                        {intl.formatMessage({ id: 'sort' })}:&nbsp;
+                        {intl.formatMessage({ id: getSortTypeIntlId(sortType) })}
+                      </div>
+                  )}
                   {/* Sort and Filter buttons */}
                   <div className='ml-auto flex gap-2'>
-                    <Button
-                        className='rounded bg-black bg-buttonPrimary'
-                        size='sm'
-                        radius='none'
-                        onClick={() => setScreen(ScreenType.SORT)}
-                        data-pw='itg-sort-button'>
-                      <span className='text-buttonPrimary'>
-                        {intl.formatMessage({ id: 'sort' })}
-                      </span>
-                    </Button>
+                    {!!productDetails['price'] && (
+                        <Button
+                            className='rounded bg-black bg-buttonPrimary'
+                            size='sm'
+                            radius='none'
+                            onClick={() => setScreen(ScreenType.SORT)}
+                            data-pw='itg-sort-button'>
+                          <span className='text-buttonPrimary'>
+                            {intl.formatMessage({ id: 'sort' })}
+                          </span>
+                        </Button>
+                    )}
                     {hasApplicableFacets && (
                         <Button
                             className='rounded bg-black bg-buttonPrimary'
