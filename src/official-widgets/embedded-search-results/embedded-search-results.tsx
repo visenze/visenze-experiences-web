@@ -171,10 +171,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     if (entry.imageUrl) {
       imgUrl = entry.imageUrl;
       setImageUrl(entry.imageUrl);
+    } else {
+      setImageUrl('');
     }
     if (entry.query) {
       historyText = entry.query;
       setQuery(entry.query);
+    } else {
+      setQuery('');
     }
     multisearchWithSearchBarDetails(imgUrl, historyText, 1);
     setIsLoading(true);
