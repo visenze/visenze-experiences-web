@@ -90,7 +90,6 @@ const SearchHistory = ({
                 )}
                 onClick={() => {
                   if (entry.id !== getActiveHistoryId()) {
-                    console.log(entry);
                     onHistorySelect(entry);
                   }
                 }}
