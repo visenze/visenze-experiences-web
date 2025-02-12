@@ -13,8 +13,32 @@ export const getFlattenProduct = (result: Product): ProcessedProduct => {
   };
 };
 
+// TODO add this field to visearch-javascript-sdk
+interface ProductWithAlternatives extends Product {
+  alternatives?: Product[];
+}
+
 export const getFlattenProducts = (results: Product[] = []): ProcessedProduct[] => {
-  return results.map((r) => getFlattenProduct(r));
+  const maxNumOfAlternatives = results.map((r) => ((r as ProductWithAlternatives).alternatives || []).length)
+      .reduce((a, b) => Math.max(a, b), 0);
+  if (maxNumOfAlternatives === 0) {
+    return results.map((r) => getFlattenProduct(r));
+  }
+  const output: ProcessedProduct[] = [];
+  // If there are alternatives, display the alternatives in the following order
+  // Alt 1 of product 1, alt 1 of product 2, ..., alt 1 of product N,
+  // Alt 2 of product 1, alt 2 of product 2, ..., alt 2 of product N,
+  // ...
+  // Alt M of product 1, alt M of product 2, ..., alt M of product N
+  for (let i = 0; i < maxNumOfAlternatives; i += 1) {
+    for (const r of results) {
+      const rWithAlternatives = r as ProductWithAlternatives;
+      if (rWithAlternatives.alternatives?.[i]) {
+        output.push(getFlattenProduct(rWithAlternatives.alternatives[i]));
+      }
+    }
+  }
+  return output;
 };
 
 export const flattenBox = (box: CroppedBox): number[] => {
