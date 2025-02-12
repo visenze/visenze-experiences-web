@@ -220,7 +220,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
         if (target.isIntersecting && !isLoading && !isLoadingMore && productResults.length > 0) {
           setPage((prevPage) => {
             const nextPage = prevPage + 1;
-            multisearchWithSearchBarDetails(imageUrl, query, nextPage);
+            multisearchWithSearchBarDetails(imageUrl, query, nextPage, false);
             return nextPage;
           });
         }
