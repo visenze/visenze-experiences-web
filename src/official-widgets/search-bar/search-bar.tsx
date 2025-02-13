@@ -176,10 +176,6 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                             {intl.formatMessage({ id: 'suggestions' })}
                           </p>
                           <Listbox
-                              onAction={(key) => {
-                                setQuery(String(key));
-                                emitSearchBarCallback(String(key), image);
-                              }}
                               aria-label='Autocomplete Dropdown'
                           >
                             <ListboxSection classNames={{ base: 'mb-0' }}>
@@ -195,6 +191,10 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                                                                className='size-4' />
                                       )}
                                       textValue={result}
+                                      onPress={() => {
+                                        setQuery(result);
+                                        emitSearchBarCallback(result, image);
+                                      }}
                                   >
                             <span className='pl-2 text-primary'
                                   data-pw={`sb-autocomplete-suggestion-${index + 1}`}>{result}</span>
@@ -273,10 +273,6 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                         {intl.formatMessage({ id: 'recentSearches' })}
                       </p>
                       <Listbox
-                          onAction={(key) => {
-                            setQuery(String(key));
-                            emitSearchBarCallback(String(key), image);
-                          }}
                           aria-label='Recent searches'
                       >
                         <ListboxSection classNames={{ base: 'mb-0' }}>
@@ -291,7 +287,13 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                                                              : (customizations.generalLayout?.fontColor || '')}
                                                            className='size-4' />
                                   )}
-                                  textValue={entry.query ?? ''}
+                                  textValue={entry.query}
+                                  onPress={() => {
+                                    if (entry && entry.query) {
+                                      setQuery(entry.query);
+                                      emitSearchBarCallback(entry.query, image);
+                                    }
+                                }}
                               >
                             <span className='pl-2 text-primary'
                                   data-pw={`sb-recent-searches-${entry.id}`}>{entry.query}</span>
