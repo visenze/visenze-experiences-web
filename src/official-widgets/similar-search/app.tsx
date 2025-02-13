@@ -29,6 +29,9 @@ const ENABLE_CUSTOMIZATION = true;
 
 const App: FC<AppProps> = ({ widgetConfig, fieldMappings, widgetClient, element }) => {
   const imUrl = element.dataset['url'] ?? '';
+  if (!imUrl) {
+    return <></>;
+  }
 
   return (
     <AppWrapper widgetConfig={widgetConfig}

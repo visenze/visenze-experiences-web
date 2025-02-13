@@ -33,6 +33,9 @@ const ENABLE_CUSTOMIZATION = true;
 
 const App: FC<AppProps> = ({ widgetConfig, fieldMappings, widgetClient, element }) => {
   const productId = element.dataset['pid'] ?? '';
+  if (!productId) {
+    return <></>;
+  }
 
   return (
     <AppWrapper widgetConfig={widgetConfig}
