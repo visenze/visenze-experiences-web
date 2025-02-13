@@ -13,7 +13,7 @@ interface SearchBarInputProps {
   query: string;
   setQuery: (query: string) => void;
   emitSearchBarCallback: () => void;
-  imageUploadHandler: (image: SearchImage) => void;
+  imageUploadHandler: (image: SearchImage | undefined) => void;
   placementId: string;
   setShowDropdown: (showDropdown: boolean) => void;
   image: SearchImage | undefined;
