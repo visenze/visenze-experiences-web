@@ -230,6 +230,11 @@ const ProductCard: FC<ProductCardProps> = ({
                         onFindSimilar(result);
                       }
                     }}
+                    style={{
+                      backgroundColor: darkMode
+                          ? (customizations.productCard?.findSimilar?.icon?.backgroundColorDark || '')
+                          : (customizations.productCard?.findSimilar?.icon?.backgroundColor || ''),
+                    }}
                     data-pw={`${pwPrefix}-more-like-this-button`}
                 >
                   {customizations.productCard?.findSimilar?.icon?.url ? (

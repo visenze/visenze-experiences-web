@@ -338,6 +338,24 @@ interface Icon {
 }
 
 /**
+ * A colorable icon with a colorable background.
+ */
+interface IconWithBackground extends Icon {
+  /**
+   * Background color of the icon.
+   *
+   * @since 1.0.0
+   */
+  backgroundColor: string;
+  /**
+   * Background color of the icon in dark mode.
+   *
+   * @since 1.0.0
+   */
+  backgroundColorDark: string;
+}
+
+/**
  * A minimalistic font settings.
  *
  * @since 1.0.0
@@ -933,7 +951,7 @@ export interface WidgetConfig {
          *
          * @since 1.0.0
          */
-        icon: Icon;
+        icon: IconWithBackground;
       };
     };
     /**

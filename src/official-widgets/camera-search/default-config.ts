@@ -107,7 +107,9 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       position: 'bottom_right',
       icon: {
         color: '#000000',
-        colorDark: '#000000',
+        colorDark: '#FFFFFF',
+        backgroundColor: '#FFFFFF',
+        backgroundColorDark: '#000000',
       },
     },
   },
