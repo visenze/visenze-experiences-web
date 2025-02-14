@@ -159,7 +159,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
 
           {screen !== ScreenType.ERROR && (
             <>
-              <div className='flex flex-col border-none p-4 md:w-3/10 md:px-10 md:py-6'>
+              <div className='flex flex-col border-none p-4 md:w-1/3 md:px-10 md:py-6'>
                 {/* Widget Title */}
                 {customizations.generalLayout?.showWidgetTitle && (
                     <div className='wigmix-widget-title text-primary' data-pw='itg-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
@@ -169,7 +169,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                 {productInfo && (
                   <div className='wigmix-reference-image-container pt-4 md:pt-8' data-pw='itg-reference-product'>
                     <img
-                        className='wigmix-reference-image size-full object-cover'
+                        className='wigmix-reference-image size-full object-contain object-center aspect-square'
                         src={productInfo.im_url}
                         data-pw='itg-reference-image'
                     />
@@ -182,7 +182,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                 )}
               </div>
 
-              <div className='relative flex w-full flex-col bg-primary px-6 pb-4 md:w-7/10 md:pt-[6.5%]'>
+              <div className='relative flex w-full flex-col bg-primary px-6 pb-4 md:w-2/3 md:pt-[6.5%]'>
                 <div className='flex items-center pb-4' style={{ display: screen === ScreenType.RESULT ? '' : 'none' }}>
                   {/* Sort Type */}
                   {!!productDetails['price'] && (

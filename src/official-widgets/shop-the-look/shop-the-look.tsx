@@ -208,7 +208,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                     {referenceImageUrl && (
                         <img
                             ref={imageRef}
-                            className='wigmix-reference-image size-full object-cover'
+                            className='wigmix-reference-image size-full object-contain'
                             src={referenceImageUrl}
                             onLoad={onImageLoad}
                             data-pw='stl-reference-image'

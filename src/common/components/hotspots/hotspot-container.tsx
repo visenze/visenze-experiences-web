@@ -108,7 +108,7 @@ const HotspotContainer: FC<HotspotContainerProps> = ({
         <div className='relative size-full text-center' ref={boxRef}>
           <>
             <img
-              className={cn('object-cover size-full', referenceImageClassName)}
+              className={cn('object-contain size-full', referenceImageClassName)}
               ref={imageRef}
               src={referenceImage}
               onLoad={() => setTimeout(() => rescaleImage(), 250)} // Delay needed to get correct image width and height for calculation in onLoad
