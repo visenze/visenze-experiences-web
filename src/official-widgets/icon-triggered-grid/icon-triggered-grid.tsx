@@ -1,28 +1,22 @@
 import type { FC } from 'react';
 import { useEffect, useCallback, useContext, useState } from 'react';
-import { Button } from '@heroui/button';
 import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import { type FacetType, SortType, WidgetBreakpoint } from '../../common/types/constants';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import Footer from '../../common/components/Footer';
 import ProductCard from '../../common/components/product-card/ProductCard';
-import SortOptions from './components/SortOptions';
-import FilterOptions, { showFacet } from './components/FilterOptions';
-import { getProductGridCssClasses, getProductGridCssConfig, getSortTypeIntlId } from '../../common/utils';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import CloseIcon from '../../common/icons/CloseIcon';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 
 export enum ScreenType {
   RESULT = 'result',
-  SORT = 'sort',
-  FILTER = 'filter',
   ERROR = 'error',
 }
 
@@ -32,34 +26,20 @@ interface IconTriggeredGridProps {
 
 const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, displaySettings, customizations } = widgetConfig;
-  const { productDetails } = displaySettings;
+  const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(ScreenType.RESULT);
-  const [sortType, setSortType] = useState(SortType.RELEVANCE);
-  const defaultFilters = {
-    price: [],
-    category: new Set<string>(),
-    gender: new Set<string>(),
-    brand: new Set<string>(),
-    sizes: new Set<string>(),
-    colors: new Set<string>(),
-  };
-  const [selectedFilters, setSelectedFilters] = useState<Record<FacetType, any>>(defaultFilters);
   const root = useContext(RootContext);
   const intl = useIntl();
 
-  const { productInfo, productResults, facets, metadata, error: errorFromApi } = useRecommendationSearch({
+  const { productInfo, productResults, metadata, error: errorFromApi } = useRecommendationSearch({
     productId,
-    sortType,
-    filters: selectedFilters,
   });
 
   const onModalClose = useCallback((): void => {
     setDialogVisible(false);
-    setSortType(SortType.RELEVANCE);
     if (productResults.length > 0) {
       widgetClient.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
@@ -102,8 +82,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
       setError(errorFromApi);
     }
   }, [errorFromApi]);
-
-  const hasApplicableFacets = facets.filter((f) => showFacet(f)).length > 0;
 
   if (!root) {
     return <></>;
@@ -183,45 +161,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
               </div>
 
               <div className='relative flex w-full flex-col bg-primary px-6 pb-4 md:w-2/3 md:pt-[6.5%]'>
-                <div className='flex items-center pb-4' style={{ display: screen === ScreenType.RESULT ? '' : 'none' }}>
-                  {/* Sort Type */}
-                  {!!productDetails['price'] && (
-                      // Only show sort type if there is product price defined;
-                      // without product price, sorting can only be done by relevance.
-                      <div className='text-lg text-primary'>
-                        {intl.formatMessage({ id: 'sort' })}:&nbsp;
-                        {intl.formatMessage({ id: getSortTypeIntlId(sortType) })}
-                      </div>
-                  )}
-                  {/* Sort and Filter buttons */}
-                  <div className='ml-auto flex gap-2'>
-                    {!!productDetails['price'] && (
-                        <Button
-                            className='rounded bg-black bg-buttonPrimary'
-                            size='sm'
-                            radius='none'
-                            onClick={() => setScreen(ScreenType.SORT)}
-                            data-pw='itg-sort-button'>
-                          <span className='text-buttonPrimary'>
-                            {intl.formatMessage({ id: 'sort' })}
-                          </span>
-                        </Button>
-                    )}
-                    {hasApplicableFacets && (
-                        <Button
-                            className='rounded bg-black bg-buttonPrimary'
-                            size='sm'
-                            radius='none'
-                            onClick={() => setScreen(ScreenType.FILTER)}
-                            data-pw='itg-filter-button'>
-                          <span className='text-buttonPrimary'>
-                            {intl.formatMessage({ id: 'filter' })}
-                          </span>
-                        </Button>
-                    )}
-                   </div>
-                </div>
-
                 {/* Product Result Grid */}
                 <div
                     className={cn(
@@ -242,26 +181,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
 
                 {/* ViSenze Footer mobile */}
                 <Footer className='mt-auto bg-transparent pt-4 md:hidden' dataPw='itg-visenze-footer-mobile' />
-
-                {/* Sort Options Desktop */}
-                {screen === ScreenType.SORT && (breakpoint === WidgetBreakpoint.DESKTOP || breakpoint === WidgetBreakpoint.TABLET) && (
-                  <SortOptions
-                      className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 px-8 pb-8 pt-4 text-primary md:flex'
-                      sortType={sortType}
-                      setSortType={setSortType}
-                      setScreen={setScreen}
-                  />
-                )}
-                {/* Filter Options Desktop */}
-                {screen === ScreenType.FILTER && (breakpoint === WidgetBreakpoint.DESKTOP || breakpoint === WidgetBreakpoint.TABLET) && (
-                  <FilterOptions
-                      className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 bg-primary px-4 pb-8 pt-4 text-primary md:flex'
-                      facets={facets}
-                      selectedFilters={selectedFilters}
-                      setSelectedFilters={setSelectedFilters}
-                      setScreen={setScreen}
-                  />
-                )}
               </div>
             </>
           )}
@@ -274,41 +193,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
             </div>
           )}
         </div>
-        <>
-          {/* Sort/Filter Options Mobile & Tablet */}
-          {breakpoint === WidgetBreakpoint.MOBILE && (
-            <ViSenzeModal
-              open={screen === ScreenType.SORT || screen === ScreenType.FILTER}
-              layout='nested_mobile'
-              onClose={() => setScreen(ScreenType.RESULT)}
-              position='center'
-              darkMode={darkMode}
-              fontFamily={customizations.generalLayout?.fontFamily}
-              placementId={`${appSettings.placementId}`}>
-              <>
-                {screen === ScreenType.SORT && (
-                  <SortOptions
-                    className='flex h-full flex-col justify-between'
-                    sortType={sortType}
-                    setSortType={setSortType}
-                    setScreen={setScreen}
-                  />
-                )}
-              </>
-              <>
-                {screen === ScreenType.FILTER && (
-                  <FilterOptions
-                    className='flex h-full flex-col justify-between'
-                    facets={facets}
-                    selectedFilters={selectedFilters}
-                    setSelectedFilters={setSelectedFilters}
-                    setScreen={setScreen}
-                  />
-                )}
-              </>
-            </ViSenzeModal>
-          )}
-        </>
       </ViSenzeModal>
     </WidgetResultContext.Provider>
   );

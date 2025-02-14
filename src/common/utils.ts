@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import type { Product, ProductSearchResponseSuccess, ProductType } from 'visearch-javascript-sdk';
 import type { CroppedBox } from './types/box';
 import type { ProcessedProduct } from './types/product';
-import { FacetType, SortType, type WidgetBreakpoint } from './types/constants';
+import { FacetType, type WidgetBreakpoint } from './types/constants';
 import type { WidgetConfig } from './wigmix-core';
 
 export const getFlattenProduct = (result: Product): ProcessedProduct => {
@@ -80,19 +80,6 @@ export const parseToProductTypes = (res: ProductSearchResponseSuccess): ProductT
     return productTypes;
   }
   return [];
-};
-
-export const getSortTypeIntlId = (sortType: SortType): string => {
-  switch (sortType) {
-    case SortType.RELEVANCE:
-      return 'sortType.relevance';
-    case SortType.PRICE_HTL:
-      return 'sortType.highToLowPrice';
-    case SortType.PRICE_LTH:
-      return 'sortType.lowToHighPrice';
-    default:
-      return '';
-  }
 };
 
 export const getTitleCase = (text: string): string => {

@@ -5,13 +5,6 @@ export const DEFAULT_TEXTS: LanguagePack = {
   en: {
     'widgetTitle': 'You may also like',
     'errorDescription': 'Sorry, something went wrong',
-    'sort': 'Sort',
-    'filter': 'Filter',
-    'cancel': 'Cancel',
-    'back': 'Back',
-    'sortType.relevance': 'Relevance',
-    'sortType.highToLowPrice': 'High to low (Price)',
-    'sortType.lowToHighPrice': 'Low to high (Price)',
   },
 };
 
