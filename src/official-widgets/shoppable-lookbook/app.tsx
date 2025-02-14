@@ -1,28 +1,13 @@
 import type { FC } from 'react';
-import type { WidgetClient, WidgetConfig } from '../../common/wigmix-core';
 import ShoppableLookbook from './shoppable-lookbook';
 import './app.css';
-import type { LanguagePack } from '../../common/locales/locale';
-import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import AppWrapper from '../../common/components/app-wrapper';
-
-interface AppProps {
-  widgetConfig: WidgetConfig;
-  widgetClient: WidgetClient;
-  fieldMappings: Record<string, string>;
-  element: HTMLElement;
-}
-
-const DEFAULT_TEXTS: LanguagePack = {
-  en: {
-    widgetTitle: 'You may also like',
-  },
-};
+import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
+import { type AppPropsWithReferenceElement, AppWrapper } from '../../common/components/app-wrapper';
 
 // Set to true to enable customization via WidgetConfig
 const ENABLE_CUSTOMIZATION = true;
 
-const App: FC<AppProps> = ({ widgetConfig, fieldMappings, widgetClient, element }) => {
+const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, fieldMappings, widgetClient, element }) => {
   const productId = element.dataset['pid'] ?? '';
   if (!productId) {
     return <></>;

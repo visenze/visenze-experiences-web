@@ -1,4 +1,13 @@
 import type { WidgetConfig } from '../../common/wigmix-core';
+import type { LanguagePack } from '../../common/locales/locale';
+
+export const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    openingMessage1: 'Let\'s get started',
+    openingMessage2: 'Tell us about what your styling needs and we will help you find the perfect item for you',
+    chatBoxPlaceholder: 'Type your message',
+  },
+};
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   breakpoints: {

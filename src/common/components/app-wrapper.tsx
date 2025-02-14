@@ -7,17 +7,24 @@ import { getLocaleTexts, type LanguagePack } from '../locales/locale';
 import { WidgetDataContext } from '../types/contexts';
 import type { WidgetClient, WidgetConfig } from '../wigmix-core';
 
-interface AppProps {
+export interface AppProps {
   widgetConfig: WidgetConfig;
   widgetClient: WidgetClient;
   fieldMappings: Record<string, string>;
+}
+
+export interface AppPropsWithReferenceElement extends AppProps {
+  element: HTMLElement;
+}
+
+interface AppWrapperProps extends AppProps {
   defaultTexts: LanguagePack;
   defaultCustomizations: WidgetConfig['customizations'];
   enableCustomization: boolean;
   children: ReactNode;
 }
 
-const AppWrapper: FC<AppProps> = ({
+export const AppWrapper: FC<AppWrapperProps> = ({
   widgetConfig,
   fieldMappings,
   widgetClient,
@@ -84,5 +91,3 @@ const AppWrapper: FC<AppProps> = ({
       </WidgetDataContext.Provider>
   );
 };
-
-export default AppWrapper;

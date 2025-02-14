@@ -1,4 +1,14 @@
 import type { WidgetConfig } from '../../common/wigmix-core';
+import type { LanguagePack } from '../../common/locales/locale';
+
+export const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    errorDescription: 'Sorry, something went wrong',
+    errorResolution: 'Please refresh to try again',
+    hotspotRecommendationsTitle: 'In this photo',
+    noResults: 'There are no results for this hotspot',
+  },
+};
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   breakpoints: {

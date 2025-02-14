@@ -1,22 +1,8 @@
 import type { FC } from 'react';
-import type { WidgetClient, WidgetConfig } from '../../common/wigmix-core';
 import SearchResultsPage from './search-results-page';
 import './app.css';
-import { type LanguagePack } from '../../common/locales/locale';
-import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import AppWrapper from '../../common/components/app-wrapper';
-
-interface AppProps {
-  widgetConfig: WidgetConfig;
-  widgetClient: WidgetClient;
-  fieldMappings: Record<any, any>;
-}
-
-const DEFAULT_TEXTS: LanguagePack = {
-  en: {
-    searchBarPlaceholder: 'What are you looking for?',
-  },
-};
+import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
+import { type AppProps, AppWrapper } from '../../common/components/app-wrapper';
 
 // Set to true to enable customization via WidgetConfig
 const ENABLE_CUSTOMIZATION = true;

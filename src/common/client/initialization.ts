@@ -182,7 +182,6 @@ interface WidgetRendererParam {
   config: WidgetConfig;
   fieldMappings: Record<string, string>;
   client: WidgetClient;
-  index: number;
   element: HTMLElement;
 }
 type WidgetRenderer = (param: WidgetRendererParam) => ReactNode;
@@ -211,16 +210,16 @@ const render = (
 
   if (isMultiRender) {
     const elements = getRenderElements(config);
-    elements.forEach((element, index) => {
+    elements.forEach((element) => {
       const root = createRoot(element);
-      root.render(renderer({ config, fieldMappings, client, index, element }));
+      root.render(renderer({ config, fieldMappings, client, element }));
       roots.push(root);
     });
   } else {
     const element = getRenderElement(config);
     if (element) {
       const root = createRoot(element);
-      root.render(renderer({ config, fieldMappings, client, index: 0, element }));
+      root.render(renderer({ config, fieldMappings, client, element }));
       roots.push(root);
     }
   }

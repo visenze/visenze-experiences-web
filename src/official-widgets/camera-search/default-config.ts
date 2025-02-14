@@ -1,4 +1,20 @@
 import type { WidgetConfig } from '../../common/wigmix-core';
+import type { LanguagePack } from '../../common/locales/locale';
+
+export const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    uploadScreenTitle: "SHOW US WHAT YOU'RE LOOKING FOR",
+    resultScreenTitle: "HERE'S WHAT WE FOUND",
+    dragImageToSearch: 'drag an image to search or click to browse',
+    tapToSearchImage: 'tap here to search an image',
+    tapProductGallery: 'or tap our trending product gallery below',
+    useCamera: 'USE CAMERA',
+    searchBarPlaceholder: 'Type here to refine your results...',
+    previousViews: 'Previous views',
+    errorDescription: 'Sorry, something went wrong',
+    back: 'Back',
+  },
+};
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   breakpoints: {
