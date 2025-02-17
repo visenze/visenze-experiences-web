@@ -1,4 +1,15 @@
 import type { WidgetConfig } from '../../common/wigmix-core';
+import type { LanguagePack } from '../../common/locales/locale';
+
+export const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    searchBarPlaceholder: 'What are you looking for?',
+    uploadScreenTitle: "SHOW US WHAT YOU'RE LOOKING FOR",
+    dragImageToSearch: 'drag an image to search or click to browse',
+    tapToSearchImage: 'tap here to search an image',
+    tapProductGallery: 'or tap our trending product gallery below',
+  },
+};
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   breakpoints: {
@@ -131,6 +142,20 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
         label: '',
       },
     ],
+  },
+  buttons: {
+    primary: {
+      fontColor: '#FFFFFF',
+      fontColorDark: '#616161',
+      backgroundColor: '#616161',
+      backgroundColorDark: '#FFFFFF',
+    },
+    secondary: {
+      fontColor: '#FFFFFF',
+      fontColorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+    },
   },
   generalLayout: {
     headingFont: {

@@ -215,7 +215,7 @@ const ProductCard: FC<ProductCardProps> = ({
         <div className='wigmix-product-card-image-container'>
           <div className='flex justify-center relative'>
             {isLoading && <Skeleton className={`aspect-square size-full ${imageClasses || ''}`} />}
-            <img className={`wigmix-product-card-image aspect-square object-cover ${imageClasses || ''}`} src={result.im_url} alt=''
+            <img className={`wigmix-product-card-image aspect-square object-contain ${imageClasses || ''}`} src={result.im_url} alt=''
                  onLoad={() => {
                    setIsLoading(false);
                  }}
@@ -229,6 +229,11 @@ const ProductCard: FC<ProductCardProps> = ({
                         event.stopPropagation();
                         onFindSimilar(result);
                       }
+                    }}
+                    style={{
+                      backgroundColor: darkMode
+                          ? (customizations.productCard?.findSimilar?.icon?.backgroundColorDark || '')
+                          : (customizations.productCard?.findSimilar?.icon?.backgroundColor || ''),
                     }}
                     data-pw={`${pwPrefix}-more-like-this-button`}
                 >

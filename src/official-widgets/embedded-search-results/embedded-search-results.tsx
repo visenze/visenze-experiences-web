@@ -14,7 +14,7 @@ import {
   getProductGridCssConfig,
 } from '../../common/utils';
 import type { ProcessedProduct } from '../../common/types/product';
-import { Category } from '../../common/types/tracking-constants';
+import { Actions, Category } from '../../common/types/tracking-constants';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import type { FacetType } from '../../common/types/constants';
 import FilterOptions, { showFacet } from './components/FilterOptions';
@@ -67,17 +67,27 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   };
 
   const handleSuccess = (res: ProductSearchResponse, shouldResetFacets: boolean): void => {
+    if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
+      widgetConfig.callbacks.preprocessResponse(res);
+    }
     if (res.status === 'fail') {
       handleError(res.error.message);
     } else {
       setError('');
-      setMetadata({
+      const md = {
         cat: Category.RESULT,
         queryId: res.reqid,
-      });
+      };
+      setMetadata(md);
 
       const newProducts = getFlattenProducts(res.result);
       setProductResults((prev) => ((res.page === 1) ? newProducts : [...prev, ...newProducts]));
+
+      if (newProducts.length) {
+        widgetClient.sendEvent(Actions.RESULT_LOAD, md);
+        widgetClient.setLastTrackingMeta(md);
+      }
+
       if (shouldResetFacets && res.facets) {
         setFacets(res.facets);
       }
@@ -217,7 +227,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
         if (target.isIntersecting && !isLoading && !isLoadingMore && productResults.length > 0) {
           setPage((prevPage) => {
             const nextPage = prevPage + 1;
-            multisearchWithSearchBarDetails(imageUrl, query, nextPage);
+            multisearchWithSearchBarDetails(imageUrl, query, nextPage, false);
             return nextPage;
           });
         }

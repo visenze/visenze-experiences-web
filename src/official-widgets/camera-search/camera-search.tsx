@@ -172,6 +172,7 @@ const CameraSearch: FC<CameraSearchProps> = () => {
                           setImage(lastSuccessfulImage);
                           setScreen(ScreenType.RESULT);
                         } else {
+                          resetSearch();
                           setScreen(ScreenType.UPLOAD);
                         }
                       }}>

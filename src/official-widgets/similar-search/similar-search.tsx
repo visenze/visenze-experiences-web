@@ -151,16 +151,18 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
                 {intl.formatMessage({ id: 'errorDescription' })}
               </div>
               <div>{error}</div>
-              {lastSuccessfulImage && (
-                  <button className='text-buttonPrimary bg-buttonPrimary px-5 py-2 rounded-md w-fit mt-3'
-                          onClick={() => {
-                            setError('');
-                            setImage(lastSuccessfulImage);
-                            setScreen(ScreenType.RESULT);
-                          }}>
-                    {intl.formatMessage({ id: 'back' })}
-                  </button>
-              )}
+              <button className='text-buttonPrimary bg-buttonPrimary px-5 py-2 rounded-md w-fit mt-3'
+                      onClick={() => {
+                        if (lastSuccessfulImage) {
+                          setError('');
+                          setImage(lastSuccessfulImage);
+                          setScreen(ScreenType.RESULT);
+                        } else {
+                          onModalClose();
+                        }
+                      }}>
+                {intl.formatMessage({ id: 'back' })}
+              </button>
             </div>
         );
       case ScreenType.RESULT:

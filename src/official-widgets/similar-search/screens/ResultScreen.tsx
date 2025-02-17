@@ -61,7 +61,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   };
 
   const toggleFullResults = (): void => {
-    setShowFullResults(!showFullResults);
+    setShowFullResults((v) => !v);
   };
 
   const getFile = (searchImage: SearchImage | undefined): string => {
@@ -149,7 +149,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {searchHistory?.map((searchImage, index) => (
               <img
                 key={`image-history-${index}`}
-                className='aspect-square w-1/5 object-cover'
+                className='aspect-square w-1/5 object-contain'
                 src={getFile(searchImage)}
                 onClick={() => onFindSimilar(searchImage)}
                 data-pw={`ss-previous-views-image-${index + 1}`}
@@ -253,11 +253,11 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 : customizations.generalLayout?.fontColor} />
       <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
-          <div className='relative left-0 row-span-1 h-full w-1/4 py-4'>
+          <div className='relative left-0 row-span-1 h-full w-1/3 py-4'>
             <div className='flex h-full flex-col justify-between px-16 md:px-6'>
               <div
-                className='mt-4 flex flex-col items-center rounded-2xl border border-black text-center'>
-                <img src={getFile(image)} className='rounded-2xl object-cover object-center md:h-full' data-pw='ss-reference-image'/>
+                className='mt-4 flex flex-col items-center rounded-md border border-black text-center'>
+                <img src={getFile(image)} className='wigmix-reference-image rounded-md object-contain object-center aspect-square md:h-full' data-pw='ss-reference-image'/>
               </div>
 
               {searchHistory && searchHistory?.length > 1 && (
@@ -271,7 +271,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       .map((searchImage, index) => (
                         <img
                           key={`image-history-${index}`}
-                          className='aspect-square w-1/3 cursor-pointer rounded-lg object-cover'
+                          className='aspect-square w-1/3 cursor-pointer rounded-lg object-contain'
                           src={getFile(searchImage)}
                           onClick={() => onFindSimilar(searchImage)}
                           data-pw={`ss-previous-views-image-${index + 1}`}

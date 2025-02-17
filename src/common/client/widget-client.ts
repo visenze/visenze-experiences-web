@@ -28,7 +28,7 @@ const callIfValidFunction = (fn: any, args: any): void => {
 };
 
 const wrapCallbacks = (
-  searchCallback: ((apiResponse: ProductSearchResponse) => void) | undefined,
+  searchCallback: ((resp: ProductSearchResponse) => void) | undefined,
   onSuccess: SuccessHandler,
   onFailure: ErrorHandler,
 ): ((args: any) => void)[] => {
