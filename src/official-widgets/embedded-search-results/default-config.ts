@@ -1,4 +1,16 @@
 import type { WidgetConfig } from '../../common/wigmix-core';
+import type { LanguagePack } from '../../common/locales/locale';
+
+export const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    filter: 'Filter',
+    noResults: 'No Results Found',
+    noResultsDescription: 'We could not find any products matching your search.',
+    searchBarPlaceholder: 'What are you looking for?',
+    noSearchInput: 'No search input',
+    noSearchInputDescription: 'Enter a search term or select an image to find results.',
+  },
+};
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   breakpoints: {
@@ -107,7 +119,9 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       position: 'bottom_right',
       icon: {
         color: '#000000',
-        colorDark: '#000000',
+        colorDark: '#FFFFFF',
+        backgroundColor: '#FFFFFF',
+        backgroundColorDark: '#000000',
       },
     },
   },

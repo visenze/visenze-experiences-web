@@ -1,4 +1,12 @@
 import type { WidgetConfig } from '../../common/wigmix-core';
+import type { LanguagePack } from '../../common/locales/locale';
+
+export const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    'widgetTitle': 'You may also like',
+    'errorDescription': 'Sorry, something went wrong',
+  },
+};
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   breakpoints: {

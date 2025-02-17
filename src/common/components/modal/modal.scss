@@ -1,7 +1,6 @@
 .wigmix-modal-desktop {
-  width: 948px;
-  height: 560px;
-  max-width: 948px;
+  width: 100%;
+  height: 100%;
   position: relative;
   outline: none;
   border: 1px solid #ccc;
@@ -9,8 +8,7 @@
   overflow: hidden;
 
   &.wigmix-modal-position-center {
-    max-height: 560px;
-    border-radius: 24px;
+    border-radius: 12px;
   }
 
   &.wigmix-modal-position-left,
@@ -56,10 +54,16 @@
 
   &.wigmix-modal-position-left {
     justify-content: start;
+    padding-right: 160px;
   }
 
   &.wigmix-modal-position-right {
     justify-content: end;
+    padding-left: 160px;
+  }
+
+  &.wigmix-modal-position-center {
+    padding: 40px 80px;
   }
 }
 

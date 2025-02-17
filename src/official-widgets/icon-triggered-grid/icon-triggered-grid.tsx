@@ -1,34 +1,40 @@
 import type { FC } from 'react';
 import { useEffect, useCallback, useContext, useState } from 'react';
-import { Button } from '@heroui/button';
 import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
+import { useSwipeable } from 'react-swipeable';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import { type FacetType, SortType, WidgetBreakpoint } from '../../common/types/constants';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import Footer from '../../common/components/Footer';
 import ProductCard from '../../common/components/product-card/ProductCard';
-import SortOptions from './components/SortOptions';
-import FilterOptions, { showFacet } from './components/FilterOptions';
-import { getProductGridCssClasses, getProductGridCssConfig, getSortTypeIntlId } from '../../common/utils';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import CloseIcon from '../../common/icons/CloseIcon';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
+import ChevronDownIcon from '../../common/icons/ChevronDownIcon';
+import ChevronUpIcon from '../../common/icons/ChevronUpIcon';
 
 export enum ScreenType {
   RESULT = 'result',
-  SORT = 'sort',
-  FILTER = 'filter',
   ERROR = 'error',
 }
 
 interface IconTriggeredGridProps {
   productId: string;
 }
+
+const swipeConfig = {
+  delta: 10, // min distance(px) before a swipe starts. *See Notes*
+  trackTouch: true, // track touch input
+  trackMouse: false, // track mouse input
+  rotationAngle: 0, // set a rotation angle
+  swipeDuration: Infinity, // allowable duration of a swipe (ms). *See Notes*
+  touchEventOptions: { passive: true }, // options for touch listeners (*See Details*)
+};
 
 const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
@@ -37,28 +43,16 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(ScreenType.RESULT);
-  const [sortType, setSortType] = useState(SortType.RELEVANCE);
-  const defaultFilters = {
-    price: [],
-    category: new Set<string>(),
-    gender: new Set<string>(),
-    brand: new Set<string>(),
-    sizes: new Set<string>(),
-    colors: new Set<string>(),
-  };
-  const [selectedFilters, setSelectedFilters] = useState<Record<FacetType, any>>(defaultFilters);
+  const [showFullResults, setShowFullResults] = useState(false);
   const root = useContext(RootContext);
   const intl = useIntl();
 
-  const { productInfo, productResults, facets, metadata, error: errorFromApi } = useRecommendationSearch({
+  const { productInfo, productResults, metadata, error: errorFromApi } = useRecommendationSearch({
     productId,
-    sortType,
-    filters: selectedFilters,
   });
 
   const onModalClose = useCallback((): void => {
     setDialogVisible(false);
-    setSortType(SortType.RELEVANCE);
     if (productResults.length > 0) {
       widgetClient.sendEvent(Actions.CLOSE, {
         label: Labels.PAGE,
@@ -82,6 +76,21 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
     openWidgetPopup();
   };
 
+  const minimizedDrawerHandler = useSwipeable({
+    onSwipedUp: () => setShowFullResults(true),
+    ...swipeConfig,
+  });
+
+  const maximizedDrawerHandler = useSwipeable({
+    onSwipedDown: () => setShowFullResults(false),
+    ...swipeConfig,
+    preventScrollOnSwipe: false,
+  });
+
+  const toggleFullResults = (): void => {
+    setShowFullResults((v) => !v);
+  };
+
   useEffect(() => {
     widgetClient.registerWidgetOpener((id, bypassIdCheck) => {
       if (id === productId || bypassIdCheck) {
@@ -101,8 +110,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
       setError(errorFromApi);
     }
   }, [errorFromApi]);
-
-  const hasApplicableFacets = facets.filter((f) => showFacet(f)).length > 0;
 
   if (!root) {
     return <></>;
@@ -158,7 +165,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
 
           {screen !== ScreenType.ERROR && (
             <>
-              <div className='flex flex-col border-none p-4 md:w-3/10 md:px-10 md:py-6'>
+              <div className='flex flex-col border-none p-4 md:w-1/3 md:px-10 md:py-6'>
                 {/* Widget Title */}
                 {customizations.generalLayout?.showWidgetTitle && (
                     <div className='wigmix-widget-title text-primary' data-pw='itg-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
@@ -166,13 +173,64 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
 
                 {/* Reference Product */}
                 {productInfo && (
-                  <div className='wigmix-reference-image-container pt-4 md:pt-8' data-pw='itg-reference-product'>
+                  <div className='wigmix-reference-image-container flex pt-4 md:pt-8 w-full justify-center' data-pw='itg-reference-product'>
                     <img
-                        className='wigmix-reference-image size-full object-cover'
+                        className={cn(
+                            'wigmix-reference-image object-contain object-center aspect-square md:max-w-full',
+                            showFullResults ? 'max-w-32' : 'max-w-96',
+                        )}
                         src={productInfo.im_url}
                         data-pw='itg-reference-image'
                     />
                   </div>
+                )}
+
+                {breakpoint === 'mobile' && (
+                    <div
+                        className={cn(
+                            showFullResults ? 'top-1/4 bottom-14 left-0 right-0' : 'top-1/2 bottom-14 left-3 right-3',
+                            'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8',
+                        )}
+                        {...minimizedDrawerHandler}>
+                      <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
+                        <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
+                             onClick={(): void => toggleFullResults()}
+                             data-pw='itg-arrow-button'
+                        >
+                          {showFullResults ? (
+                              <ChevronDownIcon color={darkMode
+                                  ? (customizations.buttons?.primary?.fontColorDark || '')
+                                  : (customizations.buttons?.primary?.fontColor || '')}
+                                               className='cursor-pointer size-6' />
+                          ) : (
+                              <ChevronUpIcon color={darkMode
+                                  ? (customizations.buttons?.primary?.fontColorDark || '')
+                                  : (customizations.buttons?.primary?.fontColor || '')}
+                                             className='cursor-pointer size-6' />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className='no-scrollbar flex size-full justify-center overflow-y-auto'>
+                        <div className={cn(
+                            'wigmix-product-grid mx-2 grid h-full pb-20 pt-2',
+                            getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2', 'gap-x-4', 'gap-y-2'),
+                        )}
+                             style={getProductGridCssConfig(customizations, breakpoint)}
+                             data-pw='itg-product-result-grid'>
+                          {productResults.map((result, index) => (
+                              <ProductCard key={`${result.product_id}-${index}`}
+                                           index={index}
+                                           result={result}
+                                           hasFindSimilar={false}
+                                           isRecommendation={true}
+                                           pwPrefix='itg' />
+                          ))}
+                        </div>
+                      </div>
+                      {/* ViSenze Footer mobile */}
+                      <Footer className='mt-auto bg-transparent pt-4 md:hidden' dataPw='itg-visenze-footer-mobile' />
+                    </div>
                 )}
 
                 {/* ViSenze Footer desktop */}
@@ -181,79 +239,24 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                 )}
               </div>
 
-              <div className='relative flex w-full flex-col bg-primary px-6 pb-4 md:w-7/10 md:pt-[6.5%]'>
-                <div className='flex items-center pb-4' style={{ display: screen === ScreenType.RESULT ? '' : 'hidden' }}>
-                  {/* Sort Type */}
-                  <div className='text-lg text-primary'>
-                    {intl.formatMessage({ id: 'sort' })}:&nbsp;
-                    {intl.formatMessage({ id: getSortTypeIntlId(sortType) })}
-                  </div>
-                  {/* Sort and Filter buttons */}
-                  <div className='ml-auto flex gap-2'>
-                    <Button
-                        className='rounded bg-black bg-buttonPrimary'
-                        size='sm'
-                        radius='none'
-                        onClick={() => setScreen(ScreenType.SORT)}
-                        data-pw='itg-sort-button'>
-                      <span className='text-buttonPrimary'>
-                        {intl.formatMessage({ id: 'sort' })}
-                      </span>
-                    </Button>
-                    {hasApplicableFacets && (
-                        <Button
-                            className='rounded bg-black bg-buttonPrimary'
-                            size='sm'
-                            radius='none'
-                            onClick={() => setScreen(ScreenType.FILTER)}
-                            data-pw='itg-filter-button'>
-                          <span className='text-buttonPrimary'>
-                            {intl.formatMessage({ id: 'filter' })}
-                          </span>
-                        </Button>
-                    )}
-                   </div>
-                </div>
-
+              <div className='relative flex w-full flex-col bg-primary px-6 pb-4 md:w-2/3 md:pt-[6.5%]'>
                 {/* Product Result Grid */}
-                <div
-                    className={cn(
+                {breakpoint !== 'mobile' && (
+                    <div className={cn(
                         'wigmix-product-grid grid overflow-y-auto',
                         getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 lg:grid-cols-3', 'gap-x-2', 'gap-y-4'),
                     )}
-                    style={getProductGridCssConfig(customizations, breakpoint)}
-                    data-pw='itg-product-result-grid'>
-                  {productResults.map((result, index) => (
-                    <ProductCard key={`${result.product_id}-${index}`}
-                                 index={index}
-                                 result={result}
-                                 hasFindSimilar={false}
-                                 isRecommendation={true}
-                                 pwPrefix='itg' />
-                  ))}
-                </div>
-
-                {/* ViSenze Footer mobile */}
-                <Footer className='mt-auto bg-transparent pt-4 md:hidden' dataPw='itg-visenze-footer-mobile' />
-
-                {/* Sort Options Desktop */}
-                {screen === ScreenType.SORT && (breakpoint === WidgetBreakpoint.DESKTOP || breakpoint === WidgetBreakpoint.TABLET) && (
-                  <SortOptions
-                      className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 px-8 pb-8 pt-4 text-primary md:flex'
-                      sortType={sortType}
-                      setSortType={setSortType}
-                      setScreen={setScreen}
-                  />
-                )}
-                {/* Filter Options Desktop */}
-                {screen === ScreenType.FILTER && (breakpoint === WidgetBreakpoint.DESKTOP || breakpoint === WidgetBreakpoint.TABLET) && (
-                  <FilterOptions
-                      className='absolute left-0 top-14 hidden h-9/10 w-full flex-col justify-between gap-4 bg-primary px-4 pb-8 pt-4 text-primary md:flex'
-                      facets={facets}
-                      selectedFilters={selectedFilters}
-                      setSelectedFilters={setSelectedFilters}
-                      setScreen={setScreen}
-                  />
+                         style={getProductGridCssConfig(customizations, breakpoint)}
+                         data-pw='itg-product-result-grid'>
+                      {productResults.map((result, index) => (
+                          <ProductCard key={`${result.product_id}-${index}`}
+                                       index={index}
+                                       result={result}
+                                       hasFindSimilar={false}
+                                       isRecommendation={true}
+                                       pwPrefix='itg' />
+                      ))}
+                    </div>
                 )}
               </div>
             </>
@@ -267,41 +270,6 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
             </div>
           )}
         </div>
-        <>
-          {/* Sort/Filter Options Mobile & Tablet */}
-          {breakpoint === WidgetBreakpoint.MOBILE && (
-            <ViSenzeModal
-              open={screen === ScreenType.SORT || screen === ScreenType.FILTER}
-              layout='nested_mobile'
-              onClose={() => setScreen(ScreenType.RESULT)}
-              position='center'
-              darkMode={darkMode}
-              fontFamily={customizations.generalLayout?.fontFamily}
-              placementId={`${appSettings.placementId}`}>
-              <>
-                {screen === ScreenType.SORT && (
-                  <SortOptions
-                    className='flex h-full flex-col justify-between'
-                    sortType={sortType}
-                    setSortType={setSortType}
-                    setScreen={setScreen}
-                  />
-                )}
-              </>
-              <>
-                {screen === ScreenType.FILTER && (
-                  <FilterOptions
-                    className='flex h-full flex-col justify-between'
-                    facets={facets}
-                    selectedFilters={selectedFilters}
-                    setSelectedFilters={setSelectedFilters}
-                    setScreen={setScreen}
-                  />
-                )}
-              </>
-            </ViSenzeModal>
-          )}
-        </>
       </ViSenzeModal>
     </WidgetResultContext.Provider>
   );

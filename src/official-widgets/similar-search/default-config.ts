@@ -1,4 +1,15 @@
 import type { WidgetConfig } from '../../common/wigmix-core';
+import type { LanguagePack } from '../../common/locales/locale';
+
+export const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    widgetTitle: 'MORE LIKE THIS',
+    searchBarPlaceholder: 'Type here to refine your results...',
+    previousViews: 'Previous views',
+    errorDescription: 'Sorry, something went wrong',
+    back: 'Back',
+  },
+};
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   breakpoints: {
@@ -107,7 +118,9 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       position: 'bottom_right',
       icon: {
         color: '#000000',
-        colorDark: '#000000',
+        colorDark: '#FFFFFF',
+        backgroundColor: '#FFFFFF',
+        backgroundColorDark: '#000000',
       },
     },
   },
