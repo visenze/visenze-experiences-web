@@ -65,7 +65,7 @@ export default function ImageCropThumbnail({
   return (
     <canvas
       ref={canvasRef}
-      className={cn('w-full h-full object-contain', className)}
+      className={cn('w-full h-full object-cover', className)}
     />
   );
 }

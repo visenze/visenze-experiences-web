@@ -14,7 +14,7 @@ interface GalleryImageProps {
 const GalleryImage: FC<GalleryImageProps> = ({ result, onClickHandler }) => (
     <a className='cursor-pointer' onClick={() => onClickHandler(result)}>
       <div className='group aspect-square overflow-hidden'>
-        <img className='size-full object-contain transition duration-200 group-hover:scale-110' src={result.im_url}/>
+        <img className='size-full object-cover transition duration-200 group-hover:scale-110' src={result.im_url}/>
       </div>
     </a>
 );

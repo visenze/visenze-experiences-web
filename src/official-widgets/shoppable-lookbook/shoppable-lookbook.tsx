@@ -122,7 +122,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
                   {referenceImageUrl && (
                       <img
                           ref={imageRef}
-                          className='wigmix-reference-image size-full object-contain'
+                          className='wigmix-reference-image size-full object-cover'
                           src={referenceImageUrl}
                           onLoad={onImageLoad}
                           data-pw='sl-reference-image'
