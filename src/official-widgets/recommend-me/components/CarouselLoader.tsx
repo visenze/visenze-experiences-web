@@ -52,7 +52,7 @@ const Typewriter: FC<{ texts: string[] }> = ({ texts }) => {
 /**
  * A placeholder carousel that displays products as they are being received from the ongoing event stream.
  */
-const CarouselLoader: FC<{ results: ProcessedProduct[]; searchValue: string }> = ({ results, searchValue }): ReactElement => {
+const CarouselLoader: FC<{ results: ProcessedProduct[]; metadata: Record<string, any>; searchValue: string }> = ({ results, metadata, searchValue }): ReactElement => {
   const intl = useIntl();
   return (
     <>
@@ -65,6 +65,7 @@ const CarouselLoader: FC<{ results: ProcessedProduct[]; searchValue: string }> =
             <ProductCard key={`${result.product_id}-${index}`}
                          index={index}
                          result={result}
+                         metadata={metadata}
                          hasFindSimilar={false}
                          isRecommendation={false}
                          pwPrefix='rm' />

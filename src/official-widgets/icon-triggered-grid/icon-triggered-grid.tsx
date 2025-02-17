@@ -4,7 +4,7 @@ import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import { useSwipeable } from 'react-swipeable';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
-import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext } from '../../common/types/contexts';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
@@ -116,11 +116,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
   }
 
   return (
-    <WidgetResultContext.Provider
-      value={{
-        productResults,
-        metadata,
-      }}>
+    <>
       {!customizations.popup?.triggerIcon?.hide && (
           <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
                onClick={onPopupIconClick}>
@@ -222,6 +218,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                               <ProductCard key={`${result.product_id}-${index}`}
                                            index={index}
                                            result={result}
+                                           metadata={metadata}
                                            hasFindSimilar={false}
                                            isRecommendation={true}
                                            pwPrefix='itg' />
@@ -252,6 +249,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                           <ProductCard key={`${result.product_id}-${index}`}
                                        index={index}
                                        result={result}
+                                       metadata={metadata}
                                        hasFindSimilar={false}
                                        isRecommendation={true}
                                        pwPrefix='itg' />
@@ -271,7 +269,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
           )}
         </div>
       </ViSenzeModal>
-    </WidgetResultContext.Provider>
+    </>
   );
 };
 

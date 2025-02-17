@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { useEffect, useContext, useState, useRef } from 'react';
 import { cn } from '@heroui/theme';
-import { CroppingContext, WidgetResultContext } from '../../types/contexts';
+import type { ProductType } from 'visearch-javascript-sdk';
+import { CroppingContext } from '../../types/contexts';
 import type { CroppedBox } from '../../types/box';
 import Hotspot from './hotspot';
 
@@ -11,6 +12,7 @@ interface HotspotContainerProps {
   className?: string;
   noSelectedHotspot?: boolean;
   handleBoxClick?: () => void;
+  productTypes?: ProductType[];
 }
 
 const isSameBox = (box1: CroppedBox, box2: CroppedBox | undefined): boolean => {
@@ -26,8 +28,8 @@ const HotspotContainer: FC<HotspotContainerProps> = ({
   className,
   noSelectedHotspot,
   handleBoxClick,
+  productTypes = [],
 }) => {
-  const { productTypes = [] } = useContext(WidgetResultContext);
   const { selectedHotspot, setSelectedHotspot, boxData, setBoxData } = useContext(CroppingContext);
   const [imageHeight, setImageHeight] = useState(0);
   const [imageWidth, setImageWidth] = useState(0);

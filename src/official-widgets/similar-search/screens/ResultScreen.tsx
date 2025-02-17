@@ -5,7 +5,7 @@ import { Input } from '@heroui/input';
 import { Listbox, ListboxItem } from '@heroui/listbox';
 import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
-import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
+import { WidgetDataContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import ProductCard from '../../../common/components/product-card/ProductCard';
@@ -16,6 +16,7 @@ import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
 import ChevronUpIcon from '../../../common/icons/ChevronUpIcon';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
+import type { ProcessedProduct } from '../../../common/types/product';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -27,6 +28,10 @@ const swipeConfig = {
 };
 
 interface ResultScreenProps {
+  productResults: ProcessedProduct[];
+  image?: SearchImage;
+  autocompleteResults?: string[];
+  metadata: Record<string, any>;
   onModalClose: () => void;
   onTextSearch: (text: string) => void;
   onFindSimilar: (data: SearchImage) => void;
@@ -35,6 +40,10 @@ interface ResultScreenProps {
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
+  productResults,
+  image,
+  autocompleteResults,
+  metadata,
   onModalClose,
   onTextSearch = (): void => {},
   onFindSimilar = (): void => {},
@@ -43,7 +52,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
-  const { productResults, image, autocompleteResults } = useContext(WidgetResultContext);
   const [search, setSearch] = useState('');
   const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
   const [showFullResults, setShowFullResults] = useState(false);
@@ -197,6 +205,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                }}
                                index={index}
                                result={result}
+                               metadata={metadata}
                                isRecommendation={false}
                                hasFindSimilar={true}
                                pwPrefix='ss' />
@@ -350,6 +359,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                  }}
                                  index={index}
                                  result={result}
+                                 metadata={metadata}
                                  isRecommendation={false}
                                  hasFindSimilar={true}
                                  pwPrefix='ss' />

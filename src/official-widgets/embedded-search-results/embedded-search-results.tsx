@@ -4,7 +4,7 @@ import type { ProductSearchResponse, Facet } from 'visearch-javascript-sdk';
 import { useIntl } from 'react-intl';
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
-import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext } from '../../common/types/contexts';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import {
   getFacets,
@@ -279,7 +279,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
 
   return (
     <>
-      <WidgetResultContext.Provider value={{ metadata, productResults }}>
         <div className='flex w-full flex-col items-center'>
           <div className='flex w-full gap-y-2 px-2 py-3 md:py-4 lg:py-5'>
             <div className='sticky top-0 z-20 hidden w-2/12 px-2 py-1 md:block md:px-0'>
@@ -382,6 +381,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                           {productResults.map((result, index) => (
                               <ProductCard key={`${result.product_id}-${index}`} index={index}
                                            result={result}
+                                           metadata={metadata}
                                            onFindSimilar={(data) => {
                                              if (!isLoading) {
                                                findSimilarClickHandler(data.im_url);
@@ -416,7 +416,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
             <p className='text-primary'>{intl.formatMessage({ id: 'noSearchInputDescription' })}</p>
           </div>
         )}
-      </WidgetResultContext.Provider>
     </>
   );
 };

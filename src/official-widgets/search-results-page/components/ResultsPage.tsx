@@ -15,6 +15,7 @@ import { getProductGridCssClasses, getProductGridCssConfig } from '../../../comm
 
 interface ResultsPageProps {
   results: ProcessedProduct[];
+  metadata: Record<string, any>;
   handleMultisearchWithQuery: (query: string) => void;
   handleMultisearchWithProduct: (product: ProcessedProduct) => void;
   autocompleteResults: string[];
@@ -24,6 +25,7 @@ interface ResultsPageProps {
 
 const ResultsPage: FC<ResultsPageProps> = ({
   results,
+  metadata,
   autocompleteResults,
   handleMultisearchWithQuery,
   handleMultisearchWithProduct,
@@ -130,6 +132,7 @@ const ResultsPage: FC<ResultsPageProps> = ({
             <ProductCard key={`${result.product_id}-${index}`}
                          index={index}
                          result={result}
+                         metadata={metadata}
                          isRecommendation={false}
                          onFindSimilar={onFindSimilar}
                          hasFindSimilar={true}

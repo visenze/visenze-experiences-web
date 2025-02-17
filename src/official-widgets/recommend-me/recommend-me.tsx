@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { Input } from '@heroui/input';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext } from '../../common/types/contexts';
 import useRecommendMe from '../../common/components/hooks/use-recommend-me';
 import Carousel from './components/Carousel';
 import CarouselLoader from './components/CarouselLoader';
@@ -18,6 +18,7 @@ interface RecommendMeProps {
 interface CarouselHistory {
   carouselId: string;
   productResults: ProcessedProduct[];
+  metadata: Record<string, any>;
   query: string;
 }
 
@@ -61,6 +62,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
         {
           carouselId,
           productResults,
+          metadata: requestMetadata,
           query,
         },
         ...prev,
@@ -74,7 +76,6 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
 
   return (
     <>
-      <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {customizations.generalLayout?.showWidgetTitle && (
           <div className='wigmix-widget-title py-4 text-primary' data-pw='rm-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
         )}
@@ -117,24 +118,24 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
             }}
             data-pw='rm-recommend-me-search-bar'
           />
-         </div>
+        </div>
 
         {/* Product card carousels */}
         <div className='flex flex-col'>
           {
             isStreaming
-            && <CarouselLoader results={productResults} searchValue={query} />
+            && <CarouselLoader results={productResults} metadata={metadata} searchValue={query} />
           }
         </div>
         <div className='flex flex-col'>
           {carouselHistory.map((entry) => (
               <Carousel key={entry.carouselId}
                         results={entry.productResults}
+                        metadata={entry.metadata}
                         searchValue={entry.query}
                         removeFromHistory={() => removeFromHistory(entry.carouselId)} />
           ))}
         </div>
-      </WidgetResultContext.Provider>
     </>
   );
 };

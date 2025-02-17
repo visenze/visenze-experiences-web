@@ -1,10 +1,10 @@
 import type { FC } from 'react';
 import { memo, useContext, useMemo } from 'react';
-import type { ObjectProductResponse } from 'visearch-javascript-sdk';
+import type { ObjectProductResponse, ProductType } from 'visearch-javascript-sdk';
 import { useIntl } from 'react-intl';
 import { cn } from '@heroui/theme';
 import ViSenzeModal from '../../../common/components/modal/visenze-modal';
-import { CroppingContext, WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
+import { CroppingContext, WidgetDataContext } from '../../../common/types/contexts';
 import { getFlattenProducts, getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import ImageCropThumbnail from './ImageCropThumbnail';
@@ -22,16 +22,17 @@ import CloseIcon from '../../../common/icons/CloseIcon';
 
 interface HotspotRecommendationsProps {
   objects: ObjectProductResponse[];
+  productTypes: ProductType[];
+  metadata: Record<string, any>;
   openDrawer: boolean;
   setOpenDrawer: (openDrawer: boolean) => void;
   activeImageUrl: string;
   placementId: string;
 }
 
-const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, openDrawer, setOpenDrawer, activeImageUrl, placementId }) => {
+const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, productTypes, metadata, openDrawer, setOpenDrawer, activeImageUrl, placementId }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
-  const { productTypes } = useContext(WidgetResultContext);
   const { selectedHotspot, setSelectedHotspot } = useContext(CroppingContext) ?? {};
   const intl = useIntl();
   const breakpoint = useBreakpoint();
@@ -97,6 +98,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, open
                 <ProductCard key={`${result.product_id}-${index}`}
                              index={index}
                              result={result}
+                             metadata={metadata}
                              hasFindSimilar={false}
                              isRecommendation={true}
                              pwPrefix='sg' />

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, type CSSProperties, type FC } from 'react';
 import { Skeleton } from '@heroui/skeleton';
-import { WidgetDataContext, WidgetResultContext } from '../../types/contexts';
+import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 import ResultLogicImpl from '../../client/result-logic';
 import { Actions } from '../../types/tracking-constants';
@@ -18,6 +18,7 @@ interface ProductCardProps {
   hasFindSimilar: boolean;
   pwPrefix: string;
   imageClasses?: string;
+  metadata: Record<string, any>;
 }
 
 const currencyFormatterFactory = (
@@ -117,11 +118,11 @@ const ProductCard: FC<ProductCardProps> = ({
   hasFindSimilar,
   pwPrefix,
   imageClasses,
+  metadata,
 }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
-  const { metadata } = useContext(WidgetResultContext);
   const { onProductClick } = callbacks;
   const [isLoading, setIsLoading] = useState(true);
   const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;

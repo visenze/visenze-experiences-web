@@ -2,7 +2,6 @@ import { type FC, useContext, useEffect, useState } from 'react';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import ResultsPage from './components/ResultsPage';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
-import { WidgetResultContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
 import SearchBarWithDropdown from './components/SearchBarWithDropdown';
 
@@ -48,7 +47,6 @@ const SearchResultsPage: FC<SearchResultsPageProps> = () => {
 
   return (
     <>
-      <WidgetResultContext.Provider value={{ metadata, productResults }}>
         <div className='flex size-full flex-col items-center text-primary'>
           {/* Search bar with autocomplete dropdown */}
           <SearchBarWithDropdown
@@ -65,6 +63,7 @@ const SearchResultsPage: FC<SearchResultsPageProps> = () => {
             <ResultsPage
               autocompleteResults={autocompleteResults}
               results={productResults}
+              metadata={metadata}
               handleMultisearchWithQuery={handleMultisearchWithQuery}
               handleMultisearchWithProduct={handleMultisearchWithProduct}
               activeProduct={activeProduct}
@@ -72,7 +71,6 @@ const SearchResultsPage: FC<SearchResultsPageProps> = () => {
             />
           )}
         </div>
-      </WidgetResultContext.Provider>
     </>
   );
 };
