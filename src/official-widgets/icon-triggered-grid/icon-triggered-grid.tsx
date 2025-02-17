@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { useEffect, useCallback, useContext, useState } from 'react';
 import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
+import { useSwipeable } from 'react-swipeable';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
@@ -14,6 +15,8 @@ import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import CloseIcon from '../../common/icons/CloseIcon';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
+import ChevronDownIcon from '../../common/icons/ChevronDownIcon';
+import ChevronUpIcon from '../../common/icons/ChevronUpIcon';
 
 export enum ScreenType {
   RESULT = 'result',
@@ -24,6 +27,15 @@ interface IconTriggeredGridProps {
   productId: string;
 }
 
+const swipeConfig = {
+  delta: 10, // min distance(px) before a swipe starts. *See Notes*
+  trackTouch: true, // track touch input
+  trackMouse: false, // track mouse input
+  rotationAngle: 0, // set a rotation angle
+  swipeDuration: Infinity, // allowable duration of a swipe (ms). *See Notes*
+  touchEventOptions: { passive: true }, // options for touch listeners (*See Details*)
+};
+
 const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
@@ -31,6 +43,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(ScreenType.RESULT);
+  const [showFullResults, setShowFullResults] = useState(false);
   const root = useContext(RootContext);
   const intl = useIntl();
 
@@ -61,6 +74,21 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
       label: Labels.ICON,
     });
     openWidgetPopup();
+  };
+
+  const minimizedDrawerHandler = useSwipeable({
+    onSwipedUp: () => setShowFullResults(true),
+    ...swipeConfig,
+  });
+
+  const maximizedDrawerHandler = useSwipeable({
+    onSwipedDown: () => setShowFullResults(false),
+    ...swipeConfig,
+    preventScrollOnSwipe: false,
+  });
+
+  const toggleFullResults = (): void => {
+    setShowFullResults((v) => !v);
   };
 
   useEffect(() => {
@@ -145,13 +173,64 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
 
                 {/* Reference Product */}
                 {productInfo && (
-                  <div className='wigmix-reference-image-container pt-4 md:pt-8' data-pw='itg-reference-product'>
+                  <div className='wigmix-reference-image-container flex pt-4 md:pt-8 w-full justify-center' data-pw='itg-reference-product'>
                     <img
-                        className='wigmix-reference-image size-full object-contain object-center aspect-square'
+                        className={cn(
+                            'wigmix-reference-image object-contain object-center aspect-square md:max-w-full',
+                            showFullResults ? 'max-w-32' : 'max-w-96',
+                        )}
                         src={productInfo.im_url}
                         data-pw='itg-reference-image'
                     />
                   </div>
+                )}
+
+                {breakpoint === 'mobile' && (
+                    <div
+                        className={cn(
+                            showFullResults ? 'top-1/4 bottom-14 left-0 right-0' : 'top-1/2 bottom-14 left-3 right-3',
+                            'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8',
+                        )}
+                        {...minimizedDrawerHandler}>
+                      <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
+                        <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
+                             onClick={(): void => toggleFullResults()}
+                             data-pw='itg-arrow-button'
+                        >
+                          {showFullResults ? (
+                              <ChevronDownIcon color={darkMode
+                                  ? (customizations.buttons?.primary?.fontColorDark || '')
+                                  : (customizations.buttons?.primary?.fontColor || '')}
+                                               className='cursor-pointer size-6' />
+                          ) : (
+                              <ChevronUpIcon color={darkMode
+                                  ? (customizations.buttons?.primary?.fontColorDark || '')
+                                  : (customizations.buttons?.primary?.fontColor || '')}
+                                             className='cursor-pointer size-6' />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className='no-scrollbar flex size-full justify-center overflow-y-auto'>
+                        <div className={cn(
+                            'wigmix-product-grid mx-2 grid h-full pb-20 pt-2',
+                            getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2', 'gap-x-4', 'gap-y-2'),
+                        )}
+                             style={getProductGridCssConfig(customizations, breakpoint)}
+                             data-pw='itg-product-result-grid'>
+                          {productResults.map((result, index) => (
+                              <ProductCard key={`${result.product_id}-${index}`}
+                                           index={index}
+                                           result={result}
+                                           hasFindSimilar={false}
+                                           isRecommendation={true}
+                                           pwPrefix='itg' />
+                          ))}
+                        </div>
+                      </div>
+                      {/* ViSenze Footer mobile */}
+                      <Footer className='mt-auto bg-transparent pt-4 md:hidden' dataPw='itg-visenze-footer-mobile' />
+                    </div>
                 )}
 
                 {/* ViSenze Footer desktop */}
@@ -162,25 +241,23 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
 
               <div className='relative flex w-full flex-col bg-primary px-6 pb-4 md:w-2/3 md:pt-[6.5%]'>
                 {/* Product Result Grid */}
-                <div
-                    className={cn(
+                {breakpoint !== 'mobile' && (
+                    <div className={cn(
                         'wigmix-product-grid grid overflow-y-auto',
                         getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 lg:grid-cols-3', 'gap-x-2', 'gap-y-4'),
                     )}
-                    style={getProductGridCssConfig(customizations, breakpoint)}
-                    data-pw='itg-product-result-grid'>
-                  {productResults.map((result, index) => (
-                    <ProductCard key={`${result.product_id}-${index}`}
-                                 index={index}
-                                 result={result}
-                                 hasFindSimilar={false}
-                                 isRecommendation={true}
-                                 pwPrefix='itg' />
-                  ))}
-                </div>
-
-                {/* ViSenze Footer mobile */}
-                <Footer className='mt-auto bg-transparent pt-4 md:hidden' dataPw='itg-visenze-footer-mobile' />
+                         style={getProductGridCssConfig(customizations, breakpoint)}
+                         data-pw='itg-product-result-grid'>
+                      {productResults.map((result, index) => (
+                          <ProductCard key={`${result.product_id}-${index}`}
+                                       index={index}
+                                       result={result}
+                                       hasFindSimilar={false}
+                                       isRecommendation={true}
+                                       pwPrefix='itg' />
+                      ))}
+                    </div>
+                )}
               </div>
             </>
           )}

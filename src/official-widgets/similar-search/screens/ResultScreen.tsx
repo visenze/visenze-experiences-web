@@ -61,7 +61,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   };
 
   const toggleFullResults = (): void => {
-    setShowFullResults(!showFullResults);
+    setShowFullResults((v) => !v);
   };
 
   const getFile = (searchImage: SearchImage | undefined): string => {

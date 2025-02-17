@@ -70,7 +70,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   };
 
   const toggleFullResults = (): void => {
-    setShowFullResults(!showFullResults);
+    setShowFullResults((v) => !v);
   };
 
   const getFile = (image: SearchImage | undefined): string => {
