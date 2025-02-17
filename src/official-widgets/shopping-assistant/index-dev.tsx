@@ -8,8 +8,8 @@ import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 devInitWidget(
     WidgetType.SHOPPING_ASSISTANT,
     version,
-    ({ config, client, fieldMappings }) => (
-        <App widgetClient={client} fieldMappings={fieldMappings} widgetConfig={config} />
+    ({ config, client }) => (
+        <App widgetClient={client} widgetConfig={config} />
     ),
     false,
     devConfigs,
