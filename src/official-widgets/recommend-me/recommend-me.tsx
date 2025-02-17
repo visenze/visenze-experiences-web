@@ -9,9 +9,16 @@ import Carousel from './components/Carousel';
 import CarouselLoader from './components/CarouselLoader';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
+import type { ProcessedProduct } from '../../common/types/product';
 
 interface RecommendMeProps {
   productId: string;
+}
+
+interface CarouselHistory {
+  carouselId: string;
+  productResults: ProcessedProduct[];
+  query: string;
 }
 
 const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
@@ -19,7 +26,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
   const { customizations } = widgetConfig;
   const [searchBarValue, setSearchBarValue] = useState('');
   const [query, setQueryValue] = useState('');
-  const [carouselHistory, setCarouselHistory] = useState<any[]>([]);
+  const [carouselHistory, setCarouselHistory] = useState<CarouselHistory[]>([]);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const root = useContext(RootContext);
   const intl = useIntl();
@@ -34,7 +41,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
   });
 
   const removeFromHistory = (carouselId: string): void => {
-    setCarouselHistory((prev) => prev.filter((carousel) => carousel.key !== carouselId));
+    setCarouselHistory((prev) => prev.filter((carousel) => carousel.carouselId !== carouselId));
   };
 
   useEffect(() => {
@@ -51,7 +58,11 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
       // Prepend newly created carousel to carousel history
       const carouselId = uuid();
       setCarouselHistory((prev) => [
-        <Carousel key={carouselId} results={productResults} searchValue={query} removeFromHistory={removeFromHistory.bind(this, carouselId)} />,
+        {
+          carouselId,
+          productResults,
+          query,
+        },
         ...prev,
       ]);
     }
@@ -116,7 +127,12 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
           }
         </div>
         <div className='flex flex-col'>
-          { ...carouselHistory }
+          {carouselHistory.map((entry) => (
+              <Carousel key={entry.carouselId}
+                        results={entry.productResults}
+                        searchValue={entry.query}
+                        removeFromHistory={() => removeFromHistory(entry.carouselId)} />
+          ))}
         </div>
       </WidgetResultContext.Provider>
     </>
