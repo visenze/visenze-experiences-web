@@ -3,7 +3,7 @@ import type { LanguagePack } from '../../common/locales/locale';
 
 export const DEFAULT_TEXTS: LanguagePack = {
   en: {
-    widgetTitle: 'Pair It With',
+    widgetTitle: 'You may also like',
   },
 };
 
