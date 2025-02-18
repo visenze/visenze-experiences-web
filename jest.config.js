@@ -16,6 +16,9 @@ module.exports = module.exports = {
   ],
   coverageDirectory: '<rootDir>/coverage/',
   coveragePathIgnorePatterns: [
+    'app.tsx',
+    'index.tsx',
+    'index-dev.tsx',
     'dev-configs.ts',
   ],
   coverageReporters: [
