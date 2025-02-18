@@ -6,6 +6,7 @@ import CloseIcon from '../../../common/icons/CloseIcon';
 
 export interface SearchHistoryEntry {
   id: string;
+  query?: string | null;
   imageUrl?: string | null;
   product_types?: ProductType[];
   box?: number[];
@@ -13,6 +14,7 @@ export interface SearchHistoryEntry {
 }
 
 export const MAX_HISTORY_ITEMS = 20;
+export const SEARCH_HISTORY_BASE_KEY = 'visenze_search_history_';
 
 const SearchHistory = ({
   activeHistory,
@@ -77,9 +79,31 @@ const SearchHistory = ({
 
   return (
     <>
+      <div className='flex size-full flex-row items-center'>
+        <div className='no-scrollbar flex w-full items-center gap-2 overflow-x-scroll'>
+          {history.filter((entry) => entry.query && !entry.imageUrl).map((entry, index) => (
+            <div key={index}>
+              <button
+                className={cn(
+                  'rounded-xl bg-gray-200 px-2 py-1 border',
+                  entry.id === activeHistory?.id ? 'border-gray-500' : 'opacity-60',
+                )}
+                onClick={() => {
+                  if (entry.id !== getActiveHistoryId()) {
+                    onHistorySelect(entry);
+                  }
+                }}
+              >
+                {entry.query}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className='no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
         <div className='flex w-full flex-row gap-2 md:w-1/2'>
-          {history
+          {history.filter((entry) => entry.imageUrl)
             .flatMap((entry) => (entry.product_types !== undefined
               ? entry.product_types.map((type) => ({
                   ...entry,

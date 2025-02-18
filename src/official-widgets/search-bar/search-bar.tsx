@@ -20,21 +20,20 @@ import ProductCard from '../../common/components/product-card/ProductCard';
 import UploadIcon from '../../common/icons/UploadIcon';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 
-interface SearchHistoryEntry {
-  id: string; // Unique identifier for deduplication
-  type: 'text' | 'image';
-  query?: string;
-  imageUrl?: string;
-  imageId?: string; // For im_id parameter
+export interface SearchHistoryEntry {
+  id: string;
+  query?: string | null;
+  imageUrl?: string | null;
+  box?: number[];
   timestamp: number;
-  filters?: Record<string, any>;
-  source: 'url' | 'user'; // Track whether entry came from URL or user action
 }
 
 interface SearchBarResultProps {
   textQuery: string;
   imUrl: string;
 }
+
+export const SEARCH_HISTORY_BASE_KEY = 'visenze_search_history_';
 
 const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
@@ -43,7 +42,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
   const [, setShowDropdown] = useState(false);
-  const [searchHistory] = useState<SearchHistoryEntry[]>([]);
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [suggestionMax, setSuggestionMax] = useState(6);
   const [relatedMax] = useState(8);
   const breakpoint = useBreakpoint();
@@ -135,6 +134,9 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
         imgUrl: imUrl,
       });
     }
+
+    const localHistory = localStorage.getItem(`${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`);
+    setSearchHistory(localHistory ? JSON.parse(localHistory) : []);
   }, []);
 
   if (error) {
@@ -274,7 +276,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                           aria-label='Recent searches'
                       >
                         <ListboxSection classNames={{ base: 'mb-0' }}>
-                          {searchHistory.filter((entry) => entry.type === 'text').slice(0, 4).map((entry) => (
+                          {searchHistory.filter((entry) => !entry.imageUrl).slice(0, 4).map((entry) => (
                               <ListboxItem
                                   tabIndex={0}
                                   className='pr-4'

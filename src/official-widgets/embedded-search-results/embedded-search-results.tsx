@@ -22,7 +22,7 @@ import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import FilterIcon from '../../common/icons/FilterIcon';
 import type { ImageUrl } from '../../common/types/image';
 import SearchBarInput from './components/SearchBarInput';
-import SearchHistory, { MAX_HISTORY_ITEMS } from './components/SearchHistory';
+import SearchHistory, { MAX_HISTORY_ITEMS, SEARCH_HISTORY_BASE_KEY } from './components/SearchHistory';
 import type { SearchHistoryEntry } from './components/SearchHistory';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
@@ -103,7 +103,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       timestamp: Date.now(),
     };
 
-    setSearchHistory((prevHistory) => [newEntry, ...prevHistory].slice(0, MAX_HISTORY_ITEMS));
+    setSearchHistory((prevHistory) => {
+      const newHistory = [newEntry, ...prevHistory].slice(0, MAX_HISTORY_ITEMS);
+      localStorage.setItem(`${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`, JSON.stringify(newHistory));
+      return newHistory;
+    });
 
     setActiveHistory(newEntry);
   };
@@ -141,41 +145,52 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     widgetClient.multisearchByImage(params, (res) => {
       handleSuccess(res, shouldResetFacets);
 
-      // Only add to history if image URL is used
-      if (imgUrl) {
-        const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
-          id: imgUrl,
-        };
-
-        if (imgUrl) {
-          historyEntry.imageUrl = imgUrl;
-        }
-
-        setSearchHistory((prevHistory) => {
-          const isProductInHistory = prevHistory.find((item) => {
-            if (item.id === historyEntry.id) {
-              setActiveHistory(item);
-              return item;
-            }
-            return null;
-          });
-
-          if (!isProductInHistory) {
-            addToHistory(historyEntry);
-          }
-          return prevHistory;
-        });
+      let historyId = imgUrl ?? '';
+      if (text && text.length > 0) {
+        historyId += `-${text}`;
       }
+      const historyText = text && text.length > 0 ? text : undefined;
+      const historyImgUrl = imgUrl && imgUrl.length > 0 ? imgUrl : undefined;
+
+      const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
+        id: historyId,
+        query: historyText,
+        imageUrl: historyImgUrl,
+      };
+
+      setSearchHistory((prevHistory) => {
+        const isProductInHistory = prevHistory.find((item) => {
+          if (item.id === historyEntry.id) {
+            setActiveHistory(item);
+            return item;
+          }
+          return null;
+        });
+
+        if (!isProductInHistory) {
+          addToHistory(historyEntry);
+        }
+        return prevHistory;
+      });
     }, handleError);
   };
 
   const searchFromHistory = (entry: SearchHistoryEntry): void => {
     let imgUrl: string | undefined;
+    let historyText: string | undefined;
     if (entry.imageUrl) {
       imgUrl = entry.imageUrl;
       setImageUrl(entry.imageUrl);
+    } else {
+      setImageUrl('');
     }
-    multisearchWithSearchBarDetails(imgUrl, query, 1);
+    if (entry.query) {
+      historyText = entry.query;
+      setQuery(entry.query);
+    } else {
+      setQuery('');
+    }
+    multisearchWithSearchBarDetails(imgUrl, historyText, 1);
     setIsLoading(true);
   };
 
@@ -265,6 +280,17 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     } else {
       setIsLoading(false);
     }
+
+    const localHistory: Array<SearchHistoryEntry> = JSON.parse(localStorage.getItem(`${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`) as string);
+    const expiryTimestamp = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const newHistory: Array<SearchHistoryEntry> = [];
+    localHistory.forEach((item) => {
+      const entryTimestamp = item.timestamp;
+      if (entryTimestamp > expiryTimestamp) {
+        newHistory.push(item);
+      }
+    });
+    setSearchHistory(newHistory);
   }, []);
 
   const hasApplicableFacets = facets.filter((f) => showFacet(f)).length > 0;
