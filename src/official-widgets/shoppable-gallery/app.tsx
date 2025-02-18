@@ -7,10 +7,9 @@ import { type AppProps, AppWrapper } from '../../common/components/app-wrapper';
 // Set to true to enable customization via WidgetConfig
 const ENABLE_CUSTOMIZATION = true;
 
-const App: FC<AppProps> = ({ widgetConfig, fieldMappings, widgetClient }) => (
+const App: FC<AppProps> = ({ widgetConfig, widgetClient }) => (
   <AppWrapper widgetConfig={widgetConfig}
               widgetClient={widgetClient}
-              fieldMappings={fieldMappings}
               defaultTexts={DEFAULT_TEXTS}
               defaultCustomizations={DEFAULT_CUSTOMIZATIONS}
               enableCustomization={ENABLE_CUSTOMIZATION}>

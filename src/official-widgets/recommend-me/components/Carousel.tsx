@@ -14,9 +14,10 @@ interface CarouselProps {
   results: ProcessedProduct[];
   searchValue: string;
   removeFromHistory: () => void;
+  metadata: Record<string, any>;
 }
 
-const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }) => {
+const Carousel: FC<CarouselProps> = ({ results, metadata, searchValue, removeFromHistory }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [isLoading, setIsLoading] = useState(true);
@@ -72,6 +73,7 @@ const Carousel: FC<CarouselProps> = ({ results, searchValue, removeFromHistory }
             <ProductCard key={`${result.product_id}-${index}`}
                          index={index}
                          result={result}
+                         metadata={metadata}
                          hasFindSimilar={false}
                          isRecommendation={false}
                          pwPrefix='rm' />

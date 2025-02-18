@@ -13,8 +13,8 @@ import { DEFAULT_CUSTOMIZATIONS } from './default-config';
     initWidget: initWidgetFactory(
         WidgetType.SIMILAR_SEARCH,
         version,
-        ({ config, client, element, fieldMappings }) => (
-            <App widgetConfig={config} fieldMappings={fieldMappings} widgetClient={client} element={element} />
+        ({ config, client, element }) => (
+            <App widgetConfig={config} widgetClient={client} element={element} />
         ),
         true,
         DEFAULT_CUSTOMIZATIONS,

@@ -3,7 +3,7 @@ import { useEffect, useState, useContext, useRef } from 'react';
 import { Skeleton } from '@heroui/skeleton';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext } from '../../common/types/contexts';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
@@ -93,7 +93,6 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
 
   return (
     <>
-      <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {productResults.length > 0 && (
             <>
               {/* Widget Title */}
@@ -122,7 +121,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
                   {referenceImageUrl && (
                       <img
                           ref={imageRef}
-                          className='wigmix-reference-image size-full object-contain'
+                          className='wigmix-reference-image size-full object-cover'
                           src={referenceImageUrl}
                           onLoad={onImageLoad}
                           data-pw='sl-reference-image'
@@ -140,6 +139,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
                       <ProductCard key={`${result.product_id}-${index}`}
                                    index={index}
                                    result={result}
+                                   metadata={metadata}
                                    hasFindSimilar={false}
                                    isRecommendation={true}
                                    pwPrefix='sl' />
@@ -153,7 +153,6 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
               )}
             </>
         )}
-      </WidgetResultContext.Provider>
     </>
   );
 };

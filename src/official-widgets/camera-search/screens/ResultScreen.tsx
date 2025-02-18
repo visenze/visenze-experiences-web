@@ -5,7 +5,8 @@ import { Listbox, ListboxItem } from '@heroui/listbox';
 import { useSwipeable } from 'react-swipeable';
 import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
-import { WidgetDataContext, WidgetResultContext } from '../../../common/types/contexts';
+import type { ProductType } from 'visearch-javascript-sdk';
+import { WidgetDataContext } from '../../../common/types/contexts';
 import FileDropzone from '../../../common/components/FileDropzone';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
@@ -19,6 +20,7 @@ import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
 import ChevronUpIcon from '../../../common/icons/ChevronUpIcon';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
+import type { ProcessedProduct } from '../../../common/types/product';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -30,6 +32,10 @@ const swipeConfig = {
 };
 
 interface ResultScreenProps {
+  productResults: ProcessedProduct[];
+  productTypes?: ProductType[];
+  autocompleteResults?: string[];
+  metadata: Record<string, any>;
   onModalClose: () => void;
   onBack: () => void;
   searchHistory: SearchImage[];
@@ -41,6 +47,10 @@ interface ResultScreenProps {
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
+  productResults,
+  productTypes,
+  autocompleteResults,
+  metadata,
   onModalClose,
   onBack,
   onTextSearch = (): void => {},
@@ -52,7 +62,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
 }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
-  const { productResults, autocompleteResults } = useContext(WidgetResultContext);
   const [search, setSearch] = useState('');
   const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
   const [showFullResults, setShowFullResults] = useState(false);
@@ -152,7 +161,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           {...minimizedDrawerHandler}
           {...mobileInputFocusHandler}>
           <div className={cn('transition-all duration-500', showFullResults ? 'opacity-0' : 'w-full opacity-100')}>
-            <HotspotContainer referenceImage={getReferenceImage()} />
+            <HotspotContainer referenceImage={getReferenceImage()} productTypes={productTypes} />
           </div>
 
           <div
@@ -161,7 +170,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {searchHistory?.map((searchImage, index) => (
               <img
                 key={`image-history-${index}`}
-                className='aspect-square w-1/5 object-contain'
+                className='aspect-square w-1/5 object-cover'
                 src={getFile(searchImage)}
                 onClick={() => onFindSimilar(searchImage)}
                 data-pw={`cs-previous-views-image-${index + 1}`}
@@ -207,6 +216,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                }}
                                index={index}
                                result={result}
+                               metadata={metadata}
                                isRecommendation={false}
                                hasFindSimilar={true}
                                pwPrefix='cs' />
@@ -266,7 +276,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           <div className='relative left-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8'>
             <div className='flex h-9/10 flex-col justify-between px-2'>
               <div className='wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 pt-2 text-center'>
-                <HotspotContainer className='w-3/5' referenceImage={getReferenceImage()} />
+                <HotspotContainer className='w-3/5' referenceImage={getReferenceImage()} productTypes={productTypes} />
 
                 <FileDropzone onImageUpload={onImageUpload} name='upload-icon'>
                   <p className='px-3 py-2 leading-6'>
@@ -288,7 +298,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       .map((searchImage, index) => (
                         <img
                           key={`image-history-${index}`}
-                          className='aspect-square w-1/3 cursor-pointer rounded-lg object-contain'
+                          className='aspect-square w-1/3 cursor-pointer rounded-lg object-cover'
                           src={getFile(searchImage)}
                           onClick={() => onFindSimilar(searchImage)}
                           data-pw={`cs-previous-views-image-${index + 1}`}
@@ -367,6 +377,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                  }}
                                  index={index}
                                  result={result}
+                                 metadata={metadata}
                                  isRecommendation={false}
                                  hasFindSimilar={true}
                                  pwPrefix='cs' />

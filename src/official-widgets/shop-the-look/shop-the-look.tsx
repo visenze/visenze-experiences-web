@@ -7,7 +7,7 @@ import 'slick-carousel/slick/slick.css';
 import { Skeleton } from '@heroui/skeleton';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext } from '../../common/types/contexts';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
@@ -158,6 +158,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
               <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
                 <ProductCard index={index}
                              result={result}
+                             metadata={metadata}
                              hasFindSimilar={false}
                              isRecommendation={true}
                              pwPrefix='stl' />
@@ -178,7 +179,6 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
 
   return (
     <>
-      <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {productResults.length > 0 && (
             <>
               {/* Widget Title */}
@@ -208,7 +208,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                     {referenceImageUrl && (
                         <img
                             ref={imageRef}
-                            className='wigmix-reference-image size-full object-contain'
+                            className='wigmix-reference-image size-full object-cover'
                             src={referenceImageUrl}
                             onLoad={onImageLoad}
                             data-pw='stl-reference-image'
@@ -233,7 +233,6 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
               )}
             </>
         )}
-      </WidgetResultContext.Provider>
     </>
   );
 };

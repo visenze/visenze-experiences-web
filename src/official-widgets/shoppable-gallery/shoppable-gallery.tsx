@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 import { Spinner } from '@heroui/spinner';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetResultContext, WidgetDataContext } from '../../common/types/contexts';
+import { WidgetDataContext } from '../../common/types/contexts';
 import GalleryImage from './components/GalleryImage';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
@@ -35,7 +35,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
   const [page, setPage] = useState(1);
   const intl = useIntl();
 
-  const { objects, productResults, productTypes, metadata, error } = useRecommendationSearch({
+  const { objects, productTypes, metadata, error } = useRecommendationSearch({
     productId: activeProductId,
   });
 
@@ -96,7 +96,6 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
 
   return (
     <>
-      <WidgetResultContext.Provider value={{ metadata, productResults, productTypes }}>
         <div>
           {/* Gallery Products Grid */}
           <div
@@ -153,11 +152,12 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
             openDrawer={openDrawer}
             setOpenDrawer={setOpenDrawer}
             objects={objects}
+            metadata={metadata}
+            productTypes={productTypes}
             activeImageUrl={activeImageUrl}
             placementId={`${appSettings.placementId}`}
           />
         </CroppingProvider>
-      </WidgetResultContext.Provider>
     </>
   );
 };

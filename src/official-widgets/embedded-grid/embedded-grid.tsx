@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useEffect, useState, useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext } from '../../common/types/contexts';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
@@ -50,7 +50,6 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
 
   return (
     <>
-      <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {productResults.length > 0 && (
             <>
               {/* Widget Title */}
@@ -67,6 +66,7 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
                     <ProductCard key={`${result.product_id}-${index}`}
                                  index={index}
                                  result={result}
+                                 metadata={metadata}
                                  hasFindSimilar={false}
                                  isRecommendation={true}
                                  pwPrefix='eg' />
@@ -79,7 +79,6 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
               )}
             </>
         )}
-      </WidgetResultContext.Provider>
     </>
   );
 };

@@ -6,7 +6,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 import { useIntl } from 'react-intl';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext } from '../../common/types/contexts';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import Footer from '../../common/components/Footer';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
@@ -122,7 +122,6 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
 
   return (
     <>
-      <WidgetResultContext.Provider value={{ metadata, productResults }}>
         {productResults.length > 0 && (
             <>
               {/* Widget Title */}
@@ -138,6 +137,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
                         <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
                           <ProductCard index={index}
                                        result={result}
+                                       metadata={metadata}
                                        hasFindSimilar={false}
                                        isRecommendation={true}
                                        pwPrefix='mlt' />
@@ -153,7 +153,6 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
               )}
             </>
         )}
-      </WidgetResultContext.Provider>
     </>
   );
 };
