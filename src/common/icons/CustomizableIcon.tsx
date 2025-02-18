@@ -10,7 +10,7 @@ interface CustomizableIconProps {
 }
 
 const CustomizableIcon: FC<CustomizableIconProps> = ({ url, color, height, width, className, onClickHandler }): ReactElement => {
-  if (color) {
+  if (color && color !== 'DEFAULT_ICON_COLOR') {
     return (
         <div onClick={onClickHandler}
              className={className}
