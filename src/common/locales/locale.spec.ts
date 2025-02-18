@@ -7,11 +7,6 @@ describe('locale', () => {
       key2: 'value2',
       key3: 'value3',
     },
-    es: {
-      key1: 'valor1',
-      key2: 'valor2',
-      key3: 'valor3',
-    },
     fr: {
       key1: 'valeur1',
       key2: 'valeur2',
@@ -33,14 +28,14 @@ describe('locale', () => {
     },
   };
 
-  it('should only ignore regional variant if not specified', () => {
+  it('should ignore regional variant if not specified', () => {
     const texts = getLocaleTexts('en', presetTexts, customTexts);
     expect(texts['key1']).toBe('value1');
     expect(texts['key2']).toBe('value2_1');
     expect(texts['key3']).toBe('value3');
   });
 
-  it('should use regional variant if available', () => {
+  it('should use regional variant if specified', () => {
     let texts = getLocaleTexts('en_GB', presetTexts, customTexts);
     expect(texts['key1']).toBe('value1_3');
     expect(texts['key2']).toBe('value2_1');

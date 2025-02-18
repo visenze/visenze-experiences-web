@@ -22,7 +22,6 @@ describe('embedded-grid', () => {
       widgetTitle: 'Embedded Grid 103',
     },
   };
-  const defaultCustomizations = (): WidgetConfig['customizations'] => DEFAULT_CUSTOMIZATIONS;
   const mockVisearchClient: ViSearchClient = {
     setKeys: jest.fn(),
     productSearchById: jest.fn(),
@@ -52,7 +51,7 @@ describe('embedded-grid', () => {
         currency: '',
       },
       callbacks: {},
-      customizations: defaultCustomizations(),
+      customizations: JSON.parse(JSON.stringify(DEFAULT_CUSTOMIZATIONS)),
       disableAnalytics: true,
     };
   });
@@ -77,9 +76,8 @@ describe('embedded-grid', () => {
         handler(getStandardRecommendationPidNotFoundResponse());
       }),
     }));
-    const root = new DOMParser().parseFromString('<body></body>', 'text/html');
     testComponent = render(
-        <RootContext.Provider value={root.body}>
+        <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <EmbeddedGrid productId='pid-not-found' />
@@ -110,9 +108,8 @@ describe('embedded-grid', () => {
         handler(getStandardRecommendationSuccessResponse());
       }),
     }));
-    const root = new DOMParser().parseFromString('<body></body>', 'text/html');
     testComponent = render(
-        <RootContext.Provider value={root.body}>
+        <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <EmbeddedGrid productId='pid-found' />
@@ -132,9 +129,8 @@ describe('embedded-grid', () => {
         handler(getStandardRecommendationSuccessResponse());
       }),
     }));
-    const root = new DOMParser().parseFromString('<body></body>', 'text/html');
     testComponent = render(
-        <RootContext.Provider value={root.body}>
+        <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <EmbeddedGrid productId='pid-found' />

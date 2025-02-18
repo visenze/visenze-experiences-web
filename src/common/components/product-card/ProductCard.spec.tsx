@@ -298,8 +298,8 @@ describe('ProductCard', () => {
     const productCardImage = testComponent.getByTestId('wigmix-product-card-image');
     fireEvent.load(productCardImage);
 
-    const productCardAnchor = testComponent.getByTestId('wigmix-find-similar-button');
-    productCardAnchor.click();
+    const findSimilarButton = testComponent.getByTestId('wigmix-find-similar-button');
+    findSimilarButton.click();
 
     expect(onFindSimilar).toHaveBeenNthCalledWith(1, testProduct);
     // Tracking events should not be sent
