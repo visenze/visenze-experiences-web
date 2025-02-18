@@ -28,7 +28,7 @@ interface SimilarSearchProps {
 
 const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations, searchSettings } = widgetConfig;
+  const { customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -108,7 +108,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
       q: query,
       im_id: imageId,
       page: 1,
-      limit: searchSettings['limit'],
+      limit: searchSettings['limit'] || 20,
       get_all_fl: true,
     };
     const product = boxData?.index ? productTypes[boxData.index] : boxData;
@@ -150,6 +150,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
               </div>
               <div>{error}</div>
               <button className='text-buttonPrimary bg-buttonPrimary px-5 py-2 rounded-md w-fit mt-3'
+                      data-testid='wigmix-back'
                       onClick={() => {
                         if (lastSuccessfulImage) {
                           setError('');
@@ -184,19 +185,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
           </div>
         );
       default:
-        return (
-          <ResultScreen
-            productResults={productResults}
-            image={image}
-            autocompleteResults={autocompleteResults}
-            metadata={metadata}
-            onModalClose={onModalClose}
-            onTextSearch={onTextSearch}
-            onFindSimilar={onFindSimilar}
-            onKeywordUpdate={onKeywordUpdate}
-            searchHistory={searchHistory}
-          />
-        );
+        return <></>;
     }
   };
 
@@ -244,6 +233,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
     <>
       {!customizations.popup?.triggerIcon?.hide && (
           <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+               data-testid='wigmix-popup-trigger-button'
                onClick={onPopupIconClick}>
             {customizations.popup?.triggerIcon?.url ? (
                 <CustomizableIcon
@@ -265,10 +255,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
       )}
 
       <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
-                    position={customizations.popup?.position || 'right'}
-                    darkMode={darkMode}
-                    fontFamily={customizations.generalLayout?.fontFamily}
-                    placementId={`${appSettings.placementId}`}>
+                    position={customizations.popup?.position || 'right'}>
         {getScreen()}
       </ViSenzeModal>
     </>

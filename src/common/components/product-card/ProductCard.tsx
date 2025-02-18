@@ -212,15 +212,17 @@ const ProductCard: FC<ProductCardProps> = ({
          target={openLinksInNewTab ? '_blank' : ''}
          rel={openLinksInNewTab ? 'noopener noreferrer' : ''}
          onClick={(event) => onClick(event, productUrl)}
-         data-pw={`${pwPrefix}-product-result-card-${index + 1}`}>
+         data-pw={`${pwPrefix}-product-result-card-${index + 1}`}
+         data-testid='wigmix-product-card-anchor'>
         <div className='wigmix-product-card-image-container'>
           <div className='flex justify-center relative'>
             {isLoading && <Skeleton className={`aspect-square size-full ${imageClasses || ''}`} />}
-            <img className={`wigmix-product-card-image aspect-square object-cover ${imageClasses || ''}`} src={result.im_url} alt=''
+            <img className={`wigmix-product-card-image aspect-square object-contain ${imageClasses || ''}`} src={result.im_url} alt=''
                  onLoad={() => {
                    setIsLoading(false);
                  }}
-                 data-pw={`${pwPrefix}-product-result-card-image-${index + 1}`}/>
+                 data-pw={`${pwPrefix}-product-result-card-image-${index + 1}`}
+                 data-testid='wigmix-product-card-image' />
             {hasFindSimilar && !isLoading && customizations.productCard?.findSimilar?.enable && (
                 <div
                     className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-5 bg-white rounded-full p-1 hover:opacity-90`}
@@ -236,7 +238,8 @@ const ProductCard: FC<ProductCardProps> = ({
                           ? (customizations.productCard?.findSimilar?.icon?.backgroundColorDark || '')
                           : (customizations.productCard?.findSimilar?.icon?.backgroundColor || ''),
                     }}
-                    data-pw={`${pwPrefix}-more-like-this-button`}
+                    data-pw={`${pwPrefix}-find-similar-button`}
+                    data-testid='wigmix-find-similar-button'
                 >
                   {customizations.productCard?.findSimilar?.icon?.url ? (
                       <CustomizableIcon

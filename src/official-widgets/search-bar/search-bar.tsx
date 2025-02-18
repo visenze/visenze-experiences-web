@@ -163,8 +163,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                           emitSearchBarCallback={() => {
                             emitSearchBarCallback(query, image);
                           }}
-                          setShowDropdown={setShowDropdown}
-                          placementId={`${widgetConfig.appSettings.placementId}`} />
+                          setShowDropdown={setShowDropdown} />
           {/* Autocomplete dropdown */}
           {query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
               ? (<div

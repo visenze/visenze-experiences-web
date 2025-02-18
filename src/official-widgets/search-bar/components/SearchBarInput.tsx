@@ -14,7 +14,6 @@ interface SearchBarInputProps {
   setQuery: (query: string) => void;
   emitSearchBarCallback: () => void;
   imageUploadHandler: (image: SearchImage | undefined) => void;
-  placementId: string;
   setShowDropdown: (showDropdown: boolean) => void;
   image: SearchImage | undefined;
 }
@@ -25,7 +24,6 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
   emitSearchBarCallback,
   imageUploadHandler,
   setShowDropdown,
-  placementId,
   image,
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
@@ -77,7 +75,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       startContent={
         <div className='flex items-center gap-2'>
           {customizations.imageUpload?.enable && (
-            <ImageGalleryUpload imageUploadHandler={imageUploadHandler} placementId={placementId} image={image} />
+            <ImageGalleryUpload imageUploadHandler={imageUploadHandler} image={image} />
           )}
           <MagnifyingGlassIcon color={darkMode
                                  ? (customizations.generalLayout?.fontColorDark || '')

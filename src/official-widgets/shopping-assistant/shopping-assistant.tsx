@@ -342,10 +342,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
             </div>
         )}
         <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
-                      position={customizations.popup?.position || 'center'}
-                      darkMode={darkMode}
-                      fontFamily={customizations.generalLayout?.fontFamily}
-                      placementId={`${appSettings.placementId}`}>
+                      position={customizations.popup?.position || 'center'}>
           {getScreen()}
         </ViSenzeModal>
       </>

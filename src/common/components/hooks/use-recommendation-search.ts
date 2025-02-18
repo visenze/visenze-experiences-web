@@ -159,7 +159,7 @@ const useRecommendationSearch = ({
 
       // Model Outfit should be the reference image if strategy is STL
       const strategy: any = response['strategy'];
-      if (strategy.algorithm === 'STL') {
+      if (strategy?.algorithm === 'STL') {
         setModelOutfitAsReference();
       }
 

@@ -32,8 +32,8 @@ interface EmbeddedSearchResultProps {
 }
 
 const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl }): ReactElement => {
-  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { customizations, displaySettings, searchSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
@@ -56,6 +56,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [activeHistory, setActiveHistory] = useState<SearchHistoryEntry>();
   const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
   const root = useContext(RootContext);
@@ -87,6 +88,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
         widgetClient.sendEvent(Actions.RESULT_LOAD, md);
         widgetClient.setLastTrackingMeta(md);
       }
+      setHasNextPage(newProducts.length > 0);
 
       if (shouldResetFacets && res.facets) {
         setFacets(res.facets);
@@ -240,11 +242,13 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       (entries) => {
         const target = entries[0];
         if (target.isIntersecting && !isLoading && !isLoadingMore && productResults.length > 0) {
-          setPage((prevPage) => {
-            const nextPage = prevPage + 1;
-            multisearchWithSearchBarDetails(imageUrl, query, nextPage, false);
-            return nextPage;
-          });
+          if (hasNextPage) {
+            setPage((prevPage) => {
+              const nextPage = prevPage + 1;
+              multisearchWithSearchBarDetails(imageUrl, query, nextPage, false);
+              return nextPage;
+            });
+          }
         }
       },
       { threshold: 0.1 },
@@ -368,9 +372,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                     open={showMobileFilterOptions} layout='mobile'
                     onClose={() => setShowMobileFilterOptions(false)}
                     position='center'
-                    placementId={`${appSettings.placementId}`}
-                    darkMode={darkMode}
-                    fontFamily={customizations.generalLayout?.fontFamily}
                 >
                   <FilterOptions
                       displayAsDropdown={false}
