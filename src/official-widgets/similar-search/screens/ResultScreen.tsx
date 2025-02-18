@@ -342,6 +342,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       onTextSearch('');
                     }}
                     data-pw='ss-refinement-text-bar'
+                    data-testid='wigmix-text-bar'
                   />
                 </div>
               </div>

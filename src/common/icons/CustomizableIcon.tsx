@@ -28,7 +28,10 @@ const CustomizableIcon: FC<CustomizableIconProps> = ({ url, color, height, width
            style={{
              height,
              width,
-             background: `url(${url}) no-repeat center / contain`,
+             backgroundImage: `url(${url})`,
+             backgroundRepeat: 'no-repeat',
+             backgroundPosition: 'center',
+             backgroundSize: 'contain',
            }}/>
   );
 };

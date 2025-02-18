@@ -50,6 +50,7 @@ const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, pos
       isOpen={open}
       className={cn(`wigmix-modal bg-primary text-primary wigmix-modal-${layout} wigmix-modal-position-${position}`, className)}
       overlayClassName={`wigmix-modal-overlay wigmix-modal-position-${position}`}
+      testId='wigmix-modal'
       onRequestClose={onClose}
       appElement={document.body}>
       {children}
