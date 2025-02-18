@@ -15,6 +15,7 @@ interface SearchAsYouTypeProps {
 interface SearchAsYouType {
   productCount: number;
   searchAsYouTypeResults: ProcessedProduct[];
+  metadata: Record<string, any>;
   error: string;
 }
 
@@ -26,6 +27,7 @@ const useSearchAsYouType = ({
   const { searchSettings } = widgetConfig;
   const [productCount, setProductCount] = useState(0);
   const [searchAsYouTypeResults, setSearchAsYouTypeResults] = useState<ProcessedProduct[]>([]);
+  const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [error, setError] = useState<string>('');
 
   const handleError = (err: string): void => {
@@ -44,6 +46,7 @@ const useSearchAsYouType = ({
         cat: Category.RESULT,
         queryId: res.reqid,
       };
+      setMetadata(newMetadata);
 
       if (res.total) {
         setProductCount(res.total);
@@ -86,6 +89,7 @@ const useSearchAsYouType = ({
   return {
     productCount,
     searchAsYouTypeResults,
+    metadata,
     error,
   };
 };

@@ -61,6 +61,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
   const {
     productCount,
     searchAsYouTypeResults,
+    metadata,
   } = useSearchAsYouType({
     image,
     query: debouncedQuery,
@@ -237,6 +238,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                                   <ProductCard key={`${result.product_id}-${index}`}
                                                index={index}
                                                result={result}
+                                               metadata={metadata}
                                                hasFindSimilar={false}
                                                isRecommendation={false}
                                                pwPrefix='sb' />
@@ -287,7 +289,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                                                              : (customizations.generalLayout?.fontColor || '')}
                                                            className='size-4' />
                                   )}
-                                  textValue={entry.query}
+                                  textValue={entry.query || ''}
                                   onPress={() => {
                                     if (entry && entry.query) {
                                       setQuery(entry.query);
