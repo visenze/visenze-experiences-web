@@ -8,8 +8,8 @@ import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 devInitWidget(
     WidgetType.ICON_TRIGGERED_GRID,
     version,
-    ({ config, client, element, fieldMappings }) => (
-        <App widgetConfig={config} fieldMappings={fieldMappings} widgetClient={client} element={element} />
+    ({ config, client, element }) => (
+        <App widgetConfig={config} widgetClient={client} element={element} />
     ),
     true,
     devConfigs,

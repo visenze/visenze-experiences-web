@@ -2,9 +2,8 @@ import type { FC, ReactElement } from 'react';
 import { useEffect, useState, useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
-import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
-import { isImageDataUrl } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
@@ -34,7 +33,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [image, setImage] = useState<SearchImage | undefined>();
-  const [resizedImage, setResizedImage] = useState<SearchImage | undefined>();
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(ScreenType.LOADING);
   const [boxData, setBoxData] = useState<BoxData | undefined>();
@@ -168,6 +166,10 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
       case ScreenType.RESULT:
         return (
           <ResultScreen
+            productResults={productResults}
+            image={image}
+            autocompleteResults={autocompleteResults}
+            metadata={metadata}
             onModalClose={onModalClose}
             onTextSearch={onTextSearch}
             onFindSimilar={onFindSimilar}
@@ -184,6 +186,10 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
       default:
         return (
           <ResultScreen
+            productResults={productResults}
+            image={image}
+            autocompleteResults={autocompleteResults}
+            metadata={metadata}
             onModalClose={onModalClose}
             onTextSearch={onTextSearch}
             onFindSimilar={onFindSimilar}
@@ -207,14 +213,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
       }
     });
   }, []);
-
-  useEffect(() => {
-    (async (): Promise<void> => {
-      if (image && isImageDataUrl(image)) {
-        await widgetClient.visearch.resizeImage(image.file, appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
-      }
-    })();
-  }, [image]);
 
   useEffect(() => {
     if (productResults.length > 0) {
@@ -243,15 +241,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
   }
 
   return (
-    <WidgetResultContext.Provider
-      value={{
-        productTypes,
-        autocompleteResults,
-        productResults,
-        imageId,
-        image: resizedImage ?? image,
-        metadata,
-      }}>
+    <>
       {!customizations.popup?.triggerIcon?.hide && (
           <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
                onClick={onPopupIconClick}>
@@ -281,7 +271,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
                     placementId={`${appSettings.placementId}`}>
         {getScreen()}
       </ViSenzeModal>
-    </WidgetResultContext.Provider>
+    </>
   );
 };
 

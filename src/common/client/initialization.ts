@@ -12,10 +12,9 @@ import { DEFAULT_CONFIGS } from '../default-configs';
 import getWidgetClient from './widget-client';
 import { DEFAULT_ENDPOINT } from '../constants';
 
-export interface WidgetInitResult {
+interface WidgetInitResult {
   widgetClient: WidgetClient;
-  config: WidgetConfig;
-  fieldMappings: Record<string, string>;
+  widgetConfig: WidgetConfig;
 }
 
 export function deepMerge<T extends Record<string, any> | undefined | null>(overrides: any, base: T): T {
@@ -165,14 +164,14 @@ const init = (
     return;
   }
 
-  let config = deepMerge(initConfig, {
+  let widgetConfig = deepMerge(initConfig, {
     ...DEFAULT_CONFIGS,
     customizations,
   });
-  setCssVariables(config, config.customizations.generalLayout.darkModeDefault);
-  config = populateProductDetailsAndAttrsToGet(config, fieldMappings);
-  const widgetClient = getWidgetClient(config, widgetType, widgetVersion);
-  return { widgetClient, fieldMappings, config };
+  setCssVariables(widgetConfig, widgetConfig.customizations.generalLayout.darkModeDefault);
+  widgetConfig = populateProductDetailsAndAttrsToGet(widgetConfig, fieldMappings);
+  const widgetClient = getWidgetClient(widgetConfig, widgetType, widgetVersion);
+  return { widgetClient, widgetConfig };
 };
 
 type WidgetInitializer = (initConfig: WidgetConfig, fieldMappings: Record<string, string>, skipRender?: boolean)
@@ -180,7 +179,6 @@ type WidgetInitializer = (initConfig: WidgetConfig, fieldMappings: Record<string
 
 interface WidgetRendererParam {
   config: WidgetConfig;
-  fieldMappings: Record<string, string>;
   client: WidgetClient;
   element: HTMLElement;
 }
@@ -198,7 +196,6 @@ const getRenderElement = (config: WidgetConfig): HTMLElement | null => {
 
 const render = (
     client: WidgetClient,
-    fieldMappings: Record<string, string>,
     config: WidgetConfig,
     renderer: WidgetRenderer,
     isMultiRender: boolean,
@@ -212,14 +209,14 @@ const render = (
     const elements = getRenderElements(config);
     elements.forEach((element) => {
       const root = createRoot(element);
-      root.render(renderer({ config, fieldMappings, client, element }));
+      root.render(renderer({ config, client, element }));
       roots.push(root);
     });
   } else {
     const element = getRenderElement(config);
     if (element) {
       const root = createRoot(element);
-      root.render(renderer({ config, fieldMappings, client, element }));
+      root.render(renderer({ config, client, element }));
       roots.push(root);
     }
   }
@@ -241,17 +238,17 @@ export const initWidgetFactory = (
       return undefined;
     }
 
-    const { widgetClient, config } = result;
+    const { widgetClient, widgetConfig } = result;
     widgetClient.rerender = (selector?: string): void => {
       widgetClient.hideWidget();
       if (selector) {
-        config.displaySettings.cssSelector = selector;
+        widgetConfig.displaySettings.cssSelector = selector;
       }
-      render(widgetClient, fieldMappings, config, renderer, isMultiRender);
+      render(widgetClient, widgetConfig, renderer, isMultiRender);
     };
 
     if (!skipRender) {
-      render(widgetClient, fieldMappings, config, renderer, isMultiRender);
+      render(widgetClient, widgetConfig, renderer, isMultiRender);
     }
 
     return widgetClient;
@@ -283,14 +280,14 @@ export const devInitWidget = async (
     return;
   }
 
-  const { widgetClient, config } = result;
-  render(widgetClient, fieldsMapping, config, renderer, isMultiRender);
+  const { widgetClient, widgetConfig } = result;
+  render(widgetClient, widgetConfig, renderer, isMultiRender);
   widgetClient.rerender = (selector?: string): void => {
     widgetClient.hideWidget();
     if (selector) {
-      config.displaySettings.cssSelector = selector;
+      widgetConfig.displaySettings.cssSelector = selector;
     }
-    render(widgetClient, fieldsMapping, config, renderer, isMultiRender);
+    render(widgetClient, widgetConfig, renderer, isMultiRender);
   };
   window['widget'] = widgetClient;
 };

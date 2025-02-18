@@ -70,10 +70,10 @@ in order for the settings to be properly overridden.
   | `trackingSettings` | 1.0.0           | Additional key-value parameters that will be sent to ViSenze analytics API.                            |
   | `languageSettings` | 1.0.0           | Localization- and internationalization-related settings. See section on l10n and 18n for more details. |
   | `callbacks`        | 1.0.0           | Callbacks settings. See section on callbacks for more details.                                         |
-
-  The full list of available parameters can be seen in the `WidgetConfig` object in `wigmix-core.ts`.
-  Parameters marked as `@internal` are only for internal usage and not recommended to be set within the configuration object.
 </details>
+
+The full list of available parameters can be seen in the `WidgetConfig` object in `wigmix-core.ts`.
+Parameters marked as `@internal` are only for internal usage and not recommended to be set within the configuration object.
 
 ## Callbacks
 
@@ -101,10 +101,10 @@ window.visenzeConfigs[5000] = {
   | `onProductClick`     | 1.0.0           | Fires whenever a product card is clicked on.                                                                                                                               |
   | `onSearchCallback`   | 1.0.0           | Fires whenever response from a search/recommendation API result is returned.                                                                                               |
   | `onSearchBarInput`   | 1.0.0           | Fires when there is an input change within the search bar (when exists), such as clicking enter in search bar, selecting an autocomplete option, or uploading a new image. |
-
-  The full list of available callbacks and also the parameters for each available callback
-  can be seen in the `WidgetConfig` object in `wigmix-core.ts` under the `callbacks` field.
 </details>
+
+The full list of available callbacks and the parameters for each available callback
+can be seen in the `WidgetConfig` object in `wigmix-core.ts` under the `callbacks` field.
 
 ## Localization and Internationalization
 

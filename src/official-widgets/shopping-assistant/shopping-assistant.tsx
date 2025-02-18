@@ -15,6 +15,7 @@ import { DEFAULT_ENDPOINT } from '../../common/constants';
 import type { ProcessedProduct } from '../../common/types/product';
 import NewChatIcon from './icons/NewChatIcon';
 import { getFlattenProduct } from '../../common/utils';
+import { Actions, Category } from '../../common/types/tracking-constants';
 
 // Product line can look like one of these:
 // [[pid]] **title** - ...
@@ -209,6 +210,12 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
             }
             tokensToDisplay.push(tkn);
           }
+          const requestMetadata = {
+            queryId: reqIdFromResp,
+            cat: Category.RESULT,
+          };
+          widgetClient.sendEvent(Actions.RESULT_LOAD, requestMetadata);
+          widgetClient.setLastTrackingMeta(requestMetadata);
           const afterText = tokensToDisplay.reverse().join('\n').trim();
           setChats((chats1) => [...chats1, {
             chatId: chatIdFromResp,

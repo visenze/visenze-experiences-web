@@ -10,7 +10,6 @@ import type { WidgetClient, WidgetConfig } from '../wigmix-core';
 export interface AppProps {
   widgetConfig: WidgetConfig;
   widgetClient: WidgetClient;
-  fieldMappings: Record<string, string>;
 }
 
 export interface AppPropsWithReferenceElement extends AppProps {
@@ -26,7 +25,6 @@ interface AppWrapperProps extends AppProps {
 
 export const AppWrapper: FC<AppWrapperProps> = ({
   widgetConfig,
-  fieldMappings,
   widgetClient,
   defaultTexts,
   defaultCustomizations,
@@ -82,7 +80,7 @@ export const AppWrapper: FC<AppWrapperProps> = ({
   }, [configInternal]);
 
   return (
-      <WidgetDataContext.Provider value={{ widgetConfig: configInternal, fieldMappings, widgetClient, darkMode }}>
+      <WidgetDataContext.Provider value={{ widgetConfig: configInternal, widgetClient, darkMode }}>
         <ShadowWrapper darkMode={darkMode} fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
           <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
             {children}

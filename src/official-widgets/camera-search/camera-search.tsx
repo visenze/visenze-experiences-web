@@ -2,9 +2,8 @@ import type { FC, ReactElement } from 'react';
 import { useEffect, useContext, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
-import { WidgetDataContext, WidgetResultContext } from '../../common/types/contexts';
+import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
-import { isImageDataUrl } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { parseBox } from '../../common/utils';
@@ -37,7 +36,6 @@ const CameraSearch: FC<CameraSearchProps> = () => {
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [image, setImage] = useState<SearchImage | undefined>();
-  const [resizedImage, setResizedImage] = useState<SearchImage | undefined>();
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(ScreenType.UPLOAD);
   const [boxData, setBoxData] = useState<BoxData | undefined>();
@@ -185,6 +183,10 @@ const CameraSearch: FC<CameraSearchProps> = () => {
       case ScreenType.RESULT:
         return (
           <ResultScreen
+            productResults={productResults}
+            productTypes={productTypes}
+            autocompleteResults={autocompleteResults}
+            metadata={metadata}
             onModalClose={onModalClose}
             onBack={onBack}
             onTextSearch={onTextSearch}
@@ -205,14 +207,6 @@ const CameraSearch: FC<CameraSearchProps> = () => {
         return <UploadScreen onModalClose={onModalClose} onImageUpload={onImageUpload} />;
     }
   };
-
-  useEffect(() => {
-    (async (): Promise<void> => {
-      if (image && isImageDataUrl(image)) {
-        await widgetClient.visearch.resizeImage(image.file, appSettings.resizeSettings, (resizedObj) => setResizedImage({ file: resizedObj ?? '' }));
-      }
-    })();
-  }, [image]);
 
   useEffect(() => {
     if (productResults.length > 0) {
@@ -252,15 +246,6 @@ const CameraSearch: FC<CameraSearchProps> = () => {
   }
 
   return (
-    <WidgetResultContext.Provider
-      value={{
-        productTypes,
-        autocompleteResults,
-        productResults,
-        imageId,
-        image: resizedImage ?? image,
-        metadata,
-      }}>
       <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
         {!customizations.popup?.triggerIcon?.hide && (
             <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
@@ -294,7 +279,6 @@ const CameraSearch: FC<CameraSearchProps> = () => {
           {getScreen()}
         </ViSenzeModal>
       </CroppingProvider>
-    </WidgetResultContext.Provider>
   );
 };
 
