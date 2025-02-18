@@ -2,8 +2,7 @@ import type { FC, ReactElement } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import ReactModal from 'react-modal';
 import { cn } from '@heroui/theme';
-import ShadowWrapper, { RootContext } from '../shadow-wrapper';
-import Portal from '../portal';
+import { RootContext } from '../shadow-wrapper';
 import './modal.scss';
 
 interface ModalProps {
@@ -58,25 +57,4 @@ const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, pos
   );
 };
 
-interface VisenzeModalProps {
-  open: boolean;
-  onClose: () => void;
-  layout: 'desktop' | 'tablet' | 'mobile' | 'nested_mobile';
-  position: 'left' | 'center' | 'right';
-  children: ReactElement | ReactElement[];
-  className?: string;
-  placementId: string;
-  idSuffix?: string;
-  darkMode: boolean;
-  fontFamily: string;
-}
-
-const ViSenzeModal: FC<VisenzeModalProps> = (props) => (
-    <Portal idName={`visenze-widget-modal-portal-${props.placementId}${props.idSuffix ? `-${props.idSuffix}` : ''}`}>
-      <ShadowWrapper darkMode={props.darkMode} fontFamily={props.fontFamily}>
-        <Modal {...props} />
-      </ShadowWrapper>
-    </Portal>
-  );
-
-export default ViSenzeModal;
+export default Modal;

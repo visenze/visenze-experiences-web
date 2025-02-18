@@ -38,7 +38,7 @@ const swipeConfig = {
 
 const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations } = widgetConfig;
+  const { customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [error, setError] = useState('');
@@ -143,10 +143,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
         open={dialogVisible}
         layout={breakpoint}
         onClose={onModalClose}
-        position={customizations.popup?.position || 'center'}
-        darkMode={darkMode}
-        fontFamily={customizations.generalLayout?.fontFamily}
-        placementId={`${appSettings.placementId}`}>
+        position={customizations.popup?.position || 'center'}>
         <div className='relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1'>
           {/* Close Button */}
           <div

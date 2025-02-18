@@ -122,9 +122,6 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
             onClose={onCloseHandler}
             layout={breakpoint}
             position='center'
-            darkMode={darkMode}
-            fontFamily={customizations.generalLayout?.fontFamily}
-            placementId={`${appSettings.placementId}`}
             className='left-[unset] top-[unset] h-[500px] w-[300px] rounded-xl'>
             <div className='flex size-full flex-col bg-primary pt-1/5' data-pw='sg-image-hotspot-modal'>
               <div
@@ -155,7 +152,6 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
             metadata={metadata}
             productTypes={productTypes}
             activeImageUrl={activeImageUrl}
-            placementId={`${appSettings.placementId}`}
           />
         </CroppingProvider>
     </>

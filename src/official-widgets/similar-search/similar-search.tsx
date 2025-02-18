@@ -28,7 +28,7 @@ interface SimilarSearchProps {
 
 const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations, searchSettings } = widgetConfig;
+  const { customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -265,10 +265,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
       )}
 
       <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
-                    position={customizations.popup?.position || 'right'}
-                    darkMode={darkMode}
-                    fontFamily={customizations.generalLayout?.fontFamily}
-                    placementId={`${appSettings.placementId}`}>
+                    position={customizations.popup?.position || 'right'}>
         {getScreen()}
       </ViSenzeModal>
     </>
