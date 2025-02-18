@@ -33,7 +33,7 @@ jobs:
       - name: Install Frontend Dependencies
         run: npm ci
       - name: Run Tests
-        run: npm run test
+        run: npm run test -- --verbose
   code_build:
     runs-on: ubuntu-latest
     steps:
