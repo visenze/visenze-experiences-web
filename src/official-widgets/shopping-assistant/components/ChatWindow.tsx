@@ -104,9 +104,11 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
                 {chat.author === 'products' && (chat.products || []).map((product, pidx) => (
                     <>
                       <div key={`product-${pidx}`}>
-                        <ProductCard key={`product-card-${pidx}`}
+                        <ProductCard key={`${product.product_id}-${pidx}`}
                                      result={product}
-                                     metadata={{}}
+                                     metadata={{
+                                       queryId: chat.requestId,
+                                     }}
                                      index={pidx}
                                      pwPrefix='sa'
                                      isRecommendation={false}
