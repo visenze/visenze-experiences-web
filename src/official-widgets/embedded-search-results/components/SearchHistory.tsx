@@ -125,7 +125,7 @@ const SearchHistory = ({
                     )}
                   </div>
                 ) : (
-                  <img className='h-full rounded-none object-cover'
+                  <img className='h-full rounded-none object-contain aspect-square'
                        src={entry.imageUrl ?? ''}
                        data-pw={`esr-product-history-image-${index + 1}`} />
                 )}

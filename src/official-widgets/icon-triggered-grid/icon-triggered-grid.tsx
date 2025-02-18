@@ -172,7 +172,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                   <div className='wigmix-reference-image-container flex pt-4 md:pt-8 w-full justify-center' data-pw='itg-reference-product'>
                     <img
                         className={cn(
-                            'wigmix-reference-image object-cover object-center aspect-square md:max-w-full',
+                            'wigmix-reference-image object-contain object-center aspect-square md:max-w-full',
                             showFullResults ? 'max-w-32' : 'max-w-96',
                         )}
                         src={productInfo.im_url}
