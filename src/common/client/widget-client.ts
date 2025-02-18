@@ -1,5 +1,5 @@
 import type { Root } from 'react-dom/client';
-import ViSearch, { type ProductSearchResponse } from 'visearch-javascript-sdk';
+import ViSearch, { type ProductSearchResponse, type ViSearchClient } from 'visearch-javascript-sdk';
 import type { Primitive, WidgetClient, WidgetConfig, WidgetRenderStatus } from '../wigmix-core';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
 import { DEFAULT_ENDPOINT } from '../constants';
@@ -43,7 +43,7 @@ const wrapCallbacks = (
   return [newOnSuccess, newOnError];
 };
 
-const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion: string): WidgetClient => {
+const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion: string, visearchFactory: () => ViSearchClient = () => ViSearch()): WidgetClient => {
   const { disableAnalytics } = config;
   const { placementId, appKey, strategyId, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
   const { onSearchCallback } = config.callbacks;
@@ -55,7 +55,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
   let lastTrackingMetadata: Record<string, Primitive> = {};
   let lastReference = '';
 
-  const visearch = ViSearch();
+  const visearch = visearchFactory();
   visearch.setKeys({
     placement_id: placementId,
     strategy_id: strategyId,

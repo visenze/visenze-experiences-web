@@ -1,8 +1,9 @@
 module.exports = (args) => {
   const isES = args.env('es');
-  const isTest = args.env('test');
+  const isUnitTest = process.env.unit_test === 'true';
+  const isStaging = process.env.build === 'staging';
 
-  return {
+  const out = {
     presets: [
       '@babel/preset-env',
       [
@@ -23,4 +24,17 @@ module.exports = (args) => {
       ],
     ],
   };
+  if (!isUnitTest) {
+    if (isStaging) {
+      out.plugins.push('babel-plugin-jsx-remove-data-test-id');
+    } else {
+      out.plugins.push([
+        'babel-plugin-jsx-remove-data-test-id',
+        {
+          attributes: ['data-testid', 'data-pw'],
+        },
+      ]);
+    }
+  }
+  return out;
 };
