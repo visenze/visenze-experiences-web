@@ -21,10 +21,7 @@ import UploadIcon from '../../common/icons/UploadIcon';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 
 export interface SearchHistoryEntry {
-  id: string;
-  query?: string | null;
-  imageUrl?: string | null;
-  box?: number[];
+  query: string;
   timestamp: number;
 }
 
@@ -136,13 +133,28 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
       });
     }
 
-    const localHistory = localStorage.getItem(`${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`);
-    setSearchHistory(localHistory ? JSON.parse(localHistory) : []);
+    const historyFromLocalStorage = localStorage.getItem(`${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`);
+    const historyFull: SearchHistoryEntry[] = historyFromLocalStorage ? JSON.parse(historyFromLocalStorage) : [];
+    const now = new Date().getTime();
+    setSearchHistory(historyFull.filter((h) => now - h.timestamp <= 7 * 24 * 60 * 60 * 1000));
   }, []);
 
   if (error) {
     console.error(error);
   }
+
+  const updateSavedHistory = (search: string): void => {
+    setSearchHistory((prevHistory) => {
+      const newEntry: SearchHistoryEntry = {
+        query: search,
+        timestamp: new Date().getTime(),
+      };
+      const newHistory = [newEntry, ...prevHistory.filter((h) => h.query !== search)]
+          .slice(0, 20);
+      localStorage.setItem(`${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`, JSON.stringify(newHistory));
+      return newHistory;
+    });
+  };
 
   if (!root) {
     return <></>;
@@ -161,6 +173,9 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                             }
                           }}
                           emitSearchBarCallback={() => {
+                            if (query) {
+                              updateSavedHistory(query);
+                            }
                             emitSearchBarCallback(query, image);
                           }}
                           setShowDropdown={setShowDropdown} />
@@ -277,7 +292,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                           aria-label='Recent searches'
                       >
                         <ListboxSection classNames={{ base: 'mb-0' }}>
-                          {searchHistory.filter((entry) => !entry.imageUrl).slice(0, 4).map((entry) => (
+                          {searchHistory.slice(0, 4).map((entry) => (
                               <ListboxItem
                                   tabIndex={0}
                                   className='pr-4'
@@ -291,13 +306,13 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                                   textValue={entry.query || ''}
                                   onPress={() => {
                                     if (entry && entry.query) {
+                                      updateSavedHistory(entry.query);
                                       setQuery(entry.query);
                                       emitSearchBarCallback(entry.query, image);
                                     }
                                 }}
                               >
-                            <span className='pl-2 text-primary'
-                                  data-pw={`sb-recent-searches-${entry.id}`}>{entry.query}</span>
+                                <span className='pl-2 text-primary'>{entry.query}</span>
                               </ListboxItem>
                           ))}
                         </ListboxSection>
