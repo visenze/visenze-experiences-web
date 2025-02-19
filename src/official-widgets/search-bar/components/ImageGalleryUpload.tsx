@@ -14,7 +14,7 @@ import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 import UploadIcon from '../../../common/icons/UploadIcon';
 
 interface ImageGalleryUploadProps {
-  imageUploadHandler: (image: SearchImage) => void;
+  imageUploadHandler: (image: SearchImage | undefined) => void;
   image: SearchImage | undefined;
 }
 
@@ -97,7 +97,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, i
   };
 
   return (
-    <div className='md:flex'>
+    <div className='relative flex'>
       <Button isIconOnly className='rounded-full bg-zinc-100' onClick={onIconClickHandler} data-pw='sb-gallery-button'>
         {searchImage && (
             <>
@@ -116,6 +116,20 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, i
             <PhotoIcon className='size-6'/>
         )}
       </Button>
+
+      {searchImage && (
+        <div
+          className='absolute -right-1 -top-1 z-20 cursor-pointer rounded-full bg-white'
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setSearchImage(undefined);
+            imageUploadHandler(undefined);
+          }}
+        >
+          <CloseIcon className='size-4'/>
+        </div>
+      )}
 
       <VisenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint} position='center'>
         <div className='relative flex size-full flex-col bg-primary'>

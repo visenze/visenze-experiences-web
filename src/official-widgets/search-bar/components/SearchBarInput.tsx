@@ -13,7 +13,7 @@ interface SearchBarInputProps {
   query: string;
   setQuery: (query: string) => void;
   emitSearchBarCallback: () => void;
-  imageUploadHandler: (image: SearchImage) => void;
+  imageUploadHandler: (image: SearchImage | undefined) => void;
   setShowDropdown: (showDropdown: boolean) => void;
   image: SearchImage | undefined;
 }
@@ -26,7 +26,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
   setShowDropdown,
   image,
 }) => {
-  const { widgetConfig } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const searchBarRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
@@ -42,7 +42,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       ref={searchBarRef}
       className='z-5'
       classNames={{
-        inputWrapper: cn('rounded-md bg-white w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
+        inputWrapper: cn('rounded-md w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
       }}
       autoCapitalize='off'
       autoComplete='off'
@@ -77,7 +77,10 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
           {customizations.imageUpload?.enable && (
             <ImageGalleryUpload imageUploadHandler={imageUploadHandler} image={image} />
           )}
-          <MagnifyingGlassIcon className='size-4'/>
+          <MagnifyingGlassIcon color={darkMode
+                                 ? (customizations.generalLayout?.fontColorDark || '')
+                                 : (customizations.generalLayout?.fontColor || '')}
+                               className='size-4' />
         </div>
       }
     />
