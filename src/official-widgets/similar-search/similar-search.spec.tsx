@@ -235,6 +235,20 @@ describe('similar-search', () => {
     });
 
     expect(testComponent.baseElement).toMatchSnapshot();
+
+    // Upon clicking close button, modal should close
+
+    act(() => {
+      const closeButton = testComponent.getByTestId('wigmix-close-button');
+      closeButton.click();
+
+      // Wait for the modal to close
+      jest.advanceTimersByTime(500);
+    });
+
+    const modal = testComponent.queryByTestId('wigmix-modal');
+    // Check against a class name that is indicative of a closed modal
+    expect(modal!.className).toContain('ReactModal__Content--before-close');
   });
 
   // TODO find out how to test mobile view

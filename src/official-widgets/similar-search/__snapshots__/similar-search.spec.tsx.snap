@@ -236,6 +236,7 @@ exports[`similar-search should render a successful response with default config 
             <div
               class="absolute right-4 top-2 bg-transparent md:right-5 md:top-4 rounded-full p-1 hover:opacity-90"
               data-pw="ss-close-button"
+              data-testid="wigmix-close-button"
             >
               <div
                 class="size-6 cursor-pointer"
