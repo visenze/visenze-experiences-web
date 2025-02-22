@@ -1776,8 +1776,8 @@ exports[`similar-search should render a successful response with default config 
             POWERED BY 
           </p>
           <img
-            class="h-5 object-center pb-1 pl-1"
-            src="https://visenze-static.s3.amazonaws.com/demos/ms-adidas/ViSenze-FullColor-Horizontal.png"
+            class="h-5 object-center py-0.5 pl-1"
+            src="https://cdn.visenze.com/images/visenze-logo-sm.png"
           />
         </div>
       </div>
