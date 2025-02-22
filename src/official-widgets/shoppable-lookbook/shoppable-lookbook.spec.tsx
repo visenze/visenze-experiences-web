@@ -1,25 +1,25 @@
-import { IntlProvider } from 'react-intl';
 import { act, fireEvent, render, type RenderResult } from '@testing-library/react';
+import { IntlProvider } from 'react-intl';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import EmbeddedGrid from './embedded-grid';
-import type { WidgetConfig } from '../../common/wigmix-core';
-import { WidgetDataContext } from '../../common/types/contexts';
-import getWidgetClient from '../../common/client/widget-client';
-import { RootContext } from '../../common/components/shadow-wrapper';
+import ShoppableLookbook from './shoppable-lookbook';
 import {
   getStandardRecommendationPidNotFoundResponse,
   getStandardRecommendationSuccessResponse,
 } from '../../../mocks/responses';
+import getWidgetClient from '../../common/client/widget-client';
+import { RootContext } from '../../common/components/shadow-wrapper';
 import type { LanguagePack } from '../../common/locales/locale';
+import { WidgetDataContext } from '../../common/types/contexts';
+import type { WidgetConfig } from '../../common/wigmix-core';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-describe('embedded-grid', () => {
+describe('shoppable-lookbook', () => {
   let testComponent: RenderResult;
   const texts: LanguagePack = {
     en: {
-      widgetTitle: 'Embedded Grid 103',
+      widgetTitle: 'Shoppable Lookbook 841',
     },
   };
   const mockVisearchClient: ViSearchClient = {
@@ -80,7 +80,7 @@ describe('embedded-grid', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <EmbeddedGrid productId='pid-not-found' />
+              <ShoppableLookbook productId='pid-not-found' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -112,7 +112,7 @@ describe('embedded-grid', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <EmbeddedGrid productId='pid-found' />
+              <ShoppableLookbook productId='pid-found' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -141,11 +141,80 @@ describe('embedded-grid', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <EmbeddedGrid productId='pid-found' />
+              <ShoppableLookbook productId='pid-found' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
     );
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    expect(testComponent.asFragment()).toMatchSnapshot();
+  });
+
+  it('should render a successful response with object hotspots', () => {
+    const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_grid', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productSearchById: jest.fn().mockImplementation((_, __, handler) => {
+        const standardResponse = getStandardRecommendationSuccessResponse();
+        const scrambledResult = scrambledOrder.map((i) => standardResponse.result![i]);
+        standardResponse.objects = [
+          {
+            score: 0.9,
+            id: '',
+            result: [...(standardResponse.result || [])],
+            type: '',
+            box: [10, 10, 20, 20],
+            attributes: {},
+            box_type: '',
+          },
+          {
+            score: 0.8,
+            id: '',
+            result: [...scrambledResult],
+            type: '',
+            box: [20, 20, 30, 30],
+            attributes: {},
+            box_type: '',
+          },
+        ];
+        handler(standardResponse);
+      }),
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <ShoppableLookbook productId='pid-found' />
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const referenceImage = testComponent.getByTestId('wigmix-reference-image');
+      fireEvent.load(referenceImage);
+    });
+
+    // Click another hotspot to change the displayed products
+
+    act(() => {
+      const hotspotDots = testComponent.queryAllByTestId('wigmix-hotspot-dot');
+      fireEvent.click(hotspotDots[1]);
+    });
 
     act(() => {
       const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
