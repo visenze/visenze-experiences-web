@@ -59,7 +59,6 @@
     "@heroui/checkbox": "^2.3.9",
     "@heroui/input": "^2.4.10",
     "@heroui/listbox": "^2.3.10",
-    "@heroui/radio": "^2.3.9",
     "@heroui/skeleton": "^2.2.6",
     "@heroui/slider": "^2.4.8",
     "@heroui/spinner": "^2.2.7",
