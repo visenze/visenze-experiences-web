@@ -190,6 +190,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                       <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
                         <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
                              onClick={(): void => toggleFullResults()}
+                             data-testid='wigmix-full-results-toggle'
                              data-pw='itg-arrow-button'
                         >
                           {showFullResults ? (
