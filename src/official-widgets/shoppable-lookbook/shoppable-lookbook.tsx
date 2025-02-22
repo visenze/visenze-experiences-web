@@ -48,8 +48,8 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
   });
 
   const resizeObjectDots = (image: HTMLImageElement): void => {
-    const heightScale = image.clientHeight / image.naturalHeight;
-    const widthScale = image.clientWidth / image.naturalWidth;
+    const heightScale = (image.clientHeight / image.naturalHeight) || 1;
+    const widthScale = (image.clientWidth / image.naturalWidth) || 1;
     if (objects.length > 0) {
       const normalizedObjs = objects.map((object, index) => {
         const { box } = object;
@@ -107,14 +107,14 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
                   {objectDots.map((obj, index) => (
                       <button
                           data-pw='sl-hotspot-dot'
+                          data-testid='wigmix-hotspot-dot'
                           className={`group absolute z-10 flex items-center justify-center rounded-full bg-[#515151] transition-all
                     duration-300 hover:size-6 hover:-translate-x-3 hover:-translate-y-3 hover:ring-1 hover:ring-white
                     ${objectIndex === index ? 'size-6 -translate-x-3 -translate-y-3 ring-1 ring-white' : 'size-4 -translate-x-2 -translate-y-2'}`}
                           style={{ top: obj.top, left: obj.left }}
                           key={obj.index}
                           onClick={(): void => setObjectIndex(index)}>
-                        <div
-                            className={`rounded-full bg-white transition-all duration-300 group-hover:size-4 ${objectIndex === index ? 'size-4' : 'size-2'}`}></div>
+                        <div className={`rounded-full bg-white transition-all duration-300 group-hover:size-4 ${objectIndex === index ? 'size-4' : 'size-2'}`}></div>
                       </button>
                   ))}
                   {!referenceImageUrl && <Skeleton className='aspect-square' />}
@@ -124,6 +124,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
                           className='wigmix-reference-image size-full object-cover'
                           src={referenceImageUrl}
                           onLoad={onImageLoad}
+                          data-testid='wigmix-reference-image'
                           data-pw='sl-reference-image'
                       />
                   )}

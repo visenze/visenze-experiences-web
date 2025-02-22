@@ -1,6 +1,7 @@
 import { fireEvent, act, render, type RenderResult } from '@testing-library/react';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { IntlProvider } from 'react-intl';
+import { Context as ResponsiveContext } from 'react-responsive';
 import type { LanguagePack } from '../../common/locales/locale';
 import type { WidgetConfig } from '../../common/wigmix-core';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
@@ -235,9 +236,74 @@ describe('similar-search', () => {
     });
 
     expect(testComponent.baseElement).toMatchSnapshot();
+
+    // Upon clicking close button, modal should close
+
+    act(() => {
+      const closeButton = testComponent.getByTestId('wigmix-close-button');
+      closeButton.click();
+
+      // Wait for the modal to close
+      jest.advanceTimersByTime(500);
+    });
+
+    const modal = testComponent.queryByTestId('wigmix-modal');
+    // Check against a class name that is indicative of a closed modal
+    expect(modal!.className).toContain('ReactModal__Content--before-close');
   });
 
-  // TODO find out how to test mobile view
+  it('should render a successful response with default config in mobile view', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        expect(params).toEqual({
+          im_url: 'test-imurl',
+          return_fields_mapping: true,
+          return_query_sys_meta: true,
+        });
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
+        expect(params).toEqual({
+          q: '',
+          im_url: 'test-imurl',
+          return_fields_mapping: true,
+          return_query_sys_meta: true,
+        });
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <ResponsiveContext.Provider value={{ width: 600 }}>
+                <SimilarSearch imUrl='test-imurl' />
+              </ResponsiveContext.Provider>
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const fullResultsToggleButton = testComponent.getByTestId('wigmix-full-results-toggle');
+      fullResultsToggleButton.click();
+    });
+
+    expect(testComponent.baseElement).toMatchSnapshot();
+  });
 
   it('should show find similar results successfully', () => {
     const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
@@ -403,4 +469,6 @@ describe('similar-search', () => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
     });
   });
+
+  // TODO add test for clicking on search history
 });

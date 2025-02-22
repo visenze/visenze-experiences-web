@@ -119,6 +119,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
     <>
       {!customizations.popup?.triggerIcon?.hide && (
           <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+               data-testid='wigmix-popup-trigger-button'
                onClick={onPopupIconClick}>
             {customizations.popup?.triggerIcon?.url ? (
                 <CustomizableIcon
@@ -149,6 +150,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
           <div
             className='absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90'
             onClick={onModalClose}
+            data-testid='wigmix-close-button'
             data-pw='itg-close-button'>
             <CloseIcon className='size-6'
                        color={darkMode
@@ -188,6 +190,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                       <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
                         <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
                              onClick={(): void => toggleFullResults()}
+                             data-testid='wigmix-full-results-toggle'
                              data-pw='itg-arrow-button'
                         >
                           {showFullResults ? (
