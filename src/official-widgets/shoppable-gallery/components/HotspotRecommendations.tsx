@@ -7,7 +7,7 @@ import ViSenzeModal from '../../../common/components/modal/visenze-modal';
 import { CroppingContext, WidgetDataContext } from '../../../common/types/contexts';
 import { getFlattenProducts, getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 import ProductCard from '../../../common/components/product-card/ProductCard';
-import ImageCropThumbnail from './ImageCropThumbnail';
+import ImageCropThumbnail from '../../../common/components/crop/ImageCropThumbnail';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import CloseIcon from '../../../common/icons/CloseIcon';
 
