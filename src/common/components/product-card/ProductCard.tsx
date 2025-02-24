@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState, type CSSProperties, type FC } from 'react';
 import { Skeleton } from '@heroui/skeleton';
+import { cn } from '@heroui/theme';
 import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 import ResultLogicImpl from '../../client/result-logic';
@@ -216,8 +217,19 @@ const ProductCard: FC<ProductCardProps> = ({
          data-testid='wigmix-product-card-anchor'>
         <div className='wigmix-product-card-image-container'>
           <div className='flex justify-center relative'>
-            {isLoading && <Skeleton className={`aspect-square size-full ${imageClasses || ''}`} />}
-            <img className={`wigmix-product-card-image aspect-square object-contain ${imageClasses || ''}`} src={result.im_url} alt=''
+            {isLoading && (
+                <Skeleton className={cn(
+                            `wigmix-product-card-image size-full ${imageClasses || ''}`,
+                            customizations.productCard?.imageAspectRatio ? '' : 'aspect-square',
+                          )}
+                          style={{ aspectRatio: customizations.productCard?.imageAspectRatio || '' }}/>
+            )}
+            <img className={cn(
+                   `wigmix-product-card-image object-contain ${imageClasses || ''}`,
+                   customizations.productCard?.imageAspectRatio ? '' : 'aspect-square',
+                 )}
+                 src={result.im_url} alt=''
+                 style={{ aspectRatio: customizations.productCard?.imageAspectRatio || '' }}
                  onLoad={() => {
                    setIsLoading(false);
                  }}
