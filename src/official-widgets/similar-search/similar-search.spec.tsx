@@ -312,11 +312,14 @@ describe('similar-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-imurl') {
           handler(getStandardMultiSearchSuccessResponse());
-        } else if (params.im_url === 'https://main-image-5') {
+        } else if (params.pid === 'pid-5') {
           const standardResponse = getStandardMultiSearchSuccessResponse();
           // Just scramble the results
           standardResponse.result = scrambledOrder.map((i) => standardResponse.result![i]);
           handler(standardResponse);
+        } else {
+          // Fail; other parameter combinations are not expected here
+          expect(true).toBeFalsy();
         }
       }),
       productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
@@ -362,8 +365,11 @@ describe('similar-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-imurl') {
           handler(getStandardMultiSearchSuccessResponse());
-        } else if (params.im_url === 'https://main-image-5') {
+        } else if (params.pid === 'pid-5') {
           handler(getStandardMultiSearchInvalidImageResponse());
+        } else {
+          // Fail; other parameter combinations are not expected here
+          expect(true).toBeFalsy();
         }
       }),
       productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {

@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetDataContext } from '../../common/types/contexts';
-import type { SearchImage } from '../../common/types/image';
+import type { SearchImageOrPid } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
@@ -33,12 +33,12 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl, renderModalWithoutPortal
   const breakpoint = useBreakpoint();
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [image, setImage] = useState<SearchImage | undefined>();
+  const [image, setImage] = useState<SearchImageOrPid | undefined>();
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(ScreenType.LOADING);
   const [boxData, setBoxData] = useState<BoxData | undefined>();
-  const [searchHistory, setSearchHistory] = useState<SearchImage[]>([]);
-  const [lastSuccessfulImage, setLastSuccessfulImage] = useState<SearchImage | undefined>();
+  const [searchHistory, setSearchHistory] = useState<SearchImageOrPid[]>([]);
+  const [lastSuccessfulImage, setLastSuccessfulImage] = useState<SearchImageOrPid | undefined>();
   const root = useContext(RootContext);
 
   const {
@@ -78,12 +78,12 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl, renderModalWithoutPortal
     }, 300);
   };
 
-  const appendSearchHistory = (searchImage: SearchImage): void => {
+  const appendSearchHistory = (searchImage: SearchImageOrPid): void => {
     const previousSearches = searchHistory.filter((prev) => prev !== searchImage);
     setSearchHistory([searchImage, ...previousSearches]);
   };
 
-  const onFindSimilar = (data: SearchImage): void => {
+  const onFindSimilar = (data: SearchImageOrPid): void => {
     if (image === data) {
       // Fake the search if same image
       setScreen(ScreenType.LOADING);

@@ -6,7 +6,7 @@ import { Listbox, ListboxItem } from '@heroui/listbox';
 import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
 import { WidgetDataContext } from '../../../common/types/contexts';
-import type { SearchImage } from '../../../common/types/image';
+import type { SearchImageOrPid } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import Footer from '../../../common/components/Footer';
@@ -29,14 +29,14 @@ const swipeConfig = {
 
 interface ResultScreenProps {
   productResults: ProcessedProduct[];
-  image?: SearchImage;
+  image?: SearchImageOrPid;
   autocompleteResults?: string[];
   metadata: Record<string, any>;
   onModalClose: () => void;
   onTextSearch: (text: string) => void;
-  onFindSimilar: (data: SearchImage) => void;
+  onFindSimilar: (data: SearchImageOrPid) => void;
   onKeywordUpdate: (q: string) => void;
-  searchHistory: SearchImage[];
+  searchHistory: SearchImageOrPid[];
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
@@ -72,7 +72,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
     setShowFullResults((v) => !v);
   };
 
-  const getFile = (searchImage: SearchImage | undefined): string => {
+  const getFile = (searchImage: SearchImageOrPid | undefined): string => {
     if (!searchImage) {
       return '';
     }
@@ -202,7 +202,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   <ProductCard key={`${result.product_id}-${index}`}
                                onFindSimilar={(data) => {
                                  setSearch('');
-                                 return onFindSimilar({ imgUrl: data.im_url });
+                                 return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
                                }}
                                index={index}
                                result={result}
@@ -221,7 +221,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           showFullResults ? 'opacity-100 pb-2 z-20' : 'opacity-0',
           'absolute bottom-8 left-0 w-full pt-1 transition-all duration-700',
         )}>
-        <div className='px-3 pt-2'>
+        <div className='bg-primary px-3 pt-2'>
           {/* Refinement Text Bar */}
           <Input
             isClearable
@@ -264,9 +264,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
       <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
           <div className='relative left-0 row-span-1 h-full w-1/3 py-4'>
-            <div className='flex h-full flex-col justify-between px-16 md:px-6'>
+            <div className='flex h-full flex-col justify-between px-16 md:px-6 overflow-y-scroll'>
               <div
-                className='mt-4 flex flex-col items-center rounded-md border border-black text-center'>
+                className='wigmix-reference-image-container mt-4 flex flex-col items-center text-center'>
                 <img src={getFile(image)} className='wigmix-reference-image rounded-md object-contain object-center aspect-square md:h-full' data-pw='ss-reference-image'/>
               </div>
 
@@ -275,13 +275,13 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   <p>
                     {intl.formatMessage({ id: 'previousViews' })}
                   </p>
-                  <div className='no-scrollbar flex h-full flex-row gap-1 overflow-scroll pt-1' data-pw='ss-previous-views'>
+                  <div className='no-scrollbar flex flex-row gap-1 overflow-scroll pt-1' data-pw='ss-previous-views'>
                     {searchHistory
                       ?.slice(1)
                       .map((searchImage, index) => (
                         <img
                           key={`image-history-${index}`}
-                          className='aspect-square w-1/3 cursor-pointer rounded-lg object-contain'
+                          className='aspect-square w-1/3 cursor-pointer rounded-lg object-cover'
                           src={getFile(searchImage)}
                           onClick={() => onFindSimilar(searchImage)}
                           data-pw={`ss-previous-views-image-${index + 1}`}
@@ -357,7 +357,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     <ProductCard key={`${result.product_id}-${index}`}
                                  onFindSimilar={(data) => {
                                    setSearch('');
-                                   return onFindSimilar({ imgUrl: data.im_url });
+                                   return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
                                  }}
                                  index={index}
                                  result={result}

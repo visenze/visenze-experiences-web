@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 import type { ProductSearchResponse, ProductSearchResponseSuccess, ProductType } from 'visearch-javascript-sdk';
 import { WidgetDataContext } from '../../types/contexts';
 import { Actions, Category } from '../../types/tracking-constants';
-import type { SearchImage } from '../../types/image';
-import { isImageFile, isImageUrl } from '../../types/image';
+import type { SearchImageOrPid } from '../../types/image';
+import { isImageFile, isImageUrl, isPid } from '../../types/image';
 import type { BoxData, ProcessedProduct } from '../../types/product';
 import { getFlattenProducts, parseBox, parseToProductTypes } from '../../utils';
 
@@ -17,14 +17,16 @@ const getMetadata = (
 };
 
 const getSearchParams = (
-  img: SearchImage,
+  img: SearchImageOrPid,
   imageId: string,
   searchSettings: Record<string, any>,
   product: BoxData | ProductType | undefined,
 ): Record<string, any> => {
   const params = { ...searchSettings };
 
-  if (isImageUrl(img)) {
+  if (isPid(img)) {
+    params['pid'] = img.pid;
+  } else if (isImageUrl(img)) {
     params['im_url'] = img.imgUrl;
   } else if (isImageFile(img)) {
     params['image'] = img.files[0];
@@ -56,7 +58,7 @@ const parseResults = (res: ProductSearchResponseSuccess, boxData?: BoxData): Pro
 };
 
 interface ImageMultisearchProps {
-  image: SearchImage | undefined;
+  image: SearchImageOrPid | undefined;
   boxData: BoxData | undefined;
 }
 
@@ -171,6 +173,8 @@ const useImageMultisearch = ({
       const productTypes = parseToProductTypes(response);
       if (productTypes.length) {
         setProductTypes(productTypes);
+      } else {
+        setProductTypes([]);
       }
 
       autocompleteWithQuery('');

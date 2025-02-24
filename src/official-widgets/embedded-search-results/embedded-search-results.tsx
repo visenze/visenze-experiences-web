@@ -20,7 +20,8 @@ import type { FacetType } from '../../common/types/constants';
 import FilterOptions, { showFacet } from './components/FilterOptions';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import FilterIcon from '../../common/icons/FilterIcon';
-import type { ImageUrl } from '../../common/types/image';
+import type { SearchImageOrPid } from '../../common/types/image';
+import { isImageUrl, isPid } from '../../common/types/image';
 import SearchBarInput from './components/SearchBarInput';
 import SearchHistory, { MAX_HISTORY_ITEMS } from './components/SearchHistory';
 import type { SearchHistoryEntry } from './components/SearchHistory';
@@ -53,7 +54,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [image, setImage] = useState<SearchImageOrPid | undefined>();
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [activeHistory, setActiveHistory] = useState<SearchHistoryEntry>();
   const [page, setPage] = useState(1);
@@ -111,7 +112,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     setActiveHistory(newEntry);
   };
 
-  const multisearchWithSearchBarDetails = (imgUrl?: string, text?: string, currentPage?: number, shouldResetFacets = true): void => {
+  const multisearchWithSearchBarDetails = (imgOrPid?: SearchImageOrPid, text?: string, currentPage?: number, shouldResetFacets = true): void => {
     if (currentPage && currentPage > 1) {
       setIsLoadingMore(true);
     } else {
@@ -136,8 +137,12 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     if (text) {
       params['q'] = text;
     }
-    if (imgUrl) {
-      params['im_url'] = imgUrl;
+    if (imgOrPid) {
+      if (isPid(imgOrPid)) {
+        params['pid'] = imgOrPid.pid;
+      } else if (isImageUrl(imgOrPid)) {
+        params['im_url'] = imgOrPid.imgUrl;
+      }
     }
     params['limit'] = 24; // hardcode for now
 
@@ -145,13 +150,15 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       handleSuccess(res, shouldResetFacets);
 
       // Only add to history if image URL is used
-      if (imgUrl) {
+      // This flow can only be reached with non-null image URL; PID is optional
+      if (imgOrPid && isImageUrl(imgOrPid)) {
         const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
-          id: imgUrl,
+          id: imgOrPid.imgUrl,
+          imageUrl: imgOrPid.imgUrl,
         };
 
-        if (imgUrl) {
-          historyEntry.imageUrl = imgUrl;
+        if (isPid(imgOrPid)) {
+          historyEntry.pid = imgOrPid.pid;
         }
 
         setSearchHistory((prevHistory) => {
@@ -173,11 +180,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   };
 
   const searchFromHistory = (entry: SearchHistoryEntry): void => {
-    let imgUrl: string | undefined;
-    if (entry.imageUrl) {
-      imgUrl = entry.imageUrl;
-      setImageUrl(entry.imageUrl);
-    }
+    const imgUrl: SearchImageOrPid = {
+      imgUrl: entry.imageUrl,
+      pid: entry.pid || '',
+    };
+    setImage(imgUrl);
     multisearchWithSearchBarDetails(imgUrl, query, 1);
     setIsLoading(true);
   };
@@ -187,21 +194,21 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     if (entry.id !== activeHistory?.id) {
       searchFromHistory(entry);
     } else {
-      setImageUrl('');
+      setImage(undefined);
       setProductResults([]);
       setActiveHistory(undefined);
       setIsLoading(true);
       setIsFirstLoad(true);
-      multisearchWithSearchBarDetails(imageUrl, query, 1);
+      multisearchWithSearchBarDetails(image, query, 1);
     }
   };
 
   const onHistoryRemove = (entry: SearchHistoryEntry, isActiveHistoryRemoved: boolean): void => {
     setSearchHistory((prev) => prev.filter((hist) => hist.id !== entry.id));
     if (isActiveHistoryRemoved) {
-      setImageUrl('');
+      setImage(undefined);
       if (query) {
-        multisearchWithSearchBarDetails('', query, 1);
+        multisearchWithSearchBarDetails(undefined, query, 1);
       } else {
         // empty input
         setProductResults([]);
@@ -210,15 +217,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     }
   };
 
-  const findSimilarClickHandler = (imgUrl?: string): void => {
+  const findSimilarClickHandler = (imgOrPid: SearchImageOrPid): void => {
     setPage(1);
-    if (imgUrl) {
-      const image: ImageUrl = { imgUrl };
-      const event = new CustomEvent('wigmix_search_bar_append_image', { detail: image });
+    if (isImageUrl(imgOrPid)) {
+      const event = new CustomEvent('wigmix_search_bar_append_image', { detail: { imgUrl: imgOrPid.imgUrl } });
       document.dispatchEvent(event);
-      setImageUrl(imgUrl);
     }
-    multisearchWithSearchBarDetails(imgUrl, query, 1);
+    setImage(imgOrPid);
+    multisearchWithSearchBarDetails(imgOrPid, query, 1);
     setIsLoading(true);
   };
 
@@ -231,7 +237,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
           if (hasNextPage) {
             setPage((prevPage) => {
               const nextPage = prevPage + 1;
-              multisearchWithSearchBarDetails(imageUrl, query, nextPage, false);
+              multisearchWithSearchBarDetails(image, query, nextPage, false);
               return nextPage;
             });
           }
@@ -247,12 +253,12 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     return (): void => {
       observer.disconnect();
     };
-  }, [isLoading, isLoadingMore, imageUrl, productResults.length]);
+  }, [isLoading, isLoadingMore, image, productResults.length]);
 
   useEffect(() => {
     if (!isLoading) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      multisearchWithSearchBarDetails(imageUrl, query, 1, false);
+      multisearchWithSearchBarDetails(image, query, 1, false);
     }
   }, [selectedFilters]);
 
@@ -264,9 +270,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
 
   useEffect(() => {
     setQuery(textQuery);
-    setImageUrl(imUrl);
+    if (imUrl) {
+      setImage({ imgUrl: imUrl });
+    }
     if (imUrl || textQuery) {
-      multisearchWithSearchBarDetails(imUrl, textQuery);
+      multisearchWithSearchBarDetails(imUrl ? { imgUrl: imUrl } : undefined, textQuery);
     } else {
       setIsLoading(false);
     }
@@ -294,8 +302,8 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                 query={query}
                 setQuery={setQuery}
                 emitSearchBarCallback={() => {
-                  if (imageUrl) {
-                    findSimilarClickHandler(imageUrl);
+                  if (image) {
+                    findSimilarClickHandler(image);
                   } else if (query) {
                     multisearchWithSearchBarDetails(undefined, query);
                   } else {
@@ -314,7 +322,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                 activeHistory={activeHistory}
                 setActiveHistory={setActiveHistory}
                 history={searchHistory}
-                multisearchWithSearchBarDetails={findSimilarClickHandler}
                 onHistorySelect={onHistorySelect}
                 onHistoryRemove={onHistoryRemove}
               />
@@ -390,7 +397,10 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                                            metadata={metadata}
                                            onFindSimilar={(data) => {
                                              if (!isLoading) {
-                                               findSimilarClickHandler(data.im_url);
+                                               findSimilarClickHandler({
+                                                 imgUrl: data.im_url,
+                                                 pid: data.product_id,
+                                               });
                                              }
                                            }}
                                            isRecommendation={true}
@@ -400,7 +410,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                         </div>
                         : <div className={cn(
                           'flex flex-col gap-y-2 py-24 text-center md:w-3/4',
-                          !query && !imageUrl && 'hidden',
+                          !query && !image && 'hidden',
                         )}>
                           <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noResults' })}</p>
                           <p className='text-primary'>{intl.formatMessage({ id: 'noResultsDescription' })}</p>
@@ -416,7 +426,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
           </div>
         </div>
 
-        {!isLoading && !query && !imageUrl && productResults.length === 0 && (
+        {!isLoading && !query && !image && productResults.length === 0 && (
           <div className='flex w-full flex-col items-center justify-center gap-y-2 py-24 text-center'>
             <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noSearchInput' })}</p>
             <p className='text-primary'>{intl.formatMessage({ id: 'noSearchInputDescription' })}</p>
