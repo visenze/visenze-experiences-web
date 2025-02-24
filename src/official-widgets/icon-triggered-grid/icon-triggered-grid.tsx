@@ -25,6 +25,7 @@ export enum ScreenType {
 
 interface IconTriggeredGridProps {
   productId: string;
+  renderModalWithoutPortal?: boolean;
 }
 
 const swipeConfig = {
@@ -36,9 +37,9 @@ const swipeConfig = {
   touchEventOptions: { passive: true }, // options for touch listeners (*See Details*)
 };
 
-const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
+const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalWithoutPortal }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [error, setError] = useState('');
@@ -144,7 +145,11 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
         open={dialogVisible}
         layout={breakpoint}
         onClose={onModalClose}
-        position={customizations.popup?.position || 'center'}>
+        position={customizations.popup?.position || 'center'}
+        darkMode={darkMode}
+        fontFamily={customizations.generalLayout?.fontFamily}
+        placementId={`${appSettings.placementId}`}
+        renderWithoutPortal={!!renderModalWithoutPortal}>
         <div className='relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1'>
           {/* Close Button */}
           <div

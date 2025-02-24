@@ -24,11 +24,12 @@ enum ScreenType {
 
 interface SimilarSearchProps {
   imUrl: string;
+  renderModalWithoutPortal?: boolean;
 }
 
-const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
+const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl, renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
-  const { customizations, searchSettings } = widgetConfig;
+  const { appSettings, customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -255,7 +256,11 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl }) => {
       )}
 
       <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
-                    position={customizations.popup?.position || 'right'}>
+                    renderWithoutPortal={!!renderModalWithoutPortal}
+                    position={customizations.popup?.position || 'right'}
+                    darkMode={darkMode}
+                    fontFamily={customizations.generalLayout?.fontFamily}
+                    placementId={`${appSettings.placementId}`}>
         {getScreen()}
       </ViSenzeModal>
     </>

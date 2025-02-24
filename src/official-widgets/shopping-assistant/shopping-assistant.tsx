@@ -28,10 +28,10 @@ const PRODUCT_LINE_REGEX = /^(?:\d+\.? |- )?\[\[(.*)]]/;
 const IMAGE_LINE_REGEX = /^ *!\[/;
 
 interface ShoppingAssistantProps {
-  // no properties at the moment
+  renderModalWithoutPortal?: boolean;
 }
 
-const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
+const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
@@ -342,7 +342,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
             </div>
         )}
         <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
-                      position={customizations.popup?.position || 'center'}>
+                      renderWithoutPortal={!!renderModalWithoutPortal}
+                      position={customizations.popup?.position || 'center'}
+                      darkMode={darkMode}
+                      fontFamily={customizations.generalLayout?.fontFamily}
+                      placementId={`${appSettings.placementId}`}>
           {getScreen()}
         </ViSenzeModal>
       </>

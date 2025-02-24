@@ -29,11 +29,12 @@ import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 interface EmbeddedSearchResultProps {
   textQuery: string;
   imUrl: string;
+  renderModalWithoutPortal?: boolean;
 }
 
-const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl }): ReactElement => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
-  const { customizations, displaySettings, searchSettings } = widgetConfig;
+const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl, renderModalWithoutPortal }): ReactElement => {
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
@@ -346,6 +347,10 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                     open={showMobileFilterOptions} layout='mobile'
                     onClose={() => setShowMobileFilterOptions(false)}
                     position='center'
+                    placementId={`${appSettings.placementId}`}
+                    darkMode={darkMode}
+                    fontFamily={customizations.generalLayout?.fontFamily}
+                    renderWithoutPortal={!!renderModalWithoutPortal}
                 >
                   <FilterOptions
                       displayAsDropdown={false}

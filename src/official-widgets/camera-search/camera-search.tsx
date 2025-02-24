@@ -26,12 +26,12 @@ enum ScreenType {
 }
 
 interface CameraSearchProps {
-  // no properties at the moment
+  renderModalWithoutPortal?: boolean;
 }
 
-const CameraSearch: FC<CameraSearchProps> = () => {
+const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
-  const { customizations, searchSettings } = widgetConfig;
+  const { appSettings, customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -272,7 +272,11 @@ const CameraSearch: FC<CameraSearchProps> = () => {
           open={dialogVisible}
           layout={breakpoint}
           onClose={onModalClose}
-          position={customizations.popup?.position || 'center'}>
+          position={customizations.popup?.position || 'center'}
+          darkMode={darkMode}
+          fontFamily={customizations.generalLayout?.fontFamily}
+          placementId={`${appSettings.placementId}`}
+          renderWithoutPortal={!!renderModalWithoutPortal}>
           {getScreen()}
         </ViSenzeModal>
       </CroppingProvider>
