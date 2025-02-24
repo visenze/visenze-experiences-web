@@ -1,5 +1,5 @@
 import type { FC, ReactElement } from 'react';
-import { useEffect, useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Listbox, ListboxItem, ListboxSection } from '@heroui/listbox';
 import { Button } from '@heroui/button';
 import { cn } from '@heroui/theme';
@@ -38,7 +38,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
-  const [, setShowDropdown] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [suggestionMax, setSuggestionMax] = useState(6);
   const [relatedMax] = useState(8);
@@ -56,7 +56,6 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
   });
 
   const {
-    productCount,
     searchAsYouTypeResults,
     metadata,
   } = useSearchAsYouType({
@@ -156,6 +155,33 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
     });
   };
 
+  const useOutsideAlerter = (ref: any): void => {
+    useEffect(() => {
+      const handleClickOutside = (event: any): void => {
+        if (!ref.current || !event.target || !event.target.shadowRoot || !event.target.shadowRoot.contains(ref.current)) {
+          setShowDropdown(false);
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+      return (): void => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [ref]);
+  };
+
+  const OutsideAlerter = (props: any): ReactElement => {
+    const wrapperRef = useRef(null);
+    useOutsideAlerter(wrapperRef);
+
+    return (
+        <div ref={wrapperRef}
+             className='absolute top-12 z-20 h-[80vh] w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all'>
+          {props.children}
+        </div>
+    );
+  };
+
   if (!root) {
     return <></>;
   }
@@ -178,13 +204,16 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                             }
                             emitSearchBarCallback(query, image);
                           }}
-                          setShowDropdown={setShowDropdown}
+                          setShowDropdown={(s) => {
+                            if (s) {
+                              setShowDropdown(true);
+                            }
+                          }}
                           placementId={`${widgetConfig.appSettings.placementId}`} />
           {/* Autocomplete dropdown */}
-          {query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
-              ? (<div
-                      className='absolute top-12 z-20 h-[80vh] w-full overflow-y-auto rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all md:h-auto'
-                  >
+          {/* eslint-disable no-nested-ternary */}
+          {showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
+              ? (<OutsideAlerter>
                     <div className='relative flex flex-col divide-x divide-gray-200 py-1 md:flex-row'>
                       <div className='flex flex-col justify-between md:w-2/5'>
                         <div className='flex flex-col gap-2 px-4 py-1'>
@@ -207,7 +236,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                                                                className='size-4' />
                                       )}
                                       textValue={result}
-                                      onPress={() => {
+                                      onClick={() => {
                                         setQuery(result);
                                         emitSearchBarCallback(result, image);
                                       }}
@@ -230,7 +259,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                                 }
                               }}
                           >
-                            {intl.formatMessage({ id: 'viewAllProducts' }).replace('{productCount}', `${productCount}`)}
+                            {intl.formatMessage({ id: 'viewAllProducts' })}
                           </Button>
                         </div>
                       </div>
@@ -273,88 +302,87 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                               }
                             }}
                         >
-                          {intl.formatMessage({ id: 'viewAllProducts' }).replace('{productCount}', `${productCount}`)}
+                          {intl.formatMessage({ id: 'viewAllProducts' })}
                         </Button>
                       </div>
                     </div>
-                  </div>
+                  </OutsideAlerter>
               )
-              : <div
-                  className='absolute top-12 z-20 w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all'
-                  aria-label='Drag or upload image'
-              >
-                <div className='flex divide-x divide-gray-200 py-1'>
-                  <div className='flex-1'>
-                    <div className='flex flex-col gap-2 px-4 py-1'>
-                      <p className='text-large font-semibold leading-6 text-primary'>
-                        {intl.formatMessage({ id: 'recentSearches' })}
-                      </p>
-                      <Listbox
-                          aria-label='Recent searches'
-                      >
-                        <ListboxSection classNames={{ base: 'mb-0' }}>
-                          {searchHistory.slice(0, 4).map((entry) => (
-                              <ListboxItem
-                                  tabIndex={0}
-                                  className='pr-4'
-                                  key={String(entry.query)}
-                                  endContent={(
-                                      <MagnifyingGlassIcon color={darkMode
-                                                             ? (customizations.generalLayout?.fontColorDark || '')
-                                                             : (customizations.generalLayout?.fontColor || '')}
-                                                           className='size-4' />
-                                  )}
-                                  textValue={entry.query || ''}
-                                  onPress={() => {
-                                    if (entry && entry.query) {
-                                      updateSavedHistory(entry.query);
-                                      setQuery(entry.query);
-                                      emitSearchBarCallback(entry.query, image);
-                                    }
-                                }}
+              : (showDropdown && (searchHistory.length > 0 || customizations.imageUpload?.enable))
+                  ? <OutsideAlerter>
+                    <div className='flex justify-center divide-x divide-gray-200 py-1'>
+                      {searchHistory.length > 0 && (
+                          <div className='flex-1'>
+                            <div className='flex flex-col gap-2 px-4 py-1'>
+                              <p className='text-large font-semibold leading-6 text-primary'>
+                                {intl.formatMessage({ id: 'recentSearches' })}
+                              </p>
+                              <Listbox
+                                  aria-label='Recent searches'
                               >
-                                <span className='pl-2 text-primary'>{entry.query}</span>
-                              </ListboxItem>
-                          ))}
-                        </ListboxSection>
-                      </Listbox>
-                    </div>
-                  </div>
-
-                  {customizations.imageUpload?.enable && (
-                      <div className='hidden w-2/5 justify-center md:flex'>
-                        <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload-dropdown'>
-                          <div
-                              className='flex flex-col items-center gap-6 py-1 text-center text-medium'>
-                            {customizations.imageUpload?.icon?.url ? (
-                                <CustomizableIcon
-                                    height={80}
-                                    width={80}
-                                    url={customizations.imageUpload.icon.url}
-                                    color={darkMode
-                                      ? (customizations.imageUpload.icon.colorDark || '')
-                                      : (customizations.imageUpload.icon.color || '')}
-                                />
-                            ) : (
-                                <UploadIcon className='size-20'
-                                            color={darkMode
-                                              ? (customizations.imageUpload?.icon?.colorDark || '')
-                                              : (customizations.imageUpload?.icon?.color || '')} />
-                            )}
-
-                            <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
-                              {intl.formatMessage({ id: 'dragImageToSearch' })}
-                            </p>
-
-                            <p className='pt-3 leading-6 text-primary md:hidden'>
-                              {intl.formatMessage({ id: 'tapToSearchImage' })}
-                            </p>
+                                <ListboxSection classNames={{ base: 'mb-0' }}>
+                                  {searchHistory.slice(0, 4).map((entry) => (
+                                      <ListboxItem
+                                          tabIndex={0}
+                                          className='pr-4'
+                                          key={String(entry.query)}
+                                          endContent={(
+                                              <MagnifyingGlassIcon color={darkMode
+                                                  ? (customizations.generalLayout?.fontColorDark || '')
+                                                  : (customizations.generalLayout?.fontColor || '')}
+                                                                   className='size-4' />
+                                          )}
+                                          textValue={entry.query || ''}
+                                          onClick={() => {
+                                            if (entry && entry.query) {
+                                              updateSavedHistory(entry.query);
+                                              setQuery(entry.query);
+                                              emitSearchBarCallback(entry.query, image);
+                                            }
+                                          }}
+                                      >
+                                        <span className='pl-2 text-primary'>{entry.query}</span>
+                                      </ListboxItem>
+                                  ))}
+                                </ListboxSection>
+                              </Listbox>
+                            </div>
                           </div>
-                        </FileDropzone>
-                      </div>
-                  )}
-                </div>
-              </div>
+                      )}
+                      {customizations.imageUpload?.enable && (
+                          <div className='flex w-2/5 justify-center'>
+                            <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload-dropdown'>
+                              <div className='flex flex-col items-center gap-6 py-1 text-center text-medium'>
+                                {customizations.imageUpload?.icon?.url ? (
+                                    <CustomizableIcon
+                                        height={80}
+                                        width={80}
+                                        url={customizations.imageUpload.icon.url}
+                                        color={darkMode
+                                            ? (customizations.imageUpload.icon.colorDark || '')
+                                            : (customizations.imageUpload.icon.color || '')}
+                                    />
+                                ) : (
+                                    <UploadIcon className='size-20'
+                                                color={darkMode
+                                                    ? (customizations.imageUpload?.icon?.colorDark || '')
+                                                    : (customizations.imageUpload?.icon?.color || '')} />
+                                )}
+
+                                <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
+                                  {intl.formatMessage({ id: 'dragImageToSearch' })}
+                                </p>
+
+                                <p className='pt-3 leading-6 text-primary md:hidden'>
+                                  {intl.formatMessage({ id: 'tapToSearchImage' })}
+                                </p>
+                              </div>
+                            </FileDropzone>
+                          </div>
+                      )}
+                    </div>
+                  </OutsideAlerter>
+                  : <></>
           }
         </div>
       </div>
