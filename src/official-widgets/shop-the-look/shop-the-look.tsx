@@ -92,14 +92,15 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
   const settings = useSlideSettings();
 
   const resizeObjectDots = (image: HTMLImageElement): void => {
-    const r = image.offsetHeight / image.naturalHeight;
+    const heightScale = (image.clientHeight / image.naturalHeight) || 1;
+    const widthScale = (image.clientWidth / image.naturalWidth) || 1;
     if (objects.length > 0) {
       const normalizedObjs = objects.map((object, index) => {
         const { box } = object;
         return {
           index,
-          top: (box[1] + (box[3] - box[1]) / 2) * r,
-          left: (box[0] + (box[2] - box[0]) / 2) * r,
+          top: (box[1] + (box[3] - box[1]) / 2) * heightScale,
+          left: (box[0] + (box[2] - box[0]) / 2) * widthScale,
         };
       });
       setObjectDots(normalizedObjs);
@@ -192,6 +193,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                   <div className='relative'>
                     {objectDots.map((obj, index) => (
                         <button
+                            data-testid='wigmix-hotspot-dot'
                             data-pw='stl-hotspot-dot'
                             className={
                               `group absolute z-10 flex items-center justify-center rounded-full bg-[#515151] transition-all 
@@ -211,6 +213,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                             className='wigmix-reference-image size-full object-cover'
                             src={referenceImageUrl}
                             onLoad={onImageLoad}
+                            data-testid='wigmix-reference-image'
                             data-pw='stl-reference-image'
                         />
                     )}
