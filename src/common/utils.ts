@@ -18,7 +18,10 @@ interface ProductWithAlternatives extends Product {
   alternatives?: Product[];
 }
 
-export const getFlattenProducts = (results: Product[] = []): ProcessedProduct[] => {
+export const getFlattenProducts = (results: Product[] = [], shouldDisplayAlternatives = false): ProcessedProduct[] => {
+  if (!shouldDisplayAlternatives) {
+    return results.map((r) => getFlattenProduct(r));
+  }
   const maxNumOfAlternatives = results.map((r) => ((r as ProductWithAlternatives).alternatives || []).length)
       .reduce((a, b) => Math.max(a, b), 0);
   if (maxNumOfAlternatives === 0) {

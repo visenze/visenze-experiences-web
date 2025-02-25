@@ -737,6 +737,34 @@ export interface WidgetConfig {
       darkModeDefault: boolean;
     };
     /**
+     * Settings to influence API results or how the responses are parsed.
+     *
+     * This section is expected to be lightweight as most of API settings should instead
+     * be set through the searchSettings parameter.
+     *
+     * @internal
+     *
+     * @since 1.0.0
+     */
+    results?: {
+      /**
+       * Number of results to be returned from API.
+       *
+       * @internal Not yet used
+       *
+       * @since 1.0.0
+       */
+      limit?: number;
+      /**
+       * Whether to display alternatives as the recommendation result.
+       *
+       * @internal
+       *
+       * @since 1.0.0
+       */
+      useAlternatives?: boolean;
+    };
+    /**
      * Popup-related settings. This section is relevant only for widgets that have popup behavior.
      *
      * @since 1.0.0
