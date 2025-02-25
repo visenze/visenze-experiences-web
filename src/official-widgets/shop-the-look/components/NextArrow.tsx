@@ -15,6 +15,7 @@ const NextArrow: FC<NextArrowProps> = ({ className, onClick, iconColor }) => (
       className?.includes('slick-disabled') ? 'opacity-0' : 'opacity-100 hover:opacity-90',
     )}
     onClick={onClick}
+    data-testid='wigmix-next-arrow'
     data-pw='stl-next-arrow'
   >
     <ChevronLeftIcon className='size-6 rotate-180' color={iconColor} />

@@ -879,6 +879,12 @@ export interface WidgetConfig {
        */
       openLinksInNewTab: boolean;
       /**
+       * The aspect ratio for the product card image; defaults to 1 / 1 (square image) if not specified.
+       *
+       * @since 1.0.0
+       */
+      imageAspectRatio?: string;
+      /**
        * Configuration for price field.
        *
        * @since 1.0.0

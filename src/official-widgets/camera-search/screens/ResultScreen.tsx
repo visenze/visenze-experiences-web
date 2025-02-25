@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl';
 import type { ProductType } from 'visearch-javascript-sdk';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import FileDropzone from '../../../common/components/FileDropzone';
-import type { SearchImage } from '../../../common/types/image';
+import type { SearchImage, SearchImageOrPid } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import Footer from '../../../common/components/Footer';
@@ -38,10 +38,10 @@ interface ResultScreenProps {
   metadata: Record<string, any>;
   onModalClose: () => void;
   onBack: () => void;
-  searchHistory: SearchImage[];
+  searchHistory: SearchImageOrPid[];
   setSearchHistory: (searchHistory: SearchImage[]) => void;
   onTextSearch: (text: string) => void;
-  onFindSimilar: (data: SearchImage) => void;
+  onFindSimilar: (data: SearchImageOrPid) => void;
   onImageUpload: (img: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
 }
@@ -82,7 +82,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
     setShowFullResults((v) => !v);
   };
 
-  const getFile = (image: SearchImage | undefined): string => {
+  const getFile = (image: SearchImageOrPid | undefined): string => {
     if (!image) {
       return '';
     }
@@ -212,7 +212,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   <ProductCard key={`${result.product_id}-${index}`}
                                onFindSimilar={(data) => {
                                  setSearch('');
-                                 return onFindSimilar({ imgUrl: data.im_url });
+                                 return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
                                }}
                                index={index}
                                result={result}
@@ -273,16 +273,18 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 : customizations.generalLayout?.fontColor} />
       <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
-          <div className='relative left-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8'>
+          <div className='relative left-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8 overflow-y-scroll'>
             <div className='flex h-9/10 flex-col justify-between px-2'>
-              <div className='wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 pt-2 text-center'>
+              <div className='wigmix-reference-image-container flex w-full flex-col items-center rounded-md border border-gray-300 py-2 text-center'>
                 <HotspotContainer className='w-3/5' referenceImage={getReferenceImage()} productTypes={productTypes} />
 
-                <FileDropzone onImageUpload={onImageUpload} name='upload-icon'>
-                  <p className='px-3 py-2 leading-6'>
-                    {intl.formatMessage({ id: 'dragImageToSearch' })}
-                  </p>
-                </FileDropzone>
+                {!getReferenceImage() && (
+                    <FileDropzone onImageUpload={onImageUpload} name='upload-icon'>
+                      <p className='px-3 py-2 leading-6'>
+                        {intl.formatMessage({ id: 'dragImageToSearch' })}
+                      </p>
+                    </FileDropzone>
+                )}
               </div>
 
               {searchHistory && searchHistory.length > 1 && (
@@ -373,7 +375,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     <ProductCard key={`${result.product_id}-${index}`}
                                  onFindSimilar={(data) => {
                                    setSearch('');
-                                   return onFindSimilar({ imgUrl: data.im_url });
+                                   return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
                                  }}
                                  index={index}
                                  result={result}
@@ -432,7 +434,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
       {breakpoint === 'mobile' && getMobileView()}
       {(breakpoint === 'tablet' || breakpoint === 'desktop') && getTabletAndDesktopView()}
       {customizations.generalLayout?.showViSenzeLogo && (
-        <Footer className='fixed bottom-0 bg-primary py-2 md:absolute md:justify-start md:pl-20 lg:rounded-b-3xl' />
+        <Footer className='fixed bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl' />
       )}
     </>
   );

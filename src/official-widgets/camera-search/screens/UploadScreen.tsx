@@ -93,7 +93,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
           <div className='px-1/5 md:w-1/3 md:px-10'>
             <FileDropzone onImageUpload={onImageUpload} name='cs-upload-icon'>
               <div
-                className='wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center'>
+                className='wigmix-reference-image-container flex w-full flex-col items-center rounded-md border border-gray-300 py-1 text-center'>
                 {customizations.imageUpload?.icon?.url ? (
                     <CustomizableIcon
                         height={80}
@@ -166,7 +166,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
       </div>
 
       {customizations.generalLayout?.showViSenzeLogo && (
-        <Footer className='sticky bottom-0 bg-primary py-2 md:absolute md:justify-start md:pl-20 lg:rounded-b-3xl' dataPw='cs-visenze-footer'/>
+        <Footer className='sticky bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl' dataPw='cs-visenze-footer'/>
       )}
     </div>
   );

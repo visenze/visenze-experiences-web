@@ -7,3 +7,13 @@ Object.assign(global, { TextDecoder, TextEncoder });
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }));
+
+(window as any).matchMedia = jest.fn().mockImplementation(query => {
+  return {
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+  };
+});

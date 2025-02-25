@@ -3,7 +3,7 @@ import { useEffect, useContext, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetDataContext } from '../../common/types/contexts';
-import type { SearchImage } from '../../common/types/image';
+import type { SearchImage, SearchImageOrPid } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { parseBox } from '../../common/utils';
@@ -26,21 +26,21 @@ enum ScreenType {
 }
 
 interface CameraSearchProps {
-  // no properties at the moment
+  renderModalWithoutPortal?: boolean;
 }
 
-const CameraSearch: FC<CameraSearchProps> = () => {
+const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
-  const { customizations, searchSettings } = widgetConfig;
+  const { appSettings, customizations, searchSettings } = widgetConfig;
   const breakpoint = useBreakpoint();
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [image, setImage] = useState<SearchImage | undefined>();
+  const [image, setImage] = useState<SearchImageOrPid | undefined>();
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(ScreenType.UPLOAD);
   const [boxData, setBoxData] = useState<BoxData | undefined>();
-  const [searchHistory, setSearchHistory] = useState<SearchImage[]>([]);
-  const [lastSuccessfulImage, setLastSuccessfulImage] = useState<SearchImage | undefined>();
+  const [searchHistory, setSearchHistory] = useState<SearchImageOrPid[]>([]);
+  const [lastSuccessfulImage, setLastSuccessfulImage] = useState<SearchImageOrPid | undefined>();
   const root = useContext(RootContext);
 
   const {
@@ -85,7 +85,7 @@ const CameraSearch: FC<CameraSearchProps> = () => {
     setLastSuccessfulImage(undefined);
   };
 
-  const appendSearchHistory = (searchImage: SearchImage): void => {
+  const appendSearchHistory = (searchImage: SearchImageOrPid): void => {
     const previousSearches = searchHistory.filter((prev) => prev !== searchImage);
     setSearchHistory([searchImage, ...previousSearches]);
   };
@@ -96,7 +96,7 @@ const CameraSearch: FC<CameraSearchProps> = () => {
     setImage(data);
   };
 
-  const onFindSimilar = (data: SearchImage): void => {
+  const onFindSimilar = (data: SearchImageOrPid): void => {
     if (image === data) {
       // Fake the search if same image
       setScreen(ScreenType.LOADING);
@@ -272,7 +272,11 @@ const CameraSearch: FC<CameraSearchProps> = () => {
           open={dialogVisible}
           layout={breakpoint}
           onClose={onModalClose}
-          position={customizations.popup?.position || 'center'}>
+          position={customizations.popup?.position || 'center'}
+          darkMode={darkMode}
+          fontFamily={customizations.generalLayout?.fontFamily}
+          placementId={`${appSettings.placementId}`}
+          renderWithoutPortal={!!renderModalWithoutPortal}>
           {getScreen()}
         </ViSenzeModal>
       </CroppingProvider>

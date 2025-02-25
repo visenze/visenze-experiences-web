@@ -73,7 +73,7 @@ describe('icon-triggered-grid', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <IconTriggeredGrid productId='pid-found' />
+              <IconTriggeredGrid productId='pid-found' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -88,7 +88,7 @@ describe('icon-triggered-grid', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <IconTriggeredGrid productId='test-imurl' />
+              <IconTriggeredGrid productId='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -104,7 +104,7 @@ describe('icon-triggered-grid', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <IconTriggeredGrid productId='pid-found' />
+              <IconTriggeredGrid productId='pid-found' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -136,7 +136,7 @@ describe('icon-triggered-grid', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <IconTriggeredGrid productId='pid-not-found' />
+              <IconTriggeredGrid productId='pid-not-found' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -187,7 +187,7 @@ describe('icon-triggered-grid', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <IconTriggeredGrid productId='pid-not-found' />
+              <IconTriggeredGrid productId='pid-not-found' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -228,7 +228,7 @@ describe('icon-triggered-grid', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <IconTriggeredGrid productId='pid-found' />
+              <IconTriggeredGrid productId='pid-found' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -261,7 +261,7 @@ describe('icon-triggered-grid', () => {
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ResponsiveContext.Provider value={{ width: 600 }}>
-                <IconTriggeredGrid productId='pid-found' />
+                <IconTriggeredGrid productId='pid-found' renderModalWithoutPortal={true} />
               </ResponsiveContext.Provider>
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -301,7 +301,7 @@ describe('icon-triggered-grid', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <IconTriggeredGrid productId='pid-found' />
+              <IconTriggeredGrid productId='pid-found' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,

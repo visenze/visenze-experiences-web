@@ -15,10 +15,12 @@ import UploadIcon from '../../../common/icons/UploadIcon';
 
 interface ImageGalleryUploadProps {
   imageUploadHandler: (image: SearchImage | undefined) => void;
+  placementId: string;
   image: SearchImage | undefined;
+  renderModalWithoutPortal: boolean;
 }
 
-const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, image }) => {
+const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, placementId, image, renderModalWithoutPortal }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [openModal, setOpenModal] = useState(false);
@@ -131,7 +133,11 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, i
         </div>
       )}
 
-      <VisenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint} position='center'>
+      <VisenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint} position='center'
+                    renderWithoutPortal={!!renderModalWithoutPortal}
+                    darkMode={darkMode}
+                    fontFamily={customizations.generalLayout?.fontFamily}
+                    placementId={placementId} idSuffix='image-gallery-upload'>
         <div className='relative flex size-full flex-col bg-primary'>
           {/* Title */}
           <p className='widget-title py-4 text-center text-primary' data-pw='sb-image-upload-title'>

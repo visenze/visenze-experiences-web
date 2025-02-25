@@ -5,7 +5,6 @@
   "scripts": {
     "build": "npm run build:camera-search && npm run build:similar-search && npm run build:search-results-page && npm run build:shopping-assistant && npm run build:recommend-me && npm run build:more-like-this && npm run build:shop-the-look && npm run build:embedded-grid && npm run build:shoppable-lookbook && npm run build:shoppable-gallery && npm run build:icon-triggered-grid && npm run build:search-bar && npm run build:embedded-search-results",
     "build:staging": "export build=staging && npm run build",
-    "build:init": "webpack --config webpack.init.js",
     "build:camera-search": "export widget_dir='official-widgets/camera-search' && webpack --config webpack.config.js",
     "start:camera-search": "export widget_dir='official-widgets/camera-search' && webpack-dev-server --config webpack.dev.js",
     "build:similar-search": "export widget_dir='official-widgets/similar-search' && webpack --config webpack.config.js",

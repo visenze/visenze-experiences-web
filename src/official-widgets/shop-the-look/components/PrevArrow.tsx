@@ -15,6 +15,7 @@ const PrevArrow: FC<PrevArrowProps> = ({ className, onClick, iconColor }) => (
       className?.includes('slick-disabled') ? 'opacity-0' : 'opacity-100 hover:opacity-90',
     )}
     onClick={onClick}
+    data-testid='wigmix-prev-arrow'
     data-pw='stl-prev-arrow'
   >
     <ChevronLeftIcon className='size-6' color={iconColor} />

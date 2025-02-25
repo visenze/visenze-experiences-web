@@ -7,7 +7,7 @@ import ViSenzeModal from '../../../common/components/modal/visenze-modal';
 import { CroppingContext, WidgetDataContext } from '../../../common/types/contexts';
 import { getFlattenProducts, getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 import ProductCard from '../../../common/components/product-card/ProductCard';
-import ImageCropThumbnail from './ImageCropThumbnail';
+import ImageCropThumbnail from '../../../common/components/crop/ImageCropThumbnail';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import CloseIcon from '../../../common/icons/CloseIcon';
 
@@ -27,9 +27,20 @@ interface HotspotRecommendationsProps {
   openDrawer: boolean;
   setOpenDrawer: (openDrawer: boolean) => void;
   activeImageUrl: string;
+  placementId: string;
+  renderModalWithoutPortal: boolean;
 }
 
-const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, productTypes, metadata, openDrawer, setOpenDrawer, activeImageUrl }) => {
+const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({
+  objects,
+  productTypes,
+  metadata,
+  openDrawer,
+  setOpenDrawer,
+  activeImageUrl,
+  placementId,
+  renderModalWithoutPortal,
+}) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const { selectedHotspot, setSelectedHotspot } = useContext(CroppingContext) ?? {};
@@ -52,7 +63,11 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({ objects, prod
   }, [objects, selectedHotspot]);
 
   return (
-    <ViSenzeModal open={openDrawer} onClose={closeDrawerHandler} layout='mobile' className='bottom-0 top-[unset] h-9/10 w-full rounded-t-xl' position='center'>
+    <ViSenzeModal open={openDrawer} onClose={closeDrawerHandler} layout='mobile' className='bottom-0 top-[unset] h-9/10 w-full rounded-t-xl' position='center'
+                  darkMode={darkMode}
+                  fontFamily={customizations.generalLayout?.fontFamily}
+                  placementId={placementId} idSuffix='hotspot'
+                  renderWithoutPortal={renderModalWithoutPortal}>
       <div className='flex size-full flex-col bg-primary' data-pw='sg-hotspot-recommendations'>
         {/* Close Button Tablet/Desktop */}
         <div className='absolute right-3 top-2 hidden bg-transparent md:flex rounded-full p-1 hover:opacity-90 cursor-pointer'

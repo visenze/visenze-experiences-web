@@ -55,7 +55,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
         } else {
           newPriceRange = [value, value];
         }
-        return { ...currentFilters, price: newPriceRange };
+        return { ...currentFilters, [facetName]: newPriceRange };
       });
     };
 

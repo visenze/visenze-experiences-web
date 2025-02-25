@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef, useCallback, useContext } from 'react';
 import type { ReactNode, FC } from 'react';
 import { cn } from '@heroui/theme';
-import { CroppingContext } from '../../../common/types/contexts';
+import { CroppingContext } from '../../types/contexts';
 
 /**
  * This component is responsible for rendering a cropped thumbnail of an image based on the provided box coordinates.
