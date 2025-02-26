@@ -176,7 +176,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
 
     return (
         <div ref={wrapperRef}
-             className='absolute top-12 z-20 h-[80vh] w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all'>
+             className='absolute top-12 z-20 h-fit w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all'>
           {props.children}
         </div>
     );
@@ -265,7 +265,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                       </div>
 
                       <div className='flex w-full justify-center md:w-3/5'>
-                        <div className='flex flex-col gap-2 px-4 py-1'>
+                        <div className='flex max-h-[60vh] flex-col gap-2 overflow-y-scroll px-4 py-1 md:max-h-[70vh]'>
                           <p className='text-large font-semibold leading-6 text-primary'>
                             {intl.formatMessage({ id: 'relatedProducts' })}
                           </p>
