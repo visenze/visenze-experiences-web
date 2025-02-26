@@ -16,6 +16,7 @@ module.exports = module.exports = {
   ],
   coverageDirectory: '<rootDir>/coverage/',
   coveragePathIgnorePatterns: [
+    'search-results-page', // deprecated widget; to be removed
     'app.tsx',
     'index.tsx',
     'index-dev.tsx',
