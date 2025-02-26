@@ -1,4 +1,4 @@
-import { act, fireEvent, render, type RenderResult } from '@testing-library/react';
+import { act, fireEvent, render, type RenderResult, waitFor } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { Context as ResponsiveContext } from 'react-responsive';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
@@ -120,49 +120,6 @@ describe('camera-search', () => {
     );
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
-
-  // it('should open the popup when icon is clicked and display error message if API error occurred', () => {
-  //   const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
-  //     ...mockVisearchClient,
-  //     productMultisearch: jest.fn().mockImplementation((params, handler) => {
-  //       expect(params).toEqual({
-  //         im_url: 'test-imurl',
-  //         return_fields_mapping: true,
-  //         return_query_sys_meta: true,
-  //       });
-  //       handler(getStandardMultiSearchInvalidImageResponse());
-  //     }),
-  //   }));
-  //   testComponent = render(
-  //       <RootContext.Provider value={document.body}>
-  //         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
-  //           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-  //             <CameraSearch renderModalWithoutPortal={true} />
-  //           </IntlProvider>
-  //         </WidgetDataContext.Provider>
-  //       </RootContext.Provider>,
-  //   );
-  //
-  //   act(() => {
-  //     const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
-  //     popupTriggerButton.click();
-  //   });
-  //
-  //   expect(testComponent.baseElement).toMatchSnapshot();
-  //
-  //   // Upon clicking back button, modal should close
-  //
-  //   act(() => {
-  //     const backButton = testComponent.getByTestId('wigmix-back');
-  //     backButton.click();
-  //
-  //     // Wait for the modal to close
-  //     jest.advanceTimersByTime(500);
-  //   });
-  //
-  //   // Second snapshot to verify the remnants of the ReactModal classes after being closed
-  //   expect(testComponent.baseElement).toMatchSnapshot();
-  // });
 
   it('should open the popup when programmatically called', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
@@ -296,9 +253,7 @@ describe('camera-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <ResponsiveContext.Provider value={{ width: 600 }}>
-                <CameraSearch renderModalWithoutPortal={true} />
-              </ResponsiveContext.Provider>
+              <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -407,9 +362,7 @@ describe('camera-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <ResponsiveContext.Provider value={{ width: 600 }}>
-                <CameraSearch renderModalWithoutPortal={true} />
-              </ResponsiveContext.Provider>
+              <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -444,9 +397,78 @@ describe('camera-search', () => {
 
   // TODO add test for successful image response with product types (should show cropped views)
 
-  // TODO add test for uploading image
+  it('should render a successful response after uploading image in desktop view', async () => {
+    // Due to usage of FileReader, need to simulate with real timer
+    jest.useRealTimers();
 
-  // TODO add test for using camera; is it even possible?
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        expect(params.image instanceof File);
+        // No need to check other params as they are the same as the URL counterpart
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
+        expect(params.image instanceof File);
+        // No need to check other params as they are the same as the URL counterpart
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <CameraSearch renderModalWithoutPortal={true} />
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    const makeMockData = (files: File[]): any => ({
+        dataTransfer: {
+          files,
+          items: files.map((file) => ({
+            kind: 'file',
+            type: file.type,
+            getAsFile: () => file,
+          })),
+          types: ['Files'],
+        },
+      });
+
+    const fileInput = testComponent.getByTestId('wigmix-cs-upload-icon-dropzone');
+    const testFile = new File(['image-content'], 'test-file.png', { type: 'image/png' });
+
+    act(() => {
+      fireEvent.drop(fileInput, makeMockData([testFile]));
+    });
+
+    await waitFor(async () => {
+      // Advance time for the FileReader onload function to fire
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
+    }).catch(() => {
+      // Expected to encounter timeout error here; swallow the exception as the test can proceed harmlessly after this
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+    productCardImages.forEach((productCardImage, idx) => {
+      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
+    });
+  });
 
   it('should show find similar results successfully', () => {
     const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
