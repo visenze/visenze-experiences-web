@@ -178,7 +178,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           <div
             className={`no-scrollbar fixed left-3/20 top-14 m-auto flex w-2/3 items-center gap-1 overflow-scroll ${showFullResults ? 'block' : 'hidden'}`}
             data-pw='cs-previous-views'>
-            <div className='wat flex gap-1'>
+            <div className='flex gap-1'>
               {searchHistory?.map((searchImage, index) => {
                 if (searchImage.box) {
                   return (
