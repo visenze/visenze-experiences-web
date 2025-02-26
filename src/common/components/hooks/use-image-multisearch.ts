@@ -20,7 +20,8 @@ const getSearchParams = (
   img: SearchImageOrPid,
   imageId: string,
   searchSettings: Record<string, any>,
-  product: BoxData | ProductType | undefined,
+  boxData: BoxData | undefined,
+  product: ProductType | undefined,
 ): Record<string, any> => {
   const params = { ...searchSettings };
 
@@ -34,11 +35,11 @@ const getSearchParams = (
     params['im_id'] = imageId;
   }
 
+  if (boxData) {
+    params['box'] = parseBox(boxData.box);
+  }
   if (product) {
-    params['box'] = parseBox(product.box);
-    if ('type' in product) {
-      params['detection'] = product.type;
-    }
+    params['detection'] = product.type;
   }
 
   return params;
@@ -126,18 +127,17 @@ const useImageMultisearch = ({
     setProductTypes([]);
   };
 
-  const getProductType = (boxData: BoxData | undefined): ProductType | BoxData | undefined => {
+  const getProductType = (boxData: BoxData | undefined): ProductType | undefined => {
     if (boxData?.index) {
       return productTypes[boxData.index];
-    } else {
-      return boxData;
     }
+    return undefined;
   };
 
   const multisearch = (): void => {
     if (image) {
       const product = getProductType(boxData);
-      const params = getSearchParams(image, imageId, searchSettings, product);
+      const params = getSearchParams(image, imageId, searchSettings, boxData, product);
       widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
     } else {
       resetSearch();
@@ -154,7 +154,7 @@ const useImageMultisearch = ({
 
     if (image) {
       const product = getProductType(boxData);
-      params = { q, ...getSearchParams(image, imageId, searchSettings, product) };
+      params = { q, ...getSearchParams(image, imageId, searchSettings, boxData, product) };
     } else if (!q) {
       return;
     }

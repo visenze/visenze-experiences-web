@@ -1,12 +1,12 @@
-import type { FC, ReactElement } from 'react';
-import { useContext, useRef, useState } from 'react';
 import { Button } from '@heroui/button';
 import { cn } from '@heroui/theme';
-import type { ProcessedProduct } from '../../../common/types/product';
+import { useContext, useRef, useState } from 'react';
+import type { FC, ReactElement } from 'react';
+import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import CloseIcon from '../../../common/icons/CloseIcon';
-import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import { WidgetDataContext } from '../../../common/types/contexts';
+import type { ProcessedProduct } from '../../../common/types/product';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 
 /**
@@ -85,7 +85,7 @@ const ResultsPage: FC<ResultsPageProps> = ({
                 scrollToResultsTop();
               }}
               data-pw={`srp-${product.product_id === activeProduct?.product_id ? 'active-product' : 'inactive-product'}`}>
-              <img className='h-full rounded-none object-fit'
+              <img className='object-fit h-full rounded-none'
                    src={product.im_url}
                    data-pw={`srp-product-history-image-${index + 1}`} />
               <button

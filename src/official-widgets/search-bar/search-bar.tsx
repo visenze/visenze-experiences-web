@@ -1,23 +1,23 @@
+import { Button } from '@heroui/button';
+import { Listbox, ListboxItem, ListboxSection } from '@heroui/listbox';
+import { cn } from '@heroui/theme';
 import type { FC, ReactElement } from 'react';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { Listbox, ListboxItem, ListboxSection } from '@heroui/listbox';
-import { Button } from '@heroui/button';
-import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
+import SearchBarInput from './components/SearchBarInput';
+import FileDropzone from '../../common/components/FileDropzone';
+import useAutocomplete from '../../common/components/hooks/use-autocomplete';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import { WidgetBreakpoint } from '../../common/types/constants';
+import useSearchAsYouType from '../../common/components/hooks/use-search-as-you-type';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import { RootContext } from '../../common/components/shadow-wrapper';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
+import UploadIcon from '../../common/icons/UploadIcon';
+import { WidgetBreakpoint } from '../../common/types/constants';
+import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
 import { isImageFile } from '../../common/types/image';
-import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
-import SearchBarInput from './components/SearchBarInput';
-import useAutocomplete from '../../common/components/hooks/use-autocomplete';
-import useSearchAsYouType from '../../common/components/hooks/use-search-as-you-type';
-import { WidgetDataContext } from '../../common/types/contexts';
-import FileDropzone from '../../common/components/FileDropzone';
-import CustomizableIcon from '../../common/icons/CustomizableIcon';
-import ProductCard from '../../common/components/product-card/ProductCard';
-import UploadIcon from '../../common/icons/UploadIcon';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 
 export interface SearchHistoryEntry {
@@ -176,7 +176,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
 
     return (
         <div ref={wrapperRef}
-             className='absolute top-12 z-20 h-[80vh] w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all'>
+             className='absolute top-12 z-20 h-fit w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all'>
           {props.children}
         </div>
     );
@@ -265,7 +265,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                       </div>
 
                       <div className='flex w-full justify-center md:w-3/5'>
-                        <div className='flex flex-col gap-2 px-4 py-1'>
+                        <div className='flex max-h-[60vh] flex-col gap-2 overflow-y-scroll px-4 py-1 md:max-h-[70vh]'>
                           <p className='text-large font-semibold leading-6 text-primary'>
                             {intl.formatMessage({ id: 'relatedProducts' })}
                           </p>

@@ -80,7 +80,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -145,7 +145,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -210,7 +210,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -275,7 +275,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -340,7 +340,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -405,7 +405,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -470,7 +470,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -535,7 +535,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -600,7 +600,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -665,7 +665,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -730,7 +730,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -795,7 +795,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -860,7 +860,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -925,7 +925,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -990,7 +990,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1055,7 +1055,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1120,7 +1120,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1185,7 +1185,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1250,7 +1250,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1315,7 +1315,7 @@ exports[`more-like-this should render a successful response with default config 
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1452,7 +1452,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1517,7 +1517,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1582,7 +1582,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1647,7 +1647,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1712,7 +1712,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1777,7 +1777,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1842,7 +1842,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1907,7 +1907,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1972,7 +1972,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2037,7 +2037,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2102,7 +2102,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2167,7 +2167,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2232,7 +2232,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2297,7 +2297,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2362,7 +2362,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2427,7 +2427,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2492,7 +2492,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2557,7 +2557,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2622,7 +2622,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2687,7 +2687,7 @@ exports[`more-like-this should render a successful response with some customizat
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""

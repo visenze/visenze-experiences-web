@@ -57,7 +57,7 @@ describe('shoppable-lookbook', () => {
   });
 
   it('should not render anything if product is not found', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_grid', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_shoppable_lookbook', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((pid, params, handler) => {
         expect(pid).toBe('pid-not-found');
@@ -89,7 +89,7 @@ describe('shoppable-lookbook', () => {
   });
 
   it('should render a successful response with default config', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_grid', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_shoppable_lookbook', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((pid, params, handler) => {
         expect(pid).toBe('pid-found');
@@ -131,7 +131,7 @@ describe('shoppable-lookbook', () => {
   it('should render a successful response with some customizations', () => {
     widgetConfig.customizations.generalLayout.showWidgetTitle = false;
     widgetConfig.customizations.generalLayout.showViSenzeLogo = true;
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_grid', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_shoppable_lookbook', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((_, __, handler) => {
         handler(getStandardRecommendationSuccessResponse());
@@ -159,7 +159,7 @@ describe('shoppable-lookbook', () => {
 
   it('should render a successful response with object hotspots', () => {
     const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_grid', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_shoppable_lookbook', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((_, __, handler) => {
         const standardResponse = getStandardRecommendationSuccessResponse();

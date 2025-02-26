@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import ShoppingAssistant from './shopping-assistant';
 import './app.css';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
+import ShoppingAssistant from './shopping-assistant';
 import { type AppProps, AppWrapper } from '../../common/components/app-wrapper';
 
 // Set to true to enable customization via WidgetConfig

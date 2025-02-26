@@ -97,7 +97,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -162,7 +162,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -227,7 +227,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -292,7 +292,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -357,7 +357,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -422,7 +422,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -487,7 +487,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -552,7 +552,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -617,7 +617,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -682,7 +682,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -747,7 +747,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -812,7 +812,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -877,7 +877,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -942,7 +942,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1007,7 +1007,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1072,7 +1072,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1137,7 +1137,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1202,7 +1202,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1267,7 +1267,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1332,7 +1332,7 @@ exports[`shop-the-look should render a successful response with default config 1
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1517,7 +1517,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1582,7 +1582,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1647,7 +1647,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1712,7 +1712,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1777,7 +1777,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1842,7 +1842,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1907,7 +1907,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -1972,7 +1972,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2037,7 +2037,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2102,7 +2102,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2167,7 +2167,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2232,7 +2232,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2297,7 +2297,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2362,7 +2362,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2427,7 +2427,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2492,7 +2492,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2557,7 +2557,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2622,7 +2622,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2687,7 +2687,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2752,7 +2752,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2907,7 +2907,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -2972,7 +2972,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3037,7 +3037,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3102,7 +3102,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3167,7 +3167,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3232,7 +3232,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3297,7 +3297,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3362,7 +3362,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3427,7 +3427,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3492,7 +3492,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3557,7 +3557,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3622,7 +3622,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3687,7 +3687,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3752,7 +3752,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3817,7 +3817,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3882,7 +3882,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -3947,7 +3947,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -4012,7 +4012,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -4077,7 +4077,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""
@@ -4142,7 +4142,7 @@ exports[`shop-the-look should render a successful response with some customizati
                           class="wigmix-product-card-image-container"
                         >
                           <div
-                            class="flex justify-center relative"
+                            class="relative flex justify-center"
                           >
                             <img
                               alt=""

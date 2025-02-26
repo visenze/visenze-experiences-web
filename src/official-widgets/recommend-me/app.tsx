@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import RecommendMe from './recommend-me';
 import './app.css';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
+import RecommendMe from './recommend-me';
 import { type AppPropsWithReferenceElement, AppWrapper } from '../../common/components/app-wrapper';
 
 // Set to true to enable customization via WidgetConfig

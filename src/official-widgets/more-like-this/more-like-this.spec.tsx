@@ -73,7 +73,7 @@ describe('more-like-this', () => {
   });
 
   it('should not render anything if product is not found', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_grid', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_more_like_this', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((pid, params, handler) => {
         expect(pid).toBe('pid-not-found');
@@ -105,7 +105,7 @@ describe('more-like-this', () => {
   });
 
   it('should render a successful response with default config', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_grid', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_more_like_this', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((pid, params, handler) => {
         expect(pid).toBe('pid-found');
@@ -145,7 +145,7 @@ describe('more-like-this', () => {
   });
 
   it('should move the carousel page when relevant arrows are pressed', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_grid', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_more_like_this', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((_, __, handler) => {
         handler(getStandardRecommendationSuccessResponse());
@@ -218,7 +218,7 @@ describe('more-like-this', () => {
   it('should render a successful response with some customizations', () => {
     widgetConfig.customizations.generalLayout.showWidgetTitle = false;
     widgetConfig.customizations.generalLayout.showViSenzeLogo = true;
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_grid', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_more_like_this', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((_, __, handler) => {
         handler(getStandardRecommendationSuccessResponse());

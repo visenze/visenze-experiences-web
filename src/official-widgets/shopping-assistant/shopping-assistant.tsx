@@ -1,21 +1,21 @@
+import { Textarea } from '@heroui/input';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { type FC, type ReactElement, useCallback, useContext, useEffect, useState } from 'react';
-import { Textarea } from '@heroui/input';
 import { useIntl } from 'react-intl';
-import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import { WidgetDataContext } from '../../common/types/contexts';
-import { RootContext } from '../../common/components/shadow-wrapper';
-import ViSenzeModal from '../../common/components/modal/visenze-modal';
-import CloseIcon from '../../common/icons/CloseIcon';
-import SubmitChatIcon from './icons/SubmitChatIcon';
 import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
-import CustomizableIcon from '../../common/icons/CustomizableIcon';
-import { DEFAULT_ENDPOINT } from '../../common/constants';
-import type { ProcessedProduct } from '../../common/types/product';
 import NewChatIcon from './icons/NewChatIcon';
-import { getFlattenProduct } from '../../common/utils';
+import SubmitChatIcon from './icons/SubmitChatIcon';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import ViSenzeModal from '../../common/components/modal/visenze-modal';
+import { RootContext } from '../../common/components/shadow-wrapper';
+import { DEFAULT_ENDPOINT } from '../../common/constants';
+import CloseIcon from '../../common/icons/CloseIcon';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import { WidgetDataContext } from '../../common/types/contexts';
+import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
+import { getFlattenProduct } from '../../common/utils';
 
 // Product line can look like one of these:
 // [[pid]] **title** - ...
@@ -274,7 +274,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   }, []);
 
   const getScreen = (): ReactElement => (
-      <div className='p-6 flex flex-col h-full'>
+      <div className='flex h-full flex-col p-6'>
         <div className='flex w-full justify-end'>
           <div onClick={() => setDialogVisible(false)}>
             <CloseIcon className='size-6 cursor-pointer' />

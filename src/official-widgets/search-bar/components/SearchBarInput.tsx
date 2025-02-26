@@ -1,13 +1,13 @@
-import type { FC } from 'react';
-import { useContext, memo, useRef } from 'react';
 import { Input } from '@heroui/input';
-import { useIntl } from 'react-intl';
 import { cn } from '@heroui/theme';
-import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
+import type { FC } from 'react';
+import { memo, useContext, useRef } from 'react';
+import { useIntl } from 'react-intl';
 import ImageGalleryUpload from './ImageGalleryUpload';
-import type { SearchImage } from '../../../common/types/image';
+import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import MagnifyingGlassIcon from '../../../common/icons/MagnifyingGlassIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
+import type { SearchImage } from '../../../common/types/image';
 
 interface SearchBarInputProps {
   query: string;

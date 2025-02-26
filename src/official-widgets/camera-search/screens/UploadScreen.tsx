@@ -2,13 +2,13 @@ import type { FC, ReactNode } from 'react';
 import { useContext, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import FileDropzone from '../../../common/components/FileDropzone';
-import type { SearchImage } from '../../../common/types/image';
-import { WidgetDataContext } from '../../../common/types/contexts';
-import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
-import Header from '../components/Header';
 import Footer from '../../../common/components/Footer';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 import UploadIcon from '../../../common/icons/UploadIcon';
+import { WidgetDataContext } from '../../../common/types/contexts';
+import type { SearchImage } from '../../../common/types/image';
+import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
+import Header from '../components/Header';
 
 interface UploadScreenProps {
   onModalClose: () => void;
@@ -42,7 +42,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
         return (
           <div
             key={index}
-            className='row-span-1 border-none relative cursor-pointer'
+            className='relative row-span-1 cursor-pointer border-none'
             onClick={(): void => onGallerySelect(index)}
             onKeyDown={(evt): void => {
               if (evt.key === 'Enter') {
@@ -50,10 +50,12 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
               }
             }}
           >
-            <img className='h-full object-cover' src={imageWithLabel.url} data-pw={`cs-gallery-image-${index + 1}`}/>
+            <img className='h-full object-cover' src={imageWithLabel.url}
+                 data-testid={`wigmix-gallery-image-${index + 1}`}
+                 data-pw={`cs-gallery-image-${index + 1}`}/>
             {imageWithLabel.label && (
-              <div className='absolute bottom-0 z-10 w-full text-center overflow-hidden
-            border-1 border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small'>
+              <div className='absolute bottom-0 z-10 w-full overflow-hidden border-1
+            border-white/20 bg-gray-800 bg-opacity-80 py-1 text-center text-white shadow-small'>
                 <p>{imageWithLabel.label}</p>
               </div>
             )}
@@ -129,17 +131,19 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
             <div className='grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0'>
               <div className='col-span-1'>
                 <div
-                  className='h-full relative cursor-pointer'
+                  className='relative h-full cursor-pointer'
                   onClick={(): void => onGallerySelect(0)}
                   onKeyDown={(evt): void => {
                     if (evt.key === 'Enter') {
                       onGallerySelect(0);
                     }
                   }}>
-                  <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url} data-pw='cs-gallery-image-1'/>
+                  <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url}
+                       data-testid='wigmix-gallery-image-1'
+                       data-pw='cs-gallery-image-1'/>
                   {customizations.imageUpload?.images[0].label && (
-                    <div className='absolute bottom-0 z-10 w-full text-center overflow-hidden border-1
-                      border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small'>
+                    <div className='absolute bottom-0 z-10 w-full overflow-hidden border-1 border-white/20
+                      bg-gray-800 bg-opacity-80 py-1 text-center text-white shadow-small'>
                       <p>
                         {customizations.imageUpload?.images[0].label}
                       </p>

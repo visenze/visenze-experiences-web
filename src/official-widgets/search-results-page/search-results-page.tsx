@@ -1,9 +1,9 @@
 import { type FC, useContext, useEffect, useState } from 'react';
-import { RootContext } from '../../common/components/shadow-wrapper';
 import ResultsPage from './components/ResultsPage';
-import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
-import type { ProcessedProduct } from '../../common/types/product';
 import SearchBarWithDropdown from './components/SearchBarWithDropdown';
+import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
+import { RootContext } from '../../common/components/shadow-wrapper';
+import type { ProcessedProduct } from '../../common/types/product';
 
 interface SearchResultsPageProps {
   // no properties at the moment

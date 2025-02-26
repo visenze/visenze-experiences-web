@@ -2,8 +2,8 @@ import { act, fireEvent, render, type RenderResult } from '@testing-library/reac
 import { IntlProvider } from 'react-intl';
 import { Context as ResponsiveContext } from 'react-responsive';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
+import CameraSearch from './camera-search';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import SimilarSearch from './similar-search';
 import {
   getStandardMultiSearchAutocompleteResponse,
   getStandardMultiSearchInvalidImageResponse,
@@ -17,11 +17,16 @@ import type { WidgetConfig } from '../../common/wigmix-core';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-describe('similar-search', () => {
+describe('camera-search', () => {
   let testComponent: RenderResult;
   const texts: LanguagePack = {
     en: {
-      widgetTitle: 'Similar Search 532',
+      uploadScreenTitle: 'Camera Search 771',
+      resultScreenTitle: 'Camera Search 117',
+      dragImageToSearch: 'drag this',
+      tapToSearchImage: 'tap this',
+      tapProductGallery: 'product gallery',
+      useCamera: 'USE CAMERA',
       searchBarPlaceholder: 'This is a search bar',
       previousViews: 'History',
       errorDescription: 'Houston, we\'ve had a problem!',
@@ -72,12 +77,12 @@ describe('similar-search', () => {
   });
 
   it('should render the standard icon', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => mockVisearchClient);
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -87,12 +92,12 @@ describe('similar-search', () => {
 
   it('should not render the icon if configured as such', () => {
     widgetConfig.customizations.popup!.triggerIcon!.hide = true;
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => mockVisearchClient);
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -103,12 +108,12 @@ describe('similar-search', () => {
   it('should render a custom icon if configured as such', () => {
     widgetConfig.customizations.popup!.triggerIcon.url = 'https://trigger-icon';
     widgetConfig.customizations.popup!.triggerIcon.color = 'DEFAULT_ICON_COLOR';
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => mockVisearchClient);
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -116,51 +121,51 @@ describe('similar-search', () => {
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
 
-  it('should open the popup when icon is clicked and display error message if API error occurred', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
-      ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        expect(params).toEqual({
-          im_url: 'test-imurl',
-          return_fields_mapping: true,
-          return_query_sys_meta: true,
-        });
-        handler(getStandardMultiSearchInvalidImageResponse());
-      }),
-    }));
-    testComponent = render(
-        <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
-            </IntlProvider>
-          </WidgetDataContext.Provider>
-        </RootContext.Provider>,
-    );
-
-    act(() => {
-      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
-      popupTriggerButton.click();
-    });
-
-    expect(testComponent.baseElement).toMatchSnapshot();
-
-    // Upon clicking back button, modal should close
-
-    act(() => {
-      const backButton = testComponent.getByTestId('wigmix-back');
-      backButton.click();
-
-      // Wait for the modal to close
-      jest.advanceTimersByTime(500);
-    });
-
-    // Second snapshot to verify the remnants of the ReactModal classes after being closed
-    expect(testComponent.baseElement).toMatchSnapshot();
-  });
+  // it('should open the popup when icon is clicked and display error message if API error occurred', () => {
+  //   const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+  //     ...mockVisearchClient,
+  //     productMultisearch: jest.fn().mockImplementation((params, handler) => {
+  //       expect(params).toEqual({
+  //         im_url: 'test-imurl',
+  //         return_fields_mapping: true,
+  //         return_query_sys_meta: true,
+  //       });
+  //       handler(getStandardMultiSearchInvalidImageResponse());
+  //     }),
+  //   }));
+  //   testComponent = render(
+  //       <RootContext.Provider value={document.body}>
+  //         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+  //           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+  //             <CameraSearch renderModalWithoutPortal={true} />
+  //           </IntlProvider>
+  //         </WidgetDataContext.Provider>
+  //       </RootContext.Provider>,
+  //   );
+  //
+  //   act(() => {
+  //     const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+  //     popupTriggerButton.click();
+  //   });
+  //
+  //   expect(testComponent.baseElement).toMatchSnapshot();
+  //
+  //   // Upon clicking back button, modal should close
+  //
+  //   act(() => {
+  //     const backButton = testComponent.getByTestId('wigmix-back');
+  //     backButton.click();
+  //
+  //     // Wait for the modal to close
+  //     jest.advanceTimersByTime(500);
+  //   });
+  //
+  //   // Second snapshot to verify the remnants of the ReactModal classes after being closed
+  //   expect(testComponent.baseElement).toMatchSnapshot();
+  // });
 
   it('should open the popup when programmatically called', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
@@ -175,7 +180,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -192,32 +197,15 @@ describe('similar-search', () => {
     expect(modal).not.toBeNull();
   });
 
-  it('should render a successful response with default config in desktop view', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+  it('should render the gallery in desktop view', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        expect(params).toEqual({
-          im_url: 'test-imurl',
-          return_fields_mapping: true,
-          return_query_sys_meta: true,
-        });
-        handler(getStandardMultiSearchSuccessResponse());
-      }),
-      productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
-        expect(params).toEqual({
-          q: '',
-          im_url: 'test-imurl',
-          return_fields_mapping: true,
-          return_query_sys_meta: true,
-        });
-        handler(getStandardMultiSearchAutocompleteResponse());
-      }),
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -226,13 +214,6 @@ describe('similar-search', () => {
     act(() => {
       const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
       popupTriggerButton.click();
-    });
-
-    act(() => {
-      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
-      productCardImages.forEach((productCardImage) => {
-        fireEvent.load(productCardImage);
-      });
     });
 
     expect(testComponent.baseElement).toMatchSnapshot();
@@ -252,12 +233,50 @@ describe('similar-search', () => {
     expect(modal!.className).toContain('ReactModal__Content--before-close');
   });
 
-  it('should render a successful response with default config in mobile view', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+  it('should render the gallery in mobile view', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <ResponsiveContext.Provider value={{ width: 600 }}>
+                <CameraSearch renderModalWithoutPortal={true} />
+              </ResponsiveContext.Provider>
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    expect(testComponent.baseElement).toMatchSnapshot();
+
+    // Upon clicking close button, modal should close
+
+    act(() => {
+      const closeButton = testComponent.getByTestId('wigmix-close-button');
+      closeButton.click();
+
+      // Wait for the modal to close
+      jest.advanceTimersByTime(500);
+    });
+
+    const modal = testComponent.queryByTestId('wigmix-modal');
+    // Check against a class name that is indicative of a closed modal
+    expect(modal!.className).toContain('ReactModal__Content--before-close');
+  });
+
+  it('should render a successful response with default config in desktop view', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
-          im_url: 'test-imurl',
+          im_url: 'https://cdn.visenze.com/images/widget-3.jpg',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -266,7 +285,7 @@ describe('similar-search', () => {
       productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           q: '',
-          im_url: 'test-imurl',
+          im_url: 'https://cdn.visenze.com/images/widget-3.jpg',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -278,7 +297,60 @@ describe('similar-search', () => {
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ResponsiveContext.Provider value={{ width: 600 }}>
-                <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+                <CameraSearch renderModalWithoutPortal={true} />
+              </ResponsiveContext.Provider>
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    expect(testComponent.baseElement).toMatchSnapshot();
+  });
+
+  it('should render a successful response with default config in mobile view', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        expect(params).toEqual({
+          im_url: 'https://cdn.visenze.com/images/widget-3.jpg',
+          return_fields_mapping: true,
+          return_query_sys_meta: true,
+        });
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
+        expect(params).toEqual({
+          q: '',
+          im_url: 'https://cdn.visenze.com/images/widget-3.jpg',
+          return_fields_mapping: true,
+          return_query_sys_meta: true,
+        });
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <ResponsiveContext.Provider value={{ width: 600 }}>
+                <CameraSearch renderModalWithoutPortal={true} />
               </ResponsiveContext.Provider>
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -298,6 +370,11 @@ describe('similar-search', () => {
     });
 
     act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
+    });
+
+    act(() => {
       const fullResultsToggleButton = testComponent.getByTestId('wigmix-full-results-toggle');
       fullResultsToggleButton.click();
     });
@@ -305,12 +382,78 @@ describe('similar-search', () => {
     expect(testComponent.baseElement).toMatchSnapshot();
   });
 
-  it('should show find similar results successfully', () => {
-    const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+  it('should display error message if API error occurred when clicking gallery image', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.im_url === 'test-imurl') {
+        expect(params).toEqual({
+          im_url: 'https://cdn.visenze.com/images/widget-3.jpg',
+          return_fields_mapping: true,
+          return_query_sys_meta: true,
+        });
+        handler(getStandardMultiSearchInvalidImageResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
+        expect(params).toEqual({
+          q: '',
+          im_url: 'https://cdn.visenze.com/images/widget-3.jpg',
+          return_fields_mapping: true,
+          return_query_sys_meta: true,
+        });
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <ResponsiveContext.Provider value={{ width: 600 }}>
+                <CameraSearch renderModalWithoutPortal={true} />
+              </ResponsiveContext.Provider>
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
+    });
+
+    // Upon clicking back button, should go back to gallery page
+
+    act(() => {
+      const backButton = testComponent.getByTestId('wigmix-back');
+      backButton.click();
+
+      // Wait for the modal to close
+      jest.advanceTimersByTime(500);
+    });
+
+    // Second snapshot to verify the remnants of the ReactModal classes after being closed
+    const galleryImage = testComponent.queryByTestId('wigmix-gallery-image-3');
+    expect(galleryImage).not.toBeNull();
+  });
+
+  // TODO test configurations
+
+  // TODO add test for successful image response with product types (should show cropped views)
+
+  // TODO add test for uploading image
+
+  // TODO add test for using camera; is it even possible?
+
+  it('should show find similar results successfully', () => {
+    const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        if (params.im_url === 'https://cdn.visenze.com/images/widget-3.jpg') {
           handler(getStandardMultiSearchSuccessResponse());
         } else if (params.pid === 'pid-5') {
           const standardResponse = getStandardMultiSearchSuccessResponse();
@@ -330,7 +473,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -339,6 +482,11 @@ describe('similar-search', () => {
     act(() => {
       const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
       popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
     });
 
     act(() => {
@@ -360,10 +508,10 @@ describe('similar-search', () => {
   });
 
   it('should show error message if find similar encounters error', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.im_url === 'test-imurl') {
+        if (params.im_url === 'https://cdn.visenze.com/images/widget-3.jpg') {
           handler(getStandardMultiSearchSuccessResponse());
         } else if (params.pid === 'pid-5') {
           handler(getStandardMultiSearchInvalidImageResponse());
@@ -380,7 +528,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -389,6 +537,11 @@ describe('similar-search', () => {
     act(() => {
       const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
       popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
     });
 
     act(() => {
@@ -422,10 +575,10 @@ describe('similar-search', () => {
 
   it('should show text query results successfully', () => {
     const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.im_url === 'test-imurl') {
+        if (params.im_url === 'https://cdn.visenze.com/images/widget-3.jpg') {
           // Initial image search
           handler(getStandardMultiSearchSuccessResponse());
         } else if (params.q === 'jeans') {
@@ -453,7 +606,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -462,6 +615,11 @@ describe('similar-search', () => {
     act(() => {
       const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
       popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
     });
 
     act(() => {

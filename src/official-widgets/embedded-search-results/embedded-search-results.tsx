@@ -1,11 +1,24 @@
-import type { FC, ReactElement } from 'react';
-import { useEffect, useRef, useContext, useState, useLayoutEffect } from 'react';
-import type { ProductSearchResponse, Facet } from 'visearch-javascript-sdk';
-import { useIntl } from 'react-intl';
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
-import { WidgetDataContext } from '../../common/types/contexts';
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { FC, ReactElement } from 'react';
+import { useIntl } from 'react-intl';
+import type { Facet, ProductSearchResponse } from 'visearch-javascript-sdk';
+import FilterOptions, { showFacet } from './components/FilterOptions';
+import SearchBarInput from './components/SearchBarInput';
+import SearchHistory, { MAX_HISTORY_ITEMS } from './components/SearchHistory';
+import type { SearchHistoryEntry } from './components/SearchHistory';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import ViSenzeModal from '../../common/components/modal/visenze-modal';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import { RootContext } from '../../common/components/shadow-wrapper';
+import FilterIcon from '../../common/icons/FilterIcon';
+import type { FacetType } from '../../common/types/constants';
+import { WidgetDataContext } from '../../common/types/contexts';
+import { isImageUrl, isPid } from '../../common/types/image';
+import type { SearchImageOrPid } from '../../common/types/image';
+import type { ProcessedProduct } from '../../common/types/product';
+import { Actions, Category } from '../../common/types/tracking-constants';
 import {
   getFacets,
   getFilterQueries,
@@ -13,19 +26,6 @@ import {
   getProductGridCssClasses,
   getProductGridCssConfig,
 } from '../../common/utils';
-import type { ProcessedProduct } from '../../common/types/product';
-import { Actions, Category } from '../../common/types/tracking-constants';
-import ProductCard from '../../common/components/product-card/ProductCard';
-import type { FacetType } from '../../common/types/constants';
-import FilterOptions, { showFacet } from './components/FilterOptions';
-import ViSenzeModal from '../../common/components/modal/visenze-modal';
-import FilterIcon from '../../common/icons/FilterIcon';
-import type { SearchImageOrPid } from '../../common/types/image';
-import { isImageUrl, isPid } from '../../common/types/image';
-import SearchBarInput from './components/SearchBarInput';
-import SearchHistory, { MAX_HISTORY_ITEMS } from './components/SearchHistory';
-import type { SearchHistoryEntry } from './components/SearchHistory';
-import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 
 interface EmbeddedSearchResultProps {
   textQuery: string;
@@ -342,7 +342,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
           {/* Filter Section Mobile */}
           {hasApplicableFacets && (
               <>
-                <div className='w-full bg-white p-2 md:hidden md:px-0 cursor-pointer flex gap-2 mb-2 items-center'
+                <div className='mb-2 flex w-full cursor-pointer items-center gap-2 bg-white p-2 md:hidden md:px-0'
                      onClick={() => setShowMobileFilterOptions(true)}>
                   <FilterIcon className='size-5'/>
                   <span className='text-black'>

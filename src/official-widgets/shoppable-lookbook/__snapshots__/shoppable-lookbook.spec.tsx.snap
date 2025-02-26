@@ -44,7 +44,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -89,7 +89,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -134,7 +134,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -179,7 +179,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -224,7 +224,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -269,7 +269,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -314,7 +314,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -359,7 +359,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -404,7 +404,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -449,7 +449,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -494,7 +494,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -539,7 +539,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -584,7 +584,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -629,7 +629,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -674,7 +674,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -719,7 +719,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -764,7 +764,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -809,7 +809,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -854,7 +854,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -899,7 +899,7 @@ exports[`shoppable-lookbook should render a successful response with default con
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1000,7 +1000,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1045,7 +1045,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1090,7 +1090,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1135,7 +1135,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1180,7 +1180,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1225,7 +1225,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1270,7 +1270,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1315,7 +1315,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1360,7 +1360,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1405,7 +1405,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1450,7 +1450,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1495,7 +1495,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1540,7 +1540,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1585,7 +1585,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1630,7 +1630,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1675,7 +1675,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1720,7 +1720,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1765,7 +1765,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1810,7 +1810,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1855,7 +1855,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1926,7 +1926,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -1971,7 +1971,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2016,7 +2016,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2061,7 +2061,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2106,7 +2106,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2151,7 +2151,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2196,7 +2196,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2241,7 +2241,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2286,7 +2286,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2331,7 +2331,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2376,7 +2376,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2421,7 +2421,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2466,7 +2466,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2511,7 +2511,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2556,7 +2556,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2601,7 +2601,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2646,7 +2646,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2691,7 +2691,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2736,7 +2736,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""
@@ -2781,7 +2781,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
             class="wigmix-product-card-image-container"
           >
             <div
-              class="flex justify-center relative"
+              class="relative flex justify-center"
             >
               <img
                 alt=""

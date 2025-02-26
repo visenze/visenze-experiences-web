@@ -1,26 +1,27 @@
-import type { FC, ReactElement } from 'react';
-import { useContext, useEffect, useRef, useState } from 'react';
 import { Input } from '@heroui/input';
 import { Listbox, ListboxItem } from '@heroui/listbox';
-import { useSwipeable } from 'react-swipeable';
 import { cn } from '@heroui/theme';
+import { useContext, useEffect, useRef, useState } from 'react';
+import type { FC, ReactElement } from 'react';
 import { useIntl } from 'react-intl';
+import { useSwipeable } from 'react-swipeable';
 import type { ProductType } from 'visearch-javascript-sdk';
-import { WidgetDataContext } from '../../../common/types/contexts';
+import ImageCropThumbnail from '../../../common/components/crop/ImageCropThumbnail';
 import FileDropzone from '../../../common/components/FileDropzone';
-import type { SearchImage, SearchImageOrPid } from '../../../common/types/image';
-import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
-import ProductCard from '../../../common/components/product-card/ProductCard';
 import Footer from '../../../common/components/Footer';
-import Header from '../components/Header';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import HotspotContainer from '../../../common/components/hotspots/hotspot-container';
-import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
 import ChevronUpIcon from '../../../common/icons/ChevronUpIcon';
-import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
-import type { ProcessedProduct } from '../../../common/types/product';
+import { WidgetDataContext } from '../../../common/types/contexts';
+import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
+import type { SearchImage, SearchImageOrPid } from '../../../common/types/image';
+import type { BoxData, ProcessedProduct } from '../../../common/types/product';
+import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
+import { flattenBox, getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
+import Header from '../components/Header';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -31,6 +32,12 @@ const swipeConfig = {
   touchEventOptions: { passive: true }, // options for touch listeners (*See Details*)
 };
 
+interface SearchHistoryEntry {
+  image: SearchImageOrPid;
+  productTypes: ProductType[];
+  box?: BoxData;
+}
+
 interface ResultScreenProps {
   productResults: ProcessedProduct[];
   productTypes?: ProductType[];
@@ -38,12 +45,16 @@ interface ResultScreenProps {
   metadata: Record<string, any>;
   onModalClose: () => void;
   onBack: () => void;
-  searchHistory: SearchImageOrPid[];
-  setSearchHistory: (searchHistory: SearchImage[]) => void;
+  searchHistory: SearchHistoryEntry[];
+  setSearchHistory: (searchHistory: SearchHistoryEntry[]) => void;
+  showFullResults: boolean;
+  setShowFullResults: (showFullResults: boolean) => void;
+  toggleFullResults: () => void;
   onTextSearch: (text: string) => void;
-  onFindSimilar: (data: SearchImageOrPid) => void;
+  onFindSimilar: (data: SearchHistoryEntry) => void;
   onImageUpload: (img: SearchImage) => void;
   onKeywordUpdate: (q: string) => void;
+  activeHistory?: SearchHistoryEntry;
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
@@ -59,12 +70,16 @@ const ResultScreen: FC<ResultScreenProps> = ({
   onKeywordUpdate,
   searchHistory,
   setSearchHistory,
+  showFullResults,
+  setShowFullResults,
+  toggleFullResults,
+  activeHistory,
 }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [search, setSearch] = useState('');
   const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
-  const [showFullResults, setShowFullResults] = useState(false);
+  // const [showFullResults, setShowFullResults] = useState(false);
   const [showInputSuggest, setShowInputSuggest] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState<string[]>([]);
   const [autocompleteSuggestionsHeight, setAutocompleteSuggestionsHeight] = useState(0);
@@ -76,10 +91,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
     height: `${showInputSuggest ? autocompleteSuggestionsHeight : 0}px`,
     width: 'calc(100% - 16px)',
     top: '52px',
-  };
-
-  const toggleFullResults = (): void => {
-    setShowFullResults((v) => !v);
   };
 
   const getFile = (image: SearchImageOrPid | undefined): string => {
@@ -96,8 +107,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
   };
 
   const getReferenceImage = (): string => {
-    if (searchHistory && searchHistory.length > 0) {
-      return getFile(searchHistory[0]);
+    if (activeHistory) {
+      return getFile(activeHistory.image);
     }
     return '';
   };
@@ -165,17 +176,32 @@ const ResultScreen: FC<ResultScreenProps> = ({
           </div>
 
           <div
-            className={`no-scrollbar fixed left-3/20 top-14 m-auto flex w-2/3 gap-1 overflow-scroll ${showFullResults ? 'block' : 'hidden'}`}
+            className={`no-scrollbar fixed left-3/20 top-14 m-auto flex w-2/3 items-center gap-1 overflow-scroll ${showFullResults ? 'block' : 'hidden'}`}
             data-pw='cs-previous-views'>
-            {searchHistory?.map((searchImage, index) => (
-              <img
-                key={`image-history-${index}`}
-                className='aspect-square w-1/5 object-contain'
-                src={getFile(searchImage)}
-                onClick={() => onFindSimilar(searchImage)}
-                data-pw={`cs-previous-views-image-${index + 1}`}
-              />
-            ))}
+            <div className='wat flex gap-1'>
+              {searchHistory?.map((searchImage, index) => {
+                if (searchImage.box) {
+                  return (
+                      <div key={`image-history-${index}`} className='aspect-square size-20' onClick={() => onFindSimilar(searchImage)}>
+                        <ImageCropThumbnail imageUrl={getFile(searchImage.image)}
+                                            className={`size-20 ${activeHistory?.image === searchImage.image ? '' : 'opacity-50'}`}
+                                            box={flattenBox(searchImage.box.box)}
+                                            index={searchImage.box.index} />
+                      </div>
+                  );
+                }
+                return (
+                    <img key={`image-history-${index}`}
+                         className={cn(
+                             'aspect-square size-20 object-contain cursor-pointer',
+                             activeHistory?.image === searchImage.image ? '' : 'opacity-50',
+                         )}
+                         src={getFile(searchImage.image)}
+                         onClick={() => onFindSimilar(searchImage)}
+                         data-pw={`cs-previous-views-image-${index + 1}`} />
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -186,19 +212,20 @@ const ResultScreen: FC<ResultScreenProps> = ({
           )}
           {...minimizedDrawerHandler}>
           <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
-            <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
+            <div className='absolute inset-x-0 -top-3 m-auto w-fit rounded-full bg-buttonPrimary p-1 hover:opacity-90'
                  onClick={(): void => toggleFullResults()}
+                 data-testid='wigmix-full-results-toggle'
                  data-pw='cs-arrow-button'>
               {showFullResults ? (
                   <ChevronDownIcon color={darkMode
                                      ? (customizations.buttons?.primary?.fontColorDark || '')
                                      : (customizations.buttons?.primary?.fontColor || '')}
-                                   className='cursor-pointer size-6' />
+                                   className='size-6 cursor-pointer' />
               ) : (
                   <ChevronUpIcon color={darkMode
                                    ? (customizations.buttons?.primary?.fontColorDark || '')
                                    : (customizations.buttons?.primary?.fontColor || '')}
-                                 className='cursor-pointer size-6' />
+                                 className='size-6 cursor-pointer' />
               )}
             </div>
           </div>
@@ -212,7 +239,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   <ProductCard key={`${result.product_id}-${index}`}
                                onFindSimilar={(data) => {
                                  setSearch('');
-                                 return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
+                                 return onFindSimilar({
+                                   image: { imgUrl: data.im_url, pid: data.product_id },
+                                   productTypes: [],
+                                 });
                                }}
                                index={index}
                                result={result}
@@ -257,6 +287,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
               onTextSearch('');
               scrollToResultsTop();
             }}
+            data-testid='wigmix-text-bar'
             data-pw='cs-refinement-text-bar'
           />
         </div>
@@ -273,7 +304,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 : customizations.generalLayout?.fontColor} />
       <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
-          <div className='relative left-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8 overflow-y-scroll'>
+          <div className='relative left-0 row-span-1 h-full w-1/3 overflow-y-scroll border-r-2 border-gray-300 px-8'>
             <div className='flex h-9/10 flex-col justify-between px-2'>
               <div className='wigmix-reference-image-container flex w-full flex-col items-center rounded-md border border-gray-300 py-2 text-center'>
                 <HotspotContainer className='w-3/5' referenceImage={getReferenceImage()} productTypes={productTypes} />
@@ -296,16 +327,28 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     className='no-scrollbar flex h-full flex-row gap-1 overflow-scroll pt-1'
                     data-pw='cs-previous-views'>
                     {searchHistory
-                      ?.slice(1)
-                      .map((searchImage, index) => (
-                        <img
-                          key={`image-history-${index}`}
-                          className='aspect-square w-1/3 cursor-pointer rounded-lg object-contain'
-                          src={getFile(searchImage)}
-                          onClick={() => onFindSimilar(searchImage)}
-                          data-pw={`cs-previous-views-image-${index + 1}`}
-                        />
-                      ))}
+                      .map((searchImage, index) => {
+                        if (searchImage.box) {
+                          return (
+                              <div key={`image-history-${index}`} className='aspect-square size-24' onClick={() => onFindSimilar(searchImage)}>
+                                <ImageCropThumbnail imageUrl={getFile(searchImage.image)}
+                                                    className={`size-24 ${activeHistory?.image === searchImage.image ? '' : 'opacity-50'}`}
+                                                    box={flattenBox(searchImage.box.box)}
+                                                    index={searchImage.box.index} />
+                              </div>
+                          );
+                        }
+                        return (
+                            <img key={`image-history-${index}`}
+                                 className={cn(
+                                     'aspect-square size-24 cursor-pointer rounded-lg object-contain',
+                                     activeHistory?.image === searchImage.image ? '' : 'opacity-50',
+                                 )}
+                                 src={getFile(searchImage.image)}
+                                 onClick={() => onFindSimilar(searchImage)}
+                                 data-pw={`cs-previous-views-image-${index + 1}`} />
+                        );
+                      })}
                   </div>
                 </div>
               )}
@@ -361,6 +404,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       setSearch('');
                       onTextSearch('');
                     }}
+                    data-testid='wigmix-text-bar'
                     data-pw='cs-refinement-text-bar'
                   />
                 </div>
@@ -375,7 +419,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     <ProductCard key={`${result.product_id}-${index}`}
                                  onFindSimilar={(data) => {
                                    setSearch('');
-                                   return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
+                                   return onFindSimilar({
+                                     image: { imgUrl: data.im_url, pid: data.product_id },
+                                     productTypes: [],
+                                   });
                                  }}
                                  index={index}
                                  result={result}

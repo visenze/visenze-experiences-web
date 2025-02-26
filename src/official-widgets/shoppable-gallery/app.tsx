@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import ShoppableGallery from './shoppable-gallery';
 import './app.css';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
+import ShoppableGallery from './shoppable-gallery';
 import { type AppProps, AppWrapper } from '../../common/components/app-wrapper';
 
 // Set to true to enable customization via WidgetConfig

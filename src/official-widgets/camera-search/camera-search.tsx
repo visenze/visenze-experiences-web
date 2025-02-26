@@ -1,22 +1,23 @@
 import type { FC, ReactElement } from 'react';
-import { useEffect, useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Actions, Category, Labels } from '../../common/types/tracking-constants';
+import type { ProductType } from 'visearch-javascript-sdk';
+import LoadingIcon from './icons/LoadingIcon';
+import ResultScreen from './screens/ResultScreen';
+import UploadScreen from './screens/UploadScreen';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
+import ViSenzeModal from '../../common/components/modal/visenze-modal';
+import CroppingProvider from '../../common/components/providers/CroppingProvider';
+import { RootContext } from '../../common/components/shadow-wrapper';
+import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
+import CameraIcon from '../../common/icons/CameraIcon';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage, SearchImageOrPid } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
-import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { parseBox } from '../../common/utils';
-import UploadScreen from './screens/UploadScreen';
-import ResultScreen from './screens/ResultScreen';
-import { RootContext } from '../../common/components/shadow-wrapper';
-import ViSenzeModal from '../../common/components/modal/visenze-modal';
-import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
-import LoadingIcon from './icons/LoadingIcon';
-import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
-import CroppingProvider from '../../common/components/providers/CroppingProvider';
-import CustomizableIcon from '../../common/icons/CustomizableIcon';
-import CameraIcon from '../../common/icons/CameraIcon';
 
 enum ScreenType {
   LOADING = 'loading',
@@ -29,6 +30,12 @@ interface CameraSearchProps {
   renderModalWithoutPortal?: boolean;
 }
 
+interface SearchHistoryEntry {
+  image: SearchImageOrPid;
+  productTypes: ProductType[];
+  box?: BoxData;
+}
+
 const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations, searchSettings } = widgetConfig;
@@ -39,7 +46,9 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(ScreenType.UPLOAD);
   const [boxData, setBoxData] = useState<BoxData | undefined>();
-  const [searchHistory, setSearchHistory] = useState<SearchImageOrPid[]>([]);
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
+  const [activeHistory, setActiveHistory] = useState<SearchHistoryEntry>();
+  const [showFullResults, setShowFullResults] = useState(false);
   const [lastSuccessfulImage, setLastSuccessfulImage] = useState<SearchImageOrPid | undefined>();
   const root = useContext(RootContext);
 
@@ -85,9 +94,39 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
     setLastSuccessfulImage(undefined);
   };
 
-  const appendSearchHistory = (searchImage: SearchImageOrPid): void => {
-    const previousSearches = searchHistory.filter((prev) => prev !== searchImage);
-    setSearchHistory([searchImage, ...previousSearches]);
+  const appendSearchHistory = (searchImage: SearchImageOrPid, pts: ProductType[]): void => {
+    if (pts.length) {
+      const newEntries: SearchHistoryEntry[] = [];
+      pts.forEach((pt, i) => {
+        const newEntry: SearchHistoryEntry = {
+          image: searchImage,
+          productTypes: pts,
+          box: {
+            box: {
+              x1: pt.box[0],
+              y1: pt.box[1],
+              x2: pt.box[2],
+              y2: pt.box[3],
+            },
+            index: i,
+          },
+        };
+        newEntries.push(newEntry);
+      });
+      if (!searchHistory.find((entry) => entry.image === searchImage)) {
+        setSearchHistory((prevHistory) => [...newEntries, ...prevHistory].slice(0, 20));
+      }
+      setActiveHistory(newEntries[0]);
+    } else {
+      const newEntry: SearchHistoryEntry = {
+        image: searchImage,
+        productTypes: [],
+      };
+      if (!searchHistory.find((entry) => entry.image === searchImage)) {
+        setSearchHistory((prevHistory) => [newEntry, ...prevHistory].slice(0, 20));
+      }
+      setActiveHistory(newEntry);
+    }
   };
 
   const onImageUpload = (data: SearchImage): void => {
@@ -96,15 +135,15 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
     setImage(data);
   };
 
-  const onFindSimilar = (data: SearchImageOrPid): void => {
-    if (image === data) {
+  const onFindSimilar = (data: SearchHistoryEntry): void => {
+    if (JSON.stringify(activeHistory) === JSON.stringify(data)) {
       // Fake the search if same image
       setScreen(ScreenType.LOADING);
       setTimeout(() => setScreen(ScreenType.RESULT), 300);
     } else {
       setScreen(ScreenType.LOADING);
-      setBoxData(undefined);
-      setImage(data);
+      setBoxData(data.box);
+      setImage(data.image);
     }
   };
 
@@ -122,16 +161,12 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
       q: query,
       im_id: imageId,
       page: 1,
-      limit: searchSettings['limit'],
+      limit: searchSettings['limit'] || 20,
       get_all_fl: true,
     };
-    const product = boxData?.index ? productTypes[boxData.index] : boxData;
 
-    if (product) {
-      params['box'] = parseBox(product.box);
-      if ('type' in product) {
-        params['detection'] = product.type;
-      }
+    if (activeHistory?.box) {
+      params['box'] = parseBox(activeHistory.box.box);
     }
 
     multisearchWithParams(params);
@@ -158,12 +193,13 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
     switch (screen) {
       case ScreenType.ERROR:
         return (
-            <div className='size-full flex flex-col text-center justify-center items-center gap-1'>
+            <div className='flex size-full flex-col items-center justify-center gap-1 text-center'>
               <div className='font-bold'>
                 {intl.formatMessage({ id: 'errorDescription' })}
               </div>
               <div>{error}</div>
-              <button className='text-buttonPrimary bg-buttonPrimary px-5 py-2 rounded-md w-fit mt-3'
+              <button className='mt-3 w-fit rounded-md bg-buttonPrimary px-5 py-2 text-buttonPrimary'
+                      data-testid='wigmix-back'
                       onClick={() => {
                         setError('');
                         if (lastSuccessfulImage) {
@@ -180,11 +216,11 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
         );
       case ScreenType.UPLOAD:
         return <UploadScreen onModalClose={onModalClose} onImageUpload={onImageUpload} />;
-      case ScreenType.RESULT:
+      case ScreenType.RESULT: {
         return (
           <ResultScreen
             productResults={productResults}
-            productTypes={productTypes}
+            productTypes={activeHistory?.productTypes || []}
             autocompleteResults={autocompleteResults}
             metadata={metadata}
             onModalClose={onModalClose}
@@ -195,8 +231,15 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
             setSearchHistory={setSearchHistory}
+            showFullResults={showFullResults}
+            setShowFullResults={setShowFullResults}
+            toggleFullResults={() => {
+              setShowFullResults((v) => !v);
+            }}
+            activeHistory={activeHistory}
           />
         );
+      }
       case ScreenType.LOADING:
         return (
           <div className='flex h-full items-center justify-center'>
@@ -211,7 +254,12 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
   useEffect(() => {
     if (productResults.length > 0) {
       if (image) {
-        appendSearchHistory(image);
+        if (boxData) {
+          setActiveHistory(searchHistory.find((h) => JSON.stringify(h.image) === JSON.stringify(image)
+            && JSON.stringify(h.box) === JSON.stringify(boxData)));
+        } else {
+          appendSearchHistory(image, productTypes);
+        }
       }
       setScreen(ScreenType.RESULT);
       setLastSuccessfulImage(image);
@@ -249,6 +297,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
       <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
         {!customizations.popup?.triggerIcon?.hide && (
             <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+                 data-testid='wigmix-popup-trigger-button'
                  onClick={onCameraButtonClick}>
               {customizations.popup?.triggerIcon?.url ? (
                   <CustomizableIcon

@@ -1,10 +1,10 @@
-import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
 import { cn } from '@heroui/theme';
-import DownArrowIcon from '../icons/DownArrowIcon';
+import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
-import type { ProcessedProduct } from '../../../common/types/product';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import { WidgetDataContext } from '../../../common/types/contexts';
+import type { ProcessedProduct } from '../../../common/types/product';
+import DownArrowIcon from '../icons/DownArrowIcon';
 
 export interface Chat {
   chatId: string;
@@ -91,12 +91,12 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
                    style={getProductGridCssConfig(chat.author === 'products')}
                    key={`chat-row-${idx}`}>
                 {chat.author === 'user' && chat.messages.map((message, cidx) => (
-                    <div className='bg-buttonPrimary text-buttonPrimary w-fit max-w-7/10 px-4 py-2 mb-1' tabIndex={0} key={`chat-user-message-${cidx}`}>
+                    <div className='mb-1 w-fit max-w-7/10 bg-buttonPrimary px-4 py-2 text-buttonPrimary' tabIndex={0} key={`chat-user-message-${cidx}`}>
                       {message}
                     </div>
                 ))}
                 {chat.author === 'bot' && chat.messages.map((message, cidx) => (
-                    <div className='bg-buttonPrimary text-buttonPrimary w-fit max-w-7/10 px-4 py-2 mb-1' tabIndex={0} key={`chat-bot-message-${cidx}`}
+                    <div className='mb-1 w-fit max-w-7/10 bg-buttonPrimary px-4 py-2 text-buttonPrimary' tabIndex={0} key={`chat-bot-message-${cidx}`}
                          dangerouslySetInnerHTML={{
                            __html: processMessageForDisplay(message),
                          }} />
@@ -121,7 +121,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
           {(isWaiting || latestMessage) && (
               <div className='chat-row'>
                 {isWaiting && (
-                    <div className='p-3 flex gap-2 bg-buttonPrimary w-fit'>
+                    <div className='flex w-fit gap-2 bg-buttonPrimary p-3'>
                       {[0, 1, 2].map((i) => (
                           <div key={`loading-dot-${i}`}
                                className='loading-dot rounded-full'
@@ -130,7 +130,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
                     </div>
                 )}
                 {latestMessage && (
-                    <div className='bg-buttonPrimary text-buttonPrimary w-fit max-w-7/10 px-4 py-2 mb-1'
+                    <div className='mb-1 w-fit max-w-7/10 bg-buttonPrimary px-4 py-2 text-buttonPrimary'
                          dangerouslySetInnerHTML={{
                            __html: processMessageForDisplay(latestMessage),
                          }} />

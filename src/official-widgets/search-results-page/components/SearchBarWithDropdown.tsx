@@ -1,12 +1,12 @@
+import { Input } from '@heroui/input';
+import { Listbox, ListboxItem, ListboxSection } from '@heroui/listbox';
+import { cn } from '@heroui/theme';
 import type { FC, Key, ReactElement } from 'react';
 import { useRef } from 'react';
-import { Listbox, ListboxSection, ListboxItem } from '@heroui/listbox';
-import { Input } from '@heroui/input';
-import { cn } from '@heroui/theme';
 import { useIntl } from 'react-intl';
+import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import MagnifyingGlassIcon from '../../../common/icons/MagnifyingGlassIcon';
 import type { ProcessedProduct } from '../../../common/types/product';
-import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 
 /**
  * Component which displays autocomplete suggestions based on search bar input

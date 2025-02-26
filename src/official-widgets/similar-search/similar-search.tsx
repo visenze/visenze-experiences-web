@@ -1,20 +1,20 @@
 import type { FC, ReactElement } from 'react';
-import { useEffect, useState, useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Actions, Category, Labels } from '../../common/types/tracking-constants';
-import { WidgetDataContext } from '../../common/types/contexts';
-import type { SearchImageOrPid } from '../../common/types/image';
-import type { BoxData } from '../../common/types/product';
+import LoadingIcon from './icons/LoadingIcon';
+import ResultScreen from './screens/ResultScreen';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
-import { parseBox } from '../../common/utils';
-import ResultScreen from './screens/ResultScreen';
-import { RootContext } from '../../common/components/shadow-wrapper';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
-import LoadingIcon from './icons/LoadingIcon';
+import { RootContext } from '../../common/components/shadow-wrapper';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
+import { WidgetDataContext } from '../../common/types/contexts';
+import type { SearchImageOrPid } from '../../common/types/image';
+import type { BoxData } from '../../common/types/product';
+import { Actions, Category, Labels } from '../../common/types/tracking-constants';
+import { parseBox } from '../../common/utils';
 
 enum ScreenType {
   LOADING = 'loading',
@@ -145,12 +145,12 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl, renderModalWithoutPortal
     switch (screen) {
       case ScreenType.ERROR:
         return (
-            <div className='size-full flex flex-col text-center justify-center items-center gap-1'>
+            <div className='flex size-full flex-col items-center justify-center gap-1 text-center'>
               <div className='font-bold'>
                 {intl.formatMessage({ id: 'errorDescription' })}
               </div>
               <div>{error}</div>
-              <button className='text-buttonPrimary bg-buttonPrimary px-5 py-2 rounded-md w-fit mt-3'
+              <button className='mt-3 w-fit rounded-md bg-buttonPrimary px-5 py-2 text-buttonPrimary'
                       data-testid='wigmix-back'
                       onClick={() => {
                         if (lastSuccessfulImage) {

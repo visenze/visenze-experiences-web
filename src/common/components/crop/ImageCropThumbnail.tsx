@@ -1,6 +1,6 @@
-import { memo, useEffect, useRef, useCallback, useContext } from 'react';
-import type { ReactNode, FC } from 'react';
 import { cn } from '@heroui/theme';
+import { memo, useCallback, useContext, useEffect, useRef } from 'react';
+import type { FC, ReactNode } from 'react';
 import { CroppingContext } from '../../types/contexts';
 
 /**
@@ -15,7 +15,7 @@ interface ImageCropThumbnailProps {
   className?: string;
 }
 
-const ImageCropThumbnail: FC<ImageCropThumbnailProps> = ({ imageUrl, box, index }): ReactNode => {
+const ImageCropThumbnail: FC<ImageCropThumbnailProps> = ({ imageUrl, box, index, className }): ReactNode => {
   const { selectedHotspot, setSelectedHotspot } = useContext(CroppingContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -45,8 +45,8 @@ const ImageCropThumbnail: FC<ImageCropThumbnailProps> = ({ imageUrl, box, index 
 
       const canvas = canvasRef.current;
       if (canvas) {
-        canvas.height = 64;
-        canvas.width = 64;
+        canvas.height = 150;
+        canvas.width = 150;
         const ctx = canvas.getContext('2d');
         if (!ctx) {
           return;
@@ -70,7 +70,13 @@ const ImageCropThumbnail: FC<ImageCropThumbnailProps> = ({ imageUrl, box, index 
     getCroppedImage();
   }, [getCroppedImage]);
 
-  return <canvas ref={canvasRef} className={cn('size-16 cursor-pointer rounded-xl', selectedHotspot !== index && 'opacity-50')} onClick={() => setSelectedHotspot(index)} />;
+  return <canvas ref={canvasRef}
+                 className={cn(
+                     'aspect-square cursor-pointer rounded-md',
+                     selectedHotspot !== index && 'opacity-50',
+                     className,
+                 )}
+                 onClick={() => setSelectedHotspot(index)} />;
 };
 
 export default memo(ImageCropThumbnail);

@@ -16,7 +16,7 @@ interface RecommendationSearchProps {
   productId: string;
   sortType?: SortType;
   filters?: Record<FacetType, any>;
-  additionalParams?: Record<string, any>;
+  shouldDisplayAlternatives?: boolean;
 }
 
 export interface RecommendationSearch {
@@ -37,7 +37,7 @@ const useRecommendationSearch = ({
   productId,
   sortType,
   filters,
-  additionalParams,
+  shouldDisplayAlternatives,
 }: RecommendationSearchProps): RecommendationSearch => {
   const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
@@ -94,12 +94,6 @@ const useRecommendationSearch = ({
       params['filters'] = getFilterQueries(productDetails, filters);
     }
 
-    if (additionalParams) {
-      Object.keys(additionalParams).forEach((key) => {
-        params[key] = additionalParams[key];
-      });
-    }
-
     widgetClient.searchById(productId, params, handleSuccess, handleError);
   };
 
@@ -117,10 +111,10 @@ const useRecommendationSearch = ({
 
   const parseResults = (res: ProductSearchResponseSuccess): ProcessedProduct[] => {
     if (res.result) {
-      return getFlattenProducts(res.result);
+      return getFlattenProducts(res.result, shouldDisplayAlternatives);
     }
     if (res.objects?.[objectIndex].result) {
-      return getFlattenProducts(res.objects[objectIndex].result);
+      return getFlattenProducts(res.objects[objectIndex].result, shouldDisplayAlternatives);
     }
     return [];
   };
@@ -183,7 +177,7 @@ const useRecommendationSearch = ({
   // Update product results when objectIndex changes
   useEffect(() => {
     if (objects.length > 0) {
-      setProductResults(getFlattenProducts(objects[objectIndex].result));
+      setProductResults(getFlattenProducts(objects[objectIndex].result, shouldDisplayAlternatives));
     }
   }, [objectIndex]);
 

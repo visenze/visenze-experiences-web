@@ -2,8 +2,8 @@ import type { FC, ReactNode } from 'react';
 import { useContext } from 'react';
 import type { FileRejection } from 'react-dropzone';
 import { useDropzone } from 'react-dropzone';
-import type { SearchImage } from '../types/image';
 import { WidgetDataContext } from '../types/contexts';
+import type { SearchImage } from '../types/image';
 import { Actions, Category, Labels } from '../types/tracking-constants';
 
 interface FileDropzoneProps {
