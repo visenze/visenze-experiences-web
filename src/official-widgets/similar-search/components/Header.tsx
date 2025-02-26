@@ -19,7 +19,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, showTitle, iconColor }): Reac
         </div>
       )}
 
-      <div className='absolute right-4 top-2 bg-transparent md:right-5 md:top-4 rounded-full p-1 hover:opacity-90'
+      <div className='absolute right-4 top-2 rounded-full bg-transparent p-1 hover:opacity-90 md:right-5 md:top-4'
            onClick={onCloseHandler}
            data-testid='wigmix-close-button'
            data-pw='ss-close-button'>

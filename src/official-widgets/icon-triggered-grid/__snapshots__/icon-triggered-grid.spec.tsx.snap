@@ -55,7 +55,7 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
           class="relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1"
         >
           <div
-            class="absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90"
+            class="absolute right-3 top-3 z-10 cursor-pointer rounded-full border-none bg-transparent p-1 hover:opacity-90"
             data-pw="itg-close-button"
             data-testid="wigmix-close-button"
           >
@@ -79,7 +79,7 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
             </div>
           </div>
           <div
-            class="size-full flex flex-col text-center justify-center items-center gap-1"
+            class="flex size-full flex-col items-center justify-center gap-1 text-center"
           >
             <div
               class="font-bold"
@@ -155,7 +155,7 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
           class="relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1"
         >
           <div
-            class="absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90"
+            class="absolute right-3 top-3 z-10 cursor-pointer rounded-full border-none bg-transparent p-1 hover:opacity-90"
             data-pw="itg-close-button"
             data-testid="wigmix-close-button"
           >
@@ -179,7 +179,7 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
             </div>
           </div>
           <div
-            class="size-full flex flex-col text-center justify-center items-center gap-1"
+            class="flex size-full flex-col items-center justify-center gap-1 text-center"
           >
             <div
               class="font-bold"
@@ -269,7 +269,7 @@ exports[`icon-triggered-grid should render a successful response with default co
           class="relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1"
         >
           <div
-            class="absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90"
+            class="absolute right-3 top-3 z-10 cursor-pointer rounded-full border-none bg-transparent p-1 hover:opacity-90"
             data-pw="itg-close-button"
             data-testid="wigmix-close-button"
           >
@@ -302,7 +302,7 @@ exports[`icon-triggered-grid should render a successful response with default co
               Icon Triggered Grid 814
             </div>
             <div
-              class="wigmix-reference-image-container flex pt-4 md:pt-8 w-full justify-center"
+              class="wigmix-reference-image-container flex w-full justify-center pt-4 md:pt-8"
               data-pw="itg-reference-product"
             >
               <img
@@ -349,7 +349,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -394,7 +394,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -439,7 +439,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -484,7 +484,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -529,7 +529,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -574,7 +574,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -619,7 +619,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -664,7 +664,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -709,7 +709,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -754,7 +754,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -799,7 +799,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -844,7 +844,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -889,7 +889,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -934,7 +934,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -979,7 +979,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -1024,7 +1024,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -1069,7 +1069,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -1114,7 +1114,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -1159,7 +1159,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -1204,7 +1204,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -1301,7 +1301,7 @@ exports[`icon-triggered-grid should render a successful response with default co
           class="relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1"
         >
           <div
-            class="absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90"
+            class="absolute right-3 top-3 z-10 cursor-pointer rounded-full border-none bg-transparent p-1 hover:opacity-90"
             data-pw="itg-close-button"
             data-testid="wigmix-close-button"
           >
@@ -1334,7 +1334,7 @@ exports[`icon-triggered-grid should render a successful response with default co
               Icon Triggered Grid 814
             </div>
             <div
-              class="wigmix-reference-image-container flex pt-4 md:pt-8 w-full justify-center"
+              class="wigmix-reference-image-container flex w-full justify-center pt-4 md:pt-8"
               data-pw="itg-reference-product"
             >
               <img
@@ -1350,12 +1350,12 @@ exports[`icon-triggered-grid should render a successful response with default co
                 class="absolute top-0 h-8 w-full"
               >
                 <div
-                  class="absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit"
+                  class="absolute inset-x-0 -top-3 m-auto w-fit rounded-full bg-buttonPrimary p-1 hover:opacity-90"
                   data-pw="itg-arrow-button"
                   data-testid="wigmix-full-results-toggle"
                 >
                   <div
-                    class="cursor-pointer size-6"
+                    class="size-6 cursor-pointer"
                     style="color: rgb(255, 255, 255);"
                   >
                     <svg
@@ -1397,7 +1397,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1442,7 +1442,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1487,7 +1487,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1532,7 +1532,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1577,7 +1577,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1622,7 +1622,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1667,7 +1667,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1712,7 +1712,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1757,7 +1757,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1802,7 +1802,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1847,7 +1847,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1892,7 +1892,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1937,7 +1937,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -1982,7 +1982,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2027,7 +2027,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2072,7 +2072,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2117,7 +2117,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2162,7 +2162,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2207,7 +2207,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2252,7 +2252,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                         class="wigmix-product-card-image-container"
                       >
                         <div
-                          class="flex justify-center relative"
+                          class="relative flex justify-center"
                         >
                           <img
                             alt=""
@@ -2382,7 +2382,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
           class="relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1"
         >
           <div
-            class="absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90"
+            class="absolute right-3 top-3 z-10 cursor-pointer rounded-full border-none bg-transparent p-1 hover:opacity-90"
             data-pw="itg-close-button"
             data-testid="wigmix-close-button"
           >
@@ -2409,7 +2409,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
             class="flex flex-col border-none p-4 md:w-1/3 md:px-10 md:py-6"
           >
             <div
-              class="wigmix-reference-image-container flex pt-4 md:pt-8 w-full justify-center"
+              class="wigmix-reference-image-container flex w-full justify-center pt-4 md:pt-8"
               data-pw="itg-reference-product"
             >
               <img
@@ -2456,7 +2456,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2501,7 +2501,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2546,7 +2546,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2591,7 +2591,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2636,7 +2636,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2681,7 +2681,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2726,7 +2726,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2771,7 +2771,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2816,7 +2816,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2861,7 +2861,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2906,7 +2906,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2951,7 +2951,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -2996,7 +2996,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -3041,7 +3041,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -3086,7 +3086,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -3131,7 +3131,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -3176,7 +3176,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -3221,7 +3221,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -3266,7 +3266,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""
@@ -3311,7 +3311,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
                     class="wigmix-product-card-image-container"
                   >
                     <div
-                      class="flex justify-center relative"
+                      class="relative flex justify-center"
                     >
                       <img
                         alt=""

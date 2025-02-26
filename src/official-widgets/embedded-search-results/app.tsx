@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import EmbeddedSearchResults from './embedded-search-results';
 import './app.css';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
+import EmbeddedSearchResults from './embedded-search-results';
 import { type AppPropsWithReferenceElement, AppWrapper } from '../../common/components/app-wrapper';
 
 // Set to true to enable customization via WidgetConfig

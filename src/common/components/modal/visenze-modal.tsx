@@ -1,7 +1,7 @@
+import { cn } from '@heroui/theme';
 import type { FC, ReactElement } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import ReactModal from 'react-modal';
-import { cn } from '@heroui/theme';
 import Portal from '../portal';
 import ShadowWrapper, { RootContext } from '../shadow-wrapper';
 import './modal.scss';

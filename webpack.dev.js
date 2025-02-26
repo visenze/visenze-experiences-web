@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ESLintPlugin = require('eslint-webpack-plugin');
 const { HotModuleReplacementPlugin } = require('webpack');
 const { env } = require('process');
 const getWebpackModule = require('./webpack.util');
@@ -25,12 +24,6 @@ module.exports = () => {
 				template: path.resolve(directory, 'index.html'),
 			}),
 			new HotModuleReplacementPlugin(),
-			new ESLintPlugin({
-				extensions: ['ts', 'tsx', 'js', 'jsx'],
-				emitError: true,
-				emitWarning: false,
-				failOnError: true,
-			}),
 		],
 		resolve: {
 			extensions: ['.js', '.ts', '.tsx', '.jsx', '.css', '.scss'],

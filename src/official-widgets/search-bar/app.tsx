@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import SearchBar from './search-bar';
 import './app.css';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
+import SearchBar from './search-bar';
 import { type AppPropsWithReferenceElement, AppWrapper } from '../../common/components/app-wrapper';
 
 // Set to true to enable customization via WidgetConfig

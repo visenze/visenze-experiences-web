@@ -1,6 +1,6 @@
-import { memo, useEffect, useRef, useCallback, useContext } from 'react';
-import type { ReactNode, FC } from 'react';
 import { cn } from '@heroui/theme';
+import { memo, useCallback, useContext, useEffect, useRef } from 'react';
+import type { FC, ReactNode } from 'react';
 import { CroppingContext } from '../../types/contexts';
 
 /**

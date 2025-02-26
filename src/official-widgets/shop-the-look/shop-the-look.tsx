@@ -1,20 +1,20 @@
+import { Skeleton } from '@heroui/skeleton';
 import type { CSSProperties, FC, ReactElement } from 'react';
-import { useEffect, useRef, useState, useContext } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import Slider from 'react-slick';
 import type { Settings } from 'react-slick';
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
-import { Skeleton } from '@heroui/skeleton';
-import { useIntl } from 'react-intl';
-import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetDataContext } from '../../common/types/contexts';
-import ProductCard from '../../common/components/product-card/ProductCard';
-import Footer from '../../common/components/Footer';
-import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
-import PrevArrow from './components/PrevArrow';
 import NextArrow from './components/NextArrow';
+import PrevArrow from './components/PrevArrow';
+import Footer from '../../common/components/Footer';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
+import ProductCard from '../../common/components/product-card/ProductCard';
+import { RootContext } from '../../common/components/shadow-wrapper';
 import { WidgetBreakpoint } from '../../common/types/constants';
+import { WidgetDataContext } from '../../common/types/contexts';
 
 interface ShopTheLookProps {
   productId: string;

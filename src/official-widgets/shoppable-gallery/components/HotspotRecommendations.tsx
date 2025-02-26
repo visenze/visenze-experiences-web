@@ -1,15 +1,15 @@
+import { cn } from '@heroui/theme';
 import type { FC } from 'react';
 import { memo, useContext, useMemo } from 'react';
-import type { ObjectProductResponse, ProductType } from 'visearch-javascript-sdk';
 import { useIntl } from 'react-intl';
-import { cn } from '@heroui/theme';
-import ViSenzeModal from '../../../common/components/modal/visenze-modal';
-import { CroppingContext, WidgetDataContext } from '../../../common/types/contexts';
-import { getFlattenProducts, getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
-import ProductCard from '../../../common/components/product-card/ProductCard';
+import type { ObjectProductResponse, ProductType } from 'visearch-javascript-sdk';
 import ImageCropThumbnail from '../../../common/components/crop/ImageCropThumbnail';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
+import ViSenzeModal from '../../../common/components/modal/visenze-modal';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import CloseIcon from '../../../common/icons/CloseIcon';
+import { CroppingContext, WidgetDataContext } from '../../../common/types/contexts';
+import { getFlattenProducts, getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 
 /**
  * This component displays a drawer with product recommendations based on selected hotspots in an image.
@@ -70,7 +70,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({
                   renderWithoutPortal={renderModalWithoutPortal}>
       <div className='flex size-full flex-col bg-primary' data-pw='sg-hotspot-recommendations'>
         {/* Close Button Tablet/Desktop */}
-        <div className='absolute right-3 top-2 hidden bg-transparent md:flex rounded-full p-1 hover:opacity-90 cursor-pointer'
+        <div className='absolute right-3 top-2 hidden cursor-pointer rounded-full bg-transparent p-1 hover:opacity-90 md:flex'
              onClick={closeDrawerHandler}
              data-pw='sg-drawer-close-button-desktop'>
           <CloseIcon className='size-6'
@@ -80,7 +80,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({
         </div>
 
         {/* Close Button Mobile */}
-        <div className='flex flex-shrink-0 justify-center bg-buttonPrimary md:hidden rounded-full p-1 hover:opacity-90 w-full cursor-pointer'
+        <div className='flex w-full flex-shrink-0 cursor-pointer justify-center rounded-full bg-buttonPrimary p-1 hover:opacity-90 md:hidden'
              onClick={closeDrawerHandler} data-pw='sg-drawer-close-button-mobile'>
           <div className='h-1 w-12 bg-gray-400'></div>
         </div>

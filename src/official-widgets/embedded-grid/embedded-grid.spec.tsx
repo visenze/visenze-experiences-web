@@ -1,17 +1,17 @@
-import { IntlProvider } from 'react-intl';
 import { act, fireEvent, render, type RenderResult } from '@testing-library/react';
+import { IntlProvider } from 'react-intl';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 import EmbeddedGrid from './embedded-grid';
-import type { WidgetConfig } from '../../common/wigmix-core';
-import { WidgetDataContext } from '../../common/types/contexts';
-import getWidgetClient from '../../common/client/widget-client';
-import { RootContext } from '../../common/components/shadow-wrapper';
 import {
   getStandardRecommendationPidNotFoundResponse,
   getStandardRecommendationSuccessResponse,
 } from '../../../mocks/responses';
+import getWidgetClient from '../../common/client/widget-client';
+import { RootContext } from '../../common/components/shadow-wrapper';
 import type { LanguagePack } from '../../common/locales/locale';
+import { WidgetDataContext } from '../../common/types/contexts';
+import type { WidgetConfig } from '../../common/wigmix-core';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 

@@ -1,15 +1,15 @@
-import { useContext, useEffect, useState, type CSSProperties, type FC } from 'react';
 import { Skeleton } from '@heroui/skeleton';
 import { cn } from '@heroui/theme';
+import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
+import ResultLogicImpl from '../../client/result-logic';
+import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../default-configs';
+import CustomizableIcon from '../../icons/CustomizableIcon';
+import MagnifyingGlassIcon from '../../icons/MagnifyingGlassIcon';
+import { getCurrencyFormatter } from '../../locales/locale';
 import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
-import ResultLogicImpl from '../../client/result-logic';
 import { Actions } from '../../types/tracking-constants';
-import CustomizableIcon from '../../icons/CustomizableIcon';
 import type { WidgetConfig } from '../../wigmix-core';
-import { getCurrencyFormatter } from '../../locales/locale';
-import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../default-configs';
-import MagnifyingGlassIcon from '../../icons/MagnifyingGlassIcon';
 
 interface ProductCardProps {
   result: ProcessedProduct;
@@ -216,7 +216,7 @@ const ProductCard: FC<ProductCardProps> = ({
          data-pw={`${pwPrefix}-product-result-card-${index + 1}`}
          data-testid='wigmix-product-card-anchor'>
         <div className='wigmix-product-card-image-container'>
-          <div className='flex justify-center relative'>
+          <div className='relative flex justify-center'>
             {isLoading && (
                 <Skeleton className={cn(
                             `wigmix-product-card-image size-full ${imageClasses || ''}`,
@@ -237,7 +237,7 @@ const ProductCard: FC<ProductCardProps> = ({
                  data-testid='wigmix-product-card-image' />
             {hasFindSimilar && !isLoading && customizations.productCard?.findSimilar?.enable && (
                 <div
-                    className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-5 bg-white rounded-full p-1 hover:opacity-90`}
+                    className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-5 rounded-full bg-white p-1 hover:opacity-90`}
                     onClick={(event) => {
                       if (onFindSimilar) {
                         event.preventDefault();

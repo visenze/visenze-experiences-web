@@ -1,10 +1,10 @@
 import type { CSSProperties, FC } from 'react';
-import { useContext, memo, useEffect, useState } from 'react';
-import type { ProcessedProduct } from '../../../common/types/product';
-import ProductCard from '../../../common/components/product-card/ProductCard';
+import { memo, useContext, useEffect, useState } from 'react';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
-import { WidgetDataContext } from '../../../common/types/contexts';
+import ProductCard from '../../../common/components/product-card/ProductCard';
 import TrashIcon from '../../../common/icons/TrashIcon';
+import { WidgetDataContext } from '../../../common/types/contexts';
+import type { ProcessedProduct } from '../../../common/types/product';
 
 /**
  * An individual carousel of product cards based on a search query
@@ -67,7 +67,7 @@ const Carousel: FC<CarouselProps> = ({ results, metadata, searchValue, removeFro
           </div>
         )}
       </div>
-      <div className={`no-scrollbar grid grid-cols-5 w-full items-end text-primary ${getProductGridCssClasses('gap-x-4')} overflow-scroll`}
+      <div className={`no-scrollbar grid w-full grid-cols-5 items-end text-primary ${getProductGridCssClasses('gap-x-4')} overflow-scroll`}
            style={getProductGridCssConfig()}>
         {results.map((result, index) => (
             <ProductCard key={`${result.product_id}-${index}`}

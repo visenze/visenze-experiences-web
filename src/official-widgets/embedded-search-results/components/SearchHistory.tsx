@@ -70,7 +70,7 @@ const SearchHistory = ({
                      }}>
                   <CloseIcon className='size-4 text-black' />
                 </div>
-                <img className='h-full rounded-none object-contain aspect-square'
+                <img className='aspect-square h-full rounded-none object-contain'
                      src={entry.imageUrl ?? ''}
                      data-pw={`esr-product-history-image-${index + 1}`} />
               </div>

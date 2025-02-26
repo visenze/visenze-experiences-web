@@ -17,7 +17,7 @@ exports[`ProductCard should render with all fields hidden, open in new tabs 1`] 
         class="wigmix-product-card-image-container"
       >
         <div
-          class="flex justify-center relative"
+          class="relative flex justify-center"
         >
           <img
             alt=""
@@ -63,7 +63,7 @@ exports[`ProductCard should render with secondary title field, price fields with
         class="wigmix-product-card-image-container"
       >
         <div
-          class="flex justify-center relative"
+          class="relative flex justify-center"
         >
           <img
             alt=""
@@ -126,7 +126,7 @@ exports[`ProductCard should render with standard fields 1`] = `
         class="wigmix-product-card-image-container"
       >
         <div
-          class="flex justify-center relative"
+          class="relative flex justify-center"
         >
           <div
             class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 wigmix-product-card-image size-full aspect-square"
@@ -183,7 +183,7 @@ exports[`ProductCard should render with standard fields, find similar enabled wi
         class="wigmix-product-card-image-container"
       >
         <div
-          class="flex justify-center relative"
+          class="relative flex justify-center"
         >
           <img
             alt=""
@@ -193,7 +193,7 @@ exports[`ProductCard should render with standard fields, find similar enabled wi
             src="test_image_url"
           />
           <div
-            class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 bg-white rounded-full p-1 hover:opacity-90"
+            class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
             data-pw="ut-find-similar-button"
             data-testid="wigmix-find-similar-button"
           >
@@ -252,7 +252,7 @@ exports[`ProductCard should render with standard fields, find similar enabled, w
         class="wigmix-product-card-image-container"
       >
         <div
-          class="flex justify-center relative"
+          class="relative flex justify-center"
         >
           <img
             alt=""
@@ -262,7 +262,7 @@ exports[`ProductCard should render with standard fields, find similar enabled, w
             src="test_image_url"
           />
           <div
-            class="wigmix-find-similar-button absolute top-3 right-3 z-5 bg-white rounded-full p-1 hover:opacity-90"
+            class="wigmix-find-similar-button absolute top-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
             data-pw="ut-find-similar-button"
             data-testid="wigmix-find-similar-button"
           >

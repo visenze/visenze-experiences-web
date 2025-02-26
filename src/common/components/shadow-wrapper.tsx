@@ -1,7 +1,7 @@
+import { HeroUIProvider } from '@heroui/system';
 import type { CSSProperties, FC, HTMLProps, ReactNode } from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import root from 'react-shadow';
-import { HeroUIProvider } from '@heroui/system';
 import useStyles from './hooks/use-styles';
 import { WidgetDataContext } from '../types/contexts';
 

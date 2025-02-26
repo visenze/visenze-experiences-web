@@ -1,8 +1,8 @@
-import { deepMerge, initWidgetFactory } from '../../common/client/initialization';
-import version from '../../version';
-import { WidgetType } from '../../common/wigmix-core';
 import App from './app';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
+import { deepMerge, initWidgetFactory } from '../../common/client/initialization';
+import { WidgetType } from '../../common/wigmix-core';
+import version from '../../version';
 
 // eslint-disable-next-line func-names
 (function (context: Window): void {

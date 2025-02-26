@@ -1,5 +1,5 @@
-import type { FC, ReactElement } from 'react';
 import { cn } from '@heroui/theme';
+import type { FC, ReactElement } from 'react';
 
 interface FooterProps {
   className?: string;

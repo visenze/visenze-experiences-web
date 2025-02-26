@@ -1,19 +1,19 @@
-import { fireEvent, act, render, type RenderResult } from '@testing-library/react';
-import type { ViSearchClient } from 'visearch-javascript-sdk';
+import { act, fireEvent, render, type RenderResult } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { Context as ResponsiveContext } from 'react-responsive';
-import type { LanguagePack } from '../../common/locales/locale';
-import type { WidgetConfig } from '../../common/wigmix-core';
+import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import getWidgetClient from '../../common/client/widget-client';
-import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetDataContext } from '../../common/types/contexts';
 import SimilarSearch from './similar-search';
 import {
   getStandardMultiSearchAutocompleteResponse,
   getStandardMultiSearchInvalidImageResponse,
   getStandardMultiSearchSuccessResponse,
 } from '../../../mocks/responses';
+import getWidgetClient from '../../common/client/widget-client';
+import { RootContext } from '../../common/components/shadow-wrapper';
+import type { LanguagePack } from '../../common/locales/locale';
+import { WidgetDataContext } from '../../common/types/contexts';
+import type { WidgetConfig } from '../../common/wigmix-core';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 

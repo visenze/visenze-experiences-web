@@ -1,5 +1,5 @@
-import type { FC, MouseEventHandler } from 'react';
 import { cn } from '@heroui/theme';
+import type { FC, MouseEventHandler } from 'react';
 import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 
 interface PrevArrowProps {

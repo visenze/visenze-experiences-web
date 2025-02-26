@@ -20,10 +20,10 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
         isResultScreen
         ? (
           <>
-            <div className='absolute left-5 top-3 bg-transparent rounded-full p-1 hover:opacity-90'
+            <div className='absolute left-5 top-3 rounded-full bg-transparent p-1 hover:opacity-90'
                  onClick={onBackHandler}
                  data-pw='cs-back-button'>
-              <ChevronLeftIcon color={iconColor} className='cursor-pointer size-6' />
+              <ChevronLeftIcon color={iconColor} className='size-6 cursor-pointer' />
             </div>
             {showTitle && (
               <div className='wigmix-widget-title hidden md:block' data-pw='cs-widget-title'>
@@ -43,10 +43,10 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
         )
       }
 
-      <div className='absolute right-5 top-3 bg-transparent rounded-full p-1 hover:opacity-90'
+      <div className='absolute right-5 top-3 rounded-full bg-transparent p-1 hover:opacity-90'
            onClick={onCloseHandler}
            data-pw='cs-close-button'>
-        <CloseIcon color={iconColor} className='cursor-pointer size-6' />
+        <CloseIcon color={iconColor} className='size-6 cursor-pointer' />
       </div>
     </div>
   );
