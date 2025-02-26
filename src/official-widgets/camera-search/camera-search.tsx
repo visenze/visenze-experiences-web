@@ -1,6 +1,7 @@
 import type { FC, ReactElement } from 'react';
 import { useEffect, useContext, useState } from 'react';
 import { useIntl } from 'react-intl';
+import type { ProductType } from 'visearch-javascript-sdk';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage, SearchImageOrPid } from '../../common/types/image';
@@ -29,6 +30,12 @@ interface CameraSearchProps {
   renderModalWithoutPortal?: boolean;
 }
 
+interface SearchHistoryEntry {
+  image: SearchImageOrPid;
+  productTypes: ProductType[];
+  box?: BoxData;
+}
+
 const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations, searchSettings } = widgetConfig;
@@ -39,7 +46,9 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
   const [error, setError] = useState('');
   const [screen, setScreen] = useState(ScreenType.UPLOAD);
   const [boxData, setBoxData] = useState<BoxData | undefined>();
-  const [searchHistory, setSearchHistory] = useState<SearchImageOrPid[]>([]);
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
+  const [activeHistory, setActiveHistory] = useState<SearchHistoryEntry>();
+  const [showFullResults, setShowFullResults] = useState(false);
   const [lastSuccessfulImage, setLastSuccessfulImage] = useState<SearchImageOrPid | undefined>();
   const root = useContext(RootContext);
 
@@ -85,9 +94,39 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
     setLastSuccessfulImage(undefined);
   };
 
-  const appendSearchHistory = (searchImage: SearchImageOrPid): void => {
-    const previousSearches = searchHistory.filter((prev) => prev !== searchImage);
-    setSearchHistory([searchImage, ...previousSearches]);
+  const appendSearchHistory = (searchImage: SearchImageOrPid, pts: ProductType[]): void => {
+    if (pts.length) {
+      const newEntries: SearchHistoryEntry[] = [];
+      pts.forEach((pt, i) => {
+        const newEntry: SearchHistoryEntry = {
+          image: searchImage,
+          productTypes: pts,
+          box: {
+            box: {
+              x1: pt.box[0],
+              y1: pt.box[1],
+              x2: pt.box[2],
+              y2: pt.box[3],
+            },
+            index: i,
+          },
+        };
+        newEntries.push(newEntry);
+      });
+      if (!searchHistory.find((entry) => entry.image === searchImage)) {
+        setSearchHistory((prevHistory) => [...newEntries, ...prevHistory].slice(0, 20));
+      }
+      setActiveHistory(newEntries[0]);
+    } else {
+      const newEntry: SearchHistoryEntry = {
+        image: searchImage,
+        productTypes: [],
+      };
+      if (!searchHistory.find((entry) => entry.image === searchImage)) {
+        setSearchHistory((prevHistory) => [newEntry, ...prevHistory].slice(0, 20));
+      }
+      setActiveHistory(newEntry);
+    }
   };
 
   const onImageUpload = (data: SearchImage): void => {
@@ -96,15 +135,15 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
     setImage(data);
   };
 
-  const onFindSimilar = (data: SearchImageOrPid): void => {
-    if (image === data) {
+  const onFindSimilar = (data: SearchHistoryEntry): void => {
+    if (JSON.stringify(activeHistory) === JSON.stringify(data)) {
       // Fake the search if same image
       setScreen(ScreenType.LOADING);
       setTimeout(() => setScreen(ScreenType.RESULT), 300);
     } else {
       setScreen(ScreenType.LOADING);
-      setBoxData(undefined);
-      setImage(data);
+      setBoxData(data.box);
+      setImage(data.image);
     }
   };
 
@@ -122,16 +161,12 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
       q: query,
       im_id: imageId,
       page: 1,
-      limit: searchSettings['limit'],
+      limit: searchSettings['limit'] || 20,
       get_all_fl: true,
     };
-    const product = boxData?.index ? productTypes[boxData.index] : boxData;
 
-    if (product) {
-      params['box'] = parseBox(product.box);
-      if ('type' in product) {
-        params['detection'] = product.type;
-      }
+    if (activeHistory?.box) {
+      params['box'] = parseBox(activeHistory.box.box);
     }
 
     multisearchWithParams(params);
@@ -180,11 +215,11 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
         );
       case ScreenType.UPLOAD:
         return <UploadScreen onModalClose={onModalClose} onImageUpload={onImageUpload} />;
-      case ScreenType.RESULT:
+      case ScreenType.RESULT: {
         return (
           <ResultScreen
             productResults={productResults}
-            productTypes={productTypes}
+            productTypes={activeHistory?.productTypes || []}
             autocompleteResults={autocompleteResults}
             metadata={metadata}
             onModalClose={onModalClose}
@@ -195,8 +230,15 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
             onKeywordUpdate={onKeywordUpdate}
             searchHistory={searchHistory}
             setSearchHistory={setSearchHistory}
+            showFullResults={showFullResults}
+            setShowFullResults={setShowFullResults}
+            toggleFullResults={() => {
+              setShowFullResults((v) => !v);
+            }}
+            activeHistory={activeHistory}
           />
         );
+      }
       case ScreenType.LOADING:
         return (
           <div className='flex h-full items-center justify-center'>
@@ -211,7 +253,12 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
   useEffect(() => {
     if (productResults.length > 0) {
       if (image) {
-        appendSearchHistory(image);
+        if (boxData) {
+          setActiveHistory(searchHistory.find((h) => JSON.stringify(h.image) === JSON.stringify(image)
+            && JSON.stringify(h.box) === JSON.stringify(boxData)));
+        } else {
+          appendSearchHistory(image, productTypes);
+        }
       }
       setScreen(ScreenType.RESULT);
       setLastSuccessfulImage(image);
