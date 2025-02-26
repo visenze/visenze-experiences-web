@@ -205,7 +205,7 @@ describe('icon-triggered-grid', () => {
   });
 
   it('should render a successful response with default config in desktop view', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_icon_triggered_grid', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((pid, params, handler) => {
         expect(pid).toBe('pid-found');
@@ -250,7 +250,7 @@ describe('icon-triggered-grid', () => {
   });
 
   it('should render a successful response with default config in mobile view', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_icon_triggered_grid', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((_, __, handler) => {
         handler(getStandardRecommendationSuccessResponse());
@@ -291,7 +291,7 @@ describe('icon-triggered-grid', () => {
   it('should render a successful response with some customizations', () => {
     widgetConfig.customizations.generalLayout.showWidgetTitle = false;
     widgetConfig.customizations.generalLayout.showViSenzeLogo = true;
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_icon_triggered_grid', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((_, __, handler) => {
         handler(getStandardRecommendationSuccessResponse());

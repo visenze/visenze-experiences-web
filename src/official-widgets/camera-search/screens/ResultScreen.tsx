@@ -214,6 +214,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
             <div className='absolute inset-x-0 -top-3 m-auto w-fit rounded-full bg-buttonPrimary p-1 hover:opacity-90'
                  onClick={(): void => toggleFullResults()}
+                 data-testid='wigmix-full-results-toggle'
                  data-pw='cs-arrow-button'>
               {showFullResults ? (
                   <ChevronDownIcon color={darkMode
@@ -286,6 +287,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
               onTextSearch('');
               scrollToResultsTop();
             }}
+            data-testid='wigmix-text-bar'
             data-pw='cs-refinement-text-bar'
           />
         </div>
@@ -402,6 +404,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       setSearch('');
                       onTextSearch('');
                     }}
+                    data-testid='wigmix-text-bar'
                     data-pw='cs-refinement-text-bar'
                   />
                 </div>

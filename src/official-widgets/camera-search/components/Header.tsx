@@ -45,6 +45,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
 
       <div className='absolute right-5 top-3 rounded-full bg-transparent p-1 hover:opacity-90'
            onClick={onCloseHandler}
+           data-testid='wigmix-close-button'
            data-pw='cs-close-button'>
         <CloseIcon color={iconColor} className='size-6 cursor-pointer' />
       </div>

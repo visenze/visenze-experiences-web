@@ -199,6 +199,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
               </div>
               <div>{error}</div>
               <button className='mt-3 w-fit rounded-md bg-buttonPrimary px-5 py-2 text-buttonPrimary'
+                      data-testid='wigmix-back'
                       onClick={() => {
                         setError('');
                         if (lastSuccessfulImage) {
@@ -296,6 +297,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
       <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
         {!customizations.popup?.triggerIcon?.hide && (
             <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+                 data-testid='wigmix-popup-trigger-button'
                  onClick={onCameraButtonClick}>
               {customizations.popup?.triggerIcon?.url ? (
                   <CustomizableIcon
