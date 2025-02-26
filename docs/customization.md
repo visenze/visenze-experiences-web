@@ -91,15 +91,17 @@ the following folder structure is expected to be common across all widgets:
 
 ```txt
 ├─ camera-search
-   ├─ components          <- Folder containing some reusable components
+   ├─ __snapshots__           <- Folder containing files used in the snapshot testing portion of the unit test
+   ├─ components              <- Folder containing some reusable components
    ├─ app.css
-   ├─ app.tsx             <- Wrapper component used to provide context and data, including localized texts
-   ├─ camera-search.tsx   <- Main widget code consisting of the components and layout; will have the same name as the widget name
-   ├─ default-config.ts   <- Default widget customization configuration
-   ├─ dev-configs.ts      <- Configuration object for development purpose; will not be used in the deployed widget (unless the code is edited as such)
-   ├─ index.html          <- HTML file used for local testing
-   ├─ index.tsx           <- Main entrypoint file
-   ├─ index-dev.tsx       <- Main entrypoint file for development
+   ├─ app.tsx                 <- Wrapper component used to provide context and data
+   ├─ camera-search.tsx       <- Main widget code consisting of the components and layout; will have the same name as the widget name
+   ├─ camera-search.spec.tsx  <- Unit tests for the widget
+   ├─ default-config.ts       <- Default widget customization and displayed texts configuration
+   ├─ dev-configs.ts          <- Configuration object for development purpose; under normal circumstances, will not be used in the deployed widget
+   ├─ index.html              <- HTML file used for local testing
+   ├─ index.tsx               <- Main entrypoint file
+   ├─ index-dev.tsx           <- Main entrypoint file for development
    ├─ README.md
 ```
 

@@ -1,15 +1,15 @@
 # ViSenze Product Search Widgets
 
-This is the repository for all ViSenze widgets aiming to accelerate development and deployment of Visenze powered Shopping Experiences.
+This is the repository for all ViSenze widgets aiming to accelerate development and deployment of ViSenze-powered Shopping Experiences.
 
-The widgets use react and tailwind css. 
+Each widget can operate as a standalone component to be deployed in an e-commerce website and can be build and distributed independently from each other. 
 
-Each widget can operate as a standalone component to be deployed in an ecommerce website and can be build and distributed independently from each other. 
+The widgets use React, HeroUI (formerly known as NextUI) and Tailwind CSS.
 
 ## Repository structure
 
 ```txt
-├─ common               <- Folder for code used across different widgets
+├─ common               <- Folder for common code used across different widgets
    ├─ client            <- Client connecting with ViSenze APIs
    ├─ components        <- Common React components
    ├─ types             <- TypeScript typing
@@ -21,17 +21,23 @@ Each widget can operate as a standalone component to be deployed in an ecommerce
 
 ## Local development
 
-Each widget is designed to be distributed as a separate bundle. For example, using `camera-search`:
+Each widget is designed to be distributed as a separate bundle.
+The exact steps for local development vary slightly between different widgets, but generally follow the same idea.
+Using `similar-search` as example:
 
-1. To run the widget locally:
-   1. Add your app key and placement ID to `dev-configs.ts` in the relevant folder, which in this case is `src/official-widgets/camera-search`.
-   2. Run:
-      ```sh
-      npm run start:camera-search
-      ```
-      The dev server will be available at `http://localhost:8080` and will automatically reload for changes made in `src/official-widgets/camera-search` folder.
-2. To bundle the widget:
-   ```sh
-   npm run build:camera-search
-   ```
-   The bundled file will be available in `dist/camera-search` directory. 
+- To run the widget locally:
+  1. Add your app key and placement ID to `dev-configs.ts` in the relevant folder, which in this case is `src/official-widgets/similar-search`.
+  2. Add the widget-specific parameters to `index.html` in the same folder.
+     For example, for the `similar-search` widget, add the product image URL in the `data-url` field of the widget selector.
+  3. Run:
+     ```sh
+     npm run start:similar-search
+     ```
+     The dev server will be available at `http://localhost:8080` and will automatically reload for changes made in `src/official-widgets/similar-search` folder.
+- To bundle the widget:
+  ```sh
+  npm run build:similar-search
+  ```
+  The bundled file will be available in `dist/similar-search` directory. 
+
+The exact instructions for different widgets can be found in the sub-folder containing the widget.
