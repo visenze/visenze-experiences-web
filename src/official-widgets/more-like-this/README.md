@@ -1,6 +1,6 @@
 # More Like This widget
 
-![status](https://img.shields.io/badge/status-beta-yellow)
+![status](https://img.shields.io/badge/status-stable-blue)
 
 ## Local development
 

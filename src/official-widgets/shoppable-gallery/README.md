@@ -1,6 +1,6 @@
 # Shoppable Gallery widget
 
-![status](https://img.shields.io/badge/status-beta-yellow)
+![status](https://img.shields.io/badge/status-alpha-red)
 
 ## Local development
 
