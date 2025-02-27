@@ -1,7 +1,6 @@
 import type { FC, ReactElement } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import LoadingIcon from './icons/LoadingIcon';
 import ResultScreen from './screens/ResultScreen';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
@@ -182,7 +181,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl, renderModalWithoutPortal
       case ScreenType.LOADING:
         return (
           <div className='flex h-full items-center justify-center'>
-            <LoadingIcon />
+            <img className='w-48 md:w-60' src='https://cdn.visenze.com/images/loading-results.gif' />
           </div>
         );
       default:
