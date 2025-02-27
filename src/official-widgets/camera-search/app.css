@@ -34,29 +34,3 @@
     @apply text-mobile-productCardOriginalPrice md:text-tablet-productCardOriginalPrice lg:text-desktop-productCardOriginalPrice font-mobile-productCardOriginalPrice md:font-tablet-productCardOriginalPrice lg:font-desktop-productCardOriginalPrice;
   }
 }
-
-@keyframes pulseSize {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-@keyframes pulseColor {
-  0%,
-  100% {
-    stroke: #4a5568; /* Tailwind gray-600 */
-  }
-  50% {
-    stroke: #f56565; /* Tailwind red-400 */
-  }
-}
-
-.pulse-icon {
-  animation:
-    pulseSize 2s infinite,
-    pulseColor 2s infinite;
-}

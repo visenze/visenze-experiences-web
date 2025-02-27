@@ -157,7 +157,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {searchHistory?.map((searchImage, index) => (
               <img
                 key={`image-history-${index}`}
-                className='aspect-square w-1/5 object-contain'
+                className='aspect-square size-20 cursor-pointer object-contain'
                 src={getFile(searchImage)}
                 onClick={() => onFindSimilar(searchImage)}
                 data-pw={`ss-previous-views-image-${index + 1}`}
@@ -281,7 +281,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       .map((searchImage, index) => (
                         <img
                           key={`image-history-${index}`}
-                          className='aspect-square w-1/3 cursor-pointer rounded-lg object-cover'
+                          className='aspect-square size-24 cursor-pointer rounded-lg object-cover'
                           src={getFile(searchImage)}
                           onClick={() => onFindSimilar(searchImage)}
                           data-pw={`ss-previous-views-image-${index + 1}`}

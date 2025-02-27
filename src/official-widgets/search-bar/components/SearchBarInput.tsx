@@ -36,7 +36,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
   const intl = useIntl();
 
   const createImageEvent = (im: SearchImage): void => {
-    const event = new CustomEvent('wigmix_search_bar_append_image', { detail: im });
+    const event = new CustomEvent('wigmix_internal_search_bar_append_image', { detail: im });
     document.dispatchEvent(event);
   };
 

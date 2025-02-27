@@ -28,7 +28,8 @@ The following internal implementations are covered under versioning policy:
 
 The following internal implementations are not covered under versioning policy and can change anytime:
 
-- `CustomEvent`s with type `wigmix_*`.
+- `CustomEvent`s with type `wigmix_internal_*`.
+- Local storage items with key starting with `wigmix_internal_`.
 
 ## Support Status
 

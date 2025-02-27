@@ -44,9 +44,9 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
         setSearchImage(undefined);
       }
     };
-    document.addEventListener('wigmix_search_bar_append_image', handleImageAppended);
+    document.addEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
     return (): void => {
-      document.removeEventListener('wigmix_search_bar_append_image', handleImageAppended);
+      document.removeEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
     };
   }, []);
 

@@ -30,7 +30,7 @@ interface SearchBarResultProps {
   imUrl: string;
 }
 
-export const SEARCH_HISTORY_BASE_KEY = 'visenze_search_history_';
+const SEARCH_HISTORY_BASE_KEY = 'wigmix_internal_search_history_';
 
 const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
@@ -65,7 +65,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
 
   const onImageUpload = (img: SearchImage): void => {
     setImage(img);
-    const event = new CustomEvent('wigmix_search_bar_append_image', { detail: img });
+    const event = new CustomEvent('wigmix_internal_search_bar_append_image', { detail: img });
     document.dispatchEvent(event);
   };
 
@@ -73,9 +73,9 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
     const handleImageAppended = (e: any): void => {
       setImage(e.detail);
     };
-    document.addEventListener('wigmix_search_bar_append_image', handleImageAppended);
+    document.addEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
     return (): void => {
-      document.removeEventListener('wigmix_search_bar_append_image', handleImageAppended);
+      document.removeEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
     };
   }, []);
 
