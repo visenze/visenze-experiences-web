@@ -28,6 +28,12 @@
   top: 0;
   left: 0;
   overflow: auto;
+
+  &.wigmix-modal-position-bottom {
+    bottom: 0;
+    top: unset;
+    height: 80%;
+  }
 }
 
 .wigmix-modal-nested_mobile {

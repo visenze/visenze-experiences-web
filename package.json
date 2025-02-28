@@ -1,16 +1,14 @@
 {
   "name": "visenze-experiences-web",
-  "version": "1.0.0",
+  "version": "1.0.1-snapshot.0",
   "description": "A collection of widgets to instantly add ViSenze-powered product search functionality into websites",
   "scripts": {
-    "build": "npm run build:camera-search && npm run build:similar-search && npm run build:search-results-page && npm run build:shopping-assistant && npm run build:recommend-me && npm run build:more-like-this && npm run build:shop-the-look && npm run build:embedded-grid && npm run build:shoppable-lookbook && npm run build:shoppable-gallery && npm run build:icon-triggered-grid && npm run build:search-bar && npm run build:embedded-search-results",
+    "build": "npm run build:camera-search && npm run build:similar-search && npm run build:shopping-assistant && npm run build:recommend-me && npm run build:more-like-this && npm run build:shop-the-look && npm run build:embedded-grid && npm run build:shoppable-lookbook && npm run build:shoppable-gallery && npm run build:icon-triggered-grid && npm run build:search-bar && npm run build:embedded-search-results",
     "build:staging": "export build=staging && npm run build",
     "build:camera-search": "export widget_dir='official-widgets/camera-search' && webpack --config webpack.config.js",
     "start:camera-search": "export widget_dir='official-widgets/camera-search' && webpack-dev-server --config webpack.dev.js",
     "build:similar-search": "export widget_dir='official-widgets/similar-search' && webpack --config webpack.config.js",
     "start:similar-search": "export widget_dir='official-widgets/similar-search' && webpack-dev-server --config webpack.dev.js",
-    "build:search-results-page": "export widget_dir='official-widgets/search-results-page' && webpack --config webpack.config.js",
-    "start:search-results-page": "export widget_dir='official-widgets/search-results-page' && webpack-dev-server --config webpack.dev.js",
     "build:recommend-me": "export widget_dir='official-widgets/recommend-me' && webpack --config webpack.config.js",
     "start:recommend-me": "export widget_dir='official-widgets/recommend-me' && webpack-dev-server --config webpack.dev.js",
     "build:shopping-assistant": "export widget_dir='official-widgets/shopping-assistant' && webpack --config webpack.config.js",

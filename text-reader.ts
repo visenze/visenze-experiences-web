@@ -4,7 +4,6 @@
 import type { LanguagePack } from './src/common/locales/locale';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_7 } from './src/official-widgets/camera-search/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_8 } from './src/official-widgets/similar-search/default-config';
-import { DEFAULT_TEXTS as DEFAULT_TEXTS_9 } from './src/official-widgets/search-results-page/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_10 } from './src/official-widgets/shopping-assistant/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_11 } from './src/official-widgets/recommend-me/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_12 } from './src/official-widgets/more-like-this/default-config';
@@ -19,7 +18,6 @@ import { DEFAULT_TEXTS as DEFAULT_TEXTS_19 } from './src/official-widgets/embedd
 const configs: Record<string, LanguagePack> = {
   7: DEFAULT_TEXTS_7,
   8: DEFAULT_TEXTS_8,
-  9: DEFAULT_TEXTS_9,
   10: DEFAULT_TEXTS_10,
   11: DEFAULT_TEXTS_11,
   12: DEFAULT_TEXTS_12,

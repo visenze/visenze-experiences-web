@@ -3,7 +3,6 @@ require('dotenv').config();
 const path = require('path');
 const CompressionPlugin = require('compression-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
-const versionRegex = new RegExp(/^(\d)+\.(\d){1,3}\.(\d){1,3}$/);
 const { DefinePlugin, IgnorePlugin, optimize } = require('webpack');
 const { env } = require('process');
 const getWebpackModule = require('./webpack.util');
@@ -15,10 +14,6 @@ const getWebpackConfig = () => {
   const packageName = dir.split('/').pop().replaceAll('-', '_');
   const buildEnv = env.build || 'production';
   const isPublish = env.publish === 'true';
-
-  if (!versionRegex.test(version)) {
-    throw new Error('Invalid script version');
-  }
 
   const exportConfig = {
     entry: {

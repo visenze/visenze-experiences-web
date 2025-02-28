@@ -8,7 +8,6 @@ const widgetType = process.env.widget_dir;
 const herouiPackagesForOfficialWidgets = {
   'official-widgets/camera-search': 'input|listbox|skeleton',
   'official-widgets/similar-search': 'input|listbox|skeleton',
-  'official-widgets/search-results-page': 'button|input|listbox|skeleton',
   'official-widgets/shopping-assistant': 'input|skeleton',
   'official-widgets/recommend-me': 'input|skeleton',
   'official-widgets/more-like-this': 'skeleton',

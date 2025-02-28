@@ -214,7 +214,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
           {/* eslint-disable no-nested-ternary */}
           {showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
               ? (<OutsideAlerter>
-                    <div className='relative flex flex-col divide-x divide-gray-200 py-1 md:flex-row'>
+                    <div className='relative flex max-h-[70vh] flex-col divide-x divide-gray-200 py-1 md:max-h-full md:flex-row'>
                       <div className='flex flex-col justify-between md:w-2/5'>
                         <div className='flex flex-col gap-2 px-4 py-1'>
                           <p className='text-large font-semibold leading-6 text-primary'>
@@ -265,7 +265,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                       </div>
 
                       <div className='flex w-full justify-center md:w-3/5'>
-                        <div className='flex max-h-[60vh] flex-col gap-2 overflow-y-scroll px-4 py-1 md:max-h-[70vh]'>
+                        <div className='flex flex-col gap-2 overflow-y-scroll px-4 py-1 md:max-h-[70vh]'>
                           <p className='text-large font-semibold leading-6 text-primary'>
                             {intl.formatMessage({ id: 'relatedProducts' })}
                           </p>
@@ -292,7 +292,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                         </div>
                       </div>
 
-                      <div className='sticky bottom-0 flex px-4 md:hidden'>
+                      <div className='sticky bottom-0 flex bg-primary px-4 py-2 md:hidden'>
                         <Button
                             className='w-full rounded bg-buttonPrimary py-2 font-semibold text-buttonPrimary'
                             radius='none'
