@@ -350,10 +350,9 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                   </span>
                 </div>
                 <ViSenzeModal
-                    className='bottom-0 top-[unset] h-4/5'
                     open={showMobileFilterOptions} layout='mobile'
                     onClose={() => setShowMobileFilterOptions(false)}
-                    position='center'
+                    position='bottom'
                     placementId={`${appSettings.placementId}`}
                     darkMode={darkMode}
                     fontFamily={customizations.generalLayout?.fontFamily}
