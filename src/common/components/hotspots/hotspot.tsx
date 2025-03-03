@@ -1,6 +1,6 @@
+import { cn } from '@heroui/theme';
 import type { FC } from 'react';
 import { memo, useEffect, useState } from 'react';
-import { cn } from '@heroui/theme';
 import type { CroppedBox } from '../../types/box';
 
 interface HotspotProps {

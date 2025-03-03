@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 import type { ProductSearchResponse, ProductSearchResponseSuccess, ProductType } from 'visearch-javascript-sdk';
 import { WidgetDataContext } from '../../types/contexts';
 import { Actions, Category } from '../../types/tracking-constants';
-import type { SearchImage } from '../../types/image';
-import { isImageFile, isImageUrl } from '../../types/image';
+import type { SearchImageOrPid } from '../../types/image';
+import { isImageFile, isImageUrl, isPid } from '../../types/image';
 import type { BoxData, ProcessedProduct } from '../../types/product';
 import { getFlattenProducts, parseBox, parseToProductTypes } from '../../utils';
 
@@ -17,14 +17,17 @@ const getMetadata = (
 };
 
 const getSearchParams = (
-  img: SearchImage,
+  img: SearchImageOrPid,
   imageId: string,
   searchSettings: Record<string, any>,
-  product: BoxData | ProductType | undefined,
+  boxData: BoxData | undefined,
+  product: ProductType | undefined,
 ): Record<string, any> => {
   const params = { ...searchSettings };
 
-  if (isImageUrl(img)) {
+  if (isPid(img)) {
+    params['pid'] = img.pid;
+  } else if (isImageUrl(img)) {
     params['im_url'] = img.imgUrl;
   } else if (isImageFile(img)) {
     params['image'] = img.files[0];
@@ -32,11 +35,11 @@ const getSearchParams = (
     params['im_id'] = imageId;
   }
 
+  if (boxData) {
+    params['box'] = parseBox(boxData.box);
+  }
   if (product) {
-    params['box'] = parseBox(product.box);
-    if ('type' in product) {
-      params['detection'] = product.type;
-    }
+    params['detection'] = product.type;
   }
 
   return params;
@@ -56,7 +59,7 @@ const parseResults = (res: ProductSearchResponseSuccess, boxData?: BoxData): Pro
 };
 
 interface ImageMultisearchProps {
-  image: SearchImage | undefined;
+  image: SearchImageOrPid | undefined;
   boxData: BoxData | undefined;
 }
 
@@ -124,18 +127,17 @@ const useImageMultisearch = ({
     setProductTypes([]);
   };
 
-  const getProductType = (boxData: BoxData | undefined): ProductType | BoxData | undefined => {
+  const getProductType = (boxData: BoxData | undefined): ProductType | undefined => {
     if (boxData?.index) {
       return productTypes[boxData.index];
-    } else {
-      return boxData;
     }
+    return undefined;
   };
 
   const multisearch = (): void => {
     if (image) {
       const product = getProductType(boxData);
-      const params = getSearchParams(image, imageId, searchSettings, product);
+      const params = getSearchParams(image, imageId, searchSettings, boxData, product);
       widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
     } else {
       resetSearch();
@@ -152,7 +154,7 @@ const useImageMultisearch = ({
 
     if (image) {
       const product = getProductType(boxData);
-      params = { q, ...getSearchParams(image, imageId, searchSettings, product) };
+      params = { q, ...getSearchParams(image, imageId, searchSettings, boxData, product) };
     } else if (!q) {
       return;
     }
@@ -171,6 +173,8 @@ const useImageMultisearch = ({
       const productTypes = parseToProductTypes(response);
       if (productTypes.length) {
         setProductTypes(productTypes);
+      } else {
+        setProductTypes([]);
       }
 
       autocompleteWithQuery('');

@@ -4,7 +4,6 @@
 import type { WidgetConfig } from './src/common/wigmix-core';
 import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_7 } from './src/official-widgets/camera-search/default-config';
 import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_8 } from './src/official-widgets/similar-search/default-config';
-import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_9 } from './src/official-widgets/search-results-page/default-config';
 import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_10 } from './src/official-widgets/shopping-assistant/default-config';
 import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_11 } from './src/official-widgets/recommend-me/default-config';
 import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_12 } from './src/official-widgets/more-like-this/default-config';
@@ -19,7 +18,6 @@ import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_19 } from './src/offic
 const configs: Record<string, WidgetConfig['customizations']> = {
   7: DEFAULT_CUSTOMIZATIONS_7,
   8: DEFAULT_CUSTOMIZATIONS_8,
-  9: DEFAULT_CUSTOMIZATIONS_9,
   10: DEFAULT_CUSTOMIZATIONS_10,
   11: DEFAULT_CUSTOMIZATIONS_11,
   12: DEFAULT_CUSTOMIZATIONS_12,

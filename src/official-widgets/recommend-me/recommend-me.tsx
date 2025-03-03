@@ -1,15 +1,15 @@
-import { type FC, useContext, useEffect, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 import { Input } from '@heroui/input';
+import { type FC, useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetDataContext } from '../../common/types/contexts';
-import useRecommendMe from '../../common/components/hooks/use-recommend-me';
+import { v4 as uuid } from 'uuid';
 import Carousel from './components/Carousel';
 import CarouselLoader from './components/CarouselLoader';
-import { Actions, Category } from '../../common/types/tracking-constants';
+import useRecommendMe from '../../common/components/hooks/use-recommend-me';
+import { RootContext } from '../../common/components/shadow-wrapper';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
+import { WidgetDataContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
+import { Actions, Category } from '../../common/types/tracking-constants';
 
 interface RecommendMeProps {
   productId: string;
@@ -83,7 +83,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
         {/* Search input bar with Recommend me button */}
         <div className='flex'>
           <div
-            className='w-48 rounded-l bg-buttonPrimary px-3 py-2 font-semibold cursor-pointer hover:opacity-90'
+            className='w-48 cursor-pointer rounded-l bg-buttonPrimary px-3 py-2 font-semibold hover:opacity-90'
             onClick={() => {
               if (!searchBarValue) {
                 return;

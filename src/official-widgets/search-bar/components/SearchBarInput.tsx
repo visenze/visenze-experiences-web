@@ -1,13 +1,13 @@
-import type { FC } from 'react';
-import { useContext, memo, useRef } from 'react';
 import { Input } from '@heroui/input';
-import { useIntl } from 'react-intl';
 import { cn } from '@heroui/theme';
-import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
+import type { FC } from 'react';
+import { memo, useContext, useRef } from 'react';
+import { useIntl } from 'react-intl';
 import ImageGalleryUpload from './ImageGalleryUpload';
-import type { SearchImage } from '../../../common/types/image';
+import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import MagnifyingGlassIcon from '../../../common/icons/MagnifyingGlassIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
+import type { SearchImage } from '../../../common/types/image';
 
 interface SearchBarInputProps {
   query: string;
@@ -16,6 +16,8 @@ interface SearchBarInputProps {
   imageUploadHandler: (image: SearchImage | undefined) => void;
   setShowDropdown: (showDropdown: boolean) => void;
   image: SearchImage | undefined;
+  placementId: string;
+  renderModalWithoutPortal?: boolean;
 }
 
 const SearchBarInput: FC<SearchBarInputProps> = ({
@@ -24,6 +26,8 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
   emitSearchBarCallback,
   imageUploadHandler,
   setShowDropdown,
+  placementId,
+  renderModalWithoutPortal,
   image,
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
@@ -32,7 +36,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
   const intl = useIntl();
 
   const createImageEvent = (im: SearchImage): void => {
-    const event = new CustomEvent('wigmix_search_bar_append_image', { detail: im });
+    const event = new CustomEvent('wigmix_internal_search_bar_append_image', { detail: im });
     document.dispatchEvent(event);
   };
 
@@ -75,7 +79,8 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       startContent={
         <div className='flex items-center gap-2'>
           {customizations.imageUpload?.enable && (
-            <ImageGalleryUpload imageUploadHandler={imageUploadHandler} image={image} />
+            <ImageGalleryUpload imageUploadHandler={imageUploadHandler} placementId={placementId} image={image}
+                                renderModalWithoutPortal={!!renderModalWithoutPortal} />
           )}
           <MagnifyingGlassIcon color={darkMode
                                  ? (customizations.generalLayout?.fontColorDark || '')

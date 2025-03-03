@@ -73,6 +73,15 @@ module.exports = {
           'ImportDeclaration': { 'multiline': true, 'consistent': true },
           'ExportDeclaration': { 'multiline': true, 'consistent': true },
         }],
+        'import/order': ['error', {
+          'groups': ['builtin', 'external', 'internal'],
+          'alphabetize': { 'order': 'asc', 'caseInsensitive': true},
+          'newlines-between': 'never',
+        }],
+        'sort-imports': ['error', {
+          'ignoreDeclarationSort': true,
+          'ignoreCase': true,
+        }],
         'operator-linebreak': ['error', 'before', {
           'overrides': {
             '=': 'after',

@@ -1,14 +1,11 @@
 import { cn } from '@heroui/theme';
-import { useEffect, useRef, useState, type ReactElement } from 'react';
-import type { ProductType } from 'visearch-javascript-sdk';
-import ImageCropThumbnail from './ImageCropThumbnail';
+import { type ReactElement, useEffect, useRef } from 'react';
 import CloseIcon from '../../../common/icons/CloseIcon';
 
 export interface SearchHistoryEntry {
   id: string;
-  imageUrl?: string | null;
-  product_types?: ProductType[];
-  box?: number[];
+  imageUrl: string;
+  pid?: string;
   timestamp: number;
 }
 
@@ -23,11 +20,9 @@ const SearchHistory = ({
   activeHistory: SearchHistoryEntry | undefined;
   setActiveHistory: (entry: SearchHistoryEntry | undefined) => void;
   history: SearchHistoryEntry[];
-  multisearchWithSearchBarDetails: (imgUrl?: string) => void;
   onHistorySelect: (entry: SearchHistoryEntry) => void;
   onHistoryRemove: (entry: SearchHistoryEntry, isActiveHistoryRemoved: boolean) => void;
 }): ReactElement => {
-  const [imageDimensions, setImageDimensions] = useState<{ [key: string]: { width: number; height: number } }>({});
   const activeItemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,37 +35,9 @@ const SearchHistory = ({
     }
   }, [activeHistory]);
 
-  const loadImageDimensions = (imageUrl: string): void => {
-    if (!imageDimensions[imageUrl]) {
-      const img = new Image();
-      img.onload = (): void => {
-        setImageDimensions((prev) => ({
-          ...prev,
-          [imageUrl]: {
-            width: img.width,
-            height: img.height,
-          },
-        }));
-      };
-      img.src = imageUrl;
-    }
-  };
-
   const getActiveHistoryId = (): string => {
     if (activeHistory) {
-      let baseId = activeHistory.id;
-      if (activeHistory.product_types) {
-        // TODO refactor this to remove dependency to URL params
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const searchBarBox = urlSearchParams.get('box');
-
-        if (searchBarBox) {
-          baseId += `-${searchBarBox}`;
-        } else {
-          baseId += `-${activeHistory.product_types[0].box.join()}`;
-        }
-      }
-      return baseId;
+      return activeHistory.id;
     }
     return '';
   };
@@ -80,13 +47,6 @@ const SearchHistory = ({
       <div className='no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3' data-pw='esr-product-history'>
         <div className='flex w-full flex-row gap-2 md:w-1/2'>
           {history
-            .flatMap((entry) => (entry.product_types !== undefined
-              ? entry.product_types.map((type) => ({
-                  ...entry,
-                  id: `${entry.id}-${type.box.join()}`,
-                  box: type.box,
-                }))
-              : [entry]))
             .map((entry, index) => (
               <div
                 key={`${entry.id}-${index}`}
@@ -110,25 +70,9 @@ const SearchHistory = ({
                      }}>
                   <CloseIcon className='size-4 text-black' />
                 </div>
-                {entry.box ? (
-                  <div className='h-32 w-24 overflow-hidden'>
-                    {entry.imageUrl && (
-                      <>
-                        {!imageDimensions[entry.imageUrl] && loadImageDimensions(entry.imageUrl)}
-                        <ImageCropThumbnail
-                          imageSrc={entry.imageUrl}
-                          originalBox={entry.box}
-                          className='h-full rounded-none bg-gray-200'
-                          data-pw={`esr-product-history-image-cropped-${index + 1}`}
-                        />
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <img className='h-full rounded-none object-contain aspect-square'
-                       src={entry.imageUrl ?? ''}
-                       data-pw={`esr-product-history-image-${index + 1}`} />
-                )}
+                <img className='aspect-square h-full rounded-none object-contain'
+                     src={entry.imageUrl ?? ''}
+                     data-pw={`esr-product-history-image-${index + 1}`} />
               </div>
             ))}
         </div>

@@ -1,0 +1,4223 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`shop-the-look should not render anything if product is not found 1`] = `<DocumentFragment />`;
+
+exports[`shop-the-look should render a successful response with default config 1`] = `
+<DocumentFragment>
+  <div
+    class="wigmix-widget-title py-2 text-primary md:py-4"
+    data-pw="stl-widget-title"
+  >
+    Shop The Look 319
+  </div>
+  <div
+    class="items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0"
+  >
+    <div
+      class="px-1 md:w-7/20 lg:w-3/10"
+    >
+      <div
+        class="relative"
+      >
+        <img
+          class="wigmix-reference-image size-full object-cover"
+          data-pw="stl-reference-image"
+          data-testid="wigmix-reference-image"
+          src="https://main-image-main"
+        />
+      </div>
+    </div>
+    <div
+      class="relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10"
+      data-pw="stl-product-result-carousel"
+    >
+      <div
+        class="slick-slider slider slick-initialized"
+        dir="ltr"
+      >
+        <div
+          class="absolute -left-10 top-1/2 flex w-fit transition-opacity rounded-full p-1 cursor-pointer opacity-0"
+          data-pw="stl-prev-arrow"
+          data-testid="wigmix-prev-arrow"
+        >
+          <div
+            class="size-6"
+            style="color: rgb(0, 0, 0);"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15.75 19.5 8.25 12l7.5-7.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+        <div
+          class="slick-list"
+        >
+          <div
+            class="slick-track"
+            style="opacity: 1; transform: translate3d(0px, 0px, 0px);"
+          >
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active slick-current"
+              data-index="0"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-1"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-1/?vsFromReqId=87654321&vsFromPid=pid-1&vsFromPos=1"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-1"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-1-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 1
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $19.30
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active"
+              data-index="1"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-2"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-2/?vsFromReqId=87654321&vsFromPid=pid-2&vsFromPos=2"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-2"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-2-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 2
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active"
+              data-index="2"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-3"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-3/?vsFromReqId=87654321&vsFromPid=pid-3&vsFromPos=3"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-3"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-3-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 3
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $15.50
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active"
+              data-index="3"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-4"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-4/?vsFromReqId=87654321&vsFromPid=pid-4&vsFromPos=4"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-4"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-4-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 4
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $14.80
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="4"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-5"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-5/?vsFromReqId=87654321&vsFromPid=pid-5&vsFromPos=5"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-5"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-5-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 5
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $14.80
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="5"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-6"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-6/?vsFromReqId=87654321&vsFromPid=pid-6&vsFromPos=6"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-6"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-6-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 6
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $20.60
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="6"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-7"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-7/?vsFromReqId=87654321&vsFromPid=pid-7&vsFromPos=7"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-7"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-7-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 7
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $23.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="7"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-8"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-8/?vsFromReqId=87654321&vsFromPid=pid-8&vsFromPos=8"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-8"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-8-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 8
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $18.90
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="8"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-9"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-9/?vsFromReqId=87654321&vsFromPid=pid-9&vsFromPos=9"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-9"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-9-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 9
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="9"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-10"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-10/?vsFromReqId=87654321&vsFromPid=pid-10&vsFromPos=10"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-10"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-10-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 10
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $14.80
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="10"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-11"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-11/?vsFromReqId=87654321&vsFromPid=pid-11&vsFromPos=11"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-11"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-11-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 11
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $3.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="11"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-12"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-12/?vsFromReqId=87654321&vsFromPid=pid-12&vsFromPos=12"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-12"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-12-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 12
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $12.50
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="12"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-13"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-13/?vsFromReqId=87654321&vsFromPid=pid-13&vsFromPos=13"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-13"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-13-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 13
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $19.60
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="13"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-14"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-14/?vsFromReqId=87654321&vsFromPid=pid-14&vsFromPos=14"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-14"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-14-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 14
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.10
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="14"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-15"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-15/?vsFromReqId=87654321&vsFromPid=pid-15&vsFromPos=15"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-15"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-15-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 15
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $23.30
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="15"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-16"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-16/?vsFromReqId=87654321&vsFromPid=pid-16&vsFromPos=16"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-16"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-16-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 16
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $21.10
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="16"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-17"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-17/?vsFromReqId=87654321&vsFromPid=pid-17&vsFromPos=17"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-17"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-17-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 17
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $6.50
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="17"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-18"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-18/?vsFromReqId=87654321&vsFromPid=pid-18&vsFromPos=18"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-18"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-18-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 18
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $2.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="18"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-19"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-19/?vsFromReqId=87654321&vsFromPid=pid-19&vsFromPos=19"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-19"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-19-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 19
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="19"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-20"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-20/?vsFromReqId=87654321&vsFromPid=pid-20&vsFromPos=20"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-20"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-20-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 20
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $26.70
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="absolute -right-12 top-1/2 flex w-fit transition-opacity rounded-full p-1 cursor-pointer opacity-100 hover:opacity-90"
+          data-pw="stl-next-arrow"
+          data-testid="wigmix-next-arrow"
+        >
+          <div
+            class="size-6 rotate-180"
+            style="color: rgb(0, 0, 0);"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15.75 19.5 8.25 12l7.5-7.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`shop-the-look should render a successful response with object hotspots 1`] = `
+<DocumentFragment>
+  <div
+    class="wigmix-widget-title py-2 text-primary md:py-4"
+    data-pw="stl-widget-title"
+  >
+    Shop The Look 319
+  </div>
+  <div
+    class="items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0"
+  >
+    <div
+      class="px-1 md:w-7/20 lg:w-3/10"
+    >
+      <div
+        class="relative"
+      >
+        <button
+          class="group absolute z-10 flex items-center justify-center rounded-full bg-[#515151] transition-all 
+                    duration-300 hover:size-6 hover:-translate-x-3 hover:-translate-y-3 hover:ring-1 hover:ring-white
+                    size-4 -translate-x-2 -translate-y-2"
+          data-pw="stl-hotspot-dot"
+          data-testid="wigmix-hotspot-dot"
+          style="top: 15px; left: 15px;"
+        >
+          <div
+            class="rounded-full bg-white transition-all duration-300 group-hover:size-4 size-2"
+          />
+        </button>
+        <button
+          class="group absolute z-10 flex items-center justify-center rounded-full bg-[#515151] transition-all 
+                    duration-300 hover:size-6 hover:-translate-x-3 hover:-translate-y-3 hover:ring-1 hover:ring-white
+                    size-6 -translate-x-3 -translate-y-3 ring-1 ring-white"
+          data-pw="stl-hotspot-dot"
+          data-testid="wigmix-hotspot-dot"
+          style="top: 25px; left: 25px;"
+        >
+          <div
+            class="rounded-full bg-white transition-all duration-300 group-hover:size-4 size-4"
+          />
+        </button>
+        <img
+          class="wigmix-reference-image size-full object-cover"
+          data-pw="stl-reference-image"
+          data-testid="wigmix-reference-image"
+          src="https://main-image-main"
+        />
+      </div>
+    </div>
+    <div
+      class="relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10"
+      data-pw="stl-product-result-carousel"
+    >
+      <div
+        class="slick-slider slider slick-initialized"
+        dir="ltr"
+      >
+        <div
+          class="absolute -left-10 top-1/2 flex w-fit transition-opacity rounded-full p-1 cursor-pointer opacity-0"
+          data-pw="stl-prev-arrow"
+          data-testid="wigmix-prev-arrow"
+        >
+          <div
+            class="size-6"
+            style="color: rgb(0, 0, 0);"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15.75 19.5 8.25 12l7.5-7.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+        <div
+          class="slick-list"
+        >
+          <div
+            class="slick-track"
+            style="opacity: 1; transform: translate3d(0px, 0px, 0px);"
+          >
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active slick-current"
+              data-index="0"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-1"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-10/?vsFromReqId=87654321&vsFromPid=pid-10&vsFromPos=1"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-1"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-10-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 10
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $14.80
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active"
+              data-index="1"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-2"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-5/?vsFromReqId=87654321&vsFromPid=pid-5&vsFromPos=2"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-2"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-5-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 5
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $14.80
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active"
+              data-index="2"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-3"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-2/?vsFromReqId=87654321&vsFromPid=pid-2&vsFromPos=3"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-3"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-2-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 2
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active"
+              data-index="3"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-4"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-13/?vsFromReqId=87654321&vsFromPid=pid-13&vsFromPos=4"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-4"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-13-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 13
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $19.60
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="4"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-5"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-14/?vsFromReqId=87654321&vsFromPid=pid-14&vsFromPos=5"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-5"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-14-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 14
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.10
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="5"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-6"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-1/?vsFromReqId=87654321&vsFromPid=pid-1&vsFromPos=6"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-6"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-1-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 1
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $19.30
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="6"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-7"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-20/?vsFromReqId=87654321&vsFromPid=pid-20&vsFromPos=7"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-7"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-20-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 20
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $26.70
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="7"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-8"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-18/?vsFromReqId=87654321&vsFromPid=pid-18&vsFromPos=8"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-8"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-18-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 18
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $2.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="8"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-9"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-17/?vsFromReqId=87654321&vsFromPid=pid-17&vsFromPos=9"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-9"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-17-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 17
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $6.50
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="9"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-10"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-6/?vsFromReqId=87654321&vsFromPid=pid-6&vsFromPos=10"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-10"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-6-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 6
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $20.60
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="10"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-11"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-9/?vsFromReqId=87654321&vsFromPid=pid-9&vsFromPos=11"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-11"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-9-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 9
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="11"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-12"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-3/?vsFromReqId=87654321&vsFromPid=pid-3&vsFromPos=12"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-12"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-3-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 3
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $15.50
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="12"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-13"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-11/?vsFromReqId=87654321&vsFromPid=pid-11&vsFromPos=13"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-13"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-11-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 11
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $3.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="13"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-14"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-4/?vsFromReqId=87654321&vsFromPid=pid-4&vsFromPos=14"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-14"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-4-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 4
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $14.80
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="14"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-15"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-12/?vsFromReqId=87654321&vsFromPid=pid-12&vsFromPos=15"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-15"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-12-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 12
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $12.50
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="15"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-16"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-15/?vsFromReqId=87654321&vsFromPid=pid-15&vsFromPos=16"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-16"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-15-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 15
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $23.30
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="16"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-17"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-16/?vsFromReqId=87654321&vsFromPid=pid-16&vsFromPos=17"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-17"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-16-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 16
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $21.10
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="17"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-18"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-8/?vsFromReqId=87654321&vsFromPid=pid-8&vsFromPos=18"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-18"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-8-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 8
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $18.90
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="18"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-19"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-19/?vsFromReqId=87654321&vsFromPid=pid-19&vsFromPos=19"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-19"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-19-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 19
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="19"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-20"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-7/?vsFromReqId=87654321&vsFromPid=pid-7&vsFromPos=20"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-20"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-7-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 7
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $23.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="absolute -right-12 top-1/2 flex w-fit transition-opacity rounded-full p-1 cursor-pointer opacity-100 hover:opacity-90"
+          data-pw="stl-next-arrow"
+          data-testid="wigmix-next-arrow"
+        >
+          <div
+            class="size-6 rotate-180"
+            style="color: rgb(0, 0, 0);"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15.75 19.5 8.25 12l7.5-7.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`shop-the-look should render a successful response with some customizations 1`] = `
+<DocumentFragment>
+  <div
+    class="items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0"
+  >
+    <div
+      class="px-1 md:w-7/20 lg:w-3/10"
+    >
+      <div
+        class="relative"
+      >
+        <img
+          class="wigmix-reference-image size-full object-cover"
+          data-pw="stl-reference-image"
+          data-testid="wigmix-reference-image"
+          src="https://main-image-main"
+        />
+      </div>
+    </div>
+    <div
+      class="relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10"
+      data-pw="stl-product-result-carousel"
+    >
+      <div
+        class="slick-slider slider slick-initialized"
+        dir="ltr"
+      >
+        <div
+          class="absolute -left-10 top-1/2 flex w-fit transition-opacity rounded-full p-1 cursor-pointer opacity-0"
+          data-pw="stl-prev-arrow"
+          data-testid="wigmix-prev-arrow"
+        >
+          <div
+            class="size-6"
+            style="color: rgb(0, 0, 0);"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15.75 19.5 8.25 12l7.5-7.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+        <div
+          class="slick-list"
+        >
+          <div
+            class="slick-track"
+            style="opacity: 1; transform: translate3d(0px, 0px, 0px);"
+          >
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active slick-current"
+              data-index="0"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-1"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-1/?vsFromReqId=87654321&vsFromPid=pid-1&vsFromPos=1"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-1"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-1-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 1
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $19.30
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active"
+              data-index="1"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-2"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-2/?vsFromReqId=87654321&vsFromPid=pid-2&vsFromPos=2"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-2"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-2-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 2
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active"
+              data-index="2"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-3"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-3/?vsFromReqId=87654321&vsFromPid=pid-3&vsFromPos=3"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-3"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-3-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 3
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $15.50
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active"
+              data-index="3"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-4"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-4/?vsFromReqId=87654321&vsFromPid=pid-4&vsFromPos=4"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-4"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-4-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 4
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $14.80
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="4"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-5"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-5/?vsFromReqId=87654321&vsFromPid=pid-5&vsFromPos=5"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-5"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-5-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 5
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $14.80
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="5"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-6"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-6/?vsFromReqId=87654321&vsFromPid=pid-6&vsFromPos=6"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-6"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-6-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 6
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $20.60
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="6"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-7"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-7/?vsFromReqId=87654321&vsFromPid=pid-7&vsFromPos=7"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-7"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-7-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 7
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $23.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="7"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-8"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-8/?vsFromReqId=87654321&vsFromPid=pid-8&vsFromPos=8"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-8"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-8-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 8
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $18.90
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="8"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-9"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-9/?vsFromReqId=87654321&vsFromPid=pid-9&vsFromPos=9"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-9"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-9-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 9
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="9"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-10"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-10/?vsFromReqId=87654321&vsFromPid=pid-10&vsFromPos=10"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-10"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-10-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 10
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $14.80
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="10"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-11"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-11/?vsFromReqId=87654321&vsFromPid=pid-11&vsFromPos=11"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-11"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-11-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 11
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $3.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="11"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-12"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-12/?vsFromReqId=87654321&vsFromPid=pid-12&vsFromPos=12"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-12"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-12-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 12
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $12.50
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="12"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-13"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-13/?vsFromReqId=87654321&vsFromPid=pid-13&vsFromPos=13"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-13"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-13-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 13
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $19.60
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="13"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-14"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-14/?vsFromReqId=87654321&vsFromPid=pid-14&vsFromPos=14"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-14"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-14-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 14
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.10
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="14"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-15"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-15/?vsFromReqId=87654321&vsFromPid=pid-15&vsFromPos=15"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-15"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-15-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 15
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $23.30
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="15"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-16"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-16/?vsFromReqId=87654321&vsFromPid=pid-16&vsFromPos=16"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-16"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-16-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 16
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $21.10
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="16"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-17"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-17/?vsFromReqId=87654321&vsFromPid=pid-17&vsFromPos=17"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-17"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-17-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 17
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $6.50
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="17"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-18"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-18/?vsFromReqId=87654321&vsFromPid=pid-18&vsFromPos=18"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-18"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-18-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 18
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $2.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="18"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-19"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-19/?vsFromReqId=87654321&vsFromPid=pid-19&vsFromPos=19"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-19"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-19-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 19
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $7.00
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              class="slick-slide"
+              data-index="19"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class=""
+                    style="margin-left: 8px; margin-right: 8px;"
+                  >
+                    <div
+                      class="wigmix-product-card"
+                    >
+                      <a
+                        class="cursor-pointer"
+                        data-pw="stl-product-result-card-20"
+                        data-testid="wigmix-product-card-anchor"
+                        href="https://product-20/?vsFromReqId=87654321&vsFromPid=pid-20&vsFromPos=20"
+                        rel=""
+                        target=""
+                      >
+                        <div
+                          class="wigmix-product-card-image-container"
+                        >
+                          <div
+                            class="relative flex justify-center"
+                          >
+                            <img
+                              alt=""
+                              class="wigmix-product-card-image object-contain aspect-square"
+                              data-pw="stl-product-result-card-image-20"
+                              data-testid="wigmix-product-card-image"
+                              src="https://best-images-20-1"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="wigmix-product-card-details pt-2"
+                        >
+                          <span
+                            class="wigmix-product-card-title line-clamp-1"
+                          >
+                            Product Title 20
+                          </span>
+                          <span
+                            class="wigmix-product-card-secondary-title line-clamp-1"
+                          />
+                          <span
+                            class="wigmix-product-card-price"
+                          >
+                            $26.70
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="absolute -right-12 top-1/2 flex w-fit transition-opacity rounded-full p-1 cursor-pointer opacity-100 hover:opacity-90"
+          data-pw="stl-next-arrow"
+          data-testid="wigmix-next-arrow"
+        >
+          <div
+            class="size-6 rotate-180"
+            style="color: rgb(0, 0, 0);"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15.75 19.5 8.25 12l7.5-7.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="z-10 flex w-full justify-center items-center bg-transparent py-4 text-primary md:py-8"
+    data-pw="stl-visenze-footer"
+  >
+    <p
+      class="text-xs"
+    >
+      POWERED BY 
+    </p>
+    <img
+      class="h-5 object-center py-0.5 pl-1"
+      src="https://cdn.visenze.com/images/visenze-logo-sm.png"
+    />
+  </div>
+</DocumentFragment>
+`;

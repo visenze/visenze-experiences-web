@@ -1,10 +1,10 @@
+import { Skeleton } from '@heroui/skeleton';
+import { motion } from 'framer-motion';
 import type { FC, ReactElement } from 'react';
 import { useEffect, useState } from 'react';
-import { Skeleton } from '@heroui/skeleton';
 import { useIntl } from 'react-intl';
-import { motion } from 'framer-motion';
-import type { ProcessedProduct } from '../../../common/types/product';
 import ProductCard from '../../../common/components/product-card/ProductCard';
+import type { ProcessedProduct } from '../../../common/types/product';
 
 const Typewriter: FC<{ texts: string[] }> = ({ texts }) => {
   const [step, setStep] = useState<'TYPE' | 'DELETE'>('TYPE');
@@ -72,7 +72,7 @@ const CarouselLoader: FC<{ results: ProcessedProduct[]; metadata: Record<string,
         ))}
         {results.length <= 4 && [0, 1, 2, 3, 4].map((i) => (
           <>
-            {i >= results.length && <Skeleton className='w-full aspect-square'></Skeleton>}
+            {i >= results.length && <Skeleton className='aspect-square w-full'></Skeleton>}
           </>
         ))}
         <div className='absolute size-full bg-zinc-200 opacity-75 dark:bg-zinc-800'/>

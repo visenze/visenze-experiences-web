@@ -1,24 +1,26 @@
+import { Button } from '@heroui/button';
 import type { FC, ReactNode } from 'react';
 import { useContext, useEffect, useState } from 'react';
-import { Button } from '@heroui/button';
 import { useIntl } from 'react-intl';
-import PhotoIcon from '../../../common/icons/PhotoIcon';
-import VisenzeModal from '../../../common/components/modal/visenze-modal';
-import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import FileDropzone from '../../../common/components/FileDropzone';
+import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
+import VisenzeModal from '../../../common/components/modal/visenze-modal';
+import CloseIcon from '../../../common/icons/CloseIcon';
+import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import PhotoIcon from '../../../common/icons/PhotoIcon';
+import UploadIcon from '../../../common/icons/UploadIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
-import CloseIcon from '../../../common/icons/CloseIcon';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
-import UploadIcon from '../../../common/icons/UploadIcon';
 
 interface ImageGalleryUploadProps {
   imageUploadHandler: (image: SearchImage | undefined) => void;
+  placementId: string;
   image: SearchImage | undefined;
+  renderModalWithoutPortal: boolean;
 }
 
-const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, image }) => {
+const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, placementId, image, renderModalWithoutPortal }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [openModal, setOpenModal] = useState(false);
@@ -42,9 +44,9 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, i
         setSearchImage(undefined);
       }
     };
-    document.addEventListener('wigmix_search_bar_append_image', handleImageAppended);
+    document.addEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
     return (): void => {
-      document.removeEventListener('wigmix_search_bar_append_image', handleImageAppended);
+      document.removeEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
     };
   }, []);
 
@@ -73,7 +75,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, i
         return (
           <div
             key={index}
-            className='row-span-1 border-none relative'
+            className='relative row-span-1 border-none'
             onClick={(): void => onGallerySelect(index)}
             onKeyDown={(evt): void => {
               if (evt.key === 'Enter') {
@@ -83,8 +85,8 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, i
           >
             <img className='h-full object-cover' src={imageWithLabel.url} data-pw={`sb-gallery-image-${index + 1}`}/>
             {imageWithLabel.label && (
-              <div className='absolute bottom-0 z-10 w-full text-center overflow-hidden
-            border-1 border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small'>
+              <div className='absolute bottom-0 z-10 w-full overflow-hidden border-1
+            border-white/20 bg-gray-800 bg-opacity-80 py-1 text-center text-white shadow-small'>
                 <p>{imageWithLabel.label}</p>
               </div>
             )}
@@ -131,7 +133,11 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, i
         </div>
       )}
 
-      <VisenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint} position='center'>
+      <VisenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint} position='center'
+                    renderWithoutPortal={!!renderModalWithoutPortal}
+                    darkMode={darkMode}
+                    fontFamily={customizations.generalLayout?.fontFamily}
+                    placementId={placementId} idSuffix='image-gallery-upload'>
         <div className='relative flex size-full flex-col bg-primary'>
           {/* Title */}
           <p className='widget-title py-4 text-center text-primary' data-pw='sb-image-upload-title'>
@@ -183,7 +189,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, i
               <div className='grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0'>
                 <div className='col-span-1'>
                   <div
-                    className='h-full relative'
+                    className='relative h-full'
                     onClick={(): void => onGallerySelect(0)}
                     onKeyDown={(evt): void => {
                       if (evt.key === 'Enter') {
@@ -193,8 +199,8 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, i
                     <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url}
                          data-pw='sb-gallery-image-1'/>
                     {customizations.imageUpload?.images[0].label && (
-                      <div className='absolute bottom-0 z-10 w-full text-center overflow-hidden border-1
-                    border-white/20 bg-gray-800 bg-opacity-80 py-1 text-white shadow-small'>
+                      <div className='absolute bottom-0 z-10 w-full overflow-hidden border-1 border-white/20
+                    bg-gray-800 bg-opacity-80 py-1 text-center text-white shadow-small'>
                         <p>{customizations.imageUpload?.images[0].label}</p>
                       </div>
                     )}

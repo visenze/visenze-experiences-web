@@ -1,12 +1,12 @@
 import type { FC } from 'react';
-import { useEffect, useState, useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import Footer from '../../common/components/Footer';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { WidgetDataContext } from '../../common/types/contexts';
-import ProductCard from '../../common/components/product-card/ProductCard';
-import Footer from '../../common/components/Footer';
-import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
-import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 
 interface EmbeddedGridProps {
@@ -28,6 +28,7 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
 
   const { productResults, metadata, error: errorFromApi } = useRecommendationSearch({
     productId,
+    shouldDisplayAlternatives: customizations.results?.useAlternatives,
   });
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import type { LanguagePack } from '../../common/locales/locale';
 
 export const DEFAULT_TEXTS: LanguagePack = {
   en: {
-    widgetTitle: 'MORE LIKE THIS',
+    widgetTitle: 'You may also like',
     searchBarPlaceholder: 'Type here to refine your results...',
     previousViews: 'Previous views',
     errorDescription: 'Sorry, something went wrong',

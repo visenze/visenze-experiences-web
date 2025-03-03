@@ -1,8 +1,9 @@
+import { cn } from '@heroui/theme';
 import type { FC, ReactElement } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import ReactModal from 'react-modal';
-import { cn } from '@heroui/theme';
-import { RootContext } from '../shadow-wrapper';
+import Portal from '../portal';
+import ShadowWrapper, { RootContext } from '../shadow-wrapper';
 import './modal.scss';
 
 interface ModalProps {
@@ -11,7 +12,7 @@ interface ModalProps {
   layout: 'desktop' | 'tablet' | 'mobile' | 'nested_mobile';
   children: ReactElement | ReactElement[];
   className?: string;
-  position: 'left' | 'center' | 'right';
+  position: 'left' | 'center' | 'right' | 'bottom';
 }
 
 const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position }) => {
@@ -58,4 +59,34 @@ const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, pos
   );
 };
 
-export default Modal;
+interface VisenzeModalProps {
+  open: boolean;
+  onClose: () => void;
+  layout: 'desktop' | 'tablet' | 'mobile' | 'nested_mobile';
+  position: 'left' | 'center' | 'right' | 'bottom';
+  children: ReactElement | ReactElement[];
+  className?: string;
+  placementId: string;
+  idSuffix?: string;
+  darkMode: boolean;
+  fontFamily: string;
+  renderWithoutPortal: boolean;
+}
+
+const ViSenzeModal: FC<VisenzeModalProps> = (props) => {
+  // At the moment, testing elements with ShadowWrapper is troublesome.
+  // At least for the time being, add this property so that the modal can be rendered directly within the component
+  // and therefore allowing it to be tested normally.
+  if (props.renderWithoutPortal) {
+    return <Modal {...props} />;
+  }
+  return (
+    <Portal idName={`visenze-widget-modal-portal-${props.placementId}${props.idSuffix ? `-${props.idSuffix}` : ''}`}>
+      <ShadowWrapper darkMode={props.darkMode} fontFamily={props.fontFamily}>
+        <Modal {...props} />
+      </ShadowWrapper>
+    </Portal>
+  );
+};
+
+export default ViSenzeModal;

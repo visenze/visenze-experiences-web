@@ -1,22 +1,22 @@
-import type { FC } from 'react';
-import { useEffect, useCallback, useContext, useState } from 'react';
 import { cn } from '@heroui/theme';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import type { FC } from 'react';
 import { useIntl } from 'react-intl';
 import { useSwipeable } from 'react-swipeable';
-import { Actions, Category, Labels } from '../../common/types/tracking-constants';
-import { WidgetDataContext } from '../../common/types/contexts';
-import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import { RootContext } from '../../common/components/shadow-wrapper';
-import ViSenzeModal from '../../common/components/modal/visenze-modal';
-import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import Footer from '../../common/components/Footer';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
+import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import ProductCard from '../../common/components/product-card/ProductCard';
-import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
-import CustomizableIcon from '../../common/icons/CustomizableIcon';
-import CloseIcon from '../../common/icons/CloseIcon';
-import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
+import { RootContext } from '../../common/components/shadow-wrapper';
 import ChevronDownIcon from '../../common/icons/ChevronDownIcon';
 import ChevronUpIcon from '../../common/icons/ChevronUpIcon';
+import CloseIcon from '../../common/icons/CloseIcon';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
+import { WidgetDataContext } from '../../common/types/contexts';
+import { Actions, Category, Labels } from '../../common/types/tracking-constants';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 
 export enum ScreenType {
   RESULT = 'result',
@@ -25,6 +25,7 @@ export enum ScreenType {
 
 interface IconTriggeredGridProps {
   productId: string;
+  renderModalWithoutPortal?: boolean;
 }
 
 const swipeConfig = {
@@ -36,9 +37,9 @@ const swipeConfig = {
   touchEventOptions: { passive: true }, // options for touch listeners (*See Details*)
 };
 
-const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
+const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalWithoutPortal }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [error, setError] = useState('');
@@ -49,6 +50,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
 
   const { productInfo, productResults, metadata, error: errorFromApi } = useRecommendationSearch({
     productId,
+    shouldDisplayAlternatives: customizations.results?.useAlternatives,
   });
 
   const onModalClose = useCallback((): void => {
@@ -119,6 +121,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
     <>
       {!customizations.popup?.triggerIcon?.hide && (
           <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
+               data-testid='wigmix-popup-trigger-button'
                onClick={onPopupIconClick}>
             {customizations.popup?.triggerIcon?.url ? (
                 <CustomizableIcon
@@ -143,12 +146,17 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
         open={dialogVisible}
         layout={breakpoint}
         onClose={onModalClose}
-        position={customizations.popup?.position || 'center'}>
+        position={customizations.popup?.position || 'center'}
+        darkMode={darkMode}
+        fontFamily={customizations.generalLayout?.fontFamily}
+        placementId={`${appSettings.placementId}`}
+        renderWithoutPortal={!!renderModalWithoutPortal}>
         <div className='relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1'>
           {/* Close Button */}
           <div
-            className='absolute right-3 top-3 z-10 border-none bg-transparent cursor-pointer rounded-full p-1 hover:opacity-90'
+            className='absolute right-3 top-3 z-10 cursor-pointer rounded-full border-none bg-transparent p-1 hover:opacity-90'
             onClick={onModalClose}
+            data-testid='wigmix-close-button'
             data-pw='itg-close-button'>
             <CloseIcon className='size-6'
                        color={darkMode
@@ -166,7 +174,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
 
                 {/* Reference Product */}
                 {productInfo && (
-                  <div className='wigmix-reference-image-container flex pt-4 md:pt-8 w-full justify-center' data-pw='itg-reference-product'>
+                  <div className='wigmix-reference-image-container flex w-full justify-center pt-4 md:pt-8' data-pw='itg-reference-product'>
                     <img
                         className={cn(
                             'wigmix-reference-image object-contain object-center aspect-square md:max-w-full',
@@ -186,20 +194,21 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
                         )}
                         {...minimizedDrawerHandler}>
                       <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
-                        <div className='absolute inset-x-0 -top-3 m-auto bg-buttonPrimary rounded-full p-1 hover:opacity-90 w-fit'
+                        <div className='absolute inset-x-0 -top-3 m-auto w-fit rounded-full bg-buttonPrimary p-1 hover:opacity-90'
                              onClick={(): void => toggleFullResults()}
+                             data-testid='wigmix-full-results-toggle'
                              data-pw='itg-arrow-button'
                         >
                           {showFullResults ? (
                               <ChevronDownIcon color={darkMode
                                   ? (customizations.buttons?.primary?.fontColorDark || '')
                                   : (customizations.buttons?.primary?.fontColor || '')}
-                                               className='cursor-pointer size-6' />
+                                               className='size-6 cursor-pointer' />
                           ) : (
                               <ChevronUpIcon color={darkMode
                                   ? (customizations.buttons?.primary?.fontColorDark || '')
                                   : (customizations.buttons?.primary?.fontColor || '')}
-                                             className='cursor-pointer size-6' />
+                                             className='size-6 cursor-pointer' />
                           )}
                         </div>
                       </div>
@@ -257,7 +266,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId }) => {
             </>
           )}
           {screen === ScreenType.ERROR && (
-            <div className='size-full flex flex-col text-center justify-center items-center gap-1'>
+            <div className='flex size-full flex-col items-center justify-center gap-1 text-center'>
               <div className='font-bold'>
                 {intl.formatMessage({ id: 'errorDescription' })}
               </div>

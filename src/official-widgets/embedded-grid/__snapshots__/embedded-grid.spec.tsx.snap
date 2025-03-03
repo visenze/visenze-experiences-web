@@ -30,18 +30,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-1"
               data-testid="wigmix-product-card-image"
               src="https://best-images-1-1"
@@ -82,18 +75,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-2"
               data-testid="wigmix-product-card-image"
               src="https://best-images-2-1"
@@ -134,18 +120,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-3"
               data-testid="wigmix-product-card-image"
               src="https://best-images-3-1"
@@ -186,18 +165,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-4"
               data-testid="wigmix-product-card-image"
               src="https://best-images-4-1"
@@ -238,18 +210,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-5"
               data-testid="wigmix-product-card-image"
               src="https://best-images-5-1"
@@ -290,18 +255,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-6"
               data-testid="wigmix-product-card-image"
               src="https://best-images-6-1"
@@ -342,18 +300,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-7"
               data-testid="wigmix-product-card-image"
               src="https://best-images-7-1"
@@ -394,18 +345,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-8"
               data-testid="wigmix-product-card-image"
               src="https://best-images-8-1"
@@ -446,18 +390,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-9"
               data-testid="wigmix-product-card-image"
               src="https://best-images-9-1"
@@ -498,18 +435,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-10"
               data-testid="wigmix-product-card-image"
               src="https://best-images-10-1"
@@ -550,18 +480,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-11"
               data-testid="wigmix-product-card-image"
               src="https://best-images-11-1"
@@ -602,18 +525,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-12"
               data-testid="wigmix-product-card-image"
               src="https://best-images-12-1"
@@ -654,18 +570,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-13"
               data-testid="wigmix-product-card-image"
               src="https://best-images-13-1"
@@ -706,18 +615,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-14"
               data-testid="wigmix-product-card-image"
               src="https://best-images-14-1"
@@ -758,18 +660,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-15"
               data-testid="wigmix-product-card-image"
               src="https://best-images-15-1"
@@ -810,18 +705,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-16"
               data-testid="wigmix-product-card-image"
               src="https://best-images-16-1"
@@ -862,18 +750,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-17"
               data-testid="wigmix-product-card-image"
               src="https://best-images-17-1"
@@ -914,18 +795,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-18"
               data-testid="wigmix-product-card-image"
               src="https://best-images-18-1"
@@ -966,18 +840,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-19"
               data-testid="wigmix-product-card-image"
               src="https://best-images-19-1"
@@ -1018,18 +885,11 @@ exports[`embedded-grid should render a successful response with default config 1
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-20"
               data-testid="wigmix-product-card-image"
               src="https://best-images-20-1"
@@ -1081,18 +941,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-1"
               data-testid="wigmix-product-card-image"
               src="https://best-images-1-1"
@@ -1133,18 +986,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-2"
               data-testid="wigmix-product-card-image"
               src="https://best-images-2-1"
@@ -1185,18 +1031,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-3"
               data-testid="wigmix-product-card-image"
               src="https://best-images-3-1"
@@ -1237,18 +1076,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-4"
               data-testid="wigmix-product-card-image"
               src="https://best-images-4-1"
@@ -1289,18 +1121,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-5"
               data-testid="wigmix-product-card-image"
               src="https://best-images-5-1"
@@ -1341,18 +1166,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-6"
               data-testid="wigmix-product-card-image"
               src="https://best-images-6-1"
@@ -1393,18 +1211,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-7"
               data-testid="wigmix-product-card-image"
               src="https://best-images-7-1"
@@ -1445,18 +1256,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-8"
               data-testid="wigmix-product-card-image"
               src="https://best-images-8-1"
@@ -1497,18 +1301,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-9"
               data-testid="wigmix-product-card-image"
               src="https://best-images-9-1"
@@ -1549,18 +1346,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-10"
               data-testid="wigmix-product-card-image"
               src="https://best-images-10-1"
@@ -1601,18 +1391,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-11"
               data-testid="wigmix-product-card-image"
               src="https://best-images-11-1"
@@ -1653,18 +1436,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-12"
               data-testid="wigmix-product-card-image"
               src="https://best-images-12-1"
@@ -1705,18 +1481,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-13"
               data-testid="wigmix-product-card-image"
               src="https://best-images-13-1"
@@ -1757,18 +1526,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-14"
               data-testid="wigmix-product-card-image"
               src="https://best-images-14-1"
@@ -1809,18 +1571,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-15"
               data-testid="wigmix-product-card-image"
               src="https://best-images-15-1"
@@ -1861,18 +1616,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-16"
               data-testid="wigmix-product-card-image"
               src="https://best-images-16-1"
@@ -1913,18 +1661,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-17"
               data-testid="wigmix-product-card-image"
               src="https://best-images-17-1"
@@ -1965,18 +1706,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-18"
               data-testid="wigmix-product-card-image"
               src="https://best-images-18-1"
@@ -2017,18 +1751,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-19"
               data-testid="wigmix-product-card-image"
               src="https://best-images-19-1"
@@ -2069,18 +1796,11 @@ exports[`embedded-grid should render a successful response with some customizati
           class="wigmix-product-card-image-container"
         >
           <div
-            class="flex justify-center relative"
+            class="relative flex justify-center"
           >
-            <div
-              class="group relative overflow-hidden bg-content3 dark:bg-content2 pointer-events-none before:opacity-100 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-content4/30 before:bg-gradient-to-r before:from-transparent before:via-content4 dark:before:via-default-700/10 before:to-transparent after:opacity-100 after:absolute after:inset-0 after:-z-10 after:bg-content3 dark:after:bg-content2 data-[loaded=true]:pointer-events-auto data-[loaded=true]:overflow-visible data-[loaded=true]:!bg-transparent data-[loaded=true]:before:opacity-0 data-[loaded=true]:before:-z-10 data-[loaded=true]:before:animate-none data-[loaded=true]:after:opacity-0 transition-background !duration-300 aspect-square size-full"
-            >
-              <div
-                class="opacity-0 group-data-[loaded=true]:opacity-100 transition-opacity motion-reduce:transition-none !duration-300"
-              />
-            </div>
             <img
               alt=""
-              class="wigmix-product-card-image aspect-square object-contain "
+              class="wigmix-product-card-image object-contain aspect-square"
               data-pw="eg-product-result-card-image-20"
               data-testid="wigmix-product-card-image"
               src="https://best-images-20-1"
@@ -2117,8 +1837,8 @@ exports[`embedded-grid should render a successful response with some customizati
       POWERED BY 
     </p>
     <img
-      class="h-5 object-center pb-1 pl-1"
-      src="https://visenze-static.s3.amazonaws.com/demos/ms-adidas/ViSenze-FullColor-Horizontal.png"
+      class="h-5 object-center py-0.5 pl-1"
+      src="https://cdn.visenze.com/images/visenze-logo-sm.png"
     />
   </div>
 </DocumentFragment>

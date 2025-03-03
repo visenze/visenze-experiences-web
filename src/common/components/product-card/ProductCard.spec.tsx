@@ -1,8 +1,8 @@
 import type { RenderResult } from '@testing-library/react';
 import { fireEvent, render } from '@testing-library/react';
 import ProductCard from './ProductCard';
-import type { ProcessedProduct } from '../../types/product';
 import { WidgetDataContext } from '../../types/contexts';
+import type { ProcessedProduct } from '../../types/product';
 import type { WidgetClient, WidgetConfig } from '../../wigmix-core';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */

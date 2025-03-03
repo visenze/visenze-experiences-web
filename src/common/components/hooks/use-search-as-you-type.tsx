@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import type { ProductSearchResponse } from 'visearch-javascript-sdk';
+import { WidgetDataContext } from '../../types/contexts';
 import type { SearchImage } from '../../types/image';
 import { isImageFile, isImageUrl } from '../../types/image';
-import { WidgetDataContext } from '../../types/contexts';
-import { Actions, Category } from '../../types/tracking-constants';
 import type { ProcessedProduct } from '../../types/product';
+import { Actions, Category } from '../../types/tracking-constants';
 import { getFlattenProducts } from '../../utils';
 
 interface SearchAsYouTypeProps {

@@ -1,12 +1,12 @@
-import React, { useContext, type ChangeEvent, type FC, type ReactElement, useState, useEffect, useRef } from 'react';
 import { Accordion, AccordionItem } from '@heroui/accordion';
-import type { Facet } from 'visearch-javascript-sdk';
-import { Slider } from '@heroui/slider';
 import { Checkbox } from '@heroui/checkbox';
+import { Slider } from '@heroui/slider';
+import React, { type ChangeEvent, type FC, type ReactElement, useContext, useEffect, useRef, useState } from 'react';
+import type { Facet } from 'visearch-javascript-sdk';
+import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 import type { FacetType } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { getFacetNameByKey, getTitleCase } from '../../../common/utils';
-import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 
 interface FilterOptionsProps {
   facets: Facet[];
@@ -55,7 +55,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
         } else {
           newPriceRange = [value, value];
         }
-        return { ...currentFilters, price: newPriceRange };
+        return { ...currentFilters, [facetName]: newPriceRange };
       });
     };
 
@@ -84,7 +84,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
     };
 
     return facet.items.filter((i) => i.value).map((item) => (
-      <div className='flex w-full justify-between mb-1' key={item.value}>
+      <div className='mb-1 flex w-full justify-between' key={item.value}>
         <Checkbox
           radius='none'
           value={item.value}
@@ -128,7 +128,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
 
   if (displayAsDropdown) {
     return (
-        <div className='flex flex-wrap w-8/12'>
+        <div className='flex w-8/12 flex-wrap'>
           {facets.map((facet) => (showFacet(facet) ? (
               <div key={facet.key} className='w-2/6 p-1'>
                 <div className='w-full border-y border-y-gray-300 py-2'

@@ -1,20 +1,20 @@
+import { Skeleton } from '@heroui/skeleton';
 import type { CSSProperties, FC, ReactElement } from 'react';
-import { useEffect, useRef, useState, useContext } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import Slider from 'react-slick';
 import type { Settings } from 'react-slick';
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
-import { Skeleton } from '@heroui/skeleton';
-import { useIntl } from 'react-intl';
-import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetDataContext } from '../../common/types/contexts';
-import ProductCard from '../../common/components/product-card/ProductCard';
-import Footer from '../../common/components/Footer';
-import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
-import PrevArrow from './components/PrevArrow';
 import NextArrow from './components/NextArrow';
+import PrevArrow from './components/PrevArrow';
+import Footer from '../../common/components/Footer';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
+import ProductCard from '../../common/components/product-card/ProductCard';
+import { RootContext } from '../../common/components/shadow-wrapper';
 import { WidgetBreakpoint } from '../../common/types/constants';
+import { WidgetDataContext } from '../../common/types/contexts';
 
 interface ShopTheLookProps {
   productId: string;
@@ -51,9 +51,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
     objects,
   } = useRecommendationSearch({
     productId,
-    additionalParams: {
-      show_best_product_images: true,
-    },
+    shouldDisplayAlternatives: customizations.results?.useAlternatives,
   });
 
   const useSlideSettings = (): Settings => {
@@ -92,14 +90,15 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
   const settings = useSlideSettings();
 
   const resizeObjectDots = (image: HTMLImageElement): void => {
-    const r = image.offsetHeight / image.naturalHeight;
+    const heightScale = (image.clientHeight / image.naturalHeight) || 1;
+    const widthScale = (image.clientWidth / image.naturalWidth) || 1;
     if (objects.length > 0) {
       const normalizedObjs = objects.map((object, index) => {
         const { box } = object;
         return {
           index,
-          top: (box[1] + (box[3] - box[1]) / 2) * r,
-          left: (box[0] + (box[2] - box[0]) / 2) * r,
+          top: (box[1] + (box[3] - box[1]) / 2) * heightScale,
+          left: (box[0] + (box[2] - box[0]) / 2) * widthScale,
         };
       });
       setObjectDots(normalizedObjs);
@@ -192,6 +191,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                   <div className='relative'>
                     {objectDots.map((obj, index) => (
                         <button
+                            data-testid='wigmix-hotspot-dot'
                             data-pw='stl-hotspot-dot'
                             className={
                               `group absolute z-10 flex items-center justify-center rounded-full bg-[#515151] transition-all 
@@ -211,6 +211,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                             className='wigmix-reference-image size-full object-cover'
                             src={referenceImageUrl}
                             onLoad={onImageLoad}
+                            data-testid='wigmix-reference-image'
                             data-pw='stl-reference-image'
                         />
                     )}

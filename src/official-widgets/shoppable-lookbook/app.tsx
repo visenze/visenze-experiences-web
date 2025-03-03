@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import ShoppableLookbook from './shoppable-lookbook';
 import './app.css';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
+import ShoppableLookbook from './shoppable-lookbook';
 import { type AppPropsWithReferenceElement, AppWrapper } from '../../common/components/app-wrapper';
 
 // Set to true to enable customization via WidgetConfig

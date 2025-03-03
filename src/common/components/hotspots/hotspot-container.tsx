@@ -1,10 +1,10 @@
-import type { FC } from 'react';
-import { useEffect, useContext, useState, useRef } from 'react';
 import { cn } from '@heroui/theme';
+import type { FC } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import type { ProductType } from 'visearch-javascript-sdk';
-import { CroppingContext } from '../../types/contexts';
-import type { CroppedBox } from '../../types/box';
 import Hotspot from './hotspot';
+import type { CroppedBox } from '../../types/box';
+import { CroppingContext } from '../../types/contexts';
 
 interface HotspotContainerProps {
   referenceImage: string;

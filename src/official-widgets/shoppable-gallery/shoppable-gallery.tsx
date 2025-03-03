@@ -1,26 +1,26 @@
-import type { FC } from 'react';
-import { useEffect, useState, useContext } from 'react';
 import { Spinner } from '@heroui/spinner';
+import type { FC } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetDataContext } from '../../common/types/contexts';
 import GalleryImage from './components/GalleryImage';
+import HotspotRecommendations from './components/HotspotRecommendations';
 import Footer from '../../common/components/Footer';
-import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
-import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import HotspotContainer from '../../common/components/hotspots/hotspot-container';
+import ViSenzeModal from '../../common/components/modal/visenze-modal';
+import CroppingProvider from '../../common/components/providers/CroppingProvider';
+import { RootContext } from '../../common/components/shadow-wrapper';
+import CloseIcon from '../../common/icons/CloseIcon';
+import { WidgetDataContext } from '../../common/types/contexts';
 import type { BoxData, ProcessedProduct } from '../../common/types/product';
 import { getFlattenProducts, getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
-import HotspotRecommendations from './components/HotspotRecommendations';
-import CroppingProvider from '../../common/components/providers/CroppingProvider';
-import CloseIcon from '../../common/icons/CloseIcon';
 
 interface ShoppableGalleryProps {
-  // no properties at the moment
+  renderModalWithoutPortal?: boolean;
 }
 
-const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
+const ShoppableGallery: FC<ShoppableGalleryProps> = ({ renderModalWithoutPortal }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
@@ -122,10 +122,14 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
             onClose={onCloseHandler}
             layout={breakpoint}
             position='center'
+            darkMode={darkMode}
+            fontFamily={customizations.generalLayout?.fontFamily}
+            placementId={`${appSettings.placementId}`}
+            renderWithoutPortal={!!renderModalWithoutPortal}
             className='left-[unset] top-[unset] h-[500px] w-[300px] rounded-xl'>
             <div className='flex size-full flex-col bg-primary pt-1/5' data-pw='sg-image-hotspot-modal'>
               <div
-                className='absolute right-2 top-2 bg-transparent rounded-full p-1 hover:opacity-90 cursor-pointer'
+                className='absolute right-2 top-2 cursor-pointer rounded-full bg-transparent p-1 hover:opacity-90'
                 onClick={onCloseHandler}
                 data-pw='sg-modal-close-button'>
                 <CloseIcon className='size-6'
@@ -152,6 +156,8 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = () => {
             metadata={metadata}
             productTypes={productTypes}
             activeImageUrl={activeImageUrl}
+            placementId={`${appSettings.placementId}`}
+            renderModalWithoutPortal={!!renderModalWithoutPortal}
           />
         </CroppingProvider>
     </>

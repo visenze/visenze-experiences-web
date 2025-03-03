@@ -11,7 +11,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     relatedProducts: 'Related products',
     recentSearches: 'Recent searches',
     suggestions: 'Suggestions',
-    viewAllProducts: 'View all {productCount} products',
+    viewAllProducts: 'View all products',
   },
 };
 

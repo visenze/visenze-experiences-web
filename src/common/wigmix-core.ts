@@ -11,7 +11,6 @@ export type WidgetRenderStatus = 'UNRENDERED' | 'HIDDEN' | 'RENDERED';
 export enum WidgetType {
   CAMERA_SEARCH = 'camera_search',
   SIMILAR_SEARCH = 'similar_search',
-  SEARCH_RESULTS_PAGE = 'search_results_page',
   SHOPPING_ASSISTANT = 'shopping_assistant',
   RECOMMEND_ME = 'recommend_me',
   MORE_LIKE_THIS = 'more_like_this',
@@ -737,6 +736,34 @@ export interface WidgetConfig {
       darkModeDefault: boolean;
     };
     /**
+     * Settings to influence API results or how the responses are parsed.
+     *
+     * This section is expected to be lightweight as most of API settings should instead
+     * be set through the searchSettings parameter.
+     *
+     * @internal
+     *
+     * @since 1.0.0
+     */
+    results?: {
+      /**
+       * Number of results to be returned from API.
+       *
+       * @internal Not yet used
+       *
+       * @since 1.0.0
+       */
+      limit?: number;
+      /**
+       * Whether to display alternatives as the recommendation result.
+       *
+       * @internal
+       *
+       * @since 1.0.0
+       */
+      useAlternatives?: boolean;
+    };
+    /**
      * Popup-related settings. This section is relevant only for widgets that have popup behavior.
      *
      * @since 1.0.0
@@ -878,6 +905,12 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       openLinksInNewTab: boolean;
+      /**
+       * The aspect ratio for the product card image; defaults to 1 / 1 (square image) if not specified.
+       *
+       * @since 1.0.0
+       */
+      imageAspectRatio?: string;
       /**
        * Configuration for price field.
        *
