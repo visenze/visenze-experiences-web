@@ -310,7 +310,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
               )
               : (showDropdown && (searchHistory.length > 0 || customizations.imageUpload?.enable))
                   ? <OutsideAlerter>
-                    <div className='flex justify-center divide-x divide-gray-200 py-1'>
+                    <div className='flex flex-col-reverse md:flex-row justify-center max-md:divide-y max-md:divide-y-reverse md:divide-x divide-gray-200 py-1'>
                       {searchHistory.length > 0 && (
                           <div className='flex-1'>
                             <div className='flex flex-col gap-2 px-4 py-1'>
@@ -350,7 +350,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                           </div>
                       )}
                       {customizations.imageUpload?.enable && (
-                          <div className='flex w-2/5 justify-center'>
+                          <div className='flex md:w-2/5 justify-center'>
                             <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload-dropdown'>
                               <div className='flex flex-col items-center gap-6 py-1 text-center text-medium'>
                                 {customizations.imageUpload?.icon?.url ? (
