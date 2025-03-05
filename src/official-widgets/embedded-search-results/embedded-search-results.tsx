@@ -37,6 +37,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
   const { productDetails } = displaySettings;
+  const [hasError, setHasError] = useState<boolean>(false);
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
   const defaultFilters = {
@@ -66,7 +67,12 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   const breakpoint = useBreakpoint();
 
   const handleError = (errorMsg: string): void => {
-    setError(errorMsg);
+    setHasError(true);
+    if (errorMsg.includes('im_url') || errorMsg.includes('image')) {
+      setError(intl.formatMessage({ id: 'imageOrQueryNotFound' }));
+    } else {
+      setError(intl.formatMessage({ id: 'systemError' }));
+    }
   };
 
   const handleSuccess = (res: ProductSearchResponse, shouldResetFacets: boolean): void => {
@@ -77,6 +83,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       handleError(res.error.message);
     } else {
       setError('');
+      setHasError(false);
       const md = {
         cat: Category.RESULT,
         queryId: res.reqid,
@@ -214,6 +221,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
         setProductResults([]);
         setFacets([]);
       }
+      setHasError(false);
     }
   };
 
@@ -226,6 +234,15 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     setImage(imgOrPid);
     multisearchWithSearchBarDetails(imgOrPid, query, 1);
     setIsLoading(true);
+  };
+
+  const checkForError = () : void => {
+    if (hasError) {
+      setHasError(false);
+    }
+    if (query === '' && imUrl === '') {
+      setError('');
+    }
   };
 
   useLayoutEffect(() => {
@@ -280,7 +297,13 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     }
   }, []);
 
+  useEffect(() => {
+    checkForError();
+  }, [query, imUrl]);
+
   const hasApplicableFacets = facets.filter((f) => showFacet(f)).length > 0;
+
+  const errorDiv = (): ReactElement => <p className='font-semibold text-primary pb-7'>{ error }</p>;
 
   if (!root) {
     return <>Searching...</>;
@@ -327,6 +350,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
               />
             </div>
           </div>
+          {hasError && productResults.length > 0 && (errorDiv())}
           <div className='hidden w-full gap-y-2 px-2 pb-2 md:flex'>
             <div className='w-2/12' />
             <FilterOptions
@@ -337,7 +361,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
             />
           </div>
         </div>
-
         <div className='flex size-full flex-col justify-center md:flex-row'>
           {/* Filter Section Mobile */}
           {hasApplicableFacets && (
@@ -408,11 +431,17 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                           ))}
                         </div>
                         : <div className={cn(
-                          'flex flex-col gap-y-2 py-24 text-center md:w-3/4',
+                          'flex flex-col w-full gap-y-2 py-24 items-center justify-center text-center md:w-3/4',
                           !query && !image && 'hidden',
                         )}>
-                          <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noResults' })}</p>
-                          <p className='text-primary'>{intl.formatMessage({ id: 'noResultsDescription' })}</p>
+                          { hasError ? (
+                            errorDiv()
+                          ) : (
+                            <>
+                            <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noResults' })}</p>
+                            <p className='text-primary'>{intl.formatMessage({ id: 'noResultsDescription' })}</p>
+                            </>
+                          )}
                         </div>
                     }
                   </>

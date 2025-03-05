@@ -1,14 +1,17 @@
-import { IntlProvider } from 'react-intl';
 import { render, type RenderResult } from '@testing-library/react';
+import { IntlProvider } from 'react-intl';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import type { LanguagePack } from '../../common/locales/locale';
-import type { WidgetConfig } from '../../common/wigmix-core';
+import EmbeddedSearchResults from './embedded-search-results';
+import {
+  getStandardMultiSearchInvalidImageResponse, getStandardMultiSearchSuccessNoResultResponse,
+  getStandardMultiSearchSuccessResponse, getStandardMultiSearchSystemErrorResponse,
+} from '../../../mocks/responses';
 import getWidgetClient from '../../common/client/widget-client';
 import { RootContext } from '../../common/components/shadow-wrapper';
+import type { LanguagePack } from '../../common/locales/locale';
 import { WidgetDataContext } from '../../common/types/contexts';
-import EmbeddedSearchResults from './embedded-search-results';
-import { getStandardMultiSearchSuccessResponse } from '../../../mocks/responses';
+import type { WidgetConfig } from '../../common/wigmix-core';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -22,6 +25,8 @@ describe('embedded-search-result', () => {
       searchBarPlaceholder: 'What are you looking for?',
       noSearchInput: 'No search input available.',
       noSearchInputDescription: 'Enter a search term or select an image to find results matching your search.',
+      imageOrQueryNotFound: 'You have provided an invalid image or query, please remove them and try again.',
+      systemError: 'Sorry, our system is experiencing difficulties, please try again later.',
     },
   };
   const mockVisearchClient: ViSearchClient = {
@@ -147,6 +152,93 @@ describe('embedded-search-result', () => {
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <EmbeddedSearchResults textQuery='' imUrl='test-im-url' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+    expect(testComponent.asFragment()).toMatchSnapshot();
+  });
+
+  it('should fail render with invalid im-url', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        expect(params).toEqual({
+          facets: ['price', 'brand'],
+          facets_show_count: true,
+          limit: 24,
+          page: 1,
+          im_url: 'test-im-url',
+          return_fields_mapping: true,
+          return_query_sys_meta: true,
+          return_query_temp_url: true,
+        });
+        handler(getStandardMultiSearchInvalidImageResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <EmbeddedSearchResults textQuery='' imUrl='test-im-url' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+    expect(testComponent.asFragment()).toMatchSnapshot();
+  });
+
+  it('should fail render with system error', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        expect(params).toEqual({
+          facets: ['price', 'brand'],
+          facets_show_count: true,
+          limit: 24,
+          page: 1,
+          q: ' ',
+          return_fields_mapping: true,
+          return_query_sys_meta: true,
+          return_query_temp_url: true,
+        });
+        handler(getStandardMultiSearchSystemErrorResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <EmbeddedSearchResults textQuery=' ' imUrl='' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+    expect(testComponent.asFragment()).toMatchSnapshot();
+  });
+
+  it('should fail render with system error', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        expect(params).toEqual({
+          facets: ['price', 'brand'],
+          facets_show_count: true,
+          limit: 24,
+          page: 1,
+          q: 'no_result',
+          return_fields_mapping: true,
+          return_query_sys_meta: true,
+          return_query_temp_url: true,
+        });
+        handler(getStandardMultiSearchSuccessNoResultResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <EmbeddedSearchResults textQuery='no_result' imUrl='' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,

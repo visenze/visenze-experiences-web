@@ -14,6 +14,16 @@ export const getStandardMultiSearchInvalidImageResponse = (): ProductSearchRespo
   },
 });
 
+export const getStandardMultiSearchSystemErrorResponse = (): ProductSearchResponseError => ({
+  reqid: '0195604ea2ab2c64e3dc4cc3c4116b',
+  status: 'fail',
+  method: 'product/multisearch',
+  error: {
+    code: 101,
+    message: 'A system error is reported and we are fixing it right now.',
+  },
+});
+
 export const getStandardMultiSearchAutocompleteResponse = (): AutoCompleteResponseSuccess => ({
   reqid: '87654321',
   status: 'OK',
@@ -28,6 +38,18 @@ export const getStandardMultiSearchAutocompleteResponse = (): AutoCompleteRespon
       score: 0.7,
     },
   ],
+});
+
+export const getStandardMultiSearchSuccessNoResultResponse = (): ProductSearchResponseSuccess => ({
+  im_id: 'im_id1234567890',
+  reqid: '87654321',
+  status: 'OK',
+  method: 'product/multisearch',
+  page: 1,
+  limit: 20,
+  total: 1000,
+  product_types: [],
+  result: [],
 });
 
 export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSuccess => ({
