@@ -28,11 +28,12 @@ export interface SearchHistoryEntry {
 interface SearchBarResultProps {
   textQuery: string;
   imUrl: string;
+  renderModalWithoutPortal?: boolean;
 }
 
 const SEARCH_HISTORY_BASE_KEY = 'wigmix_internal_search_history_';
 
-const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement => {
+const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWithoutPortal }): ReactElement => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [query, setQuery] = useState('');
@@ -217,7 +218,8 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl }): ReactElement
                               setShowDropdown(true);
                             }
                           }}
-                          placementId={`${widgetConfig.appSettings.placementId}`} />
+                          placementId={`${widgetConfig.appSettings.placementId}`}
+                          renderModalWithoutPortal={!!renderModalWithoutPortal} />
           {/* Autocomplete dropdown */}
           {/* eslint-disable no-nested-ternary */}
           {showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
