@@ -100,7 +100,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
 
   return (
     <div className='relative flex'>
-      <Button isIconOnly className='rounded-full bg-zinc-100' onClick={onIconClickHandler} data-pw='sb-gallery-button'>
+      <Button isIconOnly className='rounded-full bg-zinc-100' onClick={onIconClickHandler} data-testid='wigmix-sb-gallery-button' data-pw='sb-gallery-button'>
         {searchImage && (
             <>
               {isImageUrl(searchImage) && (
@@ -145,7 +145,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
           </p>
 
           {/* Close Button */}
-          <Button isIconOnly className='absolute right-5 top-3 bg-transparent' onClick={onCloseHandler} data-pw='sb-close-button'>
+          <Button isIconOnly className='absolute right-5 top-3 bg-transparent' onClick={onCloseHandler} data-testid='wigmix-sb-close-button' data-pw='sb-close-button'>
             <CloseIcon className='size-6'/>
           </Button>
 
