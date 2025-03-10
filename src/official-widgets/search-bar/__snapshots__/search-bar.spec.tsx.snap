@@ -33,9 +33,10 @@ exports[`search-bar should render the search bar 1`] = `
                 <div
                   class="relative flex"
                 >
-                  <button
-                    class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-small gap-2 px-0 !gap-0 transition-transform-colors-opacity motion-reduce:transition-none text-default-foreground min-w-10 w-10 h-10 data-[hover=true]:opacity-hover rounded-full bg-zinc-100"
-                    type="button"
+                  <div
+                    class="rounded-full bg-zinc-100 cursor-pointer p-2"
+                    data-pw="sb-gallery-button"
+                    data-testid="wigmix-sb-gallery-button"
                   >
                     <svg
                       class="size-6"
@@ -51,7 +52,7 @@ exports[`search-bar should render the search bar 1`] = `
                         stroke-linejoin="round"
                       />
                     </svg>
-                  </button>
+                  </div>
                 </div>
                 <div
                   class="size-4"
@@ -78,7 +79,9 @@ exports[`search-bar should render the search bar 1`] = `
                 autocomplete="off"
                 class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-medium peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground"
                 data-has-start-content="true"
+                data-pw="sb-search-bar-input"
                 data-slot="input"
+                data-testid="wigmix-sb-search-bar-input"
                 id="react-aria-:r0:"
                 maxlength="500"
                 placeholder="What are you looking for?"
@@ -161,11 +164,10 @@ exports[`search-bar should render upload image modal 1`] = `
                   <div
                     class="relative flex"
                   >
-                    <button
-                      class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-small gap-2 px-0 !gap-0 transition-transform-colors-opacity motion-reduce:transition-none text-default-foreground min-w-10 w-10 h-10 data-[hover=true]:opacity-hover rounded-full bg-zinc-100"
+                    <div
+                      class="rounded-full bg-zinc-100 cursor-pointer p-2"
                       data-pw="sb-gallery-button"
                       data-testid="wigmix-sb-gallery-button"
-                      type="button"
                     >
                       <svg
                         class="size-6"
@@ -181,11 +183,7 @@ exports[`search-bar should render upload image modal 1`] = `
                           stroke-linejoin="round"
                         />
                       </svg>
-                      <span
-                        class="heroui-ripple"
-                        style="position: absolute; background-color: currentColor; border-radius: 100%; transform-origin: center; pointer-events: none; overflow: hidden; inset: 0; z-index: 0; top: 0px; left: 0px; width: 0px; height: 0px; transform: scale(0); opacity: 0.35;"
-                      />
-                    </button>
+                    </div>
                   </div>
                   <div
                     class="size-4"
@@ -216,6 +214,7 @@ exports[`search-bar should render upload image modal 1`] = `
                   data-has-start-content="true"
                   data-pw="sb-search-bar-input"
                   data-slot="input"
+                  data-testid="wigmix-sb-search-bar-input"
                   id="react-aria-:r5:"
                   maxlength="500"
                   placeholder="What are you looking for?"
@@ -273,11 +272,10 @@ exports[`search-bar should render upload image modal 1`] = `
           >
             SHOW US WHAT YOU'RE LOOKING FOR
           </p>
-          <button
-            class="z-0 group inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-small gap-2 rounded-medium px-0 !gap-0 transition-transform-colors-opacity motion-reduce:transition-none text-default-foreground min-w-10 w-10 h-10 data-[hover=true]:opacity-hover absolute right-5 top-3 bg-transparent"
+          <div
+            class="absolute right-5 top-3 p-2 bg-transparent cursor-pointer"
             data-pw="sb-close-button"
             data-testid="wigmix-sb-close-button"
-            type="button"
           >
             <div
               class="size-6"
@@ -296,7 +294,7 @@ exports[`search-bar should render upload image modal 1`] = `
                 />
               </svg>
             </div>
-          </button>
+          </div>
           <div
             class="flex flex-col pb-5 md:flex-row"
           >

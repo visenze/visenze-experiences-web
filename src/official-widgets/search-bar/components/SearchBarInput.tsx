@@ -43,6 +43,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
   return (
     <Input
       data-pw='sb-search-bar-input'
+      data-testid='wigmix-sb-search-bar-input'
       ref={searchBarRef}
       className='z-5'
       classNames={{

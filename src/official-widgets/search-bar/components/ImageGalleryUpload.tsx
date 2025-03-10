@@ -1,4 +1,3 @@
-import { Button } from '@heroui/button';
 import type { FC, ReactNode } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -100,7 +99,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
 
   return (
     <div className='relative flex'>
-      <Button isIconOnly className='rounded-full bg-zinc-100' onClick={onIconClickHandler} data-testid='wigmix-sb-gallery-button' data-pw='sb-gallery-button'>
+      <div className='rounded-full bg-zinc-100 cursor-pointer p-2' onClick={onIconClickHandler} data-testid='wigmix-sb-gallery-button' data-pw='sb-gallery-button'>
         {searchImage && (
             <>
               {isImageUrl(searchImage) && (
@@ -117,7 +116,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
         {!searchImage && (
             <PhotoIcon className='size-6'/>
         )}
-      </Button>
+      </div>
 
       {searchImage && (
         <div
@@ -145,9 +144,9 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
           </p>
 
           {/* Close Button */}
-          <Button isIconOnly className='absolute right-5 top-3 bg-transparent' onClick={onCloseHandler} data-testid='wigmix-sb-close-button' data-pw='sb-close-button'>
+          <div className='absolute right-5 top-3 p-2 bg-transparent cursor-pointer' onClick={onCloseHandler} data-testid='wigmix-sb-close-button' data-pw='sb-close-button'>
             <CloseIcon className='size-6'/>
-          </Button>
+          </div>
 
           <div className='flex flex-col pb-5 md:flex-row'>
             <div className='px-1/5 md:w-1/3 md:px-10'>

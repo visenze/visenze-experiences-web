@@ -1,4 +1,3 @@
-import { Button } from '@heroui/button';
 import { Listbox, ListboxItem, ListboxSection } from '@heroui/listbox';
 import { cn } from '@heroui/theme';
 import type { FC, ReactElement } from 'react';
@@ -252,7 +251,8 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                                       }}
                                   >
                             <span className='pl-2 text-primary'
-                                  data-pw={`sb-autocomplete-suggestion-${index + 1}`}>{result}</span>
+                                  data-pw={`sb-autocomplete-suggestion-${index + 1}`}
+                                  data-testid='wigmix-sb-autocomplete-value'>{result}</span>
                                   </ListboxItem>
                               ))}
                             </ListboxSection>
@@ -260,17 +260,17 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                         </div>
 
                         <div className='hidden px-4 pb-4 md:flex'>
-                          <Button
-                              className='w-full rounded bg-buttonPrimary py-2 font-semibold text-buttonPrimary'
-                              radius='none'
-                              onPress={() => {
+                          <div
+                              className='w-full rounded text-center bg-buttonPrimary py-2 font-semibold text-buttonPrimary cursor-pointer'
+                              data-testid='wigmix-sb-view-all-button'
+                              onClick={() => {
                                 if (query) {
                                   emitSearchBarCallback(query, image);
                                 }
                               }}
                           >
                             {intl.formatMessage({ id: 'viewAllProducts' })}
-                          </Button>
+                          </div>
                         </div>
                       </div>
 
@@ -302,18 +302,18 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                         </div>
                       </div>
 
-                      <div className='sticky bottom-0 flex bg-primary px-4 py-2 md:hidden'>
-                        <Button
-                            className='w-full rounded bg-buttonPrimary py-2 font-semibold text-buttonPrimary'
-                            radius='none'
-                            onPress={() => {
+                      <div className='sticky bottom-0 flex bg-primary text-center px-4 py-2 md:hidden'>
+                        <div
+                            className='w-full rounded text-center bg-buttonPrimary py-2 font-semibold text-buttonPrimary cursor-pointer'
+                            data-testid='wigmix-sb-view-all-button'
+                            onClick={() => {
                               if (query) {
                                 emitSearchBarCallback(query, image);
                               }
                             }}
                         >
                           {intl.formatMessage({ id: 'viewAllProducts' })}
-                        </Button>
+                        </div>
                       </div>
                     </div>
                   </OutsideAlerter>
@@ -359,7 +359,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                                     }
                                   }}
                                 >
-                                  <span className='pl-2 text-primary'>{entry.query}</span>
+                                  <span className='pl-2 text-primary' data-testid='wigmix-sb-recent-search'>{entry.query}</span>
                                 </ListboxItem>
                               ))}
                             </ListboxSection>
