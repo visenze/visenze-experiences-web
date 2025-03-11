@@ -25,6 +25,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
 
   return (
     <Input
+      data-testid='wigmix-text-bar'
       data-pw='esr-search-bar-input'
       ref={searchBarRef}
       className='z-5'
@@ -38,7 +39,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       maxLength={QUERY_MAX_CHARACTER_LENGTH}
       placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
       onKeyDown={(e) => {
-        if (e.key === 'Enter') {
+        if (e.nativeEvent.code === 'Enter') {
           emitSearchBarCallback();
           if (searchBarRef.current) {
             searchBarRef.current.blur();

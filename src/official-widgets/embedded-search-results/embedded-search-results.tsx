@@ -1,22 +1,23 @@
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { FC, ReactElement } from 'react';
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { Facet, ProductSearchResponse } from 'visearch-javascript-sdk';
 import FilterOptions, { showFacet } from './components/FilterOptions';
 import SearchBarInput from './components/SearchBarInput';
-import SearchHistory, { MAX_HISTORY_ITEMS } from './components/SearchHistory';
 import type { SearchHistoryEntry } from './components/SearchHistory';
+import SearchHistory, { MAX_HISTORY_ITEMS } from './components/SearchHistory';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import FilterIcon from '../../common/icons/FilterIcon';
 import type { FacetType } from '../../common/types/constants';
+import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
-import { isImageUrl, isPid } from '../../common/types/image';
 import type { SearchImageOrPid } from '../../common/types/image';
+import { isImageUrl, isPid } from '../../common/types/image';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import {
@@ -309,10 +310,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     return <>Searching...</>;
   }
 
-  if (error) {
-    console.error(error);
-  }
-
   return (
     <>
         <div className='flex w-full flex-col items-center'>
@@ -351,21 +348,24 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
             </div>
           </div>
           {hasError && productResults.length > 0 && (errorDiv())}
-          <div className='hidden w-full gap-y-2 px-2 pb-2 md:flex'>
-            <div className='w-2/12' />
-            <FilterOptions
-                displayAsDropdown={true}
-                facets={facets}
-                selectedFilters={selectedFilters}
-                setSelectedFilters={setSelectedFilters}
-            />
-          </div>
+          {breakpoint !== WidgetBreakpoint.MOBILE && (
+              <div className='hidden w-full gap-y-2 px-2 pb-2 md:flex'>
+                <div className='w-2/12' />
+                <FilterOptions
+                    displayAsDropdown={true}
+                    facets={facets}
+                    selectedFilters={selectedFilters}
+                    setSelectedFilters={setSelectedFilters}
+                />
+              </div>
+          )}
         </div>
         <div className='flex size-full flex-col justify-center md:flex-row'>
           {/* Filter Section Mobile */}
-          {hasApplicableFacets && (
+          {hasApplicableFacets && breakpoint === WidgetBreakpoint.MOBILE && (
               <>
                 <div className='mb-2 flex w-full cursor-pointer items-center gap-2 bg-white p-2 md:hidden md:px-0'
+                     data-testid='wigmix-mobile-filter-toggle'
                      onClick={() => setShowMobileFilterOptions(true)}>
                   <FilterIcon className='size-5'/>
                   <span className='text-black'>

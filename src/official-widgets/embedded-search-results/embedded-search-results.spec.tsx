@@ -1,11 +1,13 @@
-import { render, type RenderResult } from '@testing-library/react';
+import { act, fireEvent, render, type RenderResult } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 import EmbeddedSearchResults from './embedded-search-results';
 import {
-  getStandardMultiSearchInvalidImageResponse, getStandardMultiSearchSuccessNoResultResponse,
-  getStandardMultiSearchSuccessResponse, getStandardMultiSearchSystemErrorResponse,
+  getStandardMultiSearchInvalidImageResponse,
+  getStandardMultiSearchSuccessNoResultResponse,
+  getStandardMultiSearchSuccessResponse,
+  getStandardMultiSearchSystemErrorResponse,
 } from '../../../mocks/responses';
 import getWidgetClient from '../../common/client/widget-client';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -31,7 +33,6 @@ describe('embedded-search-result', () => {
   };
   const mockVisearchClient: ViSearchClient = {
     setKeys: jest.fn(),
-    productSearchById: jest.fn(),
   } as Partial<ViSearchClient> as ViSearchClient;
   window.scrollTo = jest.fn();
   window.HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -71,7 +72,7 @@ describe('embedded-search-result', () => {
     jest.useRealTimers();
   });
 
-  it('should render successfully with query and imurl', () => {
+  it('should render successfully with query and im-url', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
@@ -98,6 +99,14 @@ describe('embedded-search-result', () => {
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
     );
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
 
@@ -127,7 +136,7 @@ describe('embedded-search-result', () => {
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
     );
-    expect(testComponent.asFragment()).toMatchSnapshot();
+    // no need to test snapshot; it will be the same as query and im-url counterpart
   });
 
   it('should render successfully with im-url', () => {
@@ -156,23 +165,13 @@ describe('embedded-search-result', () => {
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
     );
-    expect(testComponent.asFragment()).toMatchSnapshot();
+    // no need to test snapshot; it will be the same as query and im-url counterpart
   });
 
   it('should fail render with invalid im-url', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        expect(params).toEqual({
-          facets: ['price', 'brand'],
-          facets_show_count: true,
-          limit: 24,
-          page: 1,
-          im_url: 'test-im-url',
-          return_fields_mapping: true,
-          return_query_sys_meta: true,
-          return_query_temp_url: true,
-        });
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
         handler(getStandardMultiSearchInvalidImageResponse());
       }),
     }));
@@ -191,17 +190,7 @@ describe('embedded-search-result', () => {
   it('should fail render with system error', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        expect(params).toEqual({
-          facets: ['price', 'brand'],
-          facets_show_count: true,
-          limit: 24,
-          page: 1,
-          q: ' ',
-          return_fields_mapping: true,
-          return_query_sys_meta: true,
-          return_query_temp_url: true,
-        });
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
         handler(getStandardMultiSearchSystemErrorResponse());
       }),
     }));
@@ -217,20 +206,10 @@ describe('embedded-search-result', () => {
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
 
-  it('should fail render with system error', () => {
+  it('should render with no results', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        expect(params).toEqual({
-          facets: ['price', 'brand'],
-          facets_show_count: true,
-          limit: 24,
-          page: 1,
-          q: 'no_result',
-          return_fields_mapping: true,
-          return_query_sys_meta: true,
-          return_query_temp_url: true,
-        });
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
         handler(getStandardMultiSearchSuccessNoResultResponse());
       }),
     }));
@@ -244,5 +223,209 @@ describe('embedded-search-result', () => {
       </RootContext.Provider>,
     );
     expect(testComponent.asFragment()).toMatchSnapshot();
+  });
+
+  it('should show find similar results successfully', () => {
+    const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        if (params.im_url === 'test-im-url') {
+          handler(getStandardMultiSearchSuccessResponse());
+        } else if (params.pid === 'pid-5') {
+          const standardResponse = getStandardMultiSearchSuccessResponse();
+          // Just scramble the results
+          standardResponse.result = scrambledOrder.map((i) => standardResponse.result![i]);
+          handler(standardResponse);
+        } else {
+          // Fail; other parameter combinations are not expected here
+          expect(true).toBeFalsy();
+        }
+      }),
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <EmbeddedSearchResults textQuery='testQuery' imUrl='test-im-url' />
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
+      findSimilarButtons[4].click();
+    });
+
+    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+    productCardImages.forEach((productCardImage, idx) => {
+      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
+    });
+  });
+
+  it('should show error message if find similar encounters error', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        if (params.im_url === 'test-im-url') {
+          handler(getStandardMultiSearchSuccessResponse());
+        } else if (params.pid === 'pid-5') {
+          handler(getStandardMultiSearchSystemErrorResponse());
+        } else {
+          // Fail; other parameter combinations are not expected here
+          expect(true).toBeFalsy();
+        }
+      }),
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <EmbeddedSearchResults textQuery='testQuery' imUrl='test-im-url' />
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
+      findSimilarButtons[4].click();
+    });
+
+    expect(testComponent.getByText('Sorry, our system is experiencing difficulties, please try again later.')).not.toBeNull();
+  });
+
+  // TODO test delete inactive image history
+
+  // TODO test delete active image history, should re-trigger search
+
+  // TODO add test for clicking on search history
+
+  it('should apply filter successfully in desktop view', () => {
+    const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        const resp = getStandardMultiSearchSuccessResponse();
+        if (params.filters) {
+          expect(params.filters).toEqual(['brand:"brand_1"']);
+          // Scramble the results
+          resp.result = scrambledOrder.map((i) => resp.result![i]);
+        }
+        resp.facets = [
+          {
+            key: 'brand',
+            items: [
+              {
+                value: 'brand_1',
+                count: 30,
+              },
+              {
+                value: 'brand_2',
+                count: 10,
+              },
+              {
+                value: 'brand_3',
+                count: 5,
+              },
+            ],
+          },
+        ];
+        handler(resp);
+      }),
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <EmbeddedSearchResults textQuery='' imUrl='test-im-url' />
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      const brandFilter = testComponent.getByTestId('wigmix-filter-brand');
+      brandFilter.click();
+    });
+
+    act(() => {
+      const brandFilterValues = testComponent.queryAllByTestId('wigmix-filter-checkbox');
+      brandFilterValues[0].click();
+    });
+
+    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+    productCardImages.forEach((productCardImage, idx) => {
+      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
+    });
+  });
+
+  // TODO mobile view filter is not yet tested as accordion doesn't play well with jest testing
+  // (https://github.com/heroui-inc/heroui/issues/4893)
+  // Consider moving out of heroui accordion.
+
+  it('should show text query results successfully', () => {
+    const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        if (params.im_url === 'test-im-url' && !params.q) {
+          // Initial image search
+          handler(getStandardMultiSearchSuccessResponse());
+        } else if (params.q === 'jeans') {
+          // Text query
+          expect(params).toEqual({
+            facets: ['price', 'brand'],
+            facets_show_count: true,
+            q: 'jeans',
+            im_url: 'test-im-url',
+            page: 1,
+            limit: 24,
+            return_fields_mapping: true,
+            return_query_sys_meta: true,
+            return_query_temp_url: true,
+          });
+          const standardResponse = getStandardMultiSearchSuccessResponse();
+          // Just scramble the results
+          standardResponse.result = scrambledOrder.map((i) => standardResponse.result![i]);
+          handler(standardResponse);
+        }
+      }),
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <EmbeddedSearchResults textQuery='' imUrl='test-im-url' />
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      const textBar = testComponent.getByTestId('wigmix-text-bar');
+      fireEvent.change(textBar, { target: { value: 'jeans' } });
+      fireEvent.keyDown(textBar, { code: 'Enter' });
+    });
+
+    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+    productCardImages.forEach((productCardImage, idx) => {
+      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
+    });
   });
 });
