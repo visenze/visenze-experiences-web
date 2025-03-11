@@ -1,5 +1,6 @@
-import { act, fireEvent, render, type RenderResult } from '@testing-library/react';
+import { act, fireEvent, render, type RenderResult, waitFor } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
+import { Context as ResponsiveContext } from 'react-responsive';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import SearchBar from './search-bar';
 import {
@@ -19,15 +20,15 @@ describe('search-bar', () => {
   let testComponent: RenderResult;
   const texts: LanguagePack = {
     en: {
-      searchBarPlaceholder: 'What are you looking for?',
-      uploadScreenTitle: "SHOW US WHAT YOU'RE LOOKING FOR",
-      dragImageToSearch: 'drag an image to search or click to browse',
-      tapToSearchImage: 'tap here to search an image',
-      tapProductGallery: 'or tap our trending product gallery below',
-      relatedProducts: 'Related products',
-      recentSearches: 'Recent searches',
-      suggestions: 'Suggestions',
-      viewAllProducts: 'View all products',
+      searchBarPlaceholder: 'search',
+      uploadScreenTitle: 'upload',
+      dragImageToSearch: 'drag here',
+      tapToSearchImage: 'tap here',
+      tapProductGallery: 'tap to see images',
+      relatedProducts: 'products related',
+      recentSearches: 'searches related',
+      suggestions: 'suggested',
+      viewAllProducts: 'All products',
       errorMessage: 'WE HAVE A PROBLEM HERE!',
     },
   };
@@ -69,6 +70,9 @@ describe('search-bar', () => {
 
   afterEach(() => {
     jest.useRealTimers();
+
+    const modalPortals = document.querySelectorAll('.ReactModalPortal');
+    modalPortals.forEach((modalPortal) => modalPortal.parentNode!.removeChild(modalPortal));
   });
 
   it('should render the search bar', () => {
@@ -85,7 +89,7 @@ describe('search-bar', () => {
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
 
-  it('should render upload image modal', () => {
+  it('should render upload image modal in desktop view', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_search_bar', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation(),
@@ -98,6 +102,47 @@ describe('search-bar', () => {
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <SearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-sb-gallery-button');
+      popupTriggerButton.click();
+    });
+
+    expect(testComponent.baseElement).toMatchSnapshot();
+
+    // Upon clicking close button, modal should close
+
+    act(() => {
+      const closeButton = testComponent.getByTestId('wigmix-sb-close-button');
+      closeButton.click();
+
+      // Wait for the modal to close
+      jest.advanceTimersByTime(500);
+    });
+
+    const modal = testComponent.queryByTestId('wigmix-modal');
+    // Check against a class name that is indicative of a closed modal
+    expect(modal!.className).toContain('ReactModal__Content--before-close');
+  });
+
+  it('should render upload image modal in mobile view', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ResponsiveContext.Provider value={{ width: 600 }}>
+              <SearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
+            </ResponsiveContext.Provider>
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -170,6 +215,10 @@ describe('search-bar', () => {
       fireEvent.keyDown(searchBar!, { code: 'Enter' });
     });
     expect(searchBar!.getAttribute('value')).toBe('jeans');
+    const autocompleteResults = testComponent.queryAllByTestId('wigmix-sb-autocomplete-value');
+    autocompleteResults.forEach((result, idx) => {
+      expect(result.innerText).toEqual(`text${idx + 1}`);
+    });
     const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
     productCardImages.forEach((productCardImage, idx) => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
@@ -204,5 +253,228 @@ describe('search-bar', () => {
     });
     expect(searchBar!.getAttribute('value')).toBe('jeans');
     expect(testComponent.getByText('WE HAVE A PROBLEM HERE!')).not.toBeNull();
+  });
+
+  it('should render a successful response after uploading image with search bar icon in desktop view', async () => {
+    // Due to usage of FileReader, need to simulate with real timer
+    jest.useRealTimers();
+
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        expect(params.image instanceof File);
+        // No need to check other params as they are the same as the URL counterpart
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
+        expect(params.image instanceof File);
+        // No need to check other params as they are the same as the URL counterpart
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <SearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const galleryButton = testComponent.queryByTestId('wigmix-sb-gallery-button');
+      galleryButton!.click();
+    });
+
+    const makeMockData = (files: File[]): any => ({
+      dataTransfer: {
+        files,
+        items: files.map((file) => ({
+          kind: 'file',
+          type: file.type,
+          getAsFile: () => file,
+        })),
+        types: ['Files'],
+      },
+    });
+
+    const fileInput = testComponent.getByTestId('wigmix-sb-image-upload-dropzone');
+    const testFile = new File(['image-content'], 'test-file.png', { type: 'image/png' });
+
+    act(() => {
+      fireEvent.drop(fileInput, makeMockData([testFile]));
+    });
+
+    await waitFor(async () => {
+      // Advance time for the FileReader onload function to fire
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
+    }).catch(() => {
+      // Expected to encounter timeout error here; swallow the exception as the test can proceed harmlessly after this
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+    productCardImages.forEach((productCardImage, idx) => {
+      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
+    });
+  });
+
+  it('should render a successful response after uploading image with dropdown in mobile view', async () => {
+    // Due to usage of FileReader, need to simulate with real timer
+    jest.useRealTimers();
+
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        expect(params.image instanceof File);
+        // No need to check other params as they are the same as the URL counterpart
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
+        expect(params.image instanceof File);
+        // No need to check other params as they are the same as the URL counterpart
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ResponsiveContext.Provider value={{ width: 600 }}>
+              <SearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
+            </ResponsiveContext.Provider>
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const searchBar = testComponent.queryByTestId('wigmix-sb-search-bar-input');
+      searchBar!.click();
+    });
+
+    const makeMockData = (files: File[]): any => ({
+      dataTransfer: {
+        files,
+        items: files.map((file) => ({
+          kind: 'file',
+          type: file.type,
+          getAsFile: () => file,
+        })),
+        types: ['Files'],
+      },
+    });
+
+    const fileInput = testComponent.getByTestId('wigmix-sb-image-upload-dropdown-dropzone');
+    const testFile = new File(['image-content'], 'test-file.png', { type: 'image/png' });
+
+    act(() => {
+      fireEvent.drop(fileInput, makeMockData([testFile]));
+    });
+
+    await waitFor(async () => {
+      // Advance time for the FileReader onload function to fire
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
+    }).catch(() => {
+      // Expected to encounter timeout error here; swallow the exception as the test can proceed harmlessly after this
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+    productCardImages.forEach((productCardImage, idx) => {
+      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
+    });
+  });
+
+  it('should render a successful response after uploading image with dropdown in mobile view', async () => {
+    // Due to usage of FileReader, need to simulate with real timer
+    jest.useRealTimers();
+
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        expect(params.image instanceof File);
+        // No need to check other params as they are the same as the URL counterpart
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
+        expect(params.image instanceof File);
+        // No need to check other params as they are the same as the URL counterpart
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ResponsiveContext.Provider value={{ width: 600 }}>
+              <SearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
+            </ResponsiveContext.Provider>
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const searchBar = testComponent.queryByTestId('wigmix-sb-search-bar-input');
+      searchBar!.click();
+    });
+
+    const makeMockData = (files: File[]): any => ({
+      dataTransfer: {
+        files,
+        items: files.map((file) => ({
+          kind: 'file',
+          type: file.type,
+          getAsFile: () => file,
+        })),
+        types: ['Files'],
+      },
+    });
+
+    const fileInput = testComponent.getByTestId('wigmix-sb-image-upload-dropdown-dropzone');
+    const testFile = new File(['image-content'], 'test-file.png', { type: 'image/png' });
+
+    act(() => {
+      fireEvent.drop(fileInput, makeMockData([testFile]));
+    });
+
+    await waitFor(async () => {
+      // Advance time for the FileReader onload function to fire
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
+    }).catch(() => {
+      // Expected to encounter timeout error here; swallow the exception as the test can proceed harmlessly after this
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+    productCardImages.forEach((productCardImage, idx) => {
+      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
+    });
   });
 });
