@@ -16,13 +16,13 @@ const herouiPackagesForOfficialWidgets = {
   'official-widgets/shoppable-lookbook': 'skeleton',
   'official-widgets/shoppable-gallery': 'skeleton|spinner',
   'official-widgets/icon-triggered-grid': 'skeleton',
-  'official-widgets/search-bar': 'button|input|listbox|skeleton',
+  'official-widgets/search-bar': 'input|listbox|skeleton',
   'official-widgets/embedded-search-results': 'accordion|checkbox|input|skeleton|slider|spinner',
 };
 
 const herouiPackagesForWidget = herouiPackagesForOfficialWidgets[widgetType]
   // If not found, bundle all available packages as fallback.
-  || 'accordion|button|checkbox|input|listbox|skeleton|slider|spinner';
+  || 'accordion|checkbox|input|listbox|skeleton|slider|spinner';
 
 const getFontObj = (configName) => {
   const deviceTypes = ['mobile', 'tablet', 'desktop'];
