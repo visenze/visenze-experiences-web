@@ -477,4 +477,54 @@ describe('search-bar', () => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
     });
   });
+
+  it('should show autocomplete results successfully', () => {
+    const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        if (params.im_url === 'https://cdn.visenze.com/images/widget-3.jpg') {
+          // Initial image search
+          handler(getStandardMultiSearchSuccessResponse());
+        } else if (params.q === 'jeans') {
+          // Text query
+          expect(params).toEqual({
+            q: 'jeans',
+            im_id: 'im_id1234567890',
+            page: 1,
+            limit: 20,
+            get_all_fl: true,
+            return_fields_mapping: true,
+            return_query_sys_meta: true,
+          });
+          const standardResponse = getStandardMultiSearchSuccessResponse();
+          // Just scramble the results
+          standardResponse.result = scrambledOrder.map((i) => standardResponse.result![i]);
+          handler(standardResponse);
+        }
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <SearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+    const searchBar = testComponent.queryByTestId('wigmix-sb-search-bar-input');
+    expect(searchBar).toBeDefined();
+    act(() => {
+      searchBar!.click();
+      fireEvent.change(searchBar!, { target: { value: 'jeans' } });
+      fireEvent.keyDown(searchBar!, { code: 'Enter' });
+    });
+    const autocompleteResults = testComponent.queryAllByTestId('wigmix-sb-autocomplete-value');
+    // length of array should be 2
+    expect(autocompleteResults.length).toBeGreaterThan(0);
+  });
 });
