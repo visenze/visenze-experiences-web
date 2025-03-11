@@ -34,6 +34,21 @@ describe('similar-search', () => {
   } as Partial<ViSearchClient> as ViSearchClient;
   let widgetConfig: WidgetConfig;
 
+  const originalWarn = console.warn.bind(console.warn);
+
+  beforeAll(() => {
+    console.warn = (msg): void => {
+      // Silence warning messages from React-Modal
+      if (!msg.toString().includes('React-Modal: "parentSelector" prop')) {
+        originalWarn(msg);
+      }
+    };
+  });
+
+  afterAll(() => {
+    console.warn = originalWarn;
+  });
+
   beforeEach(() => {
     widgetConfig = {
       appSettings: {
