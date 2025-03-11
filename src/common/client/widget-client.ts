@@ -52,6 +52,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
   let widgetOpeners: ((id: string, bypassIdCheck: boolean) => void)[] = [];
   let darkModeTogglers: (() => void)[] = [];
   let configUpdaters: ((configOverride: WidgetConfig, isPartial: boolean) => void)[] = [];
+  let localeUpdaters: ((locale: string) => void)[] = [];
   let lastTrackingMetadata: Record<string, Primitive> = {};
   let lastReference = '';
 
@@ -217,6 +218,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     widgetOpeners = [];
     darkModeTogglers = [];
     configUpdaters = [];
+    localeUpdaters = [];
   };
 
   const disposeWidget = (): void => {
@@ -273,6 +275,14 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     configUpdaters.forEach((fn) => fn(configOverride, isPartial));
   };
 
+  const registerLocaleUpdater = (fn: (locale: string) => void): void => {
+    localeUpdaters.push(fn);
+  };
+
+  const updateLocale = (locale: string): void => {
+    localeUpdaters.forEach((fn) => fn(locale));
+  };
+
   return {
     visearch,
     widgetType,
@@ -301,6 +311,8 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     registerDarkModeToggler,
     updateConfig,
     registerConfigUpdater,
+    updateLocale,
+    registerLocaleUpdater,
     forceErrorState: (): void => {}, // implemented in individual widgets
   };
 };

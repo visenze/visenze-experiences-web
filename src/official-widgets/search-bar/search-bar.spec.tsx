@@ -79,7 +79,7 @@ describe('search-bar', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_search_bar', 'VERSION', () => mockVisearchClient);
     testComponent = render(
       <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <SearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
           </IntlProvider>
@@ -99,7 +99,7 @@ describe('search-bar', () => {
     }));
     testComponent = render(
       <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <SearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
           </IntlProvider>
@@ -138,7 +138,7 @@ describe('search-bar', () => {
     }));
     testComponent = render(
       <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <ResponsiveContext.Provider value={{ width: 600 }}>
               <SearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
@@ -200,7 +200,7 @@ describe('search-bar', () => {
     }));
     testComponent = render(
       <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <SearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
           </IntlProvider>
@@ -237,7 +237,7 @@ describe('search-bar', () => {
     }));
     testComponent = render(
       <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <SearchBar textQuery='' imUrl='test-invalid-url' renderModalWithoutPortal={true} />
           </IntlProvider>
@@ -274,7 +274,7 @@ describe('search-bar', () => {
     }));
     testComponent = render(
       <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <SearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
           </IntlProvider>
@@ -347,7 +347,7 @@ describe('search-bar', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ResponsiveContext.Provider value={{ width: 600 }}>
                 <SearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
@@ -432,7 +432,7 @@ describe('search-bar', () => {
     }));
     testComponent = render(
       <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <SearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
           </IntlProvider>

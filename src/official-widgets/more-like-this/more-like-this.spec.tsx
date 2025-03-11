@@ -94,7 +94,7 @@ describe('more-like-this', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <MoreLikeThis productId='pid-not-found' />
             </IntlProvider>
@@ -126,7 +126,7 @@ describe('more-like-this', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <MoreLikeThis productId='pid-found' />
             </IntlProvider>
@@ -153,7 +153,7 @@ describe('more-like-this', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <MoreLikeThis productId='pid-found' />
             </IntlProvider>
@@ -226,7 +226,7 @@ describe('more-like-this', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <MoreLikeThis productId='pid-found' />
             </IntlProvider>

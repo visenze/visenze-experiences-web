@@ -70,6 +70,10 @@ export const AppWrapper: FC<AppWrapperProps> = ({
         return !dm;
       });
     });
+    widgetClient.registerLocaleUpdater((l) => {
+      setLocale(l);
+      setMessages(getLocaleTexts(l, defaultTexts, configInternal.customizations.localization?.text));
+    });
   }, []);
 
   useEffect(() => {
@@ -80,7 +84,7 @@ export const AppWrapper: FC<AppWrapperProps> = ({
   }, [configInternal]);
 
   return (
-      <WidgetDataContext.Provider value={{ widgetConfig: configInternal, widgetClient, darkMode }}>
+      <WidgetDataContext.Provider value={{ widgetConfig: configInternal, widgetClient, darkMode, locale }}>
         <ShadowWrapper darkMode={darkMode} fontFamily={configInternal.customizations.generalLayout?.fontFamily}>
           <IntlProvider messages={messages} locale={locale.replace('_', '-')} defaultLocale='en'>
             {children}

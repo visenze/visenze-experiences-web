@@ -75,7 +75,7 @@ describe('similar-search', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -90,7 +90,7 @@ describe('similar-search', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -106,7 +106,7 @@ describe('similar-search', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -130,7 +130,7 @@ describe('similar-search', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -173,7 +173,7 @@ describe('similar-search', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -215,7 +215,7 @@ describe('similar-search', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -275,7 +275,7 @@ describe('similar-search', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ResponsiveContext.Provider value={{ width: 600 }}>
                 <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
@@ -328,7 +328,7 @@ describe('similar-search', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -378,7 +378,7 @@ describe('similar-search', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -451,7 +451,7 @@ describe('similar-search', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>

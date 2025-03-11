@@ -71,7 +71,7 @@ describe('icon-triggered-grid', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_icon_triggered_grid', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <IconTriggeredGrid productId='pid-found' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -86,7 +86,7 @@ describe('icon-triggered-grid', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_icon_triggered_grid', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <IconTriggeredGrid productId='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -102,7 +102,7 @@ describe('icon-triggered-grid', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_icon_triggered_grid', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <IconTriggeredGrid productId='pid-found' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -134,7 +134,7 @@ describe('icon-triggered-grid', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <IconTriggeredGrid productId='pid-not-found' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -185,7 +185,7 @@ describe('icon-triggered-grid', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <IconTriggeredGrid productId='pid-not-found' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -226,7 +226,7 @@ describe('icon-triggered-grid', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <IconTriggeredGrid productId='pid-found' renderModalWithoutPortal={true} />
             </IntlProvider>
@@ -258,7 +258,7 @@ describe('icon-triggered-grid', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ResponsiveContext.Provider value={{ width: 600 }}>
                 <IconTriggeredGrid productId='pid-found' renderModalWithoutPortal={true} />
@@ -299,7 +299,7 @@ describe('icon-triggered-grid', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <IconTriggeredGrid productId='pid-found' renderModalWithoutPortal={true} />
             </IntlProvider>
