@@ -1,0 +1,758 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`search-bar should render the search bar 1`] = `
+<DocumentFragment>
+  <div
+    class="flex size-full flex-col bg-primary"
+  >
+    <div
+      class="relative flex w-full flex-col items-center"
+    >
+      <div
+        class="group flex flex-col data-[hidden=true]:hidden w-full relative justify-end data-[has-label=true]:mt-[calc(theme(fontSize.small)_+_12px)] z-5"
+        data-filled="true"
+        data-filled-within="true"
+        data-slot="base"
+      >
+        <div
+          class="h-full flex flex-col"
+          data-slot="main-wrapper"
+        >
+          <div
+            class="relative inline-flex tap-highlight-transparent flex-row items-center shadow-sm gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-12 min-h-12 transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-md w-full border border-gray-200 px-1.5"
+            data-slot="input-wrapper"
+            style="cursor: text;"
+          >
+            <div
+              class="inline-flex w-full items-center h-full box-border"
+              data-slot="inner-wrapper"
+            >
+              <div
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="relative flex"
+                >
+                  <div
+                    class="rounded-full bg-zinc-100 cursor-pointer p-2"
+                    data-pw="sb-gallery-button"
+                    data-testid="wigmix-sb-gallery-button"
+                  >
+                    <svg
+                      class="size-6"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div
+                  class="size-4"
+                  style="color: rgb(0, 0, 0);"
+                >
+                  <svg
+                    class="size-full"
+                    fill="none"
+                    viewBox="0 0 60 60"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      clip-rule="evenodd"
+                      d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <input
+                aria-label="search"
+                autocapitalize="off"
+                autocomplete="off"
+                class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-medium peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground"
+                data-has-start-content="true"
+                data-pw="sb-search-bar-input"
+                data-slot="input"
+                data-testid="wigmix-sb-search-bar-input"
+                id="react-aria-:r0:"
+                maxlength="500"
+                placeholder="search"
+                title=""
+                type="text"
+                value=""
+              />
+              <button
+                aria-label="clear input"
+                class="p-2 -m-2 z-10 absolute end-3 start-auto pointer-events-none appearance-none select-none opacity-0 hover:!opacity-100 cursor-pointer active:!opacity-70 rounded-full outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-large peer-data-[filled=true]:pointer-events-auto peer-data-[filled=true]:opacity-70 peer-data-[filled=true]:block peer-data-[filled=true]:scale-100 scale-90 ease-out duration-150 transition-[opacity,transform] motion-reduce:transition-none motion-reduce:scale-100"
+                data-slot="clear-button"
+                tabindex="-1"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  focusable="false"
+                  height="1em"
+                  role="presentation"
+                  viewBox="0 0 24 24"
+                  width="1em"
+                >
+                  <path
+                    d="M12 2a10 10 0 1010 10A10.016 10.016 0 0012 2zm3.36 12.3a.754.754 0 010 1.06.748.748 0 01-1.06 0l-2.3-2.3-2.3 2.3a.748.748 0 01-1.06 0 .754.754 0 010-1.06l2.3-2.3-2.3-2.3A.75.75 0 019.7 8.64l2.3 2.3 2.3-2.3a.75.75 0 011.06 1.06l-2.3 2.3z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`search-bar should render upload image modal in desktop view 1`] = `
+<body
+  aria-hidden="true"
+  class="ReactModal__Body--open"
+  style="overflow: hidden;"
+>
+  <div
+    data-react-modal-body-trap=""
+    style="position: absolute; opacity: 0;"
+    tabindex="0"
+  />
+  <div>
+    <div
+      class="flex size-full flex-col bg-primary"
+    >
+      <div
+        class="relative flex w-full flex-col items-center"
+      >
+        <div
+          class="group flex flex-col data-[hidden=true]:hidden w-full relative justify-end data-[has-label=true]:mt-[calc(theme(fontSize.small)_+_12px)] z-5 is-filled"
+          data-filled="true"
+          data-filled-within="true"
+          data-focus-within="true"
+          data-has-value="true"
+          data-slot="base"
+        >
+          <div
+            class="h-full flex flex-col"
+            data-slot="main-wrapper"
+          >
+            <div
+              class="relative inline-flex tap-highlight-transparent flex-row items-center shadow-sm gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-12 min-h-12 transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-md w-full border border-gray-200 px-1.5 is-filled"
+              data-slot="input-wrapper"
+              style="cursor: text;"
+            >
+              <div
+                class="inline-flex w-full items-center h-full box-border"
+                data-slot="inner-wrapper"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <div
+                    class="relative flex"
+                  >
+                    <div
+                      class="rounded-full bg-zinc-100 cursor-pointer p-2"
+                      data-pw="sb-gallery-button"
+                      data-testid="wigmix-sb-gallery-button"
+                    >
+                      <svg
+                        class="size-6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div
+                    class="size-4"
+                    style="color: rgb(0, 0, 0);"
+                  >
+                    <svg
+                      class="size-full"
+                      fill="none"
+                      viewBox="0 0 60 60"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <input
+                  aria-label="search"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-medium peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground is-filled"
+                  data-filled="true"
+                  data-filled-within="true"
+                  data-has-start-content="true"
+                  data-pw="sb-search-bar-input"
+                  data-slot="input"
+                  data-testid="wigmix-sb-search-bar-input"
+                  id="react-aria-:r5:"
+                  maxlength="500"
+                  placeholder="search"
+                  title=""
+                  type="text"
+                  value="test"
+                />
+                <button
+                  aria-label="clear input"
+                  class="p-2 -m-2 z-10 absolute end-3 start-auto pointer-events-none appearance-none select-none opacity-0 hover:!opacity-100 cursor-pointer active:!opacity-70 rounded-full outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-large peer-data-[filled=true]:pointer-events-auto peer-data-[filled=true]:opacity-70 peer-data-[filled=true]:block peer-data-[filled=true]:scale-100 scale-90 ease-out duration-150 transition-[opacity,transform] motion-reduce:transition-none motion-reduce:scale-100"
+                  data-slot="clear-button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    height="1em"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                  >
+                    <path
+                      d="M12 2a10 10 0 1010 10A10.016 10.016 0 0012 2zm3.36 12.3a.754.754 0 010 1.06.748.748 0 01-1.06 0l-2.3-2.3-2.3 2.3a.748.748 0 01-1.06 0 .754.754 0 010-1.06l2.3-2.3-2.3-2.3A.75.75 0 019.7 8.64l2.3 2.3 2.3-2.3a.75.75 0 011.06 1.06l-2.3 2.3z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="ReactModalPortal"
+  >
+    <div
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
+    >
+      <div
+        aria-modal="true"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-center"
+        data-testid="wigmix-modal"
+        role="dialog"
+        tabindex="-1"
+      >
+        <div
+          class="relative flex size-full flex-col bg-primary"
+        >
+          <p
+            class="widget-title py-4 text-center text-primary"
+            data-pw="sb-image-upload-title"
+          >
+            upload
+          </p>
+          <div
+            class="absolute right-5 top-3 p-2 bg-transparent cursor-pointer"
+            data-pw="sb-close-button"
+            data-testid="wigmix-sb-close-button"
+          >
+            <div
+              class="size-6"
+            >
+              <svg
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 18 18 6M6 6l12 12"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <div
+            class="flex flex-col pb-5 md:flex-row"
+          >
+            <div
+              class="px-1/5 md:w-1/3 md:px-10"
+            >
+              <div
+                class="cursor-pointer"
+                role="presentation"
+                tabindex="0"
+              >
+                <input
+                  accept="image/png,image/jpeg,image/jpg,image/gif"
+                  data-pw="sb-image-upload-dropzone"
+                  data-testid="wigmix-sb-image-upload-dropzone"
+                  multiple=""
+                  style="border: 0px; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
+                  tabindex="-1"
+                  type="file"
+                />
+                <div
+                  class="wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center"
+                >
+                  <div
+                    class="size-20"
+                    style="color: rgb(146, 146, 146);"
+                  >
+                    <svg
+                      fill="currentColor"
+                      stroke-width="0"
+                      viewBox="8 8 32 32"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M33.47363,27.41846c-0.27539-0.22461-0.67188-0.22461-0.94727,0c0,0-1.49762,1.22021-1.5,1.22217 c-0.72473,0.59045,0.2049,1.77032,0.94727,1.16309L32.25,29.57849c0,1.11438,0,2.41113,0,2.42145c0,0.94568,1.5,0.95361,1.5,0 c0-0.00793,0-1.30603,0-2.42145c0.15515,0.1264,0.276,0.22491,0.27637,0.22522c0.72742,0.59277,1.68353-0.56317,0.94727-1.16315 C34.9671,28.63531,33.47363,27.41846,33.47363,27.41846z"
+                      />
+                      <path
+                        d="M21.25,18.5c0,1.24072,1.00928,2.25,2.25,2.25s2.25-1.00928,2.25-2.25s-1.00928-2.25-2.25-2.25S21.25,17.25928,21.25,18.5z M24.25,18.5c0,0.41357-0.33643,0.75-0.75,0.75s-0.75-0.33643-0.75-0.75s0.33643-0.75,0.75-0.75S24.25,18.08643,24.25,18.5z"
+                      />
+                      <path
+                        d="M28.81494,23.13281l-0.43018-0.56006c-0.66797-0.86816-2.10156-0.86816-2.76953,0l-2.84454,3.69855l-4.38593-5.69855 c-0.66797-0.86816-2.10205-0.86768-2.76904-0.00049L10.75,26.88763V15c0-0.68945,0.56055-1.25,1.25-1.25h20 c0.68945,0,1.25,0.56055,1.25,1.25c0,0,0,7.02826,0,7.05994c0,0.93817,1.5,0.98608,1.5,0.00012V15c0-1.5166-1.2334-2.75-2.75-2.75 H12c-1.5166,0-2.75,1.2334-2.75,2.75v14c0,1.5166,1.2334,2.75,2.75,2.75c0,0,13.03351,0,13.06,0c0.96466,0,0.9707-1.5,0.00006-1.5 h-3.45691l5.20154-6.76318c0.12988-0.16895,0.26074-0.16895,0.39062,0c0,0,0.42737,0.5564,0.43018,0.56006 C28.18573,24.77557,29.40411,23.89972,28.81494,23.13281z M19.71069,30.25H12c-0.59253,0-1.06653-0.42255-1.19464-0.97662 l5.99933-7.78656c0.12988-0.16895,0.26025-0.16943,0.39111,0.00049l4.62885,6.01404L19.71069,30.25z"
+                      />
+                      <path
+                        d="M33,24.25c-3.17041,0-5.75,2.57959-5.75,5.75s2.57959,5.75,5.75,5.75s5.75-2.57959,5.75-5.75S36.17041,24.25,33,24.25z M33,34.25c-2.34326,0-4.25-1.90674-4.25-4.25s1.90674-4.25,4.25-4.25s4.25,1.90674,4.25,4.25S35.34326,34.25,33,34.25z"
+                      />
+                    </svg>
+                  </div>
+                  <p
+                    class="hidden px-3 py-2 leading-6 text-primary md:block"
+                  >
+                    drag here
+                  </p>
+                  <p
+                    class="pt-3 leading-6 text-primary md:hidden"
+                  >
+                    tap here
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              class="py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0"
+            >
+              <p
+                class="px-14 pb-3 text-center text-primary md:px-0 md:text-left"
+              >
+                tap to see images
+              </p>
+              <div
+                class="grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0"
+              >
+                <div
+                  class="col-span-1"
+                >
+                  <div
+                    class="relative h-full"
+                  >
+                    <img
+                      class="h-full object-cover"
+                      data-pw="sb-gallery-image-1"
+                      src="https://cdn.visenze.com/images/widget-1.jpg"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="col-span-1"
+                >
+                  <div
+                    class="grid grid-cols-2 gap-2 md:gap-4"
+                  >
+                    <div
+                      class="relative row-span-1 border-none"
+                    >
+                      <img
+                        class="h-full object-cover"
+                        data-pw="sb-gallery-image-2"
+                        src="https://cdn.visenze.com/images/widget-2.jpg"
+                      />
+                    </div>
+                    <div
+                      class="relative row-span-1 border-none"
+                    >
+                      <img
+                        class="h-full object-cover"
+                        data-pw="sb-gallery-image-3"
+                        src="https://cdn.visenze.com/images/widget-3.jpg"
+                      />
+                    </div>
+                    <div
+                      class="relative row-span-1 border-none"
+                    >
+                      <img
+                        class="h-full object-cover"
+                        data-pw="sb-gallery-image-4"
+                        src="https://cdn.visenze.com/images/widget-4.jpg"
+                      />
+                    </div>
+                    <div
+                      class="relative row-span-1 border-none"
+                    >
+                      <img
+                        class="h-full object-cover"
+                        data-pw="sb-gallery-image-5"
+                        src="https://cdn.visenze.com/images/widget-5.jpg"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    data-react-modal-body-trap=""
+    style="position: absolute; opacity: 0;"
+    tabindex="0"
+  />
+</body>
+`;
+
+exports[`search-bar should render upload image modal in mobile view 1`] = `
+<body
+  aria-hidden="true"
+  class="ReactModal__Body--open"
+  style="overflow: hidden;"
+>
+  <div
+    data-react-modal-body-trap=""
+    style="position: absolute; opacity: 0;"
+    tabindex="0"
+  />
+  <div>
+    <div
+      class="flex size-full flex-col bg-primary"
+    >
+      <div
+        class="relative flex w-full flex-col items-center"
+      >
+        <div
+          class="group flex flex-col data-[hidden=true]:hidden w-full relative justify-end data-[has-label=true]:mt-[calc(theme(fontSize.small)_+_12px)] z-5 is-filled"
+          data-filled="true"
+          data-filled-within="true"
+          data-focus-within="true"
+          data-has-value="true"
+          data-slot="base"
+        >
+          <div
+            class="h-full flex flex-col"
+            data-slot="main-wrapper"
+          >
+            <div
+              class="relative inline-flex tap-highlight-transparent flex-row items-center shadow-sm gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-12 min-h-12 transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-md w-full border border-gray-200 px-1.5 is-filled"
+              data-slot="input-wrapper"
+              style="cursor: text;"
+            >
+              <div
+                class="inline-flex w-full items-center h-full box-border"
+                data-slot="inner-wrapper"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <div
+                    class="relative flex"
+                  >
+                    <div
+                      class="rounded-full bg-zinc-100 cursor-pointer p-2"
+                      data-pw="sb-gallery-button"
+                      data-testid="wigmix-sb-gallery-button"
+                    >
+                      <svg
+                        class="size-6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div
+                    class="size-4"
+                    style="color: rgb(0, 0, 0);"
+                  >
+                    <svg
+                      class="size-full"
+                      fill="none"
+                      viewBox="0 0 60 60"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <input
+                  aria-label="search"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-medium peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground is-filled"
+                  data-filled="true"
+                  data-filled-within="true"
+                  data-has-start-content="true"
+                  data-pw="sb-search-bar-input"
+                  data-slot="input"
+                  data-testid="wigmix-sb-search-bar-input"
+                  id="react-aria-:ra:"
+                  maxlength="500"
+                  placeholder="search"
+                  title=""
+                  type="text"
+                  value="test"
+                />
+                <button
+                  aria-label="clear input"
+                  class="p-2 -m-2 z-10 absolute end-3 start-auto pointer-events-none appearance-none select-none opacity-0 hover:!opacity-100 cursor-pointer active:!opacity-70 rounded-full outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-large peer-data-[filled=true]:pointer-events-auto peer-data-[filled=true]:opacity-70 peer-data-[filled=true]:block peer-data-[filled=true]:scale-100 scale-90 ease-out duration-150 transition-[opacity,transform] motion-reduce:transition-none motion-reduce:scale-100"
+                  data-slot="clear-button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    height="1em"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                  >
+                    <path
+                      d="M12 2a10 10 0 1010 10A10.016 10.016 0 0012 2zm3.36 12.3a.754.754 0 010 1.06.748.748 0 01-1.06 0l-2.3-2.3-2.3 2.3a.748.748 0 01-1.06 0 .754.754 0 010-1.06l2.3-2.3-2.3-2.3A.75.75 0 019.7 8.64l2.3 2.3 2.3-2.3a.75.75 0 011.06 1.06l-2.3 2.3z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="ReactModalPortal"
+  >
+    <div
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
+    >
+      <div
+        aria-modal="true"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-center"
+        data-testid="wigmix-modal"
+        role="dialog"
+        tabindex="-1"
+      >
+        <div
+          class="relative flex size-full flex-col bg-primary"
+        >
+          <p
+            class="widget-title py-4 text-center text-primary"
+            data-pw="sb-image-upload-title"
+          >
+            upload
+          </p>
+          <div
+            class="absolute right-5 top-3 p-2 bg-transparent cursor-pointer"
+            data-pw="sb-close-button"
+            data-testid="wigmix-sb-close-button"
+          >
+            <div
+              class="size-6"
+            >
+              <svg
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 18 18 6M6 6l12 12"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <div
+            class="flex flex-col pb-5 md:flex-row"
+          >
+            <div
+              class="px-1/5 md:w-1/3 md:px-10"
+            >
+              <div
+                class="cursor-pointer"
+                role="presentation"
+                tabindex="0"
+              >
+                <input
+                  accept="image/png,image/jpeg,image/jpg,image/gif"
+                  data-pw="sb-image-upload-dropzone"
+                  data-testid="wigmix-sb-image-upload-dropzone"
+                  multiple=""
+                  style="border: 0px; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
+                  tabindex="-1"
+                  type="file"
+                />
+                <div
+                  class="wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center"
+                >
+                  <div
+                    class="size-20"
+                    style="color: rgb(146, 146, 146);"
+                  >
+                    <svg
+                      fill="currentColor"
+                      stroke-width="0"
+                      viewBox="8 8 32 32"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M33.47363,27.41846c-0.27539-0.22461-0.67188-0.22461-0.94727,0c0,0-1.49762,1.22021-1.5,1.22217 c-0.72473,0.59045,0.2049,1.77032,0.94727,1.16309L32.25,29.57849c0,1.11438,0,2.41113,0,2.42145c0,0.94568,1.5,0.95361,1.5,0 c0-0.00793,0-1.30603,0-2.42145c0.15515,0.1264,0.276,0.22491,0.27637,0.22522c0.72742,0.59277,1.68353-0.56317,0.94727-1.16315 C34.9671,28.63531,33.47363,27.41846,33.47363,27.41846z"
+                      />
+                      <path
+                        d="M21.25,18.5c0,1.24072,1.00928,2.25,2.25,2.25s2.25-1.00928,2.25-2.25s-1.00928-2.25-2.25-2.25S21.25,17.25928,21.25,18.5z M24.25,18.5c0,0.41357-0.33643,0.75-0.75,0.75s-0.75-0.33643-0.75-0.75s0.33643-0.75,0.75-0.75S24.25,18.08643,24.25,18.5z"
+                      />
+                      <path
+                        d="M28.81494,23.13281l-0.43018-0.56006c-0.66797-0.86816-2.10156-0.86816-2.76953,0l-2.84454,3.69855l-4.38593-5.69855 c-0.66797-0.86816-2.10205-0.86768-2.76904-0.00049L10.75,26.88763V15c0-0.68945,0.56055-1.25,1.25-1.25h20 c0.68945,0,1.25,0.56055,1.25,1.25c0,0,0,7.02826,0,7.05994c0,0.93817,1.5,0.98608,1.5,0.00012V15c0-1.5166-1.2334-2.75-2.75-2.75 H12c-1.5166,0-2.75,1.2334-2.75,2.75v14c0,1.5166,1.2334,2.75,2.75,2.75c0,0,13.03351,0,13.06,0c0.96466,0,0.9707-1.5,0.00006-1.5 h-3.45691l5.20154-6.76318c0.12988-0.16895,0.26074-0.16895,0.39062,0c0,0,0.42737,0.5564,0.43018,0.56006 C28.18573,24.77557,29.40411,23.89972,28.81494,23.13281z M19.71069,30.25H12c-0.59253,0-1.06653-0.42255-1.19464-0.97662 l5.99933-7.78656c0.12988-0.16895,0.26025-0.16943,0.39111,0.00049l4.62885,6.01404L19.71069,30.25z"
+                      />
+                      <path
+                        d="M33,24.25c-3.17041,0-5.75,2.57959-5.75,5.75s2.57959,5.75,5.75,5.75s5.75-2.57959,5.75-5.75S36.17041,24.25,33,24.25z M33,34.25c-2.34326,0-4.25-1.90674-4.25-4.25s1.90674-4.25,4.25-4.25s4.25,1.90674,4.25,4.25S35.34326,34.25,33,34.25z"
+                      />
+                    </svg>
+                  </div>
+                  <p
+                    class="hidden px-3 py-2 leading-6 text-primary md:block"
+                  >
+                    drag here
+                  </p>
+                  <p
+                    class="pt-3 leading-6 text-primary md:hidden"
+                  >
+                    tap here
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              class="py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0"
+            >
+              <p
+                class="px-14 pb-3 text-center text-primary md:px-0 md:text-left"
+              >
+                tap to see images
+              </p>
+              <div
+                class="grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0"
+              >
+                <div
+                  class="col-span-1"
+                >
+                  <div
+                    class="relative h-full"
+                  >
+                    <img
+                      class="h-full object-cover"
+                      data-pw="sb-gallery-image-1"
+                      src="https://cdn.visenze.com/images/widget-1.jpg"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="col-span-1"
+                >
+                  <div
+                    class="grid grid-cols-2 gap-2 md:gap-4"
+                  >
+                    <div
+                      class="relative row-span-1 border-none"
+                    >
+                      <img
+                        class="h-full object-cover"
+                        data-pw="sb-gallery-image-2"
+                        src="https://cdn.visenze.com/images/widget-2.jpg"
+                      />
+                    </div>
+                    <div
+                      class="relative row-span-1 border-none"
+                    >
+                      <img
+                        class="h-full object-cover"
+                        data-pw="sb-gallery-image-3"
+                        src="https://cdn.visenze.com/images/widget-3.jpg"
+                      />
+                    </div>
+                    <div
+                      class="relative row-span-1 border-none"
+                    >
+                      <img
+                        class="h-full object-cover"
+                        data-pw="sb-gallery-image-4"
+                        src="https://cdn.visenze.com/images/widget-4.jpg"
+                      />
+                    </div>
+                    <div
+                      class="relative row-span-1 border-none"
+                    >
+                      <img
+                        class="h-full object-cover"
+                        data-pw="sb-gallery-image-5"
+                        src="https://cdn.visenze.com/images/widget-5.jpg"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    data-react-modal-body-trap=""
+    style="position: absolute; opacity: 0;"
+    tabindex="0"
+  />
+</body>
+`;

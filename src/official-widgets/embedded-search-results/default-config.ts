@@ -9,6 +9,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     searchBarPlaceholder: 'What are you looking for?',
     noSearchInput: 'No search input',
     noSearchInputDescription: 'Enter a search term or select an image to find results.',
+    imageOrQueryNotFound: 'You have provided an invalid image or query, please remove them and try again.',
+    systemError: 'Sorry, our system is experiencing difficulties, please try again later.',
   },
 };
 

@@ -1,22 +1,23 @@
 import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { FC, ReactElement } from 'react';
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { Facet, ProductSearchResponse } from 'visearch-javascript-sdk';
 import FilterOptions, { showFacet } from './components/FilterOptions';
 import SearchBarInput from './components/SearchBarInput';
-import SearchHistory, { MAX_HISTORY_ITEMS } from './components/SearchHistory';
 import type { SearchHistoryEntry } from './components/SearchHistory';
+import SearchHistory, { MAX_HISTORY_ITEMS } from './components/SearchHistory';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import FilterIcon from '../../common/icons/FilterIcon';
 import type { FacetType } from '../../common/types/constants';
+import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
-import { isImageUrl, isPid } from '../../common/types/image';
 import type { SearchImageOrPid } from '../../common/types/image';
+import { isImageUrl, isPid } from '../../common/types/image';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import {
@@ -37,6 +38,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
   const { productDetails } = displaySettings;
+  const [hasError, setHasError] = useState<boolean>(false);
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
   const defaultFilters = {
@@ -66,7 +68,12 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   const breakpoint = useBreakpoint();
 
   const handleError = (errorMsg: string): void => {
-    setError(errorMsg);
+    setHasError(true);
+    if (errorMsg.includes('im_url') || errorMsg.includes('image')) {
+      setError(intl.formatMessage({ id: 'imageOrQueryNotFound' }));
+    } else {
+      setError(intl.formatMessage({ id: 'systemError' }));
+    }
   };
 
   const handleSuccess = (res: ProductSearchResponse, shouldResetFacets: boolean): void => {
@@ -77,6 +84,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       handleError(res.error.message);
     } else {
       setError('');
+      setHasError(false);
       const md = {
         cat: Category.RESULT,
         queryId: res.reqid,
@@ -214,6 +222,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
         setProductResults([]);
         setFacets([]);
       }
+      setHasError(false);
     }
   };
 
@@ -226,6 +235,15 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     setImage(imgOrPid);
     multisearchWithSearchBarDetails(imgOrPid, query, 1);
     setIsLoading(true);
+  };
+
+  const checkForError = () : void => {
+    if (hasError) {
+      setHasError(false);
+    }
+    if (query === '' && imUrl === '') {
+      setError('');
+    }
   };
 
   useLayoutEffect(() => {
@@ -280,14 +298,16 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     }
   }, []);
 
+  useEffect(() => {
+    checkForError();
+  }, [query, imUrl]);
+
   const hasApplicableFacets = facets.filter((f) => showFacet(f)).length > 0;
+
+  const errorDiv = (): ReactElement => <p className='font-semibold text-primary pb-7'>{ error }</p>;
 
   if (!root) {
     return <>Searching...</>;
-  }
-
-  if (error) {
-    console.error(error);
   }
 
   return (
@@ -327,22 +347,25 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
               />
             </div>
           </div>
-          <div className='hidden w-full gap-y-2 px-2 pb-2 md:flex'>
-            <div className='w-2/12' />
-            <FilterOptions
-                displayAsDropdown={true}
-                facets={facets}
-                selectedFilters={selectedFilters}
-                setSelectedFilters={setSelectedFilters}
-            />
-          </div>
+          {hasError && productResults.length > 0 && (errorDiv())}
+          {breakpoint !== WidgetBreakpoint.MOBILE && (
+              <div className='hidden w-full gap-y-2 px-2 pb-2 md:flex'>
+                <div className='w-2/12' />
+                <FilterOptions
+                    displayAsDropdown={true}
+                    facets={facets}
+                    selectedFilters={selectedFilters}
+                    setSelectedFilters={setSelectedFilters}
+                />
+              </div>
+          )}
         </div>
-
         <div className='flex size-full flex-col justify-center md:flex-row'>
           {/* Filter Section Mobile */}
-          {hasApplicableFacets && (
+          {hasApplicableFacets && breakpoint === WidgetBreakpoint.MOBILE && (
               <>
                 <div className='mb-2 flex w-full cursor-pointer items-center gap-2 bg-white p-2 md:hidden md:px-0'
+                     data-testid='wigmix-mobile-filter-toggle'
                      onClick={() => setShowMobileFilterOptions(true)}>
                   <FilterIcon className='size-5'/>
                   <span className='text-black'>
@@ -408,11 +431,17 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                           ))}
                         </div>
                         : <div className={cn(
-                          'flex flex-col gap-y-2 py-24 text-center md:w-3/4',
+                          'flex flex-col w-full gap-y-2 py-24 items-center justify-center text-center md:w-3/4',
                           !query && !image && 'hidden',
                         )}>
-                          <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noResults' })}</p>
-                          <p className='text-primary'>{intl.formatMessage({ id: 'noResultsDescription' })}</p>
+                          { hasError ? (
+                            errorDiv()
+                          ) : (
+                            <>
+                            <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noResults' })}</p>
+                            <p className='text-primary'>{intl.formatMessage({ id: 'noResultsDescription' })}</p>
+                            </>
+                          )}
                         </div>
                     }
                   </>

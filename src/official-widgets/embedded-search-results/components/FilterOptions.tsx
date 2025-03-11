@@ -94,6 +94,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
           classNames={{
             base: 'w-full max-w-full',
           }}
+          data-testid='wigmix-filter-checkbox'
         >
           <span className={`${coloredText ? 'text-primary' : 'text-black'}`}>{item.value}</span>
         </Checkbox>
@@ -132,6 +133,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
           {facets.map((facet) => (showFacet(facet) ? (
               <div key={facet.key} className='w-2/6 p-1'>
                 <div className='w-full border-y border-y-gray-300 py-2'
+                     data-testid={`wigmix-filter-${facet.key}`}
                      onClick={() => {
                        setShownFacets((prev) => {
                          const originalValueForFacet = prev[facet.key];
@@ -168,6 +170,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
         {
           facets.map((facet) => (
             <AccordionItem
+              data-testid={`wigmix-filter-${facet.key}`}
               classNames={{ title: 'font-bold text-primary' }}
               key={facet.key}
               title={getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}

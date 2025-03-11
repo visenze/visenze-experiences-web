@@ -12,6 +12,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     recentSearches: 'Recent searches',
     suggestions: 'Suggestions',
     viewAllProducts: 'View all products',
+    errorMessage: 'You have entered an invalid query or image, please try again.',
   },
 };
 

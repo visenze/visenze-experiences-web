@@ -1,0 +1,2095 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`embedded-search-result should fail render with invalid im-url 1`] = `
+<DocumentFragment>
+  <div
+    class="flex w-full flex-col items-center"
+  >
+    <div
+      class="flex w-full gap-y-2 px-2 py-3 md:py-4 lg:py-5"
+    >
+      <div
+        class="sticky top-0 z-20 hidden w-2/12 px-2 py-1 md:block md:px-0"
+      />
+      <div
+        class="w-full md:w-8/12"
+      >
+        <div
+          class="group flex flex-col data-[hidden=true]:hidden w-full relative justify-end data-[has-label=true]:mt-[calc(theme(fontSize.small)_+_12px)] z-5"
+          data-filled="true"
+          data-filled-within="true"
+          data-slot="base"
+        >
+          <div
+            class="h-full flex flex-col"
+            data-slot="main-wrapper"
+          >
+            <div
+              class="relative inline-flex tap-highlight-transparent flex-row items-center shadow-sm gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-12 min-h-12 transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-md w-full border border-gray-200 px-3"
+              data-slot="input-wrapper"
+              style="cursor: text;"
+            >
+              <div
+                class="inline-flex w-full items-center h-full box-border"
+                data-slot="inner-wrapper"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <div
+                    class="size-4"
+                  >
+                    <svg
+                      class="size-full"
+                      fill="none"
+                      viewBox="0 0 60 60"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <input
+                  aria-label="What are you looking for?"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-medium peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground"
+                  data-has-start-content="true"
+                  data-pw="esr-search-bar-input"
+                  data-slot="input"
+                  data-testid="wigmix-text-bar"
+                  id="react-aria-:rf:"
+                  maxlength="500"
+                  placeholder="What are you looking for?"
+                  title=""
+                  type="text"
+                  value=""
+                />
+                <button
+                  aria-label="clear input"
+                  class="p-2 -m-2 z-10 absolute end-3 start-auto pointer-events-none appearance-none select-none opacity-0 hover:!opacity-100 cursor-pointer active:!opacity-70 rounded-full outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-large peer-data-[filled=true]:pointer-events-auto peer-data-[filled=true]:opacity-70 peer-data-[filled=true]:block peer-data-[filled=true]:scale-100 scale-90 ease-out duration-150 transition-[opacity,transform] motion-reduce:transition-none motion-reduce:scale-100"
+                  data-slot="clear-button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    height="1em"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                  >
+                    <path
+                      d="M12 2a10 10 0 1010 10A10.016 10.016 0 0012 2zm3.36 12.3a.754.754 0 010 1.06.748.748 0 01-1.06 0l-2.3-2.3-2.3 2.3a.748.748 0 01-1.06 0 .754.754 0 010-1.06l2.3-2.3-2.3-2.3A.75.75 0 019.7 8.64l2.3 2.3 2.3-2.3a.75.75 0 011.06 1.06l-2.3 2.3z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex w-full items-end gap-y-2 px-2 pb-3 md:pb-4 lg:pb-5"
+    >
+      <div
+        class="hidden w-2/12 md:flex"
+      />
+      <div
+        class="w-full md:w-8/12"
+      >
+        <div
+          class="no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3"
+          data-pw="esr-product-history"
+        >
+          <div
+            class="flex w-full flex-row gap-2 md:w-1/2"
+          >
+            <div
+              class="relative h-32 flex-shrink-0 cursor-pointer overflow-hidden rounded-md border border-gray-500"
+              data-pw="esr-active-product"
+            >
+              <div
+                class="absolute right-1 top-1 z-20 rounded-full bg-white"
+              >
+                <div
+                  class="size-4 text-black"
+                >
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6 18 18 6M6 6l12 12"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <img
+                class="aspect-square h-full rounded-none object-contain"
+                data-pw="esr-product-history-image-1"
+                src="test-im-url"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="hidden w-full gap-y-2 px-2 pb-2 md:flex"
+    >
+      <div
+        class="w-2/12"
+      />
+      <div
+        class="flex w-8/12 flex-wrap"
+      />
+    </div>
+  </div>
+  <div
+    class="flex size-full flex-col justify-center md:flex-row"
+  >
+    <div
+      class="flex w-full flex-col"
+    >
+      <div
+        class="flex flex-col items-center text-primary"
+      >
+        <div
+          class="flex flex-col w-full gap-y-2 py-24 items-center justify-center text-center md:w-3/4"
+        >
+          <p
+            class="font-semibold text-primary pb-7"
+          >
+            You have provided an invalid image or query, please remove them and try again.
+          </p>
+        </div>
+        <div
+          class="flex h-10 items-center justify-center"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`embedded-search-result should fail render with system error 1`] = `
+<DocumentFragment>
+  <div
+    class="flex w-full flex-col items-center"
+  >
+    <div
+      class="flex w-full gap-y-2 px-2 py-3 md:py-4 lg:py-5"
+    >
+      <div
+        class="sticky top-0 z-20 hidden w-2/12 px-2 py-1 md:block md:px-0"
+      />
+      <div
+        class="w-full md:w-8/12"
+      >
+        <div
+          class="group flex flex-col data-[hidden=true]:hidden w-full relative justify-end data-[has-label=true]:mt-[calc(theme(fontSize.small)_+_12px)] z-5 is-filled"
+          data-filled="true"
+          data-filled-within="true"
+          data-has-value="true"
+          data-slot="base"
+        >
+          <div
+            class="h-full flex flex-col"
+            data-slot="main-wrapper"
+          >
+            <div
+              class="relative inline-flex tap-highlight-transparent flex-row items-center shadow-sm gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-12 min-h-12 transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-md w-full border border-gray-200 px-3 is-filled"
+              data-slot="input-wrapper"
+              style="cursor: text;"
+            >
+              <div
+                class="inline-flex w-full items-center h-full box-border"
+                data-slot="inner-wrapper"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <div
+                    class="size-4"
+                  >
+                    <svg
+                      class="size-full"
+                      fill="none"
+                      viewBox="0 0 60 60"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <input
+                  aria-label="What are you looking for?"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-medium peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground is-filled"
+                  data-filled="true"
+                  data-filled-within="true"
+                  data-has-start-content="true"
+                  data-pw="esr-search-bar-input"
+                  data-slot="input"
+                  data-testid="wigmix-text-bar"
+                  id="react-aria-:rk:"
+                  maxlength="500"
+                  placeholder="What are you looking for?"
+                  title=""
+                  type="text"
+                  value=" "
+                />
+                <button
+                  aria-label="clear input"
+                  class="p-2 -m-2 z-10 absolute end-3 start-auto pointer-events-none appearance-none select-none opacity-0 hover:!opacity-100 cursor-pointer active:!opacity-70 rounded-full outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-large peer-data-[filled=true]:pointer-events-auto peer-data-[filled=true]:opacity-70 peer-data-[filled=true]:block peer-data-[filled=true]:scale-100 scale-90 ease-out duration-150 transition-[opacity,transform] motion-reduce:transition-none motion-reduce:scale-100"
+                  data-slot="clear-button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    height="1em"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                  >
+                    <path
+                      d="M12 2a10 10 0 1010 10A10.016 10.016 0 0012 2zm3.36 12.3a.754.754 0 010 1.06.748.748 0 01-1.06 0l-2.3-2.3-2.3 2.3a.748.748 0 01-1.06 0 .754.754 0 010-1.06l2.3-2.3-2.3-2.3A.75.75 0 019.7 8.64l2.3 2.3 2.3-2.3a.75.75 0 011.06 1.06l-2.3 2.3z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex w-full items-end gap-y-2 px-2 pb-3 md:pb-4 lg:pb-5"
+    >
+      <div
+        class="hidden w-2/12 md:flex"
+      />
+      <div
+        class="w-full md:w-8/12"
+      >
+        <div
+          class="no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3"
+          data-pw="esr-product-history"
+        >
+          <div
+            class="flex w-full flex-row gap-2 md:w-1/2"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="hidden w-full gap-y-2 px-2 pb-2 md:flex"
+    >
+      <div
+        class="w-2/12"
+      />
+      <div
+        class="flex w-8/12 flex-wrap"
+      />
+    </div>
+  </div>
+  <div
+    class="flex size-full flex-col justify-center md:flex-row"
+  >
+    <div
+      class="flex w-full flex-col"
+    >
+      <div
+        class="flex flex-col items-center text-primary"
+      >
+        <div
+          class="flex flex-col w-full gap-y-2 py-24 items-center justify-center text-center md:w-3/4"
+        >
+          <p
+            class="font-semibold text-primary"
+          >
+            Cannot find results.
+          </p>
+          <p
+            class="text-primary"
+          >
+            No products matching your search.
+          </p>
+        </div>
+        <div
+          class="flex h-10 items-center justify-center"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`embedded-search-result should render successfully with query and im-url 1`] = `
+<DocumentFragment>
+  <div
+    class="flex w-full flex-col items-center"
+  >
+    <div
+      class="flex w-full gap-y-2 px-2 py-3 md:py-4 lg:py-5"
+    >
+      <div
+        class="sticky top-0 z-20 hidden w-2/12 px-2 py-1 md:block md:px-0"
+      />
+      <div
+        class="w-full md:w-8/12"
+      >
+        <div
+          class="group flex flex-col data-[hidden=true]:hidden w-full relative justify-end data-[has-label=true]:mt-[calc(theme(fontSize.small)_+_12px)] z-5 is-filled"
+          data-filled="true"
+          data-filled-within="true"
+          data-slot="base"
+        >
+          <div
+            class="h-full flex flex-col"
+            data-slot="main-wrapper"
+          >
+            <div
+              class="relative inline-flex tap-highlight-transparent flex-row items-center shadow-sm gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-12 min-h-12 transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-md w-full border border-gray-200 px-3 is-filled"
+              data-slot="input-wrapper"
+              style="cursor: text;"
+            >
+              <div
+                class="inline-flex w-full items-center h-full box-border"
+                data-slot="inner-wrapper"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <div
+                    class="size-4"
+                  >
+                    <svg
+                      class="size-full"
+                      fill="none"
+                      viewBox="0 0 60 60"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <input
+                  aria-label="What are you looking for?"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-medium peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground is-filled"
+                  data-filled="true"
+                  data-filled-within="true"
+                  data-has-start-content="true"
+                  data-pw="esr-search-bar-input"
+                  data-slot="input"
+                  data-testid="wigmix-text-bar"
+                  id="react-aria-:r0:"
+                  maxlength="500"
+                  placeholder="What are you looking for?"
+                  title=""
+                  type="text"
+                  value="testQuery"
+                />
+                <button
+                  aria-label="clear input"
+                  class="p-2 -m-2 z-10 absolute end-3 start-auto pointer-events-none appearance-none select-none opacity-0 hover:!opacity-100 cursor-pointer active:!opacity-70 rounded-full outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-large peer-data-[filled=true]:pointer-events-auto peer-data-[filled=true]:opacity-70 peer-data-[filled=true]:block peer-data-[filled=true]:scale-100 scale-90 ease-out duration-150 transition-[opacity,transform] motion-reduce:transition-none motion-reduce:scale-100"
+                  data-slot="clear-button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    height="1em"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                  >
+                    <path
+                      d="M12 2a10 10 0 1010 10A10.016 10.016 0 0012 2zm3.36 12.3a.754.754 0 010 1.06.748.748 0 01-1.06 0l-2.3-2.3-2.3 2.3a.748.748 0 01-1.06 0 .754.754 0 010-1.06l2.3-2.3-2.3-2.3A.75.75 0 019.7 8.64l2.3 2.3 2.3-2.3a.75.75 0 011.06 1.06l-2.3 2.3z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex w-full items-end gap-y-2 px-2 pb-3 md:pb-4 lg:pb-5"
+    >
+      <div
+        class="hidden w-2/12 md:flex"
+      />
+      <div
+        class="w-full md:w-8/12"
+      >
+        <div
+          class="no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3"
+          data-pw="esr-product-history"
+        >
+          <div
+            class="flex w-full flex-row gap-2 md:w-1/2"
+          >
+            <div
+              class="relative h-32 flex-shrink-0 cursor-pointer overflow-hidden rounded-md border border-gray-500"
+              data-pw="esr-active-product"
+            >
+              <div
+                class="absolute right-1 top-1 z-20 rounded-full bg-white"
+              >
+                <div
+                  class="size-4 text-black"
+                >
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6 18 18 6M6 6l12 12"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <img
+                class="aspect-square h-full rounded-none object-contain"
+                data-pw="esr-product-history-image-1"
+                src="test-im-url"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="hidden w-full gap-y-2 px-2 pb-2 md:flex"
+    >
+      <div
+        class="w-2/12"
+      />
+      <div
+        class="flex w-8/12 flex-wrap"
+      />
+    </div>
+  </div>
+  <div
+    class="flex size-full flex-col justify-center md:flex-row"
+  >
+    <div
+      class="flex w-full flex-col"
+    >
+      <div
+        class="flex flex-col items-center text-primary"
+      >
+        <div
+          class="wigmix-product-grid grid w-full"
+          data-pw="esr-product-result-grid"
+          style="grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 16px; column-gap: 8px;"
+        >
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-1"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-1/?vsFromReqId=87654321&vsFromPid=pid-1&vsFromPos=1"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-1"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-1"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 1
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $19.30
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-2"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-2/?vsFromReqId=87654321&vsFromPid=pid-2&vsFromPos=2"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-2"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-2"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 2
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $7.00
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-3"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-3/?vsFromReqId=87654321&vsFromPid=pid-3&vsFromPos=3"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-3"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-3"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 3
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $15.50
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-4"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-4/?vsFromReqId=87654321&vsFromPid=pid-4&vsFromPos=4"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-4"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-4"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 4
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $14.80
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-5"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-5/?vsFromReqId=87654321&vsFromPid=pid-5&vsFromPos=5"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-5"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-5"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 5
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $14.80
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-6"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-6/?vsFromReqId=87654321&vsFromPid=pid-6&vsFromPos=6"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-6"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-6"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 6
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $20.60
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-7"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-7/?vsFromReqId=87654321&vsFromPid=pid-7&vsFromPos=7"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-7"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-7"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 7
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $23.00
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-8"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-8/?vsFromReqId=87654321&vsFromPid=pid-8&vsFromPos=8"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-8"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-8"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 8
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $18.90
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-9"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-9/?vsFromReqId=87654321&vsFromPid=pid-9&vsFromPos=9"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-9"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-9"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 9
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $7.00
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-10"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-10/?vsFromReqId=87654321&vsFromPid=pid-10&vsFromPos=10"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-10"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-10"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 10
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $14.80
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-11"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-11/?vsFromReqId=87654321&vsFromPid=pid-11&vsFromPos=11"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-11"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-11"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 11
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $3.00
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-12"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-12/?vsFromReqId=87654321&vsFromPid=pid-12&vsFromPos=12"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-12"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-12"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 12
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $12.50
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-13"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-13/?vsFromReqId=87654321&vsFromPid=pid-13&vsFromPos=13"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-13"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-13"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 13
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $19.60
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-14"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-14/?vsFromReqId=87654321&vsFromPid=pid-14&vsFromPos=14"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-14"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-14"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 14
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $7.10
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-15"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-15/?vsFromReqId=87654321&vsFromPid=pid-15&vsFromPos=15"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-15"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-15"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 15
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $23.30
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-16"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-16/?vsFromReqId=87654321&vsFromPid=pid-16&vsFromPos=16"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-16"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-16"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 16
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $21.10
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-17"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-17/?vsFromReqId=87654321&vsFromPid=pid-17&vsFromPos=17"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-17"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-17"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 17
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $6.50
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-18"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-18/?vsFromReqId=87654321&vsFromPid=pid-18&vsFromPos=18"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-18"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-18"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 18
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $2.00
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-19"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-19/?vsFromReqId=87654321&vsFromPid=pid-19&vsFromPos=19"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-19"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-19"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 19
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $7.00
+                </span>
+              </div>
+            </a>
+          </div>
+          <div
+            class="wigmix-product-card"
+          >
+            <a
+              class="cursor-pointer"
+              data-pw="esr-product-result-card-20"
+              data-testid="wigmix-product-card-anchor"
+              href="https://product-20/?vsFromReqId=87654321&vsFromPid=pid-20&vsFromPos=20"
+              rel=""
+              target=""
+            >
+              <div
+                class="wigmix-product-card-image-container"
+              >
+                <div
+                  class="relative flex justify-center"
+                >
+                  <img
+                    alt=""
+                    class="wigmix-product-card-image object-contain aspect-square"
+                    data-pw="esr-product-result-card-image-20"
+                    data-testid="wigmix-product-card-image"
+                    src="https://main-image-20"
+                  />
+                  <div
+                    class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
+                    data-pw="esr-find-similar-button"
+                    data-testid="wigmix-find-similar-button"
+                    style="background-color: rgb(255, 255, 255);"
+                  >
+                    <div
+                      class="wigmix-find-similar-icon default size-5"
+                      style="color: rgb(0, 0, 0);"
+                    >
+                      <svg
+                        class="size-full"
+                        fill="none"
+                        viewBox="0 0 60 60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                          fill="currentColor"
+                          fill-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="wigmix-product-card-details pt-2"
+              >
+                <span
+                  class="wigmix-product-card-title line-clamp-1"
+                >
+                  Product Title 20
+                </span>
+                <span
+                  class="wigmix-product-card-secondary-title line-clamp-1"
+                />
+                <span
+                  class="wigmix-product-card-price"
+                >
+                  $26.70
+                </span>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div
+          class="flex h-10 items-center justify-center"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`embedded-search-result should render with no results 1`] = `
+<DocumentFragment>
+  <div
+    class="flex w-full flex-col items-center"
+  >
+    <div
+      class="flex w-full gap-y-2 px-2 py-3 md:py-4 lg:py-5"
+    >
+      <div
+        class="sticky top-0 z-20 hidden w-2/12 px-2 py-1 md:block md:px-0"
+      />
+      <div
+        class="w-full md:w-8/12"
+      >
+        <div
+          class="group flex flex-col data-[hidden=true]:hidden w-full relative justify-end data-[has-label=true]:mt-[calc(theme(fontSize.small)_+_12px)] z-5 is-filled"
+          data-filled="true"
+          data-filled-within="true"
+          data-slot="base"
+        >
+          <div
+            class="h-full flex flex-col"
+            data-slot="main-wrapper"
+          >
+            <div
+              class="relative inline-flex tap-highlight-transparent flex-row items-center shadow-sm gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-12 min-h-12 transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-md w-full border border-gray-200 px-3 is-filled"
+              data-slot="input-wrapper"
+              style="cursor: text;"
+            >
+              <div
+                class="inline-flex w-full items-center h-full box-border"
+                data-slot="inner-wrapper"
+              >
+                <div
+                  class="flex items-center gap-2"
+                >
+                  <div
+                    class="size-4"
+                  >
+                    <svg
+                      class="size-full"
+                      fill="none"
+                      viewBox="0 0 60 60"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M40.2825 40.2797C36.24 44.3222 30.8625 46.5497 25.1437 46.5497C19.425 46.5497 14.0513 44.3222 10.0088 40.2797C1.66125 31.9322 1.66125 18.3534 10.0088 10.0059C14.1825 5.83219 19.6612 3.74719 25.1437 3.74719C30.6262 3.74719 36.1088 5.83594 40.2825 10.0059C48.63 18.3534 48.63 31.9322 40.2825 40.2797ZM59.04 56.3859L44.1937 41.5397C52.6987 31.6659 52.2937 16.7184 42.9338 7.35469C33.1275 -2.45156 17.1637 -2.45156 7.3575 7.35469C-2.4525 17.1647 -2.4525 33.1247 7.3575 42.9309C12.1087 47.6822 18.4237 50.2997 25.1437 50.2997C31.2337 50.2997 36.9825 48.1322 41.5425 44.1909L56.3887 59.0372C56.7562 59.4047 57.2363 59.5847 57.7125 59.5847C58.1925 59.5847 58.6725 59.4047 59.04 59.0372C59.7713 58.3059 59.7713 57.1172 59.04 56.3859Z"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <input
+                  aria-label="What are you looking for?"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-medium peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground is-filled"
+                  data-filled="true"
+                  data-filled-within="true"
+                  data-has-start-content="true"
+                  data-pw="esr-search-bar-input"
+                  data-slot="input"
+                  data-testid="wigmix-text-bar"
+                  id="react-aria-:rp:"
+                  maxlength="500"
+                  placeholder="What are you looking for?"
+                  title=""
+                  type="text"
+                  value="no_result"
+                />
+                <button
+                  aria-label="clear input"
+                  class="p-2 -m-2 z-10 absolute end-3 start-auto pointer-events-none appearance-none select-none opacity-0 hover:!opacity-100 cursor-pointer active:!opacity-70 rounded-full outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-large peer-data-[filled=true]:pointer-events-auto peer-data-[filled=true]:opacity-70 peer-data-[filled=true]:block peer-data-[filled=true]:scale-100 scale-90 ease-out duration-150 transition-[opacity,transform] motion-reduce:transition-none motion-reduce:scale-100"
+                  data-slot="clear-button"
+                  tabindex="-1"
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    height="1em"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                  >
+                    <path
+                      d="M12 2a10 10 0 1010 10A10.016 10.016 0 0012 2zm3.36 12.3a.754.754 0 010 1.06.748.748 0 01-1.06 0l-2.3-2.3-2.3 2.3a.748.748 0 01-1.06 0 .754.754 0 010-1.06l2.3-2.3-2.3-2.3A.75.75 0 019.7 8.64l2.3 2.3 2.3-2.3a.75.75 0 011.06 1.06l-2.3 2.3z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex w-full items-end gap-y-2 px-2 pb-3 md:pb-4 lg:pb-5"
+    >
+      <div
+        class="hidden w-2/12 md:flex"
+      />
+      <div
+        class="w-full md:w-8/12"
+      >
+        <div
+          class="no-scrollbar flex w-full flex-col gap-2 overflow-x-scroll px-2 py-3"
+          data-pw="esr-product-history"
+        >
+          <div
+            class="flex w-full flex-row gap-2 md:w-1/2"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="hidden w-full gap-y-2 px-2 pb-2 md:flex"
+    >
+      <div
+        class="w-2/12"
+      />
+      <div
+        class="flex w-8/12 flex-wrap"
+      />
+    </div>
+  </div>
+  <div
+    class="flex size-full flex-col justify-center md:flex-row"
+  >
+    <div
+      class="flex w-full flex-col"
+    >
+      <div
+        class="flex flex-col items-center text-primary"
+      >
+        <div
+          class="flex flex-col w-full gap-y-2 py-24 items-center justify-center text-center md:w-3/4"
+        >
+          <p
+            class="font-semibold text-primary"
+          >
+            Cannot find results.
+          </p>
+          <p
+            class="text-primary"
+          >
+            No products matching your search.
+          </p>
+        </div>
+        <div
+          class="flex h-10 items-center justify-center"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
