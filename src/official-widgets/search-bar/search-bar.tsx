@@ -146,7 +146,6 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
   }, []);
 
   if (error && !hasError) {
-    console.error(error);
     setHasError(true);
   }
 
