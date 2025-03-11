@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+<!-- BEGIN visenze-experiences-web 1.0.1 -->
+## [1.0.1](https://github.com/visenze/visenze-experiences-web/compare/1.0.0...1.0.1) - 2025-03-11
+
+### Highlights
+
+The following widgets are available under stable status and will follow our versioning policy:
+- Search bar
+- Embedded search results
+<!-- END visenze-experiences-web 1.0.1 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.0 -->
 ## 1.0.0 - 2025-02-28
 
@@ -47,4 +57,4 @@ The following widgets are available under stable status and will follow our vers
 - Icon-triggered grid
 <!-- END visenze-experiences-web 1.0.0 -->
 
-[unreleased]: https://github.com/visenze/visenze-experiences-web/compare/production...develop
+[unreleased]: https://github.com/visenze/visenze-experiences-web/compare/1.0.1...develop
