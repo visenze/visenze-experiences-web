@@ -34,7 +34,7 @@ exports[`search-bar should render the search bar 1`] = `
                   class="relative flex"
                 >
                   <div
-                    class="rounded-full bg-zinc-100 cursor-pointer p-2"
+                    class="rounded-full bg-zinc-100 cursor-pointer p-2 size-10"
                     data-pw="sb-gallery-button"
                     data-testid="wigmix-sb-gallery-button"
                   >
@@ -165,7 +165,7 @@ exports[`search-bar should render upload image modal in desktop view 1`] = `
                     class="relative flex"
                   >
                     <div
-                      class="rounded-full bg-zinc-100 cursor-pointer p-2"
+                      class="rounded-full bg-zinc-100 cursor-pointer p-2 size-10"
                       data-pw="sb-gallery-button"
                       data-testid="wigmix-sb-gallery-button"
                     >
@@ -484,7 +484,7 @@ exports[`search-bar should render upload image modal in mobile view 1`] = `
                     class="relative flex"
                   >
                     <div
-                      class="rounded-full bg-zinc-100 cursor-pointer p-2"
+                      class="rounded-full bg-zinc-100 cursor-pointer p-2 size-10"
                       data-pw="sb-gallery-button"
                       data-testid="wigmix-sb-gallery-button"
                     >

@@ -99,7 +99,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
 
   return (
     <div className='relative flex'>
-      <div className='rounded-full bg-zinc-100 cursor-pointer p-2' onClick={onIconClickHandler} data-testid='wigmix-sb-gallery-button' data-pw='sb-gallery-button'>
+      <div className='rounded-full bg-zinc-100 cursor-pointer p-2 size-10' onClick={onIconClickHandler} data-testid='wigmix-sb-gallery-button' data-pw='sb-gallery-button'>
         {searchImage && (
             <>
               {isImageUrl(searchImage) && (
