@@ -78,7 +78,7 @@ describe('shoppable-lookbook', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ShoppableLookbook productId='pid-not-found' />
             </IntlProvider>
@@ -110,7 +110,7 @@ describe('shoppable-lookbook', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ShoppableLookbook productId='pid-found' />
             </IntlProvider>
@@ -139,7 +139,7 @@ describe('shoppable-lookbook', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ShoppableLookbook productId='pid-found' />
             </IntlProvider>
@@ -189,7 +189,7 @@ describe('shoppable-lookbook', () => {
     }));
     testComponent = render(
         <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ShoppableLookbook productId='pid-found' />
             </IntlProvider>

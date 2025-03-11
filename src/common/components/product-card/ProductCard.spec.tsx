@@ -86,6 +86,7 @@ describe('ProductCard', () => {
           widgetClient,
           widgetConfig,
           darkMode: false,
+          locale: 'en',
         }}>
           <ProductCard result={testProduct}
                        metadata={{}}
@@ -111,6 +112,7 @@ describe('ProductCard', () => {
           widgetClient,
           widgetConfig,
           darkMode: false,
+          locale: 'en',
         }}>
           <ProductCard result={{
                          ...testProduct,
@@ -151,6 +153,7 @@ describe('ProductCard', () => {
           widgetClient,
           widgetConfig,
           darkMode: false,
+          locale: 'en',
         }}>
           <ProductCard result={{
                          ...testProduct,
@@ -186,6 +189,7 @@ describe('ProductCard', () => {
           widgetClient,
           widgetConfig,
           darkMode: false,
+          locale: 'en',
         }}>
           <ProductCard result={{
                          ...testProduct,
@@ -218,6 +222,7 @@ describe('ProductCard', () => {
           widgetClient,
           widgetConfig,
           darkMode: false,
+          locale: 'en',
         }}>
           <ProductCard result={testProduct}
                        metadata={{}}
@@ -241,6 +246,7 @@ describe('ProductCard', () => {
           widgetClient,
           widgetConfig,
           darkMode: false,
+          locale: 'en',
         }}>
           <ProductCard result={testProduct}
                        metadata={{
@@ -281,6 +287,7 @@ describe('ProductCard', () => {
           widgetClient,
           widgetConfig,
           darkMode: false,
+          locale: 'en',
         }}>
           <ProductCard result={testProduct}
                        metadata={{

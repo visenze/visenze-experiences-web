@@ -281,6 +281,20 @@ export interface WidgetClient {
    */
   registerConfigUpdater: (fn: (configOverride: WidgetConfig, isPartial: boolean) => void) => void;
   /**
+   * Updates the widget locale.
+   *
+   * @param locale The new locale
+   *
+   * @since 1.0.1
+   */
+  updateLocale: (locale: string) => void;
+  /**
+   * @internal
+   *
+   * @since 1.0.1
+   */
+  registerLocaleUpdater: (fn: (locale: string) => void) => void;
+  /**
    * @internal
    *
    * @since 1.0.0
