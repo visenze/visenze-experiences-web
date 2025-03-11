@@ -346,90 +346,15 @@ describe('search-bar', () => {
       }),
     }));
     testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <ResponsiveContext.Provider value={{ width: 600 }}>
-              <SearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
-            </ResponsiveContext.Provider>
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
-
-    act(() => {
-      const searchBar = testComponent.queryByTestId('wigmix-sb-search-bar-input');
-      searchBar!.click();
-    });
-
-    const makeMockData = (files: File[]): any => ({
-      dataTransfer: {
-        files,
-        items: files.map((file) => ({
-          kind: 'file',
-          type: file.type,
-          getAsFile: () => file,
-        })),
-        types: ['Files'],
-      },
-    });
-
-    const fileInput = testComponent.getByTestId('wigmix-sb-image-upload-dropdown-dropzone');
-    const testFile = new File(['image-content'], 'test-file.png', { type: 'image/png' });
-
-    act(() => {
-      fireEvent.drop(fileInput, makeMockData([testFile]));
-    });
-
-    await waitFor(async () => {
-      // Advance time for the FileReader onload function to fire
-      await new Promise((resolve) => {
-        setTimeout(resolve, 500);
-      });
-    }).catch(() => {
-      // Expected to encounter timeout error here; swallow the exception as the test can proceed harmlessly after this
-    });
-
-    act(() => {
-      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
-      productCardImages.forEach((productCardImage) => {
-        fireEvent.load(productCardImage);
-      });
-    });
-
-    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
-    productCardImages.forEach((productCardImage, idx) => {
-      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
-    });
-  });
-
-  it('should render a successful response after uploading image with dropdown in mobile view', async () => {
-    // Due to usage of FileReader, need to simulate with real timer
-    jest.useRealTimers();
-
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_search_bar', 'VERSION', () => ({
-      ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        expect(params.image instanceof File);
-        // No need to check other params as they are the same as the URL counterpart
-        handler(getStandardMultiSearchSuccessResponse());
-      }),
-      productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
-        expect(params.image instanceof File);
-        // No need to check other params as they are the same as the URL counterpart
-        handler(getStandardMultiSearchAutocompleteResponse());
-      }),
-    }));
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <ResponsiveContext.Provider value={{ width: 600 }}>
-              <SearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
-            </ResponsiveContext.Provider>
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <ResponsiveContext.Provider value={{ width: 600 }}>
+                <SearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
+              </ResponsiveContext.Provider>
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
     );
 
     act(() => {
