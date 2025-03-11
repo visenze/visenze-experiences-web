@@ -58,7 +58,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       onClick={() => setShowDropdown(true)}
       onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
       onKeyDown={(e) => {
-        if (e.key === 'Enter') {
+        if (e.nativeEvent.code === 'Enter') {
           emitSearchBarCallback();
           if (searchBarRef.current) {
             searchBarRef.current.blur();

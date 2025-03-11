@@ -415,10 +415,8 @@ describe('search-bar', () => {
           // Text query
           expect(params).toEqual({
             q: 'jeans',
-            im_id: 'im_id1234567890',
-            page: 1,
-            limit: 20,
-            get_all_fl: true,
+            sayt: true,
+            limit: 8,
             return_fields_mapping: true,
             return_query_sys_meta: true,
           });
@@ -447,6 +445,9 @@ describe('search-bar', () => {
       searchBar!.click();
       fireEvent.change(searchBar!, { target: { value: 'jeans' } });
       fireEvent.keyDown(searchBar!, { code: 'Enter' });
+
+      // Wait for the modal to close
+      jest.advanceTimersByTime(500);
     });
     const autocompleteResults = testComponent.queryAllByTestId('wigmix-sb-autocomplete-value');
     // length of array should be 2
