@@ -217,7 +217,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                     )}
                     {/* Product Result Carousel */}
                     {breakpoint === 'mobile' && (
-                        <div className='absolute bottom-4 w-full bg-primary'>
+                        <div className='absolute bottom-4 w-full bg-white bg-opacity-85'>
                           {getProductCarouselView()}
                         </div>
                     )}
