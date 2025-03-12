@@ -84,7 +84,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-1"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-1-1"
@@ -149,7 +149,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-2"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-2-1"
@@ -214,7 +214,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-3"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-3-1"
@@ -279,7 +279,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-4"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-4-1"
@@ -344,7 +344,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-5"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-5-1"
@@ -409,7 +409,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-6"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-6-1"
@@ -474,7 +474,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-7"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-7-1"
@@ -539,7 +539,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-8"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-8-1"
@@ -604,7 +604,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-9"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-9-1"
@@ -669,7 +669,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-10"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-10-1"
@@ -734,7 +734,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-11"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-11-1"
@@ -799,7 +799,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-12"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-12-1"
@@ -864,7 +864,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-13"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-13-1"
@@ -929,7 +929,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-14"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-14-1"
@@ -994,7 +994,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-15"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-15-1"
@@ -1059,7 +1059,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-16"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-16-1"
@@ -1124,7 +1124,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-17"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-17-1"
@@ -1189,7 +1189,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-18"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-18-1"
@@ -1254,7 +1254,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-19"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-19-1"
@@ -1319,7 +1319,7 @@ exports[`more-like-this should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-20"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-20-1"
@@ -1456,7 +1456,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-1"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-1-1"
@@ -1521,7 +1521,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-2"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-2-1"
@@ -1586,7 +1586,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-3"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-3-1"
@@ -1651,7 +1651,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-4"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-4-1"
@@ -1716,7 +1716,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-5"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-5-1"
@@ -1781,7 +1781,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-6"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-6-1"
@@ -1846,7 +1846,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-7"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-7-1"
@@ -1911,7 +1911,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-8"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-8-1"
@@ -1976,7 +1976,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-9"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-9-1"
@@ -2041,7 +2041,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-10"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-10-1"
@@ -2106,7 +2106,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-11"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-11-1"
@@ -2171,7 +2171,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-12"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-12-1"
@@ -2236,7 +2236,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-13"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-13-1"
@@ -2301,7 +2301,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-14"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-14-1"
@@ -2366,7 +2366,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-15"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-15-1"
@@ -2431,7 +2431,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-16"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-16-1"
@@ -2496,7 +2496,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-17"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-17-1"
@@ -2561,7 +2561,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-18"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-18-1"
@@ -2626,7 +2626,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-19"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-19-1"
@@ -2691,7 +2691,7 @@ exports[`more-like-this should render a successful response with some customizat
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-20"
                             data-testid="wigmix-product-card-image"
                             src="https://best-images-20-1"

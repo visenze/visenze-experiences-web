@@ -36,6 +36,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
   },
   productCard: {
+    imageAspectRatio: '2 / 3',
     openLinksInNewTab: false,
     price: {
       show: true,
