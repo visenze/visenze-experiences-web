@@ -43,6 +43,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
   },
   productCard: {
+    imageAspectRatio: '2 / 3',
     openLinksInNewTab: false,
     price: {
       show: true,
@@ -197,7 +198,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     backgroundColor: '#FFFFFF',
     backgroundColorDark: '#000000',
     showWidgetTitle: true,
-    showViSenzeLogo: false,
+    showViSenzeLogo: true,
     darkModeDefault: false,
   },
 };

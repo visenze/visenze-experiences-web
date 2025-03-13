@@ -32,7 +32,6 @@
   }
 }
 
-.left-align-slick-track {
-  transform: unset !important;
+.slick-track {
   margin-left: unset !important;
 }

@@ -65,16 +65,6 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
     }
     const slidesToScroll = Math.floor(slidesToShow);
 
-    // Manually left align slick track if there are not enough products to show
-    const slickTrack: HTMLDivElement | null | undefined = root?.querySelector('.slick-track');
-    if (slickTrack) {
-      if (productResults.length < slidesToShow) {
-        slickTrack.classList.add('left-align-slick-track');
-      } else {
-        slickTrack.classList.remove('left-align-slick-track');
-      }
-    }
-
     return {
       className: 'slider',
       infinite: false,
@@ -208,7 +198,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                     {referenceImageUrl && (
                         <img
                             ref={imageRef}
-                            className='wigmix-reference-image size-full object-cover'
+                            className='wigmix-reference-image size-full aspect-square object-contain'
                             src={referenceImageUrl}
                             onLoad={onImageLoad}
                             data-testid='wigmix-reference-image'
@@ -217,7 +207,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                     )}
                     {/* Product Result Carousel */}
                     {breakpoint === 'mobile' && (
-                        <div className='absolute bottom-4 w-full bg-primary'>
+                        <div className='absolute bottom-4 w-full bg-white bg-opacity-85'>
                           {getProductCarouselView()}
                         </div>
                     )}

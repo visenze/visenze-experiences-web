@@ -225,7 +225,7 @@ const ProductCard: FC<ProductCardProps> = ({
                           style={{ aspectRatio: customizations.productCard?.imageAspectRatio || '' }}/>
             )}
             <img className={cn(
-                   `wigmix-product-card-image object-contain ${imageClasses || ''}`,
+                   `wigmix-product-card-image object-cover ${imageClasses || ''}`,
                    customizations.productCard?.imageAspectRatio ? '' : 'aspect-square',
                  )}
                  src={result.im_url} alt=''

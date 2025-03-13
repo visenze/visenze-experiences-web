@@ -370,7 +370,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-1"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-1"
@@ -440,7 +440,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-2"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-2"
@@ -510,7 +510,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-3"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-3"
@@ -580,7 +580,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-4"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-4"
@@ -650,7 +650,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-5"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-5"
@@ -720,7 +720,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-6"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-6"
@@ -790,7 +790,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-7"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-7"
@@ -860,7 +860,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-8"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-8"
@@ -930,7 +930,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-9"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-9"
@@ -1000,7 +1000,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-10"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-10"
@@ -1070,7 +1070,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-11"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-11"
@@ -1140,7 +1140,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-12"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-12"
@@ -1210,7 +1210,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-13"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-13"
@@ -1280,7 +1280,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-14"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-14"
@@ -1350,7 +1350,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-15"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-15"
@@ -1420,7 +1420,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-16"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-16"
@@ -1490,7 +1490,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-17"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-17"
@@ -1560,7 +1560,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-18"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-18"
@@ -1630,7 +1630,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-19"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-19"
@@ -1700,7 +1700,7 @@ exports[`similar-search should render a successful response with default config 
                           >
                             <img
                               alt=""
-                              class="wigmix-product-card-image object-contain aspect-square"
+                              class="wigmix-product-card-image object-cover"
                               data-pw="ss-product-result-card-image-20"
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-20"
@@ -1948,7 +1948,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-1"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-1"
@@ -2018,7 +2018,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-2"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-2"
@@ -2088,7 +2088,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-3"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-3"
@@ -2158,7 +2158,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-4"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-4"
@@ -2228,7 +2228,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-5"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-5"
@@ -2298,7 +2298,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-6"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-6"
@@ -2368,7 +2368,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-7"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-7"
@@ -2438,7 +2438,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-8"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-8"
@@ -2508,7 +2508,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-9"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-9"
@@ -2578,7 +2578,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-10"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-10"
@@ -2648,7 +2648,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-11"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-11"
@@ -2718,7 +2718,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-12"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-12"
@@ -2788,7 +2788,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-13"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-13"
@@ -2858,7 +2858,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-14"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-14"
@@ -2928,7 +2928,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-15"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-15"
@@ -2998,7 +2998,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-16"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-16"
@@ -3068,7 +3068,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-17"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-17"
@@ -3138,7 +3138,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-18"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-18"
@@ -3208,7 +3208,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-19"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-19"
@@ -3278,7 +3278,7 @@ exports[`similar-search should render a successful response with default config 
                         >
                           <img
                             alt=""
-                            class="wigmix-product-card-image object-contain aspect-square"
+                            class="wigmix-product-card-image object-cover"
                             data-pw="ss-product-result-card-image-20"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-20"

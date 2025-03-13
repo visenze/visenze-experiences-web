@@ -1,3 +1,4 @@
+import { cn } from '@heroui/theme';
 import type { FC, ReactNode } from 'react';
 import { useContext, useEffect } from 'react';
 import { useIntl } from 'react-intl';
@@ -84,18 +85,20 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
   }, []);
 
   return (
-    <div className='w-full md:overflow-hidden'>
+    <div className='size-full flex flex-col'>
       <Header onCloseHandler={onModalClose} isResultScreen={false} onBackHandler={() => {}}
               showTitle={customizations.generalLayout?.showWidgetTitle}
               iconColor={darkMode
                 ? customizations.generalLayout?.fontColorDark
                 : customizations.generalLayout?.fontColor} />
-      <div className='size-full'>
+      <div className='overflow-y-scroll'>
         <div className='flex flex-col pb-5 md:flex-row'>
           <div className='px-1/5 md:w-1/3 md:px-10'>
             <FileDropzone onImageUpload={onImageUpload} name='cs-upload-icon'>
-              <div
-                className='wigmix-reference-image-container flex w-full flex-col items-center rounded-md border border-gray-300 py-1 text-center'>
+              <div className={cn(
+                  'wigmix-reference-image-container flex size-full flex-col items-center justify-center text-center',
+                  'py-4 md:py-0 border rounded-xl border-gray md:border-0',
+              )}>
                 {customizations.imageUpload?.icon?.url ? (
                     <CustomizableIcon
                         height={80}
@@ -131,23 +134,23 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
             <div className='grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0'>
               <div className='col-span-1'>
                 <div
-                  className='relative h-full cursor-pointer'
-                  onClick={(): void => onGallerySelect(0)}
-                  onKeyDown={(evt): void => {
-                    if (evt.key === 'Enter') {
-                      onGallerySelect(0);
-                    }
-                  }}>
+                    className='relative h-full cursor-pointer'
+                    onClick={(): void => onGallerySelect(0)}
+                    onKeyDown={(evt): void => {
+                      if (evt.key === 'Enter') {
+                        onGallerySelect(0);
+                      }
+                    }}>
                   <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url}
                        data-testid='wigmix-gallery-image-1'
                        data-pw='cs-gallery-image-1'/>
                   {customizations.imageUpload?.images[0].label && (
-                    <div className='absolute bottom-0 z-10 w-full overflow-hidden border-1 border-white/20
+                      <div className='absolute bottom-0 z-10 w-full overflow-hidden border-1 border-white/20
                       bg-gray-800 bg-opacity-80 py-1 text-center text-white shadow-small'>
-                      <p>
-                        {customizations.imageUpload?.images[0].label}
-                      </p>
-                    </div>
+                        <p>
+                          {customizations.imageUpload?.images[0].label}
+                        </p>
+                      </div>
                   )}
                 </div>
               </div>
@@ -157,14 +160,6 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className='pb-5'>
-            <FileDropzone onImageUpload={onImageUpload} name='cs-use-camera'>
-              <div className='mx-16 mt-3 rounded-full bg-buttonPrimary py-2 text-center font-bold text-buttonPrimary hover:opacity-80 md:hidden'>
-                {intl.formatMessage({ id: 'useCamera' })}
-              </div>
-            </FileDropzone>
           </div>
         </div>
       </div>

@@ -260,7 +260,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
 
                         <div className='hidden px-4 pb-4 md:flex'>
                           <div
-                              className='w-full rounded text-center bg-buttonPrimary py-2 font-semibold text-buttonPrimary cursor-pointer'
+                              className='w-full rounded text-center bg-buttonPrimary py-2 font-semibold text-buttonPrimary cursor-pointer hover:opacity-90'
                               data-testid='wigmix-sb-view-all-button'
                               onClick={() => {
                                 if (query) {

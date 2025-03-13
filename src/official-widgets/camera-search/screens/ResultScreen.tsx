@@ -208,7 +208,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
         <div
           className={cn(
             showFullResults ? 'top-20 bottom-24 left-0 right-0' : 'top-11/20 bottom-14 left-3 right-3',
-            'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8',
+            'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8 pb-4 px-4',
           )}
           {...minimizedDrawerHandler}>
           <div className='absolute top-0 h-8 w-full' {...maximizedDrawerHandler}>
@@ -261,7 +261,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           showFullResults ? 'opacity-100 pb-2 z-20' : 'opacity-0',
           'absolute bottom-8 left-0 w-full pt-1 transition-all duration-700',
         )}>
-        <div className='bg-primary px-3 pt-2'>
+        <div className='bg-primary px-4 pt-2'>
           {/* Refinement Text Bar */}
           <Input
             isClearable
@@ -355,7 +355,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             </div>
           </div>
 
-          <div className='flex w-2/3 flex-col'>
+          <div className='flex w-2/3 flex-col px-4'>
             <div className='z-20 col-span-2 pb-4'>
               <div className='relative'>
                 {/* Autocomplete Suggestions */}
@@ -381,7 +381,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 )}
 
                 {/* Refinement Text Bar */}
-                <div className='relative z-20 px-2 pt-3'>
+                <div className='relative z-20 px-2'>
                   <Input
                     isClearable
                     maxLength={QUERY_MAX_CHARACTER_LENGTH}

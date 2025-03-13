@@ -59,7 +59,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   const [image, setImage] = useState<SearchImageOrPid | undefined>();
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [activeHistory, setActiveHistory] = useState<SearchHistoryEntry>();
-  const [page, setPage] = useState(1);
+  const [, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -124,6 +124,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     if (currentPage && currentPage > 1) {
       setIsLoadingMore(true);
     } else {
+      setPage(1);
       setIsLoading(true);
     }
 
@@ -131,7 +132,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       ...searchSettings,
       facets: getFacets(productDetails),
       facets_show_count: true,
-      page: currentPage ?? page,
+      page: currentPage ?? 1,
       return_query_temp_url: true,
     };
     if (shouldResetFacets) {
