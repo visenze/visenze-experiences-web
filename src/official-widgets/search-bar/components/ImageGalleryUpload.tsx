@@ -1,7 +1,9 @@
+import { cn } from '@heroui/theme';
 import type { FC, ReactNode } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import FileDropzone from '../../../common/components/FileDropzone';
+import Footer from '../../../common/components/Footer';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import VisenzeModal from '../../../common/components/modal/visenze-modal';
 import CloseIcon from '../../../common/icons/CloseIcon';
@@ -99,14 +101,15 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
 
   return (
     <div className='relative flex'>
-      <div className='rounded-full bg-zinc-100 cursor-pointer p-2 size-10' onClick={onIconClickHandler} data-testid='wigmix-sb-gallery-button' data-pw='sb-gallery-button'>
+      <div className='flex items-center justify-center rounded-full bg-zinc-100 cursor-pointer size-10' onClick={onIconClickHandler}
+           data-testid='wigmix-sb-gallery-button' data-pw='sb-gallery-button'>
         {searchImage && (
             <>
               {isImageUrl(searchImage) && (
-                  <img src={searchImage.imgUrl} />
+                  <img className='rounded-full aspect-square object-cover' src={searchImage.imgUrl} />
               )}
               {isImageDataUrl(searchImage) && (
-                  <img src={searchImage.file} />
+                  <img className='rounded-full aspect-square object-cover' src={searchImage.file} />
               )}
               {!isImageUrl(searchImage) && !isImageDataUrl(searchImage) && (
                   <PhotoIcon className='size-6'/>
@@ -137,83 +140,93 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
                     darkMode={darkMode}
                     fontFamily={customizations.generalLayout?.fontFamily}
                     placementId={placementId} idSuffix='image-gallery-upload'>
-        <div className='relative flex size-full flex-col bg-primary'>
-          {/* Title */}
-          <p className='widget-title py-4 text-center text-primary' data-pw='sb-image-upload-title'>
-            {intl.formatMessage({ id: 'uploadScreenTitle' })}
-          </p>
+        <div className='flex size-full flex-col'>
+          <div className='relative flex w-full items-center justify-center py-4'>
+            {/* Title */}
+            <p className='wigmix-widget-title px-16 md:px-0 text-center' data-pw='sb-image-upload-title'>
+              {intl.formatMessage({ id: 'uploadScreenTitle' })}
+            </p>
 
-          {/* Close Button */}
-          <div className='absolute right-5 top-3 p-2 bg-transparent cursor-pointer' onClick={onCloseHandler} data-testid='wigmix-sb-close-button' data-pw='sb-close-button'>
-            <CloseIcon className='size-6'/>
+            {/* Close Button */}
+            <div className='absolute right-5 top-3 rounded-full p-1 bg-transparent hover:opacity-90'
+                 onClick={onCloseHandler} data-testid='wigmix-sb-close-button' data-pw='sb-close-button'>
+              <CloseIcon className='size-6 cursor-pointer' />
+            </div>
           </div>
 
-          <div className='flex flex-col pb-5 md:flex-row'>
-            <div className='px-1/5 md:w-1/3 md:px-10'>
-              <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload'>
-                <div
-                  className='wigmix-reference-image-container flex w-full flex-col items-center rounded-3xl border border-gray-300 py-1 text-center'>
-                  {customizations.imageUpload?.icon?.url ? (
-                      <CustomizableIcon
-                          height={80}
-                          width={80}
-                          url={customizations.imageUpload.icon.url}
-                          color={darkMode
-                            ? (customizations.imageUpload.icon.colorDark || '')
-                            : (customizations.imageUpload.icon.color || '')}
-                      />
-                  ) : (
-                      <UploadIcon className='size-20'
-                                  color={darkMode
-                                    ? (customizations.imageUpload?.icon?.colorDark || '')
-                                    : (customizations.imageUpload?.icon?.color || '')} />
-                  )}
-
-                  <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
-                    {intl.formatMessage({ id: 'dragImageToSearch' })}
-                  </p>
-
-                  <p className='pt-3 leading-6 text-primary md:hidden'>
-                    {intl.formatMessage({ id: 'tapToSearchImage' })}
-                  </p>
-                </div>
-              </FileDropzone>
-            </div>
-
-            <div className='py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0'>
-              <p className='px-14 pb-3 text-center text-primary md:px-0 md:text-left'>
-                {intl.formatMessage({ id: 'tapProductGallery' })}
-              </p>
-
-              <div className='grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0'>
-                <div className='col-span-1'>
-                  <div
-                    className='relative h-full'
-                    onClick={(): void => onGallerySelect(0)}
-                    onKeyDown={(evt): void => {
-                      if (evt.key === 'Enter') {
-                        onGallerySelect(0);
-                      }
-                    }}>
-                    <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url}
-                         data-pw='sb-gallery-image-1'/>
-                    {customizations.imageUpload?.images[0].label && (
-                      <div className='absolute bottom-0 z-10 w-full overflow-hidden border-1 border-white/20
-                    bg-gray-800 bg-opacity-80 py-1 text-center text-white shadow-small'>
-                        <p>{customizations.imageUpload?.images[0].label}</p>
-                      </div>
+          <div className='overflow-y-scroll'>
+            <div className='flex flex-col pb-5 md:flex-row overflow-y-scroll'>
+              <div className='px-1/5 md:w-1/3 md:px-10'>
+                <FileDropzone onImageUpload={onImageUpload} name='sb-image-upload'>
+                  <div className={cn(
+                      'wigmix-reference-image-container flex size-full flex-col items-center justify-center text-center',
+                      'py-4 md:py-0 border rounded-xl border-gray md:border-0',
+                  )}>
+                    {customizations.imageUpload?.icon?.url ? (
+                        <CustomizableIcon
+                            height={80}
+                            width={80}
+                            url={customizations.imageUpload.icon.url}
+                            color={darkMode
+                                ? (customizations.imageUpload.icon.colorDark || '')
+                                : (customizations.imageUpload.icon.color || '')}
+                        />
+                    ) : (
+                        <UploadIcon className='size-20'
+                                    color={darkMode
+                                        ? (customizations.imageUpload?.icon?.colorDark || '')
+                                        : (customizations.imageUpload?.icon?.color || '')} />
                     )}
+
+                    <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
+                      {intl.formatMessage({ id: 'dragImageToSearch' })}
+                    </p>
+
+                    <p className='pt-3 leading-6 text-primary md:hidden'>
+                      {intl.formatMessage({ id: 'tapToSearchImage' })}
+                    </p>
                   </div>
-                </div>
-                <div className='col-span-1'>
-                  <div className='grid grid-cols-2 gap-2 md:gap-4'>
-                    {getGalleryCards()}
+                </FileDropzone>
+              </div>
+
+              <div className='py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0'>
+                <p className='px-14 pb-3 text-center text-primary md:px-0 md:text-left'>
+                  {intl.formatMessage({ id: 'tapProductGallery' })}
+                </p>
+
+                <div className='grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0'>
+                  <div className='col-span-1'>
+                    <div
+                        className='relative h-full'
+                        onClick={(): void => onGallerySelect(0)}
+                        onKeyDown={(evt): void => {
+                          if (evt.key === 'Enter') {
+                            onGallerySelect(0);
+                          }
+                        }}>
+                      <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url}
+                           data-pw='sb-gallery-image-1'/>
+                      {customizations.imageUpload?.images[0].label && (
+                          <div className='absolute bottom-0 z-10 w-full overflow-hidden border-1 border-white/20
+                    bg-gray-800 bg-opacity-80 py-1 text-center text-white shadow-small'>
+                            <p>{customizations.imageUpload?.images[0].label}</p>
+                          </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className='col-span-1'>
+                    <div className='grid grid-cols-2 gap-2 md:gap-4'>
+                      {getGalleryCards()}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
+
+          {customizations.generalLayout?.showViSenzeLogo && (
+              <Footer className='sticky bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl' dataPw='cs-visenze-footer'/>
+          )}
         </div>
       </VisenzeModal>
     </div>

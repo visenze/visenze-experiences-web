@@ -26,7 +26,6 @@ describe('camera-search', () => {
       dragImageToSearch: 'drag this',
       tapToSearchImage: 'tap this',
       tapProductGallery: 'product gallery',
-      useCamera: 'USE CAMERA',
       searchBarPlaceholder: 'This is a search bar',
       previousViews: 'History',
       errorDescription: 'Houston, we\'ve had a problem!',

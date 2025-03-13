@@ -52,7 +52,7 @@ const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name }) 
   });
 
   return (
-    <div className='cursor-pointer' {...getRootProps()}>
+    <div className='cursor-pointer h-full' {...getRootProps()}>
       <input {...getInputProps()} data-testid={`wigmix-${name}-dropzone`} data-pw={`${name}-dropzone`} />
       {children}
     </div>
