@@ -52,16 +52,6 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
     }
     const slidesToScroll = Math.floor(slidesToShow);
 
-    // Manually center slick track if there are not enough products to show
-    const slickTrack: HTMLDivElement | null | undefined = root?.querySelector('.slick-track');
-    if (slickTrack) {
-      if (productResults.length < slidesToShow) {
-        slickTrack.classList.add('center-slick-track');
-      } else {
-        slickTrack.classList.remove('center-slick-track');
-      }
-    }
-
     return {
       className: 'slider',
       infinite: false,

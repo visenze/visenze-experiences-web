@@ -65,16 +65,6 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
     }
     const slidesToScroll = Math.floor(slidesToShow);
 
-    // Manually left align slick track if there are not enough products to show
-    const slickTrack: HTMLDivElement | null | undefined = root?.querySelector('.slick-track');
-    if (slickTrack) {
-      if (productResults.length < slidesToShow) {
-        slickTrack.classList.add('left-align-slick-track');
-      } else {
-        slickTrack.classList.remove('left-align-slick-track');
-      }
-    }
-
     return {
       className: 'slider',
       infinite: false,
