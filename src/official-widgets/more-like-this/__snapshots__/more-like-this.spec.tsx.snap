@@ -62,7 +62,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -127,7 +127,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -192,7 +192,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -257,7 +257,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -322,7 +322,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -387,7 +387,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -452,7 +452,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -517,7 +517,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -582,7 +582,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -647,7 +647,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -712,7 +712,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -777,7 +777,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -842,7 +842,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -907,7 +907,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -972,7 +972,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1037,7 +1037,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1102,7 +1102,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1167,7 +1167,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1232,7 +1232,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1297,7 +1297,7 @@ exports[`more-like-this should render a successful response with default config 
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1434,7 +1434,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1499,7 +1499,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1564,7 +1564,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1629,7 +1629,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1694,7 +1694,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1759,7 +1759,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1824,7 +1824,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1889,7 +1889,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -1954,7 +1954,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2019,7 +2019,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2084,7 +2084,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2149,7 +2149,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2214,7 +2214,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2279,7 +2279,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2344,7 +2344,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2409,7 +2409,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2474,7 +2474,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2539,7 +2539,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2604,7 +2604,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div
@@ -2669,7 +2669,7 @@ exports[`more-like-this should render a successful response with some customizat
                 tabindex="-1"
               >
                 <div
-                  class=""
+                  class="p-1 md:p-2"
                   style="margin-left: 8px; margin-right: 8px;"
                 >
                   <div

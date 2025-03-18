@@ -198,9 +198,8 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                     {referenceImageUrl && (
                         <img
                             ref={imageRef}
-                            className='wigmix-reference-image size-full object-cover'
+                            className='wigmix-reference-image size-full aspect-auto'
                             src={referenceImageUrl}
-                            style={{ aspectRatio: '2 / 3' }}
                             onLoad={onImageLoad}
                             data-testid='wigmix-reference-image'
                             data-pw='stl-reference-image'
