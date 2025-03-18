@@ -70,7 +70,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
     const cssConfigSrc = customizations.productGrid?.[breakpoint];
     const classes = [];
     if (cssConfigSrc) {
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+      if (cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
         classes.push('p-1 md:p-2');
       }
       return classes.join(' ');

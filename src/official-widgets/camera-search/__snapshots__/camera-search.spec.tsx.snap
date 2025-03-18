@@ -3159,7 +3159,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                       drag this
                     </p>
                     <p
-                      class="px-6 pt-3 md:hidden"
+                      class="px-6 pt-3 w-8/12 md:hidden"
                     >
                       tap this
                     </p>
@@ -3416,7 +3416,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                       drag this
                     </p>
                     <p
-                      class="px-6 pt-3 md:hidden"
+                      class="px-6 pt-3 w-8/12 md:hidden"
                     >
                       tap this
                     </p>
