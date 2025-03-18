@@ -119,7 +119,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                   {intl.formatMessage({ id: 'dragImageToSearch' })}
                 </p>
 
-                <p className='px-6 pt-3 w-1/3 md:hidden'>
+                <p className='px-6 pt-3 w-8/12 md:hidden'>
                   {intl.formatMessage({ id: 'tapToSearchImage' })}
                 </p>
               </div>
