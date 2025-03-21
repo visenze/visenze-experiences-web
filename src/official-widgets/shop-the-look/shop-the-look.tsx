@@ -177,7 +177,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
 
               <div className='items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0'>
                 {/* Reference Image */}
-                <div className='px-1 md:w-3/10 lg:w-1/4'>
+                <div className='px-1 md:w-3/10 xl:w-1/4'>
                   <div className='relative'>
                     {objectDots.map((obj, index) => (
                         <button
