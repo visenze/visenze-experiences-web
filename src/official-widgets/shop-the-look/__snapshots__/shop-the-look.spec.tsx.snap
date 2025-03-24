@@ -14,7 +14,7 @@ exports[`shop-the-look should render a successful response with default config 1
     class="items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0"
   >
     <div
-      class="px-1 md:w-3/10 lg:w-1/4"
+      class="px-1 md:w-3/10 xl:w-1/4"
     >
       <div
         class="relative"
@@ -1410,7 +1410,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
     class="items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0"
   >
     <div
-      class="px-1 md:w-3/10 lg:w-1/4"
+      class="px-1 md:w-3/10 xl:w-1/4"
     >
       <div
         class="relative"
@@ -2824,7 +2824,7 @@ exports[`shop-the-look should render a successful response with some customizati
     class="items-center justify-center text-primary md:flex md:flex-row md:gap-4 lg:gap-0"
   >
     <div
-      class="px-1 md:w-3/10 lg:w-1/4"
+      class="px-1 md:w-3/10 xl:w-1/4"
     >
       <div
         class="relative"
