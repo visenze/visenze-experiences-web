@@ -182,7 +182,16 @@ const ResultScreen: FC<ResultScreenProps> = ({
               {searchHistory?.map((searchImage, index) => {
                 if (searchImage.box) {
                   return (
-                      <div key={`image-history-${index}`} className='aspect-square size-20' onClick={() => onFindSimilar(searchImage)}>
+                      <div
+                        key={`image-history-${index}`}
+                        className='aspect-square size-20'
+                        onClick={() => {
+                          if (activeHistory?.image !== searchImage.image) {
+                            onFindSimilar(searchImage);
+                          }
+                        }}
+                        data-testid={`wigmix-${activeHistory?.image === searchImage.image ? 'active-product' : 'inactive-product'}`}
+                      >
                         <ImageCropThumbnail imageUrl={getFile(searchImage.image)}
                                             className={`size-20 ${activeHistory?.image === searchImage.image ? '' : 'opacity-50'}`}
                                             box={flattenBox(searchImage.box.box)}
@@ -191,14 +200,21 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   );
                 }
                 return (
-                    <img key={`image-history-${index}`}
-                         className={cn(
-                             'aspect-square size-20 object-contain cursor-pointer',
-                             activeHistory?.image === searchImage.image ? '' : 'opacity-50',
-                         )}
-                         src={getFile(searchImage.image)}
-                         onClick={() => onFindSimilar(searchImage)}
-                         data-pw={`cs-previous-views-image-${index + 1}`} />
+                  <img
+                    key={`image-history-${index}`}
+                    className={cn(
+                      'aspect-square size-20 object-contain cursor-pointer',
+                      activeHistory?.image === searchImage.image ? '' : 'opacity-50',
+                    )}
+                    src={getFile(searchImage.image)}
+                    onClick={() => {
+                      if (activeHistory?.image !== searchImage.image) {
+                        onFindSimilar(searchImage);
+                      }
+                    }}
+                    data-pw={`cs-previous-views-image-${index + 1}`}
+                    data-testid={`wigmix-${activeHistory?.image === searchImage.image ? 'active-product' : 'inactive-product'}`}
+                  />
                 );
               })}
             </div>
@@ -330,7 +346,16 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       .map((searchImage, index) => {
                         if (searchImage.box) {
                           return (
-                              <div key={`image-history-${index}`} className='aspect-square size-24' onClick={() => onFindSimilar(searchImage)}>
+                              <div
+                                key={`image-history-${index}`} className='aspect-square size-24'
+                                onClick={() => {
+                                  if (activeHistory?.image !== searchImage.image) {
+                                    onFindSimilar(searchImage);
+                                  }
+                                }}
+                                data-pw={`cs-previous-views-image-${index + 1}`}
+                                data-testid={`wigmix-${activeHistory?.image === searchImage.image ? 'active-product' : 'inactive-product'}`}
+                              >
                                 <ImageCropThumbnail imageUrl={getFile(searchImage.image)}
                                                     className={`size-24 ${activeHistory?.image === searchImage.image ? '' : 'opacity-50'}`}
                                                     box={flattenBox(searchImage.box.box)}
@@ -345,8 +370,13 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                      activeHistory?.image === searchImage.image ? '' : 'opacity-50',
                                  )}
                                  src={getFile(searchImage.image)}
-                                 onClick={() => onFindSimilar(searchImage)}
-                                 data-pw={`cs-previous-views-image-${index + 1}`} />
+                                 onClick={() => {
+                                   if (activeHistory?.image !== searchImage.image) {
+                                     onFindSimilar(searchImage);
+                                   }
+                                 }}
+                                 data-pw={`cs-previous-views-image-${index + 1}`}
+                                 data-testid={`wigmix-${activeHistory?.image === searchImage.image ? 'active-product' : 'inactive-product'}`} />
                         );
                       })}
                   </div>

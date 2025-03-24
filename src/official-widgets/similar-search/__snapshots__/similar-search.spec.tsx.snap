@@ -1886,6 +1886,7 @@ exports[`similar-search should render a successful response with default config 
                 <img
                   class="aspect-square size-20 cursor-pointer object-contain"
                   data-pw="ss-previous-views-image-1"
+                  data-testid="wigmix-previous-views-image"
                   src="test-imurl"
                 />
               </div>

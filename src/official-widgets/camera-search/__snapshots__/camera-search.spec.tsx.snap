@@ -1834,6 +1834,7 @@ exports[`camera-search should render a successful response with default config i
                   <img
                     class="aspect-square size-20 object-contain cursor-pointer"
                     data-pw="cs-previous-views-image-1"
+                    data-testid="wigmix-active-product"
                     src="https://cdn.visenze.com/images/widget-3.jpg"
                   />
                 </div>

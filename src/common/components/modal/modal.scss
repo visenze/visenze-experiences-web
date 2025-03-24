@@ -26,7 +26,6 @@
   max-height: 100%;
   outline: none;
   position: absolute;
-  top: 0;
   left: 0;
   overflow: auto;
 
@@ -39,6 +38,7 @@
 
 .wigmix-modal-mobile {
   height: 100%;
+  top: 0;
 }
 
 .wigmix-modal-nested_mobile {

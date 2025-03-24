@@ -160,6 +160,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 className='aspect-square size-20 cursor-pointer object-contain'
                 src={getFile(searchImage)}
                 onClick={() => onFindSimilar(searchImage)}
+                data-testid='wigmix-previous-views-image'
                 data-pw={`ss-previous-views-image-${index + 1}`}
               />
             ))}
@@ -285,6 +286,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                           src={getFile(searchImage)}
                           onClick={() => onFindSimilar(searchImage)}
                           data-pw={`ss-previous-views-image-${index + 1}`}
+                          data-testid='wigmix-previous-views-image'
                         />
                       ))}
                   </div>
