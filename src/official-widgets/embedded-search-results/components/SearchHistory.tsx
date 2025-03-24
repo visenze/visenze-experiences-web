@@ -61,13 +61,17 @@ const SearchHistory = ({
                   }
                 }}
                 data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
+                data-testid={`wigmix-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
               >
                 <div className='absolute right-1 top-1 z-20 rounded-full bg-white'
-                     onClick={(event) => {
-                       event.preventDefault();
-                       event.stopPropagation();
-                       onHistoryRemove(entry, entry.id === getActiveHistoryId());
-                     }}>
+                   onClick={(event) => {
+                     event.preventDefault();
+                     event.stopPropagation();
+                     onHistoryRemove(entry, entry.id === getActiveHistoryId());
+                   }}
+                   data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product-close' : 'inactive-product-close'}`}
+                   data-testid={`wigmix-${entry.id === getActiveHistoryId() ? 'active-product-close' : 'inactive-product-close'}`}
+                >
                   <CloseIcon className='size-4 text-black' />
                 </div>
                 <img className='aspect-square h-full rounded-none object-contain'
