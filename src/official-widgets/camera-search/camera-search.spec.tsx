@@ -671,4 +671,225 @@ describe('camera-search', () => {
   });
 
   // TODO add test for clicking on search history
+  it('should re-trigger search when clicking on inactive history desktop and tablet view', () => {
+    let counter = 0;
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+        counter += 1;
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <CameraSearch renderModalWithoutPortal={true} />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
+      findSimilarButtons[4].click();
+    });
+
+    act(() => {
+      const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
+      inactiveHistory[0].click();
+    });
+
+    expect(counter).toEqual(3);
+  });
+
+  it('should not re-trigger search when clicking on active history desktop and tablet view', () => {
+    let counter = 0;
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+        counter += 1;
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <CameraSearch renderModalWithoutPortal={true} />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
+      findSimilarButtons[4].click();
+    });
+
+    act(() => {
+      const activeHistory = testComponent.getByTestId('wigmix-active-product');
+      activeHistory.click();
+    });
+
+    expect(counter).toEqual(2);
+  });
+
+  it('should not re-trigger search when clicking on active history mobile view', () => {
+    let counter = 0;
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+        counter += 1;
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ResponsiveContext.Provider value={{ width: 600 }}>
+              <CameraSearch renderModalWithoutPortal={true} />
+            </ResponsiveContext.Provider>
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
+      findSimilarButtons[1].click();
+    });
+
+    act(() => {
+      const fullToggleButton = testComponent.getByTestId('wigmix-full-results-toggle');
+      fullToggleButton.click();
+    });
+
+    act(() => {
+      const activeHistory = testComponent.getByTestId('wigmix-active-product');
+      activeHistory.click();
+    });
+
+    expect(counter).toEqual(2);
+  });
+
+  it('should re-trigger search when clicking on inactive history mobile view', () => {
+    let counter = 0;
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+        counter += 1;
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ResponsiveContext.Provider value={{ width: 600 }}>
+              <CameraSearch renderModalWithoutPortal={true} />
+            </ResponsiveContext.Provider>
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
+      findSimilarButtons[1].click();
+    });
+
+    act(() => {
+      const fullToggleButton = testComponent.getByTestId('wigmix-full-results-toggle');
+      fullToggleButton.click();
+    });
+
+    act(() => {
+      const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
+      inactiveHistory[0].click();
+    });
+
+    expect(counter).toEqual(3);
+  });
 });
