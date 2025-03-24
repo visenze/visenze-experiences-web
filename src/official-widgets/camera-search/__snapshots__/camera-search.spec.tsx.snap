@@ -3184,7 +3184,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                       class="relative h-full cursor-pointer"
                     >
                       <img
-                        class="h-full object-cover"
+                        class="h-full w-fit object-cover"
                         data-pw="cs-gallery-image-1"
                         data-testid="wigmix-gallery-image-1"
                         src="https://cdn.visenze.com/images/widget-1.jpg"
@@ -3201,7 +3201,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                         class="relative row-span-1 cursor-pointer border-none"
                       >
                         <img
-                          class="h-full object-cover"
+                          class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-2"
                           data-testid="wigmix-gallery-image-2"
                           src="https://cdn.visenze.com/images/widget-2.jpg"
@@ -3211,7 +3211,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                         class="relative row-span-1 cursor-pointer border-none"
                       >
                         <img
-                          class="h-full object-cover"
+                          class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-3"
                           data-testid="wigmix-gallery-image-3"
                           src="https://cdn.visenze.com/images/widget-3.jpg"
@@ -3221,7 +3221,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                         class="relative row-span-1 cursor-pointer border-none"
                       >
                         <img
-                          class="h-full object-cover"
+                          class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-4"
                           data-testid="wigmix-gallery-image-4"
                           src="https://cdn.visenze.com/images/widget-4.jpg"
@@ -3231,7 +3231,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                         class="relative row-span-1 cursor-pointer border-none"
                       >
                         <img
-                          class="h-full object-cover"
+                          class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-5"
                           data-testid="wigmix-gallery-image-5"
                           src="https://cdn.visenze.com/images/widget-5.jpg"
@@ -3441,7 +3441,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                       class="relative h-full cursor-pointer"
                     >
                       <img
-                        class="h-full object-cover"
+                        class="h-full w-fit object-cover"
                         data-pw="cs-gallery-image-1"
                         data-testid="wigmix-gallery-image-1"
                         src="https://cdn.visenze.com/images/widget-1.jpg"
@@ -3458,7 +3458,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                         class="relative row-span-1 cursor-pointer border-none"
                       >
                         <img
-                          class="h-full object-cover"
+                          class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-2"
                           data-testid="wigmix-gallery-image-2"
                           src="https://cdn.visenze.com/images/widget-2.jpg"
@@ -3468,7 +3468,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                         class="relative row-span-1 cursor-pointer border-none"
                       >
                         <img
-                          class="h-full object-cover"
+                          class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-3"
                           data-testid="wigmix-gallery-image-3"
                           src="https://cdn.visenze.com/images/widget-3.jpg"
@@ -3478,7 +3478,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                         class="relative row-span-1 cursor-pointer border-none"
                       >
                         <img
-                          class="h-full object-cover"
+                          class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-4"
                           data-testid="wigmix-gallery-image-4"
                           src="https://cdn.visenze.com/images/widget-4.jpg"
@@ -3488,7 +3488,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                         class="relative row-span-1 cursor-pointer border-none"
                       >
                         <img
-                          class="h-full object-cover"
+                          class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-5"
                           data-testid="wigmix-gallery-image-5"
                           src="https://cdn.visenze.com/images/widget-5.jpg"

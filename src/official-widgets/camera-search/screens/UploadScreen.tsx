@@ -51,7 +51,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
               }
             }}
           >
-            <img className='h-full object-cover' src={imageWithLabel.url}
+            <img className='h-full w-fit object-cover' src={imageWithLabel.url}
                  data-testid={`wigmix-gallery-image-${index + 1}`}
                  data-pw={`cs-gallery-image-${index + 1}`}/>
             {imageWithLabel.label && (
@@ -141,7 +141,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                         onGallerySelect(0);
                       }
                     }}>
-                  <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url}
+                  <img className='h-full w-fit object-cover' src={customizations.imageUpload?.images[0].url}
                        data-testid='wigmix-gallery-image-1'
                        data-pw='cs-gallery-image-1'/>
                   {customizations.imageUpload?.images[0].label && (

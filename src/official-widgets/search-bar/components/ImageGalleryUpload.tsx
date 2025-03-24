@@ -84,7 +84,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
               }
             }}
           >
-            <img className='h-full object-cover' src={imageWithLabel.url} data-pw={`sb-gallery-image-${index + 1}`}/>
+            <img className='h-full w-fit object-cover' src={imageWithLabel.url} data-pw={`sb-gallery-image-${index + 1}`}/>
             {imageWithLabel.label && (
               <div className='absolute bottom-0 z-10 w-full overflow-hidden border-1
             border-white/20 bg-gray-800 bg-opacity-80 py-1 text-center text-white shadow-small'>
@@ -204,7 +204,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
                             onGallerySelect(0);
                           }
                         }}>
-                      <img className='h-full object-cover' src={customizations.imageUpload?.images[0].url}
+                      <img className='h-full w-fit object-cover' src={customizations.imageUpload?.images[0].url}
                            data-pw='sb-gallery-image-1'/>
                       {customizations.imageUpload?.images[0].label && (
                           <div className='absolute bottom-0 z-10 w-full overflow-hidden border-1 border-white/20
