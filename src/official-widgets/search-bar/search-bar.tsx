@@ -222,7 +222,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
           {/* eslint-disable no-nested-ternary */}
           {showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
               ? (<OutsideAlerter>
-                    <div className='relative flex max-h-[70vh] flex-col divide-x divide-gray-200 py-1 md:max-h-full md:flex-row'>
+                    <div className='relative flex max-h-[70vh] flex-col divide-x divide-gray-200 py-1 md:min-h-fit md:max-h-full md:flex-row'>
                       <div className='flex flex-col justify-between md:w-2/5'>
                         <div className='flex flex-col gap-2 px-4 py-1'>
                           <p className='text-large font-semibold leading-6 text-primary'>
