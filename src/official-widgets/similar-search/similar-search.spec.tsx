@@ -492,7 +492,7 @@ describe('similar-search', () => {
   });
 
   // TODO add test for clicking on search history
-  it('should re-trigger search when clicking on inactive history', () => {
+  it('should re-trigger search when clicking on inactive history desktop and tablet view', () => {
     let counter = 0;
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
       ...mockVisearchClient,
@@ -534,6 +534,59 @@ describe('similar-search', () => {
     act(() => {
       const inactiveHistory = testComponent.queryAllByTestId('wigmix-previous-views-image');
       inactiveHistory[0].click();
+    });
+    expect(counter).toEqual(3);
+  });
+
+  it('should re-trigger search when clicking on inactive history mobile view', () => {
+    let counter = 0;
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+        counter += 1;
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ResponsiveContext.Provider value={{ width: 600 }}>
+              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+            </ResponsiveContext.Provider>
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
+      findSimilarButtons[2].click();
+    });
+
+    act(() => {
+      const fullToggleButton = testComponent.getByTestId('wigmix-full-results-toggle');
+      fullToggleButton.click();
+    });
+
+    act(() => {
+      const inactiveHistory = testComponent.queryAllByTestId('wigmix-previous-views-image');
+      inactiveHistory[1].click();
     });
     expect(counter).toEqual(3);
   });
