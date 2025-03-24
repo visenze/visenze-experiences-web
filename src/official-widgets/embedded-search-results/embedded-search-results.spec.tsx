@@ -401,7 +401,7 @@ describe('embedded-search-result', () => {
   it('clearing an active search history should return no search input', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
         handler(getStandardMultiSearchSuccessNoResultResponse());
       }),
     }));
