@@ -670,6 +670,52 @@ describe('camera-search', () => {
     });
   });
 
+  it('clicking on find similar should store product search history', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchSuccessResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <CameraSearch renderModalWithoutPortal={true} />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
+      findSimilarButtons[4].click();
+    });
+
+    const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
+    expect(inactiveHistory.length).toBeGreaterThan(0);
+  });
+
   // TODO add test for clicking on search history
   it('should re-trigger search when clicking on inactive history desktop and tablet view', () => {
     let counter = 0;
