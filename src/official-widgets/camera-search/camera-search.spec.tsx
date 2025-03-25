@@ -716,7 +716,6 @@ describe('camera-search', () => {
     expect(inactiveHistory.length).toBeGreaterThan(0);
   });
 
-  // TODO add test for clicking on search history
   it('should re-trigger search when clicking on inactive history desktop and tablet view', () => {
     let counter = 0;
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({

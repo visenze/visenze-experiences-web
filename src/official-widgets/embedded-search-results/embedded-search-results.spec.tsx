@@ -353,8 +353,8 @@ describe('embedded-search-result', () => {
     expect(inactiveHistory).toBeDefined();
   });
 
-  // TODO test delete inactive image history
-  it('clearing an inactive search history should not re-trigger search', () => {
+
+  it('should not re-trigger search when clearing an inactive search history', () => {
     let counter = 0;
     const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
@@ -405,8 +405,7 @@ describe('embedded-search-result', () => {
     expect(inactiveHistoryCloseButton.length).toEqual(0);
   });
 
-  // TODO test delete active image history, should re-trigger search
-  it('clearing an active search history should re-trigger search text query', () => {
+  it('should re-trigger search text query when clearing an active search history and there is text query', () => {
     let counter = 0;
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
@@ -441,7 +440,7 @@ describe('embedded-search-result', () => {
     expect(counter).toBeGreaterThan(1);
   });
 
-  it('clearing an active search history should return no search input', () => {
+  it('should return no search input when clearing an active search history and there is no text query', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((_, handler) => {
@@ -472,8 +471,7 @@ describe('embedded-search-result', () => {
     expect(testComponent.getByText('No search input available.')).not.toBeNull();
   });
 
-  // TODO add test for clicking on search history
-  it('clicking on active search history should not do anything', () => {
+  it('should not do anything when clicking on active search history', () => {
     let counter = 0;
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
@@ -511,7 +509,7 @@ describe('embedded-search-result', () => {
     expect(counter).toEqual(1);
   });
 
-  it('clicking on inactive search history should re-search the product', () => {
+  it('should trigger a new search when clicking on inactive search history', () => {
     let counter = 0;
     const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
