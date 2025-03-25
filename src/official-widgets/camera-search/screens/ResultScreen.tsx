@@ -186,7 +186,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
                         key={`image-history-${index}`}
                         className='aspect-square size-20'
                         onClick={() => {
-                          if (activeHistory?.image !== searchImage.image) {
+                          if (
+                            activeHistory?.image !== searchImage.image
+                            || (activeHistory?.image === searchImage.image && activeHistory?.box !== searchImage.box)
+                          ) {
                             onFindSimilar(searchImage);
                           }
                         }}
@@ -208,7 +211,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     )}
                     src={getFile(searchImage.image)}
                     onClick={() => {
-                      if (activeHistory?.image !== searchImage.image) {
+                      if (
+                        activeHistory?.image !== searchImage.image
+                        || (activeHistory?.image === searchImage.image && activeHistory?.box !== searchImage.box)
+                      ) {
                         onFindSimilar(searchImage);
                       }
                     }}
@@ -349,7 +355,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
                               <div
                                 key={`image-history-${index}`} className='aspect-square size-24'
                                 onClick={() => {
-                                  if (activeHistory?.image !== searchImage.image) {
+                                  if (
+                                    activeHistory?.image !== searchImage.image
+                                    || (activeHistory?.image === searchImage.image && activeHistory?.box !== searchImage.box)
+                                  ) {
                                     onFindSimilar(searchImage);
                                   }
                                 }}
@@ -371,7 +380,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                  )}
                                  src={getFile(searchImage.image)}
                                  onClick={() => {
-                                   if (activeHistory?.image !== searchImage.image) {
+                                   if (
+                                     activeHistory?.image !== searchImage.image
+                                     || (activeHistory?.image === searchImage.image && activeHistory?.box !== searchImage.box)
+                                   ) {
                                      onFindSimilar(searchImage);
                                    }
                                  }}
