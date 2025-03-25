@@ -50,6 +50,14 @@ export interface WidgetClient {
    */
   placementId: string | number;
   /**
+   * Indicates whether this placement is using preset code or custom code.
+   *
+   * @internal
+   *
+   * @since 1.0.2
+   */
+  isCustomScript: boolean;
+  /**
    * Gets the query ID of the API call that results in the last click event.
    *
    * @since 1.0.0
@@ -1059,6 +1067,14 @@ export interface WidgetConfig {
    * @since 1.0.0
    */
   disableAnalytics: boolean;
+  /**
+   * Indicates whether this placement is using preset code or custom code.
+   *
+   * @internal
+   *
+   * @since 1.0.2
+   */
+  isCustomScript?: boolean | string;
 }
 
 /**
