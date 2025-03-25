@@ -541,6 +541,16 @@ describe('camera-search', () => {
     productCardImages.forEach((productCardImage, idx) => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
     });
+
+    // Active history should be replaced
+    const activeHistory = testComponent.queryAllByTestId('wigmix-active-product');
+    expect(activeHistory.length).toEqual(1);
+    expect(activeHistory[0].getAttribute('src')).toEqual('https://main-image-5');
+
+    // The previously used gallery image should be moved to inactive history
+    const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
+    expect(inactiveHistory.length).toEqual(1);
+    expect(inactiveHistory[0].getAttribute('src')).toEqual('https://cdn.visenze.com/images/widget-3.jpg');
   });
 
   it('should show error message if find similar encounters error', () => {
@@ -668,52 +678,6 @@ describe('camera-search', () => {
     productCardImages.forEach((productCardImage, idx) => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
     });
-  });
-
-  it('clicking on find similar should store product search history', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
-      ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((_, handler) => {
-        handler(getStandardMultiSearchSuccessResponse());
-      }),
-      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
-        handler(getStandardMultiSearchAutocompleteResponse());
-      }),
-    }));
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <CameraSearch renderModalWithoutPortal={true} />
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
-
-    act(() => {
-      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
-      popupTriggerButton.click();
-    });
-
-    act(() => {
-      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
-      galleryImage.click();
-    });
-
-    act(() => {
-      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
-      productCardImages.forEach((productCardImage) => {
-        fireEvent.load(productCardImage);
-      });
-    });
-
-    act(() => {
-      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
-      findSimilarButtons[4].click();
-    });
-
-    const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
-    expect(inactiveHistory.length).toBeGreaterThan(0);
   });
 
   it('should re-trigger search when clicking on inactive history desktop and tablet view', () => {
