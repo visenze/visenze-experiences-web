@@ -264,25 +264,25 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 : customizations.generalLayout?.fontColor} />
       <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
-          <div className='relative left-0 row-span-1 h-full w-1/3 py-4'>
-            <div className='flex h-full flex-col justify-between overflow-y-scroll px-16 md:px-6'>
+          <div className='relative left-0 row-span-1 h-full w-1/3 overflow-y-scroll border-r-2 border-gray-300 px-8'>
+            <div className='flex h-19/20 flex-col justify-between px-2'>
               <div
-                className='wigmix-reference-image-container mt-4 flex flex-col items-center text-center'>
+                className='wigmix-reference-image-container flex w-full flex-col items-center text-center'>
                 <img src={getFile(image)} className='wigmix-reference-image aspect-square rounded-md object-contain object-center md:h-full' data-pw='ss-reference-image'/>
               </div>
 
               {searchHistory && searchHistory?.length > 1 && (
-                <div className='pt-2'>
-                  <p>
+                <div>
+                  <span>
                     {intl.formatMessage({ id: 'previousViews' })}
-                  </p>
-                  <div className='no-scrollbar flex flex-row gap-1 overflow-scroll pt-1' data-pw='ss-previous-views'>
+                  </span>
+                  <div className='no-scrollbar flex h-full flex-row gap-1 overflow-scroll pt-1' data-pw='ss-previous-views'>
                     {searchHistory
                       ?.slice(1)
                       .map((searchImage, index) => (
                         <img
                           key={`image-history-${index}`}
-                          className='aspect-square size-24 cursor-pointer rounded-lg object-cover'
+                          className='aspect-square size-24 cursor-pointer rounded-lg object-contain'
                           src={getFile(searchImage)}
                           onClick={() => onFindSimilar(searchImage)}
                           data-pw={`ss-previous-views-image-${index + 1}`}
@@ -295,7 +295,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             </div>
           </div>
 
-          <div className='flex w-2/3 flex-col'>
+          <div className='flex w-2/3 flex-col px-4'>
             <div className='z-20 col-span-2 pb-4'>
               <div className='relative'>
                 {/* Autocomplete Suggestions */}
@@ -321,7 +321,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 )}
 
                 {/* Refinement Text Bar */}
-                <div className='relative z-20 px-2 pt-3'>
+                <div className='relative z-20 px-2'>
                   <Input
                     isClearable
                     maxLength={QUERY_MAX_CHARACTER_LENGTH}

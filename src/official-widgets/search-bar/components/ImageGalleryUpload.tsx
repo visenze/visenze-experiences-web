@@ -10,6 +10,7 @@ import CloseIcon from '../../../common/icons/CloseIcon';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 import PhotoIcon from '../../../common/icons/PhotoIcon';
 import UploadIcon from '../../../common/icons/UploadIcon';
+import { WidgetBreakpoint } from '../../../common/types/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
@@ -136,6 +137,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
       )}
 
       <VisenzeModal open={openModal} onClose={onCloseHandler} layout={breakpoint} position='center'
+                    className={breakpoint !== WidgetBreakpoint.MOBILE ? 'h-fit' : ''}
                     renderWithoutPortal={!!renderModalWithoutPortal}
                     darkMode={darkMode}
                     fontFamily={customizations.generalLayout?.fontFamily}
