@@ -12,6 +12,7 @@ import { RootContext } from '../../common/components/shadow-wrapper';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CameraIcon from '../../common/icons/CameraIcon';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage, SearchImageOrPid } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
@@ -317,6 +318,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
             </div>
         )}
         <ViSenzeModal
+          className={screen === ScreenType.UPLOAD && breakpoint !== WidgetBreakpoint.MOBILE ? 'h-fit' : ''}
           open={dialogVisible}
           layout={breakpoint}
           onClose={onModalClose}

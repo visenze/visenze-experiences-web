@@ -44,9 +44,9 @@ const wrapCallbacks = (
 };
 
 const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion: string, visearchFactory: () => ViSearchClient = () => ViSearch()): WidgetClient => {
-  const { disableAnalytics } = config;
-  const { placementId, appKey, strategyId, endpoint, gtmTracking, resizeSettings, uid } = config.appSettings;
-  const { onSearchCallback } = config.callbacks;
+  const { appSettings, callbacks, disableAnalytics, isCustomScript } = config;
+  const { appKey, placementId, strategyId, endpoint, gtmTracking, resizeSettings, uid } = appSettings;
+  const { onSearchCallback } = callbacks;
   let renderStatus: WidgetRenderStatus = 'UNRENDERED';
   let roots: Root[] = [];
   let widgetOpeners: ((id: string, bypassIdCheck: boolean) => void)[] = [];
@@ -287,6 +287,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     visearch,
     widgetType,
     widgetVersion,
+    isCustomScript: isCustomScript === true || isCustomScript === 'true',
     placementId,
     setLastTrackingMeta,
     sendEvent,
