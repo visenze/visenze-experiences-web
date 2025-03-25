@@ -310,50 +310,6 @@ describe('embedded-search-result', () => {
     expect(testComponent.getByText('Sorry, our system is experiencing difficulties, please try again later.')).not.toBeNull();
   });
 
-  it('click on find similar should store product search history', () => {
-    const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
-      ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.im_url === 'test-im-url') {
-          handler(getStandardMultiSearchSuccessResponse());
-        } else if (params.pid === 'pid-5') {
-          const standardResponse = getStandardMultiSearchSuccessResponse();
-          // Just scramble the results
-          standardResponse.result = scrambledOrder.map((i) => standardResponse.result![i]);
-          handler(standardResponse);
-        } else {
-          // Fail; other parameter combinations are not expected here
-          expect(true).toBeFalsy();
-        }
-      }),
-    }));
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <EmbeddedSearchResults textQuery='testQuery' imUrl='test-im-url' />
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
-
-    act(() => {
-      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
-      productCardImages.forEach((productCardImage) => {
-        fireEvent.load(productCardImage);
-      });
-    });
-
-    act(() => {
-      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
-      findSimilarButtons[4].click();
-    });
-    const inactiveHistory = testComponent.getByTestId('wigmix-inactive-product');
-    expect(inactiveHistory).toBeDefined();
-  });
-
-
   it('should not re-trigger search when clearing an inactive search history', () => {
     let counter = 0;
     const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
@@ -555,6 +511,10 @@ describe('embedded-search-result', () => {
       const inactiveHistory = testComponent.getByTestId('wigmix-inactive-product');
       inactiveHistory.click();
     });
+    const activeHistory = testComponent.getByTestId('wigmix-active-product');
+    expect(activeHistory).toBeDefined();
+    const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
+    expect(inactiveHistory.length).toEqual(1);
     expect(counter).toEqual(3);
   });
 
