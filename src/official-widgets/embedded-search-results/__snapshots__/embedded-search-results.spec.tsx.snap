@@ -144,6 +144,7 @@ exports[`embedded-search-result should fail render with invalid im-url 1`] = `
               <img
                 class="aspect-square h-full rounded-none object-contain"
                 data-pw="esr-product-history-image-1"
+                data-testid="wigmix-active-product-history-image"
                 src="test-im-url"
               />
             </div>
@@ -497,6 +498,7 @@ exports[`embedded-search-result should render successfully with query and im-url
               <img
                 class="aspect-square h-full rounded-none object-contain"
                 data-pw="esr-product-history-image-1"
+                data-testid="wigmix-active-product-history-image"
                 src="test-im-url"
               />
             </div>

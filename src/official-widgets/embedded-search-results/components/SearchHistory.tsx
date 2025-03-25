@@ -76,7 +76,8 @@ const SearchHistory = ({
                 </div>
                 <img className='aspect-square h-full rounded-none object-contain'
                      src={entry.imageUrl ?? ''}
-                     data-pw={`esr-product-history-image-${index + 1}`} />
+                     data-pw={`esr-product-history-image-${index + 1}`}
+                     data-testid={`wigmix-${entry.id === getActiveHistoryId() ? 'active-product-history-image' : 'inactive-product-history-image'}`}/>
               </div>
             ))}
         </div>

@@ -541,6 +541,16 @@ describe('camera-search', () => {
     productCardImages.forEach((productCardImage, idx) => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
     });
+
+    // Active history should be replaced
+    const activeHistory = testComponent.queryAllByTestId('wigmix-active-product');
+    expect(activeHistory.length).toEqual(1);
+    expect(activeHistory[0].getAttribute('src')).toEqual('https://main-image-5');
+
+    // The previously used gallery image should be moved to inactive history
+    const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
+    expect(inactiveHistory.length).toEqual(1);
+    expect(inactiveHistory[0].getAttribute('src')).toEqual('https://cdn.visenze.com/images/widget-3.jpg');
   });
 
   it('should show error message if find similar encounters error', () => {

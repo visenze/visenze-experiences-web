@@ -532,6 +532,8 @@ describe('similar-search', () => {
 
     act(() => {
       const inactiveHistory = testComponent.queryAllByTestId('wigmix-previous-views-image');
+      expect(inactiveHistory.length).toEqual(1);
+      expect(inactiveHistory[0].getAttribute('src')).toEqual('test-imurl');
       inactiveHistory[0].click();
     });
     expect(counter).toEqual(3);

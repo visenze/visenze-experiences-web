@@ -512,6 +512,21 @@ describe('embedded-search-result', () => {
       inactiveHistory.click();
     });
     expect(counter).toEqual(3);
+
+    // Active history should be replaced
+    const activeHistoryImage = testComponent.getByTestId('wigmix-active-product-history-image');
+    expect(activeHistoryImage.getAttribute('src')).toEqual('test-im-url');
+
+    // The previously used image should be moved to inactive history
+    const inactiveHistoryImages = testComponent.queryAllByTestId('wigmix-inactive-product-history-image');
+    expect(inactiveHistoryImages.length).toEqual(1);
+    expect(inactiveHistoryImages[0].getAttribute('src')).toEqual('https://main-image-5');
+
+    // Verify that the results go back to the unscrambled order
+    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+    productCardImages.forEach((productCardImage, idx) => {
+      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
+    });
   });
 
   it('should apply filter successfully in desktop view', () => {
