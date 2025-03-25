@@ -511,10 +511,11 @@ describe('embedded-search-result', () => {
       const inactiveHistory = testComponent.getByTestId('wigmix-inactive-product');
       inactiveHistory.click();
     });
-    const activeHistory = testComponent.getByTestId('wigmix-active-product');
-    expect(activeHistory).toBeDefined();
-    const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
-    expect(inactiveHistory.length).toEqual(1);
+    const activeHistoryImage = testComponent.getByTestId('wigmix-active-product-history-image');
+    expect(activeHistoryImage.getAttribute('src')).toEqual('test-im-url');
+    const inactiveHistoryImages = testComponent.queryAllByTestId('wigmix-inactive-product-history-image');
+    expect(inactiveHistoryImages.length).toEqual(1);
+    expect(inactiveHistoryImages[0].getAttribute('src')).toEqual('https://main-image-5');
     expect(counter).toEqual(3);
   });
 
