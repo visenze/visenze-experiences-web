@@ -261,7 +261,7 @@ exports[`similar-search should render a successful response with default config 
                   class="flex h-19/20 flex-col justify-between px-2"
                 >
                   <div
-                    class="wigmix-reference-image-container flex w-full flex-col items-center text-center"
+                    class="wigmix-reference-image-container flex w-full items-center text-center"
                   >
                     <img
                       class="wigmix-reference-image aspect-square rounded-md object-contain object-center md:h-full"
