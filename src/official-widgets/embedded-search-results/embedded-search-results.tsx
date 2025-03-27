@@ -109,18 +109,21 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     setIsLoadingMore(false);
   };
 
-  const addToHistory = (entry: Omit<SearchHistoryEntry, 'timestamp'>): void => {
-    const newEntry: SearchHistoryEntry = {
-      ...entry,
-      timestamp: Date.now(),
-    };
+  const addToHistory = (entry: Omit<SearchHistoryEntry, 'timestamp'>[]): void => {
+    const entries = entry.map((e) => {
+      const newEntry: SearchHistoryEntry = {
+        ...e,
+        timestamp: Date.now(),
+      };
+      return newEntry;
+    });
 
-    setSearchHistory((prevHistory) => [newEntry, ...prevHistory].slice(0, MAX_HISTORY_ITEMS));
+    setSearchHistory((prevHistory) => [...entries, ...prevHistory].slice(0, MAX_HISTORY_ITEMS));
 
-    setActiveHistory(newEntry);
+    setActiveHistory(entries[0]);
   };
 
-  const multisearchWithSearchBarDetails = (imgOrPid?: SearchImageOrPid, text?: string, currentPage?: number, shouldResetFacets = true): void => {
+  const multisearchWithSearchBarDetails = (imgOrPid?: SearchImageOrPid, text?: string, currentPage?: number, shouldResetFacets = true, isInitialSearch = false): void => {
     if (currentPage && currentPage > 1) {
       setIsLoadingMore(true);
     } else {
@@ -161,18 +164,43 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       // Only add to history if image URL is used
       // This flow can only be reached with non-null image URL; PID is optional
       if (imgOrPid && isImageUrl(imgOrPid)) {
-        const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
-          id: imgOrPid.imgUrl,
-          imageUrl: imgOrPid.imgUrl,
-        };
+        const newEntries: Omit<SearchHistoryEntry, 'timestamp'>[] = [];
+        if (res.status === 'OK' && isInitialSearch) {
+          res.product_types?.map((pt, i) => {
+            const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
+              id: imgOrPid.imgUrl,
+              imageUrl: imgOrPid.imgUrl,
+              box: {
+                box: {
+                  x1: pt.box[0],
+                  y1: pt.box[1],
+                  x2: pt.box[2],
+                  y2: pt.box[3],
+                },
+                index: i,
+              },
+            };
 
-        if (isPid(imgOrPid)) {
-          historyEntry.pid = imgOrPid.pid;
+            if (isPid(imgOrPid)) {
+              historyEntry.pid = imgOrPid.pid;
+            }
+            newEntries.push(historyEntry);
+            return historyEntry;
+          });
+        } else {
+          const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
+            id: imgOrPid.imgUrl,
+            imageUrl: imgOrPid.imgUrl,
+          };
+
+          if (isPid(imgOrPid)) {
+            historyEntry.pid = imgOrPid.pid;
+          }
+          newEntries.push(historyEntry);
         }
-
         setSearchHistory((prevHistory) => {
           const isProductInHistory = prevHistory.find((item) => {
-            if (item.id === historyEntry.id) {
+            if (item.id === newEntries[0].id) {
               setActiveHistory(item);
               return item;
             }
@@ -180,7 +208,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
           });
 
           if (!isProductInHistory) {
-            addToHistory(historyEntry);
+            addToHistory(newEntries);
           }
           return prevHistory;
         });
@@ -293,7 +321,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       setImage({ imgUrl: imUrl });
     }
     if (imUrl || textQuery) {
-      multisearchWithSearchBarDetails(imUrl ? { imgUrl: imUrl } : undefined, textQuery);
+      multisearchWithSearchBarDetails(imUrl ? { imgUrl: imUrl } : undefined, textQuery, 1, true, true);
     } else {
       setIsLoading(false);
     }

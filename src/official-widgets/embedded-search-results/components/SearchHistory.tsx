@@ -1,11 +1,15 @@
 import { cn } from '@heroui/theme';
 import { type ReactElement, useEffect, useRef } from 'react';
+import ImageCropThumbnail from '../../../common/components/crop/ImageCropThumbnail';
 import CloseIcon from '../../../common/icons/CloseIcon';
+import type { BoxData } from '../../../common/types/product';
+import { flattenBox } from '../../../common/utils';
 
 export interface SearchHistoryEntry {
   id: string;
   imageUrl: string;
   pid?: string;
+  box?: BoxData;
   timestamp: number;
 }
 
@@ -74,10 +78,20 @@ const SearchHistory = ({
                 >
                   <CloseIcon className='size-4 text-black' />
                 </div>
-                <img className='aspect-square h-full rounded-none object-contain'
-                     src={entry.imageUrl ?? ''}
-                     data-pw={`esr-product-history-image-${index + 1}`}
-                     data-testid={`wigmix-${entry.id === getActiveHistoryId() ? 'active-product-history-image' : 'inactive-product-history-image'}`}/>
+                {entry.box ? <div
+                    className='aspect-square h-full rounded-none object-contain'
+                    data-pw={`esr-product-history-image-${index + 1}`}
+                    data-testid={`wigmix-${entry.id === getActiveHistoryId() ? 'active-product-history-crop-image' : 'inactive-product-history-crop-image'}`}
+                  >
+                    <ImageCropThumbnail imageUrl={entry.imageUrl ?? ''}
+                                                 className='aspect-square h-full rounded-none object-contain opacity-100'
+                                                 box={flattenBox(entry.box.box)} index={entry.box.index} />
+                </div>
+                  : <img className='aspect-square h-full rounded-none object-contain'
+                         src={entry.imageUrl ?? ''}
+                         data-pw={`esr-product-history-image-${index + 1}`}
+                         data-testid={`wigmix-${entry.id === getActiveHistoryId() ? 'active-product-history-image' : 'inactive-product-history-image'}`}/>
+                }
               </div>
             ))}
         </div>

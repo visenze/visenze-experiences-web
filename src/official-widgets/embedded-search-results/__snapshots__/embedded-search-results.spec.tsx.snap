@@ -495,12 +495,15 @@ exports[`embedded-search-result should render successfully with query and im-url
                   </svg>
                 </div>
               </div>
-              <img
+              <div
                 class="aspect-square h-full rounded-none object-contain"
                 data-pw="esr-product-history-image-1"
-                data-testid="wigmix-active-product-history-image"
-                src="test-im-url"
-              />
+                data-testid="wigmix-active-product-history-crop-image"
+              >
+                <canvas
+                  class="cursor-pointer aspect-square h-full rounded-none object-contain opacity-100"
+                />
+              </div>
             </div>
           </div>
         </div>

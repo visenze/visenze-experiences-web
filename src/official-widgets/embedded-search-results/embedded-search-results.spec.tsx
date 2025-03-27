@@ -6,7 +6,7 @@ import EmbeddedSearchResults from './embedded-search-results';
 import {
   getStandardMultiSearchInvalidImageResponse,
   getStandardMultiSearchSuccessNoResultResponse,
-  getStandardMultiSearchSuccessResponse,
+  getStandardMultiSearchSuccessResponse, getStandardMultiSearchSuccessWithBoxResponse,
   getStandardMultiSearchSystemErrorResponse,
 } from '../../../mocks/responses';
 import getWidgetClient from '../../common/client/widget-client';
@@ -87,7 +87,7 @@ describe('embedded-search-result', () => {
           return_query_sys_meta: true,
           return_query_temp_url: true,
         });
-        handler(getStandardMultiSearchSuccessResponse());
+        handler(getStandardMultiSearchSuccessWithBoxResponse());
       }),
     }));
     testComponent = render(
@@ -153,7 +153,7 @@ describe('embedded-search-result', () => {
           return_query_sys_meta: true,
           return_query_temp_url: true,
         });
-        handler(getStandardMultiSearchSuccessResponse());
+        handler(getStandardMultiSearchSuccessWithBoxResponse());
       }),
     }));
     testComponent = render(
@@ -231,7 +231,7 @@ describe('embedded-search-result', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url') {
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else if (params.pid === 'pid-5') {
           const standardResponse = getStandardMultiSearchSuccessResponse();
           // Just scramble the results
@@ -276,7 +276,7 @@ describe('embedded-search-result', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url') {
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else if (params.pid === 'pid-5') {
           handler(getStandardMultiSearchSystemErrorResponse());
         } else {
@@ -318,7 +318,7 @@ describe('embedded-search-result', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url') {
           counter += 1;
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else if (params.pid === 'pid-5') {
           counter += 1;
           const standardResponse = getStandardMultiSearchSuccessResponse();
@@ -366,10 +366,12 @@ describe('embedded-search-result', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.q === 'testQuery') {
+        if (params.im_url === 'test-im-url') {
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
+        } else if (params.q === 'testQuery') {
           counter += 1;
+          handler(getStandardMultiSearchSuccessResponse());
         }
-        handler(getStandardMultiSearchSuccessResponse());
       }),
     }));
     testComponent = render(
@@ -399,8 +401,12 @@ describe('embedded-search-result', () => {
   it('should return no search input when clearing an active search history and there is no text query', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((_, handler) => {
-        handler(getStandardMultiSearchSuccessNoResultResponse());
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        if (params.im_url === 'test-im-url') {
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
+        } else {
+          handler(getStandardMultiSearchSuccessNoResultResponse());
+        }
       }),
     }));
     testComponent = render(
@@ -434,7 +440,7 @@ describe('embedded-search-result', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url') {
           counter += 1;
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else {
           // Fail; other parameter combinations are not expected here
           expect(true).toBeFalsy();
@@ -473,7 +479,7 @@ describe('embedded-search-result', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url') {
           counter += 1;
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else if (params.pid === 'pid-5') {
           counter += 1;
           const standardResponse = getStandardMultiSearchSuccessResponse();
@@ -514,8 +520,8 @@ describe('embedded-search-result', () => {
     expect(counter).toEqual(3);
 
     // Active history should be replaced
-    const activeHistoryImage = testComponent.getByTestId('wigmix-active-product-history-image');
-    expect(activeHistoryImage.getAttribute('src')).toEqual('test-im-url');
+    const activeHistoryImage = testComponent.getByTestId('wigmix-active-product-history-crop-image');
+    expect(activeHistoryImage).toBeDefined();
 
     // The previously used image should be moved to inactive history
     const inactiveHistoryImages = testComponent.queryAllByTestId('wigmix-inactive-product-history-image');
@@ -534,7 +540,7 @@ describe('embedded-search-result', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        const resp = getStandardMultiSearchSuccessResponse();
+        const resp = getStandardMultiSearchSuccessWithBoxResponse();
         if (params.filters) {
           expect(params.filters).toEqual(['brand:"brand_1"']);
           // Scramble the results
@@ -599,7 +605,7 @@ describe('embedded-search-result', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url' && !params.q) {
           // Initial image search
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else if (params.q === 'jeans') {
           // Text query
           expect(params).toEqual({
@@ -640,5 +646,30 @@ describe('embedded-search-result', () => {
     productCardImages.forEach((productCardImage, idx) => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
     });
+  });
+
+  it('should show image results successfully with cropped view', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchSuccessWithBoxResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <EmbeddedSearchResults textQuery='' imUrl='test-im-url' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+    productCardImages.forEach((productCardImage, idx) => {
+      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
+    });
+    const croppedSearchHistoryImage = testComponent.getByTestId('wigmix-active-product-history-crop-image');
+    expect(croppedSearchHistoryImage).toBeDefined();
   });
 });
