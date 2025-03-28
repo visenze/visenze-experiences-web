@@ -890,7 +890,10 @@ export const getStandardMultiSearchSuccessWithBoxResponse = (): ProductSearchRes
   page: 1,
   limit: 20,
   total: 1000,
-  product_types: [{ type: 'top', score: 0.704, box: [131, 223, 600, 852], attributes: {}, box_type: ''}],
+  product_types: [
+    { type: 'top', score: 0.704, box: [131, 223, 600, 852], attributes: {}, box_type: ''},
+    { type: 'bottom', score: 0.805, box: [131, 223, 750, 905], attributes: {}, box_type: ''},
+  ],
   result: [
     {
       product_id: 'pid-1',

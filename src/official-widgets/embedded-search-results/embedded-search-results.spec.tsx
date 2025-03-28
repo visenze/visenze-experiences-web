@@ -166,6 +166,12 @@ describe('embedded-search-result', () => {
       </RootContext.Provider>,
     );
     // no need to test snapshot; it will be the same as query and im-url counterpart
+    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+    productCardImages.forEach((productCardImage, idx) => {
+      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
+    });
+    const croppedSearchHistoryImage = testComponent.queryAllByTestId('wigmix-active-product-history-crop-image');
+    expect(croppedSearchHistoryImage.length).toBeGreaterThan(0);
   });
 
   it('should fail render with invalid im-url', () => {
@@ -392,8 +398,8 @@ describe('embedded-search-result', () => {
     });
 
     act(() => {
-      const activeHistoryCloseButton = testComponent.getByTestId('wigmix-active-product-close');
-      activeHistoryCloseButton.click();
+      const activeHistoryCloseButton = testComponent.queryAllByTestId('wigmix-active-product-close');
+      activeHistoryCloseButton[0].click();
     });
     expect(counter).toBeGreaterThan(1);
   });
@@ -427,8 +433,8 @@ describe('embedded-search-result', () => {
     });
 
     act(() => {
-      const activeHistoryCloseButton = testComponent.getByTestId('wigmix-active-product-close');
-      activeHistoryCloseButton.click();
+      const activeHistoryCloseButton = testComponent.queryAllByTestId('wigmix-active-product-close');
+      activeHistoryCloseButton[0].click();
     });
     expect(testComponent.getByText('No search input available.')).not.toBeNull();
   });
@@ -465,8 +471,8 @@ describe('embedded-search-result', () => {
     });
 
     act(() => {
-      const activeHistory = testComponent.getByTestId('wigmix-active-product');
-      activeHistory.click();
+      const activeHistory = testComponent.queryAllByTestId('wigmix-active-product');
+      activeHistory[0].click();
     });
     expect(counter).toEqual(1);
   });
@@ -514,14 +520,14 @@ describe('embedded-search-result', () => {
       findSimilarButtons[4].click();
     });
     act(() => {
-      const inactiveHistory = testComponent.getByTestId('wigmix-inactive-product');
-      inactiveHistory.click();
+      const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
+      inactiveHistory[0].click();
     });
     expect(counter).toEqual(3);
 
     // Active history should be replaced
-    const activeHistoryImage = testComponent.getByTestId('wigmix-active-product-history-crop-image');
-    expect(activeHistoryImage).toBeDefined();
+    const activeHistoryImage = testComponent.queryAllByTestId('wigmix-active-product-history-crop-image');
+    expect(activeHistoryImage.length).toBeGreaterThan(0);
 
     // The previously used image should be moved to inactive history
     const inactiveHistoryImages = testComponent.queryAllByTestId('wigmix-inactive-product-history-image');
@@ -646,30 +652,5 @@ describe('embedded-search-result', () => {
     productCardImages.forEach((productCardImage, idx) => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
     });
-  });
-
-  it('should show image results successfully with cropped view', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
-      ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((_, handler) => {
-        handler(getStandardMultiSearchSuccessWithBoxResponse());
-      }),
-    }));
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <EmbeddedSearchResults textQuery='' imUrl='test-im-url' />
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
-
-    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
-    productCardImages.forEach((productCardImage, idx) => {
-      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
-    });
-    const croppedSearchHistoryImage = testComponent.getByTestId('wigmix-active-product-history-crop-image');
-    expect(croppedSearchHistoryImage).toBeDefined();
   });
 });
