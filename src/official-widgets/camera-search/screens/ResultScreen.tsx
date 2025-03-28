@@ -193,7 +193,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                             onFindSimilar(searchImage);
                           }
                         }}
-                        data-testid={`wigmix-${activeHistory?.image === searchImage.image ? 'active-product' : 'inactive-product'}`}
+                        data-testid={`wigmix-${activeHistory?.image === searchImage.image ? 'active-product-crop' : 'inactive-product-crop'}`}
                       >
                         <ImageCropThumbnail imageUrl={getFile(searchImage.image)}
                                             className={`size-20 ${activeHistory?.image === searchImage.image ? '' : 'opacity-50'}`}
@@ -363,7 +363,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                   }
                                 }}
                                 data-pw={`cs-previous-views-image-${index + 1}`}
-                                data-testid={`wigmix-${activeHistory?.image === searchImage.image ? 'active-product' : 'inactive-product'}`}
+                                data-testid={`wigmix-${activeHistory?.image === searchImage.image ? 'active-product-crop' : 'inactive-product-crop'}`}
                               >
                                 <ImageCropThumbnail imageUrl={getFile(searchImage.image)}
                                                     className={`size-24 ${activeHistory?.image === searchImage.image ? '' : 'opacity-50'}`}

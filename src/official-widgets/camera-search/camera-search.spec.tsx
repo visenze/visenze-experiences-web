@@ -7,7 +7,7 @@ import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 import {
   getStandardMultiSearchAutocompleteResponse,
   getStandardMultiSearchInvalidImageResponse,
-  getStandardMultiSearchSuccessResponse,
+  getStandardMultiSearchSuccessResponse, getStandardMultiSearchSuccessWithBoxResponse,
 } from '../../../mocks/responses';
 import getWidgetClient from '../../common/client/widget-client';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -900,5 +900,140 @@ describe('camera-search', () => {
     });
 
     expect(counter).toEqual(3);
+  });
+
+  it('uploading image should return cropped image', async () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchSuccessWithBoxResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <CameraSearch renderModalWithoutPortal={true} />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    const makeMockData = (files: File[]): any => ({
+      dataTransfer: {
+        files,
+        items: files.map((file) => ({
+          kind: 'file',
+          type: file.type,
+          getAsFile: () => file,
+        })),
+        types: ['Files'],
+      },
+    });
+
+    const fileInput = testComponent.getByTestId('wigmix-cs-upload-icon-dropzone');
+    const testFile = new File(['image-content'], 'test-file.png', { type: 'image/png' });
+
+    act(() => {
+      fireEvent.drop(fileInput, makeMockData([testFile]));
+    });
+
+    await waitFor(async () => {
+      // Advance time for the FileReader onload function to fire
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
+    }).catch(() => {
+      // Expected to encounter timeout error here; swallow the exception as the test can proceed harmlessly after this
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
+      findSimilarButtons[1].click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    const inactiveSearchCropImage = testComponent.queryAllByTestId('wigmix-inactive-product-crop');
+    expect(inactiveSearchCropImage.length).toBeGreaterThan(0);
+  });
+
+  it('clicking on gallery image should return cropped image', async () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchSuccessWithBoxResponse());
+      }),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <CameraSearch renderModalWithoutPortal={true} />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    act(() => {
+      const popupTriggerButton = testComponent.getByTestId('wigmix-popup-trigger-button');
+      popupTriggerButton.click();
+    });
+
+    act(() => {
+      const galleryImage = testComponent.getByTestId('wigmix-gallery-image-3');
+      galleryImage.click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
+      findSimilarButtons[1].click();
+    });
+
+    act(() => {
+      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
+      productCardImages.forEach((productCardImage) => {
+        fireEvent.load(productCardImage);
+      });
+    });
+
+    act(() => {
+      const inactiveSearchCropImage = testComponent.queryAllByTestId('wigmix-inactive-product-crop');
+      expect(inactiveSearchCropImage.length).toBeGreaterThan(0);
+      inactiveSearchCropImage[0].click();
+    });
+
+    const activeSearchCropImage = testComponent.getByTestId('wigmix-active-product-crop');
+    expect(activeSearchCropImage).toBeDefined();
   });
 });
