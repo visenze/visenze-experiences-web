@@ -267,7 +267,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           <div className='relative left-0 row-span-1 h-full w-1/3 overflow-y-scroll border-r-2 border-gray-300 px-8'>
             <div className='flex h-19/20 flex-col justify-between px-2'>
               <div
-                className='wigmix-reference-image-container flex w-full flex-col items-center text-center'>
+                className='wigmix-reference-image-container flex w-full items-center text-center'>
                 <img src={getFile(image)} className='wigmix-reference-image aspect-square rounded-md object-contain object-center md:h-full' data-pw='ss-reference-image'/>
               </div>
 
