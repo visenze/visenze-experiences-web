@@ -881,3 +881,289 @@ export const getStandardRecommendationSuccessResponse = (): ProductSearchRespons
     ],
   },
 });
+
+export const getStandardMultiSearchSuccessWithBoxResponse = (): ProductSearchResponseSuccess => ({
+  im_id: 'im_id1234567890',
+  reqid: '87654321',
+  status: 'OK',
+  method: 'product/multisearch',
+  page: 1,
+  limit: 20,
+  total: 1000,
+  product_types: [
+    { type: 'top', score: 0.704, box: [131, 223, 600, 852], attributes: {}, box_type: ''},
+    { type: 'bottom', score: 0.805, box: [131, 223, 750, 905], attributes: {}, box_type: ''},
+  ],
+  result: [
+    {
+      product_id: 'pid-1',
+      main_image_url: 'https://main-image-1',
+      data: {
+        product_url: 'https://product-1',
+        price: {
+          currency: 'USD',
+          value: '19.3',
+        },
+        title: 'Product Title 1',
+        brand: 'Product Brand 1',
+      },
+    },
+    {
+      product_id: 'pid-2',
+      main_image_url: 'https://main-image-2',
+      data: {
+        product_url: 'https://product-2',
+        price: {
+          currency: 'USD',
+          value: '7.0',
+        },
+        title: 'Product Title 2',
+        brand: 'Product Brand 2',
+      },
+    },
+    {
+      product_id: 'pid-3',
+      main_image_url: 'https://main-image-3',
+      data: {
+        product_url: 'https://product-3',
+        price: {
+          currency: 'USD',
+          value: '15.5',
+        },
+        title: 'Product Title 3',
+        brand: 'Product Brand 3',
+      },
+    },
+    {
+      product_id: 'pid-4',
+      main_image_url: 'https://main-image-4',
+      data: {
+        product_url: 'https://product-4',
+        price: {
+          currency: 'USD',
+          value: '14.8',
+        },
+        title: 'Product Title 4',
+        brand: 'Product Brand 4',
+      },
+    },
+    {
+      product_id: 'pid-5',
+      main_image_url: 'https://main-image-5',
+      data: {
+        product_url: 'https://product-5',
+        price: {
+          currency: 'USD',
+          value: '14.8',
+        },
+        title: 'Product Title 5',
+        brand: 'Product Brand 5',
+      },
+    },
+    {
+      product_id: 'pid-6',
+      main_image_url: 'https://main-image-6',
+      data: {
+        product_url: 'https://product-6',
+        price: {
+          currency: 'USD',
+          value: '20.6',
+        },
+        title: 'Product Title 6',
+        brand: 'Product Brand 6',
+      },
+    },
+    {
+      product_id: 'pid-7',
+      main_image_url: 'https://main-image-7',
+      data: {
+        product_url: 'https://product-7',
+        price: {
+          currency: 'USD',
+          value: '23.0',
+        },
+        title: 'Product Title 7',
+        brand: 'Product Brand 7',
+      },
+    },
+    {
+      product_id: 'pid-8',
+      main_image_url: 'https://main-image-8',
+      data: {
+        product_url: 'https://product-8',
+        price: {
+          currency: 'USD',
+          value: '18.9',
+        },
+        title: 'Product Title 8',
+        brand: 'Product Brand 8',
+      },
+    },
+    {
+      product_id: 'pid-9',
+      main_image_url: 'https://main-image-9',
+      data: {
+        product_url: 'https://product-9',
+        price: {
+          currency: 'USD',
+          value: '7.0',
+        },
+        title: 'Product Title 9',
+        brand: 'Product Brand 9',
+      },
+    },
+    {
+      product_id: 'pid-10',
+      main_image_url: 'https://main-image-10',
+      data: {
+        product_url: 'https://product-10',
+        price: {
+          currency: 'USD',
+          value: '14.8',
+        },
+        title: 'Product Title 10',
+        brand: 'Product Brand 10',
+      },
+    },
+    {
+      product_id: 'pid-11',
+      main_image_url: 'https://main-image-11',
+      data: {
+        product_url: 'https://product-11',
+        price: {
+          currency: 'USD',
+          value: '3.0',
+        },
+        title: 'Product Title 11',
+        brand: 'Product Brand 11',
+      },
+    },
+    {
+      product_id: 'pid-12',
+      main_image_url: 'https://main-image-12',
+      data: {
+        product_url: 'https://product-12',
+        price: {
+          currency: 'USD',
+          value: '12.5',
+        },
+        title: 'Product Title 12',
+        brand: 'Product Brand 12',
+      },
+    },
+    {
+      product_id: 'pid-13',
+      main_image_url: 'https://main-image-13',
+      data: {
+        product_url: 'https://product-13',
+        price: {
+          currency: 'USD',
+          value: '19.6',
+        },
+        title: 'Product Title 13',
+        brand: 'Product Brand 13',
+      },
+    },
+    {
+      product_id: 'pid-14',
+      main_image_url: 'https://main-image-14',
+      data: {
+        product_url: 'https://product-14',
+        price: {
+          currency: 'USD',
+          value: '7.1',
+        },
+        title: 'Product Title 14',
+        brand: 'Product Brand 14',
+      },
+    },
+    {
+      product_id: 'pid-15',
+      main_image_url: 'https://main-image-15',
+      data: {
+        product_url: 'https://product-15',
+        price: {
+          currency: 'USD',
+          value: '23.3',
+        },
+        title: 'Product Title 15',
+        brand: 'Product Brand 15',
+      },
+    },
+    {
+      product_id: 'pid-16',
+      main_image_url: 'https://main-image-16',
+      data: {
+        product_url: 'https://product-16',
+        price: {
+          currency: 'USD',
+          value: '21.1',
+        },
+        title: 'Product Title 16',
+        brand: 'Product Brand 16',
+      },
+    },
+    {
+      product_id: 'pid-17',
+      main_image_url: 'https://main-image-17',
+      data: {
+        product_url: 'https://product-17',
+        price: {
+          currency: 'USD',
+          value: '6.5',
+        },
+        title: 'Product Title 17',
+        brand: 'Product Brand 17',
+      },
+    },
+    {
+      product_id: 'pid-18',
+      main_image_url: 'https://main-image-18',
+      data: {
+        product_url: 'https://product-18',
+        price: {
+          currency: 'USD',
+          value: '2.0',
+        },
+        title: 'Product Title 18',
+        brand: 'Product Brand 18',
+      },
+    },
+    {
+      product_id: 'pid-19',
+      main_image_url: 'https://main-image-19',
+      data: {
+        product_url: 'https://product-19',
+        price: {
+          currency: 'USD',
+          value: '7.0',
+        },
+        title: 'Product Title 19',
+        brand: 'Product Brand 19',
+      },
+    },
+    {
+      product_id: 'pid-20',
+      main_image_url: 'https://main-image-20',
+      data: {
+        product_url: 'https://product-20',
+        price: {
+          currency: 'USD',
+          value: '26.7',
+        },
+        title: 'Product Title 20',
+        brand: 'Product Brand 20',
+      },
+    },
+  ],
+  catalog_fields_mapping: {
+    main_image_url: 'main_image_url',
+    product_url: 'product_url',
+    additional_image_url: 'additional_image_url',
+    price: 'price',
+    product_id: 'product_id',
+    category: 'category',
+    title: 'title',
+    brand: 'brand',
+  },
+});

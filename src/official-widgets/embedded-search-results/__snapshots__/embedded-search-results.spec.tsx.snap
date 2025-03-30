@@ -495,12 +495,55 @@ exports[`embedded-search-result should render successfully with query and im-url
                   </svg>
                 </div>
               </div>
-              <img
+              <div
                 class="aspect-square h-full rounded-none object-contain"
                 data-pw="esr-product-history-image-1"
-                data-testid="wigmix-active-product-history-image"
-                src="test-im-url"
-              />
+                data-testid="wigmix-active-product-history-crop-image"
+              >
+                <canvas
+                  class="cursor-pointer aspect-square h-full rounded-none object-contain opacity-100"
+                  data-src="test-im-url"
+                />
+              </div>
+            </div>
+            <div
+              class="relative h-32 flex-shrink-0 cursor-pointer overflow-hidden rounded-md opacity-60"
+              data-pw="esr-inactive-product"
+              data-testid="wigmix-inactive-product"
+            >
+              <div
+                class="absolute right-1 top-1 z-20 rounded-full bg-white"
+                data-pw="esr-inactive-product-close"
+                data-testid="wigmix-inactive-product-close"
+              >
+                <div
+                  class="size-4 text-black"
+                >
+                  <svg
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6 18 18 6M6 6l12 12"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div
+                class="aspect-square h-full rounded-none object-contain"
+                data-pw="esr-product-history-image-2"
+                data-testid="wigmix-inactive-product-history-crop-image"
+              >
+                <canvas
+                  class="cursor-pointer aspect-square h-full rounded-none object-contain opacity-100"
+                  data-src="test-im-url"
+                />
+              </div>
             </div>
           </div>
         </div>

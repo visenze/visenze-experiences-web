@@ -8,6 +8,7 @@ import {
   getStandardMultiSearchAutocompleteResponse,
   getStandardMultiSearchInvalidImageResponse,
   getStandardMultiSearchSuccessResponse,
+  getStandardMultiSearchSuccessWithBoxResponse,
 } from '../../../mocks/responses';
 import getWidgetClient from '../../common/client/widget-client';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -409,8 +410,6 @@ describe('camera-search', () => {
 
   // TODO test configurations
 
-  // TODO add test for successful image response with product types (should show cropped views)
-
   it('should render a successful response after uploading image in desktop view', async () => {
     // Due to usage of FileReader, need to simulate with real timer
     jest.useRealTimers();
@@ -420,7 +419,7 @@ describe('camera-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params.image instanceof File);
         // No need to check other params as they are the same as the URL counterpart
-        handler(getStandardMultiSearchSuccessResponse());
+        handler(getStandardMultiSearchSuccessWithBoxResponse());
       }),
       productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
         expect(params.image instanceof File);
@@ -482,6 +481,12 @@ describe('camera-search', () => {
     productCardImages.forEach((productCardImage, idx) => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
     });
+
+    // There should be one active and one inactive cropped image each
+    const activeSearchCropImage = testComponent.queryAllByTestId('wigmix-active-product-crop');
+    expect(activeSearchCropImage.length).toEqual(1);
+    const inactiveSearchCropImage = testComponent.queryAllByTestId('wigmix-inactive-product-crop');
+    expect(inactiveSearchCropImage.length).toEqual(1);
   });
 
   it('should show find similar results successfully', () => {
@@ -684,9 +689,13 @@ describe('camera-search', () => {
     let counter = 0;
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
         counter += 1;
-        handler(getStandardMultiSearchSuccessResponse());
+        if (params.im_url === 'https://cdn.visenze.com/images/widget-3.jpg') {
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
+        } else {
+          handler(getStandardMultiSearchSuccessResponse());
+        }
       }),
       productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
         handler(getStandardMultiSearchAutocompleteResponse());
@@ -725,20 +734,24 @@ describe('camera-search', () => {
     });
 
     act(() => {
-      const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
+      const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product-crop');
       inactiveHistory[0].click();
     });
 
-    expect(counter).toEqual(3);
+    expect(counter).toEqual(4);
   });
 
   it('should not re-trigger search when clicking on active history desktop and tablet view', () => {
     let counter = 0;
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
         counter += 1;
-        handler(getStandardMultiSearchSuccessResponse());
+        if (params.im_url === 'https://cdn.visenze.com/images/widget-3.jpg') {
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
+        } else {
+          handler(getStandardMultiSearchSuccessResponse());
+        }
       }),
       productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
         handler(getStandardMultiSearchAutocompleteResponse());
@@ -788,9 +801,13 @@ describe('camera-search', () => {
     let counter = 0;
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
         counter += 1;
-        handler(getStandardMultiSearchSuccessResponse());
+        if (params.im_url === 'https://cdn.visenze.com/images/widget-3.jpg') {
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
+        } else {
+          handler(getStandardMultiSearchSuccessResponse());
+        }
       }),
       productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
         handler(getStandardMultiSearchAutocompleteResponse());
@@ -827,7 +844,7 @@ describe('camera-search', () => {
 
     act(() => {
       const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
-      findSimilarButtons[1].click();
+      findSimilarButtons[4].click();
     });
 
     act(() => {
@@ -847,9 +864,13 @@ describe('camera-search', () => {
     let counter = 0;
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((_, handler) => {
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
         counter += 1;
-        handler(getStandardMultiSearchSuccessResponse());
+        if (params.im_url === 'https://cdn.visenze.com/images/widget-3.jpg') {
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
+        } else {
+          handler(getStandardMultiSearchSuccessResponse());
+        }
       }),
       productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
         handler(getStandardMultiSearchAutocompleteResponse());
@@ -895,10 +916,9 @@ describe('camera-search', () => {
     });
 
     act(() => {
-      const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
+      const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product-crop');
       inactiveHistory[0].click();
     });
-
-    expect(counter).toEqual(3);
+    expect(counter).toEqual(4);
   });
 });

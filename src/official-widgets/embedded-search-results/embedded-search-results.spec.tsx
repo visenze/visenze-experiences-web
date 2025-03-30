@@ -7,6 +7,7 @@ import {
   getStandardMultiSearchInvalidImageResponse,
   getStandardMultiSearchSuccessNoResultResponse,
   getStandardMultiSearchSuccessResponse,
+  getStandardMultiSearchSuccessWithBoxResponse,
   getStandardMultiSearchSystemErrorResponse,
 } from '../../../mocks/responses';
 import getWidgetClient from '../../common/client/widget-client';
@@ -87,7 +88,7 @@ describe('embedded-search-result', () => {
           return_query_sys_meta: true,
           return_query_temp_url: true,
         });
-        handler(getStandardMultiSearchSuccessResponse());
+        handler(getStandardMultiSearchSuccessWithBoxResponse());
       }),
     }));
     testComponent = render(
@@ -153,7 +154,7 @@ describe('embedded-search-result', () => {
           return_query_sys_meta: true,
           return_query_temp_url: true,
         });
-        handler(getStandardMultiSearchSuccessResponse());
+        handler(getStandardMultiSearchSuccessWithBoxResponse());
       }),
     }));
     testComponent = render(
@@ -166,6 +167,9 @@ describe('embedded-search-result', () => {
       </RootContext.Provider>,
     );
     // no need to test snapshot; it will be the same as query and im-url counterpart
+
+    const croppedSearchHistoryImage = testComponent.queryAllByTestId('wigmix-active-product-history-crop-image');
+    expect(croppedSearchHistoryImage.length).toEqual(1);
   });
 
   it('should fail render with invalid im-url', () => {
@@ -231,7 +235,7 @@ describe('embedded-search-result', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url') {
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else if (params.pid === 'pid-5') {
           const standardResponse = getStandardMultiSearchSuccessResponse();
           // Just scramble the results
@@ -276,7 +280,7 @@ describe('embedded-search-result', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url') {
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else if (params.pid === 'pid-5') {
           handler(getStandardMultiSearchSystemErrorResponse());
         } else {
@@ -318,7 +322,7 @@ describe('embedded-search-result', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url') {
           counter += 1;
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else if (params.pid === 'pid-5') {
           counter += 1;
           const standardResponse = getStandardMultiSearchSuccessResponse();
@@ -358,7 +362,7 @@ describe('embedded-search-result', () => {
     });
     expect(counter).toEqual(2);
     const inactiveHistoryCloseButton = testComponent.queryAllByTestId('wigmix-inactive-product-close');
-    expect(inactiveHistoryCloseButton.length).toEqual(0);
+    expect(inactiveHistoryCloseButton.length).toEqual(1);
   });
 
   it('should re-trigger search text query when clearing an active search history and there is text query', () => {
@@ -366,10 +370,12 @@ describe('embedded-search-result', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.q === 'testQuery') {
+        if (params.im_url === 'test-im-url') {
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
+        } else if (params.q === 'testQuery') {
           counter += 1;
+          handler(getStandardMultiSearchSuccessResponse());
         }
-        handler(getStandardMultiSearchSuccessResponse());
       }),
     }));
     testComponent = render(
@@ -393,14 +399,18 @@ describe('embedded-search-result', () => {
       const activeHistoryCloseButton = testComponent.getByTestId('wigmix-active-product-close');
       activeHistoryCloseButton.click();
     });
-    expect(counter).toBeGreaterThan(1);
+    expect(counter).toEqual(2);
   });
 
   it('should return no search input when clearing an active search history and there is no text query', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((_, handler) => {
-        handler(getStandardMultiSearchSuccessNoResultResponse());
+      productMultisearch: jest.fn().mockImplementation((params, handler) => {
+        if (params.im_url === 'test-im-url') {
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
+        } else {
+          handler(getStandardMultiSearchSuccessNoResultResponse());
+        }
       }),
     }));
     testComponent = render(
@@ -434,7 +444,7 @@ describe('embedded-search-result', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url') {
           counter += 1;
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else {
           // Fail; other parameter combinations are not expected here
           expect(true).toBeFalsy();
@@ -473,7 +483,7 @@ describe('embedded-search-result', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url') {
           counter += 1;
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else if (params.pid === 'pid-5') {
           counter += 1;
           const standardResponse = getStandardMultiSearchSuccessResponse();
@@ -508,8 +518,8 @@ describe('embedded-search-result', () => {
       findSimilarButtons[4].click();
     });
     act(() => {
-      const inactiveHistory = testComponent.getByTestId('wigmix-inactive-product');
-      inactiveHistory.click();
+      const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
+      inactiveHistory[0].click();
     });
     expect(counter).toEqual(3);
 
@@ -534,7 +544,7 @@ describe('embedded-search-result', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        const resp = getStandardMultiSearchSuccessResponse();
+        const resp = getStandardMultiSearchSuccessWithBoxResponse();
         if (params.filters) {
           expect(params.filters).toEqual(['brand:"brand_1"']);
           // Scramble the results
@@ -599,7 +609,7 @@ describe('embedded-search-result', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-im-url' && !params.q) {
           // Initial image search
-          handler(getStandardMultiSearchSuccessResponse());
+          handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else if (params.q === 'jeans') {
           // Text query
           expect(params).toEqual({
