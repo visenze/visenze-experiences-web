@@ -7,7 +7,8 @@ import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 import {
   getStandardMultiSearchAutocompleteResponse,
   getStandardMultiSearchInvalidImageResponse,
-  getStandardMultiSearchSuccessResponse, getStandardMultiSearchSuccessWithBoxResponse,
+  getStandardMultiSearchSuccessResponse,
+  getStandardMultiSearchSuccessWithBoxResponse,
 } from '../../../mocks/responses';
 import getWidgetClient from '../../common/client/widget-client';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -409,8 +410,6 @@ describe('camera-search', () => {
 
   // TODO test configurations
 
-  // TODO add test for successful image response with product types (should show cropped views)
-
   it('should render a successful response after uploading image in desktop view', async () => {
     // Due to usage of FileReader, need to simulate with real timer
     jest.useRealTimers();
@@ -478,24 +477,16 @@ describe('camera-search', () => {
       });
     });
 
-    act(() => {
-      const findSimilarButtons = testComponent.queryAllByTestId('wigmix-find-similar-button');
-      findSimilarButtons[1].click();
-    });
-
-    act(() => {
-      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
-      productCardImages.forEach((productCardImage) => {
-        fireEvent.load(productCardImage);
-      });
-    });
-
     const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
     productCardImages.forEach((productCardImage, idx) => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
     });
+
+    // There should be one active and one inactive cropped image each
+    const activeSearchCropImage = testComponent.queryAllByTestId('wigmix-active-product-crop');
+    expect(activeSearchCropImage.length).toEqual(1);
     const inactiveSearchCropImage = testComponent.queryAllByTestId('wigmix-inactive-product-crop');
-    expect(inactiveSearchCropImage.length).toBeGreaterThan(0);
+    expect(inactiveSearchCropImage.length).toEqual(1);
   });
 
   it('should show find similar results successfully', () => {
