@@ -168,7 +168,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
         if (res.status === 'OK' && isInitialSearch) {
           res.product_types?.map((pt, i) => {
             const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
-              id: imgOrPid.imgUrl,
+              id: `${imgOrPid.imgUrl}-${pt.box || []}`,
               imageUrl: imgOrPid.imgUrl,
               box: {
                 box: {

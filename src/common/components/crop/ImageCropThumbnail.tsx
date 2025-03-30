@@ -71,6 +71,7 @@ const ImageCropThumbnail: FC<ImageCropThumbnailProps> = ({ imageUrl, box, index,
   }, [getCroppedImage]);
 
   return <canvas ref={canvasRef}
+                 data-src={imageUrl}
                  className={cn(
                      'aspect-square cursor-pointer rounded-md',
                      selectedHotspot !== index && 'opacity-50',

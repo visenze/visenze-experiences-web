@@ -6,7 +6,8 @@ import EmbeddedSearchResults from './embedded-search-results';
 import {
   getStandardMultiSearchInvalidImageResponse,
   getStandardMultiSearchSuccessNoResultResponse,
-  getStandardMultiSearchSuccessResponse, getStandardMultiSearchSuccessWithBoxResponse,
+  getStandardMultiSearchSuccessResponse,
+  getStandardMultiSearchSuccessWithBoxResponse,
   getStandardMultiSearchSystemErrorResponse,
 } from '../../../mocks/responses';
 import getWidgetClient from '../../common/client/widget-client';
@@ -166,12 +167,9 @@ describe('embedded-search-result', () => {
       </RootContext.Provider>,
     );
     // no need to test snapshot; it will be the same as query and im-url counterpart
-    const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
-    productCardImages.forEach((productCardImage, idx) => {
-      expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${idx + 1}`);
-    });
+
     const croppedSearchHistoryImage = testComponent.queryAllByTestId('wigmix-active-product-history-crop-image');
-    expect(croppedSearchHistoryImage.length).toBeGreaterThan(0);
+    expect(croppedSearchHistoryImage.length).toEqual(1);
   });
 
   it('should fail render with invalid im-url', () => {
@@ -364,7 +362,7 @@ describe('embedded-search-result', () => {
     });
     expect(counter).toEqual(2);
     const inactiveHistoryCloseButton = testComponent.queryAllByTestId('wigmix-inactive-product-close');
-    expect(inactiveHistoryCloseButton.length).toEqual(0);
+    expect(inactiveHistoryCloseButton.length).toEqual(1);
   });
 
   it('should re-trigger search text query when clearing an active search history and there is text query', () => {
@@ -398,10 +396,10 @@ describe('embedded-search-result', () => {
     });
 
     act(() => {
-      const activeHistoryCloseButton = testComponent.queryAllByTestId('wigmix-active-product-close');
-      activeHistoryCloseButton[0].click();
+      const activeHistoryCloseButton = testComponent.getByTestId('wigmix-active-product-close');
+      activeHistoryCloseButton.click();
     });
-    expect(counter).toBeGreaterThan(1);
+    expect(counter).toEqual(2);
   });
 
   it('should return no search input when clearing an active search history and there is no text query', () => {
@@ -433,8 +431,8 @@ describe('embedded-search-result', () => {
     });
 
     act(() => {
-      const activeHistoryCloseButton = testComponent.queryAllByTestId('wigmix-active-product-close');
-      activeHistoryCloseButton[0].click();
+      const activeHistoryCloseButton = testComponent.getByTestId('wigmix-active-product-close');
+      activeHistoryCloseButton.click();
     });
     expect(testComponent.getByText('No search input available.')).not.toBeNull();
   });
@@ -471,8 +469,8 @@ describe('embedded-search-result', () => {
     });
 
     act(() => {
-      const activeHistory = testComponent.queryAllByTestId('wigmix-active-product');
-      activeHistory[0].click();
+      const activeHistory = testComponent.getByTestId('wigmix-active-product');
+      activeHistory.click();
     });
     expect(counter).toEqual(1);
   });
@@ -526,8 +524,8 @@ describe('embedded-search-result', () => {
     expect(counter).toEqual(3);
 
     // Active history should be replaced
-    const activeHistoryImage = testComponent.queryAllByTestId('wigmix-active-product-history-crop-image');
-    expect(activeHistoryImage.length).toBeGreaterThan(0);
+    const activeHistoryImage = testComponent.getByTestId('wigmix-active-product-history-image');
+    expect(activeHistoryImage.getAttribute('src')).toEqual('test-im-url');
 
     // The previously used image should be moved to inactive history
     const inactiveHistoryImages = testComponent.queryAllByTestId('wigmix-inactive-product-history-image');

@@ -84,8 +84,8 @@ const SearchHistory = ({
                     data-testid={`wigmix-${entry.id === getActiveHistoryId() ? 'active-product-history-crop-image' : 'inactive-product-history-crop-image'}`}
                   >
                     <ImageCropThumbnail imageUrl={entry.imageUrl ?? ''}
-                                                 className='aspect-square h-full rounded-none object-contain opacity-100'
-                                                 box={flattenBox(entry.box.box)} index={entry.box.index} />
+                                        className='aspect-square h-full rounded-none object-contain opacity-100'
+                                        box={flattenBox(entry.box.box)} index={entry.box.index} />
                 </div>
                   : <img className='aspect-square h-full rounded-none object-contain'
                          src={entry.imageUrl ?? ''}
