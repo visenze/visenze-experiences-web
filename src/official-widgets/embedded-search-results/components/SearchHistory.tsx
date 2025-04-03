@@ -60,7 +60,8 @@ const SearchHistory = ({
                   entry.id === getActiveHistoryId() ? 'border border-gray-500' : 'opacity-60',
                 )}
                 onClick={() => {
-                  if (entry.id !== getActiveHistoryId()) {
+                  if (entry.id !== getActiveHistoryId()
+                    || ((entry.box && activeHistory?.box) && entry.box !== activeHistory.box)) {
                     onHistorySelect(entry);
                   }
                 }}
