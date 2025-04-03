@@ -18,14 +18,14 @@ import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImageOrPid } from '../../common/types/image';
 import { isImageUrl, isPid } from '../../common/types/image';
-import type { ProcessedProduct } from '../../common/types/product';
+import type { BoxData, ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import {
   getFacets,
   getFilterQueries,
   getFlattenProducts,
   getProductGridCssClasses,
-  getProductGridCssConfig,
+  getProductGridCssConfig, parseBox,
 } from '../../common/utils';
 
 interface EmbeddedSearchResultProps {
@@ -123,7 +123,14 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     setActiveHistory(entries[0]);
   };
 
-  const multisearchWithSearchBarDetails = (imgOrPid?: SearchImageOrPid, text?: string, currentPage?: number, shouldResetFacets = true, isInitialSearch = false): void => {
+  const multisearchWithSearchBarDetails = (
+    imgOrPid?: SearchImageOrPid,
+    text?: string,
+    currentPage?: number,
+    shouldResetFacets = true,
+    isInitialSearch = false,
+    boxData?: BoxData,
+  ): void => {
     if (currentPage && currentPage > 1) {
       setIsLoadingMore(true);
     } else {
@@ -155,6 +162,9 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       } else if (isImageUrl(imgOrPid)) {
         params['im_url'] = imgOrPid.imgUrl;
       }
+    }
+    if (boxData) {
+      params['box'] = parseBox(boxData.box);
     }
     params['limit'] = 24; // hardcode for now
 
@@ -189,7 +199,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
           });
         } else {
           const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
-            id: imgOrPid.imgUrl,
+            id: `${imgOrPid.imgUrl}${boxData ? `-${parseBox(boxData.box)}` : ''}`,
             imageUrl: imgOrPid.imgUrl,
           };
 
@@ -206,7 +216,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
             }
             return null;
           });
-
           if (!isProductInHistory) {
             addToHistory(newEntries);
           }
@@ -222,7 +231,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       pid: entry.pid || '',
     };
     setImage(imgUrl);
-    multisearchWithSearchBarDetails(imgUrl, query, 1);
+    if (entry.box) {
+      multisearchWithSearchBarDetails(imgUrl, query, 1, true, false, entry.box);
+    } else {
+      multisearchWithSearchBarDetails(imgUrl, query, 1);
+    }
     setIsLoading(true);
   };
 
