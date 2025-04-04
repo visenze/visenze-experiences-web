@@ -318,7 +318,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   useEffect(() => {
     if (!isLoading) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      multisearchWithSearchBarDetails(image, query, 1, false);
+      if (activeHistory?.box) {
+        multisearchWithSearchBarDetails(image, query, 1, false, false, activeHistory.box);
+      } else {
+        multisearchWithSearchBarDetails(image, query, 1, false);
+      }
     }
   }, [selectedFilters]);
 
