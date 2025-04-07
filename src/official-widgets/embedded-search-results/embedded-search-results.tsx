@@ -57,6 +57,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
   const [image, setImage] = useState<SearchImageOrPid | undefined>();
+  const [imageBoxData, setImageBoxData] = useState<BoxData | undefined>();
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [activeHistory, setActiveHistory] = useState<SearchHistoryEntry>();
   const [, setPage] = useState(1);
@@ -121,6 +122,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     setSearchHistory((prevHistory) => [...entries, ...prevHistory].slice(0, MAX_HISTORY_ITEMS));
 
     setActiveHistory(entries[0]);
+    setImage({
+      imgUrl: entries[0].imageUrl,
+      pid: entries[0]?.pid,
+    });
+    setImageBoxData(entries[0]?.box);
   };
 
   const multisearchWithSearchBarDetails = (
@@ -232,6 +238,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     };
     setImage(imgUrl);
     if (entry.box) {
+      setImageBoxData(entry.box);
       multisearchWithSearchBarDetails(imgUrl, query, 1, true, false, entry.box);
     } else {
       multisearchWithSearchBarDetails(imgUrl, query, 1);
@@ -245,6 +252,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       searchFromHistory(entry);
     } else {
       setImage(undefined);
+      setImageBoxData(undefined);
       setProductResults([]);
       setActiveHistory(undefined);
       setIsLoading(true);
@@ -257,6 +265,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     setSearchHistory((prev) => prev.filter((hist) => hist.id !== entry.id));
     if (isActiveHistoryRemoved) {
       setImage(undefined);
+      setImageBoxData(undefined);
       if (query) {
         multisearchWithSearchBarDetails(undefined, query, 1);
       } else {
@@ -275,7 +284,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       document.dispatchEvent(event);
     }
     setImage(imgOrPid);
-    multisearchWithSearchBarDetails(imgOrPid, query, 1);
+    if (imageBoxData) {
+      multisearchWithSearchBarDetails(imgOrPid, query, 1, true, false, imageBoxData);
+    } else {
+      multisearchWithSearchBarDetails(imgOrPid, query, 1);
+    }
     setIsLoading(true);
   };
 
