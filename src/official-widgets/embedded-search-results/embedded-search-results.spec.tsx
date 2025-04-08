@@ -617,6 +617,7 @@ describe('embedded-search-result', () => {
             facets_show_count: true,
             q: 'jeans',
             im_url: 'test-im-url',
+            box: '131,223,600,852',
             page: 1,
             limit: 24,
             return_fields_mapping: true,
