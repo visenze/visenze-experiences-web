@@ -525,7 +525,7 @@ describe('embedded-search-result', () => {
 
     // Active history should be replaced
     const activeHistoryImage = testComponent.getByTestId('wigmix-active-product-history-crop-image');
-    expect(activeHistoryImage).toBeTruthy();
+    expect(activeHistoryImage.querySelector('canvas')!.getAttribute('data-src')).toEqual('test-im-url');
 
     // The previously used image should be moved to inactive history
     const inactiveHistoryImages = testComponent.queryAllByTestId('wigmix-inactive-product-history-image');
