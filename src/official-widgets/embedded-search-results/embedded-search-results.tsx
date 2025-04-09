@@ -310,7 +310,11 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
           if (hasNextPage) {
             setPage((prevPage) => {
               const nextPage = prevPage + 1;
-              multisearchWithSearchBarDetails(image, query, nextPage, false);
+              if (imageBoxData) {
+                multisearchWithSearchBarDetails(image, query, nextPage, false, false, imageBoxData);
+              } else {
+                multisearchWithSearchBarDetails(image, query, nextPage, false);
+              }
               return nextPage;
             });
           }
