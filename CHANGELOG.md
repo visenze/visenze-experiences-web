@@ -30,6 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+<!-- BEGIN visenze-experiences-web 1.0.3 -->
+## [1.0.3](https://github.com/visenze/visenze-experiences-web/compare/1.0.2...1.0.3) - 2025-04-11
+
+### Changed
+
+- embedded-search-results: Display the different detected boxes for initial image query
+<!-- END visenze-experiences-web 1.0.3 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.2 -->
 ## [1.0.2](https://github.com/visenze/visenze-experiences-web/compare/1.0.1...1.0.2) - 2025-03-26
 
