@@ -241,6 +241,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       setImageBoxData(entry.box);
       multisearchWithSearchBarDetails(imgUrl, query, 1, true, false, entry.box);
     } else {
+      setImageBoxData(undefined);
       multisearchWithSearchBarDetails(imgUrl, query, 1);
     }
     setIsLoading(true);
@@ -283,12 +284,12 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       const event = new CustomEvent('wigmix_internal_search_bar_append_image', { detail: { imgUrl: imgOrPid.imgUrl } });
       document.dispatchEvent(event);
     }
-    setImage(imgOrPid);
-    if (imageBoxData) {
+    if (image === imgOrPid && imageBoxData) {
       multisearchWithSearchBarDetails(imgOrPid, query, 1, true, false, imageBoxData);
     } else {
       multisearchWithSearchBarDetails(imgOrPid, query, 1);
     }
+    setImage(imgOrPid);
     setIsLoading(true);
   };
 
