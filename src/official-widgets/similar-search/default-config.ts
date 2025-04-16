@@ -8,6 +8,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: 'Previous views',
     errorDescription: 'Sorry, something went wrong',
     back: 'Back',
+    triggerCTA: 'Find Similar',
   },
 };
 
@@ -183,6 +184,13 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       color: '#000000',
       colorDark: '#FFFFFF',
       hide: false,
+      triggerButton: {
+        backgroundColor: '#FFFFFF',
+        backgroundColorDark: '#000000',
+        fontColor: '#000000',
+        fontColorDark: '#FFFFFF',
+        showText: false,
+      },
     },
   },
 };

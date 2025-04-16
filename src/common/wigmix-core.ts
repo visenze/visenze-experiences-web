@@ -812,7 +812,15 @@ export interface WidgetConfig {
          * @since 1.0.0
          */
         hide: boolean;
+        /**
+         * Configuration of the the button that triggers the popup.
+         *
+         *
+         * @since 1.0.1
+         */
+        triggerButton: ColoredInterface & {showText: boolean}; 
       };
+      
     };
     /**
      * Buttons configuration.
