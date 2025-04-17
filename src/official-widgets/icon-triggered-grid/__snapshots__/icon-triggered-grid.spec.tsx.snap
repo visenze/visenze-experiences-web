@@ -14,9 +14,10 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
     tabindex="0"
   />
   <div>
-    <div
-      class="wigmix-popup-trigger-button w-fit cursor-pointer"
+    <button
+      class="wigmix-popup-trigger-button flex items-center gap-2 p-1 rounded-md border"
       data-testid="wigmix-popup-trigger-button"
+      style="border-width: 0px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -36,17 +37,17 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
           />
         </svg>
       </div>
-    </div>
+    </button>
   </div>
   <div
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-center"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -114,9 +115,10 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
     tabindex="0"
   />
   <div>
-    <div
-      class="wigmix-popup-trigger-button w-fit cursor-pointer"
+    <button
+      class="wigmix-popup-trigger-button flex items-center gap-2 p-1 rounded-md border"
       data-testid="wigmix-popup-trigger-button"
+      style="border-width: 0px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -136,17 +138,17 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
           />
         </svg>
       </div>
-    </div>
+    </button>
   </div>
   <div
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay ReactModal__Overlay--after-open ReactModal__Overlay--before-close wigmix-modal-overlay wigmix-modal-position-center"
+      class="ReactModal__Overlay ReactModal__Overlay--after-open ReactModal__Overlay--before-close wigmix-modal-overlay wigmix-modal-position-right"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content ReactModal__Content--after-open ReactModal__Content--before-close wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-center"
+        class="ReactModal__Content ReactModal__Content--after-open ReactModal__Content--before-close wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -204,15 +206,16 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
 
 exports[`icon-triggered-grid should render a custom icon if configured as such 1`] = `
 <DocumentFragment>
-  <div
-    class="wigmix-popup-trigger-button w-fit cursor-pointer"
+  <button
+    class="wigmix-popup-trigger-button flex items-center gap-2 p-1 rounded-md border"
     data-testid="wigmix-popup-trigger-button"
+    style="border-width: 0px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
   >
     <div
       class="wigmix-popup-trigger-icon custom"
       style="height: 24px; width: 24px; background-image: url(https://trigger-icon); background-repeat: no-repeat; background-position: center; background-size: contain;"
     />
-  </div>
+  </button>
 </DocumentFragment>
 `;
 
@@ -228,9 +231,10 @@ exports[`icon-triggered-grid should render a successful response with default co
     tabindex="0"
   />
   <div>
-    <div
-      class="wigmix-popup-trigger-button w-fit cursor-pointer"
+    <button
+      class="wigmix-popup-trigger-button flex items-center gap-2 p-1 rounded-md border"
       data-testid="wigmix-popup-trigger-button"
+      style="border-width: 0px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -250,17 +254,17 @@ exports[`icon-triggered-grid should render a successful response with default co
           />
         </svg>
       </div>
-    </div>
+    </button>
   </div>
   <div
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-center"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -1260,9 +1264,10 @@ exports[`icon-triggered-grid should render a successful response with default co
     tabindex="0"
   />
   <div>
-    <div
-      class="wigmix-popup-trigger-button w-fit cursor-pointer"
+    <button
+      class="wigmix-popup-trigger-button flex items-center gap-2 p-1 rounded-md border"
       data-testid="wigmix-popup-trigger-button"
+      style="border-width: 0px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -1282,17 +1287,17 @@ exports[`icon-triggered-grid should render a successful response with default co
           />
         </svg>
       </div>
-    </div>
+    </button>
   </div>
   <div
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-center"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-right"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -2341,9 +2346,10 @@ exports[`icon-triggered-grid should render a successful response with some custo
     tabindex="0"
   />
   <div>
-    <div
-      class="wigmix-popup-trigger-button w-fit cursor-pointer"
+    <button
+      class="wigmix-popup-trigger-button flex items-center gap-2 p-1 rounded-md border"
       data-testid="wigmix-popup-trigger-button"
+      style="border-width: 0px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -2363,17 +2369,17 @@ exports[`icon-triggered-grid should render a successful response with some custo
           />
         </svg>
       </div>
-    </div>
+    </button>
   </div>
   <div
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-center"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -3357,9 +3363,10 @@ exports[`icon-triggered-grid should render a successful response with some custo
 
 exports[`icon-triggered-grid should render the standard icon 1`] = `
 <DocumentFragment>
-  <div
-    class="wigmix-popup-trigger-button w-fit cursor-pointer"
+  <button
+    class="wigmix-popup-trigger-button flex items-center gap-2 p-1 rounded-md border"
     data-testid="wigmix-popup-trigger-button"
+    style="border-width: 0px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
   >
     <div
       class="wigmix-popup-trigger-icon default size-6"
@@ -3379,6 +3386,6 @@ exports[`icon-triggered-grid should render the standard icon 1`] = `
         />
       </svg>
     </div>
-  </div>
+  </button>
 </DocumentFragment>
 `;

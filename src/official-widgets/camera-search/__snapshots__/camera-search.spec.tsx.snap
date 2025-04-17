@@ -61,11 +61,11 @@ exports[`camera-search should render a successful response with default config i
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-center"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -1724,11 +1724,11 @@ exports[`camera-search should render a successful response with default config i
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-center"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-right"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -3058,11 +3058,11 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-center h-fit"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right h-fit"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -3315,11 +3315,11 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-center"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-right"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
