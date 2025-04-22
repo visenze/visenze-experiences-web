@@ -8,6 +8,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: 'Previous views',
     errorDescription: 'Sorry, something went wrong',
     back: 'Back',
+    triggerCTA: 'Find Similar',
   },
 };
 
@@ -180,8 +181,11 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   popup: {
     position: 'right',
     triggerIcon: {
+      layout: 'ICON',
       color: '#000000',
       colorDark: '#FFFFFF',
+      backgroundColor: '#FFFFFF',
+      backgroundColorDark: '#000000',
       hide: false,
     },
   },

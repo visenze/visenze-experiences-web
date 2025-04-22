@@ -6,6 +6,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage1: 'Let\'s get started',
     openingMessage2: 'Tell us about what your styling needs and we will help you find the perfect item for you',
     chatBoxPlaceholder: 'Type your message',
+    triggerCTA: 'Style Assistant',
   },
 };
 
@@ -168,8 +169,11 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   popup: {
     position: 'center',
     triggerIcon: {
+      layout: 'ICON',
       color: '#000000',
       colorDark: '#FFFFFF',
+      backgroundColor: '#FFFFFF',
+      backgroundColorDark: '#000000',
       hide: false,
     },
   },

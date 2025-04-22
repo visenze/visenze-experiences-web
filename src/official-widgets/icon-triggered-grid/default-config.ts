@@ -5,6 +5,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   en: {
     'widgetTitle': 'You may also like',
     'errorDescription': 'Sorry, something went wrong',
+    'triggerCTA': 'Find Similar',
   },
 };
 
@@ -167,8 +168,11 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   popup: {
     position: 'center',
     triggerIcon: {
+      layout: 'ICON',
       color: '#000000',
       colorDark: '#FFFFFF',
+      backgroundColor: '#FFFFFF',
+      backgroundColorDark: '#000000',
       hide: false,
     },
   },
