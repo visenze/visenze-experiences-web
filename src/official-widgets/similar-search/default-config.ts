@@ -9,6 +9,62 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Sorry, something went wrong',
     back: 'Back',
   },
+  es: {
+    widgetTitle: 'También te puede gustar',
+    searchBarPlaceholder: 'Escribe aquí para refinar tus resultados...',
+    previousViews: 'Vistas previas',
+    errorDescription: 'Lo sentimos, algo salió mal',
+    back: 'Atrás',
+  },
+  fr: {
+    widgetTitle: 'Vous aimerez peut-être aussi',
+    searchBarPlaceholder: 'Tapez ici pour affiner vos résultats...',
+    previousViews: 'Vues précédentes',
+    errorDescription: 'Désolé, quelque chose s\'est mal passé',
+    back: 'Retour',
+  },
+  pt: {
+    widgetTitle: 'Você também pode gostar',
+    searchBarPlaceholder: 'Digite aqui para refinar seus resultados...',
+    previousViews: 'Visualizações anteriores',
+    errorDescription: 'Desculpe, algo deu errado',
+    back: 'Voltar',
+  },
+  de: {
+    widgetTitle: 'Das könnte dir auch gefallen',
+    searchBarPlaceholder: 'Gib hier ein, um deine Ergebnisse zu verfeinern...',
+    previousViews: 'Vorherige Ansichten',
+    errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
+    back: 'Zurück',
+  },
+  it: {
+    widgetTitle: 'Potrebbe piacerti anche',
+    searchBarPlaceholder: 'Digita qui per affinare i tuoi risultati...',
+    previousViews: 'Visualizzazioni precedenti',
+    errorDescription: 'Spiacenti, qualcosa è andato storto',
+    back: 'Indietro',
+  },
+  ko: {
+    widgetTitle: '이 상품도 좋아하실 거예요',
+    searchBarPlaceholder: '결과를 구체화하려면 여기에 입력하세요...',
+    previousViews: '이전 조회',
+    errorDescription: '죄송합니다. 오류가 발생했습니다',
+    back: '뒤로',
+  },
+  ja: {
+    widgetTitle: 'こちらもおすすめです',
+    searchBarPlaceholder: '検索結果を絞り込むには、ここに टाइपしてください...',
+    previousViews: '以前の表示',
+    errorDescription: '申し訳ありません。問題が発生しました',
+    back: '戻る',
+  },
+  th: {
+    widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
+    searchBarPlaceholder: 'พิมพ์ที่นี่เพื่อปรับแต่งผลลัพธ์ของคุณ...',
+    previousViews: 'การดูครั้งก่อน',
+    errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
+    back: 'กลับ',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {

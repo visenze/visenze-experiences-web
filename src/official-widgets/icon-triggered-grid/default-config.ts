@@ -6,6 +6,38 @@ export const DEFAULT_TEXTS: LanguagePack = {
     'widgetTitle': 'You may also like',
     'errorDescription': 'Sorry, something went wrong',
   },
+  es: {
+    'widgetTitle': 'También te puede gustar',
+    'errorDescription': 'Lo sentimos, algo salió mal',
+  },
+  fr: {
+    'widgetTitle': 'Vous aimerez peut-être aussi',
+    'errorDescription': 'Désolé, quelque chose s\'est mal passé',
+  },
+  pt: {
+    'widgetTitle': 'Você também pode gostar',
+    'errorDescription': 'Desculpe, algo deu errado',
+  },
+  de: {
+    'widgetTitle': 'Das könnte dir auch gefallen',
+    'errorDescription': 'Entschuldigung, etwas ist schiefgelaufen',
+  },
+  it: {
+    'widgetTitle': 'Potrebbe piacerti anche',
+    'errorDescription': 'Spiacenti, qualcosa è andato storto',
+  },
+  ko: {
+    'widgetTitle': '이 상품도 좋아하실 거예요',
+    'errorDescription': '죄송합니다. 오류가 발생했습니다',
+  },
+  ja: {
+    'widgetTitle': 'こちらもおすすめです',
+    'errorDescription': '申し訳ありません。問題が発生しました',
+  },
+  th: {
+    'widgetTitle': 'คุณอาจจะชอบสิ่งนี้ด้วย',
+    'errorDescription': 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
