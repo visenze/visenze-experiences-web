@@ -5,9 +5,9 @@ import ResultScreen from './screens/ResultScreen';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
+import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
-import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImageOrPid } from '../../common/types/image';
@@ -231,42 +231,18 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl, renderModalWithoutPortal
 
   return (
     <>
-      {!customizations.popup?.triggerIcon?.hide && (
-        <button
-          className='wigmix-popup-trigger-button flex items-center gap-2 p-1 rounded-md border'
-          style={{
-            borderWidth: '0px',
-            backgroundColor: darkMode
-              ? customizations.popup?.triggerIcon?.triggerButton?.backgroundColorDark || 'transparent'
-              : customizations.popup?.triggerIcon?.triggerButton?.backgroundColor || 'transparent',
-            color: darkMode
-              ? customizations.popup?.triggerIcon?.triggerButton?.fontColorDark || 'inherit'
-              : customizations.popup?.triggerIcon?.triggerButton?.fontColor || 'inherit',
-          }}
-          data-testid='wigmix-popup-trigger-button'
-          onClick={onPopupIconClick}
-        >
-          {customizations.popup?.triggerIcon?.url ? (
-            <CustomizableIcon
-              height={24}
-              width={24}
-              url={customizations.popup.triggerIcon.url}
-              color={darkMode
-                ? customizations.popup?.triggerIcon?.colorDark || ''
-                : customizations.popup?.triggerIcon?.color || ''}
-              className='wigmix-popup-trigger-icon custom'
-            />
-          ) : (
-            <MagnifyingGlassIcon
-              color={darkMode
-                ? customizations.popup?.triggerIcon?.colorDark || ''
-                : customizations.popup?.triggerIcon?.color || ''}
-              className='wigmix-popup-trigger-icon default size-6'
-            />
-          )}
-          { customizations.popup?.triggerIcon?.triggerButton?.showText && (<span> { intl.formatMessage({ id: 'triggerCTA' }) }</span>) }
-        </button>
-      )}
+      <PopupTriggerButton config={customizations.popup}
+                          text={intl.formatMessage({ id: 'triggerCTA' })}
+                          darkMode={darkMode}
+                          onClick={onPopupIconClick}
+                          defaultIcon={
+                            <MagnifyingGlassIcon
+                                color={darkMode
+                                    ? customizations.popup?.triggerIcon?.colorDark || ''
+                                    : customizations.popup?.triggerIcon?.color || ''}
+                                className='wigmix-popup-trigger-icon default size-6'
+                            />
+                          } />
 
       <ViSenzeModal
         open={dialogVisible}

@@ -4,15 +4,16 @@ exports[`camera-search should not render the icon if configured as such 1`] = `<
 
 exports[`camera-search should render a custom icon if configured as such 1`] = `
 <DocumentFragment>
-  <div
-    class="wigmix-popup-trigger-button w-fit cursor-pointer"
+  <button
+    class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
     data-testid="wigmix-popup-trigger-button"
+    style="background-color: transparent;"
   >
     <div
       class="wigmix-popup-trigger-icon custom"
       style="height: 24px; width: 24px; background-image: url(https://trigger-icon); background-repeat: no-repeat; background-position: center; background-size: contain;"
     />
-  </div>
+  </button>
 </DocumentFragment>
 `;
 
@@ -28,9 +29,10 @@ exports[`camera-search should render a successful response with default config i
     tabindex="0"
   />
   <div>
-    <div
-      class="wigmix-popup-trigger-button w-fit cursor-pointer"
+    <button
+      class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
+      style="background-color: transparent; color: rgb(0, 0, 0);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -55,17 +57,17 @@ exports[`camera-search should render a successful response with default config i
           />
         </svg>
       </div>
-    </div>
+    </button>
   </div>
   <div
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-center"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -1691,9 +1693,10 @@ exports[`camera-search should render a successful response with default config i
     tabindex="0"
   />
   <div>
-    <div
-      class="wigmix-popup-trigger-button w-fit cursor-pointer"
+    <button
+      class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
+      style="background-color: transparent; color: rgb(0, 0, 0);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -1718,17 +1721,17 @@ exports[`camera-search should render a successful response with default config i
           />
         </svg>
       </div>
-    </div>
+    </button>
   </div>
   <div
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-right"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-center"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -3025,9 +3028,10 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
     tabindex="0"
   />
   <div>
-    <div
-      class="wigmix-popup-trigger-button w-fit cursor-pointer"
+    <button
+      class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
+      style="background-color: transparent; color: rgb(0, 0, 0);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -3052,17 +3056,17 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
           />
         </svg>
       </div>
-    </div>
+    </button>
   </div>
   <div
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right h-fit"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-center h-fit"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -3282,9 +3286,10 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
     tabindex="0"
   />
   <div>
-    <div
-      class="wigmix-popup-trigger-button w-fit cursor-pointer"
+    <button
+      class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
+      style="background-color: transparent; color: rgb(0, 0, 0);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -3309,17 +3314,17 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
           />
         </svg>
       </div>
-    </div>
+    </button>
   </div>
   <div
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-center"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-right"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-center"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -3529,9 +3534,10 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
 
 exports[`camera-search should render the standard icon 1`] = `
 <DocumentFragment>
-  <div
-    class="wigmix-popup-trigger-button w-fit cursor-pointer"
+  <button
+    class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
     data-testid="wigmix-popup-trigger-button"
+    style="background-color: transparent; color: rgb(0, 0, 0);"
   >
     <div
       class="wigmix-popup-trigger-icon default size-6"
@@ -3556,6 +3562,6 @@ exports[`camera-search should render the standard icon 1`] = `
         />
       </svg>
     </div>
-  </div>
+  </button>
 </DocumentFragment>
 `;

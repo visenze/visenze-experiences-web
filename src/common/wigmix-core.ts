@@ -800,27 +800,45 @@ export interface WidgetConfig {
       /**
        * Configurations for the icon that triggers the popup.
        *
+       * Since v1.0.4, this behaves more like a full-fledged button rather than just an icon,
+       * however the field name is kept as such for backward compatibility.
+       *
        * @since 1.0.0
        */
       triggerIcon: Icon & {
         /**
-         * Whether to hide the trigger icon.
+         * Whether to hide the trigger button.
          *
-         * Without the provided trigger icon, the only way to open the widget popup is
+         * Without the provided trigger button, the only way to open the widget popup is
          * to use the openWidget function of the widget client.
          *
          * @since 1.0.0
          */
         hide: boolean;
         /**
-         * Configuration of the the button that triggers the popup.
+         * Layout of icon and text contents of the trigger button.
          *
+         * - ICON: icon only
+         * - TEXT: text only
+         * - ICON_TEXT: icon, followed by text
+         * - TEXT_ICON: text, followed by icon
          *
-         * @since 1.0.1
+         * @since 1.0.4
          */
-        triggerButton: ColoredInterface & {showText: boolean}; 
+        layout: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
+        /**
+         * Background color of the trigger button.
+         *
+         * @since 1.0.4
+         */
+        backgroundColor?: string;
+        /**
+         * Background color of the trigger button in dark mode.
+         *
+         * @since 1.0.4
+         */
+        backgroundColorDark?: string;
       };
-      
     };
     /**
      * Buttons configuration.

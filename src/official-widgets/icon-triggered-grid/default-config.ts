@@ -166,18 +166,14 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     darkModeDefault: false,
   },
   popup: {
-    position: 'right',
+    position: 'center',
     triggerIcon: {
+      layout: 'ICON',
       color: '#000000',
       colorDark: '#FFFFFF',
+      backgroundColor: '#FFFFFF',
+      backgroundColorDark: '#000000',
       hide: false,
-      triggerButton: {
-        backgroundColor: '#FFFFFF',
-        backgroundColorDark: '#000000',
-        fontColor: '#000000',
-        fontColorDark: '#FFFFFF',
-        showText: false,
-      },
     },
   },
 };
