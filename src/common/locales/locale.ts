@@ -33,6 +33,9 @@ export const getLocaleTexts = (localeParam: string,
   return finalTexts;
 };
 
-export const getCurrencyFormatter = (locale: string, currency: string): Intl.NumberFormat => {
+export const getCurrencyFormatter = (locale: string, currency: string, hideDecimal: boolean): Intl.NumberFormat => {
+  if (hideDecimal) {
+    return Intl.NumberFormat(locale.replace('_', '-'), { style: 'currency', currency, maximumFractionDigits: 0 });
+  }
   return Intl.NumberFormat(locale.replace('_', '-'), { style: 'currency', currency });
 };

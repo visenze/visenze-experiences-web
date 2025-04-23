@@ -977,6 +977,12 @@ export interface WidgetConfig {
          * @since 1.0.0
          */
         fontColorDark: string;
+        /**
+         * Whether to hide the price value after the decimal point.
+         *
+         * @since 1.0.4
+         */
+        hideDecimal?: boolean;
       };
       /**
        * Configuration for original price (i.e. before discount) field.
@@ -996,6 +1002,12 @@ export interface WidgetConfig {
          * @since 1.0.0
          */
         fontColorDark: string;
+        /**
+         * Whether to hide the original price value after the decimal point.
+         *
+         * @since 1.0.4
+         */
+        hideDecimal?: boolean;
       };
       /**
        * Configuration for primary title field.

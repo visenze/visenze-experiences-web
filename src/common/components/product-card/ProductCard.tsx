@@ -25,10 +25,12 @@ interface ProductCardProps {
 const currencyFormatterFactory = (
     languageSettings: WidgetConfig['languageSettings'],
     customizations: WidgetConfig['customizations'],
+    hideDecimal: boolean,
     currencyFromProduct?: string,
 ): Intl.NumberFormat => getCurrencyFormatter(
     languageSettings?.locale || customizations.localization?.defaultLocale || DEFAULT_LOCALE,
     currencyFromProduct || languageSettings?.currency || customizations.localization?.defaultCurrency || DEFAULT_CURRENCY,
+    hideDecimal,
 );
 
 const getProductTitle = (
@@ -66,7 +68,12 @@ const getPrice = (
   }
   if (result[productDetails['price']]) {
     const priceNumber = +result[productDetails['price']].value;
-    const currencyFormatter = currencyFormatterFactory(languageSettings, customizations, result[productDetails['price']].currency);
+    const currencyFormatter = currencyFormatterFactory(
+        languageSettings,
+        customizations,
+        !!customizations.productCard.price.hideDecimal,
+        result[productDetails['price']].currency,
+    );
     return currencyFormatter.format(priceNumber);
   }
   return '';
@@ -86,7 +93,12 @@ const getOriginalPrice = (
     if (priceNumber === 0) {
       return '';
     }
-    const currencyFormatter = currencyFormatterFactory(languageSettings, customizations, result[productDetails['original_price']].currency);
+    const currencyFormatter = currencyFormatterFactory(
+        languageSettings,
+        customizations,
+        !!customizations.productCard.originalPrice.hideDecimal,
+        result[productDetails['original_price']].currency,
+    );
     return currencyFormatter.format(priceNumber);
   }
   return '';
