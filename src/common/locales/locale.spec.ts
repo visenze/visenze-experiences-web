@@ -55,40 +55,61 @@ describe('locale', () => {
   });
 
   it('should format currency according to formatter settings', () => {
-    const getNbspSanitizedFormattedCurrency = (locale: string, currency: string, value: number): string => {
-      return getCurrencyFormatter(locale, currency).format(value).replaceAll(/[\u00a0|\u202f]/g, ' ');
+    const getNbspSanitizedFormattedCurrency = (locale: string, currency: string, value: number, hideDecimal = false): string => {
+      return getCurrencyFormatter(locale, currency, hideDecimal).format(value).replaceAll(/[\u00a0|\u202f]/g, ' ');
     };
 
     // This test is very locale-specific in that different computers can produce different values.
     // As such, the comparison is done against a list of possible outputs.
 
     expect(['$1,000.45']).toContain(getNbspSanitizedFormattedCurrency('en', 'USD', 1000.45));
+    expect(['$1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'USD', 1000.45, true));
     expect(['US$1,000.45']).toContain(getNbspSanitizedFormattedCurrency('en_GB', 'USD', 1000.45));
+    expect(['US$1,000']).toContain(getNbspSanitizedFormattedCurrency('en_GB', 'USD', 1000.45, true));
 
     expect(['£1,000.45']).toContain(getNbspSanitizedFormattedCurrency('en', 'GBP', 1000.45));
+    expect(['£1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'GBP', 1000.45, true));
     expect(['£1,000.45']).toContain(getNbspSanitizedFormattedCurrency('en_GB', 'GBP', 1000.45));
+    expect(['£1,000']).toContain(getNbspSanitizedFormattedCurrency('en_GB', 'GBP', 1000.45, true));
 
     expect(['€1,000.45']).toContain(getNbspSanitizedFormattedCurrency('en', 'EUR', 1000.45));
+    expect(['€1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'EUR', 1000.45, true));
     expect(['1000,45 €']).toContain(getNbspSanitizedFormattedCurrency('es', 'EUR', 1000.45));
+    expect(['1000 €']).toContain(getNbspSanitizedFormattedCurrency('es', 'EUR', 1000.45, true));
     expect(['1 000,45 €']).toContain(getNbspSanitizedFormattedCurrency('fr', 'EUR', 1000.45));
+    expect(['1 000 €']).toContain(getNbspSanitizedFormattedCurrency('fr', 'EUR', 1000.45, true));
     expect(['1000,45 €', '1.000,45 €']).toContain(getNbspSanitizedFormattedCurrency('it', 'EUR', 1000.45));
+    expect(['1000 €', '1.000 €']).toContain(getNbspSanitizedFormattedCurrency('it', 'EUR', 1000.45, true));
     expect(['€ 1.000,45']).toContain(getNbspSanitizedFormattedCurrency('pt', 'EUR', 1000.45));
+    expect(['€ 1.000']).toContain(getNbspSanitizedFormattedCurrency('pt', 'EUR', 1000.45, true));
     expect(['1.000,45 €']).toContain(getNbspSanitizedFormattedCurrency('de', 'EUR', 1000.45));
+    expect(['1.000 €']).toContain(getNbspSanitizedFormattedCurrency('de', 'EUR', 1000.45, true));
     expect(['€ 1.000,45']).toContain(getNbspSanitizedFormattedCurrency('nl', 'EUR', 1000.45));
+    expect(['€ 1.000']).toContain(getNbspSanitizedFormattedCurrency('nl', 'EUR', 1000.45, true));
 
     expect(['₩1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'KRW', 1000.45));
+    expect(['₩1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'KRW', 1000.45, true));
     expect(['₩1,000']).toContain(getNbspSanitizedFormattedCurrency('ko', 'KRW', 1000.45));
+    expect(['₩1,000']).toContain(getNbspSanitizedFormattedCurrency('ko', 'KRW', 1000.45, true));
 
     expect(['¥1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'JPY', 1000.45));
+    expect(['¥1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'JPY', 1000.45, true));
     expect(['￥1,000']).toContain(getNbspSanitizedFormattedCurrency('ja', 'JPY', 1000.45));
+    expect(['￥1,000']).toContain(getNbspSanitizedFormattedCurrency('ja', 'JPY', 1000.45, true));
 
     expect(['THB 1,000.45']).toContain(getNbspSanitizedFormattedCurrency('en', 'THB', 1000.45));
+    expect(['THB 1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'THB', 1000.45, true));
     expect(['฿1,000.45']).toContain(getNbspSanitizedFormattedCurrency('th', 'THB', 1000.45));
+    expect(['฿1,000']).toContain(getNbspSanitizedFormattedCurrency('th', 'THB', 1000.45, true));
 
     expect(['IDR 1,000.45']).toContain(getNbspSanitizedFormattedCurrency('en', 'IDR', 1000.45));
+    expect(['IDR 1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'IDR', 1000.45, true));
     expect(['Rp 1.000,45']).toContain(getNbspSanitizedFormattedCurrency('id', 'IDR', 1000.45));
+    expect(['Rp 1.000']).toContain(getNbspSanitizedFormattedCurrency('id', 'IDR', 1000.45, true));
 
     expect(['₹1,000.45']).toContain(getNbspSanitizedFormattedCurrency('en', 'INR', 1000.45));
+    expect(['₹1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'INR', 1000.45, true));
     expect(['₹1,000.45']).toContain(getNbspSanitizedFormattedCurrency('hi', 'INR', 1000.45));
+    expect(['₹1,000']).toContain(getNbspSanitizedFormattedCurrency('hi', 'INR', 1000.45, true));
   });
 });
