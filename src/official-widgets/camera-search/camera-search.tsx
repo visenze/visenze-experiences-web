@@ -7,11 +7,11 @@ import UploadScreen from './screens/UploadScreen';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
+import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import CroppingProvider from '../../common/components/providers/CroppingProvider';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import CameraIcon from '../../common/icons/CameraIcon';
-import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage, SearchImageOrPid } from '../../common/types/image';
@@ -295,28 +295,18 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
 
   return (
       <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
-        {!customizations.popup?.triggerIcon?.hide && (
-            <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
-                 data-testid='wigmix-popup-trigger-button'
-                 onClick={onCameraButtonClick}>
-              {customizations.popup?.triggerIcon?.url ? (
-                  <CustomizableIcon
-                      height={24}
-                      width={24}
-                      url={customizations.popup.triggerIcon.url}
-                      color={darkMode
-                          ? (customizations.popup?.triggerIcon?.colorDark || '')
-                          : (customizations.popup?.triggerIcon?.color || '')}
-                      className='wigmix-popup-trigger-icon custom'
-                  />
-              ) : (
-                  <CameraIcon color={darkMode
-                                ? (customizations.popup?.triggerIcon?.colorDark || '')
-                                : (customizations.popup?.triggerIcon?.color || '')}
-                              className='wigmix-popup-trigger-icon default size-6' />
-              )}
-            </div>
-        )}
+        <PopupTriggerButton config={customizations.popup}
+                            text={intl.formatMessage({ id: 'triggerCTA' })}
+                            darkMode={darkMode}
+                            onClick={onCameraButtonClick}
+                            defaultIcon={
+                              <CameraIcon
+                                  color={darkMode
+                                      ? customizations.popup?.triggerIcon?.colorDark || ''
+                                      : customizations.popup?.triggerIcon?.color || ''}
+                                  className='wigmix-popup-trigger-icon default size-6'
+                              />
+                            } />
         <ViSenzeModal
           className={screen === ScreenType.UPLOAD && breakpoint !== WidgetBreakpoint.MOBILE ? 'h-fit' : ''}
           open={dialogVisible}

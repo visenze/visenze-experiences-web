@@ -25,6 +25,7 @@ This can be used alongside the previously mentioned look-and-feel customization.
   | `wigmix-shadow-root`                  | `div`        | 1.0.0           |                                                      |
   | `wigmix-popup-trigger-button`         | `div`        | 1.0.0           |                                                      |
   | `wigmix-popup-trigger-icon`           | `div`        | 1.0.0           |                                                      |
+  | `wigmix-popup-trigger-text`           | `span`       | 1.0.4           |                                                      |
   | `wigmix-widget-title`                 | `div`        | 1.0.0           |                                                      |
   | `wigmix-reference-image-container`    | `div`        | 1.0.0           |                                                      |
   | `wigmix-reference-image`              | `img`        | 1.0.0           |                                                      |

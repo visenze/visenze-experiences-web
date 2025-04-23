@@ -8,10 +8,10 @@ import NewChatIcon from './icons/NewChatIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
+import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { DEFAULT_ENDPOINT } from '../../common/constants';
 import CloseIcon from '../../common/icons/CloseIcon';
-import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
@@ -320,27 +320,18 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
 
   return (
       <>
-        {!customizations.popup?.triggerIcon?.hide && (
-            <div className='wigmix-popup-trigger-button w-fit cursor-pointer'
-                 onClick={onChatButtonClick}>
-              {customizations.popup?.triggerIcon?.url ? (
-                  <CustomizableIcon
-                      height={24}
-                      width={24}
-                      url={customizations.popup.triggerIcon.url}
-                      color={darkMode
-                          ? (customizations.popup?.triggerIcon?.colorDark || '')
-                          : (customizations.popup?.triggerIcon?.color || '')}
-                      className='wigmix-popup-trigger-icon custom'
-                  />
-              ) : (
-                  <NewChatIcon color={darkMode
-                                 ? (customizations.popup?.triggerIcon?.colorDark || '')
-                                 : (customizations.popup?.triggerIcon?.color || '')}
-                               className='wigmix-popup-trigger-icon default size-6' />
-              )}
-            </div>
-        )}
+        <PopupTriggerButton config={customizations.popup}
+                            text={intl.formatMessage({ id: 'triggerCTA' })}
+                            darkMode={darkMode}
+                            onClick={onChatButtonClick}
+                            defaultIcon={
+                              <NewChatIcon
+                                  color={darkMode
+                                      ? customizations.popup?.triggerIcon?.colorDark || ''
+                                      : customizations.popup?.triggerIcon?.color || ''}
+                                  className='wigmix-popup-trigger-icon default size-6'
+                              />
+                            } />
         <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
                       renderWithoutPortal={!!renderModalWithoutPortal}
                       position={customizations.popup?.position || 'center'}

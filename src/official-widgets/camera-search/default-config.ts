@@ -12,6 +12,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: 'Previous views',
     errorDescription: 'Sorry, something went wrong',
     back: 'Back',
+    triggerCTA: 'Search by Image',
   },
   es: {
     uploadScreenTitle: 'MUESTRANOS QUÉ ESTÁS BUSCANDO',
@@ -300,6 +301,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   popup: {
     position: 'center',
     triggerIcon: {
+      layout: 'ICON',
       color: '#000000',
       colorDark: '#FFFFFF',
       hide: false,
