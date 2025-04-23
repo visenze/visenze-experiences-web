@@ -24,6 +24,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: 'Vistas previas',
     errorDescription: 'Lo sentimos, algo salió mal',
     back: 'Atrás',
+    triggerCTA: 'Buscar por imagen',
   },
   fr: {
     uploadScreenTitle: 'MONTREZ-NOUS CE QUE VOUS RECHERCHEZ',
@@ -35,6 +36,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: 'Vues précédentes',
     errorDescription: "Désolé, quelque chose s'est mal passé",
     back: 'Retour',
+    triggerCTA: 'Rechercher par image',
   },
   pt: {
     uploadScreenTitle: 'MOSTRE-NOS O QUE VOCÊ ESTÁ PROCURANDO',
@@ -46,6 +48,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: 'Visualizações anteriores',
     errorDescription: 'Desculpe, algo deu errado',
     back: 'Voltar',
+    triggerCTA: 'Pesquisar por imagem',
   },
   de: {
     uploadScreenTitle: 'ZEIG UNS, WAS DU SUCHST',
@@ -57,6 +60,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: 'Vorherige Ansichten',
     errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
     back: 'Zurück',
+    triggerCTA: 'Suche per Bild',
   },
   it: {
     uploadScreenTitle: 'MOSTRACI COSA STAI CERCANDO',
@@ -68,6 +72,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: 'Visualizzazioni precedenti',
     errorDescription: 'Spiacenti, qualcosa è andato storto',
     back: 'Indietro',
+    triggerCTA: 'Cerca tramite immagine',
   },
   ko: {
     uploadScreenTitle: '찾고 있는 것을 보여주세요',
@@ -79,6 +84,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: '이전 조회',
     errorDescription: '죄송합니다. 오류가 발생했습니다',
     back: '뒤로',
+    triggerCTA: '이미지로 검색',
   },
   ja: {
     uploadScreenTitle: '探しているものを見せてください',
@@ -90,6 +96,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: '以前の表示',
     errorDescription: '申し訳ありません。問題が発生しました',
     back: '戻る',
+    triggerCTA: '画像で検索',
   },
   th: {
     uploadScreenTitle: 'แสดงให้เราเห็นสิ่งที่คุณกำลังมองหา',
@@ -101,6 +108,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     previousViews: 'การดูครั้งก่อน',
     errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
     back: 'กลับ',
+    triggerCTA: 'ค้นหาด้วยรูปภาพ',
   },
 };
 
