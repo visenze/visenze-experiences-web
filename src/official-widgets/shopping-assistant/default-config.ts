@@ -8,6 +8,54 @@ export const DEFAULT_TEXTS: LanguagePack = {
     chatBoxPlaceholder: 'Type your message',
     triggerCTA: 'Style Assistant',
   },
+  es: {
+    openingMessage1: 'Empecemos',
+    openingMessage2: 'Cuéntanos sobre tus necesidades de estilo y te ayudaremos a encontrar el artículo perfecto para ti',
+    chatBoxPlaceholder: 'Escribe tu mensaje',
+    triggerCTA: 'Asistente de estilo',
+  },
+  fr: {
+    openingMessage1: 'Commençons',
+    openingMessage2: 'Parlez-nous de vos besoins en matière de style et nous vous aiderons à trouver l\'article parfait pour vous',
+    chatBoxPlaceholder: 'Tapez votre message',
+    triggerCTA: 'Assistant de style',
+  },
+  pt: {
+    openingMessage1: 'Vamos começar',
+    openingMessage2: 'Conte-nos sobre suas necessidades de estilo e nós o ajudaremos a encontrar o item perfeito para você',
+    chatBoxPlaceholder: 'Digite sua mensagem',
+    triggerCTA: 'Assistente de estilo',
+  },
+  de: {
+    openingMessage1: 'Los geht\'s',
+    openingMessage2: 'Erzähl uns von deinen Styling-Bedürfnissen und wir helfen dir, das perfekte Teil für dich zu finden',
+    chatBoxPlaceholder: 'Gib deine Nachricht ein',
+    triggerCTA: 'Stil-Assistent',
+  },
+  it: {
+    openingMessage1: 'Iniziamo',
+    openingMessage2: 'Parlaci delle tue esigenze di stile e ti aiuteremo a trovare l\'articolo perfetto per te',
+    chatBoxPlaceholder: 'Digita il tuo messaggio',
+    triggerCTA: 'Assistente di stile',
+  },
+  ko: {
+    openingMessage1: '시작해 볼까요?',
+    openingMessage2: '스타일링에 필요한 것을 알려주시면 딱 맞는 상품을 찾아드릴게요',
+    chatBoxPlaceholder: '메시지를 입력하세요',
+    triggerCTA: '스타일 어시스턴트',
+  },
+  ja: {
+    openingMessage1: '始めましょう',
+    openingMessage2: 'スタイリングのニーズについて教えてください。あなたにぴったりのアイテムを見つけるお手伝いをします',
+    chatBoxPlaceholder: 'メッセージを入力してください',
+    triggerCTA: 'スタイルアシスタント',
+  },
+  th: {
+    openingMessage1: 'มาเริ่มกันเลย',
+    openingMessage2: 'บอกเราเกี่ยวกับความต้องการด้านสไตล์ของคุณ แล้วเราจะช่วยคุณค้นหาสินค้าที่สมบูรณ์แบบสำหรับคุณ',
+    chatBoxPlaceholder: 'พิมพ์ข้อความของคุณ',
+    triggerCTA: 'ผู้ช่วยด้านสไตล์',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {

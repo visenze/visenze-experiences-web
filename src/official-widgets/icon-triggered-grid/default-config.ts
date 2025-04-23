@@ -7,6 +7,46 @@ export const DEFAULT_TEXTS: LanguagePack = {
     'errorDescription': 'Sorry, something went wrong',
     'triggerCTA': 'Find Similar',
   },
+  es: {
+    'widgetTitle': 'También te puede gustar',
+    'errorDescription': 'Lo sentimos, algo salió mal',
+    'triggerCTA': 'Encontrar similares',
+  },
+  fr: {
+    'widgetTitle': 'Vous aimerez peut-être aussi',
+    'errorDescription': 'Désolé, quelque chose s\'est mal passé',
+    'triggerCTA': 'Trouver Similaire',
+  },
+  pt: {
+    'widgetTitle': 'Você também pode gostar',
+    'errorDescription': 'Desculpe, algo deu errado',
+    'triggerCTA': 'Encontrar Semelhantes',
+  },
+  de: {
+    'widgetTitle': 'Das könnte dir auch gefallen',
+    'errorDescription': 'Entschuldigung, etwas ist schiefgelaufen',
+    'triggerCTA': 'Ähnliche finden',
+  },
+  it: {
+    'widgetTitle': 'Potrebbe piacerti anche',
+    'errorDescription': 'Spiacenti, qualcosa è andato storto',
+    'triggerCTA': 'Trova simili',
+  },
+  ko: {
+    'widgetTitle': '이 상품도 좋아하실 거예요',
+    'errorDescription': '죄송합니다. 오류가 발생했습니다',
+    'triggerCTA': '비슷한 상품 찾기',
+  },
+  ja: {
+    'widgetTitle': 'こちらもおすすめです',
+    'errorDescription': '申し訳ありません。問題が発生しました',
+    'triggerCTA': '類似商品を検索',
+  },
+  th: {
+    'widgetTitle': 'คุณอาจจะชอบสิ่งนี้ด้วย',
+    'errorDescription': 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
+    'triggerCTA': 'ค้นหาสินค้าที่คล้ายกัน',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {

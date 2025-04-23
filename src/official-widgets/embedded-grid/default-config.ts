@@ -5,6 +5,30 @@ export const DEFAULT_TEXTS: LanguagePack = {
   en: {
     widgetTitle: 'You may also like',
   },
+  es: {
+    widgetTitle: 'También te puede gustar',
+  },
+  fr: {
+    widgetTitle: 'Vous aimerez peut-être aussi',
+  },
+  pt: {
+    widgetTitle: 'Você também pode gostar',
+  },
+  de: {
+    widgetTitle: 'Das könnte dir auch gefallen',
+  },
+  it: {
+    widgetTitle: 'Potrebbe piacerti anche',
+  },
+  ko: {
+    widgetTitle: '이 상품도 좋아하실 거예요',
+  },
+  ja: {
+    widgetTitle: 'こちらもおすすめです',
+  },
+  th: {
+    widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
