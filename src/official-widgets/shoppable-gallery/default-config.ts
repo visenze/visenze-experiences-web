@@ -8,6 +8,54 @@ export const DEFAULT_TEXTS: LanguagePack = {
     hotspotRecommendationsTitle: 'In this photo',
     noResults: 'There are no results for this hotspot',
   },
+  es: {
+    errorDescription: 'Lo sentimos, algo salió mal',
+    errorResolution: 'Por favor, actualiza para intentar de nuevo',
+    hotspotRecommendationsTitle: 'En esta foto',
+    noResults: 'No hay resultados para este punto de interés',
+  },
+  fr: {
+    errorDescription: 'Désolé, quelque chose s\'est mal passé',
+    errorResolution: 'Veuillez actualiser pour réessayer',
+    hotspotRecommendationsTitle: 'Sur cette photo',
+    noResults: 'Il n\'y a aucun résultat pour ce point d\'intérêt',
+  },
+  pt: {
+    errorDescription: 'Desculpe, algo deu errado',
+    errorResolution: 'Por favor, atualize para tentar novamente',
+    hotspotRecommendationsTitle: 'Nesta foto',
+    noResults: 'Não há resultados para este ponto de interesse',
+  },
+  de: {
+    errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
+    errorResolution: 'Bitte aktualisiere die Seite, um es erneut zu versuchen',
+    hotspotRecommendationsTitle: 'Auf diesem Foto',
+    noResults: 'Es gibt keine Ergebnisse für diesen Hotspot',
+  },
+  it: {
+    errorDescription: 'Spiacenti, qualcosa è andato storto',
+    errorResolution: 'Per favore, aggiorna per riprovare',
+    hotspotRecommendationsTitle: 'In questa foto',
+    noResults: 'Non ci sono risultati per questo hotspot',
+  },
+  ko: {
+    errorDescription: '죄송합니다. 오류가 발생했습니다',
+    errorResolution: '새로고침하여 다시 시도해주세요',
+    hotspotRecommendationsTitle: '이 사진에서',
+    noResults: '이 핫스팟에 대한 결과가 없습니다',
+  },
+  ja: {
+    errorDescription: '申し訳ありません。問題が発生しました',
+    errorResolution: '再読み込みしてもう一度お試しください',
+    hotspotRecommendationsTitle: 'この写真で',
+    noResults: 'このホットスポットの結果はありません',
+  },
+  th: {
+    errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
+    errorResolution: 'โปรดรีเฟรชเพื่อลองอีกครั้ง',
+    hotspotRecommendationsTitle: 'ในรูปภาพนี้',
+    noResults: 'ไม่มีผลลัพธ์สำหรับฮอตสปอตนี้',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
