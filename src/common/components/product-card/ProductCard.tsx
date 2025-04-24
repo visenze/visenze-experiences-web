@@ -248,7 +248,7 @@ const ProductCard: FC<ProductCardProps> = ({
                  data-pw={`${pwPrefix}-product-result-card-image-${index + 1}`}
                  data-testid='wigmix-product-card-image' />
             {hasFindSimilar && !isLoading && customizations.productCard?.findSimilar?.enable && (
-                <div
+                <button
                     className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-5 rounded-full bg-white p-1 hover:opacity-90`}
                     onClick={(event) => {
                       if (onFindSimilar) {
@@ -283,7 +283,7 @@ const ProductCard: FC<ProductCardProps> = ({
                               : (customizations.productCard?.findSimilar?.icon?.color || '')}
                       />
                   )}
-                </div>
+                </button>
             )}
           </div>
         </div>

@@ -192,7 +192,7 @@ exports[`ProductCard should render with standard fields, find similar enabled wi
             data-testid="wigmix-product-card-image"
             src="test_image_url"
           />
-          <div
+          <button
             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
             data-pw="ut-find-similar-button"
             data-testid="wigmix-find-similar-button"
@@ -201,7 +201,7 @@ exports[`ProductCard should render with standard fields, find similar enabled wi
               class="wigmix-find-similar-icon custom"
               style="height: 20px; width: 20px; background-color: rgb(0, 0, 0); mask: url(https://test_find_similar_icon_url) no-repeat center / contain;"
             />
-          </div>
+          </button>
         </div>
       </div>
       <div
@@ -261,7 +261,7 @@ exports[`ProductCard should render with standard fields, find similar enabled, w
             data-testid="wigmix-product-card-image"
             src="test_image_url"
           />
-          <div
+          <button
             class="wigmix-find-similar-button absolute top-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
             data-pw="ut-find-similar-button"
             data-testid="wigmix-find-similar-button"
@@ -283,7 +283,7 @@ exports[`ProductCard should render with standard fields, find similar enabled, w
                 />
               </svg>
             </div>
-          </div>
+          </button>
         </div>
       </div>
       <div

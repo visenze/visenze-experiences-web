@@ -379,7 +379,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-1"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -403,7 +403,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -449,7 +449,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-2"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -473,7 +473,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -519,7 +519,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-3"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -543,7 +543,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -589,7 +589,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-4"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -613,7 +613,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -659,7 +659,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-5"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -683,7 +683,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -729,7 +729,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-6"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -753,7 +753,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -799,7 +799,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-7"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -823,7 +823,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -869,7 +869,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-8"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -893,7 +893,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -939,7 +939,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-9"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -963,7 +963,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1009,7 +1009,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-10"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1033,7 +1033,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1079,7 +1079,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-11"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1103,7 +1103,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1149,7 +1149,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-12"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1173,7 +1173,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1219,7 +1219,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-13"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1243,7 +1243,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1289,7 +1289,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-14"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1313,7 +1313,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1359,7 +1359,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-15"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1383,7 +1383,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1429,7 +1429,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-16"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1453,7 +1453,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1499,7 +1499,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-17"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1523,7 +1523,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1569,7 +1569,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-18"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1593,7 +1593,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1639,7 +1639,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-19"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1663,7 +1663,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1709,7 +1709,7 @@ exports[`similar-search should render a successful response with default config 
                               data-testid="wigmix-product-card-image"
                               src="https://main-image-20"
                             />
-                            <div
+                            <button
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1733,7 +1733,7 @@ exports[`similar-search should render a successful response with default config 
                                   />
                                 </svg>
                               </div>
-                            </div>
+                            </button>
                           </div>
                         </div>
                         <div
@@ -1959,7 +1959,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-1"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -1983,7 +1983,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2029,7 +2029,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-2"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2053,7 +2053,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2099,7 +2099,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-3"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2123,7 +2123,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2169,7 +2169,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-4"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2193,7 +2193,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2239,7 +2239,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-5"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2263,7 +2263,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2309,7 +2309,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-6"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2333,7 +2333,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2379,7 +2379,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-7"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2403,7 +2403,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2449,7 +2449,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-8"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2473,7 +2473,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2519,7 +2519,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-9"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2543,7 +2543,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2589,7 +2589,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-10"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2613,7 +2613,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2659,7 +2659,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-11"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2683,7 +2683,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2729,7 +2729,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-12"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2753,7 +2753,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2799,7 +2799,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-13"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2823,7 +2823,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2869,7 +2869,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-14"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2893,7 +2893,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -2939,7 +2939,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-15"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2963,7 +2963,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -3009,7 +3009,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-16"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3033,7 +3033,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -3079,7 +3079,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-17"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3103,7 +3103,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -3149,7 +3149,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-18"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3173,7 +3173,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -3219,7 +3219,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-19"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3243,7 +3243,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
@@ -3289,7 +3289,7 @@ exports[`similar-search should render a successful response with default config 
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-20"
                           />
-                          <div
+                          <button
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3313,7 +3313,7 @@ exports[`similar-search should render a successful response with default config 
                                 />
                               </svg>
                             </div>
-                          </div>
+                          </button>
                         </div>
                       </div>
                       <div
