@@ -77,7 +77,7 @@ const useRecommendationSearch = ({
   };
 
   const searchById = (): void => {
-    const params = widgetConfig.searchSettings;
+    const params: Record<string, any> = {};
     params['return_product_info'] = true;
     params['show_best_product_images'] = true;
     params['sort_by'] = '';
@@ -94,7 +94,7 @@ const useRecommendationSearch = ({
       params['filters'] = getFilterQueries(productDetails, filters);
     }
 
-    widgetClient.searchById(productId, params, handleSuccess, handleError);
+    widgetClient.searchById(productId, { ...params, ...widgetConfig.searchSettings }, handleSuccess, handleError);
   };
 
   const getMetadata = (): Record<string, any> => {

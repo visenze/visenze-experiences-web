@@ -784,6 +784,14 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       useAlternatives?: boolean;
+      /**
+       * Whether to display best product images as the recommendation result.
+       *
+       * @internal Not yet used
+       *
+       * @since 1.0.4
+       */
+      showBestProductImages?: boolean;
     };
     /**
      * Popup-related settings. This section is relevant only for widgets that have popup behavior.

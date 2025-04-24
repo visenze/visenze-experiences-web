@@ -23,7 +23,7 @@ This can be used alongside the previously mentioned look-and-feel customization.
   | Class name                            | HTML element | Available since | Explanation (if not apparent from the class name)    |
   |---------------------------------------|--------------|-----------------|------------------------------------------------------|
   | `wigmix-shadow-root`                  | `div`        | 1.0.0           |                                                      |
-  | `wigmix-popup-trigger-button`         | `div`        | 1.0.0           |                                                      |
+  | `wigmix-popup-trigger-button`         | `button`     | 1.0.0           |                                                      |
   | `wigmix-popup-trigger-icon`           | `div`        | 1.0.0           |                                                      |
   | `wigmix-popup-trigger-text`           | `span`       | 1.0.4           |                                                      |
   | `wigmix-widget-title`                 | `div`        | 1.0.0           |                                                      |
