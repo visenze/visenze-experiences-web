@@ -30,6 +30,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+<!-- BEGIN visenze-experiences-web 1.0.4 -->
+## [1.0.4](https://github.com/visenze/visenze-experiences-web/compare/1.0.3...1.0.4) - 2025-04-25
+
+### Added
+
+- All widgets: Added support for hiding decimal values in price fields
+- All widgets: Added basic translations to Spanish, French, Portuguese, German, Italian, Korean, Japanese, and Thai for most displayed texts
+
+### Fixed
+
+- Fixed bug where parameters specified in `searchSettings` were unable to override certain parameters when using recommendations API.
+
+### Changed
+
+- camera-search, similar-search, icon-triggered-grid: Updated popup trigger buttons to support combination of icon and text and use `button` instead of `div`
+- similar-search, icon-triggered-grid: Updated popup trigger buttons to have white background by default
+- camera-search, similar-search, embedded-search-results: Updated find similar buttons to use `button` instead of `div`
+<!-- END visenze-experiences-web 1.0.4 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.3 -->
 ## [1.0.3](https://github.com/visenze/visenze-experiences-web/compare/1.0.2...1.0.3) - 2025-04-11
 
