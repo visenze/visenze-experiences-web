@@ -787,9 +787,9 @@ export interface WidgetConfig {
       /**
        * Whether to display best product images as the recommendation result.
        *
-       * @internal Not yet used
+       * @internal
        *
-       * @since 1.0.4
+       * @since 1.0.5
        */
       showBestProductImages?: boolean;
     };
