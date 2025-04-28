@@ -22,6 +22,7 @@ describe('icon-triggered-grid', () => {
     en: {
       widgetTitle: 'Icon Triggered Grid 814',
       errorDescription: 'Houston, we\'ve had a problem!',
+      triggerCTA: 'CTA',
     },
   };
   const mockVisearchClient: ViSearchClient = {
@@ -134,7 +135,8 @@ describe('icon-triggered-grid', () => {
         expect(pid).toBe('pid-not-found');
         expect(params).toEqual({
           return_product_info: true,
-          show_best_product_images: true,
+          limit: 20,
+          show_best_product_images: false,
           sort_by: '',
           facets: [
             'price',
@@ -185,7 +187,8 @@ describe('icon-triggered-grid', () => {
         expect(pid).toBe('pid-not-found');
         expect(params).toEqual({
           return_product_info: true,
-          show_best_product_images: true,
+          limit: 20,
+          show_best_product_images: false,
           sort_by: '',
           facets: [
             'price',
@@ -226,7 +229,8 @@ describe('icon-triggered-grid', () => {
         expect(pid).toBe('pid-found');
         expect(params).toEqual({
           return_product_info: true,
-          show_best_product_images: true,
+          limit: 20,
+          show_best_product_images: false,
           sort_by: '',
           facets: [
             'price',
