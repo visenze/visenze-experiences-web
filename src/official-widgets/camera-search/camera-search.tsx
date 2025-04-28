@@ -38,7 +38,7 @@ interface SearchHistoryEntry {
 
 const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations, searchSettings } = widgetConfig;
+  const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -161,7 +161,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
       q: query,
       im_id: imageId,
       page: 1,
-      limit: searchSettings['limit'] || 20,
+      limit: customizations.results?.limit || 20,
       get_all_fl: true,
     };
 

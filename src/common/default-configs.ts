@@ -14,9 +14,7 @@ export const DEFAULT_CONFIGS: WidgetConfig = {
       maxWidth: 100000,
     },
   },
-  searchSettings: {
-    limit: 20, // default number of results returned
-  },
+  searchSettings: {},
   trackingSettings: {},
   displaySettings: {
     cssSelector: '', // populated by widget-init API
