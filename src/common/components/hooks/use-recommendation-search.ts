@@ -83,6 +83,7 @@ const useRecommendationSearch = ({
     params['sort_by'] = '';
     params['facets'] = getFacets(productDetails);
     params['facets_show_count'] = true;
+    params['limit'] = customizations.results?.limit || 20;
 
     if (sortType === SortType.PRICE_HTL) {
       params['sort_by'] = `${productDetails['price']}:desc`;
