@@ -248,25 +248,26 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
     images: [
       {
-        url: 'https://cdn.visenze.com/images/widget-1.jpg',
+        url: 'https://visenze-static.s3.amazonaws.com/sample/street_shot.jpg',
         label: '',
       },
       {
-        url: 'https://cdn.visenze.com/images/widget-2.jpg',
+        url: 'https://visenze-static.s3.amazonaws.com/sample/suit.jpg',
         label: '',
       },
       {
-        url: 'https://cdn.visenze.com/images/widget-3.jpg',
+        url: 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg',
         label: '',
       },
       {
-        url: 'https://cdn.visenze.com/images/widget-4.jpg',
+        url: 'https://visenze-static.s3.amazonaws.com/sample/sport.jpg',
         label: '',
       },
       {
-        url: 'https://cdn.visenze.com/images/widget-5.jpg',
+        url: 'https://visenze-static.s3.amazonaws.com/sample/dance.jpg',
         label: '',
-      }],
+      },
+    ],
   },
   generalLayout: {
     headingFont: {

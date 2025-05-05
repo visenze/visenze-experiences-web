@@ -382,7 +382,7 @@ exports[`search-bar should render upload image modal in desktop view 1`] = `
                       <img
                         class="h-full w-fit object-cover"
                         data-pw="sb-gallery-image-1"
-                        src="https://cdn.visenze.com/images/widget-1.jpg"
+                        src="https://visenze-static.s3.amazonaws.com/sample/street_shot.jpg"
                       />
                     </div>
                   </div>
@@ -398,7 +398,7 @@ exports[`search-bar should render upload image modal in desktop view 1`] = `
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="sb-gallery-image-2"
-                          src="https://cdn.visenze.com/images/widget-2.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/suit.jpg"
                         />
                       </div>
                       <div
@@ -407,7 +407,7 @@ exports[`search-bar should render upload image modal in desktop view 1`] = `
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="sb-gallery-image-3"
-                          src="https://cdn.visenze.com/images/widget-3.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/sunset.jpg"
                         />
                       </div>
                       <div
@@ -416,7 +416,7 @@ exports[`search-bar should render upload image modal in desktop view 1`] = `
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="sb-gallery-image-4"
-                          src="https://cdn.visenze.com/images/widget-4.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/sport.jpg"
                         />
                       </div>
                       <div
@@ -425,7 +425,7 @@ exports[`search-bar should render upload image modal in desktop view 1`] = `
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="sb-gallery-image-5"
-                          src="https://cdn.visenze.com/images/widget-5.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/dance.jpg"
                         />
                       </div>
                     </div>
@@ -723,7 +723,7 @@ exports[`search-bar should render upload image modal in mobile view 1`] = `
                       <img
                         class="h-full w-fit object-cover"
                         data-pw="sb-gallery-image-1"
-                        src="https://cdn.visenze.com/images/widget-1.jpg"
+                        src="https://visenze-static.s3.amazonaws.com/sample/street_shot.jpg"
                       />
                     </div>
                   </div>
@@ -739,7 +739,7 @@ exports[`search-bar should render upload image modal in mobile view 1`] = `
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="sb-gallery-image-2"
-                          src="https://cdn.visenze.com/images/widget-2.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/suit.jpg"
                         />
                       </div>
                       <div
@@ -748,7 +748,7 @@ exports[`search-bar should render upload image modal in mobile view 1`] = `
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="sb-gallery-image-3"
-                          src="https://cdn.visenze.com/images/widget-3.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/sunset.jpg"
                         />
                       </div>
                       <div
@@ -757,7 +757,7 @@ exports[`search-bar should render upload image modal in mobile view 1`] = `
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="sb-gallery-image-4"
-                          src="https://cdn.visenze.com/images/widget-4.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/sport.jpg"
                         />
                       </div>
                       <div
@@ -766,7 +766,7 @@ exports[`search-bar should render upload image modal in mobile view 1`] = `
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="sb-gallery-image-5"
-                          src="https://cdn.visenze.com/images/widget-5.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/dance.jpg"
                         />
                       </div>
                     </div>
