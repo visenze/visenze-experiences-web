@@ -159,7 +159,7 @@ exports[`camera-search should render a successful response with default config i
                           <img
                             class="object-cover size-full"
                             data-pw="hotspot-reference-image"
-                            src="https://cdn.visenze.com/images/widget-3.jpg"
+                            src="https://visenze-static.s3.amazonaws.com/sample/sunset.jpg"
                           />
                           <div
                             class="absolute top-1/2 inline-block max-h-full max-w-full -translate-x-1/2 -translate-y-1/2"
@@ -1817,7 +1817,7 @@ exports[`camera-search should render a successful response with default config i
                       <img
                         class="object-cover size-full"
                         data-pw="hotspot-reference-image"
-                        src="https://cdn.visenze.com/images/widget-3.jpg"
+                        src="https://visenze-static.s3.amazonaws.com/sample/sunset.jpg"
                       />
                       <div
                         class="absolute top-1/2 inline-block max-h-full max-w-full -translate-x-1/2 -translate-y-1/2"
@@ -1838,7 +1838,7 @@ exports[`camera-search should render a successful response with default config i
                     class="aspect-square size-20 object-contain cursor-pointer"
                     data-pw="cs-previous-views-image-1"
                     data-testid="wigmix-active-product"
-                    src="https://cdn.visenze.com/images/widget-3.jpg"
+                    src="https://visenze-static.s3.amazonaws.com/sample/sunset.jpg"
                   />
                 </div>
               </div>
@@ -3192,7 +3192,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                         class="h-full w-fit object-cover"
                         data-pw="cs-gallery-image-1"
                         data-testid="wigmix-gallery-image-1"
-                        src="https://cdn.visenze.com/images/widget-1.jpg"
+                        src="https://visenze-static.s3.amazonaws.com/sample/street_shot.jpg"
                       />
                     </div>
                   </div>
@@ -3209,7 +3209,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                           class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-2"
                           data-testid="wigmix-gallery-image-2"
-                          src="https://cdn.visenze.com/images/widget-2.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/suit.jpg"
                         />
                       </div>
                       <div
@@ -3219,7 +3219,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                           class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-3"
                           data-testid="wigmix-gallery-image-3"
-                          src="https://cdn.visenze.com/images/widget-3.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/sunset.jpg"
                         />
                       </div>
                       <div
@@ -3229,7 +3229,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                           class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-4"
                           data-testid="wigmix-gallery-image-4"
-                          src="https://cdn.visenze.com/images/widget-4.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/sport.jpg"
                         />
                       </div>
                       <div
@@ -3239,7 +3239,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                           class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-5"
                           data-testid="wigmix-gallery-image-5"
-                          src="https://cdn.visenze.com/images/widget-5.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/dance.jpg"
                         />
                       </div>
                     </div>
@@ -3450,7 +3450,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                         class="h-full w-fit object-cover"
                         data-pw="cs-gallery-image-1"
                         data-testid="wigmix-gallery-image-1"
-                        src="https://cdn.visenze.com/images/widget-1.jpg"
+                        src="https://visenze-static.s3.amazonaws.com/sample/street_shot.jpg"
                       />
                     </div>
                   </div>
@@ -3467,7 +3467,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                           class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-2"
                           data-testid="wigmix-gallery-image-2"
-                          src="https://cdn.visenze.com/images/widget-2.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/suit.jpg"
                         />
                       </div>
                       <div
@@ -3477,7 +3477,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                           class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-3"
                           data-testid="wigmix-gallery-image-3"
-                          src="https://cdn.visenze.com/images/widget-3.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/sunset.jpg"
                         />
                       </div>
                       <div
@@ -3487,7 +3487,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                           class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-4"
                           data-testid="wigmix-gallery-image-4"
-                          src="https://cdn.visenze.com/images/widget-4.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/sport.jpg"
                         />
                       </div>
                       <div
@@ -3497,7 +3497,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                           class="h-full w-fit object-cover"
                           data-pw="cs-gallery-image-5"
                           data-testid="wigmix-gallery-image-5"
-                          src="https://cdn.visenze.com/images/widget-5.jpg"
+                          src="https://visenze-static.s3.amazonaws.com/sample/dance.jpg"
                         />
                       </div>
                     </div>

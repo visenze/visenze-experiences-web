@@ -30,6 +30,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+<!-- BEGIN visenze-experiences-web 1.0.5 -->
+## [1.0.5](https://github.com/visenze/visenze-experiences-web/compare/1.0.4...1.0.5) - 2025-04-29
+
+### Changed
+
+- All widgets: Updated `show_best_product_images` parameter used in recommendation API calls to `false` by default
+
+### Chore
+
+- All widgets: Internal update to use `results.limit` and `results.showBestProductImages` configurations to influence API call results
+<!-- END visenze-experiences-web 1.0.5 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.4 -->
 ## [1.0.4](https://github.com/visenze/visenze-experiences-web/compare/1.0.3...1.0.4) - 2025-04-25
 

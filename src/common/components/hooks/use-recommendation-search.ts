@@ -40,6 +40,7 @@ const useRecommendationSearch = ({
   shouldDisplayAlternatives,
 }: RecommendationSearchProps): RecommendationSearch => {
   const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
@@ -79,10 +80,11 @@ const useRecommendationSearch = ({
   const searchById = (): void => {
     const params: Record<string, any> = {};
     params['return_product_info'] = true;
-    params['show_best_product_images'] = true;
+    params['show_best_product_images'] = !!customizations.results?.showBestProductImages;
     params['sort_by'] = '';
     params['facets'] = getFacets(productDetails);
     params['facets_show_count'] = true;
+    params['limit'] = customizations.results?.limit || 20;
 
     if (sortType === SortType.PRICE_HTL) {
       params['sort_by'] = `${productDetails['price']}:desc`;

@@ -26,7 +26,7 @@ describe('similar-search', () => {
       previousViews: 'History',
       errorDescription: 'Houston, we\'ve had a problem!',
       back: 'Exit',
-      triggerCTA: 'Find Similar',
+      triggerCTA: 'CTA',
     },
   };
   const mockVisearchClient: ViSearchClient = {

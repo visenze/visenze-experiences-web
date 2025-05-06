@@ -172,7 +172,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     if (boxData) {
       params['box'] = parseBox(boxData.box);
     }
-    params['limit'] = 24; // hardcode for now
+    params['limit'] = customizations.results?.limit || 24;
 
     widgetClient.multisearchByImage(params, (res) => {
       handleSuccess(res, shouldResetFacets);

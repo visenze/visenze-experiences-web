@@ -63,7 +63,8 @@ describe('embedded-grid', () => {
         expect(pid).toBe('pid-not-found');
         expect(params).toEqual({
           return_product_info: true,
-          show_best_product_images: true,
+          limit: 20,
+          show_best_product_images: false,
           sort_by: '',
           facets: [
             'price',
@@ -95,7 +96,8 @@ describe('embedded-grid', () => {
         expect(pid).toBe('pid-found');
         expect(params).toEqual({
           return_product_info: true,
-          show_best_product_images: true,
+          limit: 20,
+          show_best_product_images: false,
           sort_by: '',
           facets: [
             'price',

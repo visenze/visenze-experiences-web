@@ -10,10 +10,6 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     placementId: '',
     endpoint: '',
   },
-  searchSettings: {
-    facets_limit: 10,
-    limit: 20,
-  },
   displaySettings: {
     cssSelector: '.shop-the-look-widget',
     productDetails: {},
