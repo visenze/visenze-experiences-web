@@ -1,7 +1,6 @@
 # Merchandise Search Bar widget
 
-![status](https://img.shields.io/badge/status-development-yellow)
-![stable](https://img.shields.io/badge/since-1.0.5-blue)
+![status](https://img.shields.io/badge/status-alpha-red)
 
 ## Local development
 

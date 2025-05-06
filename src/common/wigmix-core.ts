@@ -475,6 +475,8 @@ export interface ColoredInterface {
 /**
  * An interface for a trending product (will be changed when API is integrated)
  *
+ * @internal
+ *
  * @since 1.0.6
  */
 export interface TrendingProduct {

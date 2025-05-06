@@ -242,95 +242,34 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
     images: [
       {
-        url: 'https://cdn.visenze.com/images/widget-1.jpg',
+        url: 'https://visenze-static.s3.amazonaws.com/sample/street_shot.jpg',
         label: '',
       },
       {
-        url: 'https://cdn.visenze.com/images/widget-2.jpg',
+        url: 'https://visenze-static.s3.amazonaws.com/sample/suit.jpg',
         label: '',
       },
       {
-        url: 'https://cdn.visenze.com/images/widget-3.jpg',
+        url: 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg',
         label: '',
       },
       {
-        url: 'https://cdn.visenze.com/images/widget-4.jpg',
+        url: 'https://visenze-static.s3.amazonaws.com/sample/sport.jpg',
         label: '',
       },
       {
-        url: 'https://cdn.visenze.com/images/widget-5.jpg',
+        url: 'https://visenze-static.s3.amazonaws.com/sample/dance.jpg',
         label: '',
       },
     ],
   },
   popularTerms: {
     enable: true,
-    terms: ['dress', 'formal shirts', 'shoes'],
+    terms: [],
   },
   trendingProducts: {
     enable: true,
-    products: [
-      {
-        productId: '7959753556105',
-        productUrl: 'https://three-ways-to-search.myshopify.com/products/16063103697198710838451820',
-        imUrl: 'https://cdn.shopify.com/s/files/1/0673/4518/6953/files/kanzi-by-liza-yahya-3247-1491833-1.jpg?v=1736255080',
-        price: {
-          currency: 'SGD',
-          value: 115,
-        },
-        title: 'Kanzi Collared Kaftan',
-      },
-      {
-        productId: '7959753654409',
-        productUrl: 'https://three-ways-to-search.myshopify.com/products/16063096364642470522171820',
-        imUrl: 'https://cdn.shopify.com/s/files/1/0673/4518/6953/files/blend-2227-1084292-1.jpg?v=1736255090',
-        price: {
-          currency: 'SGD',
-          value: 38.9,
-        },
-        title: 'Regular Fit Pocket Graphic Print Tee',
-      },
-      {
-        productId: '7959751196809',
-        productUrl: 'https://three-ways-to-search.myshopify.com/products/16063107097153710378191820',
-        imUrl: 'https://cdn.shopify.com/s/files/1/0673/4518/6953/files/obstyle-8759-9115443-1.jpg?v=1736254864',
-        price: {
-          currency: 'SGD',
-          value: 49,
-        },
-        title: 'Warm solid color long brushed fleece long-sleeved sweatshirt university T-shirt《AB14188》',
-      },
-      {
-        productId: '7959749525641',
-        productUrl: 'https://three-ways-to-search.myshopify.com/products/16063083761120331744041820',
-        imUrl: 'https://cdn.shopify.com/s/files/1/0673/4518/6953/files/iroo-2402-5444243-1.jpg?v=1736254738',
-        price: {
-          currency: 'SGD',
-          value: 97.8,
-        },
-        title: 'Colour Block Knit Tank Top',
-      },
-      {
-        productId: '7959749787785',
-        productUrl: 'https://three-ways-to-search.myshopify.com/products/16063106020900337139381820',
-        imUrl: 'https://cdn.shopify.com/s/files/1/0673/4518/6953/files/tommy-hilfiger-8824-4107382-1.jpg?v=1736254762',
-        price: {
-          currency: 'SGD',
-          value: 169,
-        },
-        title: 'Icon Graphic Tee',
-      },
-      {
-        productId: '7959749558409',
-        productUrl: 'https://three-ways-to-search.myshopify.com/products/16063103597156339597911820',
-        imUrl: 'https://cdn.shopify.com/s/files/1/0673/4518/6953/files/lycka-475-9480223-1.jpg?v=1736254741',
-        price: {
-          currency: 'SGD',
-          value: 71,
-        },
-        title: 'BHS1057 European Lady One Piece Swimwear Pink',
-      },
-    ],
+    products: [],
   },
   buttons: {
     primary: {
