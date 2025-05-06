@@ -27,6 +27,8 @@
     "start:shoppable-gallery": "export widget_dir='official-widgets/shoppable-gallery' && webpack-dev-server --config webpack.dev.js",
     "build:search-bar": "export widget_dir='official-widgets/search-bar' && webpack --config webpack.config.js",
     "start:search-bar": "export widget_dir='official-widgets/search-bar' && webpack-dev-server --config webpack.dev.js",
+    "build:merchandise-search-bar": "export widget_dir='official-widgets/merchandise-search-bar' && webpack --config webpack.config.js",
+    "start:merchandise-search-bar": "export widget_dir='official-widgets/merchandise-search-bar' && webpack-dev-server --config webpack.dev.js",
     "build:embedded-search-results": "export widget_dir='official-widgets/embedded-search-results' && webpack --config webpack.config.js",
     "start:embedded-search-results": "export widget_dir='official-widgets/embedded-search-results' && webpack-dev-server --config webpack.dev.js",
     "test": "export unit_test=true && jest",
