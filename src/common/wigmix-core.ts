@@ -20,6 +20,7 @@ export enum WidgetType {
   SHOPPABLE_GALLERY = 'shoppable_gallery',
   ICON_TRIGGERED_GRID = 'icon_triggered_grid',
   SEARCH_BAR = 'search_bar',
+  MERCHANDISE_SEARCH_BAR = 'merchandise_search_bar',
   EMBEDDED_SEARCH_RESULTS = 'embedded_search_results',
 }
 
@@ -469,6 +470,57 @@ export interface ColoredInterface {
    * @since 1.0.0
    */
   backgroundColorDark: string;
+}
+
+/**
+ * An interface for a trending product (will be changed when API is integrated)
+ *
+ * @since 1.0.5
+ */
+export interface TrendingProduct {
+  /**
+   * product ID of the interface.
+   *
+   * @since 1.0.5
+   */
+  productId: string;
+  /**
+   * product URL of the interface.
+   *
+   * @since 1.0.5
+   */
+  productUrl: string;
+  /**
+   * image URL of the interface.
+   *
+   * @since 1.0.5
+   */
+  imUrl: string;
+  /**
+   * price object of product of the interface.
+   *
+   * @since 1.0.5
+   */
+  price: {
+    /**
+     * type of currency of the interface.
+     *
+     * @since 1.0.5
+     */
+    currency: string;
+    /**
+     * price amount of the interface.
+     *
+     * @since 1.0.5
+     */
+    value: number;
+  };
+  /**
+   * title of product of the interface.
+   *
+   * @since 1.0.5
+   */
+  title: string;
 }
 
 /**
@@ -1079,6 +1131,44 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       images: ImageWithLabel[];
+    };
+    /**
+     * Popular terms settings. This is only applicable for widgets with popular terms setting available.
+     *
+     * @since 1.0.5
+     */
+    popularTerms?: {
+      /**
+       * Whether the "popular term" feature is enabled or not.
+       *
+       * @since 1.0.5
+       */
+      enable: boolean;
+      /**
+       * List of terms which will be used as a quick query search.
+       *
+       * @since 1.0.5
+       */
+      terms: string[];
+    };
+    /**
+     * Trending product settings. This is only applicable for widgets with recommended products setting available.
+     *
+     * @since 1.0.5
+     */
+    trendingProducts?: {
+      /**
+       * Whether the "trending product" feature is enabled or not.
+       *
+       * @since 1.0.5
+       */
+      enable: boolean;
+      /**
+       * List of trending products which will be showcased.
+       *
+       * @since 1.0.5
+       */
+      products: TrendingProduct[];
     };
   };
   /**
