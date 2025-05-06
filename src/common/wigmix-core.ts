@@ -475,50 +475,50 @@ export interface ColoredInterface {
 /**
  * An interface for a trending product (will be changed when API is integrated)
  *
- * @since 1.0.5
+ * @since 1.0.6
  */
 export interface TrendingProduct {
   /**
    * product ID of the interface.
    *
-   * @since 1.0.5
+   * @since 1.0.6
    */
   productId: string;
   /**
    * product URL of the interface.
    *
-   * @since 1.0.5
+   * @since 1.0.6
    */
   productUrl: string;
   /**
    * image URL of the interface.
    *
-   * @since 1.0.5
+   * @since 1.0.6
    */
   imUrl: string;
   /**
    * price object of product of the interface.
    *
-   * @since 1.0.5
+   * @since 1.0.6
    */
   price: {
     /**
      * type of currency of the interface.
      *
-     * @since 1.0.5
+     * @since 1.0.6
      */
     currency: string;
     /**
      * price amount of the interface.
      *
-     * @since 1.0.5
+     * @since 1.0.6
      */
     value: number;
   };
   /**
    * title of product of the interface.
    *
-   * @since 1.0.5
+   * @since 1.0.6
    */
   title: string;
 }
@@ -1135,38 +1135,38 @@ export interface WidgetConfig {
     /**
      * Popular terms settings. This is only applicable for widgets with popular terms setting available.
      *
-     * @since 1.0.5
+     * @since 1.0.6
      */
     popularTerms?: {
       /**
        * Whether the "popular term" feature is enabled or not.
        *
-       * @since 1.0.5
+       * @since 1.0.6
        */
       enable: boolean;
       /**
        * List of terms which will be used as a quick query search.
        *
-       * @since 1.0.5
+       * @since 1.0.6
        */
       terms: string[];
     };
     /**
      * Trending product settings. This is only applicable for widgets with recommended products setting available.
      *
-     * @since 1.0.5
+     * @since 1.0.6
      */
     trendingProducts?: {
       /**
        * Whether the "trending product" feature is enabled or not.
        *
-       * @since 1.0.5
+       * @since 1.0.6
        */
       enable: boolean;
       /**
        * List of trending products which will be showcased.
        *
-       * @since 1.0.5
+       * @since 1.0.6
        */
       products: TrendingProduct[];
     };
