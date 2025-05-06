@@ -1,7 +1,7 @@
-# Search Bar widget
+# Merchandise Search Bar widget
 
-![status](https://img.shields.io/badge/status-stable-blue)
-![stable](https://img.shields.io/badge/since-1.0.1-blue)
+![status](https://img.shields.io/badge/status-development-yellow)
+![stable](https://img.shields.io/badge/since-1.0.5-blue)
 
 ## Local development
 
@@ -11,11 +11,11 @@
   3. (optional) Add the text query in the `data-text` field of the widget selector.
   4. Run:
      ```sh
-     npm run start:search-bar
+     npm run start:merchandise-search-bar
      ```
-     The dev server will be available at `http://localhost:8080` and will automatically reload for changes made in `src/official-widgets/search-bar` folder.
+     The dev server will be available at `http://localhost:8080` and will automatically reload for changes made in `src/official-widgets/merchandise-search-bar` folder.
 - To bundle the widget:
   ```sh
-  npm run build:search-bar
+  npm run build:merchandise-search-bar
   ```
-  The bundled file will be available in `dist/search-bar` directory. 
+  The bundled file will be available in `dist/merchandise-search-bar` directory. 
