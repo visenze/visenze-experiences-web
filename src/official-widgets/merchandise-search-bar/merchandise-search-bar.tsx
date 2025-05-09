@@ -66,7 +66,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
     if (!customizations.trendingProducts?.products) {
       return recProducts;
     }
-    customizations.trendingProducts.products.map((p) => {
+    Object.entries(customizations.trendingProducts.products).map(([, p]) => {
       const product: ProcessedProduct = {
         product_id: p.productId,
         im_url: p.imUrl,
@@ -366,7 +366,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                         {intl.formatMessage({ id: 'popularChoices' })}
                       </p>
                       <div>
-                        {customizations.popularTerms.terms.map((term) => (
+                        {Object.entries(customizations.popularTerms.terms).map(([, term]) => (
                           <button
                             className='rounded-full border-1 border-black px-2 mr-2 text-small font-normal'
                             key={term} onClick={() => {
