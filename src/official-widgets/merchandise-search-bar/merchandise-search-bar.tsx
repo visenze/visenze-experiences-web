@@ -44,7 +44,6 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
   const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
   const intl = useIntl();
-
   const {
     imageUrl,
     autocompleteResults,
@@ -373,7 +372,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                         </div>
                       </div>
                     )}
-                    { (customizations.popularTerms?.terms && customizations.popularTerms?.terms.length > 0) && (
+                    { popularTerms.length > 0 && (
                     <div className='px-4 py-1'>
                       <p className='text-large font-semibold leading-6 text-primary py-1'>
                         {intl.formatMessage({ id: 'popularChoices' })}
