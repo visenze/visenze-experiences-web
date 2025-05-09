@@ -80,7 +80,20 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
     return recProducts;
   };
 
+  const getPopularTerms = (): string[] => {
+    const popularTerms = [] as string[];
+    if (!customizations.popularTerms?.terms) {
+      return popularTerms;
+    }
+    Object.entries(customizations.popularTerms.terms).map(([, t]) => {
+      popularTerms.push(t);
+      return t;
+    });
+    return popularTerms;
+  };
+
   const trendingProducts = getTrendingProducts();
+  const popularTerms = getPopularTerms();
 
   useEffect(() => {
     const handleImageAppended = (e: any): void => {
@@ -340,7 +353,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                   }
                   <div
                     className='flex flex-col-reverse justify-center divide-gray-200 py-1 px-4'>
-                    { (customizations.trendingProducts?.products && customizations.trendingProducts?.products.length > 0) && (
+                    { trendingProducts.length > 0 && (
                       <div className='px-4 py-1'>
                         <p className='text-large font-semibold leading-6 text-primary py-1'>
                           {intl.formatMessage({ id: 'trending' })}
@@ -366,7 +379,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                         {intl.formatMessage({ id: 'popularChoices' })}
                       </p>
                       <div>
-                        {Object.entries(customizations.popularTerms.terms).map(([, term]) => (
+                        {popularTerms.map((term) => (
                           <button
                             className='rounded-full border-1 border-black px-2 mr-2 text-small font-normal'
                             key={term} onClick={() => {
