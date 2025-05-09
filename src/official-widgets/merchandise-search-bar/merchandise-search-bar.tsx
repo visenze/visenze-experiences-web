@@ -329,7 +329,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                     </div>
                   </OutsideAlerter>
               )
-              : (showDropdown && (searchHistory.length > 0 || customizations.imageUpload?.enable))
+              : (showDropdown && (searchHistory.length > 0 || customizations.imageUpload?.enable || customizations.popularTerms?.enable || customizations.trendingProducts?.enable))
                   ? <OutsideAlerter>
                   { hasError && (
                     <div className='flex w-full ps-4 py-4 justify-center items-center text-center border-b-2'>
@@ -340,43 +340,45 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                   }
                   <div
                     className='flex flex-col-reverse justify-center divide-gray-200 py-1 px-4'>
-                    <div className='px-4 py-1'>
-                      <p className='text-large font-semibold leading-6 text-primary py-1'>
-                        {intl.formatMessage({ id: 'trending' })}
-                      </p>
-                      <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
-                        {trendingProducts.map((result, index) => (
-                          <div className='size-1/2' key={`${result.product_id}-${index}`} data-pw={`msb-product-result-card-${index + 1}`}>
-                            <ProductCard key={`${result.product_id}-${index}`}
-                                         index={index}
-                                         result={result}
-                                         metadata={metadata}
-                                         hasFindSimilar={false}
-                                         isRecommendation={false}
-                                         pwPrefix='msb' />
-                          </div>
-                        ))}
+                    { (customizations.trendingProducts?.products && customizations.trendingProducts?.products.length > 0) && (
+                      <div className='px-4 py-1'>
+                        <p className='text-large font-semibold leading-6 text-primary py-1'>
+                          {intl.formatMessage({ id: 'trending' })}
+                        </p>
+                        <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
+                          {trendingProducts.map((result, index) => (
+                            <div className='size-1/2' key={`${result.product_id}-${index}`} data-pw={`msb-product-result-card-${index + 1}`}>
+                              <ProductCard key={`${result.product_id}-${index}`}
+                                           index={index}
+                                           result={result}
+                                           metadata={metadata}
+                                           hasFindSimilar={false}
+                                           isRecommendation={false}
+                                           pwPrefix='msb' />
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
+                    { (customizations.popularTerms?.terms && customizations.popularTerms?.terms.length > 0) && (
                     <div className='px-4 py-1'>
                       <p className='text-large font-semibold leading-6 text-primary py-1'>
                         {intl.formatMessage({ id: 'popularChoices' })}
                       </p>
-                      {customizations?.popularTerms?.terms
-                        ? <div>
-                          {customizations.popularTerms.terms.map((term) => (
-                            <button
-                              className='rounded-full border-1 border-black px-2 mr-2 text-small font-normal'
-                              key={term} onClick={() => {
-                                setQuery(term);
-                                emitSearchBarCallback(term, image);
-                            }}>
-                              {term}
-                            </button>
-                          ))}
-                        </div> : <></>
-                      }
+                      <div>
+                        {customizations.popularTerms.terms.map((term) => (
+                          <button
+                            className='rounded-full border-1 border-black px-2 mr-2 text-small font-normal'
+                            key={term} onClick={() => {
+                              setQuery(term);
+                              emitSearchBarCallback(term, image);
+                          }}>
+                            {term}
+                          </button>
+                        ))}
+                      </div>
                     </div>
+                    )}
                     {searchHistory.length > 0 && (
                       <div className='flex-1'>
                         <div className='flex flex-col gap-2 px-4 py-1'>
