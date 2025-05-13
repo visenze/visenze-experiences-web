@@ -341,7 +341,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                     </div>
                   </OutsideAlerter>
               )
-              : (showDropdown && (searchHistory.length > 0 || customizations.imageUpload?.enable || customizations.popularTerms?.enable || customizations.trendingProducts?.enable))
+              : (showDropdown && (searchHistory.length > 0 || customizations.popularTerms?.enable || customizations.trendingProducts?.enable))
                   ? <OutsideAlerter>
                   { hasError && (
                     <div className='flex w-full ps-4 py-4 justify-center items-center text-center border-b-2'>
@@ -352,7 +352,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                   }
                   <div
                     className='flex flex-col-reverse justify-center divide-gray-200 py-1 px-4'>
-                    { trendingProducts.length > 0 && (
+                    { customizations.trendingProducts?.enable && trendingProducts.length > 0 && (
                       <div className='px-4 py-1'>
                         <p className='text-large font-semibold leading-6 text-primary py-1'>
                           {intl.formatMessage({ id: 'trending' })}
@@ -372,7 +372,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                         </div>
                       </div>
                     )}
-                    { popularTerms.length > 0 && (
+                    { customizations.popularTerms?.enable && popularTerms.length > 0 && (
                     <div className='px-4 py-1'>
                       <p className='text-large font-semibold leading-6 text-primary py-1'>
                         {intl.formatMessage({ id: 'popularChoices' })}
