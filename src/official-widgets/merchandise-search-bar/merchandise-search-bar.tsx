@@ -60,39 +60,14 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
     image,
     query: debouncedQuery,
   });
-  const getTrendingProducts = (): ProcessedProduct[] => {
-    const recProducts = [] as ProcessedProduct[];
-    if (!customizations.trendingProducts?.products) {
-      return recProducts;
-    }
-    Object.entries(customizations.trendingProducts.products).map(([, p]) => {
-      const product: ProcessedProduct = {
-        product_id: p.productId,
-        im_url: p.imUrl,
-        title: p.title,
-        price: p.price,
-        product_url: p.productUrl,
-      };
-      recProducts.push(product);
-      return product;
-    });
-    return recProducts;
-  };
-
-  const getPopularTerms = (): string[] => {
-    const popularTerms = [] as string[];
-    if (!customizations.popularTerms?.terms) {
-      return popularTerms;
-    }
-    Object.entries(customizations.popularTerms.terms).map(([, t]) => {
-      popularTerms.push(t);
-      return t;
-    });
-    return popularTerms;
-  };
-
-  const trendingProducts = getTrendingProducts();
-  const popularTerms = getPopularTerms();
+  const trendingProducts: ProcessedProduct[] = (customizations.trendingProducts?.products || []).map((p) => ({
+    product_id: p.productId,
+    im_url: p.imUrl,
+    title: p.title,
+    price: p.price,
+    product_url: p.productUrl,
+  }));
+  const popularTerms = customizations.popularTerms?.terms || [];
 
   useEffect(() => {
     const handleImageAppended = (e: any): void => {
