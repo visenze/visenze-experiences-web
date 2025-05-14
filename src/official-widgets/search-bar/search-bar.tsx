@@ -66,19 +66,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
 
   const onImageUpload = (img: SearchImage): void => {
     setImage(img);
-    const event = new CustomEvent('wigmix_internal_search_bar_append_image', { detail: img });
-    document.dispatchEvent(event);
   };
-
-  useEffect(() => {
-    const handleImageAppended = (e: any): void => {
-      setImage(e.detail);
-    };
-    document.addEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
-    return (): void => {
-      document.removeEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
-    };
-  }, []);
 
   useEffect(() => {
     if (breakpoint === WidgetBreakpoint.MOBILE) {

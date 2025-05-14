@@ -39,20 +39,6 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
   };
 
   useEffect(() => {
-    const handleImageAppended = (e: any): void => {
-      if (e.detail && (e.detail.imgUrl || e.detail.file)) {
-        setSearchImage(e.detail);
-      } else {
-        setSearchImage(undefined);
-      }
-    };
-    document.addEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
-    return (): void => {
-      document.removeEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
-    };
-  }, []);
-
-  useEffect(() => {
     setSearchImage(image);
   }, [image]);
 

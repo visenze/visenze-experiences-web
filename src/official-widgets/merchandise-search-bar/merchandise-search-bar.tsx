@@ -70,16 +70,6 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
   const popularTerms = customizations.popularTerms?.terms || [];
 
   useEffect(() => {
-    const handleImageAppended = (e: any): void => {
-      setImage(e.detail);
-    };
-    document.addEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
-    return (): void => {
-      document.removeEventListener('wigmix_internal_search_bar_append_image', handleImageAppended);
-    };
-  }, []);
-
-  useEffect(() => {
     if (breakpoint === WidgetBreakpoint.MOBILE) {
       setSuggestionMax(4);
     }
