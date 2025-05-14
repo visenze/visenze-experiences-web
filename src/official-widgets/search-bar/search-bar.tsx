@@ -183,7 +183,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
 
     return (
         <div ref={wrapperRef}
-             className='absolute top-12 z-20 h-fit w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all'>
+             className='wigmix-search-bar-overlay absolute top-12 z-20 h-fit w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all'>
           {props.children}
         </div>
     );
@@ -218,6 +218,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                           }}
                           placementId={`${widgetConfig.appSettings.placementId}`}
                           renderModalWithoutPortal={!!renderModalWithoutPortal} />
+        </div>
           {/* Autocomplete dropdown */}
           {/* eslint-disable no-nested-ternary */}
           {showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
@@ -402,7 +403,6 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                 : <></>
           }
         </div>
-      </div>
     </>
   );
 };

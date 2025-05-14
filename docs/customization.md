@@ -43,6 +43,7 @@ This can be used alongside the previously mentioned look-and-feel customization.
   | `wigmix-find-similar-icon`            | `div`        | 1.0.0           |                                                      |
   | `wigmix-modal`                        | `div`        | 1.0.0           |                                                      |
   | `wigmix-modal-overlay`                | `div`        | 1.0.0           |                                                      |
+  | `wigmix-search-bar-overlay`           | `div`        | 1.0.7           |                                                      |
 
   Naturally, not all `wigmix-*` class names are available on all widgets;
   a class name is present only when the logical section it is representing is present in the widget.
