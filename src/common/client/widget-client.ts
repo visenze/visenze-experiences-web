@@ -223,6 +223,8 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
 
   const disposeWidget = (): void => {
     hideWidget();
+    // Clear all existing render roots on top of just null-rendering
+    roots.forEach((root) => root.unmount());
     if (window.visenzeWidgets?.[placementId]) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete window.visenzeWidgets[placementId];
@@ -304,6 +306,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     multisearchAutocomplete,
     setRenderRoots,
     rerender: (): void => {}, // implemented in initialization.ts
+    renderMissing: (): void => {}, // implemented in initialization.ts
     openWidget,
     registerWidgetOpener,
     hideWidget,

@@ -225,7 +225,7 @@ export interface WidgetClient {
     handleError: ErrorHandler,
   ) => void;
   /**
-   * Triggers rendering for the widgets.
+   * Triggers rendering for the widgets, including all of existing, already rendered widgets.
    *
    * For recommendations widget, this will also trigger a new call to ViSenze API.
    *
@@ -234,6 +234,15 @@ export interface WidgetClient {
    * @since 1.0.0
    */
   rerender: (selector?: string) => void;
+  /**
+   * Triggers rendering for the widgets that are not present in the designated selectors,
+   * typically when the selectors are dynamically added to the page.
+   *
+   * For recommendations widget, this will also trigger a new call to ViSenze API.
+   *
+   * @since 1.0.6
+   */
+  renderMissing: () => void;
   /**
    * Opens the widget popup; applicable only for widget types that have popup behavior.
    *

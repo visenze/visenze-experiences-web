@@ -194,29 +194,39 @@ const getRenderElement = (config: WidgetConfig): HTMLElement | null => {
   return document.body.querySelector(cssSelector || `.ps-widget-${config.appSettings.placementId}`);
 };
 
+let rootElements: HTMLElement[] = [];
+
 const render = (
     client: WidgetClient,
     config: WidgetConfig,
     renderer: WidgetRenderer,
     isMultiRender: boolean,
+    onlyMissing = false,
 ): void => {
-  // Clear all existing render roots
-  client.getRenderRoots().forEach((r) => r.unmount());
+  if (!onlyMissing) {
+    // Clear all existing render roots
+    client.getRenderRoots().forEach((r) => r.unmount());
+    rootElements = [];
+  }
 
-  const roots: Root[] = [];
+  const roots: Root[] = onlyMissing ? [...client.getRenderRoots()] : [];
 
   if (isMultiRender) {
     const elements = getRenderElements(config);
     elements.forEach((element) => {
-      const root = createRoot(element);
-      root.render(renderer({ config, client, element }));
-      roots.push(root);
+      if (rootElements.indexOf(element) < 0) {
+        const root = createRoot(element);
+        root.render(renderer({config, client, element}));
+        rootElements.push(element);
+        roots.push(root);
+      }
     });
   } else {
     const element = getRenderElement(config);
-    if (element) {
+    if (element && rootElements.indexOf(element) < 0) {
       const root = createRoot(element);
       root.render(renderer({ config, client, element }));
+      rootElements.push(element);
       roots.push(root);
     }
   }
@@ -245,6 +255,9 @@ export const initWidgetFactory = (
         widgetConfig.displaySettings.cssSelector = selector;
       }
       render(widgetClient, widgetConfig, renderer, isMultiRender);
+    };
+    widgetClient.renderMissing = (): void => {
+      render(widgetClient, widgetConfig, renderer, isMultiRender, true);
     };
 
     if (!skipRender) {
@@ -288,6 +301,9 @@ export const devInitWidget = async (
       widgetConfig.displaySettings.cssSelector = selector;
     }
     render(widgetClient, widgetConfig, renderer, isMultiRender);
+  };
+  widgetClient.renderMissing = (): void => {
+    render(widgetClient, widgetConfig, renderer, isMultiRender, true);
   };
   window['widget'] = widgetClient;
 };
