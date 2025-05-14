@@ -1146,17 +1146,23 @@ export interface WidgetConfig {
     /**
      * Popular terms settings. This is only applicable for widgets with popular terms setting available.
      *
+     * @internal
+     *
      * @since 1.0.6
      */
     popularTerms?: {
       /**
        * Whether the "popular term" feature is enabled or not.
        *
+       * @internal
+       *
        * @since 1.0.6
        */
       enable: boolean;
       /**
        * List of terms which will be used as a quick query search.
+       *
+       * @internal
        *
        * @since 1.0.6
        */
@@ -1165,17 +1171,23 @@ export interface WidgetConfig {
     /**
      * Trending product settings. This is only applicable for widgets with recommended products setting available.
      *
+     * @internal
+     *
      * @since 1.0.6
      */
     trendingProducts?: {
       /**
        * Whether the "trending product" feature is enabled or not.
        *
+       * @internal
+       *
        * @since 1.0.6
        */
       enable: boolean;
       /**
        * List of trending products which will be showcased.
+       *
+       * @internal
        *
        * @since 1.0.6
        */

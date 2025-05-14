@@ -189,7 +189,7 @@ describe('search-bar', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_search_bar', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.im_url === 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg') {
+        if (params.im_url === 'https://cdn.visenze.com/sample/sunset.jpg') {
           // Initial image search
           handler(getStandardMultiSearchSuccessResponse());
         } else if (params.q === 'jeans') {
@@ -423,7 +423,7 @@ describe('search-bar', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_search_bar', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.im_url === 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg') {
+        if (params.im_url === 'https://cdn.visenze.com/sample/sunset.jpg') {
           // Initial image search
           handler(getStandardMultiSearchSuccessResponse());
         } else if (params.q === 'jeans') {

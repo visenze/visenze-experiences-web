@@ -165,6 +165,14 @@ You can additionally specify the new selector in which the widget will be re-ren
 visenzeWidget.rerender('.new-selector');
 ```
 
+The `rerender` method will attempt to re-render the widget regardless of whether the widget is already rendered or not.
+If you're intending to render the widget on selectors that are newly, dynamically added to the page,
+you can consider using `renderMissing` instead:
+
+```ts
+visenzeWidget.renderMissing();
+```
+
 ### Hiding the widget
 
 To hide the widget from the user view, you can use the `hideWidget` method:

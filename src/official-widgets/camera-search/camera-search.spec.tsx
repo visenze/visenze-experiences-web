@@ -249,7 +249,7 @@ describe('camera-search', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
-          im_url: 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg',
+          im_url: 'https://cdn.visenze.com/sample/sunset.jpg',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -258,7 +258,7 @@ describe('camera-search', () => {
       productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           q: '',
-          im_url: 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg',
+          im_url: 'https://cdn.visenze.com/sample/sunset.jpg',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -300,7 +300,7 @@ describe('camera-search', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
-          im_url: 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg',
+          im_url: 'https://cdn.visenze.com/sample/sunset.jpg',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -309,7 +309,7 @@ describe('camera-search', () => {
       productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           q: '',
-          im_url: 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg',
+          im_url: 'https://cdn.visenze.com/sample/sunset.jpg',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -358,7 +358,7 @@ describe('camera-search', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
-          im_url: 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg',
+          im_url: 'https://cdn.visenze.com/sample/sunset.jpg',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -367,7 +367,7 @@ describe('camera-search', () => {
       productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           q: '',
-          im_url: 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg',
+          im_url: 'https://cdn.visenze.com/sample/sunset.jpg',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -495,7 +495,7 @@ describe('camera-search', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.im_url === 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg') {
+        if (params.im_url === 'https://cdn.visenze.com/sample/sunset.jpg') {
           handler(getStandardMultiSearchSuccessResponse());
         } else if (params.pid === 'pid-5') {
           const standardResponse = getStandardMultiSearchSuccessResponse();
@@ -556,14 +556,14 @@ describe('camera-search', () => {
     // The previously used gallery image should be moved to inactive history
     const inactiveHistory = testComponent.queryAllByTestId('wigmix-inactive-product');
     expect(inactiveHistory.length).toEqual(1);
-    expect(inactiveHistory[0].getAttribute('src')).toEqual('https://visenze-static.s3.amazonaws.com/sample/sunset.jpg');
+    expect(inactiveHistory[0].getAttribute('src')).toEqual('https://cdn.visenze.com/sample/sunset.jpg');
   });
 
   it('should show error message if find similar encounters error', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.im_url === 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg') {
+        if (params.im_url === 'https://cdn.visenze.com/sample/sunset.jpg') {
           handler(getStandardMultiSearchSuccessResponse());
         } else if (params.pid === 'pid-5') {
           handler(getStandardMultiSearchInvalidImageResponse());
@@ -630,7 +630,7 @@ describe('camera-search', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_camera_search', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
-        if (params.im_url === 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg') {
+        if (params.im_url === 'https://cdn.visenze.com/sample/sunset.jpg') {
           // Initial image search
           handler(getStandardMultiSearchSuccessResponse());
         } else if (params.q === 'jeans') {
@@ -692,7 +692,7 @@ describe('camera-search', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         counter += 1;
-        if (params.im_url === 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg') {
+        if (params.im_url === 'https://cdn.visenze.com/sample/sunset.jpg') {
           handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else {
           handler(getStandardMultiSearchSuccessResponse());
@@ -748,7 +748,7 @@ describe('camera-search', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         counter += 1;
-        if (params.im_url === 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg') {
+        if (params.im_url === 'https://cdn.visenze.com/sample/sunset.jpg') {
           handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else {
           handler(getStandardMultiSearchSuccessResponse());
@@ -804,7 +804,7 @@ describe('camera-search', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         counter += 1;
-        if (params.im_url === 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg') {
+        if (params.im_url === 'https://cdn.visenze.com/sample/sunset.jpg') {
           handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else {
           handler(getStandardMultiSearchSuccessResponse());
@@ -867,7 +867,7 @@ describe('camera-search', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         counter += 1;
-        if (params.im_url === 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg') {
+        if (params.im_url === 'https://cdn.visenze.com/sample/sunset.jpg') {
           handler(getStandardMultiSearchSuccessWithBoxResponse());
         } else {
           handler(getStandardMultiSearchSuccessResponse());

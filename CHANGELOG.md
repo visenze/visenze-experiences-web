@@ -30,6 +30,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+<!-- BEGIN visenze-experiences-web 1.0.6 -->
+## [1.0.6](https://github.com/visenze/visenze-experiences-web/compare/1.0.5...1.0.6) - 2025-05-14
+
+### Added
+
+- Widget client: New method `renderMissing` to re-render widgets only on matched selectors that has no rendered widget yet
+
+### Changed
+
+- camera-search, search-bar: Updated the default images shown in the gallery
+<!-- END visenze-experiences-web 1.0.6 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.5 -->
 ## [1.0.5](https://github.com/visenze/visenze-experiences-web/compare/1.0.4...1.0.5) - 2025-04-29
 
