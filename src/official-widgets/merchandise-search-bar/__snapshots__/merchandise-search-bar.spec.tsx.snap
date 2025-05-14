@@ -390,7 +390,7 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
                       <img
                         class="h-full w-fit object-cover"
                         data-pw="msb-gallery-image-1"
-                        src="https://visenze-static.s3.amazonaws.com/sample/street_shot.jpg"
+                        src="https://cdn.visenze.com/sample/street_shot.jpg"
                       />
                     </div>
                   </div>
@@ -406,7 +406,7 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="msb-gallery-image-2"
-                          src="https://visenze-static.s3.amazonaws.com/sample/suit.jpg"
+                          src="https://cdn.visenze.com/sample/suit.jpg"
                         />
                       </div>
                       <div
@@ -415,7 +415,7 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="msb-gallery-image-3"
-                          src="https://visenze-static.s3.amazonaws.com/sample/sunset.jpg"
+                          src="https://cdn.visenze.com/sample/sunset.jpg"
                         />
                       </div>
                       <div
@@ -424,7 +424,7 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="msb-gallery-image-4"
-                          src="https://visenze-static.s3.amazonaws.com/sample/sport.jpg"
+                          src="https://cdn.visenze.com/sample/sport.jpg"
                         />
                       </div>
                       <div
@@ -433,7 +433,7 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="msb-gallery-image-5"
-                          src="https://visenze-static.s3.amazonaws.com/sample/dance.jpg"
+                          src="https://cdn.visenze.com/sample/dance.jpg"
                         />
                       </div>
                     </div>
@@ -735,7 +735,7 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
                       <img
                         class="h-full w-fit object-cover"
                         data-pw="msb-gallery-image-1"
-                        src="https://visenze-static.s3.amazonaws.com/sample/street_shot.jpg"
+                        src="https://cdn.visenze.com/sample/street_shot.jpg"
                       />
                     </div>
                   </div>
@@ -751,7 +751,7 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="msb-gallery-image-2"
-                          src="https://visenze-static.s3.amazonaws.com/sample/suit.jpg"
+                          src="https://cdn.visenze.com/sample/suit.jpg"
                         />
                       </div>
                       <div
@@ -760,7 +760,7 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="msb-gallery-image-3"
-                          src="https://visenze-static.s3.amazonaws.com/sample/sunset.jpg"
+                          src="https://cdn.visenze.com/sample/sunset.jpg"
                         />
                       </div>
                       <div
@@ -769,7 +769,7 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="msb-gallery-image-4"
-                          src="https://visenze-static.s3.amazonaws.com/sample/sport.jpg"
+                          src="https://cdn.visenze.com/sample/sport.jpg"
                         />
                       </div>
                       <div
@@ -778,7 +778,7 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
                         <img
                           class="h-full w-fit object-cover"
                           data-pw="msb-gallery-image-5"
-                          src="https://visenze-static.s3.amazonaws.com/sample/dance.jpg"
+                          src="https://cdn.visenze.com/sample/dance.jpg"
                         />
                       </div>
                     </div>

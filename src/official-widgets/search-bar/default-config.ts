@@ -224,23 +224,23 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
     images: [
       {
-        url: 'https://visenze-static.s3.amazonaws.com/sample/street_shot.jpg',
+        url: 'https://cdn.visenze.com/sample/street_shot.jpg',
         label: '',
       },
       {
-        url: 'https://visenze-static.s3.amazonaws.com/sample/suit.jpg',
+        url: 'https://cdn.visenze.com/sample/suit.jpg',
         label: '',
       },
       {
-        url: 'https://visenze-static.s3.amazonaws.com/sample/sunset.jpg',
+        url: 'https://cdn.visenze.com/sample/sunset.jpg',
         label: '',
       },
       {
-        url: 'https://visenze-static.s3.amazonaws.com/sample/sport.jpg',
+        url: 'https://cdn.visenze.com/sample/sport.jpg',
         label: '',
       },
       {
-        url: 'https://visenze-static.s3.amazonaws.com/sample/dance.jpg',
+        url: 'https://cdn.visenze.com/sample/dance.jpg',
         label: '',
       },
     ],
