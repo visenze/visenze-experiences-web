@@ -17,7 +17,7 @@ exports[`similar-search should open the popup when icon is clicked and display e
     <button
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
-      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
+      style="background-color: rgb(255, 255, 255);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -96,7 +96,7 @@ exports[`similar-search should open the popup when icon is clicked and display e
     <button
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
-      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
+      style="background-color: rgb(255, 255, 255);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -180,7 +180,7 @@ exports[`similar-search should render a successful response with default config 
     <button
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
-      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
+      style="background-color: rgb(255, 255, 255);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -1801,7 +1801,7 @@ exports[`similar-search should render a successful response with default config 
     <button
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
-      style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
+      style="background-color: rgb(255, 255, 255);"
     >
       <div
         class="wigmix-popup-trigger-icon default size-6"
@@ -3434,7 +3434,7 @@ exports[`similar-search should render the standard icon 1`] = `
   <button
     class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
     data-testid="wigmix-popup-trigger-button"
-    style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
+    style="background-color: rgb(255, 255, 255);"
   >
     <div
       class="wigmix-popup-trigger-icon default size-6"

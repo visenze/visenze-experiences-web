@@ -30,6 +30,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+<!-- BEGIN visenze-experiences-web 1.0.7 -->
+## [1.0.7](https://github.com/visenze/visenze-experiences-web/compare/1.0.6...1.0.7) - 2025-05-19
+
+### Added
+
+- camera-search, similar-search, icon-triggered-grid: Font color settings for popup trigger button text if the icon is configured to use the default color
+
+### Chore
+
+- search-bar: Moved search bar overlay out of search input div
+- embedded-search-results, search-bar: Removed internal event `wigmix_internal_search_bar_append_image`
+<!-- END visenze-experiences-web 1.0.7 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.6 -->
 ## [1.0.6](https://github.com/visenze/visenze-experiences-web/compare/1.0.5...1.0.6) - 2025-05-14
 

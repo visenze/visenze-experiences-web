@@ -35,11 +35,6 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
   const searchBarRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
 
-  const createImageEvent = (im: SearchImage): void => {
-    const event = new CustomEvent('wigmix_internal_search_bar_append_image', { detail: im });
-    document.dispatchEvent(event);
-  };
-
   return (
     <Input
       data-pw='sb-search-bar-input'
@@ -70,7 +65,6 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
         const isImageUrl = (url: string): boolean => /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url.toLowerCase());
 
         if (isImageUrl(value)) {
-          createImageEvent({ imgUrl: value });
           imageUploadHandler({ imgUrl: value });
           setQuery('');
         } else {

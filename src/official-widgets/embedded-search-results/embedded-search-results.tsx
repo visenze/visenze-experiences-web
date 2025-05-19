@@ -280,10 +280,6 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
 
   const findSimilarClickHandler = (imgOrPid: SearchImageOrPid): void => {
     setPage(1);
-    if (isImageUrl(imgOrPid)) {
-      const event = new CustomEvent('wigmix_internal_search_bar_append_image', { detail: { imgUrl: imgOrPid.imgUrl } });
-      document.dispatchEvent(event);
-    }
     if (image === imgOrPid && imageBoxData) {
       multisearchWithSearchBarDetails(imgOrPid, query, 1, true, false, imageBoxData);
     } else {
