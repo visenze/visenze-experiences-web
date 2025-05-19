@@ -876,7 +876,7 @@ export interface WidgetConfig {
        *
        * @since 1.0.0
        */
-      triggerIcon: Icon & {
+      triggerIcon: Icon & Partial<ColoredInterface> & {
         /**
          * Whether to hide the trigger button.
          *
@@ -897,18 +897,6 @@ export interface WidgetConfig {
          * @since 1.0.4
          */
         layout: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
-        /**
-         * Background color of the trigger button.
-         *
-         * @since 1.0.4
-         */
-        backgroundColor?: string;
-        /**
-         * Background color of the trigger button in dark mode.
-         *
-         * @since 1.0.4
-         */
-        backgroundColorDark?: string;
       };
     };
     /**

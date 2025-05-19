@@ -11,8 +11,16 @@ interface PopupTriggerButtonProps {
   defaultIcon: ReactElement;
 }
 
-const PopupTriggerButton: FC<PopupTriggerButtonProps> = ({ config, text, darkMode, onClick, defaultIcon }) => (
-  <>
+const PopupTriggerButton: FC<PopupTriggerButtonProps> = ({ config, text, darkMode, onClick, defaultIcon }) => {
+  let fontColor = config?.triggerIcon?.color;
+  if (!fontColor || fontColor === 'DEFAULT_ICON_COLOR') {
+    fontColor = config?.triggerIcon?.fontColor || 'inherit';
+  }
+  let fontColorDark = config?.triggerIcon?.colorDark;
+  if (!fontColorDark || fontColorDark === 'DEFAULT_ICON_COLOR') {
+    fontColorDark = config?.triggerIcon?.fontColorDark || 'inherit';
+  }
+  return (<>
     {!config?.triggerIcon?.hide && (
       <button
         className={cn(
@@ -23,15 +31,13 @@ const PopupTriggerButton: FC<PopupTriggerButtonProps> = ({ config, text, darkMod
           backgroundColor: darkMode
               ? config?.triggerIcon?.backgroundColorDark || 'transparent'
               : config?.triggerIcon?.backgroundColor || 'transparent',
-          color: darkMode
-              ? config?.triggerIcon?.colorDark || 'inherit'
-              : config?.triggerIcon?.color || 'inherit',
         }}
         data-testid='wigmix-popup-trigger-button'
         onClick={onClick}
       >
         {config?.triggerIcon?.layout === 'TEXT_ICON' && (
-          <span className='wigmix-popup-trigger-text'>{text}</span>
+          <span className='wigmix-popup-trigger-text'
+                style={{ color: darkMode ? fontColorDark : fontColor }}>{text}</span>
         )}
         {config?.triggerIcon?.layout !== 'TEXT' && (
           <>
@@ -49,11 +55,12 @@ const PopupTriggerButton: FC<PopupTriggerButtonProps> = ({ config, text, darkMod
           </>
         )}
         {(config?.triggerIcon?.layout === 'TEXT' || config?.triggerIcon?.layout === 'ICON_TEXT') && (
-          <span className='wigmix-popup-trigger-text'>{text}</span>
+          <span className='wigmix-popup-trigger-text'
+                style={{ color: darkMode ? fontColorDark : fontColor }}>{text}</span>
         )}
       </button>
     )}
-  </>
-);
+  </>);
+};
 
 export default PopupTriggerButton;
