@@ -294,21 +294,23 @@ const ProductCard: FC<ProductCardProps> = ({
           <span className='wigmix-product-card-secondary-title line-clamp-1'>
             {getProductSecondaryTitle(customizations, productDetails, result)}
           </span>
-          {
-            originalPrice && originalPrice !== price
-              ? (
-                <div className='wigmix-product-card-price-row flex flex-wrap items-center gap-1'>
-                  <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
-                    {price}
-                  </span>
-                  <span className='wigmix-product-card-original-price line-through' style={getProductOriginalPriceColorStyle()}>
-                    {originalPrice}
-                  </span>
-                </div>
-              ) : (
-                <span className='wigmix-product-card-price'>{price}</span>
-              )
-          }
+          <div className='wigmix-product-card-price-row flex flex-wrap items-center gap-1'>
+            {
+              originalPrice && originalPrice !== price
+                ? (
+                  <>
+                    <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
+                      {price}
+                    </span>
+                    <span className='wigmix-product-card-original-price line-through' style={getProductOriginalPriceColorStyle()}>
+                      {originalPrice}
+                    </span>
+                  </>
+                ) : (
+                  <span className='wigmix-product-card-price'>{price}</span>
+                )
+            }
+          </div>
         </div>
       </a>
     </div>

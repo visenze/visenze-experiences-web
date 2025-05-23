@@ -66,11 +66,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $19.30
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $19.30
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -111,11 +115,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -156,11 +164,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $15.50
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $15.50
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -201,11 +213,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $14.80
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $14.80
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -246,11 +262,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $14.80
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $14.80
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -291,11 +311,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $20.60
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $20.60
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -336,11 +360,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $23.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $23.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -381,11 +409,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $18.90
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $18.90
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -426,11 +458,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -471,11 +507,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $14.80
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $14.80
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -516,11 +556,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $3.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $3.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -561,11 +605,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $12.50
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $12.50
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -606,11 +654,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $19.60
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $19.60
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -651,11 +703,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.10
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.10
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -696,11 +752,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $23.30
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $23.30
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -741,11 +801,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $21.10
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $21.10
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -786,11 +850,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $6.50
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $6.50
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -831,11 +899,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $2.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $2.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -876,11 +948,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -921,11 +997,15 @@ exports[`shoppable-lookbook should render a successful response with default con
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $26.70
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $26.70
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1022,11 +1102,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $14.80
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $14.80
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1067,11 +1151,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $14.80
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $14.80
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1112,11 +1200,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1157,11 +1249,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $19.60
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $19.60
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1202,11 +1298,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.10
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.10
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1247,11 +1347,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $19.30
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $19.30
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1292,11 +1396,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $26.70
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $26.70
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1337,11 +1445,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $2.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $2.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1382,11 +1494,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $6.50
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $6.50
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1427,11 +1543,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $20.60
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $20.60
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1472,11 +1592,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1517,11 +1641,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $15.50
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $15.50
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1562,11 +1690,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $3.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $3.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1607,11 +1739,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $14.80
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $14.80
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1652,11 +1788,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $12.50
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $12.50
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1697,11 +1837,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $23.30
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $23.30
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1742,11 +1886,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $21.10
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $21.10
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1787,11 +1935,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $18.90
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $18.90
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1832,11 +1984,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1877,11 +2033,15 @@ exports[`shoppable-lookbook should render a successful response with object hots
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $23.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $23.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1948,11 +2108,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $19.30
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $19.30
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -1993,11 +2157,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2038,11 +2206,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $15.50
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $15.50
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2083,11 +2255,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $14.80
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $14.80
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2128,11 +2304,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $14.80
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $14.80
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2173,11 +2353,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $20.60
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $20.60
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2218,11 +2402,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $23.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $23.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2263,11 +2451,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $18.90
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $18.90
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2308,11 +2500,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2353,11 +2549,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $14.80
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $14.80
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2398,11 +2598,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $3.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $3.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2443,11 +2647,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $12.50
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $12.50
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2488,11 +2696,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $19.60
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $19.60
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2533,11 +2745,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.10
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.10
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2578,11 +2794,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $23.30
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $23.30
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2623,11 +2843,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $21.10
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $21.10
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2668,11 +2892,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $6.50
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $6.50
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2713,11 +2941,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $2.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $2.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2758,11 +2990,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $7.00
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $7.00
+              </span>
+            </div>
           </div>
         </a>
       </div>
@@ -2803,11 +3039,15 @@ exports[`shoppable-lookbook should render a successful response with some custom
             <span
               class="wigmix-product-card-secondary-title line-clamp-1"
             />
-            <span
-              class="wigmix-product-card-price"
+            <div
+              class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
             >
-              $26.70
-            </span>
+              <span
+                class="wigmix-product-card-price"
+              >
+                $26.70
+              </span>
+            </div>
           </div>
         </a>
       </div>
