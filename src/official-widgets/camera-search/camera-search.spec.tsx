@@ -677,7 +677,7 @@ describe('camera-search', () => {
     act(() => {
       const textBar = testComponent.getByTestId('wigmix-text-bar');
       fireEvent.change(textBar, { target: { value: 'jeans' } });
-      fireEvent.keyDown(textBar, { code: 'Enter' });
+      fireEvent.keyDown(textBar, { key: 'Enter' });
     });
 
     const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');

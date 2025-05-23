@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+<!-- BEGIN visenze-experiences-web 1.0.8 -->
+## [1.0.8](https://github.com/visenze/visenze-experiences-web/compare/1.0.7...1.0.8) - 2025-05-23
+
+### Fixed
+
+- more-like-this: Fixed wrong condition for adding default margin classes
+- camera-search, similar-search, embedded-search-results, search-bar: Fixed search bar input not activated by enter on certain devices
+- All widgets: Added missing `wigmix-product-card-price-row` selector if original price does not exist
+<!-- END visenze-experiences-web 1.0.8 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.7 -->
 ## [1.0.7](https://github.com/visenze/visenze-experiences-web/compare/1.0.6...1.0.7) - 2025-05-19
 

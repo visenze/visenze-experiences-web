@@ -39,7 +39,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       maxLength={QUERY_MAX_CHARACTER_LENGTH}
       placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
       onKeyDown={(e) => {
-        if (e.nativeEvent.code === 'Enter') {
+        if (e.key === 'Enter') {
           emitSearchBarCallback();
           if (searchBarRef.current) {
             searchBarRef.current.blur();

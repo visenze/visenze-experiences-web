@@ -234,7 +234,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
               setSearch(input);
             }}
             onKeyDown={(event): void => {
-              if (event.nativeEvent.code === 'Enter') {
+              if (event.key === 'Enter') {
                 onTextSearch(search);
                 scrollToResultsTop();
 
@@ -335,7 +335,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       setDebouncedOnKeywordUpdate(input);
                     }}
                     onKeyDown={(event): void => {
-                      if (event.nativeEvent.code === 'Enter') {
+                      if (event.key === 'Enter') {
                         onTextSearch(search);
                         setShowInputSuggest(false);
                       }

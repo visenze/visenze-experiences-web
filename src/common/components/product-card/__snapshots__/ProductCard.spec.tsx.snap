@@ -37,9 +37,13 @@ exports[`ProductCard should render with all fields hidden, open in new tabs 1`] 
         <span
           class="wigmix-product-card-secondary-title line-clamp-1"
         />
-        <span
-          class="wigmix-product-card-price"
-        />
+        <div
+          class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
+        >
+          <span
+            class="wigmix-product-card-price"
+          />
+        </div>
       </div>
     </a>
   </div>
@@ -155,11 +159,15 @@ exports[`ProductCard should render with standard fields 1`] = `
         <span
           class="wigmix-product-card-secondary-title line-clamp-1"
         />
-        <span
-          class="wigmix-product-card-price"
+        <div
+          class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
         >
-          $100.00
-        </span>
+          <span
+            class="wigmix-product-card-price"
+          >
+            $100.00
+          </span>
+        </div>
       </div>
     </a>
   </div>
@@ -297,11 +305,15 @@ exports[`ProductCard should render with standard fields, find similar enabled, w
         <span
           class="wigmix-product-card-secondary-title line-clamp-1"
         />
-        <span
-          class="wigmix-product-card-price"
+        <div
+          class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
         >
-          $100.00
-        </span>
+          <span
+            class="wigmix-product-card-price"
+          >
+            $100.00
+          </span>
+        </div>
       </div>
     </a>
   </div>

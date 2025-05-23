@@ -227,7 +227,7 @@ describe('search-bar', () => {
     act(() => {
       searchBar!.click();
       fireEvent.change(searchBar!, { target: { value: 'jeans' } });
-      fireEvent.keyDown(searchBar!, { code: 'Enter' });
+      fireEvent.keyDown(searchBar!, { key: 'Enter' });
     });
     expect(searchBar!.getAttribute('value')).toBe('jeans');
     const autocompleteResults = testComponent.queryAllByTestId('wigmix-sb-autocomplete-value');
@@ -264,7 +264,7 @@ describe('search-bar', () => {
     act(() => {
       searchBar!.click();
       fireEvent.change(searchBar!, { target: { value: 'jeans' } });
-      fireEvent.keyDown(searchBar!, { code: 'Enter' });
+      fireEvent.keyDown(searchBar!, { key: 'Enter' });
     });
     expect(searchBar!.getAttribute('value')).toBe('jeans');
     expect(testComponent.getByText('WE HAVE A PROBLEM HERE!')).not.toBeNull();
@@ -459,7 +459,7 @@ describe('search-bar', () => {
     act(() => {
       searchBar!.click();
       fireEvent.change(searchBar!, { target: { value: 'jeans' } });
-      fireEvent.keyDown(searchBar!, { code: 'Enter' });
+      fireEvent.keyDown(searchBar!, { key: 'Enter' });
 
       // Wait for the modal to close
       jest.advanceTimersByTime(500);
