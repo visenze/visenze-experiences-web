@@ -77,9 +77,7 @@ export const AppWrapper: FC<AppWrapperProps> = ({
   }, []);
 
   useEffect(() => {
-    const localeFromConfig = configInternal.languageSettings.locale || configInternal.customizations.localization?.defaultLocale || DEFAULT_LOCALE;
-    setLocale(localeFromConfig);
-    setMessages(getLocaleTexts(localeFromConfig, defaultTexts, configInternal.customizations.localization?.text));
+    setMessages(getLocaleTexts(locale, defaultTexts, configInternal.customizations.localization?.text));
     setCssVariables(configInternal, darkMode);
   }, [configInternal]);
 
