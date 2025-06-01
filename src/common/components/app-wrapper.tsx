@@ -23,6 +23,9 @@ interface AppWrapperProps extends AppProps {
   children: ReactNode;
 }
 
+// Workaround to ensure that the updated config is still used when toggling dark mode / locale
+let configInternalExt: WidgetConfig;
+
 export const AppWrapper: FC<AppWrapperProps> = ({
   widgetConfig,
   widgetClient,
@@ -44,6 +47,12 @@ export const AppWrapper: FC<AppWrapperProps> = ({
     if (customizations?.generalLayout?.darkModeDefault) {
       setDarkMode(true);
     }
+    configInternalExt = {
+      ...widgetConfig,
+      customizations,
+    };
+    const localeFromConfig = configInternalExt.languageSettings.locale || configInternalExt.customizations.localization?.defaultLocale || DEFAULT_LOCALE;
+    setLocale(localeFromConfig);
     setConfigInternal({
       ...widgetConfig,
       customizations,
@@ -66,17 +75,18 @@ export const AppWrapper: FC<AppWrapperProps> = ({
     });
     widgetClient.registerDarkModeToggler(() => {
       setDarkMode((dm) => {
-        setCssVariables(configInternal, !dm);
+        setCssVariables(configInternalExt, !dm);
         return !dm;
       });
     });
     widgetClient.registerLocaleUpdater((l) => {
       setLocale(l);
-      setMessages(getLocaleTexts(l, defaultTexts, configInternal.customizations.localization?.text));
+      setMessages(getLocaleTexts(l, defaultTexts, configInternalExt.customizations.localization?.text));
     });
   }, []);
 
   useEffect(() => {
+    configInternalExt = configInternal;
     setMessages(getLocaleTexts(locale, defaultTexts, configInternal.customizations.localization?.text));
     setCssVariables(configInternal, darkMode);
   }, [configInternal]);
