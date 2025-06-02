@@ -30,6 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+<!-- BEGIN visenze-experiences-web 1.0.9 -->
+## [1.0.9](https://github.com/visenze/visenze-experiences-web/compare/1.0.8...1.0.9) - 2025-06-02
+
+### Fixed
+
+- (internal) Fixed issue where config updated during runtime are not reflected when toggling dark mode / locale
+<!-- END visenze-experiences-web 1.0.9 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.8 -->
 ## [1.0.8](https://github.com/visenze/visenze-experiences-web/compare/1.0.7...1.0.8) - 2025-05-23
 
