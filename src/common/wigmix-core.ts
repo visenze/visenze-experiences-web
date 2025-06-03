@@ -1111,7 +1111,17 @@ export interface WidgetConfig {
        * @since 1.0.10
        */
       images?: {
+        /**
+         * Which image should be used for the main product card image
+         *
+         * @since 1.0.10
+         */
         mainImage: 'main' | 'product' | 'outfit';
+        /**
+         * Which image should be used when the main product card image is hovered upon
+         *
+         * @since 1.0.10
+         */
         hoverImage: 'product' | 'outfit' | 'additional';
       };
     };
