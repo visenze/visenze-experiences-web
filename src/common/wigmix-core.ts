@@ -1105,6 +1105,15 @@ export interface WidgetConfig {
          */
         icon: IconWithBackground;
       };
+      /**
+       * Configurations for the image shown on product card
+       *
+       * @since 1.0.10
+       */
+      images?: {
+        mainImage: 'main' | 'product' | 'outfit';
+        hoverImage: 'product' | 'outfit' | 'additional';
+      };
     };
     /**
      * Image upload-related settings. This section is relevant only for widgets that intend to support image upload.

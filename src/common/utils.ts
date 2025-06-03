@@ -9,6 +9,7 @@ export const getFlattenProduct = (result: Product): ProcessedProduct => {
   return {
     im_url: result.best_images?.length ? result.best_images[0].url : result.main_image_url,
     product_id: result.product_id,
+    best_images: result.best_images || undefined,
     ...result.data,
   };
 };

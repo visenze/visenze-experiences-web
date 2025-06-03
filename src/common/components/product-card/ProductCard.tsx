@@ -209,6 +209,27 @@ const ProductCard: FC<ProductCardProps> = ({
     return cssConfig;
   };
 
+  const getImageToDisplay = (type: 'main' | 'hover'): string => {
+    let imageType: string;
+    if (type === 'main') {
+      imageType = customizations.productCard?.images?.mainImage || 'main';
+    } else {
+      imageType = customizations.productCard?.images?.hoverImage || 'additional';
+    }
+    switch (imageType) {
+      case 'main':
+        return result.im_url;
+      case 'product':
+        return result.best_images?.find((bestImage) => bestImage.type === 'product')?.url
+        || type === 'main' ? result.im_url : result['additional_image_url'][0];
+      case 'outfit':
+        return result.best_images?.find((bestImage) => bestImage.type === 'outfit')?.url
+        || type === 'main' ? result.im_url : result['additional_image_url'][0];
+      default:
+        return result['additional_image_url'][0];
+    }
+  };
+
   const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
   const price = getPrice(customizations, languageSettings, productDetails, result);
   const productUrl = getProductUrlWithTrackingParams(result[productDetails['product_url']], productTrackingMeta, isRecommendation);
@@ -240,13 +261,20 @@ const ProductCard: FC<ProductCardProps> = ({
                    `wigmix-product-card-image object-cover ${imageClasses || ''}`,
                    customizations.productCard?.imageAspectRatio ? '' : 'aspect-square',
                  )}
-                 src={result.im_url} alt=''
+                 src={getImageToDisplay('main')} alt=''
                  style={{ aspectRatio: customizations.productCard?.imageAspectRatio || '' }}
                  onLoad={() => {
                    setIsLoading(false);
                  }}
                  data-pw={`${pwPrefix}-product-result-card-image-${index + 1}`}
-                 data-testid='wigmix-product-card-image' />
+                 data-testid='wigmix-product-card-image'
+                 onPointerEnter={ (event) => {
+                   event.currentTarget.src = getImageToDisplay('hover');
+                 }}
+                 onPointerOut={ (event) => {
+                   event.currentTarget.src = getImageToDisplay('main');
+                 }}
+            />
             {hasFindSimilar && !isLoading && customizations.productCard?.findSimilar?.enable && (
                 <button
                     className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-5 rounded-full bg-white p-1 hover:opacity-90`}
