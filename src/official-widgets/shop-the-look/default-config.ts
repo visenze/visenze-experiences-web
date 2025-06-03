@@ -134,6 +134,11 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
         },
       },
     },
+    images: {
+      mainImage: 'main',
+      hoverImage: 'additional',
+      showAlternatives: false,
+    },
   },
   generalLayout: {
     headingFont: {
