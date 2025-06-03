@@ -38,7 +38,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
     error: errorFromApi,
   } = useRecommendationSearch({
     productId,
-    shouldDisplayAlternatives: customizations.results?.useAlternatives,
+    shouldDisplayAlternatives: customizations.productCard?.images?.showAlternatives,
   });
 
   const useSlideSettings = (): Settings => {

@@ -839,22 +839,6 @@ export interface WidgetConfig {
        * @since 1.0.5
        */
       limit?: number;
-      /**
-       * Whether to display alternatives as the recommendation result.
-       *
-       * @internal
-       *
-       * @since 1.0.0
-       */
-      useAlternatives?: boolean;
-      /**
-       * Whether to display best product images as the recommendation result.
-       *
-       * @internal
-       *
-       * @since 1.0.5
-       */
-      showBestProductImages?: boolean;
     };
     /**
      * Popup-related settings. This section is relevant only for widgets that have popup behavior.
@@ -1114,15 +1098,30 @@ export interface WidgetConfig {
         /**
          * Which image should be used for the main product card image
          *
+         * main = main image URL that is returned by the API
+         * product = best product image URL that is returned by the API
+         * outfit = best outfit image URL that is returned by the API
+         *
          * @since 1.0.10
          */
         mainImage: 'main' | 'product' | 'outfit';
         /**
          * Which image should be used when the main product card image is hovered upon
          *
+         * product = best product image URL that is returned by the API
+         * outfit = best outfit image URL that is returned by the API
+         * additional = first additional image URL that is returned by the API
+         *
          * @since 1.0.10
          */
         hoverImage: 'product' | 'outfit' | 'additional';
+        /**
+         * Whether to display alternatives as the recommendation result.
+         *
+         *
+         * @since 1.0.10
+         */
+        showAlternatives?: boolean;
       };
     };
     /**

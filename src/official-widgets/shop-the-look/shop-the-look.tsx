@@ -51,7 +51,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
     objects,
   } = useRecommendationSearch({
     productId,
-    shouldDisplayAlternatives: customizations.results?.useAlternatives,
+    shouldDisplayAlternatives: customizations.productCard?.images?.showAlternatives,
   });
 
   const useSlideSettings = (): Settings => {
