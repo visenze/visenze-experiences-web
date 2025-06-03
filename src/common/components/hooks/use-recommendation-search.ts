@@ -80,7 +80,7 @@ const useRecommendationSearch = ({
   const searchById = (): void => {
     const params: Record<string, any> = {};
     params['return_product_info'] = true;
-    params['show_best_product_images'] = !!customizations.results?.showBestProductImages;
+    params['show_best_product_images'] = true;
     params['sort_by'] = '';
     params['facets'] = getFacets(productDetails);
     params['facets_show_count'] = true;

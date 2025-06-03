@@ -28,7 +28,7 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
 
   const { productResults, metadata, error: errorFromApi } = useRecommendationSearch({
     productId,
-    shouldDisplayAlternatives: customizations.results?.useAlternatives,
+    shouldDisplayAlternatives: customizations.productCard?.images?.showAlternatives,
   });
 
   useEffect(() => {

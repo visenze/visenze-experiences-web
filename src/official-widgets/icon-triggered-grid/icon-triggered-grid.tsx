@@ -50,7 +50,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalW
 
   const { productInfo, productResults, metadata, error: errorFromApi } = useRecommendationSearch({
     productId,
-    shouldDisplayAlternatives: customizations.results?.useAlternatives,
+    shouldDisplayAlternatives: customizations.productCard?.images?.showAlternatives,
   });
 
   const onModalClose = useCallback((): void => {

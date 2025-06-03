@@ -80,7 +80,7 @@ describe('more-like-this', () => {
         expect(params).toEqual({
           return_product_info: true,
           limit: 20,
-          show_best_product_images: false,
+          show_best_product_images: true,
           sort_by: '',
           facets: [
             'price',
@@ -113,7 +113,7 @@ describe('more-like-this', () => {
         expect(params).toEqual({
           return_product_info: true,
           limit: 20,
-          show_best_product_images: false,
+          show_best_product_images: true,
           sort_by: '',
           facets: [
             'price',
@@ -141,6 +141,14 @@ describe('more-like-this', () => {
       productCardImages.forEach((productCardImage) => {
         fireEvent.load(productCardImage);
       });
+    });
+
+    act(() => {
+      const productCardImage = testComponent.queryAllByTestId('wigmix-product-card-image')[0];
+      expect(productCardImage.getAttribute('src')).toEqual('https://main-image-1');
+      fireEvent.pointerEnter(productCardImage);
+      expect(productCardImage.getAttribute('src')).toEqual('https://additional-image-1-1');
+      fireEvent.pointerOut(productCardImage);
     });
 
     expect(testComponent.asFragment()).toMatchSnapshot();

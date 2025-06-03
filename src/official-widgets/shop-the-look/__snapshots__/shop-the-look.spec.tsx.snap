@@ -104,7 +104,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-1"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-1-1"
+                              src="https://main-image-1"
                             />
                           </div>
                         </div>
@@ -173,7 +173,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-2"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-2-1"
+                              src="https://main-image-2"
                             />
                           </div>
                         </div>
@@ -242,7 +242,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-3"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-3-1"
+                              src="https://main-image-3"
                             />
                           </div>
                         </div>
@@ -311,7 +311,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-4"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-4-1"
+                              src="https://main-image-4"
                             />
                           </div>
                         </div>
@@ -380,7 +380,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-5"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-5-1"
+                              src="https://main-image-5"
                             />
                           </div>
                         </div>
@@ -449,7 +449,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-6"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-6-1"
+                              src="https://main-image-6"
                             />
                           </div>
                         </div>
@@ -518,7 +518,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-7"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-7-1"
+                              src="https://main-image-7"
                             />
                           </div>
                         </div>
@@ -587,7 +587,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-8"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-8-1"
+                              src="https://main-image-8"
                             />
                           </div>
                         </div>
@@ -656,7 +656,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-9"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-9-1"
+                              src="https://main-image-9"
                             />
                           </div>
                         </div>
@@ -725,7 +725,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-10"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-10-1"
+                              src="https://main-image-10"
                             />
                           </div>
                         </div>
@@ -794,7 +794,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-11"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-11-1"
+                              src="https://main-image-11"
                             />
                           </div>
                         </div>
@@ -863,7 +863,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-12"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-12-1"
+                              src="https://main-image-12"
                             />
                           </div>
                         </div>
@@ -932,7 +932,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-13"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-13-1"
+                              src="https://main-image-13"
                             />
                           </div>
                         </div>
@@ -1001,7 +1001,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-14"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-14-1"
+                              src="https://main-image-14"
                             />
                           </div>
                         </div>
@@ -1070,7 +1070,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-15"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-15-1"
+                              src="https://main-image-15"
                             />
                           </div>
                         </div>
@@ -1139,7 +1139,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-16"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-16-1"
+                              src="https://main-image-16"
                             />
                           </div>
                         </div>
@@ -1208,7 +1208,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-17"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-17-1"
+                              src="https://main-image-17"
                             />
                           </div>
                         </div>
@@ -1277,7 +1277,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-18"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-18-1"
+                              src="https://main-image-18"
                             />
                           </div>
                         </div>
@@ -1346,7 +1346,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-19"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-19-1"
+                              src="https://main-image-19"
                             />
                           </div>
                         </div>
@@ -1415,7 +1415,7 @@ exports[`shop-the-look should render a successful response with default config 1
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-20"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-20-1"
+                              src="https://main-image-20"
                             />
                           </div>
                         </div>
@@ -1604,7 +1604,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-1"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-10-1"
+                              src="https://main-image-10"
                             />
                           </div>
                         </div>
@@ -1673,7 +1673,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-2"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-5-1"
+                              src="https://main-image-5"
                             />
                           </div>
                         </div>
@@ -1742,7 +1742,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-3"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-2-1"
+                              src="https://main-image-2"
                             />
                           </div>
                         </div>
@@ -1811,7 +1811,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-4"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-13-1"
+                              src="https://main-image-13"
                             />
                           </div>
                         </div>
@@ -1880,7 +1880,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-5"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-14-1"
+                              src="https://main-image-14"
                             />
                           </div>
                         </div>
@@ -1949,7 +1949,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-6"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-1-1"
+                              src="https://main-image-1"
                             />
                           </div>
                         </div>
@@ -2018,7 +2018,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-7"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-20-1"
+                              src="https://main-image-20"
                             />
                           </div>
                         </div>
@@ -2087,7 +2087,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-8"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-18-1"
+                              src="https://main-image-18"
                             />
                           </div>
                         </div>
@@ -2156,7 +2156,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-9"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-17-1"
+                              src="https://main-image-17"
                             />
                           </div>
                         </div>
@@ -2225,7 +2225,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-10"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-6-1"
+                              src="https://main-image-6"
                             />
                           </div>
                         </div>
@@ -2294,7 +2294,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-11"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-9-1"
+                              src="https://main-image-9"
                             />
                           </div>
                         </div>
@@ -2363,7 +2363,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-12"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-3-1"
+                              src="https://main-image-3"
                             />
                           </div>
                         </div>
@@ -2432,7 +2432,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-13"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-11-1"
+                              src="https://main-image-11"
                             />
                           </div>
                         </div>
@@ -2501,7 +2501,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-14"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-4-1"
+                              src="https://main-image-4"
                             />
                           </div>
                         </div>
@@ -2570,7 +2570,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-15"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-12-1"
+                              src="https://main-image-12"
                             />
                           </div>
                         </div>
@@ -2639,7 +2639,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-16"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-15-1"
+                              src="https://main-image-15"
                             />
                           </div>
                         </div>
@@ -2708,7 +2708,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-17"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-16-1"
+                              src="https://main-image-16"
                             />
                           </div>
                         </div>
@@ -2777,7 +2777,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-18"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-8-1"
+                              src="https://main-image-8"
                             />
                           </div>
                         </div>
@@ -2846,7 +2846,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-19"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-19-1"
+                              src="https://main-image-19"
                             />
                           </div>
                         </div>
@@ -2915,7 +2915,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-20"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-7-1"
+                              src="https://main-image-7"
                             />
                           </div>
                         </div>
@@ -3074,7 +3074,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-1"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-1-1"
+                              src="https://main-image-1"
                             />
                           </div>
                         </div>
@@ -3143,7 +3143,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-2"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-2-1"
+                              src="https://main-image-2"
                             />
                           </div>
                         </div>
@@ -3212,7 +3212,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-3"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-3-1"
+                              src="https://main-image-3"
                             />
                           </div>
                         </div>
@@ -3281,7 +3281,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-4"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-4-1"
+                              src="https://main-image-4"
                             />
                           </div>
                         </div>
@@ -3350,7 +3350,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-5"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-5-1"
+                              src="https://main-image-5"
                             />
                           </div>
                         </div>
@@ -3419,7 +3419,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-6"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-6-1"
+                              src="https://main-image-6"
                             />
                           </div>
                         </div>
@@ -3488,7 +3488,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-7"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-7-1"
+                              src="https://main-image-7"
                             />
                           </div>
                         </div>
@@ -3557,7 +3557,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-8"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-8-1"
+                              src="https://main-image-8"
                             />
                           </div>
                         </div>
@@ -3626,7 +3626,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-9"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-9-1"
+                              src="https://main-image-9"
                             />
                           </div>
                         </div>
@@ -3695,7 +3695,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-10"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-10-1"
+                              src="https://main-image-10"
                             />
                           </div>
                         </div>
@@ -3764,7 +3764,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-11"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-11-1"
+                              src="https://main-image-11"
                             />
                           </div>
                         </div>
@@ -3833,7 +3833,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-12"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-12-1"
+                              src="https://main-image-12"
                             />
                           </div>
                         </div>
@@ -3902,7 +3902,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-13"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-13-1"
+                              src="https://main-image-13"
                             />
                           </div>
                         </div>
@@ -3971,7 +3971,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-14"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-14-1"
+                              src="https://main-image-14"
                             />
                           </div>
                         </div>
@@ -4040,7 +4040,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-15"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-15-1"
+                              src="https://main-image-15"
                             />
                           </div>
                         </div>
@@ -4109,7 +4109,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-16"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-16-1"
+                              src="https://main-image-16"
                             />
                           </div>
                         </div>
@@ -4178,7 +4178,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-17"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-17-1"
+                              src="https://main-image-17"
                             />
                           </div>
                         </div>
@@ -4247,7 +4247,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-18"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-18-1"
+                              src="https://main-image-18"
                             />
                           </div>
                         </div>
@@ -4316,7 +4316,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-19"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-19-1"
+                              src="https://main-image-19"
                             />
                           </div>
                         </div>
@@ -4385,7 +4385,7 @@ exports[`shop-the-look should render a successful response with some customizati
                               class="wigmix-product-card-image object-cover"
                               data-pw="stl-product-result-card-image-20"
                               data-testid="wigmix-product-card-image"
-                              src="https://best-images-20-1"
+                              src="https://main-image-20"
                             />
                           </div>
                         </div>
