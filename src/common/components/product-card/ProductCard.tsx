@@ -209,30 +209,60 @@ const ProductCard: FC<ProductCardProps> = ({
     return cssConfig;
   };
 
-  const getImageToDisplay = (type: 'main' | 'hover'): string => {
-    let imageType: string;
-    if (type === 'main') {
-      imageType = customizations.productCard?.images?.mainImage || 'main';
-    } else {
-      imageType = customizations.productCard?.images?.hoverImage || 'additional';
-    }
-    switch (imageType) {
+  const getMainImageToDisplay = (): string => {
+    const imageSrc = customizations.productCard?.images?.mainImage || 'main';
+    const mainImageUrl = result.im_url;
+    switch (imageSrc) {
       case 'main':
-        return result.im_url;
-      case 'product':
-        return result.best_images?.find((bestImage) => bestImage.type === 'product')?.url
-        || type === 'main' ? result.im_url : result['additional_image_url'][0];
-      case 'outfit':
-        return result.best_images?.find((bestImage) => bestImage.type === 'outfit')?.url
-        || type === 'main' ? result.im_url : result['additional_image_url'][0];
-      default:
-        return result['additional_image_url'][0];
+        return mainImageUrl;
+      case 'best_product': {
+        const bestProductImage = result.best_images?.find((bestImage) => bestImage.type === 'product')?.url;
+        return bestProductImage || mainImageUrl;
+      }
+      case 'best_outfit': {
+        const bestOutfitImage = result.best_images?.find((bestImage) => bestImage.type === 'outfit')?.url;
+        return bestOutfitImage || mainImageUrl;
+      }
+      default: // should not be reachable
+        return mainImageUrl;
+    }
+  };
+
+  const getHoverImageToDisplay = (mainImageUrl: string): string => {
+    const imageSrc = customizations.productCard?.images?.hoverImage || 'none';
+    if (imageSrc === 'none') {
+      return mainImageUrl;
+    }
+    const addImageUrl = result['additional_image_url']?.length
+        ? result['additional_image_url'][0]
+        : mainImageUrl;
+    switch (imageSrc) {
+      case 'best_product': {
+        const bestProductImage = result.best_images?.find((bestImage) => bestImage.type === 'product')?.url;
+        if (bestProductImage && bestProductImage !== mainImageUrl) {
+          return bestProductImage;
+        }
+        return addImageUrl;
+      }
+      case 'best_outfit': {
+        const bestOutfitImage = result.best_images?.find((bestImage) => bestImage.type === 'outfit')?.url;
+        if (bestOutfitImage && bestOutfitImage !== mainImageUrl) {
+          return bestOutfitImage;
+        }
+        return addImageUrl;
+      }
+      case 'additional':
+        return addImageUrl;
+      default: // should not be reachable
+        return addImageUrl;
     }
   };
 
   const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
   const price = getPrice(customizations, languageSettings, productDetails, result);
   const productUrl = getProductUrlWithTrackingParams(result[productDetails['product_url']], productTrackingMeta, isRecommendation);
+  const mainImageUrl = getMainImageToDisplay();
+  const hoverImageUrl = getHoverImageToDisplay(mainImageUrl);
 
   return (
     <div className='wigmix-product-card'>
@@ -261,18 +291,18 @@ const ProductCard: FC<ProductCardProps> = ({
                    `wigmix-product-card-image object-cover ${imageClasses || ''}`,
                    customizations.productCard?.imageAspectRatio ? '' : 'aspect-square',
                  )}
-                 src={getImageToDisplay('main')} alt=''
+                 src={mainImageUrl} alt=''
                  style={{ aspectRatio: customizations.productCard?.imageAspectRatio || '' }}
                  onLoad={() => {
                    setIsLoading(false);
                  }}
                  data-pw={`${pwPrefix}-product-result-card-image-${index + 1}`}
                  data-testid='wigmix-product-card-image'
-                 onPointerEnter={ (event) => {
-                   event.currentTarget.src = getImageToDisplay('hover');
+                 onPointerEnter={(event) => {
+                   event.currentTarget.src = hoverImageUrl;
                  }}
-                 onPointerOut={ (event) => {
-                   event.currentTarget.src = getImageToDisplay('main');
+                 onPointerOut={(event) => {
+                   event.currentTarget.src = mainImageUrl;
                  }}
             />
             {hasFindSimilar && !isLoading && customizations.productCard?.findSimilar?.enable && (

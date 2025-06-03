@@ -87,7 +87,7 @@ exports[`more-like-this should render a successful response with default config 
                             class="wigmix-product-card-image object-cover"
                             data-pw="mlt-product-result-card-image-1"
                             data-testid="wigmix-product-card-image"
-                            src="https://additional-image-1-1"
+                            src="https://main-image-1"
                           />
                         </div>
                       </div>

@@ -132,6 +132,7 @@ describe('embedded-grid', () => {
       expect(productCardImage.getAttribute('src')).toEqual('https://main-image-1');
       fireEvent.pointerEnter(productCardImage);
       expect(productCardImage.getAttribute('src')).toEqual('https://additional-image-1-1');
+      fireEvent.pointerOut(productCardImage);
     });
 
     expect(testComponent.asFragment()).toMatchSnapshot();

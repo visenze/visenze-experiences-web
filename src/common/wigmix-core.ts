@@ -322,6 +322,8 @@ export interface WidgetClient {
 
 type ViewportType = 'mobile' | 'tablet' | 'desktop';
 
+type ProductCardImageSrc = 'main' | 'best_product' | 'best_outfit' | 'additional';
+
 /**
  * A URL-based image with accompanying label.
  *
@@ -1090,38 +1092,40 @@ export interface WidgetConfig {
         icon: IconWithBackground;
       };
       /**
-       * Configurations for the image shown on product card
+       * Configuration for the image shown on product card.
        *
        * @since 1.0.10
        */
       images?: {
         /**
-         * Which image should be used for the main product card image
+         * Indicates which image should be used for the main product card image.
          *
-         * main = main image URL that is returned by the API
-         * product = best product image URL that is returned by the API
-         * outfit = best outfit image URL that is returned by the API
+         * Possible values are:
+         * - main = the main image URL of the product
+         * - best_product = the best product image URL of the product
+         * - best_outfit = the best outfit image URL of the product
          *
          * @since 1.0.10
          */
-        mainImage: 'main' | 'product' | 'outfit';
+        mainImage: Exclude<ProductCardImageSrc, 'additional'>;
         /**
-         * Which image should be used when the main product card image is hovered upon
+         * Indicates which image should be used when the main product card image is hovered on.
          *
-         * product = best product image URL that is returned by the API
-         * outfit = best outfit image URL that is returned by the API
-         * additional = first additional image URL that is returned by the API
+         * Possible values are:
+         * - best_product = the best product image URL of the product
+         * - best_outfit = the best outfit image URL of the product
+         * - additional = the first additional image URL of the product
+         * - none = do not change the image on hover
          *
          * @since 1.0.10
          */
-        hoverImage: 'product' | 'outfit' | 'additional';
+        hoverImage: Exclude<ProductCardImageSrc, 'main'> | 'none';
         /**
          * Whether to display alternatives as the recommendation result.
          *
-         *
          * @since 1.0.10
          */
-        showAlternatives?: boolean;
+        showAlternatives: boolean;
       };
     };
     /**
