@@ -351,7 +351,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                       <div>
                         {popularTerms.map((term) => (
                           <button
-                            className='rounded-full border-1 border-black px-2 mr-2 text-small font-normal'
+                            className='rounded-full border-1 border-black px-2 mr-2 mt-2 text-small font-normal'
                             key={term} onClick={() => {
                               setQuery(term);
                               emitSearchBarCallback(term, image);
