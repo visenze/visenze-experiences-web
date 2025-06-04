@@ -326,7 +326,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                         <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
                           {trendingProducts.map((result, index) => (
                             <div
-                              className='size-1/2'
+                              className='size-1/8'
                               key={`${result.product_id}-${index}`}
                               data-pw={`msb-product-result-card-${index + 1}`}
                               style={{ minHeight: '250px', minWidth: '150px' }}
