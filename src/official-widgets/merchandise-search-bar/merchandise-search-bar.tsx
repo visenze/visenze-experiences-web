@@ -317,7 +317,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                     </div>)
                   }
                   <div
-                    className='flex flex-col-reverse justify-center divide-gray-200 py-1 px-4'>
+                    className='flex flex-col-reverse justify-center divide-gray-200 py-1 px-4 md:max-h-[70vh]'>
                     { customizations.trendingProducts?.enable && trendingProducts.length > 0 && (
                       <div className='px-4 py-1'>
                         <p className='text-large font-semibold leading-6 text-primary py-1'>
@@ -326,7 +326,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                         <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
                           {trendingProducts.map((result, index) => (
                             <div
-                              className='size-1/2'
+                              className='size-1/8'
                               key={`${result.product_id}-${index}`}
                               data-pw={`msb-product-result-card-${index + 1}`}
                               style={{ minHeight: '250px', minWidth: '150px' }}
