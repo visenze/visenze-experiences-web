@@ -317,7 +317,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
                     </div>)
                   }
                   <div
-                    className='flex flex-col-reverse justify-center divide-gray-200 py-1 px-4 md:max-h-[70vh]'>
+                    className='flex flex-col-reverse justify-center divide-gray-200 py-1 px-4'>
                     { customizations.trendingProducts?.enable && trendingProducts.length > 0 && (
                       <div className='px-4 py-1'>
                         <p className='text-large font-semibold leading-6 text-primary py-1'>
