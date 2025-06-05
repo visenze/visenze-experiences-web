@@ -5,7 +5,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   en: {
     widgetTitle: 'You may also like',
     searchBarPlaceholder: 'Type here to refine your results...',
-    previousViews: 'Previous views',
+    previousViews: 'Searches',
     errorDescription: 'Sorry, something went wrong',
     back: 'Back',
     triggerCTA: 'Find Similar',
@@ -13,7 +13,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   es: {
     widgetTitle: 'También te puede gustar',
     searchBarPlaceholder: 'Escribe aquí para refinar tus resultados...',
-    previousViews: 'Vistas previas',
+    previousViews: 'Buscas',
     errorDescription: 'Lo sentimos, algo salió mal',
     back: 'Atrás',
     triggerCTA: 'Encontrar similares',
@@ -21,7 +21,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
     searchBarPlaceholder: 'Tapez ici pour affiner vos résultats...',
-    previousViews: 'Vues précédentes',
+    previousViews: 'Recherches',
     errorDescription: 'Désolé, quelque chose s\'est mal passé',
     back: 'Retour',
     triggerCTA: 'Trouver Similaire',
@@ -29,7 +29,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   pt: {
     widgetTitle: 'Você também pode gostar',
     searchBarPlaceholder: 'Digite aqui para refinar seus resultados...',
-    previousViews: 'Visualizações anteriores',
+    previousViews: 'Pesquisas',
     errorDescription: 'Desculpe, algo deu errado',
     back: 'Voltar',
     triggerCTA: 'Encontrar Semelhantes',
@@ -37,7 +37,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
     searchBarPlaceholder: 'Gib hier ein, um deine Ergebnisse zu verfeinern...',
-    previousViews: 'Vorherige Ansichten',
+    previousViews: 'Suchen',
     errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
     back: 'Zurück',
     triggerCTA: 'Ähnliche finden',
@@ -45,7 +45,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
     searchBarPlaceholder: 'Digita qui per affinare i tuoi risultati...',
-    previousViews: 'Visualizzazioni precedenti',
+    previousViews: 'Cerca',
     errorDescription: 'Spiacenti, qualcosa è andato storto',
     back: 'Indietro',
     triggerCTA: 'Trova simili',
@@ -53,7 +53,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
     searchBarPlaceholder: '결과를 구체화하려면 여기에 입력하세요...',
-    previousViews: '이전 조회',
+    previousViews: '검색',
     errorDescription: '죄송합니다. 오류가 발생했습니다',
     back: '뒤로',
     triggerCTA: '비슷한 상품 찾기',
@@ -61,7 +61,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   ja: {
     widgetTitle: 'こちらもおすすめです',
     searchBarPlaceholder: '検索結果を絞り込むには、ここに टाइपしてください...',
-    previousViews: '以前の表示',
+    previousViews: '検索',
     errorDescription: '申し訳ありません。問題が発生しました',
     back: '戻る',
     triggerCTA: '類似商品を検索',
@@ -69,7 +69,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
     searchBarPlaceholder: 'พิมพ์ที่นี่เพื่อปรับแต่งผลลัพธ์ของคุณ...',
-    previousViews: 'การดูครั้งก่อน',
+    previousViews: 'การค้นหา',
     errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
     back: 'กลับ',
     triggerCTA: 'ค้นหาสินค้าที่คล้ายกัน',
