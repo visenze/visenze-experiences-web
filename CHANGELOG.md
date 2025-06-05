@@ -30,6 +30,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+<!-- BEGIN visenze-experiences-web 1.0.10 -->
+## [1.0.10](https://github.com/visenze/visenze-experiences-web/compare/1.0.9...1.0.10) - 2025-06-06
+
+### Added
+
+- All widgets: Configuration for source of main image + on-hover image; this replaced the internal `useBestProductImages` field
+- All widgets: Configuration to show alternative products instead of the main result products; this replaced the internal `useAlternatives` field
+
+### Changed
+
+- camera-search, similar-search: Updated the default text for the search history
+- camera-search, similar-search: Removed the scroll bar in product grid for larger screen size
+<!-- END visenze-experiences-web 1.0.10 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.9 -->
 ## [1.0.9](https://github.com/visenze/visenze-experiences-web/compare/1.0.8...1.0.9) - 2025-06-02
 
