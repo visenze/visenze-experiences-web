@@ -264,7 +264,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 : customizations.generalLayout?.fontColor} />
       <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
-          <div className='relative left-0 row-span-1 h-full w-1/3 overflow-y-scroll border-r-2 border-gray-300 px-8'>
+          <div className='relative left-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8'>
             <div className='flex h-19/20 flex-col justify-between px-2'>
               <div
                 className='wigmix-reference-image-container flex w-full items-center text-center'>
