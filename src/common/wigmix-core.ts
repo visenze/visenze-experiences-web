@@ -322,6 +322,8 @@ export interface WidgetClient {
 
 type ViewportType = 'mobile' | 'tablet' | 'desktop';
 
+type ProductCardImageSrc = 'main' | 'best_product' | 'best_outfit' | 'additional';
+
 /**
  * A URL-based image with accompanying label.
  *
@@ -839,22 +841,6 @@ export interface WidgetConfig {
        * @since 1.0.5
        */
       limit?: number;
-      /**
-       * Whether to display alternatives as the recommendation result.
-       *
-       * @internal
-       *
-       * @since 1.0.0
-       */
-      useAlternatives?: boolean;
-      /**
-       * Whether to display best product images as the recommendation result.
-       *
-       * @internal
-       *
-       * @since 1.0.5
-       */
-      showBestProductImages?: boolean;
     };
     /**
      * Popup-related settings. This section is relevant only for widgets that have popup behavior.
@@ -1104,6 +1090,42 @@ export interface WidgetConfig {
          * @since 1.0.0
          */
         icon: IconWithBackground;
+      };
+      /**
+       * Configuration for the image shown on product card.
+       *
+       * @since 1.0.10
+       */
+      images?: {
+        /**
+         * Indicates which image should be used for the main product card image.
+         *
+         * Possible values are:
+         * - main = the main image URL of the product
+         * - best_product = the best product image URL of the product
+         * - best_outfit = the best outfit image URL of the product
+         *
+         * @since 1.0.10
+         */
+        mainImage: Exclude<ProductCardImageSrc, 'additional'>;
+        /**
+         * Indicates which image should be used when the main product card image is hovered on.
+         *
+         * Possible values are:
+         * - best_product = the best product image URL of the product
+         * - best_outfit = the best outfit image URL of the product
+         * - additional = the first additional image URL of the product
+         * - none = do not change the image on hover
+         *
+         * @since 1.0.10
+         */
+        hoverImage: Exclude<ProductCardImageSrc, 'main'> | 'none';
+        /**
+         * Whether to display alternatives as the recommendation result.
+         *
+         * @since 1.0.10
+         */
+        showAlternatives: boolean;
       };
     };
     /**

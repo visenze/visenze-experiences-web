@@ -45,7 +45,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
     objects,
   } = useRecommendationSearch({
     productId,
-    shouldDisplayAlternatives: customizations.results?.useAlternatives,
+    shouldDisplayAlternatives: customizations.productCard?.images?.showAlternatives,
   });
 
   const resizeObjectDots = (image: HTMLImageElement): void => {

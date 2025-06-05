@@ -189,6 +189,11 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
         backgroundColorDark: '#000000',
       },
     },
+    images: {
+      mainImage: 'main',
+      hoverImage: 'additional',
+      showAlternatives: false,
+    },
   },
   buttons: {
     primary: {
