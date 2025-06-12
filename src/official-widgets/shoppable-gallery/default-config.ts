@@ -38,6 +38,12 @@ export const DEFAULT_TEXTS: LanguagePack = {
     hotspotRecommendationsTitle: 'In questa foto',
     noResults: 'Non ci sono risultati per questo hotspot',
   },
+  pl: {
+    errorDescription: 'Przepraszamy, coś poszło nie tak',
+    errorResolution: 'Odśwież stronę, aby spróbować ponownie',
+    hotspotRecommendationsTitle: 'Na tym zdjęciu',
+    noResults: 'Brak wyników dla tego punktu',
+  },
   ko: {
     errorDescription: '죄송합니다. 오류가 발생했습니다',
     errorResolution: '새로고침하여 다시 시도해주세요',

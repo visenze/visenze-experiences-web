@@ -32,6 +32,11 @@ export const DEFAULT_TEXTS: LanguagePack = {
     'errorDescription': 'Spiacenti, qualcosa è andato storto',
     'triggerCTA': 'Trova simili',
   },
+  pl: {
+    widgetTitle: 'Może Ci się spodobać',
+    errorDescription: 'Przepraszamy, coś poszło nie tak',
+    triggerCTA: 'Znajdź podobne',
+  },
   ko: {
     'widgetTitle': '이 상품도 좋아하실 거예요',
     'errorDescription': '죄송합니다. 오류가 발생했습니다',
