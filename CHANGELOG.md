@@ -31,6 +31,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Chore
 
 <!-- BEGIN visenze-experiences-web 1.0.10 -->
+## [1.0.11](https://github.com/visenze/visenze-experiences-web/compare/1.0.10...1.0.11) - 2025-06-12
+
+### Added
+
+- All widgets: supports Polish as part of the language pack for default text
+
+
+<!-- END visenze-experiences-web 1.0.10 -->
+
+<!-- BEGIN visenze-experiences-web 1.0.10 -->
 ## [1.0.10](https://github.com/visenze/visenze-experiences-web/compare/1.0.9...1.0.10) - 2025-06-06
 
 ### Added

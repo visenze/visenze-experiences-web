@@ -50,6 +50,14 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Indietro',
     triggerCTA: 'Trova simili',
   },
+  pl: {
+    widgetTitle: 'Może Ci się spodobać',
+    searchBarPlaceholder: 'Wpisz tutaj, aby doprecyzować wyniki...',
+    previousViews: 'Wyszukiwania',
+    errorDescription: 'Przepraszamy, coś poszło nie tak',
+    back: 'Wstecz',
+    triggerCTA: 'Znajdź podobne',
+  },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
     searchBarPlaceholder: '결과를 구체화하려면 여기에 입력하세요...',

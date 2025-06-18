@@ -62,6 +62,16 @@ export const DEFAULT_TEXTS: LanguagePack = {
     resultRendering: 'Ecco cosa ho trovato per te',
     resultCarouselTitle: 'Risultati per',
   },
+  pl: {
+    widgetTitle: 'Spersonalizuj swoje rekomendacje',
+    searchBarButton: 'Zarekomenduj mi',
+    searchBarPlaceholder: 'stylizacja pasująca do tego',
+    resultLoading1: 'Wyszukiwanie najnowszych trendów...',
+    resultLoading2: 'Szukam idealnego wyglądu...',
+    resultLoading3: 'Już prawie gotowe...',
+    resultRendering: 'Oto, co dla Ciebie znalazłem',
+    resultCarouselTitle: 'Wyniki dla',
+  },
   ko: {
     widgetTitle: '추천 맞춤 설정',
     searchBarButton: '추천해 주세요',

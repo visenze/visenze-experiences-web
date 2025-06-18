@@ -74,6 +74,18 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Indietro',
     triggerCTA: 'Cerca tramite immagine',
   },
+  pl: {
+    uploadScreenTitle: 'POKAŻ NAM, CZEGO SZUKASZ',
+    resultScreenTitle: 'OTO, CO ZNALEŹLIŚMY',
+    dragImageToSearch: 'przeciągnij obraz, aby wyszukać, lub kliknij, aby przeglądać',
+    tapToSearchImage: 'stuknij tutaj, aby wyszukać obraz',
+    tapProductGallery: 'lub stuknij w naszą galerię popularnych produktów poniżej',
+    searchBarPlaceholder: 'Wpisz tutaj, aby doprecyzować wyniki...',
+    previousViews: 'Wyszukiwania',
+    errorDescription: 'Przepraszamy, coś poszło nie tak',
+    back: 'Wstecz',
+    triggerCTA: 'Wyszukaj za pomocą obrazu',
+  },
   ko: {
     uploadScreenTitle: '찾고 있는 것을 보여주세요',
     resultScreenTitle: '찾은 결과입니다',

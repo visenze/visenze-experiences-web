@@ -38,6 +38,12 @@ export const DEFAULT_TEXTS: LanguagePack = {
     chatBoxPlaceholder: 'Digita il tuo messaggio',
     triggerCTA: 'Assistente di stile',
   },
+  pl: {
+    openingMessage1: 'Zacznijmy',
+    openingMessage2: 'Powiedz nam, jakie masz potrzeby stylizacyjne, a pomożemy Ci znaleźć idealny produkt',
+    chatBoxPlaceholder: 'Wpisz swoją wiadomość',
+    triggerCTA: 'Asystent Stylu',
+  },
   ko: {
     openingMessage1: '시작해 볼까요?',
     openingMessage2: '스타일링에 필요한 것을 알려주시면 딱 맞는 상품을 찾아드릴게요',

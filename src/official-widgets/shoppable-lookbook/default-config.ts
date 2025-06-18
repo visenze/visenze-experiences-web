@@ -20,6 +20,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
   },
+  pl: {
+    widgetTitle: 'Może Ci się spodobać',
+  },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
   },

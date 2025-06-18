@@ -62,6 +62,16 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: 'Hai fornito un\'immagine o una query non valida, rimuovile e riprova.',
     systemError: 'Spiacenti, il nostro sistema sta riscontrando delle difficoltà, riprova più tardi.',
   },
+  pl: {
+    filter: 'Filtruj',
+    noResults: 'Brak wyników',
+    noResultsDescription: 'Nie znaleźliśmy produktów pasujących do Twojego wyszukiwania.',
+    searchBarPlaceholder: 'Czego szukasz?',
+    noSearchInput: 'Brak zapytania',
+    noSearchInputDescription: 'Wprowadź hasło lub wybierz obraz, aby znaleźć wyniki.',
+    imageOrQueryNotFound: 'Podano nieprawidłowy obraz lub zapytanie. Usuń je i spróbuj ponownie.',
+    systemError: 'Przepraszamy, nasz system ma obecnie problemy. Spróbuj ponownie później.',
+  },
   ko: {
     filter: '필터',
     noResults: '검색 결과 없음',
