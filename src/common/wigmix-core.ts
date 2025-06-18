@@ -8,6 +8,8 @@ export type Primitive = boolean | string | number;
 
 export type WidgetRenderStatus = 'UNRENDERED' | 'HIDDEN' | 'RENDERED';
 
+export type ProductCardIconPosition = 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right';
+
 export enum WidgetType {
   CAMERA_SEARCH = 'camera_search',
   SIMILAR_SEARCH = 'similar_search',
@@ -767,6 +769,36 @@ export interface WidgetConfig {
      * @since 1.0.0
      */
     onSearchBarInput?: (text: string | undefined, image: SearchImage | undefined) => void;
+    /**
+     * Fires an event that indicates that a product should be added to or removed from wishlist.
+     *
+     * If defined, the callback should return whether the operation succeeds,
+     * and the icon shall be toggled only if the operation returns true.
+     *
+     * @param add True if the intention is to add to wishlist, false if the intention is to remove from wishlist
+     * @param pid The product ID
+     * @param productDetails (optional) Additional details of the product
+     *
+     * @internal
+     *
+     * @since 1.0.11
+     */
+    onAddToWishlistToggle?: (add: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
+    /**
+     * Fires an event that indicates that a product should be added to or removed from cart.
+     *
+     * If defined, the callback should return whether the operation succeeds,
+     * and the icon shall be toggled only if the operation returns true.
+     *
+     * @param add True if the intention is to add to cart, false if the intention is to remove from cart
+     * @param pid The product ID
+     * @param productDetails (optional) Additional details of the product
+     *
+     * @internal
+     *
+     * @since 1.0.11
+     */
+    onAddToCartToggle?: (add: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
   };
   /**
    * Widget look-and-feel customization. The values for this section is set
@@ -1083,13 +1115,79 @@ export interface WidgetConfig {
          *
          * @since 1.0.0
          */
-        position: 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right';
+        position: ProductCardIconPosition;
         /**
          * Configurations for the find similar icon.
          *
          * @since 1.0.0
          */
         icon: IconWithBackground;
+      };
+      /**
+       * Configuration for the "add to wishlist" feature within a product card image.
+       *
+       * @internal
+       *
+       * @since 1.0.11
+       */
+      addToWishlist?: {
+        /**
+         * Whether the "add to wishlist" feature is enabled or not.
+         *
+         * @since 1.0.11
+         */
+        enable: boolean;
+        /**
+         * Position of the "add to wishlist" icon relative to the product card image.
+         *
+         * @since 1.0.11
+         */
+        position: ProductCardIconPosition;
+        /**
+         * Configurations for the add to wishlist icon, i.e. the icon when the product is not in the wishlist.
+         *
+         * @since 1.0.11
+         */
+        iconInactive: IconWithBackground;
+        /**
+         * Configurations for the remove from wishlist icon, i.e. the icon when the product is in the wishlist.
+         *
+         * @since 1.0.11
+         */
+        iconActive: IconWithBackground;
+      };
+      /**
+       * Configuration for the "add to cart" feature within a product card image.
+       *
+       * @internal
+       *
+       * @since 1.0.11
+       */
+      addToCart?: {
+        /**
+         * Whether the "add to cart" feature is enabled or not.
+         *
+         * @since 1.0.11
+         */
+        enable: boolean;
+        /**
+         * Position of the "add to cart" icon relative to the product card image.
+         *
+         * @since 1.0.11
+         */
+        position: ProductCardIconPosition;
+        /**
+         * Configurations for the add to cart icon, i.e. the icon when the product is not in the cart.
+         *
+         * @since 1.0.11
+         */
+        iconInactive: IconWithBackground;
+        /**
+         * Configurations for the remove from cart icon, i.e. the icon when the product is in the cart.
+         *
+         * @since 1.0.11
+         */
+        iconActive: IconWithBackground;
       };
       /**
        * Configuration for the image shown on product card.
