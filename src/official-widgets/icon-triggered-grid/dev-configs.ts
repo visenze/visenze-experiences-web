@@ -6,8 +6,8 @@ const customCss = `
 
 export const devConfigs: RecursivePartial<WidgetConfig> = {
   appSettings: {
-    appKey: '',
-    placementId: '',
+    appKey: process.env['ICON_TRIGGERED_GRID_APP_KEY'] || '',
+    placementId: process.env['ICON_TRIGGERED_GRID_PLACEMENT_ID'] || '',
     endpoint: '',
   },
   displaySettings: {

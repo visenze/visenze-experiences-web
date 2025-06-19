@@ -6,8 +6,8 @@ const customCss = `
 
 export const devConfigs: RecursivePartial<WidgetConfig> = {
   appSettings: {
-    appKey: '',
-    placementId: '',
+    appKey: process.env['SHOPPING_ASSISTANT_APP_KEY'] || '',
+    placementId: process.env['SHOPPING_ASSISTANT_PLACEMENT_ID'] || '',
     endpoint: '',
   },
   displaySettings: {
