@@ -101,7 +101,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 1
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -170,7 +172,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 2
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -239,7 +243,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 3
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -308,7 +314,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 4
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -377,7 +385,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 5
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -446,7 +456,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 6
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -515,7 +527,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 7
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -584,7 +598,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 8
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -653,7 +669,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 9
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -722,7 +740,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 10
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -791,7 +811,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 11
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -860,7 +882,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 12
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -929,7 +953,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 13
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -998,7 +1024,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 14
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1067,7 +1095,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 15
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1136,7 +1166,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 16
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1205,7 +1237,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 17
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1274,7 +1308,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 18
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1343,7 +1379,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 19
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1412,7 +1450,9 @@ exports[`more-like-this should render a successful response with default config 
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 20
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1553,7 +1593,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 1
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1622,7 +1664,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 2
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1691,7 +1735,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 3
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1760,7 +1806,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 4
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1829,7 +1877,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 5
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1898,7 +1948,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 6
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -1967,7 +2019,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 7
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2036,7 +2090,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 8
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2105,7 +2161,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 9
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2174,7 +2232,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 10
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2243,7 +2303,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 11
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2312,7 +2374,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 12
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2381,7 +2445,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 13
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2450,7 +2516,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 14
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2519,7 +2587,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 15
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2588,7 +2658,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 16
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2657,7 +2729,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 17
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2726,7 +2800,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 18
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2795,7 +2871,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 19
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
@@ -2864,7 +2942,9 @@ exports[`more-like-this should render a successful response with some customizat
                         </span>
                         <span
                           class="wigmix-product-card-secondary-title line-clamp-1"
-                        />
+                        >
+                          Product Brand 20
+                        </span>
                         <div
                           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
                         >
