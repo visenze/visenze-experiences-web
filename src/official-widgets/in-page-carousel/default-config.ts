@@ -1,0 +1,184 @@
+import type { WidgetConfig } from '../../common/wigmix-core';
+import type { LanguagePack } from '../../common/locales/locale';
+
+export const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    widgetTitle: 'You may also like',
+  },
+  es: {
+    widgetTitle: 'También te puede gustar',
+  },
+  fr: {
+    widgetTitle: 'Vous aimerez peut-être aussi',
+  },
+  pt: {
+    widgetTitle: 'Você também pode gostar',
+  },
+  de: {
+    widgetTitle: 'Das könnte dir auch gefallen',
+  },
+  it: {
+    widgetTitle: 'Potrebbe piacerti anche',
+  },
+  pl: {
+    widgetTitle: 'Może Ci się spodobać',
+  },
+  ko: {
+    widgetTitle: '이 상품도 좋아하실 거예요',
+  },
+  ja: {
+    widgetTitle: 'こちらもおすすめです',
+  },
+  th: {
+    widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
+  },
+};
+
+export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
+  breakpoints: {
+    mobile: {
+      maxWidth: 767,
+    },
+    tablet: {
+      maxWidth: 1023,
+    },
+  },
+  productGrid: {
+    mobile: {
+      productsPerRow: 3,
+      marginHorizontal: 8,
+      marginVertical: 0,
+    },
+    tablet: {
+      productsPerRow: 4,
+      marginHorizontal: 16,
+      marginVertical: 0,
+    },
+    desktop: {
+      productsPerRow: 4,
+      marginHorizontal: 16,
+      marginVertical: 0,
+    },
+  },
+  productCard: {
+    imageAspectRatio: '2 / 3',
+    openLinksInNewTab: false,
+    price: {
+      show: true,
+      font: {
+        mobile: {
+          size: 12,
+          weight: 400,
+        },
+        tablet: {
+          size: 12,
+          weight: 400,
+        },
+        desktop: {
+          size: 14,
+          weight: 400,
+        },
+      },
+      fontColor: '#EF4444',
+      fontColorDark: '#EF4444',
+    },
+    originalPrice: {
+      show: true,
+      font: {
+        mobile: {
+          size: 12,
+          weight: 400,
+        },
+        tablet: {
+          size: 12,
+          weight: 400,
+        },
+        desktop: {
+          size: 14,
+          weight: 400,
+        },
+      },
+      fontColor: '#9CA3AF',
+      fontColorDark: '#9CA3AF',
+    },
+    title: {
+      show: true,
+      fieldSource: 'title',
+      font: {
+        mobile: {
+          size: 14,
+          weight: 700,
+        },
+        tablet: {
+          size: 14,
+          weight: 700,
+        },
+        desktop: {
+          size: 16,
+          weight: 700,
+        },
+      },
+    },
+    secondaryTitle: {
+      show: true,
+      fieldSource: 'brand',
+      font: {
+        mobile: {
+          size: 12,
+          weight: 400,
+        },
+        tablet: {
+          size: 12,
+          weight: 400,
+        },
+        desktop: {
+          size: 14,
+          weight: 400,
+        },
+      },
+    },
+    images: {
+      mainImage: 'main',
+      hoverImage: 'additional',
+      showAlternatives: false,
+    },
+  },
+  generalLayout: {
+    headingFont: {
+      mobile: {
+        size: 20,
+        weight: 400,
+      },
+      tablet: {
+        size: 22,
+        weight: 400,
+      },
+      desktop: {
+        size: 24,
+        weight: 400,
+      },
+    },
+    bodyFont: {
+      mobile: {
+        size: 14,
+        weight: 400,
+      },
+      tablet: {
+        size: 14,
+        weight: 400,
+      },
+      desktop: {
+        size: 16,
+        weight: 400,
+      },
+    },
+    fontFamily: '',
+    fontColor: '#000000',
+    fontColorDark: '#FFFFFF',
+    backgroundColor: '#FFFFFF',
+    backgroundColorDark: '#000000',
+    showWidgetTitle: true,
+    showViSenzeLogo: false,
+    darkModeDefault: false,
+  },
+};
