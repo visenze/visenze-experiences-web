@@ -129,7 +129,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
         <>
           <div className='flex justify-between'>
             {customizations.generalLayout?.showWidgetTitle && (
-              <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='mlt-widget-title'>
+              <div className='wigmix-widget-title py-2 text-primary' data-pw='mlt-widget-title'>
                 {intl.formatMessage({ id: 'widgetTitle' })}
               </div>
             )}
@@ -145,6 +145,24 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
                 : intl.formatMessage({ id: 'showMore', defaultMessage: 'Show More' })}
             </button>
             </div>
+          </div>
+
+          <div className='flex items-center gap-4 pb-2'>
+            <button
+              className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
+              data-pw='mlt-similar-items-button'
+              onClick={() => {}}
+            >
+              Similar Items
+            </button>
+
+            <button
+              className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
+              data-pw='mlt-outfit-recommendations-button'
+              onClick={() => {}}
+            >
+              Outfit Recommendations
+            </button>
           </div>
 
           {/* Product Result List */}
