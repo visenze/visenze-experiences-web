@@ -15,19 +15,25 @@
 }
 
 @layer components {
+  .wigmix-product-card {
+    @apply flex flex-col gap-2 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all my-2;
+  }
   .wigmix-widget-title {
     @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
   }
+  .wigmix-product-card-details {
+    @apply p-4;
+  }
   .wigmix-product-card-title {
-    @apply text-mobile-productCardTitle md:text-tablet-productCardTitle lg:text-desktop-productCardTitle font-mobile-productCardTitle md:font-tablet-productCardTitle lg:font-desktop-productCardTitle;
+    @apply text-base text-gray-900 mb-1;
   }
   .wigmix-product-card-secondary-title {
-    @apply text-mobile-productCardSecondaryTitle md:text-tablet-productCardSecondaryTitle lg:text-desktop-productCardSecondaryTitle font-mobile-productCardSecondaryTitle md:font-tablet-productCardSecondaryTitle lg:font-desktop-productCardSecondaryTitle;
+    @apply uppercase tracking-widest text-xs text-gray-500 font-medium mb-1;
   }
   .wigmix-product-card-price {
-    @apply text-mobile-productCardPrice md:text-tablet-productCardPrice lg:text-desktop-productCardPrice font-mobile-productCardPrice md:font-tablet-productCardPrice lg:font-desktop-productCardPrice;
+    @apply text-base font-bold text-gray-900;
   }
   .wigmix-product-card-original-price {
-    @apply text-mobile-productCardOriginalPrice md:text-tablet-productCardOriginalPrice lg:text-desktop-productCardOriginalPrice font-mobile-productCardOriginalPrice md:font-tablet-productCardOriginalPrice lg:font-desktop-productCardOriginalPrice;
+    @apply text-base line-through text-gray-400 font-normal;
   }
 }
