@@ -4,33 +4,53 @@ import type { LanguagePack } from '../../common/locales/locale';
 export const DEFAULT_TEXTS: LanguagePack = {
   en: {
     widgetTitle: 'You may also like',
+    showMore: 'Show More',
+    showLess: 'Show Less',
   },
   es: {
     widgetTitle: 'También te puede gustar',
+    showMore: 'Mostrar Mas',
+    showLess: 'Mostrar Menos',
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
+    showMore: 'Plus de produits',
+    showLess: 'Moins de produits',
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
+    showMore: 'Mostrar Mais',
+    showLess: 'Mostrar Menos',
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
+    showMore: 'Weitere Produkte',
+    showLess: 'Weniger Produkte',
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
+    showMore: 'Mostra più prodotti',
+    showLess: 'Mostra meno prodotti',
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
+    showMore: 'Więcej produktów',
+    showLess: 'Mniej produktów',
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
+    showMore: '더보기',
+    showLess: '닫기',
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
+    showMore: 'もっと見る',
+    showLess: '閉じる',
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
+    showMore: 'ดูเพิ่มเติม',
+    showLess: 'ปิด',
   },
 };
 

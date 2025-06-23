@@ -1,18 +1,11 @@
 import type { CSSProperties, FC } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import Slider from 'react-slick';
-import type { Settings } from 'react-slick';
-import 'slick-carousel/slick/slick-theme.css';
-import 'slick-carousel/slick/slick.css';
-import NextArrow from './components/NextArrow';
-import PrevArrow from './components/PrevArrow';
 import Footer from '../../common/components/Footer';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
 
 interface InPageCarouselProps {
@@ -20,11 +13,12 @@ interface InPageCarouselProps {
 }
 
 const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
-  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showGrid, setShowGrid] = useState(false);
   const intl = useIntl();
   const breakpoint = useBreakpoint();
 
@@ -40,31 +34,6 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
     productId,
     shouldDisplayAlternatives: customizations.productCard?.images?.showAlternatives,
   });
-
-  const useSlideSettings = (): Settings => {
-    const isDesktop = breakpoint === WidgetBreakpoint.DESKTOP;
-    const isTablet = breakpoint === WidgetBreakpoint.TABLET;
-    let slidesToShow = customizations.productGrid?.mobile?.productsPerRow || 2.5;
-    if (isDesktop) {
-      slidesToShow = customizations.productGrid?.desktop?.productsPerRow || 4;
-    } else if (isTablet) {
-      slidesToShow = customizations.productGrid?.tablet?.productsPerRow || 3.5;
-    }
-    const slidesToScroll = Math.floor(slidesToShow);
-
-    return {
-      className: 'slider',
-      infinite: false,
-      initialSlide: 0,
-      slidesToScroll,
-      slidesToShow,
-      prevArrow: isDesktop ? <PrevArrow iconColor={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor} /> : <></>,
-      nextArrow: isDesktop ? <NextArrow iconColor={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor} /> : <></>,
-      variableWidth: false,
-    };
-  };
-
-  const settings = useSlideSettings();
 
   const getProductCardCssClasses = (): string => {
     const cssConfigSrc = customizations.productGrid?.[breakpoint];
@@ -108,39 +77,84 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
     return <></>;
   }
 
+  const renderHorizontalScroll = (): React.ReactNode => (
+    <div className='relative text-primary' data-pw='mlt-product-result-carousel'>
+      <div className='flex overflow-x-auto no-scrollbar gap-1 pb-2' style={{ scrollSnapType: 'x mandatory' }}>
+        {productResults.map((result, index) => (
+          <div
+            key={`${result.product_id}-${index}`}
+            className={`${getProductCardCssClasses()} min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start`}
+            style={getProductCardCssConfig()}
+          >
+            <ProductCard
+              index={index}
+              result={result}
+              metadata={metadata}
+              hasFindSimilar={true}
+              isRecommendation={true}
+              pwPrefix='mlt'
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderGrid = (): React.ReactNode => (
+    <div className='relative text-primary lg:px-10' data-pw='mlt-product-result-grid'>
+      <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
+        {productResults.map((result, index) => (
+          <div
+            key={`${result.product_id}-${index}`}
+            className={`${getProductCardCssClasses()}`}
+            style={getProductCardCssConfig()}
+          >
+            <ProductCard
+              index={index}
+              result={result}
+              metadata={metadata}
+              hasFindSimilar={false}
+              isRecommendation={true}
+              pwPrefix='mlt'
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <>
-        {productResults.length > 0 && (
-            <>
-              {/* Widget Title */}
-              {customizations.generalLayout?.showWidgetTitle && (
-                  <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='mlt-widget-title'>{intl.formatMessage({ id: 'widgetTitle' })}</div>
-              )}
-
-              {/* Product Result Carousel */}
-              <div className='relative pr-1 text-primary lg:px-10' data-pw='mlt-product-result-carousel'>
-                <Slider {...settings}>
-                  {productResults.map((result, index) => (
-                      <div key={`${result.product_id}-${index}`}>
-                        <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
-                          <ProductCard index={index}
-                                       result={result}
-                                       metadata={metadata}
-                                       hasFindSimilar={false}
-                                       isRecommendation={true}
-                                       pwPrefix='mlt' />
-                        </div>
-                      </div>
-                  ))}
-                </Slider>
+      {productResults.length > 0 && (
+        <>
+          <div className='flex justify-between'>
+            {customizations.generalLayout?.showWidgetTitle && (
+              <div className='wigmix-widget-title py-2 text-primary md:py-4' data-pw='mlt-widget-title'>
+                {intl.formatMessage({ id: 'widgetTitle' })}
               </div>
+            )}
 
-              {/* ViSenze Footer */}
-              {customizations.generalLayout?.showViSenzeLogo && (
-                  <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='mlt-visenze-footer'/>
-              )}
-            </>
-        )}
+            <div className='flex items-center'>
+            <button
+              className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
+              onClick={() => setShowGrid(!showGrid)}
+            >
+              {showGrid
+                ? intl.formatMessage({ id: 'showLess', defaultMessage: 'Show Less' })
+                : intl.formatMessage({ id: 'showMore', defaultMessage: 'Show More' })}
+            </button>
+            </div>
+          </div>
+
+          {/* Product Result List */}
+          {showGrid ? renderGrid() : renderHorizontalScroll()}
+
+          {/* ViSenze Footer */}
+          {customizations.generalLayout?.showViSenzeLogo && (
+            <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='mlt-visenze-footer' />
+          )}
+        </>
+      )}
     </>
   );
 };
