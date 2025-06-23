@@ -15,11 +15,20 @@
 }
 
 @layer components {
+  .wigmix-modal {
+    @apply text-mobile-body md:text-tablet-body lg:text-desktop-body font-mobile-body md:font-tablet-body lg:font-desktop-body;
+  }
+  .wigmix-reference-image-container {
+    @apply h-32 w-24;
+  }
+  .wigmix-reference-image {
+    @apply w-full h-full object-cover border border-gray-200;
+  }
   .wigmix-product-card {
     @apply flex flex-col gap-2 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all my-2;
   }
   .wigmix-widget-title {
-    @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
+    @apply text-mobile-heading md:text-tablet-heading font-mobile-heading md:font-tablet-heading;
   }
   .wigmix-product-card-details {
     @apply p-4;
@@ -35,5 +44,9 @@
   }
   .wigmix-product-card-original-price {
     @apply text-base line-through text-gray-400 font-normal;
+  }
+
+  .wigmix-modal-overlay.wigmix-modal-position-right {
+    padding-left: 75% !important;
   }
 }

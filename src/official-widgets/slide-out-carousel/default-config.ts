@@ -100,12 +100,12 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       marginHorizontal: 16,
     },
     tablet: {
-      productsPerRow: 3,
+      productsPerRow: 2,
       marginVertical: 12,
       marginHorizontal: 8,
     },
     desktop: {
-      productsPerRow: 3,
+      productsPerRow: 2,
       marginVertical: 12,
       marginHorizontal: 8,
     },

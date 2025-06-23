@@ -12,9 +12,9 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, showTitle, iconColor }): Reac
   const intl = useIntl();
 
   return (
-    <div className='relative flex w-full items-center py-4 pl-8 lg:rounded-t-3xl'>
+    <div className='relative flex w-full items-center border-b border-gray-200 py-4 pl-4 lg:rounded-t-3xl'>
       {showTitle && (
-        <div className='wigmix-widget-title hidden md:block' data-pw='ss-widget-title'>
+        <div className='wigmix-widget-title' data-pw='ss-widget-title'>
           {intl.formatMessage({ id: 'widgetTitle' })}
         </div>
       )}
