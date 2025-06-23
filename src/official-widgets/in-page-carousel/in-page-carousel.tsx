@@ -137,6 +137,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
             <div className='flex items-center'>
             <button
               className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
+              data-pw='mlt-show-more-button'
               onClick={() => setShowGrid(!showGrid)}
             >
               {showGrid

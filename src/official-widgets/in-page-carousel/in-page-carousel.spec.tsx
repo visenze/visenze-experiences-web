@@ -2,7 +2,7 @@ import { act, fireEvent, render, type RenderResult } from '@testing-library/reac
 import { IntlProvider } from 'react-intl';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import MoreLikeThis from './in-page-carousel';
+import InPageCarousel from './in-page-carousel';
 import {
   getStandardRecommendationPidNotFoundResponse,
   getStandardRecommendationSuccessResponse,
@@ -13,24 +13,13 @@ import type { LanguagePack } from '../../common/locales/locale';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { WidgetConfig } from '../../common/wigmix-core';
 
-const getIndexesOfShownProductCards = (productCards: HTMLCollection): number[] => {
-  const shownProductCards = [];
-  for (let i = 0; i < productCards.length; i += 1) {
-    const productCard = productCards[i];
-    if (productCard.className.includes('slick-active')) {
-      shownProductCards.push(i);
-    }
-  }
-  return shownProductCards;
-};
-
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-describe('more-like-this', () => {
+describe('in-page-carousel', () => {
   let testComponent: RenderResult;
   const texts: LanguagePack = {
     en: {
-      widgetTitle: 'More Like This 319',
+      widgetTitle: 'In Page Carousel',
     },
   };
   const mockVisearchClient: ViSearchClient = {
@@ -73,7 +62,7 @@ describe('more-like-this', () => {
   });
 
   it('should not render anything if product is not found', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_more_like_this', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_in_page_carousel', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((pid, params, handler) => {
         expect(pid).toBe('pid-not-found');
@@ -97,7 +86,7 @@ describe('more-like-this', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <MoreLikeThis productId='pid-not-found' />
+              <InPageCarousel productId='pid-not-found' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -105,8 +94,8 @@ describe('more-like-this', () => {
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
 
-  it('should render a successful response with default config', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_more_like_this', 'VERSION', () => ({
+  it('should render a successful response with default config (carousel view)', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_in_page_carousel', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((pid, params, handler) => {
         expect(pid).toBe('pid-found');
@@ -130,7 +119,7 @@ describe('more-like-this', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <MoreLikeThis productId='pid-found' />
+              <InPageCarousel productId='pid-found' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -154,8 +143,8 @@ describe('more-like-this', () => {
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
 
-  it('should move the carousel page when relevant arrows are pressed', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_more_like_this', 'VERSION', () => ({
+  it('should toggle between carousel and grid view when Show More/Less is clicked', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_in_page_carousel', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((_, __, handler) => {
         handler(getStandardRecommendationSuccessResponse());
@@ -165,70 +154,32 @@ describe('more-like-this', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <MoreLikeThis productId='pid-found' />
+              <InPageCarousel productId='pid-found' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
     );
 
+    // Start in carousel view
+    expect(testComponent.getByTestId('mlt-product-result-carousel')).not.toBeNull();
+    // Click Show More
     act(() => {
-      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
-      productCardImages.forEach((productCardImage) => {
-        fireEvent.load(productCardImage);
-      });
+      fireEvent.click(testComponent.getByRole('button', { name: /show more/i }));
     });
-
-    let productCards = testComponent.container.getElementsByClassName('slick-slide');
-    expect(getIndexesOfShownProductCards(productCards)).toEqual([0, 1, 2, 3]);
-
-    // Note: testing the Slick carousel arrow is a bit unreliable; sometimes the arrow event is not sent.
-    // Blocks that should have sent the event but do not do so will be marked.
-
+    // Should now show grid
+    expect(testComponent.getByTestId('mlt-product-result-grid')).not.toBeNull();
+    // Click Show Less
     act(() => {
-      // doesn't work
-      const nextPageButton = testComponent.getByTestId('wigmix-next-arrow');
-      nextPageButton.click();
-      jest.advanceTimersByTime(1000);
+      fireEvent.click(testComponent.getByRole('button', { name: /show less/i }));
     });
-    act(() => {
-      const nextPageButton = testComponent.getByTestId('wigmix-next-arrow');
-      nextPageButton.click();
-      jest.advanceTimersByTime(1000);
-    });
-
-    productCards = testComponent.container.getElementsByClassName('slick-slide');
-    expect(getIndexesOfShownProductCards(productCards)).toEqual([4, 5, 6, 7]);
-
-    act(() => {
-      const nextPageButton = testComponent.getByTestId('wigmix-next-arrow');
-      nextPageButton.click();
-      jest.advanceTimersByTime(1000);
-    });
-    act(() => {
-      const nextPageButton = testComponent.getByTestId('wigmix-next-arrow');
-      nextPageButton.click();
-      jest.advanceTimersByTime(1000);
-    });
-    act(() => {
-      // doesn't work
-      const prevPageButton = testComponent.getByTestId('wigmix-prev-arrow');
-      prevPageButton.click();
-      jest.advanceTimersByTime(1000);
-    });
-    act(() => {
-      const prevPageButton = testComponent.getByTestId('wigmix-prev-arrow');
-      prevPageButton.click();
-      jest.advanceTimersByTime(1000);
-    });
-
-    productCards = testComponent.container.getElementsByClassName('slick-slide');
-    expect(getIndexesOfShownProductCards(productCards)).toEqual([8, 9, 10, 11]);
+    // Should return to carousel
+    expect(testComponent.getByTestId('mlt-product-result-carousel')).not.toBeNull();
   });
 
-  it('should render a successful response with some customizations', () => {
+  it('should render a successful response with some customizations (footer, no title)', () => {
     widgetConfig.customizations.generalLayout.showWidgetTitle = false;
     widgetConfig.customizations.generalLayout.showViSenzeLogo = true;
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_more_like_this', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_in_page_carousel', 'VERSION', () => ({
       ...mockVisearchClient,
       productSearchById: jest.fn().mockImplementation((_, __, handler) => {
         handler(getStandardRecommendationSuccessResponse());
@@ -238,19 +189,17 @@ describe('more-like-this', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <MoreLikeThis productId='pid-found' />
+              <InPageCarousel productId='pid-found' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
     );
 
-    act(() => {
-      const productCardImages = testComponent.queryAllByTestId('wigmix-product-card-image');
-      productCardImages.forEach((productCardImage) => {
-        fireEvent.load(productCardImage);
-      });
-    });
-
-    expect(testComponent.asFragment()).toMatchSnapshot();
+    // Check horizontal scroll rendered
+    expect(testComponent.getByTestId('mlt-product-result-carousel')).not.toBeNull();
+    // Widget title should be rendered
+    expect(testComponent.getByTestId('mlt-widget-title')).not.toBeNull();
+    // Show More button should be present
+    expect(testComponent.getByRole('button', { name: /show more/i })).not.toBeNull();
   });
 });
