@@ -1,0 +1,254 @@
+import type { WidgetConfig } from '../../common/wigmix-core';
+import type { LanguagePack } from '../../common/locales/locale';
+
+export const DEFAULT_TEXTS: LanguagePack = {
+  en: {
+    filter: 'Filter',
+    noResults: 'No Results Found',
+    noResultsDescription: 'We could not find any products matching your search.',
+    searchBarPlaceholder: 'What are you looking for?',
+    noSearchInput: 'No search input',
+    noSearchInputDescription: 'Enter a search term or select an image to find results.',
+    imageOrQueryNotFound: 'You have provided an invalid image or query, please remove them and try again.',
+    systemError: 'Sorry, our system is experiencing difficulties, please try again later.',
+  },
+  es: {
+    filter: 'Filtrar',
+    noResults: 'No se encontraron resultados',
+    noResultsDescription: 'No pudimos encontrar ningún producto que coincida con tu búsqueda.',
+    searchBarPlaceholder: '¿Qué estás buscando?',
+    noSearchInput: 'Sin entrada de búsqueda',
+    noSearchInputDescription: 'Ingresa un término de búsqueda o selecciona una imagen para encontrar resultados.',
+    imageOrQueryNotFound: 'Has proporcionado una imagen o consulta no válida, por favor, elimínalas e inténtalo de nuevo.',
+    systemError: 'Lo sentimos, nuestro sistema está experimentando dificultades, por favor, inténtalo de nuevo más tarde.',
+  },
+  fr: {
+    filter: 'Filtrer',
+    noResults: 'Aucun résultat trouvé',
+    noResultsDescription: 'Nous n\'avons trouvé aucun produit correspondant à votre recherche.',
+    searchBarPlaceholder: 'Que recherchez-vous ?',
+    noSearchInput: 'Aucune entrée de recherche',
+    noSearchInputDescription: 'Saisissez un terme de recherche ou sélectionnez une image pour trouver des résultats.',
+    imageOrQueryNotFound: 'Vous avez fourni une image ou une requête invalide, veuillez les supprimer et réessayer.',
+    systemError: 'Désolé, notre système rencontre des difficultés, veuillez réessayer ultérieurement.',
+  },
+  pt: {
+    filter: 'Filtrar',
+    noResults: 'Nenhum resultado encontrado',
+    noResultsDescription: 'Não encontramos nenhum produto que corresponda à sua pesquisa.',
+    searchBarPlaceholder: 'O que você está procurando?',
+    noSearchInput: 'Nenhuma entrada de pesquisa',
+    noSearchInputDescription: 'Insira um termo de pesquisa ou selecione uma imagem para encontrar resultados.',
+    imageOrQueryNotFound: 'Você forneceu uma imagem ou consulta inválida, remova-as e tente novamente.',
+    systemError: 'Desculpe, nosso sistema está enfrentando dificuldades, tente novamente mais tarde.',
+  },
+  de: {
+    filter: 'Filtern',
+    noResults: 'Keine Ergebnisse gefunden',
+    noResultsDescription: 'Wir konnten keine Produkte finden, die deiner Suche entsprechen.',
+    searchBarPlaceholder: 'Wonach suchst du?',
+    noSearchInput: 'Keine Suchbegriff eingegeben',
+    noSearchInputDescription: 'Gib einen Suchbegriff ein oder wähle ein Bild aus, um Ergebnisse zu finden.',
+    imageOrQueryNotFound: 'Du hast ein ungültiges Bild oder eine ungültige Suchanfrage eingegeben. Bitte entferne sie und versuche es erneut.',
+    systemError: 'Entschuldigung, unser System hat Schwierigkeiten. Bitte versuche es später noch einmal.',
+  },
+  it: {
+    filter: 'Filtra',
+    noResults: 'Nessun risultato trovato',
+    noResultsDescription: 'Non abbiamo trovato alcun prodotto corrispondente alla tua ricerca.',
+    searchBarPlaceholder: 'Cosa stai cercando?',
+    noSearchInput: 'Nessun input di ricerca',
+    noSearchInputDescription: 'Inserisci un termine di ricerca o seleziona un\'immagine per trovare i risultati.',
+    imageOrQueryNotFound: 'Hai fornito un\'immagine o una query non valida, rimuovile e riprova.',
+    systemError: 'Spiacenti, il nostro sistema sta riscontrando delle difficoltà, riprova più tardi.',
+  },
+  ko: {
+    filter: '필터',
+    noResults: '검색 결과 없음',
+    noResultsDescription: '검색어와 일치하는 제품을 찾을 수 없습니다.',
+    searchBarPlaceholder: '무엇을 찾고 계신가요?',
+    noSearchInput: '검색어 없음',
+    noSearchInputDescription: '검색어를 입력하거나 이미지를 선택하여 결과를 찾으세요.',
+    imageOrQueryNotFound: '유효하지 않은 이미지 또는 검색어를 입력했습니다. 제거하고 다시 시도해주세요.',
+    systemError: '죄송합니다. 시스템에 오류가 발생했습니다. 나중에 다시 시도해주세요.',
+  },
+  ja: {
+    filter: 'フィルター',
+    noResults: '検索結果が見つかりませんでした',
+    noResultsDescription: '検索に一致する商品が見つかりませんでした。',
+    searchBarPlaceholder: '何をお探しですか？',
+    noSearchInput: '検索キーワードがありません',
+    noSearchInputDescription: '検索キーワードを入力するか、画像を選択して結果を見つけてください。',
+    imageOrQueryNotFound: '無効な画像またはクエリが指定されました。削除してもう一度お試しください。',
+    systemError: '申し訳ございません。システムに問題が発生しています。後でもう一度お試しください。',
+  },
+  th: {
+    filter: 'ตัวกรอง',
+    noResults: 'ไม่พบผลลัพธ์',
+    noResultsDescription: 'ไม่พบสินค้าที่ตรงกับการค้นหาของคุณ',
+    searchBarPlaceholder: 'คุณกำลังมองหาอะไร?',
+    noSearchInput: 'ไม่มีการป้อนข้อมูลการค้นหา',
+    noSearchInputDescription: 'ป้อนคำค้นหาหรือเลือกรูปภาพเพื่อค้นหาผลลัพธ์',
+    imageOrQueryNotFound: 'คุณได้ระบุรูปภาพหรือคำค้นหาที่ไม่ถูกต้อง โปรดนำออกแล้วลองใหม่อีกครั้ง',
+    systemError: 'ขออภัย ระบบของเรากำลังมีปัญหา โปรดลองอีกครั้งในภายหลัง',
+  },
+};
+
+export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
+  breakpoints: {
+    mobile: {
+      maxWidth: 767,
+    },
+    tablet: {
+      maxWidth: 1023,
+    },
+  },
+  productGrid: {
+    mobile: {
+      productsPerRow: 2,
+      marginVertical: 16,
+      marginHorizontal: 8,
+    },
+    tablet: {
+      productsPerRow: 4,
+      marginVertical: 16,
+      marginHorizontal: 8,
+    },
+    desktop: {
+      productsPerRow: 4,
+      marginVertical: 16,
+      marginHorizontal: 8,
+    },
+  },
+  productCard: {
+    imageAspectRatio: '2 / 3',
+    openLinksInNewTab: false,
+    price: {
+      show: true,
+      font: {
+        mobile: {
+          size: 14,
+          weight: 600,
+        },
+        tablet: {
+          size: 14,
+          weight: 600,
+        },
+        desktop: {
+          size: 16,
+          weight: 600,
+        },
+      },
+      fontColor: '#EF4444',
+      fontColorDark: '#EF4444',
+    },
+    originalPrice: {
+      show: true,
+      font: {
+        mobile: {
+          size: 14,
+          weight: 600,
+        },
+        tablet: {
+          size: 14,
+          weight: 600,
+        },
+        desktop: {
+          size: 16,
+          weight: 600,
+        },
+      },
+      fontColor: '#9CA3AF',
+      fontColorDark: '#9CA3AF',
+    },
+    title: {
+      show: true,
+      fieldSource: 'title',
+      font: {
+        mobile: {
+          size: 12,
+          weight: 400,
+        },
+        tablet: {
+          size: 12,
+          weight: 400,
+        },
+        desktop: {
+          size: 14,
+          weight: 400,
+        },
+      },
+    },
+    secondaryTitle: {
+      show: true,
+      fieldSource: 'brand',
+      font: {
+        mobile: {
+          size: 10,
+          weight: 400,
+        },
+        tablet: {
+          size: 10,
+          weight: 400,
+        },
+        desktop: {
+          size: 12,
+          weight: 400,
+        },
+      },
+    },
+    findSimilar: {
+      enable: true,
+      position: 'bottom_right',
+      icon: {
+        color: '#000000',
+        colorDark: '#FFFFFF',
+        backgroundColor: '#FFFFFF',
+        backgroundColorDark: '#000000',
+      },
+    },
+    images: {
+      mainImage: 'main',
+      hoverImage: 'additional',
+      showAlternatives: false,
+    },
+  },
+  generalLayout: {
+    headingFont: {
+      mobile: {
+        size: 20,
+        weight: 400,
+      },
+      tablet: {
+        size: 22,
+        weight: 400,
+      },
+      desktop: {
+        size: 24,
+        weight: 400,
+      },
+    },
+    bodyFont: {
+      mobile: {
+        size: 14,
+        weight: 400,
+      },
+      tablet: {
+        size: 14,
+        weight: 400,
+      },
+      desktop: {
+        size: 16,
+        weight: 400,
+      },
+    },
+    fontFamily: '',
+    fontColor: '#000000',
+    fontColorDark: '#FFFFFF',
+    backgroundColor: '#FFFFFF',
+    backgroundColorDark: '#000000',
+    showWidgetTitle: true,
+    showViSenzeLogo: false,
+    darkModeDefault: false,
+  },
+};
