@@ -170,7 +170,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
     },
     secondaryTitle: {
-      show: false,
+      show: true,
       fieldSource: 'brand',
       font: {
         mobile: {
