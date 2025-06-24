@@ -39,6 +39,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
   const { customizations } = widgetConfig;
   const [search, setSearch] = useState('');
   const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
+  const [isRecommendInputFocused, setIsRecommendInputFocused] = useState(false);
   const breakpoint = useBreakpoint();
   const intl = useIntl();
 
@@ -242,12 +243,12 @@ const ResultScreen: FC<ResultScreenProps> = ({
               iconColor={darkMode
                 ? customizations.generalLayout?.fontColorDark
                 : customizations.generalLayout?.fontColor} />
-      <div className='w-full '>
-        <div className='flex h-full flex-col gap-4'>
+      <div className='size-full '>
+        <div className='flex h-full flex-col gap-4 overflow-y-scroll'>
           <div className='h-full px-4 flex flex-col gap-4'>
             <div className='flex justify-between px-2'>
               <div
-                className='wigmix-reference-image-container flex w-auto items-center text-center'>
+                className='wigmix-reference-image-container flex items-center text-center'>
                 <img src={getFile(image)} className='wigmix-reference-image rounded-md md:h-full' data-pw='ss-reference-image'/>
               </div>
 
@@ -272,40 +273,68 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   </div>
                 </div>
               )} */}
-              <div className='flex flex-col gap-2'>
-                <button>Similar products</button>
+              <div className='flex w-full flex-col gap-2 px-4'>
+                <button className='text-sm border border-gray-200 px-2 py-1 rounded-full bg-blue-50 text-blue-800'>similar products</button>
 
-                <button>Suggested products</button>
+                <button className='text-sm border border-gray-200 px-2 py-1 rounded-full bg-blue-50 text-blue-800'>suggested products</button>
               </div>
             </div>
 
             <div className='border-b border-gray-200'></div>
           </div>
 
-          <div className='flex flex-col px-4 gap-4'>
-            <Input
-              isClearable
-              maxLength={QUERY_MAX_CHARACTER_LENGTH}
-              type='filters'
-              placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
-              value={search}
-              onValueChange={(input): void => {
-                setSearch(input);
-                setDebouncedOnKeywordUpdate(input);
-              }}
-              onKeyDown={(event): void => {
-                if (event.key === 'Enter') {
-                  onTextSearch(search);
+          {/* Search input bar with Recommend me button */}
+          <div className='flex gap-0 overflow-hidden w-full px-4'>
+            <button
+              className={`font-bold px-4 rounded-l-md h-10 text-sm transition-colors ${
+                isRecommendInputFocused
+                  ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                  : 'bg-gray-300 hover:bg-gray-400 text-gray-800'
+              }`}
+              disabled={!search.trim()}
+              onClick={() => {
+                if (!search) {
+                  return;
                 }
+                onTextSearch(search);
               }}
-              onClear={(): void => {
-                setSearch('');
-                onTextSearch('');
-              }}
-              data-pw='ss-refinement-text-bar'
-              data-testid='wigmix-text-bar'
-            />
+              data-pw='rm-recommend-me-button'>
+              <span>{intl.formatMessage({ id: 'searchBarButton' })}</span>
+            </button>
 
+            <div className='relative flex-1'>
+              <Input
+                isClearable
+                maxLength={QUERY_MAX_CHARACTER_LENGTH}
+                type='filters'
+                placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
+                value={search}
+                onValueChange={(input): void => {
+                  setSearch(input);
+                  setDebouncedOnKeywordUpdate(input);
+                }}
+                onKeyDown={(event): void => {
+                  if (event.key === 'Enter') {
+                    onTextSearch(search);
+                  }
+                }}
+                onClear={(): void => {
+                  setSearch('');
+                  onTextSearch('');
+                }}
+                onFocus={(): void => {
+                  setIsRecommendInputFocused(true);
+                }}
+                onBlur={(): void => {
+                  setIsRecommendInputFocused(false);
+                }}
+                data-pw='ss-refinement-text-bar'
+                data-testid='wigmix-text-bar'
+              />
+            </div>
+          </div>
+
+          <div className='flex flex-col px-4 gap-4'>
             <div className='overflow-y-auto'>
               <div className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
                    style={getProductGridCssConfig(customizations, breakpoint)}
@@ -338,7 +367,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
       {/* {(breakpoint === 'tablet' || breakpoint === 'desktop') && getTabletAndDesktopView()} */}
       {getTabletAndDesktopView()}
       {customizations.generalLayout?.showViSenzeLogo && (
-        <Footer className='fixed bottom-0 py-2 md:absolute lg:rounded-b-3xl' dataPw='ss-visenze-footer'/>
+        <Footer className='fixed bottom-0 py-2 md:absolute lg:rounded-b-3xl bg-white' dataPw='ss-visenze-footer'/>
       )}
     </>
   );

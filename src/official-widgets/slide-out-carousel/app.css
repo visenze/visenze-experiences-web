@@ -19,7 +19,7 @@
     @apply text-mobile-body md:text-tablet-body lg:text-desktop-body font-mobile-body md:font-tablet-body lg:font-desktop-body;
   }
   .wigmix-reference-image-container {
-    @apply h-32 w-24;
+    @apply h-32 w-32;
   }
   .wigmix-reference-image {
     @apply w-full h-full object-cover border border-gray-200;

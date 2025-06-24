@@ -4,6 +4,7 @@ import type { LanguagePack } from '../../common/locales/locale';
 export const DEFAULT_TEXTS: LanguagePack = {
   en: {
     widgetTitle: 'You may also like',
+    searchBarButton: 'Show Me',
     searchBarPlaceholder: 'Type here to refine your results...',
     previousViews: 'Searches',
     errorDescription: 'Sorry, something went wrong',
@@ -12,6 +13,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   },
   es: {
     widgetTitle: 'También te puede gustar',
+    searchBarButton: 'Mostrarme',
     searchBarPlaceholder: 'Escribe aquí para refinar tus resultados...',
     previousViews: 'Buscas',
     errorDescription: 'Lo sentimos, algo salió mal',
@@ -20,6 +22,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
+    searchBarButton: 'Montrer-moi',
     searchBarPlaceholder: 'Tapez ici pour affiner vos résultats...',
     previousViews: 'Recherches',
     errorDescription: 'Désolé, quelque chose s\'est mal passé',
@@ -28,6 +31,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
+    searchBarButton: 'Mostrar-me',
     searchBarPlaceholder: 'Digite aqui para refinar seus resultados...',
     previousViews: 'Pesquisas',
     errorDescription: 'Desculpe, algo deu errado',
@@ -36,6 +40,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
+    searchBarButton: 'Zeige mir',
     searchBarPlaceholder: 'Gib hier ein, um deine Ergebnisse zu verfeinern...',
     previousViews: 'Suchen',
     errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
@@ -44,6 +49,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
+    searchBarButton: 'Mostra-mi',
     searchBarPlaceholder: 'Digita qui per affinare i tuoi risultati...',
     previousViews: 'Cerca',
     errorDescription: 'Spiacenti, qualcosa è andato storto',
@@ -52,6 +58,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
+    searchBarButton: 'Pokaż mi',
     searchBarPlaceholder: 'Wpisz tutaj, aby doprecyzować wyniki...',
     previousViews: 'Wyszukiwania',
     errorDescription: 'Przepraszamy, coś poszło nie tak',
@@ -60,6 +67,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
+    searchBarButton: '보여줘',
     searchBarPlaceholder: '결과를 구체화하려면 여기에 입력하세요...',
     previousViews: '검색',
     errorDescription: '죄송합니다. 오류가 발생했습니다',
@@ -68,6 +76,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
+    searchBarButton: '表示する',
     searchBarPlaceholder: '検索結果を絞り込むには、ここに टाइपしてください...',
     previousViews: '検索',
     errorDescription: '申し訳ありません。問題が発生しました',
@@ -76,6 +85,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
+    searchBarButton: 'แสดงให้เห็น',
     searchBarPlaceholder: 'พิมพ์ที่นี่เพื่อปรับแต่งผลลัพธ์ของคุณ...',
     previousViews: 'การค้นหา',
     errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
