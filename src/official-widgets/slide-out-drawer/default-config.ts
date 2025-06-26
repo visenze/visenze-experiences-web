@@ -10,6 +10,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Sorry, something went wrong',
     back: 'Back',
     triggerCTA: 'Find Similar',
+    similarProductButton: 'Similar Products',
+    suggestedProductButton: 'Suggested Products',
   },
   es: {
     widgetTitle: 'También te puede gustar',
@@ -19,6 +21,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Lo sentimos, algo salió mal',
     back: 'Atrás',
     triggerCTA: 'Encontrar similares',
+    similarProductButton: 'Productos similares',
+    suggestedProductButton: 'Productos sugeridos',
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
@@ -28,6 +32,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Désolé, quelque chose s\'est mal passé',
     back: 'Retour',
     triggerCTA: 'Trouver Similaire',
+    similarProductButton: 'Produits similaires',
+    suggestedProductButton: 'Produits suggérés',
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
@@ -37,6 +43,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Desculpe, algo deu errado',
     back: 'Voltar',
     triggerCTA: 'Encontrar Semelhantes',
+    similarProductButton: 'Produtos Semelhantes',
+    suggestedProductButton: 'Produtos Sugeridos',
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
@@ -46,6 +54,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
     back: 'Zurück',
     triggerCTA: 'Ähnliche finden',
+    similarProductButton: 'Ähnliche Produkte',
+    suggestedProductButton: 'Empfohlene Produkte',
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
@@ -55,6 +65,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Spiacenti, qualcosa è andato storto',
     back: 'Indietro',
     triggerCTA: 'Trova simili',
+    similarProductButton: 'Prodotti Simili',
+    suggestedProductButton: 'Prodotti Suggesti',
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
@@ -64,6 +76,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Przepraszamy, coś poszło nie tak',
     back: 'Wstecz',
     triggerCTA: 'Znajdź podobne',
+    similarProductButton: 'Produkty Podobne',
+    suggestedProductButton: 'Produkty Sugerowane',
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
@@ -73,6 +87,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: '죄송합니다. 오류가 발생했습니다',
     back: '뒤로',
     triggerCTA: '비슷한 상품 찾기',
+    similarProductButton: '비슷한 상품 찾기',
+    suggestedProductButton: '비슷한 상품 찾기',
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
@@ -82,6 +98,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: '申し訳ありません。問題が発生しました',
     back: '戻る',
     triggerCTA: '類似商品を検索',
+    similarProductButton: '類似商品を検索',
+    suggestedProductButton: '類似商品を検索',
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
@@ -91,6 +109,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
     back: 'กลับ',
     triggerCTA: 'ค้นหาสินค้าที่คล้ายกัน',
+    similarProductButton: 'ค้นหาสินค้าที่คล้ายกัน',
+    suggestedProductButton: 'ค้นหาสินค้าที่คล้ายกัน',
   },
 };
 
@@ -197,8 +217,24 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
         },
       },
     },
+    addToWishlist: {
+      enable: false,
+      position: 'top_right',
+      iconActive: {
+        color: '#000000',
+        colorDark: '#FFFFFF',
+        backgroundColor: '#FFFFFF',
+        backgroundColorDark: '#000000',
+      },
+      iconInactive: {
+        color: '#000000',
+        colorDark: '#FFFFFF',
+        backgroundColor: '#FFFFFF',
+        backgroundColorDark: '#000000',
+      },
+    },
     findSimilar: {
-      enable: true,
+      enable: false,
       position: 'bottom_right',
       icon: {
         color: '#000000',

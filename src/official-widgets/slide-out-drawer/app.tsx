@@ -14,11 +14,12 @@ const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, widgetClient, ele
   }
 
   return (
-    <AppWrapper widgetConfig={widgetConfig}
-                widgetClient={widgetClient}
-                defaultTexts={DEFAULT_TEXTS}
-                defaultCustomizations={DEFAULT_CUSTOMIZATIONS}
-                enableCustomization={ENABLE_CUSTOMIZATION}>
+    <AppWrapper
+      widgetConfig={widgetConfig}
+      widgetClient={widgetClient}
+      defaultTexts={DEFAULT_TEXTS}
+      defaultCustomizations={DEFAULT_CUSTOMIZATIONS}
+      enableCustomization={ENABLE_CUSTOMIZATION}>
       <SlideOutDrawer imUrl={imUrl} />
     </AppWrapper>
   );

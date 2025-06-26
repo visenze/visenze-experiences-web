@@ -6,15 +6,13 @@ import { WidgetType } from '../../common/wigmix-core';
 import version from '../../version';
 
 devInitWidget(
-    WidgetType.SLIDE_OUT_DRAWER,
-    version,
-    ({ config, client, element }) => (
-        <App widgetConfig={config} widgetClient={client} element={element} />
-    ),
-    true,
-    devConfigs,
-    devFieldMappings,
-    shouldRetrieveFieldsMapping,
-    window,
-    DEFAULT_CUSTOMIZATIONS,
+  WidgetType.SLIDE_OUT_DRAWER,
+  version,
+  ({ config, client, element }) => <App widgetConfig={config} widgetClient={client} element={element} />,
+  true,
+  devConfigs,
+  devFieldMappings,
+  shouldRetrieveFieldsMapping,
+  window,
+  DEFAULT_CUSTOMIZATIONS,
 );

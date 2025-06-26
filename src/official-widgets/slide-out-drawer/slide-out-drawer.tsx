@@ -144,25 +144,24 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ imUrl, renderModalWithoutPort
     switch (screen) {
       case ScreenType.ERROR:
         return (
-            <div className='flex size-full flex-col items-center justify-center gap-1 text-center'>
-              <div className='font-bold'>
-                {intl.formatMessage({ id: 'errorDescription' })}
-              </div>
-              <div>{error}</div>
-              <button className='mt-3 w-fit rounded-md bg-buttonPrimary px-5 py-2 text-buttonPrimary'
-                      data-testid='wigmix-back'
-                      onClick={() => {
-                        if (lastSuccessfulImage) {
-                          setError('');
-                          setImage(lastSuccessfulImage);
-                          setScreen(ScreenType.RESULT);
-                        } else {
-                          onModalClose();
-                        }
-                      }}>
-                {intl.formatMessage({ id: 'back' })}
-              </button>
-            </div>
+          <div className='flex size-full flex-col items-center justify-center gap-1 text-center'>
+            <div className='font-bold'>{intl.formatMessage({ id: 'errorDescription' })}</div>
+            <div>{error}</div>
+            <button
+              className='mt-3 w-fit rounded-md bg-buttonPrimary px-5 py-2 text-buttonPrimary'
+              data-testid='wigmix-back'
+              onClick={() => {
+                if (lastSuccessfulImage) {
+                  setError('');
+                  setImage(lastSuccessfulImage);
+                  setScreen(ScreenType.RESULT);
+                } else {
+                  onModalClose();
+                }
+              }}>
+              {intl.formatMessage({ id: 'back' })}
+            </button>
+          </div>
         );
       case ScreenType.RESULT:
         return (
@@ -231,18 +230,22 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ imUrl, renderModalWithoutPort
 
   return (
     <>
-      <PopupTriggerButton config={customizations.popup}
-                          text={intl.formatMessage({ id: 'triggerCTA' })}
-                          darkMode={darkMode}
-                          onClick={onPopupIconClick}
-                          defaultIcon={
-                            <MagnifyingGlassIcon
-                                color={darkMode
-                                    ? customizations.popup?.triggerIcon?.colorDark || ''
-                                    : customizations.popup?.triggerIcon?.color || ''}
-                                className='wigmix-popup-trigger-icon default size-6'
-                            />
-                          } />
+      <PopupTriggerButton
+        config={customizations.popup}
+        text={intl.formatMessage({ id: 'triggerCTA' })}
+        darkMode={darkMode}
+        onClick={onPopupIconClick}
+        defaultIcon={
+          <MagnifyingGlassIcon
+            color={
+              darkMode
+                ? customizations.popup?.triggerIcon?.colorDark || ''
+                : customizations.popup?.triggerIcon?.color || ''
+            }
+            className='wigmix-popup-trigger-icon default size-6'
+          />
+        }
+      />
 
       <ViSenzeModal
         open={dialogVisible}
@@ -252,8 +255,7 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ imUrl, renderModalWithoutPort
         position={customizations.popup?.position || 'right'}
         darkMode={darkMode}
         fontFamily={customizations.generalLayout?.fontFamily}
-        placementId={`${appSettings.placementId}`}
-      >
+        placementId={`${appSettings.placementId}`}>
         {getScreen()}
       </ViSenzeModal>
     </>
