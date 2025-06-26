@@ -1,4 +1,4 @@
-# Similar Search widget
+# Slide Out Drawer widget
 
 ![status](https://img.shields.io/badge/status-stable-blue)
 ![stable](https://img.shields.io/badge/since-1.0.0-blue)
@@ -10,11 +10,11 @@
   2. Add the product image URL in the `data-url` field of the widget selector.
   3. Run:
      ```sh
-     npm run start:similar-search
+     npm run start:slide-out-drawer
      ```
-     The dev server will be available at `http://localhost:8080` and will automatically reload for changes made in `src/official-widgets/similar-search` folder.
+     The dev server will be available at `http://localhost:8080` and will automatically reload for changes made in `src/official-widgets/slide-out-drawer` folder.
 - To bundle the widget:
   ```sh
-  npm run build:similar-search
+  npm run build:slide-out-drawer
   ```
-  The bundled file will be available in `dist/similar-search` directory. 
+  The bundled file will be available in `dist/slide-out-drawer` directory. 

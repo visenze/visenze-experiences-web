@@ -3,7 +3,7 @@ import { IntlProvider } from 'react-intl';
 import { Context as ResponsiveContext } from 'react-responsive';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import SimilarSearch from './slide-out-carousel';
+import SlideOutDrawer from './slide-out-drawer';
 import {
   getStandardMultiSearchAutocompleteResponse,
   getStandardMultiSearchInvalidImageResponse,
@@ -17,7 +17,7 @@ import type { WidgetConfig } from '../../common/wigmix-core';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-describe('similar-search', () => {
+describe('slide-out-drawer', () => {
   let testComponent: RenderResult;
   const texts: LanguagePack = {
     en: {
@@ -88,12 +88,12 @@ describe('similar-search', () => {
   });
 
   it('should render the standard icon', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => mockVisearchClient);
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -103,12 +103,12 @@ describe('similar-search', () => {
 
   it('should not render the icon if configured as such', () => {
     widgetConfig.customizations.popup!.triggerIcon!.hide = true;
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => mockVisearchClient);
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -119,12 +119,12 @@ describe('similar-search', () => {
   it('should render a custom icon if configured as such', () => {
     widgetConfig.customizations.popup!.triggerIcon.url = 'https://trigger-icon';
     widgetConfig.customizations.popup!.triggerIcon.color = 'DEFAULT_ICON_COLOR';
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => mockVisearchClient);
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => mockVisearchClient);
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -133,7 +133,7 @@ describe('similar-search', () => {
   });
 
   it('should open the popup when icon is clicked and display error message if API error occurred', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
@@ -148,7 +148,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -176,7 +176,7 @@ describe('similar-search', () => {
   });
 
   it('should open the popup when programmatically called', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
@@ -191,7 +191,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -209,7 +209,7 @@ describe('similar-search', () => {
   });
 
   it('should render a successful response with default config in desktop view', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
@@ -233,7 +233,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -269,7 +269,7 @@ describe('similar-search', () => {
   });
 
   it('should render a successful response with default config in mobile view', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
@@ -294,7 +294,7 @@ describe('similar-search', () => {
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ResponsiveContext.Provider value={{ width: 600 }}>
-                <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+                <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
               </ResponsiveContext.Provider>
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -323,7 +323,7 @@ describe('similar-search', () => {
 
   it('should show find similar results successfully', () => {
     const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-imurl') {
@@ -346,7 +346,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -376,7 +376,7 @@ describe('similar-search', () => {
   });
 
   it('should show error message if find similar encounters error', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-imurl') {
@@ -396,7 +396,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -438,7 +438,7 @@ describe('similar-search', () => {
 
   it('should show text query results successfully', () => {
     const scrambledOrder = [9, 4, 1, 12, 13, 0, 19, 17, 16, 5, 8, 2, 10, 3, 11, 14, 15, 7, 18, 6];
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         if (params.im_url === 'test-imurl') {
@@ -469,7 +469,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -494,7 +494,7 @@ describe('similar-search', () => {
 
   it('should re-trigger search when clicking on inactive history desktop and tablet view', () => {
     let counter = 0;
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((_, handler) => {
         counter += 1;
@@ -508,7 +508,7 @@ describe('similar-search', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+            <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -542,7 +542,7 @@ describe('similar-search', () => {
 
   it('should re-trigger search when clicking on inactive history mobile view', () => {
     let counter = 0;
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_slide_out_drawer', 'VERSION', () => ({
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((_, handler) => {
         counter += 1;
@@ -557,7 +557,7 @@ describe('similar-search', () => {
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <ResponsiveContext.Provider value={{ width: 600 }}>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
             </ResponsiveContext.Provider>
           </IntlProvider>
         </WidgetDataContext.Provider>

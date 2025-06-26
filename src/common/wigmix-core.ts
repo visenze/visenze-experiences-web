@@ -24,7 +24,7 @@ export enum WidgetType {
   SEARCH_BAR = 'search_bar',
   MERCHANDISE_SEARCH_BAR = 'merchandise_search_bar',
   EMBEDDED_SEARCH_RESULTS = 'embedded_search_results',
-  SLIDE_OUT_CAROUSEL = 'slide_out_carousel',
+  SLIDE_OUT_DRAWER = 'slide_out_drawer',
 }
 
 export enum WidgetErrorState {

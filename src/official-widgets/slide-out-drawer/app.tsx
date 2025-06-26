@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import './app.css';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
-import SlideOutCarousel from './slide-out-carousel';
+import SlideOutDrawer from './slide-out-drawer';
 import { type AppPropsWithReferenceElement, AppWrapper } from '../../common/components/app-wrapper';
 
 // Set to true to enable customization via WidgetConfig
@@ -19,7 +19,7 @@ const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, widgetClient, ele
                 defaultTexts={DEFAULT_TEXTS}
                 defaultCustomizations={DEFAULT_CUSTOMIZATIONS}
                 enableCustomization={ENABLE_CUSTOMIZATION}>
-      <SlideOutCarousel imUrl={imUrl} />
+      <SlideOutDrawer imUrl={imUrl} />
     </AppWrapper>
   );
 };

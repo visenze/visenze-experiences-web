@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`similar-search should not render the icon if configured as such 1`] = `<DocumentFragment />`;
+exports[`slide-out-drawer should not render the icon if configured as such 1`] = `<DocumentFragment />`;
 
-exports[`similar-search should render a custom icon if configured as such 1`] = `
+exports[`slide-out-drawer should render a custom icon if configured as such 1`] = `
 <DocumentFragment>
   <button
     class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
@@ -16,7 +16,7 @@ exports[`similar-search should render a custom icon if configured as such 1`] = 
 </DocumentFragment>
 `;
 
-exports[`similar-search should render the standard icon 1`] = `
+exports[`slide-out-drawer should render the standard icon 1`] = `
 <DocumentFragment>
   <button
     class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"

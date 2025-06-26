@@ -21,12 +21,12 @@ enum ScreenType {
   ERROR = 'error',
 }
 
-interface SlideOutCarouselProps {
+interface SlideOutDrawerProps {
   imUrl: string;
   renderModalWithoutPortal?: boolean;
 }
 
-const SlideOutCarousel: FC<SlideOutCarouselProps> = ({ imUrl, renderModalWithoutPortal }) => {
+const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ imUrl, renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
@@ -260,4 +260,4 @@ const SlideOutCarousel: FC<SlideOutCarouselProps> = ({ imUrl, renderModalWithout
   );
 };
 
-export default SlideOutCarousel;
+export default SlideOutDrawer;

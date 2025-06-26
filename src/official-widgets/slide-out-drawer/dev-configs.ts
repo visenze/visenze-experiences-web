@@ -11,7 +11,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     endpoint: '',
   },
   displaySettings: {
-    cssSelector: '.slide-out-carousel-widget',
+    cssSelector: '.slide-out-drawer-widget',
     productDetails: {},
   },
   customizations: {

@@ -6,7 +6,7 @@ import { WidgetType } from '../../common/wigmix-core';
 import version from '../../version';
 
 devInitWidget(
-    WidgetType.SLIDE_OUT_CAROUSEL,
+    WidgetType.SLIDE_OUT_DRAWER,
     version,
     ({ config, client, element }) => (
         <App widgetConfig={config} widgetClient={client} element={element} />
