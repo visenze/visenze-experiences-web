@@ -2,7 +2,7 @@ import { act, fireEvent, render, type RenderResult } from '@testing-library/reac
 import { IntlProvider } from 'react-intl';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import SearchPageEmbedded from './search-page-embedded';
+import SearchResultsPage from './search-results-page';
 import {
   getStandardMultiSearchInvalidImageResponse,
   getStandardMultiSearchSuccessNoResultResponse,
@@ -95,7 +95,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery='testQuery' imUrl='test-im-url' />
+            <SearchResultsPage textQuery='testQuery' imUrl='test-im-url' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -132,7 +132,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery='testQuery' imUrl='' />
+            <SearchResultsPage textQuery='testQuery' imUrl='' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -161,7 +161,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery='' imUrl='test-im-url' />
+            <SearchResultsPage textQuery='' imUrl='test-im-url' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -183,7 +183,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery='' imUrl='test-im-url' />
+            <SearchResultsPage textQuery='' imUrl='test-im-url' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -202,7 +202,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery=' ' imUrl='' />
+            <SearchResultsPage textQuery=' ' imUrl='' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -221,7 +221,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery='no_result' imUrl='' />
+            <SearchResultsPage textQuery='no_result' imUrl='' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -251,7 +251,7 @@ describe('search-page-embedded', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SearchPageEmbedded textQuery='testQuery' imUrl='test-im-url' />
+              <SearchResultsPage textQuery='testQuery' imUrl='test-im-url' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -293,7 +293,7 @@ describe('search-page-embedded', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SearchPageEmbedded textQuery='testQuery' imUrl='test-im-url' />
+              <SearchResultsPage textQuery='testQuery' imUrl='test-im-url' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -339,7 +339,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery='testQuery' imUrl='test-im-url' />
+            <SearchResultsPage textQuery='testQuery' imUrl='test-im-url' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -382,7 +382,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery='testQuery' imUrl='test-im-url' />
+            <SearchResultsPage textQuery='testQuery' imUrl='test-im-url' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -417,7 +417,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery='' imUrl='test-im-url' />
+            <SearchResultsPage textQuery='' imUrl='test-im-url' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -455,7 +455,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery='testQuery' imUrl='test-im-url' />
+            <SearchResultsPage textQuery='testQuery' imUrl='test-im-url' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -500,7 +500,7 @@ describe('search-page-embedded', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SearchPageEmbedded textQuery='testQuery' imUrl='test-im-url' />
+            <SearchResultsPage textQuery='testQuery' imUrl='test-im-url' />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -576,7 +576,7 @@ describe('search-page-embedded', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SearchPageEmbedded textQuery='' imUrl='test-im-url' />
+              <SearchResultsPage textQuery='' imUrl='test-im-url' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -635,7 +635,7 @@ describe('search-page-embedded', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SearchPageEmbedded textQuery='' imUrl='test-im-url' />
+              <SearchResultsPage textQuery='' imUrl='test-im-url' />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,

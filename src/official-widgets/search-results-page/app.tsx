@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import './app.css';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
-import SearchPageEmbedded from './search-page-embedded';
+import SearchResultsPage from './search-results-page';
 import { type AppPropsWithReferenceElement, AppWrapper } from '../../common/components/app-wrapper';
 
 // Set to true to enable customization via WidgetConfig
@@ -17,7 +17,7 @@ const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, widgetClient, ele
                 defaultTexts={DEFAULT_TEXTS}
                 defaultCustomizations={DEFAULT_CUSTOMIZATIONS}
                 enableCustomization={ENABLE_CUSTOMIZATION}>
-      <SearchPageEmbedded textQuery={textQuery} imUrl={imUrl} />
+      <SearchResultsPage textQuery={textQuery} imUrl={imUrl} />
     </AppWrapper>
   );
 };

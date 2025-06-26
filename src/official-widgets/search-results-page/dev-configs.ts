@@ -11,7 +11,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     endpoint: '',
   },
   displaySettings: {
-    cssSelector: '.search-page-embedded-widget',
+    cssSelector: '.search-results-page-widget',
     productDetails: {},
   },
   customizations: {

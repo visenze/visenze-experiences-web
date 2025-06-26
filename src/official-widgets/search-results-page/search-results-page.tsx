@@ -28,7 +28,7 @@ import {
   getProductGridCssConfig, parseBox,
 } from '../../common/utils';
 
-interface SearchPageEmbeddedProps {
+interface SearchResultsPageProps {
   textQuery: string;
   imUrl: string;
   renderModalWithoutPortal?: boolean;
@@ -36,7 +36,7 @@ interface SearchPageEmbeddedProps {
 
 const SEARCH_HISTORY_BASE_KEY = 'wigmix_search_page_embedded_history_';
 
-const SearchPageEmbedded: FC<SearchPageEmbeddedProps> = ({ textQuery, imUrl, renderModalWithoutPortal }): ReactElement => {
+const SearchResultsPage: FC<SearchResultsPageProps> = ({ textQuery, imUrl, renderModalWithoutPortal }): ReactElement => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
   const { productDetails } = displaySettings;
@@ -538,4 +538,4 @@ const SearchPageEmbedded: FC<SearchPageEmbeddedProps> = ({ textQuery, imUrl, ren
   );
 };
 
-export default SearchPageEmbedded;
+export default SearchResultsPage;

@@ -6,12 +6,12 @@ import version from '../../version';
 
 // eslint-disable-next-line func-names
 (function (context: Window): void {
-  const widgetType = `wigmix_${WidgetType.SEARCH_PAGE_EMBEDDED}`;
+  const widgetType = `wigmix_${WidgetType.SEARCH_RESULTS_PAGE}`;
   context.visenzewigmixwidget = context.visenzewigmixwidget || {};
   context.visenzewigmixwidget[widgetType] = context.visenzewigmixwidget[widgetType] || {};
   context.visenzewigmixwidget[widgetType][version] = context.visenzewigmixwidget[widgetType][version] || {
     initWidget: initWidgetFactory(
-        WidgetType.SEARCH_PAGE_EMBEDDED,
+        WidgetType.SEARCH_RESULTS_PAGE,
         version,
         ({ config, client, element }) => (
             <App widgetClient={client} widgetConfig={config} element={element} />
