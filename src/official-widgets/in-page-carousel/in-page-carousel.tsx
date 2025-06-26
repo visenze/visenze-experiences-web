@@ -144,22 +144,6 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
             </div>
           </div>
 
-          <div className='flex items-center gap-4 pb-2'>
-            <button
-              className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
-              data-pw='mlt-similar-items-button'
-              onClick={() => {}}>
-              Similar Items
-            </button>
-
-            <button
-              className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
-              data-pw='mlt-outfit-recommendations-button'
-              onClick={() => {}}>
-              Outfit Recommendations
-            </button>
-          </div>
-
           {/* Product Result List */}
           {showGrid ? renderGrid() : renderHorizontalScroll()}
 
