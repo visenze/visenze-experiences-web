@@ -19,13 +19,15 @@ export const DEFAULT_TEXTS: LanguagePack = {
     searchBarPlaceholder: '¿Qué estás buscando?',
     noSearchInput: 'Sin entrada de búsqueda',
     noSearchInputDescription: 'Ingresa un término de búsqueda o selecciona una imagen para encontrar resultados.',
-    imageOrQueryNotFound: 'Has proporcionado una imagen o consulta no válida, por favor, elimínalas e inténtalo de nuevo.',
-    systemError: 'Lo sentimos, nuestro sistema está experimentando dificultades, por favor, inténtalo de nuevo más tarde.',
+    imageOrQueryNotFound:
+      'Has proporcionado una imagen o consulta no válida, por favor, elimínalas e inténtalo de nuevo.',
+    systemError:
+      'Lo sentimos, nuestro sistema está experimentando dificultades, por favor, inténtalo de nuevo más tarde.',
   },
   fr: {
     filter: 'Filtrer',
     noResults: 'Aucun résultat trouvé',
-    noResultsDescription: 'Nous n\'avons trouvé aucun produit correspondant à votre recherche.',
+    noResultsDescription: "Nous n'avons trouvé aucun produit correspondant à votre recherche.",
     searchBarPlaceholder: 'Que recherchez-vous ?',
     noSearchInput: 'Aucune entrée de recherche',
     noSearchInputDescription: 'Saisissez un terme de recherche ou sélectionnez une image pour trouver des résultats.',
@@ -49,7 +51,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     searchBarPlaceholder: 'Wonach suchst du?',
     noSearchInput: 'Keine Suchbegriff eingegeben',
     noSearchInputDescription: 'Gib einen Suchbegriff ein oder wähle ein Bild aus, um Ergebnisse zu finden.',
-    imageOrQueryNotFound: 'Du hast ein ungültiges Bild oder eine ungültige Suchanfrage eingegeben. Bitte entferne sie und versuche es erneut.',
+    imageOrQueryNotFound:
+      'Du hast ein ungültiges Bild oder eine ungültige Suchanfrage eingegeben. Bitte entferne sie und versuche es erneut.',
     systemError: 'Entschuldigung, unser System hat Schwierigkeiten. Bitte versuche es später noch einmal.',
   },
   it: {
@@ -58,8 +61,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResultsDescription: 'Non abbiamo trovato alcun prodotto corrispondente alla tua ricerca.',
     searchBarPlaceholder: 'Cosa stai cercando?',
     noSearchInput: 'Nessun input di ricerca',
-    noSearchInputDescription: 'Inserisci un termine di ricerca o seleziona un\'immagine per trovare i risultati.',
-    imageOrQueryNotFound: 'Hai fornito un\'immagine o una query non valida, rimuovile e riprova.',
+    noSearchInputDescription: "Inserisci un termine di ricerca o seleziona un'immagine per trovare i risultati.",
+    imageOrQueryNotFound: "Hai fornito un'immagine o una query non valida, rimuovile e riprova.",
     systemError: 'Spiacenti, il nostro sistema sta riscontrando delle difficoltà, riprova più tardi.',
   },
   ko: {

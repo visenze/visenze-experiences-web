@@ -48,14 +48,18 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
     };
 
     if (facet.range) {
-      return <Slider
-        label='Price Range'
-        color='secondary'
-        minValue={facet.range.min}
-        maxValue={facet.range.max}
-        defaultValue={selectedFilters[facetName]?.length ? selectedFilters[facetName] : [facet.range.min, facet.range.max]}
-        onChangeEnd={priceRangeChangeHandler}
-      />;
+      return (
+        <Slider
+          label='Price Range'
+          color='secondary'
+          minValue={facet.range.min}
+          maxValue={facet.range.max}
+          defaultValue={
+            selectedFilters[facetName]?.length ? selectedFilters[facetName] : [facet.range.min, facet.range.max]
+          }
+          onChangeEnd={priceRangeChangeHandler}
+        />
+      );
     }
 
     const updateFiltersHandler = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -71,23 +75,24 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
       });
     };
 
-    return facet.items.filter((i) => i.value).map((item) => (
-      <div className='mb-1 flex w-full justify-between' key={item.value}>
-        <Checkbox
-          radius='none'
-          value={item.value}
-          color='secondary'
-          onChange={updateFiltersHandler}
-          isSelected={selectedFilters[facetName].has(item.value)}
-          classNames={{
-            base: 'w-full max-w-full',
-          }}
-          data-testid='wigmix-filter-checkbox'
-        >
-          <span className={`${coloredText ? 'text-primary' : 'text-black'}`}>{item.value}</span>
-        </Checkbox>
-      </div>
-    ));
+    return facet.items
+      .filter((i) => i.value)
+      .map((item) => (
+        <div className='mb-1 flex w-full justify-between' key={item.value}>
+          <Checkbox
+            radius='none'
+            value={item.value}
+            color='secondary'
+            onChange={updateFiltersHandler}
+            isSelected={selectedFilters[facetName].has(item.value)}
+            classNames={{
+              base: 'w-full max-w-full',
+            }}
+            data-testid='wigmix-filter-checkbox'>
+            <span className={`${coloredText ? 'text-primary' : 'text-black'}`}>{item.value}</span>
+          </Checkbox>
+        </div>
+      ));
   };
 
   const useOutsideAlerter = (ref: any, facet: string): void => {
@@ -117,66 +122,57 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
 
   if (displayAsDropdown) {
     return (
-        <div className='flex w-8/12 flex-wrap'>
-          {facets.map((facet) => (showFacet(facet) ? (
-              <div key={facet.key} className='w-2/6 p-1'>
-                <div className='w-full border-y border-y-gray-300 py-2'
-                     data-testid={`wigmix-filter-${facet.key}`}
-                     onClick={() => {
-                       setShownFacets((prev) => {
-                         const originalValueForFacet = prev[facet.key];
-                         const newState: Record<string, boolean> = {};
-                         Object.keys(prev).forEach((f) => {
-                           newState[f] = false;
-                         });
-                         newState[facet.key] = !originalValueForFacet;
-                         return newState;
-                       });
-                     }}>
-                  <div className='flex cursor-pointer items-center justify-between text-primary hover:opacity-80'>
-                    <span>
-                      {getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
-                    </span>
-                    <ChevronDownIcon />
-                  </div>
+      <div className='flex w-8/12 flex-wrap'>
+        {facets.map((facet) => (showFacet(facet) ? (
+            <div key={facet.key} className='w-2/6 p-1'>
+              <div
+                className='w-full border-y border-y-gray-300 py-2'
+                data-testid={`wigmix-filter-${facet.key}`}
+                onClick={() => {
+                  setShownFacets((prev) => {
+                    const originalValueForFacet = prev[facet.key];
+                    const newState: Record<string, boolean> = {};
+                    Object.keys(prev).forEach((f) => {
+                      newState[f] = false;
+                    });
+                    newState[facet.key] = !originalValueForFacet;
+                    return newState;
+                  });
+                }}>
+                <div className='flex cursor-pointer items-center justify-between text-primary hover:opacity-80'>
+                  <span>{getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}</span>
+                  <ChevronDownIcon />
                 </div>
-                {shownFacets[facet.key] && (
-                    <OutsideAlerter facet={facet.key}>
-                      <div className='absolute z-20 mt-1 w-3/12 rounded border-gray-300 bg-gray-100 p-3 text-black'>
-                        {showFacetValues(facet, false)}
-                      </div>
-                    </OutsideAlerter>
-                )}
               </div>
-          ) : <></>))}
-        </div>
+              {shownFacets[facet.key] && (
+                <OutsideAlerter facet={facet.key}>
+                  <div className='absolute z-20 mt-1 w-3/12 rounded border-gray-300 bg-gray-100 p-3 text-black'>
+                    {showFacetValues(facet, false)}
+                  </div>
+                </OutsideAlerter>
+              )}
+            </div>
+          ) : (
+            <></>
+          )
+        ))}
+      </div>
     );
   }
   return (
     <div className='md:justify-none flex h-full flex-col justify-between gap-y-2 p-4 lg:p-0 md:h-[unset]'>
       <div className='border-b border-b-gray-300 pb-3'>Filters</div>
-        {
-          facets.map((facet) => (
-            <div
-              data-testid={`wigmix-filter-${facet.key}`}
-              key={facet.key}
-            >
-              <div className={`
-                ${darkMode
-                  ? customizations.generalLayout?.fontColorDark
-                  : customizations.generalLayout?.fontColor}
-                `}
-              >
-                <p>
-                  {getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}
-                </p>
-              </div>
-              <div className='flex flex-col gap-y-2 px-4 pb-4'>
-                {showFacetValues(facet, true)}
-              </div>
-            </div>
-          ))
-        }
+      {facets.map((facet) => (
+        <div data-testid={`wigmix-filter-${facet.key}`} key={facet.key}>
+          <div
+            className={`
+                ${darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor}
+                `}>
+            <p>{getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}</p>
+          </div>
+          <div className='flex flex-col gap-y-2 px-4 pb-4'>{showFacetValues(facet, true)}</div>
+        </div>
+      ))}
     </div>
   );
 };

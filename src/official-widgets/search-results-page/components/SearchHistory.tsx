@@ -59,23 +59,18 @@ const SearchHistory = ({
     <div className='bg-gray-50 rounded-md w-full p-4'>
       {/* Header with Saved Searches and Hide/Show */}
       <div className='flex items-center justify-between pb-2'>
-        <span className='text-sm font-semibold text-gray-700'>
-          Saved Searches ({history.length})
-        </span>
+        <span className='text-sm font-semibold text-gray-700'>Saved Searches ({history.length})</span>
         <button
           className='text-xs font-medium text-gray-400 hover:text-primary focus:outline-none'
           type='button'
-          onClick={() => setShowHistory((v) => !v)}
-        >
+          onClick={() => setShowHistory((v) => !v)}>
           {showHistory ? 'Hide' : 'Show'}
         </button>
       </div>
       {/* Thumbnails Row */}
       {showHistory && (
         <div className='flex flex-row gap-2 min-h-[90px] border-t pt-4'>
-          {history.length === 0 && (
-            <span className='text-xs text-gray-400'>No saved searches</span>
-          )}
+          {history.length === 0 && <span className='text-xs text-gray-400'>No saved searches</span>}
           {history.map((entry, index) => (
             <div
               key={`${entry.id}-${index}`}
@@ -90,8 +85,7 @@ const SearchHistory = ({
                 }
               }}
               data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
-              data-testid={`wigmix-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
-            >
+              data-testid={`wigmix-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}>
               {entry.box ? (
                 <ImageCropThumbnail
                   imageUrl={entry.imageUrl ?? ''}
@@ -117,8 +111,7 @@ const SearchHistory = ({
           <button
             className='text-xs font-medium text-gray-400 hover:text-primary focus:outline-none'
             type='button'
-            onClick={handleClearAll}
-          >
+            onClick={handleClearAll}>
             Clear All
           </button>
         </div>

@@ -6,15 +6,13 @@ import { WidgetType } from '../../common/wigmix-core';
 import version from '../../version';
 
 devInitWidget(
-    WidgetType.SEARCH_RESULTS_PAGE,
-    version,
-    ({ config, client, element }) => (
-        <App widgetClient={client} widgetConfig={config} element={element} />
-    ),
-    false,
-    devConfigs,
-    devFieldMappings,
-    shouldRetrieveFieldsMapping,
-    window,
-    DEFAULT_CUSTOMIZATIONS,
+  WidgetType.SEARCH_RESULTS_PAGE,
+  version,
+  ({ config, client, element }) => <App widgetClient={client} widgetConfig={config} element={element} />,
+  false,
+  devConfigs,
+  devFieldMappings,
+  shouldRetrieveFieldsMapping,
+  window,
+  DEFAULT_CUSTOMIZATIONS,
 );

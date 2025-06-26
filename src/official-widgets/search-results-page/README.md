@@ -18,4 +18,4 @@
   ```sh
   npm run build:search-results-page
   ```
-  The bundled file will be available in `dist/search-results-page` directory. 
+  The bundled file will be available in `dist/search-results-page` directory.

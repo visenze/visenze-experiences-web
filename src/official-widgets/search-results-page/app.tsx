@@ -12,11 +12,12 @@ const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, widgetClient, ele
   const imUrl = element.dataset['url'] ?? '';
 
   return (
-    <AppWrapper widgetConfig={widgetConfig}
-                widgetClient={widgetClient}
-                defaultTexts={DEFAULT_TEXTS}
-                defaultCustomizations={DEFAULT_CUSTOMIZATIONS}
-                enableCustomization={ENABLE_CUSTOMIZATION}>
+    <AppWrapper
+      widgetConfig={widgetConfig}
+      widgetClient={widgetClient}
+      defaultTexts={DEFAULT_TEXTS}
+      defaultCustomizations={DEFAULT_CUSTOMIZATIONS}
+      enableCustomization={ENABLE_CUSTOMIZATION}>
       <SearchResultsPage textQuery={textQuery} imUrl={imUrl} />
     </AppWrapper>
   );

@@ -25,7 +25,8 @@ import {
   getFilterQueries,
   getFlattenProducts,
   getProductGridCssClasses,
-  getProductGridCssConfig, parseBox,
+  getProductGridCssConfig,
+  parseBox,
 } from '../../common/utils';
 
 interface SearchResultsPageProps {
@@ -36,7 +37,11 @@ interface SearchResultsPageProps {
 
 const SEARCH_HISTORY_BASE_KEY = 'wigmix_search_page_embedded_history_';
 
-const SearchResultsPage: FC<SearchResultsPageProps> = ({ textQuery, imUrl, renderModalWithoutPortal }): ReactElement => {
+const SearchResultsPage: FC<SearchResultsPageProps> = ({
+  textQuery,
+  imUrl,
+  renderModalWithoutPortal,
+}): ReactElement => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
   const { productDetails } = displaySettings;
@@ -95,7 +100,7 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({ textQuery, imUrl, rende
       setMetadata(md);
 
       const newProducts = getFlattenProducts(res.result);
-      setProductResults((prev) => ((res.page === 1) ? newProducts : [...prev, ...newProducts]));
+      setProductResults((prev) => (res.page === 1 ? newProducts : [...prev, ...newProducts]));
 
       if (newProducts.length) {
         widgetClient.sendEvent(Actions.RESULT_LOAD, md);
@@ -181,61 +186,65 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({ textQuery, imUrl, rende
     }
     params['limit'] = customizations.results?.limit || 24;
 
-    widgetClient.multisearchByImage(params, (res) => {
-      handleSuccess(res, shouldResetFacets);
+    widgetClient.multisearchByImage(
+      params,
+      (res) => {
+        handleSuccess(res, shouldResetFacets);
 
-      // Only add to history if image URL is used
-      // This flow can only be reached with non-null image URL; PID is optional
-      if (imgOrPid && isImageUrl(imgOrPid)) {
-        const newEntries: Omit<SearchHistoryEntry, 'timestamp'>[] = [];
-        if (res.status === 'OK' && isInitialSearch) {
-          res.product_types?.map((pt, i) => {
-            const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
-              id: `${imgOrPid.imgUrl}-${pt.box || []}`,
-              imageUrl: imgOrPid.imgUrl,
-              box: {
+        // Only add to history if image URL is used
+        // This flow can only be reached with non-null image URL; PID is optional
+        if (imgOrPid && isImageUrl(imgOrPid)) {
+          const newEntries: Omit<SearchHistoryEntry, 'timestamp'>[] = [];
+          if (res.status === 'OK' && isInitialSearch) {
+            res.product_types?.map((pt, i) => {
+              const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
+                id: `${imgOrPid.imgUrl}-${pt.box || []}`,
+                imageUrl: imgOrPid.imgUrl,
                 box: {
-                  x1: pt.box[0],
-                  y1: pt.box[1],
-                  x2: pt.box[2],
-                  y2: pt.box[3],
+                  box: {
+                    x1: pt.box[0],
+                    y1: pt.box[1],
+                    x2: pt.box[2],
+                    y2: pt.box[3],
+                  },
+                  index: i,
                 },
-                index: i,
-              },
+              };
+
+              if (isPid(imgOrPid)) {
+                historyEntry.pid = imgOrPid.pid;
+              }
+              newEntries.push(historyEntry);
+              return historyEntry;
+            });
+          } else {
+            const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
+              id: `${imgOrPid.imgUrl}${boxData ? `-${parseBox(boxData.box)}` : ''}`,
+              imageUrl: imgOrPid.imgUrl,
             };
 
             if (isPid(imgOrPid)) {
               historyEntry.pid = imgOrPid.pid;
             }
             newEntries.push(historyEntry);
-            return historyEntry;
-          });
-        } else {
-          const historyEntry: Omit<SearchHistoryEntry, 'timestamp'> = {
-            id: `${imgOrPid.imgUrl}${boxData ? `-${parseBox(boxData.box)}` : ''}`,
-            imageUrl: imgOrPid.imgUrl,
-          };
-
-          if (isPid(imgOrPid)) {
-            historyEntry.pid = imgOrPid.pid;
           }
-          newEntries.push(historyEntry);
-        }
-        setSearchHistory((prevHistory) => {
-          const isProductInHistory = prevHistory.find((item) => {
-            if (item.id === newEntries[0].id) {
-              setActiveHistory(item);
-              return item;
+          setSearchHistory((prevHistory) => {
+            const isProductInHistory = prevHistory.find((item) => {
+              if (item.id === newEntries[0].id) {
+                setActiveHistory(item);
+                return item;
+              }
+              return null;
+            });
+            if (!isProductInHistory) {
+              addToHistory(newEntries);
             }
-            return null;
+            return prevHistory;
           });
-          if (!isProductInHistory) {
-            addToHistory(newEntries);
-          }
-          return prevHistory;
-        });
-      }
-    }, handleError);
+        }
+      },
+      handleError,
+    );
   };
 
   const searchFromHistory = (entry: SearchHistoryEntry): void => {
@@ -296,7 +305,7 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({ textQuery, imUrl, rende
     setIsLoading(true);
   };
 
-  const checkForError = () : void => {
+  const checkForError = (): void => {
     if (hasError) {
       setHasError(false);
     }
@@ -354,7 +363,9 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({ textQuery, imUrl, rende
   }, [isLoading]);
 
   useEffect(() => {
-    const historyFromLocalStorage = localStorage.getItem(`${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`);
+    const historyFromLocalStorage = localStorage.getItem(
+      `${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`,
+    );
     if (historyFromLocalStorage) {
       setSearchHistory(JSON.parse(historyFromLocalStorage));
     }
@@ -375,7 +386,7 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({ textQuery, imUrl, rende
 
   const hasApplicableFacets = facets.filter((f) => showFacet(f)).length > 0;
 
-  const errorDiv = (): ReactElement => <p className='font-semibold text-primary pb-7'>{ error }</p>;
+  const errorDiv = (): ReactElement => <p className='font-semibold text-primary pb-7'>{error}</p>;
 
   if (!root) {
     return <>Searching...</>;
@@ -383,157 +394,158 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({ textQuery, imUrl, rende
 
   return (
     <>
-        <div className='flex w-full flex-col items-center'>
-          <div className='flex w-full gap-y-2 px-2 py-3 md:py-4 lg:py-5'>
-            <div className='sticky top-0 z-20 hidden w-2/12 px-2 py-1 md:block md:px-0'>
-            </div>
+      <div className='flex w-full flex-col items-center'>
+        <div className='flex w-full gap-y-2 px-2 py-3 md:py-4 lg:py-5'>
+          <div className='sticky top-0 z-20 hidden w-2/12 px-2 py-1 md:block md:px-0'></div>
 
-            <div className='w-full md:w-8/12'>
-              <SearchBarInput
-                query={query}
-                setQuery={setQuery}
-                emitSearchBarCallback={() => {
-                  if (image) {
-                    findSimilarClickHandler(image);
-                  } else if (query) {
-                    multisearchWithSearchBarDetails(undefined, query);
-                  } else {
-                    // empty input
-                    setProductResults([]);
-                    setFacets([]);
-                  }
-                }}
-              />
-            </div>
+          <div className='w-full md:w-8/12'>
+            <SearchBarInput
+              query={query}
+              setQuery={setQuery}
+              emitSearchBarCallback={() => {
+                if (image) {
+                  findSimilarClickHandler(image);
+                } else if (query) {
+                  multisearchWithSearchBarDetails(undefined, query);
+                } else {
+                  // empty input
+                  setProductResults([]);
+                  setFacets([]);
+                }
+              }}
+            />
           </div>
-          {hasError && productResults.length > 0 && (errorDiv())}
         </div>
-        <div className='flex w-full flex-col lg:flex-row'>
-          {/* Desktop Filter Sidebar */}
-          {hasApplicableFacets && breakpoint !== WidgetBreakpoint.MOBILE && (
-            <aside className='hidden md:flex md:flex-col md:w-64 lg:w-72 xl:w-80 bg-white p-4'>
+        {hasError && productResults.length > 0 && errorDiv()}
+      </div>
+      <div className='flex w-full flex-col lg:flex-row'>
+        {/* Desktop Filter Sidebar */}
+        {hasApplicableFacets && breakpoint !== WidgetBreakpoint.MOBILE && (
+          <aside className='hidden md:flex md:flex-col md:w-64 lg:w-72 xl:w-80 bg-white p-4'>
+            <FilterOptions
+              displayAsDropdown={false}
+              facets={facets}
+              selectedFilters={selectedFilters}
+              setSelectedFilters={setSelectedFilters}
+            />
+          </aside>
+        )}
+
+        {/* Product Grid Area */}
+        {/* Filter Section Mobile */}
+        {hasApplicableFacets && breakpoint === WidgetBreakpoint.MOBILE && (
+          <>
+            <div
+              className='mb-2 flex w-full cursor-pointer items-center gap-2 bg-white p-2 md:hidden md:px-0'
+              data-testid='wigmix-mobile-filter-toggle'
+              onClick={() => setShowMobileFilterOptions(true)}>
+              <FilterIcon className='size-5' />
+              <span className='text-black'>{intl.formatMessage({ id: 'filter' })}</span>
+            </div>
+            <ViSenzeModal
+              open={showMobileFilterOptions}
+              layout='mobile'
+              onClose={() => setShowMobileFilterOptions(false)}
+              position='bottom'
+              placementId={`${appSettings.placementId}`}
+              darkMode={darkMode}
+              fontFamily={customizations.generalLayout?.fontFamily}
+              renderWithoutPortal={!!renderModalWithoutPortal}>
               <FilterOptions
                 displayAsDropdown={false}
                 facets={facets}
                 selectedFilters={selectedFilters}
                 setSelectedFilters={setSelectedFilters}
               />
-            </aside>
-          )}
-
-          {/* Product Grid Area */}
-            {/* Filter Section Mobile */}
-            {hasApplicableFacets && breakpoint === WidgetBreakpoint.MOBILE && (
-                <>
-                  <div className='mb-2 flex w-full cursor-pointer items-center gap-2 bg-white p-2 md:hidden md:px-0'
-                       data-testid='wigmix-mobile-filter-toggle'
-                       onClick={() => setShowMobileFilterOptions(true)}>
-                    <FilterIcon className='size-5'/>
-                    <span className='text-black'>
-                      {intl.formatMessage({ id: 'filter' })}
-                    </span>
-                  </div>
-                  <ViSenzeModal
-                      open={showMobileFilterOptions}
-                      layout='mobile'
-                      onClose={() => setShowMobileFilterOptions(false)}
-                      position='bottom'
-                      placementId={`${appSettings.placementId}`}
-                      darkMode={darkMode}
-                      fontFamily={customizations.generalLayout?.fontFamily}
-                      renderWithoutPortal={!!renderModalWithoutPortal}
-                  >
-                    <FilterOptions
-                        displayAsDropdown={false}
-                        facets={facets}
-                        selectedFilters={selectedFilters}
-                        setSelectedFilters={setSelectedFilters}
-                    />
-                  </ViSenzeModal>
-                </>
-            )}
-            <div className='flex w-full flex-col'>
-            {/* Product Result Grid */}
-            <div className='flex flex-col items-center text-primary px-2'>
-              {
-                isLoading && isFirstLoad
-                  ? <div className='flex w-full justify-center py-32'>
-                    <Spinner color='secondary'/>
-                  </div>
-                  : <>
-                      <div className='flex w-full gap-y-2 pb-3 md:pb-4 lg:pb-5'>
-                        <div className='w-full'>
-                          <SearchHistory
-                            activeHistory={activeHistory}
-                            setActiveHistory={setActiveHistory}
-                            history={searchHistory}
-                            onHistorySelect={onHistorySelect}
-                            onHistoryRemove={onHistoryRemove}
-                          />
-                        </div>
-                      </div>
-
-                    {
-                      productResults.length > 0
-                        ? <div className={cn(
-                            `wigmix-product-grid grid w-full ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 md:grid-cols-4', 'gap-x-2', 'gap-y-4')}`,
-                            isLoading && 'opacity-50',
-                            )}
-                            style={getProductGridCssConfig(customizations, breakpoint)}
-                            data-pw='esr-product-result-grid'
-                          >
-                          {isLoading && (
-                            <div className='absolute z-20 flex w-full justify-center py-32'>
-                              <Spinner color='secondary'/>
-                            </div>
-                          )}
-                          {productResults.map((result, index) => (
-                              <ProductCard key={`${result.product_id}-${index}`} index={index}
-                                           result={result}
-                                           metadata={metadata}
-                                           onFindSimilar={(data) => {
-                                             if (!isLoading) {
-                                               findSimilarClickHandler({
-                                                 imgUrl: data.im_url,
-                                                 pid: data.product_id,
-                                               });
-                                             }
-                                           }}
-                                           isRecommendation={true}
-                                           hasFindSimilar={true}
-                                           pwPrefix='esr' />
-                          ))}
-                        </div>
-                        : <div className={cn(
-                          'flex flex-col w-full gap-y-2 py-24 items-center justify-center text-center md:w-3/4',
-                          !query && !image && 'hidden',
-                        )}>
-                          { hasError ? (
-                            errorDiv()
-                          ) : (
-                            <>
-                            <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noResults' })}</p>
-                            <p className='text-primary'>{intl.formatMessage({ id: 'noResultsDescription' })}</p>
-                            </>
-                          )}
-                        </div>
-                    }
-                  </>
-              }
-
-              <div ref={loaderRef} className='flex h-10 items-center justify-center'>
-                {isLoadingMore && <Spinner color='secondary' />}
+            </ViSenzeModal>
+          </>
+        )}
+        <div className='flex w-full flex-col'>
+          {/* Product Result Grid */}
+          <div className='flex flex-col items-center text-primary px-2'>
+            {isLoading && isFirstLoad ? (
+              <div className='flex w-full justify-center py-32'>
+                <Spinner color='secondary' />
               </div>
+            ) : (
+              <>
+                <div className='flex w-full gap-y-2 pb-3 md:pb-4 lg:pb-5'>
+                  <div className='w-full'>
+                    <SearchHistory
+                      activeHistory={activeHistory}
+                      setActiveHistory={setActiveHistory}
+                      history={searchHistory}
+                      onHistorySelect={onHistorySelect}
+                      onHistoryRemove={onHistoryRemove}
+                    />
+                  </div>
+                </div>
+
+                {productResults.length > 0 ? (
+                  <div
+                    className={cn(
+                      `wigmix-product-grid grid w-full ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 md:grid-cols-4', 'gap-x-2', 'gap-y-4')}`,
+                      isLoading && 'opacity-50',
+                    )}
+                    style={getProductGridCssConfig(customizations, breakpoint)}
+                    data-pw='esr-product-result-grid'>
+                    {isLoading && (
+                      <div className='absolute z-20 flex w-full justify-center py-32'>
+                        <Spinner color='secondary' />
+                      </div>
+                    )}
+                    {productResults.map((result, index) => (
+                      <ProductCard
+                        key={`${result.product_id}-${index}`}
+                        index={index}
+                        result={result}
+                        metadata={metadata}
+                        onFindSimilar={(data) => {
+                          if (!isLoading) {
+                            findSimilarClickHandler({
+                              imgUrl: data.im_url,
+                              pid: data.product_id,
+                            });
+                          }
+                        }}
+                        isRecommendation={true}
+                        hasFindSimilar={true}
+                        pwPrefix='esr'
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    className={cn(
+                      'flex flex-col w-full gap-y-2 py-24 items-center justify-center text-center md:w-3/4',
+                      !query && !image && 'hidden',
+                    )}>
+                    {hasError ? (
+                      errorDiv()
+                    ) : (
+                      <>
+                        <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noResults' })}</p>
+                        <p className='text-primary'>{intl.formatMessage({ id: 'noResultsDescription' })}</p>
+                      </>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+
+            <div ref={loaderRef} className='flex h-10 items-center justify-center'>
+              {isLoadingMore && <Spinner color='secondary' />}
             </div>
           </div>
         </div>
+      </div>
 
-        {!isLoading && !query && !image && productResults.length === 0 && (
-          <div className='flex w-full flex-col items-center justify-center gap-y-2 py-24 text-center'>
-            <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noSearchInput' })}</p>
-            <p className='text-primary'>{intl.formatMessage({ id: 'noSearchInputDescription' })}</p>
-          </div>
-        )}
+      {!isLoading && !query && !image && productResults.length === 0 && (
+        <div className='flex w-full flex-col items-center justify-center gap-y-2 py-24 text-center'>
+          <p className='font-semibold text-primary'>{intl.formatMessage({ id: 'noSearchInput' })}</p>
+          <p className='text-primary'>{intl.formatMessage({ id: 'noSearchInputDescription' })}</p>
+        </div>
+      )}
     </>
   );
 };

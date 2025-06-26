@@ -13,11 +13,7 @@ interface SearchBarInputProps {
   emitSearchBarCallback: () => void;
 }
 
-const SearchBarInput: FC<SearchBarInputProps> = ({
-  query,
-  setQuery,
-  emitSearchBarCallback,
-}) => {
+const SearchBarInput: FC<SearchBarInputProps> = ({ query, setQuery, emitSearchBarCallback }) => {
   const { widgetConfig } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const searchBarRef = useRef<HTMLInputElement>(null);
@@ -30,7 +26,10 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       ref={searchBarRef}
       className='z-5'
       classNames={{
-        inputWrapper: cn('rounded-md w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
+        inputWrapper: cn(
+          'rounded-md w-full border border-gray-200',
+          customizations.imageUpload?.enable ? 'px-1.5' : 'px-3',
+        ),
       }}
       autoCapitalize='off'
       autoComplete='off'
@@ -52,7 +51,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       }}
       startContent={
         <div className='flex items-center gap-2'>
-          <MagnifyingGlassIcon className='size-4'/>
+          <MagnifyingGlassIcon className='size-4' />
         </div>
       }
     />
