@@ -84,8 +84,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
           <div
             key={`${result.product_id}-${index}`}
             className={`${getProductCardCssClasses()} min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start`}
-            style={getProductCardCssConfig()}
-          >
+            style={getProductCardCssConfig()}>
             <ProductCard
               index={index}
               result={result}
@@ -107,8 +106,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
           <div
             key={`${result.product_id}-${index}`}
             className={`${getProductCardCssClasses()}`}
-            style={getProductCardCssConfig()}
-          >
+            style={getProductCardCssConfig()}>
             <ProductCard
               index={index}
               result={result}
@@ -135,15 +133,14 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
             )}
 
             <div className='flex items-center'>
-            <button
-              className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
-              data-pw='mlt-show-more-button'
-              onClick={() => setShowGrid(!showGrid)}
-            >
-              {showGrid
-                ? intl.formatMessage({ id: 'showLess', defaultMessage: 'Show Less' })
-                : intl.formatMessage({ id: 'showMore', defaultMessage: 'Show More' })}
-            </button>
+              <button
+                className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
+                data-pw='mlt-show-more-button'
+                onClick={() => setShowGrid(!showGrid)}>
+                {showGrid
+                  ? intl.formatMessage({ id: 'showLess', defaultMessage: 'Show Less' })
+                  : intl.formatMessage({ id: 'showMore', defaultMessage: 'Show More' })}
+              </button>
             </div>
           </div>
 
@@ -151,16 +148,14 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
             <button
               className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
               data-pw='mlt-similar-items-button'
-              onClick={() => {}}
-            >
+              onClick={() => {}}>
               Similar Items
             </button>
 
             <button
               className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
               data-pw='mlt-outfit-recommendations-button'
-              onClick={() => {}}
-            >
+              onClick={() => {}}>
               Outfit Recommendations
             </button>
           </div>

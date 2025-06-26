@@ -11,13 +11,11 @@ import version from '../../version';
   context.visenzewigmixwidget[widgetType] = context.visenzewigmixwidget[widgetType] || {};
   context.visenzewigmixwidget[widgetType][version] = context.visenzewigmixwidget[widgetType][version] || {
     initWidget: initWidgetFactory(
-        WidgetType.MORE_LIKE_THIS,
-        version,
-        ({ config, client, element }) => (
-            <App widgetClient={client} widgetConfig={config} element={element} />
-        ),
-        false,
-        DEFAULT_CUSTOMIZATIONS,
+      WidgetType.MORE_LIKE_THIS,
+      version,
+      ({ config, client, element }) => <App widgetClient={client} widgetConfig={config} element={element} />,
+      false,
+      DEFAULT_CUSTOMIZATIONS,
     ),
     deepMerge,
   };

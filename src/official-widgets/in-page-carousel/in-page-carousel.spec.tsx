@@ -71,10 +71,7 @@ describe('in-page-carousel', () => {
           limit: 20,
           show_best_product_images: true,
           sort_by: '',
-          facets: [
-            'price',
-            'brand',
-          ],
+          facets: ['price', 'brand'],
           facets_show_count: true,
           return_fields_mapping: true,
           return_query_sys_meta: true,
@@ -83,13 +80,13 @@ describe('in-page-carousel', () => {
       }),
     }));
     testComponent = render(
-        <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <InPageCarousel productId='pid-not-found' />
-            </IntlProvider>
-          </WidgetDataContext.Provider>
-        </RootContext.Provider>,
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <InPageCarousel productId='pid-not-found' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
     );
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
@@ -104,10 +101,7 @@ describe('in-page-carousel', () => {
           limit: 20,
           show_best_product_images: true,
           sort_by: '',
-          facets: [
-            'price',
-            'brand',
-          ],
+          facets: ['price', 'brand'],
           facets_show_count: true,
           return_fields_mapping: true,
           return_query_sys_meta: true,
@@ -116,13 +110,13 @@ describe('in-page-carousel', () => {
       }),
     }));
     testComponent = render(
-        <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <InPageCarousel productId='pid-found' />
-            </IntlProvider>
-          </WidgetDataContext.Provider>
-        </RootContext.Provider>,
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <InPageCarousel productId='pid-found' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
     );
 
     act(() => {
@@ -151,13 +145,13 @@ describe('in-page-carousel', () => {
       }),
     }));
     testComponent = render(
-        <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <InPageCarousel productId='pid-found' />
-            </IntlProvider>
-          </WidgetDataContext.Provider>
-        </RootContext.Provider>,
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <InPageCarousel productId='pid-found' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
     );
 
     // Start in carousel view
@@ -186,13 +180,13 @@ describe('in-page-carousel', () => {
       }),
     }));
     testComponent = render(
-        <RootContext.Provider value={document.body}>
-          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <InPageCarousel productId='pid-found' />
-            </IntlProvider>
-          </WidgetDataContext.Provider>
-        </RootContext.Provider>,
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <InPageCarousel productId='pid-found' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
     );
 
     // Check horizontal scroll rendered
