@@ -1,9 +1,10 @@
-import type { FC } from 'react';
+import type { CSSProperties, FC } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
+import ProductCard from '../../common/components/product-card/ProductCard';
 import { RootContext } from '../../common/components/shadow-wrapper';
-// import HeartIcon from '../../common/icons/HeartIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 
 interface BuyTheLookProps {
@@ -17,7 +18,7 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const intl = useIntl();
-  // const breakpoint = useBreakpoint();
+  const breakpoint = useBreakpoint();
   const [selectedLookProductIndex, setSelectedLookProductIndex] = useState(0);
 
   widgetClient.forceErrorState = (): void => {
@@ -28,34 +29,35 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
     productResults,
     error: errorFromApi,
     productInfo,
+    metadata,
   } = useRecommendationSearch({
     productId,
     shouldDisplayAlternatives: customizations.productCard?.images?.showAlternatives,
   });
 
-  // const getProductCardCssClasses = (): string => {
-  //   const cssConfigSrc = customizations.productGrid?.[breakpoint];
-  //   const classes = [];
-  //   if (cssConfigSrc) {
-  //     if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-  //       classes.push('p-1 md:p-2');
-  //     }
-  //     return classes.join(' ');
-  //   }
-  //   return 'p-1 md:p-2';
-  // };
+  const getProductCardCssClasses = (): string => {
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
+    const classes = [];
+    if (cssConfigSrc) {
+      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
+        classes.push('p-1 md:p-2');
+      }
+      return classes.join(' ');
+    }
+    return 'p-1 md:p-2';
+  };
 
-  // const getProductCardCssConfig = (): CSSProperties => {
-  //   const cssConfig = {} as CSSProperties;
-  //   const cssConfigSrc = customizations.productGrid?.[breakpoint];
-  //   if (cssConfigSrc) {
-  //     if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-  //       cssConfig.marginLeft = cssConfigSrc.marginHorizontal / 2;
-  //       cssConfig.marginRight = cssConfigSrc.marginHorizontal / 2;
-  //     }
-  //   }
-  //   return cssConfig;
-  // };
+  const getProductCardCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+        cssConfig.marginLeft = cssConfigSrc.marginHorizontal / 2;
+        cssConfig.marginRight = cssConfigSrc.marginHorizontal / 2;
+      }
+    }
+    return cssConfig;
+  };
 
   useEffect(() => {
     setIsLoading(false);
@@ -108,9 +110,12 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
                     data-product-id={product.product_id}
                     data-product-title={product['title'] || 'Product'}
                     data-product-image={product.im_url}
-                    data-product-price={(typeof product['price'] === 'object' && product['price'] !== null ? product['price'].value : product['price'])}
-                    data-product-url={`/product/${product.product_id}`}
-                  >
+                    data-product-price={
+                      typeof product['price'] === 'object' && product['price'] !== null
+                        ? product['price'].value
+                        : product['price']
+                    }
+                    data-product-url={`/product/${product.product_id}`}>
                     <div className='w-32 h-48 bg-gray-100 overflow-hidden rounded relative'>
                       <img
                         src={product.im_url}
@@ -122,16 +127,6 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
                           target.src = 'https://placehold.co/128x192/gray/white?text=No+Image';
                         }}
                       />
-                    {/* Wishlist button */}
-                      {/* <div className='absolute top-2 right-2'>
-                        <button
-                          className='size-6 rounded-full bg-white/50 hover:bg-white/70 text-black fill-red-500'
-                        >
-                          <HeartIcon
-                            className='size-6'
-                          />
-                        </button>
-                      </div> */}
                     </div>
                   </div>
                 ))}
@@ -139,37 +134,57 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
 
               {/* Selected product details - compact layout */}
               {productResults.length > selectedLookProductIndex && (
-                <div className='px-6 pb-6'>
-                  <div className='flex items-center justify-between mb-2'>
-                    <h2 className='text-xl font-bold'>
-                      {productResults[selectedLookProductIndex]['title'] || 'Product'}
-                    </h2>
-                    <span className='text-gray-600 text-sm font-medium'>
-                      {productResults[selectedLookProductIndex]['brand'] || 'Store'}
-                    </span>
+                <div className='flex flex-col md:flex-row gap-6 px-6 pb-6 pt-4'>
+                  <div className='flex-shrink-0 flex justify-center items-start w-full md:w-72'>
+                    <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
+                      <ProductCard
+                        index={selectedLookProductIndex}
+                        result={productResults[selectedLookProductIndex]}
+                        metadata={metadata}
+                        hasFindSimilar={false}
+                        isRecommendation={true}
+                        pwPrefix='mlt' />
+                    </div>
                   </div>
 
-                  <div className='text-2xl font-bold mb-4'>
-                    ${((): string => {
-                      const product = productResults[selectedLookProductIndex];
-                      const priceObj = product['price'];
-                      const price = priceObj.value;
-                      return Number(price || 0).toFixed(2);
-                    })()}
-                  </div>
-
-                  {/* Action buttons - positioned at bottom */}
-                  <div className='space-y-3'>
-                    <button className='bg-black text-white hover:bg-black/90 py-2.5 px-6 rounded-md text-sm font-semibold w-full'>
-                      ADD TO BAG
-                    </button>
-
-                    <button className='bg-gray-100 text-gray-800 hover:bg-gray-200 py-2 px-6 rounded-md text-sm font-semibold w-full'>
-                      SEE SIMILAR
-                    </button>
+                  <div className='flex-1 flex flex-col justify-between min-w-0'>
+                    <div>
+                      <div className='text-xl font-semibold mb-1'>
+                        {productResults[selectedLookProductIndex]['title'] || 'Product'}
+                      </div>
+                      <div className='text-gray-700 text-base mb-2'>
+                        {productResults[selectedLookProductIndex]['brand'] || 'Store'}
+                      </div>
+                      <div className='flex items-end gap-2 mb-2'>
+                        <span className='text-2xl font-bold'>
+                          $
+                          {((): string => {
+                            const product = productResults[selectedLookProductIndex];
+                            const priceObj = product['price'];
+                            const price = priceObj.value;
+                            return Number(price || 0).toFixed(2);
+                          })()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className='flex flex-col gap-3 mt-4'>
+                      {widgetConfig.callbacks.onAddToCartToggle && (
+                        <button className='bg-black text-white hover:bg-black/90 py-3 px-6 rounded-none text-base font-bold tracking-wider w-full border-2 border-black'
+                          onClick={() => {
+                            if (widgetConfig.callbacks.onAddToCartToggle) {
+                              widgetConfig.callbacks.onAddToCartToggle(true, productResults[selectedLookProductIndex].product_id);
+                            }
+                          }}>
+                          {intl.formatMessage({ id: 'addToCart' })}
+                        </button>
+                      )}
+                      <button className='bg-gray-100 text-gray-800 hover:bg-gray-200 py-3 px-6 rounded-none text-base font-bold tracking-wider w-full border-2 border-gray-200'>
+                        {intl.formatMessage({ id: 'seeSimilar' })}
+                      </button>
+                    </div>
                   </div>
                 </div>
-                )}
+              )}
             </div>
           </div>
         </div>
