@@ -69,7 +69,7 @@ const SearchHistory = ({
       </div>
       {/* Thumbnails Row */}
       {showHistory && (
-        <div className='flex flex-row gap-2 min-h-[90px] border-t mt-2 pt-2'>
+        <div className='flex flex-row gap-2 min-h-[90px] border-t mt-2 py-2 w-full overflow-x-scroll'>
           {history.length === 0 && <span className='text-xs text-gray-400'>No saved searches</span>}
           {history.map((entry, index) => (
             <div
