@@ -5,7 +5,6 @@ import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl';
 import type { Facet, ProductSearchResponse } from 'visearch-javascript-sdk';
 import FilterOptions, { showFacet } from './components/FilterOptions';
-import SearchBarInput from './components/SearchBarInput';
 import type { SearchHistoryEntry } from './components/SearchHistory';
 import SearchHistory, { MAX_HISTORY_ITEMS } from './components/SearchHistory';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
@@ -35,7 +34,7 @@ interface SearchResultsPageProps {
   renderModalWithoutPortal?: boolean;
 }
 
-const SEARCH_HISTORY_BASE_KEY = 'wigmix_search_page_embedded_history_';
+const SEARCH_HISTORY_BASE_KEY = 'wigmix_search_results_page_';
 
 const SearchResultsPage: FC<SearchResultsPageProps> = ({
   textQuery,
@@ -76,6 +75,7 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({
   const breakpoint = useBreakpoint();
 
   const handleError = (errorMsg: string): void => {
+    console.error(errorMsg);
     setHasError(true);
     if (errorMsg.includes('im_url') || errorMsg.includes('image')) {
       setError(intl.formatMessage({ id: 'imageOrQueryNotFound' }));
@@ -394,30 +394,6 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({
 
   return (
     <>
-      <div className='flex w-full flex-col items-center'>
-        <div className='flex w-full gap-y-2 px-2 py-3 md:py-4 lg:py-5'>
-          <div className='sticky top-0 z-20 hidden w-2/12 px-2 py-1 md:block md:px-0'></div>
-
-          <div className='w-full md:w-8/12'>
-            <SearchBarInput
-              query={query}
-              setQuery={setQuery}
-              emitSearchBarCallback={() => {
-                if (image) {
-                  findSimilarClickHandler(image);
-                } else if (query) {
-                  multisearchWithSearchBarDetails(undefined, query);
-                } else {
-                  // empty input
-                  setProductResults([]);
-                  setFacets([]);
-                }
-              }}
-            />
-          </div>
-        </div>
-        {hasError && productResults.length > 0 && errorDiv()}
-      </div>
       <div className='flex w-full flex-col lg:flex-row'>
         {/* Desktop Filter Sidebar */}
         {hasApplicableFacets && breakpoint !== WidgetBreakpoint.MOBILE && (

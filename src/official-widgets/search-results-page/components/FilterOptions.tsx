@@ -170,7 +170,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
                 `}>
             <p>{getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}</p>
           </div>
-          <div className='flex flex-col gap-y-2 px-4 pb-4'>{showFacetValues(facet, true)}</div>
+          <div className='flex flex-col gap-y-2 p-4'>{showFacetValues(facet, true)}</div>
         </div>
       ))}
     </div>

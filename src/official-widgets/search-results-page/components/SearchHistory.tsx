@@ -58,7 +58,7 @@ const SearchHistory = ({
   return (
     <div className='bg-gray-50 rounded-md w-full p-4'>
       {/* Header with Saved Searches and Hide/Show */}
-      <div className='flex items-center justify-between pb-2'>
+      <div className='flex items-center justify-between'>
         <span className='text-sm font-semibold text-gray-700'>Saved Searches ({history.length})</span>
         <button
           className='text-xs font-medium text-gray-400 hover:text-primary focus:outline-none'
@@ -69,7 +69,7 @@ const SearchHistory = ({
       </div>
       {/* Thumbnails Row */}
       {showHistory && (
-        <div className='flex flex-row gap-2 min-h-[90px] border-t pt-4'>
+        <div className='flex flex-row gap-2 min-h-[90px] border-t mt-2 pt-2'>
           {history.length === 0 && <span className='text-xs text-gray-400'>No saved searches</span>}
           {history.map((entry, index) => (
             <div
