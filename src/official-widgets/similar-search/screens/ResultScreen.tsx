@@ -12,7 +12,7 @@ import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
 import ChevronUpIcon from '../../../common/icons/ChevronUpIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
-import { isImageDataUrl, isImageUrl, isPid } from '../../../common/types/image';
+import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
 import type { SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
@@ -30,7 +30,6 @@ const swipeConfig = {
 interface ResultScreenProps {
   productResults: ProcessedProduct[];
   image?: SearchImageOrPid;
-  mainImageUrl: string;
   autocompleteResults?: string[];
   metadata: Record<string, any>;
   onModalClose: () => void;
@@ -43,7 +42,6 @@ interface ResultScreenProps {
 const ResultScreen: FC<ResultScreenProps> = ({
   productResults,
   image,
-  mainImageUrl,
   autocompleteResults,
   metadata,
   onModalClose,
@@ -83,9 +81,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
     }
     if (isImageDataUrl(searchImage)) {
       return searchImage.file;
-    }
-    if (isPid(searchImage)) {
-      return mainImageUrl;
     }
     return '';
   };

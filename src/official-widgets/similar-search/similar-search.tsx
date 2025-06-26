@@ -39,7 +39,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
   const [boxData, setBoxData] = useState<BoxData | undefined>();
   const [searchHistory, setSearchHistory] = useState<SearchImageOrPid[]>([]);
   const [lastSuccessfulImage, setLastSuccessfulImage] = useState<SearchImageOrPid | undefined>();
-  const [firstSearch, setFirstSearch] = useState<boolean>(true);
   const root = useContext(RootContext);
 
   const {
@@ -52,12 +51,10 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
     resetSearch,
     autocompleteWithQuery,
     multisearchWithParams,
-    mainImageUrl,
   } = useImageMultisearch({
     image,
     boxData,
   });
-
   const onModalClose = (): void => {
     setDialogVisible(false);
     if (productResults.length > 0) {
@@ -172,7 +169,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
           <ResultScreen
             productResults={productResults}
             image={image}
-            mainImageUrl={mainImageUrl}
             autocompleteResults={autocompleteResults}
             metadata={metadata}
             onModalClose={onModalClose}
@@ -195,7 +191,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
 
   useEffect(() => {
     if (!productResults.length && dialogVisible) {
-      setImage(pid ? { pid } : { imgUrl: imUrl });
+      setImage(pid ? { pid, imgUrl: imUrl } : { imgUrl: imUrl });
     }
   }, [dialogVisible]);
 
@@ -210,12 +206,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
   useEffect(() => {
     if (productResults.length > 0) {
       if (image) {
-        if (firstSearch && mainImageUrl) {
-          appendSearchHistory({ ...image, imgUrl: mainImageUrl });
-          setFirstSearch(false);
-        } else {
-          appendSearchHistory(image);
-        }
+        appendSearchHistory(image);
       }
       setScreen(ScreenType.RESULT);
       setLastSuccessfulImage(image);
