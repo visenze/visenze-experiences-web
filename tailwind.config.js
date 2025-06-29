@@ -92,6 +92,21 @@ module.exports = {
       backgroundColor: getColorObj('background'),
       fontSize: getFontObj('fontSize'),
       fontWeight: getFontObj('fontWeight'),
+      borderWidth: {
+        'width-productCard': 'var(--wigmix-border-width-productCard)',
+        'width-searchBar': 'var(--wigmix-border-width-searchBar)',
+      },
+      borderColor: {
+        'color-productCard': 'var(--wigmix-border-color-productCard)',
+        'color-searchBar': 'var(--wigmix-border-color-searchBar)',
+      },
+      borderRadius: {
+        'radius-productCard': 'var(--wigmix-border-radius-productCard)',
+        'radius-searchBar': 'var(--wigmix-border-radius-searchBar)',
+      },
+      padding: {
+        'productCard-with-border': 'var(--wigmix-padding-productCard-with-border)',
+      },
       height: {
         108: '432px',
       },

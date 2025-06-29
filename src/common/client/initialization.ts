@@ -117,6 +117,27 @@ export const setCssVariables = (config: WidgetConfig, darkMode: boolean): void =
         }
       }
     }
+
+    if (config.customizations.productCard?.border) {
+      root.style.setProperty('--wigmix-border-width-productCard', config.customizations.productCard?.border?.width?.toString() + 'px' || '0px');
+      root.style.setProperty('--wigmix-border-color-productCard', config.customizations.productCard?.border?.color || '#000');
+      root.style.setProperty('--wigmix-border-radius-productCard', config.customizations.productCard?.border?.radius?.toString() + 'px' || '0px');
+      root.style.setProperty('--wigmix-padding-productCard-with-border', '12px');
+    } else {
+      root.style.setProperty('--wigmix-border-width-productCard', '0px');
+      root.style.setProperty('--wigmix-border-color-productCard', '#000');
+      root.style.setProperty('--wigmix-border-radius-productCard', '0px');
+    }
+
+    if (config.customizations.searchBar?.border) {
+      root.style.setProperty('--wigmix-border-width-searchBar', config.customizations.searchBar?.border?.width?.toString() + 'px' || '0px');
+      root.style.setProperty('--wigmix-border-color-searchBar', config.customizations.searchBar?.border?.color || '#000');
+      root.style.setProperty('--wigmix-border-radius-searchBar', config.customizations.searchBar?.border?.radius?.toString() + 'px' || '0px');
+    } else {
+      root.style.setProperty('--wigmix-border-width-searchBar', '0px');
+      root.style.setProperty('--wigmix-border-color-searchBar', '#000');
+      root.style.setProperty('--wigmix-border-radius-searchBar', '0px');
+    }
   }
 };
 
