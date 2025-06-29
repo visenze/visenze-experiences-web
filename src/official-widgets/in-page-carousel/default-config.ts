@@ -83,10 +83,6 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   productCard: {
     imageAspectRatio: '2 / 3',
     openLinksInNewTab: false,
-    border: {
-      width: 1,
-      color: '#E5E7EB',
-    },
     price: {
       show: true,
       font: {
