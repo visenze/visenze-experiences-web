@@ -95,7 +95,11 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       'text-sm border border-gray-200 px-2 py-1 rounded-full',
                       activeSearch === 'similar' && 'bg-blue-50 text-blue-800',
                     )}
-                    onClick={() => setActiveSearch('similar')}>
+                    onClick={() => {
+                      setActiveSearch('similar');
+                      setSearch('');
+                      onTextSearch('');
+                    }}>
                     {intl.formatMessage({ id: 'similarProductButton' })}
                   </button>
                 </div>
