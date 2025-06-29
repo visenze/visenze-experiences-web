@@ -71,14 +71,14 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   return (
     <>
-      <div className='flex flex-col gap-4'>
+      <div className='h-full flex flex-col gap-4'>
         <Header
           onCloseHandler={onModalClose}
           showTitle={customizations.generalLayout?.showWidgetTitle}
           iconColor={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor}
         />
-        <div className='size-full overflow-y-scroll'>
-          <div className='flex h-full flex-col gap-4'>
+        <div className='size-full'>
+          <div className='flex h-full flex-col gap-4 overflow-y-scroll pb-8'>
             <div className='h-full px-2 flex flex-col gap-4'>
               <div className='flex justify-between px-2'>
                 <div className='wigmix-reference-image-container w-1/2 flex items-center text-center'>
@@ -98,15 +98,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     onClick={() => setActiveSearch('similar')}>
                     {intl.formatMessage({ id: 'similarProductButton' })}
                   </button>
-
-                  <button
-                    className={cn(
-                      'text-sm border border-gray-200 px-2 py-1 rounded-full',
-                      activeSearch === 'suggested' && 'bg-blue-50 text-blue-800',
-                    )}
-                    onClick={() => setActiveSearch('suggested')}>
-                    {intl.formatMessage({ id: 'suggestedProductButton' })}
-                  </button>
                 </div>
               </div>
 
@@ -114,7 +105,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             </div>
 
             {/* Search input bar with Recommend me button */}
-            <div className='flex gap-0 overflow-hidden w-full px-4'>
+            <div className='flex gap-0 w-full px-4'>
               <button
                 className={`font-bold px-4 rounded-l-md h-10 text-sm transition-colors ${
                   isRecommendInputFocused
@@ -171,28 +162,26 @@ const ResultScreen: FC<ResultScreenProps> = ({
               </div>
             </div>
 
-            <div className='flex flex-col px-2 gap-4'>
-              <div className='overflow-y-auto'>
-                <div
-                  className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
-                  style={getProductGridCssConfig(customizations, breakpoint)}
-                  data-pw='ss-product-result-grid'>
-                  {productResults.map((result, index) => (
-                    <ProductCard
-                      key={`${result.product_id}-${index}`}
-                      onFindSimilar={(data) => {
-                        setSearch('');
-                        return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
-                      }}
-                      index={index}
-                      result={result}
-                      metadata={metadata}
-                      isRecommendation={false}
-                      hasFindSimilar={true}
-                      pwPrefix='ss'
-                    />
-                  ))}
-                </div>
+            <div className='w-full flex flex-col px-2 gap-4 mb-28'>
+              <div
+                className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
+                style={getProductGridCssConfig(customizations, breakpoint)}
+                data-pw='ss-product-result-grid'>
+                {productResults.map((result, index) => (
+                  <ProductCard
+                    key={`${result.product_id}-${index}`}
+                    onFindSimilar={(data) => {
+                      setSearch('');
+                      return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
+                    }}
+                    index={index}
+                    result={result}
+                    metadata={metadata}
+                    isRecommendation={false}
+                    hasFindSimilar={true}
+                    pwPrefix='ss'
+                  />
+                ))}
               </div>
             </div>
           </div>
