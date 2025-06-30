@@ -279,7 +279,11 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({
   };
 
   const onHistoryRemove = (entry: SearchHistoryEntry, isActiveHistoryRemoved: boolean): void => {
-    setSearchHistory((prev) => prev.filter((hist) => hist.id !== entry.id));
+    setSearchHistory((prev) => {
+      const newHistory = prev.filter((hist) => hist.id !== entry.id);
+      localStorage.setItem(`${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`, JSON.stringify(newHistory));
+      return newHistory;
+    });
     if (isActiveHistoryRemoved) {
       setImage(undefined);
       setImageBoxData(undefined);
