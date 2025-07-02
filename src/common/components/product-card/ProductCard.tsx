@@ -4,6 +4,7 @@ import { type CSSProperties, type FC, useContext, useEffect, useState } from 're
 import ResultLogicImpl from '../../client/result-logic';
 import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../default-configs';
 import CustomizableIcon from '../../icons/CustomizableIcon';
+import HeartIcon from '../../icons/HeartIcon';
 import MagnifyingGlassIcon from '../../icons/MagnifyingGlassIcon';
 import { getCurrencyFormatter } from '../../locales/locale';
 import { WidgetDataContext } from '../../types/contexts';
@@ -136,7 +137,7 @@ const ProductCard: FC<ProductCardProps> = ({
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
-  const { onProductClick } = callbacks;
+  const { onProductClick, onAddToWishlistToggle } = callbacks;
   const [isLoading, setIsLoading] = useState(true);
   const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
@@ -175,6 +176,22 @@ const ProductCard: FC<ProductCardProps> = ({
 
   const createFindSimilarPositionClasses = (): string => {
     const position = customizations.productCard?.findSimilar?.position || 'bottom_right';
+    switch (position) {
+      case 'bottom_left':
+        return 'bottom-3 left-3';
+      case 'bottom_right':
+        return 'bottom-3 right-3';
+      case 'top_left':
+        return 'top-3 left-3';
+      case 'top_right':
+        return 'top-3 right-3';
+      default:
+        return '';
+    }
+  };
+
+  const createWishListPositionClasses = (): string => {
+    const position = customizations.productCard?.addToWishlist?.position || 'bottom_right';
     switch (position) {
       case 'bottom_left':
         return 'bottom-3 left-3';
@@ -305,6 +322,45 @@ const ProductCard: FC<ProductCardProps> = ({
                    event.currentTarget.src = mainImageUrl;
                  }}
             />
+            {!isLoading && customizations.productCard?.addToWishlist?.enable && (
+              <button
+                className={`wigmix-wish-list-button absolute ${createWishListPositionClasses()} z-5 rounded-full bg-white p-1 hover:opacity-90`}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+
+                  if (onAddToWishlistToggle) {
+                    onAddToWishlistToggle(true, result.product_id);
+                  }
+                }}
+                style={{
+                  backgroundColor: darkMode
+                    ? (customizations.productCard?.addToWishlist?.iconInactive?.backgroundColorDark || '')
+                    : (customizations.productCard?.addToWishlist?.iconInactive?.backgroundColor || ''),
+                }}
+                data-pw={`${pwPrefix}-wish-list-button`}
+                data-testid='wigmix-wish-list-button'
+              >
+                {customizations.productCard?.addToWishlist?.iconInactive?.url ? (
+                  <CustomizableIcon
+                    height={20}
+                    width={20}
+                    className='wigmix-wish-list-icon custom'
+                    url={customizations.productCard.addToWishlist?.iconInactive?.url}
+                    color={darkMode
+                      ? (customizations.productCard.addToWishlist?.iconInactive?.colorDark || '')
+                      : (customizations.productCard.addToWishlist?.iconInactive?.color || '')}
+                  />
+                ) : (
+                  <HeartIcon
+                    className='wigmix-wish-list-icon default size-5'
+                    color={darkMode
+                      ? (customizations.productCard?.addToWishlist?.iconInactive?.colorDark || '')
+                      : (customizations.productCard?.addToWishlist?.iconInactive?.color || '')}
+                  />
+                )}
+              </button>
+            )}
             {hasFindSimilar && !isLoading && customizations.productCard?.findSimilar?.enable && (
                 <button
                     className={`wigmix-find-similar-button absolute ${createFindSimilarPositionClasses()} z-5 rounded-full bg-white p-1 hover:opacity-90`}
