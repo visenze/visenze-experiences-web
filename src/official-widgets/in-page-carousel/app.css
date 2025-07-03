@@ -15,6 +15,9 @@
 }
 
 @layer components {
+  .wigmix-product-card {
+    @apply border-width-productCard border-color-productCard rounded-radius-productCard;
+  }
   .wigmix-widget-title {
     @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
   }
