@@ -117,6 +117,44 @@ export const setCssVariables = (config: WidgetConfig, darkMode: boolean): void =
         }
       }
     }
+
+    const productCardBorder = config.customizations.productCard?.border;
+    if (productCardBorder) {
+      root.style.setProperty('--wigmix-border-width-productCard', (productCardBorder.width || 0) + 'px');
+      if (darkMode) {
+        root.style.setProperty('--wigmix-border-color-productCard', productCardBorder.colorDark || '#fff');
+      } else {
+        root.style.setProperty('--wigmix-border-color-productCard', productCardBorder.color || '#000');
+      }
+      root.style.setProperty('--wigmix-border-radius-productCard', (productCardBorder.radius || 0) + 'px');
+    } else {
+      root.style.setProperty('--wigmix-border-width-productCard', '0px');
+      if (darkMode) {
+        root.style.setProperty('--wigmix-border-color-productCard', '#fff');
+      } else {
+        root.style.setProperty('--wigmix-border-color-productCard', '#000');
+      }
+      root.style.setProperty('--wigmix-border-radius-productCard', '0px');
+    }
+
+    const searchBarBorder = config.customizations.searchBar?.border;
+    if (searchBarBorder) {
+      root.style.setProperty('--wigmix-border-width-searchBar', (searchBarBorder.width || 0) + 'px');
+      if (darkMode) {
+        root.style.setProperty('--wigmix-border-color-searchBar', searchBarBorder.colorDark || '#fff');
+      } else {
+        root.style.setProperty('--wigmix-border-color-searchBar', searchBarBorder.color || '#000');
+      }
+      root.style.setProperty('--wigmix-border-radius-searchBar', (searchBarBorder.radius || 0) + 'px');
+    } else {
+      root.style.setProperty('--wigmix-border-width-searchBar', '0px');
+      if (darkMode) {
+        root.style.setProperty('--wigmix-border-color-searchBar', '#fff');
+      } else {
+        root.style.setProperty('--wigmix-border-color-searchBar', '#000');
+      }
+      root.style.setProperty('--wigmix-border-radius-searchBar', '0px');
+    }
   }
 };
 
