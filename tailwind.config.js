@@ -104,9 +104,6 @@ module.exports = {
         'radius-productCard': 'var(--wigmix-border-radius-productCard)',
         'radius-searchBar': 'var(--wigmix-border-radius-searchBar)',
       },
-      padding: {
-        'productCard-with-border': 'var(--wigmix-padding-productCard-with-border)',
-      },
       height: {
         108: '432px',
       },

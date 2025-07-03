@@ -490,21 +490,27 @@ export interface ColoredInterface {
  *
  * @since 1.0.12
  */
-export interface BorderInterface {
+export interface Border {
   /**
-   * Border width.
+   * Width (thickness) of the border.
    *
    * @since 1.0.12
    */
   width: number;
   /**
-   * Border color.
+   * Color of the border.
    *
    * @since 1.0.12
    */
   color: string;
   /**
-   * Border radius.
+   * Color of the border in dark mode.
+   *
+   * @since 1.0.12
+   */
+  colorDark: string;
+  /**
+   * Radius of the border.
    *
    * @since 1.0.12
    */
@@ -1065,7 +1071,7 @@ export interface WidgetConfig {
        *
        * @since 1.0.12
        */
-      border?: BorderInterface;
+      border?: Border;
       /**
        * Configuration for price field.
        *
@@ -1265,7 +1271,7 @@ export interface WidgetConfig {
        *
        * @since 1.0.12
        */
-      border?: BorderInterface;
+      border?: Border;
       /**
        * Whether to show the dropdown of the search bar.
        *
