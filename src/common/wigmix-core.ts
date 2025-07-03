@@ -486,6 +486,38 @@ export interface ColoredInterface {
 }
 
 /**
+ * Border settings.
+ *
+ * @since 1.0.12
+ */
+export interface Border {
+  /**
+   * Width (thickness) of the border.
+   *
+   * @since 1.0.12
+   */
+  width: number;
+  /**
+   * Color of the border.
+   *
+   * @since 1.0.12
+   */
+  color: string;
+  /**
+   * Color of the border in dark mode.
+   *
+   * @since 1.0.12
+   */
+  colorDark: string;
+  /**
+   * Radius of the border.
+   *
+   * @since 1.0.12
+   */
+  radius: number;
+}
+
+/**
  * An interface for a trending product (will be changed when API is integrated)
  *
  * @internal
@@ -1035,6 +1067,12 @@ export interface WidgetConfig {
        */
       imageAspectRatio?: string;
       /**
+       * Border settings for the product card.
+       *
+       * @since 1.0.12
+       */
+      border?: Border;
+      /**
        * Configuration for price field.
        *
        * @since 1.0.0
@@ -1221,6 +1259,25 @@ export interface WidgetConfig {
          */
         showAlternatives: boolean;
       };
+    };
+    /**
+     * Configuration for the search bar.
+     *
+     * @since 1.0.12
+     */
+    searchBar?: {
+      /**
+       * Configuration for the border of the search bar.
+       *
+       * @since 1.0.12
+       */
+      border?: Border;
+      /**
+       * Whether to show the dropdown of the search bar.
+       *
+       * @since 1.0.12
+       */
+      showDropdown?: boolean;
     };
     /**
      * Image upload-related settings. This section is relevant only for widgets that intend to support image upload.
