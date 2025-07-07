@@ -1,6 +1,7 @@
 import { Checkbox } from '@heroui/checkbox';
 import { Slider } from '@heroui/slider';
 import React, { type ChangeEvent, type FC, type ReactElement, useContext, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import type { Facet } from 'visearch-javascript-sdk';
 import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
 import type { FacetType } from '../../../common/types/constants';
@@ -31,6 +32,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, customizations } = widgetConfig;
   const [shownFacets, setShownFacets] = useState<Record<string, boolean>>({});
+  const intl = useIntl();
 
   const showFacetValues = (facet: Facet, coloredText: boolean): ReactElement | ReactElement[] => {
     const facetName = getFacetNameByKey(displaySettings.productDetails, facet.key) as FacetType;
@@ -57,6 +59,9 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
           defaultValue={
             selectedFilters[facetName]?.length ? selectedFilters[facetName] : [facet.range.min, facet.range.max]
           }
+          style={{
+            color: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor,
+          }}
           onChangeEnd={priceRangeChangeHandler}
         />
       );
@@ -146,7 +151,7 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
               </div>
               {shownFacets[facet.key] && (
                 <OutsideAlerter facet={facet.key}>
-                  <div className='absolute z-20 mt-1 w-3/12 rounded border-gray-300 bg-gray-100 p-3 text-black'>
+                  <div className='absolute z-20 mt-1 w-3/12 rounded p-3 text-black'>
                     {showFacetValues(facet, false)}
                   </div>
                 </OutsideAlerter>
@@ -161,13 +166,20 @@ const FilterOptions: FC<FilterOptionsProps> = ({ facets, selectedFilters, setSel
   }
   return (
     <div className='md:justify-none flex h-full flex-col justify-between gap-y-2 p-4 lg:p-0 md:h-[unset]'>
-      <div className='border-b border-b-gray-300 pb-3'>Filters</div>
+      <div
+        className='border-b border-b-gray-300 pb-3'
+        style={{
+          color: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor,
+        }}
+      >
+        {intl.formatMessage({ id: 'filter' })}
+      </div>
       {facets.map((facet) => (
         <div data-testid={`wigmix-filter-${facet.key}`} key={facet.key}>
           <div
-            className={`
-                ${darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor}
-                `}>
+            style={{
+              color: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor,
+            }}>
             <p>{getTitleCase(getFacetNameByKey(displaySettings.productDetails, facet.key))}</p>
           </div>
           <div className='flex flex-col gap-y-2 p-4'>{showFacetValues(facet, true)}</div>

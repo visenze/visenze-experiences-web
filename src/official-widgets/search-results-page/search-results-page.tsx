@@ -401,7 +401,7 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({
       <div className='flex w-full flex-col lg:flex-row'>
         {/* Desktop Filter Sidebar */}
         {hasApplicableFacets && breakpoint !== WidgetBreakpoint.MOBILE && (
-          <aside className='hidden md:flex md:flex-col md:w-64 lg:w-72 xl:w-80 bg-white p-4'>
+          <aside className='hidden md:flex md:flex-col md:w-64 lg:w-72 xl:w-80 p-4'>
             <FilterOptions
               displayAsDropdown={false}
               facets={facets}
@@ -416,11 +416,20 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({
         {hasApplicableFacets && breakpoint === WidgetBreakpoint.MOBILE && (
           <>
             <div
-              className='mb-2 flex w-full cursor-pointer items-center gap-2 bg-white p-2 md:hidden md:px-0'
+              className='mb-2 flex w-full cursor-pointer items-center gap-2 p-2 md:hidden md:px-0'
               data-testid='wigmix-mobile-filter-toggle'
               onClick={() => setShowMobileFilterOptions(true)}>
-              <FilterIcon className='size-5' />
-              <span className='text-black'>{intl.formatMessage({ id: 'filter' })}</span>
+              <FilterIcon
+                className='size-5'
+                color={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor}
+              />
+              <span
+                style={{
+                  color: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor,
+                }}
+              >
+                {intl.formatMessage({ id: 'filter' })}
+              </span>
             </div>
             <ViSenzeModal
               open={showMobileFilterOptions}
@@ -457,6 +466,8 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({
                       history={searchHistory}
                       onHistorySelect={onHistorySelect}
                       onHistoryRemove={onHistoryRemove}
+                      darkMode={darkMode}
+                      customizations={customizations}
                     />
                   </div>
                 </div>

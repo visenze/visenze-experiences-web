@@ -19,12 +19,16 @@ const SearchHistory = ({
   history,
   onHistorySelect,
   onHistoryRemove,
+  darkMode,
+  customizations,
 }: {
   activeHistory: SearchHistoryEntry | undefined;
   setActiveHistory: (entry: SearchHistoryEntry | undefined) => void;
   history: SearchHistoryEntry[];
   onHistorySelect: (entry: SearchHistoryEntry) => void;
   onHistoryRemove: (entry: SearchHistoryEntry, isActiveHistoryRemoved: boolean) => void;
+  darkMode: boolean;
+  customizations: Record<string, any>;
 }): ReactElement => {
   const activeItemRef = useRef<HTMLDivElement>(null);
 
@@ -56,10 +60,14 @@ const SearchHistory = ({
   }
 
   return (
-    <div className='bg-gray-50 rounded-md w-full p-4'>
+    <div className='border rounded-md w-full p-4'>
       {/* Header with Saved Searches and Hide/Show */}
       <div className='flex items-center justify-between'>
-        <span className='text-sm font-semibold text-gray-700'>Saved Searches ({history.length})</span>
+        <span
+          className='text-sm font-semibold'
+          style={{ color: darkMode ? customizations['generalLayout']?.fontColorDark : customizations['generalLayout']?.fontColor }}>
+          Saved Searches ({history.length})
+        </span>
         <button
           className='text-xs font-medium text-gray-400 hover:text-primary focus:outline-none'
           type='button'
