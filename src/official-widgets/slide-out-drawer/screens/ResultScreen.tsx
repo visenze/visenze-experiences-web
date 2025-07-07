@@ -84,7 +84,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 <div className='wigmix-reference-image-container w-1/2 flex items-center text-center'>
                   <img
                     src={getFile(image)}
-                    className='wigmix-reference-image rounded-md md:h-full'
+                    className='wigmix-reference-image md:h-full'
                     data-pw='ss-reference-image'
                   />
                 </div>
@@ -92,9 +92,15 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 <div className='flex w-full flex-col gap-2 px-4'>
                   <button
                     className={cn(
-                      'text-sm border border-gray-200 px-2 py-1 rounded-full',
-                      activeSearch === 'similar' && 'bg-blue-50 text-blue-800',
+                      'text-sm px-2 py-1 rounded-full',
                     )}
+                    style={activeSearch === 'similar' ? {
+                      backgroundColor: darkMode ? customizations.buttons?.primary?.backgroundColorDark : customizations.buttons?.primary?.backgroundColor,
+                      color: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor,
+                    } : {
+                      backgroundColor: darkMode ? customizations.buttons?.secondary?.backgroundColorDark : customizations.buttons?.secondary?.backgroundColor,
+                      color: darkMode ? customizations.buttons?.secondary?.fontColorDark : customizations.buttons?.secondary?.fontColor,
+                    }}
                     onClick={() => {
                       setActiveSearch('similar');
                       setSearch('');
@@ -193,7 +199,13 @@ const ResultScreen: FC<ResultScreenProps> = ({
       </div>
 
       {customizations.generalLayout?.showViSenzeLogo && (
-        <Footer className='fixed bottom-0 py-2 md:absolute lg:rounded-b-3xl bg-white' dataPw='ss-visenze-footer' />
+        <div className='w-full fixed bottom-0 py-2 md:absolute'
+          style={{
+            backgroundColor: darkMode ? customizations.generalLayout?.backgroundColorDark : customizations.generalLayout?.backgroundColor,
+          }}
+        >
+          <Footer dataPw='ss-visenze-footer' />
+        </div>
       )}
     </>
   );

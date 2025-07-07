@@ -21,6 +21,9 @@
   .wigmix-modal {
     @apply text-mobile-body md:text-tablet-body lg:text-desktop-body font-mobile-body md:font-tablet-body lg:font-desktop-body;
   }
+  .wigmix-product-card {
+    @apply border-width-productCard border-color-productCard rounded-radius-productCard;
+  }
   .wigmix-product-card-title {
     @apply text-mobile-productCardTitle md:text-tablet-productCardTitle lg:text-desktop-productCardTitle font-mobile-productCardTitle md:font-tablet-productCardTitle lg:font-desktop-productCardTitle;
   }

@@ -251,16 +251,16 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   },
   buttons: {
     primary: {
-      fontColor: '#FFFFFF',
-      fontColorDark: '#616161',
-      backgroundColor: '#616161',
+      fontColor: '#3d5385',
+      fontColorDark: '#000000',
+      backgroundColor: '#e8efff',
       backgroundColorDark: '#FFFFFF',
     },
     secondary: {
-      fontColor: '#FFFFFF',
+      fontColor: '#3d5385',
       fontColorDark: '#000000',
-      backgroundColor: '#000000',
-      backgroundColorDark: '#FFFFFF',
+      backgroundColor: '#f7f9fc',
+      backgroundColorDark: '#AAAAAA',
     },
   },
   generalLayout: {

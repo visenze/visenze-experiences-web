@@ -10,7 +10,7 @@ import { RootContext } from '../../common/components/shadow-wrapper';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
-import type { SearchImageOrPid } from '../../common/types/image';
+import { isImageUrl, isPid, type SearchImageOrPid } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { parseBox } from '../../common/utils';
@@ -41,7 +41,6 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ imUrl, renderModalWithoutPort
   const root = useContext(RootContext);
 
   const {
-    imageId,
     productResults,
     autocompleteResults,
     productTypes,
@@ -106,11 +105,17 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ imUrl, renderModalWithoutPort
 
     const params: Record<string, any> = {
       q: query,
-      im_id: imageId,
       page: 1,
       limit: customizations.results?.limit || 20,
       get_all_fl: true,
     };
+
+    if (image && isPid(image)) {
+      params['pid'] = image.pid;
+    }
+    if (image && isImageUrl(image)) {
+      params['im_url'] = image.imgUrl;
+    }
     const product = boxData?.index ? productTypes[boxData.index] : boxData;
 
     if (product) {
