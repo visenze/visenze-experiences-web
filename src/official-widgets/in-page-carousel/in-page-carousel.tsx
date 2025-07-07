@@ -13,7 +13,7 @@ interface InPageCarouselProps {
 }
 
 const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,6 +59,17 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
     return cssConfig;
   };
 
+  const getProductGridCssConfig = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    const cssConfigSrc = customizations.productGrid?.[breakpoint];
+    if (cssConfigSrc) {
+      if (cssConfigSrc.productsPerRow) {
+        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, 1fr)`;
+      }
+    }
+    return cssConfig;
+  };
+
   useEffect(() => {
     setIsLoading(false);
   }, []);
@@ -79,7 +90,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
 
   const renderHorizontalScroll = (): React.ReactNode => (
     <div className='relative text-primary' data-pw='mlt-product-result-carousel'>
-      <div className='flex overflow-x-auto no-scrollbar gap-1 pb-2' style={{ scrollSnapType: 'x mandatory' }}>
+      <div className='flex overflow-x-auto no-scrollbar pb-2' style={{ scrollSnapType: 'x mandatory' }}>
         {productResults.map((result, index) => (
           <div
             key={`${result.product_id}-${index}`}
@@ -101,7 +112,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
 
   const renderGrid = (): React.ReactNode => (
     <div className='relative text-primary lg:px-10' data-pw='mlt-product-result-grid'>
-      <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
+      <div className='grid' style={getProductGridCssConfig()}>
         {productResults.map((result, index) => (
           <div
             key={`${result.product_id}-${index}`}
@@ -134,7 +145,11 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
 
             <div className='flex items-center'>
               <button
-                className='border border-gray-300 rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition'
+                className='border rounded px-4 py-1 text-sm font-medium transition'
+                style={{
+                  borderColor: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor,
+                  color: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor,
+                 }}
                 data-pw='mlt-show-more-button'
                 onClick={() => setShowGrid(!showGrid)}>
                 {showGrid

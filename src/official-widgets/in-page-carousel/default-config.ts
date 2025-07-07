@@ -75,7 +75,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       marginVertical: 0,
     },
     desktop: {
-      productsPerRow: 4,
+      productsPerRow: 6,
       marginHorizontal: 16,
       marginVertical: 0,
     },
