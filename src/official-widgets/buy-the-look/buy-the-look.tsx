@@ -12,7 +12,7 @@ interface BuyTheLookProps {
 }
 
 const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,11 +81,15 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
     <div className='w-full relative inset-x-1/2 -mx-[50vw] mb-12'>
       <div className='py-8 px-6'>
         <div className='max-w-6xl mx-auto' style={{ maxWidth: 'calc(100vw - var(--chat-width, 0px) - 3rem)' }}>
-          <h2 className='text-2xl font-bold mb-6'>{intl.formatMessage({ id: 'widgetTitle' })}</h2>
+          <h2
+            className='text-2xl font-bold mb-6'
+            style={{ color: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor }}>
+            {intl.formatMessage({ id: 'widgetTitle' })}
+          </h2>
 
           <div className='grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6'>
             {/* Left side: Main product image (smaller on mobile when chat open) */}
-            <div className='bg-white overflow-hidden shadow-lg lg:col-span-2 flex'>
+            <div className='overflow-hidden shadow-lg lg:col-span-2 flex'>
               <img
                 src={productInfo?.im_url}
                 alt={productInfo?.['title']}
@@ -99,7 +103,10 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
             </div>
 
             {/* Right side: White card with content (smaller width) - Redesigned to match screenshot */}
-            <div className='bg-white lg:col-span-3 p-0 shadow-lg rounded-lg overflow-hidden'>
+            <div className='lg:col-span-3 p-0 shadow-lg overflow-hidden'
+              style={{
+                backgroundColor: darkMode ? customizations.generalLayout?.backgroundColorDark : customizations.generalLayout?.backgroundColor,
+              }}>
               {/* Product thumbnails - back to horizontal layout with larger images */}
               <div className='flex border-b border-gray-200 mb-4 overflow-x-auto p-4'>
                 {productResults.map((product, index) => (
@@ -169,7 +176,12 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
                     </div>
                     <div className='flex flex-col gap-3 mt-4'>
                       {widgetConfig.callbacks.onAddToCartToggle && (
-                        <button className='bg-black text-white hover:bg-black/90 py-3 px-6 rounded-none text-base font-bold tracking-wider w-full border-2 border-black'
+                        <button
+                          className='py-3 px-6 rounded-none text-base font-bold tracking-wider w-full'
+                          style={{
+                            backgroundColor: darkMode ? customizations.buttons?.primary.backgroundColorDark : customizations.buttons?.primary.backgroundColor,
+                            color: darkMode ? customizations.buttons?.primary.fontColorDark : customizations.buttons?.primary.fontColor,
+                          }}
                           onClick={() => {
                             if (widgetConfig.callbacks.onAddToCartToggle) {
                               widgetConfig.callbacks.onAddToCartToggle(true, productResults[selectedLookProductIndex].product_id);
@@ -178,9 +190,6 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
                           {intl.formatMessage({ id: 'addToCart' })}
                         </button>
                       )}
-                      <button className='bg-gray-100 text-gray-800 hover:bg-gray-200 py-3 px-6 rounded-none text-base font-bold tracking-wider w-full border-2 border-gray-200'>
-                        {intl.formatMessage({ id: 'seeSimilar' })}
-                      </button>
                     </div>
                   </div>
                 </div>
