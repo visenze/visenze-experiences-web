@@ -24,7 +24,7 @@ export enum WidgetType {
   SEARCH_BAR = 'search_bar',
   MERCHANDISE_SEARCH_BAR = 'merchandise_search_bar',
   EMBEDDED_SEARCH_RESULTS = 'embedded_search_results',
-  SEARCH_RESULTS_PAGE = 'search_results_page',
+  SEARCH_RESULTS_PAGE_V2 = 'search_results_page_v2',
 }
 
 export enum WidgetErrorState {

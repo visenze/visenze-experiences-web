@@ -6,12 +6,12 @@ const customCss = `
 
 export const devConfigs: RecursivePartial<WidgetConfig> = {
   appSettings: {
-    appKey: '',
-    placementId: '',
+    appKey: '9efd32e47f6d4702970da940b2f6a01e',
+    placementId: '5138',
     endpoint: '',
   },
   displaySettings: {
-    cssSelector: '.search-results-page-widget',
+    cssSelector: '.search-results-page-v2-widget',
     productDetails: {},
   },
   customizations: {

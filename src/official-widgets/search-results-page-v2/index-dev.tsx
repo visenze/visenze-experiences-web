@@ -6,7 +6,7 @@ import { WidgetType } from '../../common/wigmix-core';
 import version from '../../version';
 
 devInitWidget(
-  WidgetType.SEARCH_RESULTS_PAGE,
+  WidgetType.SEARCH_RESULTS_PAGE_V2,
   version,
   ({ config, client, element }) => <App widgetClient={client} widgetConfig={config} element={element} />,
   false,

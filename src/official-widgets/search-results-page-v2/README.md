@@ -11,11 +11,12 @@
   3. (optional) Add the text query in the `data-text` field of the widget selector.
   4. Run:
      ```sh
-     npm run start:search-results-page
+     npm run start:search-results-page-v2
      ```
-     The dev server will be available at `http://localhost:8080` and will automatically reload for changes made in `src/official-widgets/search-results-page` folder.
+     The dev server will be available at `http://localhost:8080` and will automatically reload for changes made in `src/official-widgets/search-results-page-v2` folder.
 - To bundle the widget:
   ```sh
-  npm run build:search-results-page
+  npm run build:search-results-page-v2
   ```
-  The bundled file will be available in `dist/search-results-page` directory.
+  The bundled file will be available in `dist/search-results-page-v2` directory.
+  

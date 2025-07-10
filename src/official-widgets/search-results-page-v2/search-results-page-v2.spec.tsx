@@ -2,7 +2,7 @@ import { act, fireEvent, render, type RenderResult } from '@testing-library/reac
 import { IntlProvider } from 'react-intl';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import SearchResultsPage from './search-results-page';
+import SearchResultsPage from './search-results-page-v2';
 import {
   getStandardMultiSearchInvalidImageResponse,
   getStandardMultiSearchSuccessNoResultResponse,

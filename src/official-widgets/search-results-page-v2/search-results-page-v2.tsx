@@ -36,7 +36,7 @@ interface SearchResultsPageProps {
 
 const SEARCH_HISTORY_BASE_KEY = 'wigmix_search_results_page_';
 
-const SearchResultsPage: FC<SearchResultsPageProps> = ({
+const SearchResultsPageV2: FC<SearchResultsPageProps> = ({
   textQuery,
   imUrl,
   renderModalWithoutPortal,
@@ -541,4 +541,4 @@ const SearchResultsPage: FC<SearchResultsPageProps> = ({
   );
 };
 
-export default SearchResultsPage;
+export default SearchResultsPageV2;
