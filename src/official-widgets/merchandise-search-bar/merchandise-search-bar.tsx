@@ -265,64 +265,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
         </div>
         {/* Autocomplete dropdown */}
         {/* eslint-disable no-nested-ternary */}
-        {showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0) ? (
-          <OutsideAlerter>
-            <div className='flex flex-col items-end gap-2 px-4 py-1 pt-4'>
-              <button onClick={() => {
-                setShowDropdown(false);
-                setShowImageUpload(false);
-              }}>
-                <CloseIcon className='size-6' />
-              </button>
-            </div>
-
-            <div className='flex flex-col-reverse lg:flex-row-reverse divide-gray-200 py-1 px-4'>
-              <div className='px-4 py-1 w-full lg:3/4 overflow-x-scroll'>
-                <p className='text-large font-semibold leading-6 text-primary pb-1'>
-                  {intl.formatMessage({ id: 'suggestions' })}
-                </p>
-                <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
-                  {searchAsYouTypeResults.slice(0, relatedMax).map((result, index) => (
-                    <div
-                      className='size-1/8'
-                      key={`${result.product_id}-${index}`}
-                      data-pw={`msb-product-result-card-${index + 1}`}
-                      style={{ minHeight: '250px', minWidth: '150px' }}>
-                      <ProductCard
-                        key={`${result.product_id}-${index}`}
-                        index={index}
-                        result={result}
-                        metadata={metadata}
-                        hasFindSimilar={false}
-                        isRecommendation={false}
-                        pwPrefix='msb'
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className='px-4 py-1 w-full lg:w-1/4'>
-                <p className='text-large font-semibold leading-6 text-primary pb-1'>
-                  {intl.formatMessage({ id: 'popularChoices' })}
-                </p>
-                <div className='flex flex-col gap-2'>
-                  {autocompleteResults.slice(0, suggestionMax).map((result) => (
-                    <button
-                      className='p-2 text-small font-normal text-left hover:bg-gray-200'
-                      key={result}
-                      onClick={() => {
-                        setQuery(result);
-                        emitSearchBarCallback(result, image);
-                      }}>
-                      {result}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </OutsideAlerter>
-        ) : showDropdown && showImageUpload ? (
+        {showDropdown && showImageUpload ? (
           <OutsideAlerter>
             <div className='flex flex-col items-end gap-2 px-4 py-1 pt-4'>
               <button onClick={() => {
@@ -383,6 +326,63 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                       </p>
                     </div>
                   </FileDropzone>
+                </div>
+              </div>
+            </div>
+          </OutsideAlerter>
+        ) : showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0) ? (
+          <OutsideAlerter>
+            <div className='flex flex-col items-end gap-2 px-4 py-1 pt-4'>
+              <button onClick={() => {
+                setShowDropdown(false);
+                setShowImageUpload(false);
+              }}>
+                <CloseIcon className='size-6' />
+              </button>
+            </div>
+
+            <div className='flex flex-col-reverse lg:flex-row-reverse divide-gray-200 py-1 px-4'>
+              <div className='px-4 py-1 w-full lg:3/4 overflow-x-scroll'>
+                <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                  {intl.formatMessage({ id: 'suggestions' })}
+                </p>
+                <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
+                  {searchAsYouTypeResults.slice(0, relatedMax).map((result, index) => (
+                    <div
+                      className='size-1/8'
+                      key={`${result.product_id}-${index}`}
+                      data-pw={`msb-product-result-card-${index + 1}`}
+                      style={{ minHeight: '250px', minWidth: '150px' }}>
+                      <ProductCard
+                        key={`${result.product_id}-${index}`}
+                        index={index}
+                        result={result}
+                        metadata={metadata}
+                        hasFindSimilar={false}
+                        isRecommendation={false}
+                        pwPrefix='msb'
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className='px-4 py-1 w-full lg:w-1/4'>
+                <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                  {intl.formatMessage({ id: 'popularChoices' })}
+                </p>
+                <div className='flex flex-col gap-2'>
+                  {autocompleteResults.slice(0, suggestionMax).map((result) => (
+                    <button
+                      className='p-2 text-small font-normal text-left hover:bg-gray-200'
+                      key={result}
+                      onClick={() => {
+                        setQuery(result);
+                        emitSearchBarCallback(result, image);
+                      }}>
+                      {result}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
