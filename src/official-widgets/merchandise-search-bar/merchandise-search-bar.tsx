@@ -1,21 +1,22 @@
-import { Listbox, ListboxItem, ListboxSection } from '@heroui/listbox';
 import { cn } from '@heroui/theme';
 import type { FC, ReactElement } from 'react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import SearchBarInput from './components/SearchBarInput';
+import FileDropzone from '../../common/components/FileDropzone';
 import useAutocomplete from '../../common/components/hooks/use-autocomplete';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useSearchAsYouType from '../../common/components/hooks/use-search-as-you-type';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
+import CloseIcon from '../../common/icons/CloseIcon';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import UploadIcon from '../../common/icons/UploadIcon';
 import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
 import { isImageFile } from '../../common/types/image';
 import type { ProcessedProduct } from '../../common/types/product';
-import { getProductGridCssClasses, getProductGridCssConfig } from '../../common/utils';
 
 export interface SearchHistoryEntry {
   query: string;
@@ -30,13 +31,18 @@ interface SearchBarResultProps {
 
 const SEARCH_HISTORY_BASE_KEY = 'wigmix_internal_search_history_';
 
-const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWithoutPortal }): ReactElement => {
+const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
+  textQuery,
+  imUrl,
+  renderModalWithoutPortal,
+}): ReactElement => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showImageUpload, setShowImageUpload] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [suggestionMax, setSuggestionMax] = useState(6);
@@ -44,19 +50,12 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
   const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
   const intl = useIntl();
-  const {
-    imageUrl,
-    autocompleteResults,
-    error,
-  } = useAutocomplete({
+  const { imageUrl, autocompleteResults, error } = useAutocomplete({
     image,
     query: debouncedQuery,
   });
 
-  const {
-    searchAsYouTypeResults,
-    metadata,
-  } = useSearchAsYouType({
+  const { searchAsYouTypeResults, metadata } = useSearchAsYouType({
     image,
     query: debouncedQuery,
   });
@@ -128,7 +127,9 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
       });
     }
 
-    const historyFromLocalStorage = localStorage.getItem(`${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`);
+    const historyFromLocalStorage = localStorage.getItem(
+      `${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`,
+    );
     const historyFull: SearchHistoryEntry[] = historyFromLocalStorage ? JSON.parse(historyFromLocalStorage) : [];
     const now = new Date().getTime();
     setSearchHistory(historyFull.filter((h) => now - h.timestamp <= 7 * 24 * 60 * 60 * 1000));
@@ -144,8 +145,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
         query: search,
         timestamp: new Date().getTime(),
       };
-      const newHistory = [newEntry, ...prevHistory.filter((h) => h.query !== search)]
-          .slice(0, 20);
+      const newHistory = [newEntry, ...prevHistory.filter((h) => h.query !== search)].slice(0, 20);
       localStorage.setItem(`${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`, JSON.stringify(newHistory));
       return newHistory;
     });
@@ -156,6 +156,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
       const handleClickOutside = (event: any): void => {
         if (!ref.current || !event.target || !event.target.shadowRoot || !event.target.shadowRoot.contains(ref.current)) {
           setShowDropdown(false);
+          setShowImageUpload(false);
         }
       };
 
@@ -171,11 +172,61 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
     useOutsideAlerter(wrapperRef);
 
     return (
-        <div ref={wrapperRef}
-             className='wigmix-search-bar-overlay absolute top-12 z-20 h-fit w-full overflow-y-scroll rounded-b-md border-x-1 border-b-1 border-gray-200 bg-primary transition-all'>
-          {props.children}
-        </div>
+      <div
+        ref={wrapperRef}
+        className='wigmix-search-bar-overlay absolute top-14 z-20 h-fit w-full overflow-y-scroll border border-gray-200 shadow-md bg-primary transition-all'>
+        {props.children}
+      </div>
     );
+  };
+
+  const imageUploadHandler = (img: SearchImage | undefined): void => {
+    setImage(img);
+    if (img && !isImageFile(img)) {
+      emitSearchBarCallback(query, img);
+    }
+  };
+
+  const onImageUpload = (im: SearchImage): void => {
+    imageUploadHandler(im);
+  };
+
+  const onGallerySelect = (index: number): void => {
+    if (customizations.imageUpload?.images[index]) {
+      imageUploadHandler({ imgUrl: customizations.imageUpload.images[index].url });
+    }
+  };
+
+  const getGalleryCards = (): React.ReactNode => {
+    if (customizations) {
+      return Object.entries(customizations.imageUpload?.images || []).map(([, imageWithLabel], index) => (
+        <div
+          key={index}
+          className='relative row-span-1 border-none cursor-pointer'
+          style={{ minWidth: '150px' }}
+          onClick={(): void => onGallerySelect(index)}
+          onKeyDown={(evt): void => {
+            if (evt.key === 'Enter') {
+              onGallerySelect(index);
+            }
+          }}>
+          <img
+            className='h-52 w-48 lg:w-fit object-cover hover:opacity-75'
+            src={imageWithLabel.url}
+            data-pw={`msb-gallery-image-${index + 1}`}
+          />
+          {imageWithLabel.label && (
+            <div
+              className='absolute bottom-0 z-10 w-full overflow-hidden border-1
+          border-white/20 bg-gray-800 bg-opacity-80 py-1 text-center text-white shadow-small'>
+              <p>{imageWithLabel.label}</p>
+            </div>
+          )}
+        </div>
+      ));
+    }
+
+    return <></>;
   };
 
   if (!root) {
@@ -187,224 +238,227 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, rend
       <div className='flex size-full flex-col bg-primary'>
         <div className='relative flex w-full flex-col items-center'>
           {/* Search bar */}
-          <SearchBarInput query={query} setQuery={setQuery} image={image}
-                          imageUploadHandler={(img: SearchImage | undefined) => {
-                            setImage(img);
-                            if (img && !isImageFile(img)) {
-                              emitSearchBarCallback(query, img);
-                            }
-                          }}
-                          emitSearchBarCallback={() => {
-                            if (query) {
-                              updateSavedHistory(query);
-                            }
-                            emitSearchBarCallback(query, image);
-                          }}
-                          setShowDropdown={(s) => {
-                            if (s) {
-                              setShowDropdown(true);
-                            }
-                          }}
-                          placementId={`${widgetConfig.appSettings.placementId}`}
-                          renderModalWithoutPortal={!!renderModalWithoutPortal} />
+          <SearchBarInput
+            query={query}
+            setQuery={setQuery}
+            image={image}
+            imageUploadHandler={() => {}}
+            emitSearchBarCallback={() => {
+              if (query) {
+                updateSavedHistory(query);
+              }
+              emitSearchBarCallback(query, image);
+            }}
+            setShowDropdown={(s) => {
+              if (s) {
+                setShowDropdown(true);
+              }
+            }}
+            setShowImageUpload={(s) => {
+              if (s) {
+                setShowImageUpload(s);
+              }
+            }}
+            placementId={`${widgetConfig.appSettings.placementId}`}
+            renderModalWithoutPortal={!!renderModalWithoutPortal}
+          />
         </div>
-          {/* Autocomplete dropdown */}
-          {/* eslint-disable no-nested-ternary */}
-          {showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0)
-              ? (<OutsideAlerter>
-                    <div className='relative flex max-h-[70vh] flex-col divide-x divide-gray-200 py-1 md:min-h-fit md:max-h-full md:flex-row'>
-                      <div className='flex flex-col justify-between md:w-2/5'>
-                        <div className='flex flex-col gap-2 px-4 py-1'>
-                          <p className='text-large font-semibold leading-6 text-primary'>
-                            {intl.formatMessage({ id: 'suggestions' })}
-                          </p>
-                          <Listbox
-                              aria-label='Autocomplete Dropdown'
-                          >
-                            <ListboxSection classNames={{ base: 'mb-0' }}>
-                              {autocompleteResults.slice(0, suggestionMax).map((result, index) => (
-                                  <ListboxItem
-                                      tabIndex={0}
-                                      className='pr-4'
-                                      key={result}
-                                      endContent={(
-                                          <MagnifyingGlassIcon color={darkMode
-                                                                 ? (customizations.generalLayout?.fontColorDark || '')
-                                                                 : (customizations.generalLayout?.fontColor || '')}
-                                                               className='size-4' />
-                                      )}
-                                      textValue={result}
-                                      onPress={() => {
-                                        setQuery(result);
-                                        emitSearchBarCallback(result, image);
-                                      }}
-                                  >
-                            <span className='pl-2 text-primary'
-                                  data-pw={`msb-autocomplete-suggestion-${index + 1}`}
-                                  data-testid='wigmix-msb-autocomplete-value'>{result}</span>
-                                  </ListboxItem>
-                              ))}
-                            </ListboxSection>
-                          </Listbox>
-                        </div>
+        {/* Autocomplete dropdown */}
+        {/* eslint-disable no-nested-ternary */}
+        {showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0) ? (
+          <OutsideAlerter>
+            <div className='flex flex-col items-end gap-2 px-4 py-1 pt-4'>
+              <button onClick={() => {
+                setShowDropdown(false);
+                setShowImageUpload(false);
+              }}>
+                <CloseIcon className='size-6' />
+              </button>
+            </div>
 
-                        <div className='hidden px-4 pb-4 md:flex'>
-                          <div
-                              className='w-full rounded text-center bg-buttonPrimary py-2 font-semibold text-buttonPrimary cursor-pointer hover:opacity-90'
-                              data-testid='wigmix-msb-view-all-button'
-                              onClick={() => {
-                                if (query) {
-                                  emitSearchBarCallback(query, image);
-                                }
-                              }}
-                          >
-                            {intl.formatMessage({ id: 'viewAllProducts' })}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className='flex w-full justify-center md:w-3/5'>
-                        <div className='flex flex-col gap-2 overflow-y-scroll px-4 py-1 md:max-h-[70vh]'>
-                          <p className='text-large font-semibold leading-6 text-primary'>
-                            {intl.formatMessage({ id: 'relatedProducts' })}
-                          </p>
-                          <div
-                              className={cn(
-                                  'wigmix-product-grid grid text-primary w-full',
-                                  getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2 md:grid-cols-4', 'gap-x-2', 'gap-y-4'),
-                              )}
-                              style={getProductGridCssConfig(customizations, breakpoint)}
-                              data-pw='msb-product-result-grid'
-                          >
-                            {searchAsYouTypeResults.slice(0, relatedMax).map((result, index) => (
-                                <div key={`${result.product_id}-${index}`} data-pw={`msb-product-result-card-${index + 1}`}>
-                                  <ProductCard key={`${result.product_id}-${index}`}
-                                               index={index}
-                                               result={result}
-                                               metadata={metadata}
-                                               hasFindSimilar={false}
-                                               isRecommendation={false}
-                                               pwPrefix='msb' />
-                                </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className='sticky bottom-0 flex bg-primary text-center px-4 py-2 md:hidden'>
-                        <div
-                            className='w-full rounded text-center bg-buttonPrimary py-2 font-semibold text-buttonPrimary cursor-pointer'
-                            data-testid='wigmix-msb-view-all-button'
-                            onClick={() => {
-                              if (query) {
-                                emitSearchBarCallback(query, image);
-                              }
-                            }}
-                        >
-                          {intl.formatMessage({ id: 'viewAllProducts' })}
-                        </div>
-                      </div>
+            <div className='flex flex-col-reverse lg:flex-row-reverse divide-gray-200 py-1 px-4'>
+              <div className='px-4 py-1 w-full lg:3/4 overflow-x-scroll'>
+                <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                  {intl.formatMessage({ id: 'suggestions' })}
+                </p>
+                <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
+                  {searchAsYouTypeResults.slice(0, relatedMax).map((result, index) => (
+                    <div
+                      className='size-1/8'
+                      key={`${result.product_id}-${index}`}
+                      data-pw={`msb-product-result-card-${index + 1}`}
+                      style={{ minHeight: '250px', minWidth: '150px' }}>
+                      <ProductCard
+                        key={`${result.product_id}-${index}`}
+                        index={index}
+                        result={result}
+                        metadata={metadata}
+                        hasFindSimilar={false}
+                        isRecommendation={false}
+                        pwPrefix='msb'
+                      />
                     </div>
-                  </OutsideAlerter>
-              )
-              : (showDropdown && (searchHistory.length > 0 || customizations.popularTerms?.enable || customizations.trendingProducts?.enable))
-                  ? <OutsideAlerter>
-                  { hasError && (
-                    <div className='flex w-full ps-4 py-4 justify-center items-center text-center border-b-2'>
-                      <p className='text-large font-semibold leading-10 text-primary'>
-                        {intl.formatMessage({ id: 'errorMessage' })}
+                  ))}
+                </div>
+              </div>
+
+              <div className='px-4 py-1 w-full lg:w-1/4'>
+                <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                  {intl.formatMessage({ id: 'popularChoices' })}
+                </p>
+                <div className='flex flex-col gap-2'>
+                  {autocompleteResults.slice(0, suggestionMax).map((result) => (
+                    <button
+                      className='p-2 text-small font-normal text-left hover:bg-gray-200'
+                      key={result}
+                      onClick={() => {
+                        setQuery(result);
+                        emitSearchBarCallback(result, image);
+                      }}>
+                      {result}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </OutsideAlerter>
+        ) : showDropdown && showImageUpload ? (
+          <OutsideAlerter>
+            <div className='flex flex-col items-end gap-2 px-4 py-1 pt-4'>
+              <button onClick={() => {
+                setShowDropdown(false);
+                setShowImageUpload(false);
+              }}>
+                <CloseIcon className='size-6' />
+              </button>
+            </div>
+
+            <div className='flex flex-col-reverse lg:flex-row-reverse divide-gray-200 py-1 px-4'>
+              <div className='px-4 py-1 w-full lg:3/4 overflow-x-scroll'>
+                <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                  {intl.formatMessage({ id: 'suggestions' })}
+                </p>
+                <div className='flex py-2 overflow-x-scroll gap-x-3'>{getGalleryCards()}</div>
+              </div>
+
+              <div className='px-4 py-1 w-full lg:w-1/4'>
+                <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                  {intl.formatMessage({ id: 'imageUploadTitle' })}
+                </p>
+                <div className='flex flex-col gap-2 pt-2'>
+                  <FileDropzone onImageUpload={onImageUpload} name='msb-image-upload'>
+                    <div
+                      className={cn(
+                        'wigmix-reference-image-container flex h-52 flex-col lg:aspect-square items-center justify-center text-center',
+                        'py-8 md:py-0 border border-gray md:border-0 bg-gray-100',
+                      )}>
+                      {customizations.imageUpload?.icon?.url ? (
+                        <CustomizableIcon
+                          height={80}
+                          width={80}
+                          url={customizations.imageUpload.icon.url}
+                          color={
+                            darkMode
+                              ? customizations.imageUpload.icon.colorDark || ''
+                              : customizations.imageUpload.icon.color || ''
+                          }
+                        />
+                      ) : (
+                        <UploadIcon
+                          className='size-20'
+                          color={
+                            darkMode
+                              ? customizations.imageUpload?.icon?.colorDark || ''
+                              : customizations.imageUpload?.icon?.color || ''
+                          }
+                        />
+                      )}
+
+                      <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
+                        {intl.formatMessage({ id: 'dragImageToSearch' })}
                       </p>
-                    </div>)
-                  }
-                  <div
-                    className='flex flex-col-reverse justify-center divide-gray-200 py-1 px-4'>
-                    { customizations.trendingProducts?.enable && trendingProducts.length > 0 && (
-                      <div className='px-4 py-1'>
-                        <p className='text-large font-semibold leading-6 text-primary py-1'>
-                          {intl.formatMessage({ id: 'trending' })}
-                        </p>
-                        <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
-                          {trendingProducts.map((result, index) => (
-                            <div
-                              className='size-1/8'
-                              key={`${result.product_id}-${index}`}
-                              data-pw={`msb-product-result-card-${index + 1}`}
-                              style={{ minHeight: '250px', minWidth: '150px' }}
-                            >
-                              <ProductCard key={`${result.product_id}-${index}`}
-                                           index={index}
-                                           result={result}
-                                           metadata={metadata}
-                                           hasFindSimilar={false}
-                                           isRecommendation={false}
-                                           pwPrefix='msb' />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    { customizations.popularTerms?.enable && popularTerms.length > 0 && (
-                    <div className='px-4 py-1'>
-                      <p className='text-large font-semibold leading-6 text-primary py-1'>
-                        {intl.formatMessage({ id: 'popularChoices' })}
+
+                      <p className='pt-3 leading-6 text-primary md:hidden'>
+                        {intl.formatMessage({ id: 'tapToSearchImage' })}
                       </p>
-                      <div>
-                        {popularTerms.map((term) => (
-                          <button
-                            className='rounded-full border-1 border-black px-2 mr-2 mt-2 text-small font-normal'
-                            key={term} onClick={() => {
-                              setQuery(term);
-                              emitSearchBarCallback(term, image);
-                          }}>
-                            {term}
-                          </button>
-                        ))}
-                      </div>
                     </div>
-                    )}
-                    {searchHistory.length > 0 && (
-                      <div className='flex-1'>
-                        <div className='flex flex-col gap-2 px-4 py-1'>
-                          <p className='text-large font-semibold leading-6 text-primary'>
-                            {intl.formatMessage({ id: 'recentSearches' })}
-                          </p>
-                          <Listbox
-                            aria-label='Recent searches'
-                          >
-                            <ListboxSection classNames={{ base: 'mb-0' }}>
-                              {searchHistory.slice(0, 4).map((entry) => (
-                                <ListboxItem
-                                  tabIndex={0}
-                                  className='pr-4'
-                                  key={String(entry.query)}
-                                  endContent={(
-                                    <MagnifyingGlassIcon color={darkMode
-                                      ? (customizations.generalLayout?.fontColorDark || '')
-                                      : (customizations.generalLayout?.fontColor || '')}
-                                                         className='size-4' />
-                                  )}
-                                  textValue={entry.query || ''}
-                                  onPress={() => {
-                                    if (entry && entry.query) {
-                                      updateSavedHistory(entry.query);
-                                      setQuery(entry.query);
-                                      emitSearchBarCallback(entry.query, image);
-                                    }
-                                  }}
-                                >
-                                  <span className='pl-2 text-primary' data-testid='wigmix-msb-recent-search'>{entry.query}</span>
-                                </ListboxItem>
-                              ))}
-                            </ListboxSection>
-                          </Listbox>
-                        </div>
+                  </FileDropzone>
+                </div>
+              </div>
+            </div>
+          </OutsideAlerter>
+        ) : showDropdown
+          && (searchHistory.length > 0 || customizations.popularTerms?.enable || customizations.trendingProducts?.enable) ? (
+          <OutsideAlerter>
+            <div className='flex flex-col items-end gap-2 px-4 py-1 pt-4'>
+              <button onClick={() => {
+                setShowDropdown(false);
+                setShowImageUpload(false);
+              }}>
+                <CloseIcon className='size-6' />
+              </button>
+            </div>
+
+            {hasError && (
+              <div className='flex w-full ps-4 py-4 justify-center items-center text-center border-b-2'>
+                <p className='text-large font-semibold leading-10 text-primary'>
+                  {intl.formatMessage({ id: 'errorMessage' })}
+                </p>
+              </div>
+            )}
+            <div className='flex flex-col-reverse lg:flex-row-reverse divide-x-reverse divide-gray-200 py-1 px-4'>
+              {customizations.trendingProducts?.enable && trendingProducts.length > 0 && (
+                <div className='px-4 py-1 w-full md:3/4 overflow-x-scroll'>
+                  <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                    {intl.formatMessage({ id: 'trending' })}
+                  </p>
+                  <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
+                    {trendingProducts.map((result, index) => (
+                      <div
+                        className='size-1/8'
+                        key={`${result.product_id}-${index}`}
+                        data-pw={`msb-product-result-card-${index + 1}`}
+                        style={{ minHeight: '250px', minWidth: '150px' }}>
+                        <ProductCard
+                          key={`${result.product_id}-${index}`}
+                          index={index}
+                          result={result}
+                          metadata={metadata}
+                          hasFindSimilar={false}
+                          isRecommendation={false}
+                          pwPrefix='msb'
+                        />
                       </div>
-                    )}
+                    ))}
                   </div>
-                </OutsideAlerter>
-                : <></>
-          }
-        </div>
+                </div>
+              )}
+              {customizations.popularTerms?.enable && popularTerms.length > 0 && (
+                <div className='px-4 py-1 w-full md:w-1/4'>
+                  <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                    {intl.formatMessage({ id: 'popularChoices' })}
+                  </p>
+                  <div className='flex flex-col gap-2'>
+                    {popularTerms.map((term) => (
+                      <button
+                        className='p-2 text-small font-normal text-left hover:bg-gray-200'
+                        key={term}
+                        onClick={() => {
+                          setQuery(term);
+                          emitSearchBarCallback(term, image);
+                        }}>
+                        {term}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </OutsideAlerter>
+        ) : (
+          <></>
+        )}
+      </div>
     </>
   );
 };

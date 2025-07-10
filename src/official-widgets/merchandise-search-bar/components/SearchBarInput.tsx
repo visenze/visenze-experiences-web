@@ -3,9 +3,9 @@ import { cn } from '@heroui/theme';
 import type { FC } from 'react';
 import { memo, useContext, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import ImageGalleryUpload from './ImageGalleryUpload';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import MagnifyingGlassIcon from '../../../common/icons/MagnifyingGlassIcon';
+import PhotoIcon from '../../../common/icons/PhotoIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 
@@ -15,6 +15,7 @@ interface SearchBarInputProps {
   emitSearchBarCallback: () => void;
   imageUploadHandler: (image: SearchImage | undefined) => void;
   setShowDropdown: (showDropdown: boolean) => void;
+  setShowImageUpload: (showImageUpload: boolean) => void;
   image: SearchImage | undefined;
   placementId: string;
   renderModalWithoutPortal?: boolean;
@@ -26,10 +27,8 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
   emitSearchBarCallback,
   imageUploadHandler,
   setShowDropdown,
-  placementId,
-  renderModalWithoutPortal,
-  image,
-}) => {
+  setShowImageUpload,
+  }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const searchBarRef = useRef<HTMLInputElement>(null);
@@ -42,16 +41,25 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       ref={searchBarRef}
       className='z-5'
       classNames={{
-        inputWrapper: cn('rounded-md w-full border border-gray-200', customizations.imageUpload?.enable ? 'px-1.5' : 'px-3'),
+        inputWrapper: cn(
+          'rounded-none w-full border border-gray-400 bg-white data-[hover=true]:bg-white',
+          customizations.imageUpload?.enable ? 'px-1.5' : 'px-3',
+        ),
       }}
       autoCapitalize='off'
       autoComplete='off'
       size='lg'
-      isClearable
+      // isClearable
       maxLength={QUERY_MAX_CHARACTER_LENGTH}
       placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
-      onClick={() => setShowDropdown(true)}
-      onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
+      onClick={() => {
+        setShowDropdown(true);
+        setShowImageUpload(false);
+      }}
+      onBlur={() => setTimeout(() => {
+        setShowDropdown(false);
+        setShowImageUpload(false);
+      }, 100)}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
           emitSearchBarCallback();
@@ -72,19 +80,33 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
         }
       }}
       startContent={
-        <div className='flex items-center gap-2'>
-          {customizations.imageUpload?.enable && (
-            <ImageGalleryUpload imageUploadHandler={imageUploadHandler} placementId={placementId} image={image}
-                                renderModalWithoutPortal={!!renderModalWithoutPortal} />
-          )}
-          <div className='cursor-pointer pe-1' onClick={() => {
-            setShowDropdown(true);
-          }}>
-            <MagnifyingGlassIcon color={darkMode
-                                   ? (customizations.generalLayout?.fontColorDark || '')
-                                   : (customizations.generalLayout?.fontColor || '')}
-                                 className='size-4' />
+        <div className='flex items-center pl-2'>
+          <div
+            className='cursor-pointer pe-1'
+            onClick={() => {
+              setShowDropdown(true);
+            }}>
+            <MagnifyingGlassIcon
+              color={
+                darkMode
+                  ? customizations.generalLayout?.fontColorDark || ''
+                  : customizations.generalLayout?.fontColor || ''
+              }
+              className='size-4'
+            />
           </div>
+        </div>
+      }
+      endContent={
+        <div className='flex items-center pr-2'>
+          {customizations.imageUpload?.enable && (
+            <button onClick={() => {
+              setShowDropdown(true);
+              setShowImageUpload(true);
+            }}>
+              <PhotoIcon className='size-6' />
+            </button>
+          )}
         </div>
       }
     />
