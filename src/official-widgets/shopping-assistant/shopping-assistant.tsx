@@ -6,8 +6,6 @@ import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
 import NewChatIcon from './icons/NewChatIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
-import useBreakpoint from '../../common/components/hooks/use-breakpoint';
-import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { DEFAULT_ENDPOINT } from '../../common/constants';
@@ -31,10 +29,9 @@ interface ShoppingAssistantProps {
   renderModalWithoutPortal?: boolean;
 }
 
-const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPortal }) => {
+const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
-  const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
   const root = useContext(RootContext);
@@ -48,21 +45,6 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     intl.formatMessage({ id: 'openingMessage1' }),
     intl.formatMessage({ id: 'openingMessage2' }),
   ];
-
-  const startNewChat = (): void => {
-    setChatId('');
-    setChats([]);
-    setMessage('');
-    setIsWaiting(true);
-    setAllowUserInput(false);
-  };
-
-  const onModalClose = useCallback((): void => {
-    setDialogVisible(false);
-    setTimeout(() => {
-      startNewChat();
-    }, 300);
-  }, []);
 
   const sendMessage = async (
     messageToSend: string,
@@ -274,14 +256,18 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   }, []);
 
   const getScreen = (): ReactElement => (
-      <div className='flex h-full flex-col p-6'>
-        <div className='flex w-full justify-end'>
-          <div onClick={() => setDialogVisible(false)}>
+      <div className='flex h-full flex-col border-r border-neutral-300 dark:border-neutral-800'>
+        <div className='flex w-full py-4 justify-between'>
+          <div className='wigmix-widget-title flex items-center gap-2 px-4'>
+            {intl.formatMessage({ id: 'widgetTitle' })}
+          </div>
+
+          <div className='pr-4' onClick={() => setDialogVisible(false)}>
             <CloseIcon className='size-6 cursor-pointer' />
           </div>
         </div>
         <ChatWindow isWaiting={isWaiting} chats={chats} latestMessage={latestMessage} />
-        <div className='mt-2'>
+        <div className='p-4 border-t border-neutral-300 dark:border-neutral-800'>
           <Textarea value={message}
                     placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
                     minRows={1}
@@ -332,14 +318,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                                   className='wigmix-popup-trigger-icon default size-6'
                               />
                             } />
-        <ViSenzeModal open={dialogVisible} layout={breakpoint} onClose={onModalClose}
-                      renderWithoutPortal={!!renderModalWithoutPortal}
-                      position={customizations.popup?.position || 'center'}
-                      darkMode={darkMode}
-                      fontFamily={customizations.generalLayout?.fontFamily}
-                      placementId={`${appSettings.placementId}`}>
-          {getScreen()}
-        </ViSenzeModal>
+        {dialogVisible && (
+          <div className='fixed inset-y-0 left-0 w-full md:w-1/4 bg-white'>
+            {getScreen()}
+          </div>
+        )}
       </>
   );
 };

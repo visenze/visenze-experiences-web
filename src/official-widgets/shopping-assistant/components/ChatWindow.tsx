@@ -81,25 +81,37 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
 
   return (
       <>
-        <div className='overflow-scroll' onScroll={handleScroll}>
+        <div className='overflow-y-auto h-full shadow-inner p-4 space-y-3' onScroll={handleScroll}>
           {chats.map((chat, idx) => (
               <div className={cn(
-                  'w-full mb-2',
-                  chat.author === 'products' ? `grid grid-cols-3 md:max-w-9/10 lg:max-w-7/10 ${getProductGridCssClasses('gap-x-1')}` : 'flex flex-col',
+                  'w-full mb-4',
+                  chat.author === 'products' ? `grid grid-cols-3 md:max-w-9/10 lg:max-w-7/10 ${getProductGridCssClasses('gap-x-4')}` : 'flex flex-col',
                   chat.author === 'user' ? 'items-end' : '',
               )}
                    style={getProductGridCssConfig(chat.author === 'products')}
                    key={`chat-row-${idx}`}>
                 {chat.author === 'user' && chat.messages.map((message, cidx) => (
-                    <div className='mb-1 w-fit max-w-7/10 bg-buttonPrimary px-4 py-2 text-buttonPrimary' tabIndex={0} key={`chat-user-message-${cidx}`}>
+                    <div
+                      className={cn(
+                        'mb-2 w-fit max-w-7/10 bg-sky-900 p-2 text-sm text-white rounded-lg border border-neutral-100 dark:border-neutral-800',
+                        darkMode ? 'bg-neutral-800' : 'bg-sky-900',
+                      )}
+                      tabIndex={0} key={`chat-user-message-${cidx}`}
+                    >
                       {message}
                     </div>
                 ))}
                 {chat.author === 'bot' && chat.messages.map((message, cidx) => (
-                    <div className='mb-1 w-fit max-w-7/10 bg-buttonPrimary px-4 py-2 text-buttonPrimary' tabIndex={0} key={`chat-bot-message-${cidx}`}
-                         dangerouslySetInnerHTML={{
-                           __html: processMessageForDisplay(message),
-                         }} />
+                    <div
+                      className={cn(
+                        `mb-2 w-fit max-w-7/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm
+                        text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800`,
+                        darkMode ? 'bg-neutral-800' : 'bg-gray-100',
+                      )}
+                      tabIndex={0} key={`chat-bot-message-${cidx}`}
+                      dangerouslySetInnerHTML={{
+                        __html: processMessageForDisplay(message),
+                      }} />
                 ))}
                 {chat.author === 'products' && (chat.products || []).map((product, pidx) => (
                     <>
@@ -119,21 +131,27 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
               </div>
           ))}
           {(isWaiting || latestMessage) && (
-              <div className='chat-row'>
+              <div className='chat-row mt-2 flex gap-2 items-end'>
                 {isWaiting && (
-                    <div className='flex w-fit gap-2 bg-buttonPrimary p-3'>
+                    <div className='flex w-fit gap-2 bg-gray-100 p-2 rounded-lg dark:border-neutral-800'>
                       {[0, 1, 2].map((i) => (
-                          <div key={`loading-dot-${i}`}
-                               className='loading-dot rounded-full'
-                               style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }} />
+                          <div
+                            key={`loading-dot-${i}`}
+                            className='loading-dot rounded-full'
+                            style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
+                          />
                       ))}
                     </div>
                 )}
                 {latestMessage && (
-                    <div className='mb-1 w-fit max-w-7/10 bg-buttonPrimary px-4 py-2 text-buttonPrimary'
-                         dangerouslySetInnerHTML={{
-                           __html: processMessageForDisplay(latestMessage),
-                         }} />
+                    <div
+                      className={`
+                        mb-2 w-fit max-w-7/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100
+                        rounded-lg border border-neutral-100 dark:border-neutral-800`}
+                      dangerouslySetInnerHTML={{
+                        __html: processMessageForDisplay(latestMessage),
+                      }}
+                    />
                 )}
               </div>
           )}
@@ -144,9 +162,10 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
           }}></div>
         </div>
         <div className='flex-grow'></div>
-        <div className='relative'>
+        <div className='relative h-8'>
           {showBottomArrow && (
-              <div className='absolute bottom-1 right-1 cursor-pointer' onClick={scrollToBottom}>
+              <div className='absolute bottom-2 right-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
+                   onClick={scrollToBottom}>
                 <DownArrowIcon />
               </div>
           )}
