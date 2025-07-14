@@ -10,6 +10,7 @@ import PopupTriggerButton from '../../common/components/popup-trigger-button/Pop
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { DEFAULT_ENDPOINT } from '../../common/constants';
 import CloseIcon from '../../common/icons/CloseIcon';
+import PlusCircleIcon from '../../common/icons/PlusCircleIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
@@ -264,6 +265,35 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
     });
   };
 
+  const newChat = (): void => {
+    setIsWaiting(true);
+    setAllowUserInput(false);
+    setChats([]);
+    setLatestMessage('');
+    setSuggestions([]);
+
+    const renderChat = (idx: number, cId: string): void => {
+      if (idx > openingMessages.length) {
+        setIsWaiting(false);
+        setAllowUserInput(true);
+        return;
+      }
+      setTimeout(() => {
+        setChats(() => [{
+          chatId: cId,
+          requestId: '',
+          author: 'bot',
+          messages: openingMessages.slice(0, idx),
+        }]);
+        renderChat(idx + 1, cId);
+      });
+    };
+    widgetClient.visearch.generateUuid((uuid) => {
+      setChatId(uuid);
+      renderChat(1, uuid);
+    });
+  };
+
   const onChatButtonClick = useCallback((): void => {
     openDialog();
   }, []);
@@ -275,8 +305,13 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
             {intl.formatMessage({ id: 'widgetTitle' })}
           </div>
 
-          <div className='pr-4' onClick={() => setDialogVisible(false)}>
-            <CloseIcon className='size-6 cursor-pointer' />
+          <div className='flex items-center gap-2 pr-4'>
+            <div onClick={() => newChat()}>
+              <PlusCircleIcon className='size-6 cursor-pointer' />
+            </div>
+            <div onClick={() => setDialogVisible(false)}>
+              <CloseIcon className='size-6 cursor-pointer' />
+            </div>
           </div>
         </div>
         <ChatWindow isWaiting={isWaiting} chats={chats} latestMessage={latestMessage} suggestions={suggestions} sendMessage={sendMessage} />
