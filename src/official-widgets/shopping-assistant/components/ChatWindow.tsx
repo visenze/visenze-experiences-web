@@ -18,9 +18,11 @@ interface ChatWindowProps {
   isWaiting: boolean;
   chats: Chat[];
   latestMessage: string;
+  suggestions: string[];
+  sendMessage: (message: string) => void;
 }
 
-const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) => {
+const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, suggestions, sendMessage }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
@@ -81,7 +83,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
 
   return (
       <>
-        <div className='overflow-y-auto h-full shadow-inner p-4 space-y-3' onScroll={handleScroll}>
+        <div className='overflow-y-auto h-full px-4 my-4 space-y-3' onScroll={handleScroll}>
           {chats.map((chat, idx) => (
               <div className={cn(
                   'w-full mb-4',
@@ -154,6 +156,22 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
                     />
                 )}
               </div>
+          )}
+          {!isWaiting && suggestions.length > 0 && (
+            <div className='mt-2 flex items-end'>
+              <div className='flex flex-col gap-2'>
+                {suggestions.map((suggestion, idx) => (
+                  <div
+                    key={`suggestion-${idx}`}
+                    className='w-fit bg-blue-100 dark:bg-blue-300 p-2 text-xs text-blue-900 dark:text-blue-900
+                    rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
+                    onClick={() => sendMessage(suggestion)}
+                  >
+                    {suggestion}
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
           <div ref={(el) => {
             if (el) {

@@ -20,6 +20,7 @@ import { getFlattenProduct } from '../../common/utils';
 // - [[pid]] **title** - ...
 // 1. [[pid]] **title** - ...
 const PRODUCT_LINE_REGEX = /^(?:\d+\.? |- )?\[\[(.*)]]/;
+const SUGGESTION_LINE_REGEX = /\(\(([^)]+)\)\)/g;
 
 // Sometimes an image can be returned by the bot, in a markdown-compatible format:
 //     ![title](im_url)
@@ -40,6 +41,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   const [isWaiting, setIsWaiting] = useState(true);
   const [allowUserInput, setAllowUserInput] = useState(false);
   const [latestMessage, setLatestMessage] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const intl = useIntl();
   const openingMessages = [
     intl.formatMessage({ id: 'openingMessage1' }),
@@ -55,6 +57,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
     }
     setIsWaiting(true);
     setMessage('');
+    setSuggestions([]);
     setChats((chats1) => [
       ...chats1,
       {
@@ -94,6 +97,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
       va_uid: uid,
       va_sid: sid,
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
+      chat_agent: 'shopping_assistant_v2',
     });
     fetchEventSource(`${appSettings.endpoint || DEFAULT_ENDPOINT}/v1/product/multisearch/chat/shopping-assistant?${params.toString()}`, {
       openWhenHidden: true,
@@ -168,12 +172,20 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
               }]);
             }
           }
+          const suggestionInCurrentLine = currentLineContent.match(SUGGESTION_LINE_REGEX);
+          if (suggestionInCurrentLine) {
+            const currentSuggestion = suggestionInCurrentLine[0];
+            const currentSuggestionSplit = currentSuggestion.replace('((', '').replace('))', '').trim();
+            setSuggestions((prevSuggestions) => [...prevSuggestions, currentSuggestionSplit]);
+          }
           if (isFetchingProduct) {
             messageToDisplay = currentTokensSplit.slice(currentLine).join('\n');
           } else {
             messageToDisplay = currentTokens;
           }
-          setLatestMessage(messageToDisplay);
+
+          const messageToDisplayWithoutSuggestions = messageToDisplay.replace(SUGGESTION_LINE_REGEX, '').trim();
+          setLatestMessage(messageToDisplayWithoutSuggestions);
         } else if (ev.event === 'product') {
           const data = JSON.parse(ev.data);
           products.push(getFlattenProduct(data));
@@ -181,7 +193,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
       },
       onclose: () => {
         const constructedResponse = tokens.join('');
-        const constructedResponseLines = constructedResponse.split('\n');
+        const constructedResponseWithoutSuggestions = constructedResponse.replace(SUGGESTION_LINE_REGEX, '').trim();
+        const constructedResponseLines = constructedResponseWithoutSuggestions.split('\n');
         if (products.length) {
           const tokensToDisplay: string[] = [];
           // Traverse the lines in reverse until the first PID line is found
@@ -257,7 +270,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
 
   const getScreen = (): ReactElement => (
       <div className='flex h-full flex-col border-r border-neutral-300 dark:border-neutral-800'>
-        <div className='flex w-full py-4 justify-between'>
+        <div className='flex w-full py-4 justify-between shadow'>
           <div className='wigmix-widget-title flex items-center gap-2 px-4'>
             {intl.formatMessage({ id: 'widgetTitle' })}
           </div>
@@ -266,7 +279,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
             <CloseIcon className='size-6 cursor-pointer' />
           </div>
         </div>
-        <ChatWindow isWaiting={isWaiting} chats={chats} latestMessage={latestMessage} />
+        <ChatWindow isWaiting={isWaiting} chats={chats} latestMessage={latestMessage} suggestions={suggestions} sendMessage={sendMessage} />
         <div className='p-4 border-t border-neutral-300 dark:border-neutral-800'>
           <Textarea value={message}
                     placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}

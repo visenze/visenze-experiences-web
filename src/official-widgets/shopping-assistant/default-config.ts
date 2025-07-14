@@ -200,15 +200,15 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   generalLayout: {
     headingFont: {
       mobile: {
-        size: 20,
+        size: 16,
         weight: 400,
       },
       tablet: {
-        size: 22,
+        size: 16,
         weight: 400,
       },
       desktop: {
-        size: 24,
+        size: 16,
         weight: 400,
       },
     },
