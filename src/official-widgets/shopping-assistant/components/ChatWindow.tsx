@@ -2,6 +2,8 @@ import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
+import SparklesIcon from '../../../common/icons/SparklesIcon';
+import UserIcon from '../../../common/icons/UserIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { isImageDataUrl, type SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
@@ -98,52 +100,75 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
         <div className='overflow-y-auto h-full px-4 my-4 space-y-3' onScroll={handleScroll}>
           {chats.map((chat, idx) => (
               <div className={cn(
-                  'w-full mb-4',
+                  'w-full',
                   chat.author === 'products' ? `grid grid-cols-3 md:max-w-9/10 lg:max-w-7/10 ${getProductGridCssClasses('gap-x-4')}` : 'flex flex-col',
                   chat.author === 'user' ? 'items-end' : '',
               )}
                    style={getProductGridCssConfig(chat.author === 'products')}
                    key={`chat-row-${idx}`}>
                 {chat.author === 'user' && chat.image && (
-                  <div
-                    className='mb-2 w-fit max-w-9/10 bg-sky-900 p-2 text-sm text-white rounded-lg border border-neutral-100 dark:border-neutral-800'
-                    tabIndex={0} key={`chat-user-message-${idx}`}
-                  >
-                    <img
-                      alt='Uploaded image'
-                      className='max-w-full h-auto rounded-lg shadow-sm border'
-                      style={{ maxHeight: '200px' }}
-                      src={getFile(chat.image)}
-                    />
+                  <div className='flex gap-1 max-w-9/10'>
+                    <div
+                      className='mb-2 w-fit max-w-9/10 bg-sky-900 p-2 text-sm text-white rounded-lg border border-neutral-100 dark:border-neutral-800'
+                      tabIndex={0} key={`chat-user-message-${idx}`}
+                    >
+                      <img
+                        alt='Uploaded image'
+                        className='max-w-full h-auto rounded-lg shadow-sm border'
+                        style={{ maxHeight: '200px' }}
+                        src={getFile(chat.image)}
+                      />
+                    </div>
+                    <div className='size-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0'>
+                      <UserIcon className='size-6' />
+                    </div>
                   </div>
                 )}
                 {chat.author === 'user' && chat.messages.map((message, cidx) => (
+                  <div
+                    className='flex gap-1 max-w-9/10'
+                    tabIndex={0}
+                    key={`chat-user-message-${cidx}`}>
                     <div
                       className={cn(
-                        'mb-2 w-fit max-w-9/10 bg-sky-900 p-2 text-sm text-white rounded-lg border border-neutral-100 dark:border-neutral-800',
+                        'mb-2 w-fit bg-sky-900 p-2 text-sm text-white rounded-lg border border-neutral-100 dark:border-neutral-800',
                         darkMode ? 'bg-neutral-800' : 'bg-sky-900',
                       )}
-                      tabIndex={0} key={`chat-user-message-${cidx}`}
                     >
                       {message}
                     </div>
+                    <div className='size-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0'>
+                      <UserIcon className='size-6' />
+                    </div>
+                  </div>
                 ))}
                 {chat.author === 'bot' && chat.messages.map((message, cidx) => (
+                  <div
+                    className='flex gap-1 max-w-9/10'
+                    tabIndex={0}
+                    key={`chat-bot-message-${cidx}`}>
+                    <div className='size-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0'>
+                      <SparklesIcon className='size-5' />
+                    </div>
                     <div
                       className={cn(
                         `mb-2 w-fit max-w-9/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm
                         text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800`,
                         darkMode ? 'bg-neutral-800' : 'bg-gray-100',
                       )}
-                      tabIndex={0} key={`chat-bot-message-${cidx}`}
                       dangerouslySetInnerHTML={{
                         __html: processMessageForDisplay(message),
-                      }} />
+                      }}
+                    />
+                  </div>
                 ))}
                 {chat.author === 'products' && (chat.products || []).map((product, pidx) => (
-                    <>
-                      <div key={`product-${pidx}`}>
-                        <ProductCard key={`${product.product_id}-${pidx}`}
+                  <div
+                    className='flex gap-1 max-w-9/10'
+                    key={`${product.product_id}-${pidx}`}>
+                    <div className='size-8 flex-shrink-0' />
+                    <div key={`product-${pidx}`}>
+                      <ProductCard
                                      result={product}
                                      metadata={{
                                        queryId: chat.requestId,
@@ -152,15 +177,19 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                                      pwPrefix='sa'
                                      isRecommendation={false}
                                      hasFindSimilar={false} />
-                      </div>
-                    </>
+                    </div>
+                  </div>
                 ))}
               </div>
           ))}
           {(isWaiting || latestMessage) && (
-              <div className='chat-row mt-2 flex gap-2 items-end'>
+              <div className='chat-row flex gap-2 items-end'>
                 {isWaiting && (
-                    <div className='flex w-fit gap-2 bg-gray-100 p-2 rounded-lg dark:border-neutral-800'>
+                  <div className='flex gap-1 max-w-9/10'>
+                    <div className='size-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0'>
+                      <SparklesIcon className='size-5' />
+                    </div>
+                    <div className='flex items-center w-fit gap-2 bg-gray-100 p-2 rounded-lg dark:border-neutral-800'>
                       {[0, 1, 2].map((i) => (
                           <div
                             key={`loading-dot-${i}`}
@@ -168,6 +197,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                             style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
                           />
                       ))}
+                    </div>
                     </div>
                 )}
                 {latestMessage && (
@@ -205,7 +235,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
           }}></div>
         </div>
         <div className='flex-grow'></div>
-        <div className='relative h-8'>
+        <div className='relative'>
           {showBottomArrow && (
               <div className='absolute bottom-2 right-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
                    onClick={scrollToBottom}>
