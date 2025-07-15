@@ -1,4 +1,5 @@
 import { Textarea } from '@heroui/input';
+import { cn } from '@heroui/theme';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { type FC, type ReactElement, useCallback, useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -6,12 +7,16 @@ import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
 import NewChatIcon from './icons/NewChatIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
+import FileDropzone from '../../common/components/FileDropzone';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { DEFAULT_ENDPOINT } from '../../common/constants';
 import CloseIcon from '../../common/icons/CloseIcon';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import PlusCircleIcon from '../../common/icons/PlusCircleIcon';
+import UploadIcon from '../../common/icons/UploadIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
+import { isImageFile, type SearchImage, type SearchImageOrPid } from '../../common/types/image';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import { getFlattenProduct } from '../../common/utils';
@@ -36,6 +41,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   const { appSettings, customizations } = widgetConfig;
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
+  const [image, setImage] = useState<SearchImageOrPid | undefined>();
   const root = useContext(RootContext);
   const [chats, setChats] = useState<Chat[]>([]);
   const [chatId, setChatId] = useState('');
@@ -50,10 +56,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   ];
 
   const sendMessage = async (
-    messageToSend: string,
+    messageToSend?: string,
+    imageToSend?: SearchImageOrPid,
     chatIdParam = '',
   ): Promise<void> => {
-    if (!messageToSend) {
+    if (!messageToSend && !imageToSend) {
       return;
     }
     setIsWaiting(true);
@@ -65,7 +72,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
         chatId: '',
         requestId: '',
         author: 'user',
-        messages: [messageToSend],
+        messages: messageToSend ? [messageToSend] : [],
+        image: imageToSend,
       },
     ]);
 
@@ -94,13 +102,21 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
       app_key: appSettings.appKey,
       placement_id: appSettings.placementId.toString(),
       chat_id: chatIdToUse,
-      q: messageToSend,
+      q: messageToSend || 'Find me products that look like the main product in this image and are the same color as the main product',
       va_uid: uid,
       va_sid: sid,
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
       chat_agent: 'shopping_assistant_v2',
     });
+
+    const formData = new FormData();
+    if (imageToSend && isImageFile(imageToSend)) {
+      formData.append('image', imageToSend.files[0]);
+    }
+
     fetchEventSource(`${appSettings.endpoint || DEFAULT_ENDPOINT}/v1/product/multisearch/chat/shopping-assistant?${params.toString()}`, {
+      method: 'POST',
+      body: formData,
       openWhenHidden: true,
       onmessage: (ev) => {
         if (ev.event === 'chat_id') {
@@ -238,6 +254,10 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
     });
   };
 
+  const onImageUpload = (data: SearchImage): void => {
+    setImage(data);
+  };
+
   const openDialog = (): void => {
     if (dialogVisible) {
       return;
@@ -315,7 +335,28 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
           </div>
         </div>
         <ChatWindow isWaiting={isWaiting} chats={chats} latestMessage={latestMessage} suggestions={suggestions} sendMessage={sendMessage} />
-        <div className='p-4 border-t border-neutral-300 dark:border-neutral-800'>
+        <div className='flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
+          <div className='flex justify-end gap-2'>
+            <FileDropzone onImageUpload={onImageUpload} name='cs-upload-icon'>
+              <div className={cn('p-2 border border-gray rounded-md')}>
+                {customizations.imageUpload?.icon?.url ? (
+                    <CustomizableIcon
+                        height={80}
+                        width={80}
+                        url={customizations.imageUpload.icon.url}
+                        color={darkMode
+                          ? (customizations.imageUpload.icon.colorDark || '')
+                          : (customizations.imageUpload.icon.color || '')}
+                    />
+                ) : (
+                    <UploadIcon className='size-5'
+                                color={darkMode
+                                    ? (customizations.imageUpload?.icon?.colorDark || '')
+                                    : (customizations.imageUpload?.icon?.color || '')} />
+                )}
+              </div>
+            </FileDropzone>
+          </div>
           <Textarea value={message}
                     placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
                     minRows={1}
@@ -341,6 +382,10 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
         </div>
       </div>
   );
+
+  useEffect(() => {
+    sendMessage(undefined, image);
+  }, [image]);
 
   useEffect(() => {
     widgetClient.registerWidgetOpener(() => {

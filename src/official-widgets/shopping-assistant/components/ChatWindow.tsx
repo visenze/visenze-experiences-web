@@ -3,6 +3,7 @@ import { type CSSProperties, type FC, useContext, useEffect, useState } from 're
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import { WidgetDataContext } from '../../../common/types/contexts';
+import { isImageDataUrl, type SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
 import DownArrowIcon from '../icons/DownArrowIcon';
 
@@ -12,6 +13,7 @@ export interface Chat {
   author: 'user' | 'bot' | 'products';
   messages: string[];
   products?: ProcessedProduct[];
+  image?: SearchImageOrPid;
 }
 
 interface ChatWindowProps {
@@ -28,6 +30,16 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const [messageBottomRef, setMessageBottomRef] = useState<HTMLDivElement>();
+
+  const getFile = (image: SearchImageOrPid | undefined): string => {
+    if (!image) {
+      return '';
+    }
+    if (isImageDataUrl(image)) {
+      return image.file;
+    }
+    return '';
+  };
 
   const handleScroll = (e: any): void => {
     const t = e.target;
@@ -92,10 +104,23 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
               )}
                    style={getProductGridCssConfig(chat.author === 'products')}
                    key={`chat-row-${idx}`}>
+                {chat.author === 'user' && chat.image && (
+                  <div
+                    className='mb-2 w-fit max-w-9/10 bg-sky-900 p-2 text-sm text-white rounded-lg border border-neutral-100 dark:border-neutral-800'
+                    tabIndex={0} key={`chat-user-message-${idx}`}
+                  >
+                    <img
+                      alt='Uploaded image'
+                      className='max-w-full h-auto rounded-lg shadow-sm border'
+                      style={{ maxHeight: '200px' }}
+                      src={getFile(chat.image)}
+                    />
+                  </div>
+                )}
                 {chat.author === 'user' && chat.messages.map((message, cidx) => (
                     <div
                       className={cn(
-                        'mb-2 w-fit max-w-7/10 bg-sky-900 p-2 text-sm text-white rounded-lg border border-neutral-100 dark:border-neutral-800',
+                        'mb-2 w-fit max-w-9/10 bg-sky-900 p-2 text-sm text-white rounded-lg border border-neutral-100 dark:border-neutral-800',
                         darkMode ? 'bg-neutral-800' : 'bg-sky-900',
                       )}
                       tabIndex={0} key={`chat-user-message-${cidx}`}
@@ -106,7 +131,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                 {chat.author === 'bot' && chat.messages.map((message, cidx) => (
                     <div
                       className={cn(
-                        `mb-2 w-fit max-w-7/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm
+                        `mb-2 w-fit max-w-9/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm
                         text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800`,
                         darkMode ? 'bg-neutral-800' : 'bg-gray-100',
                       )}
