@@ -319,18 +319,26 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   }, []);
 
   const getScreen = (): ReactElement => (
-      <div className='flex h-full flex-col border-r border-neutral-300 dark:border-neutral-800'>
+      <div className='flex h-full flex-col bg-white dark:bg-neutral-700 border-x border-neutral-300 dark:border-neutral-800'>
         <div className='flex w-full py-4 justify-between shadow'>
-          <div className='wigmix-widget-title flex items-center gap-2 px-4'>
+          <div className='wigmix-widget-title flex items-center gap-2 px-4'
+            style={{ color: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor }}
+          >
             {intl.formatMessage({ id: 'widgetTitle' })}
           </div>
 
           <div className='flex items-center gap-2 pr-4'>
             <div onClick={() => newChat()}>
-              <PlusCircleIcon className='size-6 cursor-pointer' />
+              <PlusCircleIcon className='size-6 cursor-pointer'
+                color={darkMode
+                  ? (customizations.generalLayout?.fontColorDark || '')
+                  : (customizations.generalLayout?.fontColor || '')} />
             </div>
             <div onClick={() => setDialogVisible(false)}>
-              <CloseIcon className='size-6 cursor-pointer' />
+              <CloseIcon className='size-6 cursor-pointer'
+                color={darkMode
+                  ? (customizations.generalLayout?.fontColorDark || '')
+                  : (customizations.generalLayout?.fontColor || '')} />
             </div>
           </div>
         </div>
@@ -338,21 +346,21 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
         <div className='flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
           <div className='flex justify-end gap-2'>
             <FileDropzone onImageUpload={onImageUpload} name='cs-upload-icon'>
-              <div className={cn('p-2 border border-gray rounded-md')}>
+              <div className={cn('p-2 border border-gray dark:border-neutral-500 rounded-md')}>
                 {customizations.imageUpload?.icon?.url ? (
                     <CustomizableIcon
                         height={80}
                         width={80}
                         url={customizations.imageUpload.icon.url}
                         color={darkMode
-                          ? (customizations.imageUpload.icon.colorDark || '')
-                          : (customizations.imageUpload.icon.color || '')}
+                          ? (customizations.generalLayout?.fontColorDark || '')
+                          : (customizations.generalLayout?.fontColor || '')}
                     />
                 ) : (
                     <UploadIcon className='size-5'
                                 color={darkMode
-                                    ? (customizations.imageUpload?.icon?.colorDark || '')
-                                    : (customizations.imageUpload?.icon?.color || '')} />
+                                    ? (customizations.generalLayout?.fontColorDark || '')
+                                    : (customizations.generalLayout?.fontColor || '')} />
                 )}
               </div>
             </FileDropzone>
@@ -371,12 +379,17 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
                       }
                     }}
                     endContent={
-                      <SubmitChatIcon onClickHandler={() => {
+                      <SubmitChatIcon
+                        onClickHandler={() => {
                         if (!allowUserInput) {
                           return;
                         }
                         sendMessage(message);
-                      }} />
+                      }}
+                      color={darkMode
+                        ? (customizations.generalLayout?.fontColorDark || '')
+                        : (customizations.generalLayout?.fontColor || '')}
+                      />
                     }
           />
         </div>
@@ -412,7 +425,10 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
                               />
                             } />
         {dialogVisible && (
-          <div className='fixed inset-y-0 left-0 w-full md:w-1/4 bg-white'>
+          <div className={cn(
+            'fixed inset-y-0 w-full md:w-1/4 bg-white',
+            widgetConfig.customizations.popup?.position === 'right' ? 'right-0' : 'left-0',
+          )}>
             {getScreen()}
           </div>
         )}

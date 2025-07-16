@@ -109,7 +109,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                 {chat.author === 'user' && chat.image && (
                   <div className='flex gap-1 max-w-9/10'>
                     <div
-                      className='mb-2 w-fit max-w-9/10 bg-sky-900 p-2 text-sm text-white rounded-lg border border-neutral-100 dark:border-neutral-800'
+                      className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-800'
                       tabIndex={0} key={`chat-user-message-${idx}`}
                     >
                       <img
@@ -119,7 +119,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                         src={getFile(chat.image)}
                       />
                     </div>
-                    <div className='size-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0'>
+                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
                       <UserIcon className='size-6' />
                     </div>
                   </div>
@@ -130,14 +131,12 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                     tabIndex={0}
                     key={`chat-user-message-${cidx}`}>
                     <div
-                      className={cn(
-                        'mb-2 w-fit bg-sky-900 p-2 text-sm text-white rounded-lg border border-neutral-100 dark:border-neutral-800',
-                        darkMode ? 'bg-neutral-800' : 'bg-sky-900',
-                      )}
+                      className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-800'
                     >
                       {message}
                     </div>
-                    <div className='size-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0'>
+                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
                       <UserIcon className='size-6' />
                     </div>
                   </div>
@@ -147,15 +146,13 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                     className='flex gap-1 max-w-9/10'
                     tabIndex={0}
                     key={`chat-bot-message-${cidx}`}>
-                    <div className='size-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0'>
+                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
                       <SparklesIcon className='size-5' />
                     </div>
                     <div
-                      className={cn(
-                        `mb-2 w-fit max-w-9/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm
-                        text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800`,
-                        darkMode ? 'bg-neutral-800' : 'bg-gray-100',
-                      )}
+                      className='mb-2 w-fit max-w-9/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm
+                        text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800'
                       dangerouslySetInnerHTML={{
                         __html: processMessageForDisplay(message),
                       }}
@@ -163,22 +160,16 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                   </div>
                 ))}
                 {chat.author === 'products' && (chat.products || []).map((product, pidx) => (
-                  <div
-                    className='flex gap-1 max-w-9/10'
-                    key={`${product.product_id}-${pidx}`}>
-                    <div className='size-8 flex-shrink-0' />
-                    <div key={`product-${pidx}`}>
-                      <ProductCard
-                                     result={product}
-                                     metadata={{
-                                       queryId: chat.requestId,
-                                     }}
-                                     index={pidx}
-                                     pwPrefix='sa'
-                                     isRecommendation={false}
-                                     hasFindSimilar={false} />
-                    </div>
-                  </div>
+                  <ProductCard
+                                  result={product}
+                                  key={`${product.product_id}-${pidx}`}
+                                  metadata={{
+                                    queryId: chat.requestId,
+                                  }}
+                                  index={pidx}
+                                  pwPrefix='sa'
+                                  isRecommendation={false}
+                                  hasFindSimilar={false} />
                 ))}
               </div>
           ))}
@@ -186,10 +177,12 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
               <div className='chat-row flex gap-2 items-end'>
                 {isWaiting && (
                   <div className='flex gap-1 max-w-9/10'>
-                    <div className='size-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0'>
+                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
                       <SparklesIcon className='size-5' />
                     </div>
-                    <div className='flex items-center w-fit gap-2 bg-gray-100 p-2 rounded-lg dark:border-neutral-800'>
+                    <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
                       {[0, 1, 2].map((i) => (
                           <div
                             key={`loading-dot-${i}`}
@@ -218,7 +211,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                 {suggestions.map((suggestion, idx) => (
                   <div
                     key={`suggestion-${idx}`}
-                    className='w-fit bg-blue-100 dark:bg-blue-300 p-2 text-xs text-blue-900 dark:text-blue-900
+                    className='w-fit bg-sky-100 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
                     rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
                     onClick={() => sendMessage(suggestion)}
                   >
