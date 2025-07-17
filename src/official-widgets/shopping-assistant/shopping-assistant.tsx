@@ -1,8 +1,9 @@
 import { Textarea } from '@heroui/input';
 import { cn } from '@heroui/theme';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { type FC, type ReactElement, useCallback, useContext, useEffect, useState } from 'react';
+import { type FC, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import Webcam from 'react-webcam';
 import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
 import NewChatIcon from './icons/NewChatIcon';
@@ -11,6 +12,7 @@ import FileDropzone from '../../common/components/FileDropzone';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { DEFAULT_ENDPOINT } from '../../common/constants';
+import CameraIcon from '../../common/icons/CameraIcon';
 import CloseIcon from '../../common/icons/CloseIcon';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import PlusCircleIcon from '../../common/icons/PlusCircleIcon';
@@ -37,6 +39,7 @@ interface ShoppingAssistantProps {
 }
 
 const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
+  const webcamRef = useRef<Webcam>(null);
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -49,6 +52,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   const [allowUserInput, setAllowUserInput] = useState(false);
   const [latestMessage, setLatestMessage] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showCameraDrawer, setShowCameraDrawer] = useState(false);
   const intl = useIntl();
   const openingMessages = [
     intl.formatMessage({ id: 'openingMessage1' }),
@@ -258,6 +262,23 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
     setImage(data);
   };
 
+  const capture = useCallback(() => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (imageSrc) {
+        fetch(imageSrc)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const file = new File([blob], `${Date.now()}`, { type: 'image/png' });
+            const imageFile = { files: [file], file: imageSrc };
+
+            onImageUpload(imageFile);
+            setShowCameraDrawer(false);
+          });
+      }
+    }
+  }, [webcamRef]);
+
   const openDialog = (): void => {
     if (dialogVisible) {
       return;
@@ -343,8 +364,52 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
           </div>
         </div>
         <ChatWindow isWaiting={isWaiting} chats={chats} latestMessage={latestMessage} suggestions={suggestions} sendMessage={sendMessage} />
-        <div className='flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
+        <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
+          {showCameraDrawer && (
+            <div
+              className='absolute inset-x-0 bottom-0 z-50 bg-white dark:bg-neutral-800 shadow-lg flex flex-col items-center p-4 animate-slideup'
+              style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, minHeight: 340 }}
+            >
+              <div className='flex w-full justify-between items-center mb-2'>
+                <span className='font-semibold text-lg'>Camera Capture</span>
+                <button onClick={() => setShowCameraDrawer(false)}>
+                  <CloseIcon
+                    className='size-6 cursor-pointer'
+                    color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                  />
+                </button>
+              </div>
+              <div className='w-full flex justify-center'>
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat='image/jpeg'
+                  className='rounded-lg max-w-full'
+                  videoConstraints={{ facingMode: 'user' }}
+                />
+              </div>
+              <button onClick={capture} className='w-full flex items-center justify-center gap-2 mt-4 bg-blue-400 text-white px-4 py-2 rounded'>
+                <CameraIcon
+                  className='size-5 cursor-pointer'
+                  color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                />
+                <span
+                  style={{ color: darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '') }}
+                >
+                  Capture photo
+                </span>
+              </button>
+            </div>
+          )}
           <div className='flex justify-end gap-2'>
+            <div className={cn('p-2 border border-gray dark:border-neutral-500 rounded-md')} onClick={() => setShowCameraDrawer(true)}>
+              <CameraIcon
+                className='size-5 cursor-pointer'
+                color={darkMode
+                  ? (customizations.generalLayout?.fontColorDark || '')
+                  : (customizations.generalLayout?.fontColor || '')}
+              />
+            </div>
             <FileDropzone onImageUpload={onImageUpload} name='cs-upload-icon'>
               <div className={cn('p-2 border border-gray dark:border-neutral-500 rounded-md')}>
                 {customizations.imageUpload?.icon?.url ? (
