@@ -9,7 +9,8 @@ const ENABLE_CUSTOMIZATION = true;
 
 const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, widgetClient, element }) => {
   const imUrl = element.dataset['url'] ?? '';
-  if (!imUrl) {
+  const pid = element.dataset['pid'] ?? '';
+  if (!imUrl && !pid) {
     return <></>;
   }
 
@@ -19,7 +20,7 @@ const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, widgetClient, ele
                 defaultTexts={DEFAULT_TEXTS}
                 defaultCustomizations={DEFAULT_CUSTOMIZATIONS}
                 enableCustomization={ENABLE_CUSTOMIZATION}>
-      <SimilarSearch imUrl={imUrl} />
+      <SimilarSearch pid={pid} imUrl={imUrl} />
     </AppWrapper>
   );
 };

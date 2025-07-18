@@ -30,6 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+<!-- BEGIN visenze-experiences-web 1.0.12 -->
+## [1.0.12](https://github.com/visenze/visenze-experiences-web/compare/1.0.11...1.0.12) - 2025-07-18
+
+### Added
+
+- similar-search: Supported usage of product ID instead of product image URL as the basis for search
+<!-- END visenze-experiences-web 1.0.12 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.11 -->
 ## [1.0.11](https://github.com/visenze/visenze-experiences-web/compare/1.0.10...1.0.11) - 2025-06-19
 
