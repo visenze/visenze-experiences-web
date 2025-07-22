@@ -355,8 +355,8 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
             </div>
 
             <div className='flex flex-col-reverse lg:flex-row-reverse divide-gray-200 py-1 px-4'>
-              <div className='px-4 py-1 w-full lg:3/4 overflow-x-scroll'>
-                <p className='text-large font-semibold leading-6 text-primary pb-1'>
+              <div className='px-4 py-1 w-full lg:3/4 overflow-x-scroll text-primary'>
+                <p className='text-large font-semibold leading-6 pb-1'>
                   {intl.formatMessage({ id: 'suggestions' })}
                 </p>
                 <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
@@ -428,7 +428,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
             )}
             <div className='flex flex-col-reverse lg:flex-row-reverse divide-x-reverse divide-gray-200 py-1 px-4'>
               {customizations.trendingProducts?.enable && trendingProducts.length > 0 && (
-                <div className='px-4 py-1 w-full md:3/4 overflow-x-scroll'>
+                <div className='px-4 py-1 w-full md:3/4 overflow-x-scroll text-primary'>
                   <p className='text-large font-semibold leading-6 pb-1'>
                     {intl.formatMessage({ id: 'trending' })}
                   </p>
