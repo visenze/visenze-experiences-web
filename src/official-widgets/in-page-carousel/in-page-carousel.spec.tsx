@@ -191,8 +191,8 @@ describe('in-page-carousel', () => {
 
     // Check horizontal scroll rendered
     expect(testComponent.getByTestId('mlt-product-result-carousel')).not.toBeNull();
-    // Widget title should be rendered
-    expect(testComponent.getByTestId('mlt-widget-title')).not.toBeNull();
+    // Widget title should not be rendered
+    expect(testComponent.queryAllByTestId('mlt-widget-title').length).toEqual(0);
     // Show More button should be present
     expect(testComponent.getByRole('button', { name: /show more/i })).not.toBeNull();
   });

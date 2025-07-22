@@ -89,7 +89,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
   }
 
   const renderHorizontalScroll = (): React.ReactNode => (
-    <div className='relative text-primary' data-pw='mlt-product-result-carousel'>
+    <div className='relative text-primary' data-testid='mlt-product-result-carousel'>
       <div className='flex overflow-x-auto no-scrollbar pb-2' style={{ scrollSnapType: 'x mandatory' }}>
         {productResults.map((result, index) => (
           <div
@@ -111,7 +111,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
   );
 
   const renderGrid = (): React.ReactNode => (
-    <div className='relative text-primary lg:px-10' data-pw='mlt-product-result-grid'>
+    <div className='relative text-primary lg:px-10' data-testid='mlt-product-result-grid'>
       <div className='grid' style={getProductGridCssConfig()}>
         {productResults.map((result, index) => (
           <div
@@ -138,7 +138,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
         <>
           <div className='flex justify-between'>
             {customizations.generalLayout?.showWidgetTitle && (
-              <div className='wigmix-widget-title py-2 text-primary' data-pw='mlt-widget-title'>
+              <div className='wigmix-widget-title py-2 text-primary' data-testid='mlt-widget-title'>
                 {intl.formatMessage({ id: 'widgetTitle' })}
               </div>
             )}
