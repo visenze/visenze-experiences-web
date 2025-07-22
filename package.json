@@ -31,6 +31,8 @@
     "start:merchandise-search-bar": "export widget_dir='official-widgets/merchandise-search-bar' && webpack-dev-server --config webpack.dev.js",
     "build:embedded-search-results": "export widget_dir='official-widgets/embedded-search-results' && webpack --config webpack.config.js",
     "start:embedded-search-results": "export widget_dir='official-widgets/embedded-search-results' && webpack-dev-server --config webpack.dev.js",
+    "build:in-page-carousel": "export widget_dir='official-widgets/in-page-carousel' && webpack --config webpack.config.js",
+    "start:in-page-carousel": "export widget_dir='official-widgets/in-page-carousel' && webpack-dev-server --config webpack.dev.js",
     "test": "export unit_test=true && jest",
     "test:watch": "export unit_test=true && jest --watch",
     "lint": "eslint ./src",

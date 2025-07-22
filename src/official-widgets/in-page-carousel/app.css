@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+@layer components {
+  .wigmix-product-card {
+    @apply border-width-productCard border-color-productCard rounded-radius-productCard;
+  }
+  .wigmix-widget-title {
+    @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
+  }
+  .wigmix-product-card-title {
+    @apply text-mobile-productCardTitle md:text-tablet-productCardTitle lg:text-desktop-productCardTitle font-mobile-productCardTitle md:font-tablet-productCardTitle lg:font-desktop-productCardTitle;
+  }
+  .wigmix-product-card-secondary-title {
+    @apply text-mobile-productCardSecondaryTitle md:text-tablet-productCardSecondaryTitle lg:text-desktop-productCardSecondaryTitle font-mobile-productCardSecondaryTitle md:font-tablet-productCardSecondaryTitle lg:font-desktop-productCardSecondaryTitle;
+  }
+  .wigmix-product-card-price {
+    @apply text-mobile-productCardPrice md:text-tablet-productCardPrice lg:text-desktop-productCardPrice font-mobile-productCardPrice md:font-tablet-productCardPrice lg:font-desktop-productCardPrice;
+  }
+  .wigmix-product-card-original-price {
+    @apply text-mobile-productCardOriginalPrice md:text-tablet-productCardOriginalPrice lg:text-desktop-productCardOriginalPrice font-mobile-productCardOriginalPrice md:font-tablet-productCardOriginalPrice lg:font-desktop-productCardOriginalPrice;
+  }
+}
+
+.slick-track {
+  margin-left: unset !important;
+}
