@@ -20,7 +20,7 @@ const CarouselLoader: FC = (): ReactElement => {
           key={`skeleton-${i}`}
           className='group relative flex-shrink-0'
           style={{ width: cardWidth, minWidth: cardWidth }}>
-          <div className='wigmix-product-card bg-white overflow-hidden'>
+          <div className='wigmix-product-card overflow-hidden'>
             <Skeleton className='wigmix-product-card-image aspect-[2/3] w-full' style={{ height: cardWidth * 1.5 }} />
             <div className='flex flex-col space-y-2 py-3'>
               <Skeleton className='h-3 w-3/4 rounded' />

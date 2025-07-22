@@ -213,7 +213,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       fontColorDark: '#9CA3AF',
     },
     title: {
-      show: true,
+      show: false,
       fieldSource: 'title',
       font: {
         mobile: {
@@ -254,7 +254,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       showAlternatives: false,
     },
     findSimilar: {
-      enable: true,
+      enable: false,
       position: 'bottom_right',
       icon: {
         color: '#000000',
@@ -264,7 +264,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
     },
     addToWishlist: {
-      enable: true,
+      enable: false,
       position: 'top_right',
       iconInactive: {
         color: '#FFFFFF',

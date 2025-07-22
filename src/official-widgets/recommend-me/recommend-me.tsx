@@ -135,7 +135,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
         </div>
       </div>
 
-      <div className='wigmix-widget-description text-sm text-gray-600 pb-2'>{intl.formatMessage({ id: 'widgetDescription' })}</div>
+      <div className='text-sm pb-2 text-primary'>{intl.formatMessage({ id: 'widgetDescription' })}</div>
 
       {/* Search input bar with Recommend me button */}
       <div className='flex gap-0 border border-gray-300 rounded overflow-hidden w-full'>
@@ -160,7 +160,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
         <div className='relative flex-1'>
           <Input
             classNames={{
-              inputWrapper: 'border-l-0 rounded-r bg-default-100 text-black',
+              inputWrapper: 'border-l-0 rounded-r bg-default-100 text-primary',
             }}
             disabled={isStreaming}
             isClearable
