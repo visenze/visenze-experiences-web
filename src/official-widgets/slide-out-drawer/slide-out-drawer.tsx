@@ -10,7 +10,7 @@ import { RootContext } from '../../common/components/shadow-wrapper';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
-import type { SearchImageOrPid } from '../../common/types/image';
+import { isImageUrl, isPid, type SearchImageOrPid } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { parseBox } from '../../common/utils';
@@ -21,13 +21,12 @@ enum ScreenType {
   ERROR = 'error',
 }
 
-interface SimilarSearchProps {
-  pid: string;
+interface SlideOutDrawerProps {
   imUrl: string;
   renderModalWithoutPortal?: boolean;
 }
 
-const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutPortal }) => {
+const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ imUrl, renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
@@ -42,7 +41,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
   const root = useContext(RootContext);
 
   const {
-    imageId,
     productResults,
     autocompleteResults,
     productTypes,
@@ -55,6 +53,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
     image,
     boxData,
   });
+
   const onModalClose = (): void => {
     setDialogVisible(false);
     if (productResults.length > 0) {
@@ -106,11 +105,17 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
 
     const params: Record<string, any> = {
       q: query,
-      im_id: imageId,
       page: 1,
       limit: customizations.results?.limit || 20,
       get_all_fl: true,
     };
+
+    if (image && isPid(image)) {
+      params['pid'] = image.pid;
+    }
+    if (image && isImageUrl(image)) {
+      params['im_url'] = image.imgUrl;
+    }
     const product = boxData?.index ? productTypes[boxData.index] : boxData;
 
     if (product) {
@@ -144,25 +149,24 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
     switch (screen) {
       case ScreenType.ERROR:
         return (
-            <div className='flex size-full flex-col items-center justify-center gap-1 text-center'>
-              <div className='font-bold'>
-                {intl.formatMessage({ id: 'errorDescription' })}
-              </div>
-              <div>{error}</div>
-              <button className='mt-3 w-fit rounded-md bg-buttonPrimary px-5 py-2 text-buttonPrimary'
-                      data-testid='wigmix-back'
-                      onClick={() => {
-                        if (lastSuccessfulImage) {
-                          setError('');
-                          setImage(lastSuccessfulImage);
-                          setScreen(ScreenType.RESULT);
-                        } else {
-                          onModalClose();
-                        }
-                      }}>
-                {intl.formatMessage({ id: 'back' })}
-              </button>
-            </div>
+          <div className='flex size-full flex-col items-center justify-center gap-1 text-center'>
+            <div className='font-bold'>{intl.formatMessage({ id: 'errorDescription' })}</div>
+            <div>{error}</div>
+            <button
+              className='mt-3 w-fit rounded-md bg-buttonPrimary px-5 py-2 text-buttonPrimary'
+              data-testid='wigmix-back'
+              onClick={() => {
+                if (lastSuccessfulImage) {
+                  setError('');
+                  setImage(lastSuccessfulImage);
+                  setScreen(ScreenType.RESULT);
+                } else {
+                  onModalClose();
+                }
+              }}>
+              {intl.formatMessage({ id: 'back' })}
+            </button>
+          </div>
         );
       case ScreenType.RESULT:
         return (
@@ -191,7 +195,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
 
   useEffect(() => {
     if (!productResults.length && dialogVisible) {
-      setImage(pid ? { pid, imgUrl: imUrl } : { imgUrl: imUrl });
+      setImage({ imgUrl: imUrl });
     }
   }, [dialogVisible]);
 
@@ -231,18 +235,22 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
 
   return (
     <>
-      <PopupTriggerButton config={customizations.popup}
-                          text={intl.formatMessage({ id: 'triggerCTA' })}
-                          darkMode={darkMode}
-                          onClick={onPopupIconClick}
-                          defaultIcon={
-                            <MagnifyingGlassIcon
-                                color={darkMode
-                                    ? customizations.popup?.triggerIcon?.colorDark || ''
-                                    : customizations.popup?.triggerIcon?.color || ''}
-                                className='wigmix-popup-trigger-icon default size-6'
-                            />
-                          } />
+      <PopupTriggerButton
+        config={customizations.popup}
+        text={intl.formatMessage({ id: 'triggerCTA' })}
+        darkMode={darkMode}
+        onClick={onPopupIconClick}
+        defaultIcon={
+          <MagnifyingGlassIcon
+            color={
+              darkMode
+                ? customizations.popup?.triggerIcon?.colorDark || ''
+                : customizations.popup?.triggerIcon?.color || ''
+            }
+            className='wigmix-popup-trigger-icon default size-6'
+          />
+        }
+      />
 
       <ViSenzeModal
         open={dialogVisible}
@@ -252,12 +260,11 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
         position={customizations.popup?.position || 'right'}
         darkMode={darkMode}
         fontFamily={customizations.generalLayout?.fontFamily}
-        placementId={`${appSettings.placementId}`}
-      >
+        placementId={`${appSettings.placementId}`}>
         {getScreen()}
       </ViSenzeModal>
     </>
   );
 };
 
-export default SimilarSearch;
+export default SlideOutDrawer;

@@ -93,7 +93,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -108,7 +108,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -124,7 +124,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -148,7 +148,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -191,7 +191,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -233,7 +233,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -294,7 +294,7 @@ describe('similar-search', () => {
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ResponsiveContext.Provider value={{ width: 600 }}>
-                <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+                <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
               </ResponsiveContext.Provider>
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -346,7 +346,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -396,7 +396,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -469,7 +469,7 @@ describe('similar-search', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -508,7 +508,7 @@ describe('similar-search', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+            <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -557,7 +557,7 @@ describe('similar-search', () => {
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <ResponsiveContext.Provider value={{ width: 600 }}>
-              <SimilarSearch imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
             </ResponsiveContext.Provider>
           </IntlProvider>
         </WidgetDataContext.Provider>

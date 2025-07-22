@@ -24,6 +24,8 @@ export enum WidgetType {
   SEARCH_BAR = 'search_bar',
   MERCHANDISE_SEARCH_BAR = 'merchandise_search_bar',
   EMBEDDED_SEARCH_RESULTS = 'embedded_search_results',
+  IN_PAGE_CAROUSEL = 'in_page_carousel',
+  SLIDE_OUT_DRAWER = 'slide_out_drawer',
 }
 
 export enum WidgetErrorState {
@@ -811,6 +813,8 @@ export interface WidgetConfig {
      * @param pid The product ID
      * @param productDetails (optional) Additional details of the product
      *
+     * @internal
+     *
      * @since 1.0.11
      */
     onAddToWishlistToggle?: (add: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
@@ -1069,6 +1073,8 @@ export interface WidgetConfig {
       /**
        * Border settings for the product card.
        *
+       * @internal
+       *
        * @since 1.0.12
        */
       border?: Border;
@@ -1161,6 +1167,8 @@ export interface WidgetConfig {
       };
       /**
        * Configuration for the "add to wishlist" feature within a product card image.
+       *
+       * @internal
        *
        * @since 1.0.11
        */
@@ -1262,6 +1270,8 @@ export interface WidgetConfig {
     };
     /**
      * Configuration for the search bar.
+     *
+     * @internal
      *
      * @since 1.0.12
      */
