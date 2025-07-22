@@ -15,6 +15,7 @@ import { DEFAULT_TEXTS as DEFAULT_TEXTS_17 } from './src/official-widgets/icon-t
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_18 } from './src/official-widgets/search-bar/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_19 } from './src/official-widgets/embedded-search-results/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_20 } from './src/official-widgets/merchandise-search-bar/default-config';
+import { DEFAULT_TEXTS as DEFAULT_TEXTS_21 } from './src/official-widgets/in-page-carousel/default-config';
 
 const configs: Record<string, LanguagePack> = {
   7: DEFAULT_TEXTS_7,
@@ -30,6 +31,7 @@ const configs: Record<string, LanguagePack> = {
   18: DEFAULT_TEXTS_18,
   19: DEFAULT_TEXTS_19,
   20: DEFAULT_TEXTS_20,
+  21: DEFAULT_TEXTS_21,
 };
 
 const args = process.argv.slice(2);
