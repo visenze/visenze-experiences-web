@@ -42,8 +42,9 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       className='z-5'
       classNames={{
         inputWrapper: cn(
-          'rounded-none w-full border border-gray-400 bg-white data-[hover=true]:bg-white',
+          'rounded-none w-full border border-gray-400',
           customizations.imageUpload?.enable ? 'px-1.5' : 'px-3',
+          darkMode ? 'bg-gray-800 data-[hover=true]:bg-gray-800' : 'bg-white data-[hover=true]:bg-white',
         ),
       }}
       autoCapitalize='off'
@@ -104,7 +105,13 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
               setShowDropdown(true);
               setShowImageUpload(true);
             }}>
-              <PhotoIcon className='size-6' />
+              <PhotoIcon className='size-6'
+                color={
+                  darkMode
+                    ? customizations.generalLayout?.fontColorDark || ''
+                    : customizations.generalLayout?.fontColor || ''
+                }
+              />
             </button>
           )}
         </div>

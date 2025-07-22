@@ -272,7 +272,10 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                 setShowDropdown(false);
                 setShowImageUpload(false);
               }}>
-                <CloseIcon className='size-6' />
+                <CloseIcon
+                  className='size-6'
+                  color={darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || ''}
+                />
               </button>
             </div>
 
@@ -293,7 +296,8 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                     <div
                       className={cn(
                         'wigmix-reference-image-container flex h-52 flex-col lg:aspect-square items-center justify-center text-center',
-                        'py-8 md:py-0 border border-gray md:border-0 bg-gray-100',
+                        'py-8 md:py-0 border border-gray md:border-0',
+                        darkMode ? 'bg-gray-800' : 'bg-gray-100',
                       )}>
                       {customizations.imageUpload?.icon?.url ? (
                         <CustomizableIcon
@@ -317,11 +321,17 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                         />
                       )}
 
-                      <p className='hidden px-3 py-2 leading-6 text-primary md:block'>
+                      <p
+                        className='hidden px-3 py-2 leading-6 md:block'
+                        style={{ color: darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || '' }}
+                      >
                         {intl.formatMessage({ id: 'dragImageToSearch' })}
                       </p>
 
-                      <p className='pt-3 leading-6 text-primary md:hidden'>
+                      <p
+                        className='pt-3 leading-6 md:hidden'
+                        style={{ color: darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || '' }}
+                      >
                         {intl.formatMessage({ id: 'tapToSearchImage' })}
                       </p>
                     </div>
@@ -337,7 +347,10 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                 setShowDropdown(false);
                 setShowImageUpload(false);
               }}>
-                <CloseIcon className='size-6' />
+                <CloseIcon
+                  className='size-6'
+                  color={darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || ''}
+                />
               </button>
             </div>
 
@@ -374,7 +387,11 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                 <div className='flex flex-col gap-2'>
                   {autocompleteResults.slice(0, suggestionMax).map((result) => (
                     <button
-                      className='p-2 text-small font-normal text-left hover:bg-gray-200'
+                      className={cn(
+                        'p-2 text-small font-normal text-left',
+                        darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-200',
+                      )}
+                      style={{ color: darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || '' }}
                       key={result}
                       onClick={() => {
                         setQuery(result);
@@ -395,7 +412,10 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                 setShowDropdown(false);
                 setShowImageUpload(false);
               }}>
-                <CloseIcon className='size-6' />
+                <CloseIcon
+                  className='size-6'
+                  color={darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || ''}
+                />
               </button>
             </div>
 
@@ -409,7 +429,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
             <div className='flex flex-col-reverse lg:flex-row-reverse divide-x-reverse divide-gray-200 py-1 px-4'>
               {customizations.trendingProducts?.enable && trendingProducts.length > 0 && (
                 <div className='px-4 py-1 w-full md:3/4 overflow-x-scroll'>
-                  <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                  <p className='text-large font-semibold leading-6 pb-1'>
                     {intl.formatMessage({ id: 'trending' })}
                   </p>
                   <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
@@ -441,7 +461,11 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                   <div className='flex flex-col gap-2'>
                     {popularTerms.map((term) => (
                       <button
-                        className='p-2 text-small font-normal text-left hover:bg-gray-200'
+                        className={cn(
+                          'p-2 text-small font-normal text-left',
+                          darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-200',
+                        )}
+                        style={{ color: darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || '' }}
                         key={term}
                         onClick={() => {
                           setQuery(term);
