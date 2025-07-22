@@ -1,6 +1,6 @@
 {
   "name": "visenze-experiences-web",
-  "version": "1.0.12-snapshot.0",
+  "version": "1.0.13-snapshot.0",
   "description": "A collection of widgets to instantly add ViSenze-powered product search functionality into websites",
   "scripts": {
     "build": "npm run build:camera-search && npm run build:similar-search && npm run build:shopping-assistant && npm run build:recommend-me && npm run build:more-like-this && npm run build:shop-the-look && npm run build:embedded-grid && npm run build:shoppable-lookbook && npm run build:shoppable-gallery && npm run build:icon-triggered-grid && npm run build:search-bar && npm run build:embedded-search-results && npm run build:merchandise-search-bar",
@@ -31,6 +31,8 @@
     "start:merchandise-search-bar": "export widget_dir='official-widgets/merchandise-search-bar' && webpack-dev-server --config webpack.dev.js",
     "build:embedded-search-results": "export widget_dir='official-widgets/embedded-search-results' && webpack --config webpack.config.js",
     "start:embedded-search-results": "export widget_dir='official-widgets/embedded-search-results' && webpack-dev-server --config webpack.dev.js",
+    "build:in-page-carousel": "export widget_dir='official-widgets/in-page-carousel' && webpack --config webpack.config.js",
+    "start:in-page-carousel": "export widget_dir='official-widgets/in-page-carousel' && webpack-dev-server --config webpack.dev.js",
     "build:slide-out-drawer": "export widget_dir='official-widgets/slide-out-drawer' && webpack --config webpack.config.js",
     "start:slide-out-drawer": "export widget_dir='official-widgets/slide-out-drawer' && webpack-dev-server --config webpack.dev.js",
     "test": "export unit_test=true && jest",
@@ -75,6 +77,7 @@
     "react-shadow": "^20.6.0",
     "react-slick": "^0.30.3",
     "react-swipeable": "^7.0.2",
+    "react-webcam": "^7.2.0",
     "slick-carousel": "^1.8.1",
     "uuid": "^11.0.5",
     "visearch-javascript-sdk": "^5.0.0"

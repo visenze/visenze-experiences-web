@@ -2,7 +2,10 @@ import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
+import SparklesIcon from '../../../common/icons/SparklesIcon';
+import UserIcon from '../../../common/icons/UserIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
+import { isImageDataUrl, type SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
 import DownArrowIcon from '../icons/DownArrowIcon';
 
@@ -12,20 +15,33 @@ export interface Chat {
   author: 'user' | 'bot' | 'products';
   messages: string[];
   products?: ProcessedProduct[];
+  image?: SearchImageOrPid;
 }
 
 interface ChatWindowProps {
   isWaiting: boolean;
   chats: Chat[];
   latestMessage: string;
+  suggestions: string[];
+  sendMessage: (message: string) => void;
 }
 
-const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) => {
+const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, suggestions, sendMessage }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const [messageBottomRef, setMessageBottomRef] = useState<HTMLDivElement>();
+
+  const getFile = (image: SearchImageOrPid | undefined): string => {
+    if (!image) {
+      return '';
+    }
+    if (isImageDataUrl(image)) {
+      return image.file;
+    }
+    return '';
+  };
 
   const handleScroll = (e: any): void => {
     const t = e.target;
@@ -81,61 +97,129 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
 
   return (
       <>
-        <div className='overflow-scroll' onScroll={handleScroll}>
+        <div className='overflow-y-auto h-full px-4 my-4 space-y-3' onScroll={handleScroll}>
           {chats.map((chat, idx) => (
               <div className={cn(
-                  'w-full mb-2',
-                  chat.author === 'products' ? `grid grid-cols-3 md:max-w-9/10 lg:max-w-7/10 ${getProductGridCssClasses('gap-x-1')}` : 'flex flex-col',
+                  'w-full',
+                  chat.author === 'products' ? `grid grid-cols-3 md:max-w-9/10 lg:max-w-7/10 ${getProductGridCssClasses('gap-x-4')}` : 'flex flex-col',
                   chat.author === 'user' ? 'items-end' : '',
               )}
                    style={getProductGridCssConfig(chat.author === 'products')}
                    key={`chat-row-${idx}`}>
+                {chat.author === 'user' && chat.image && (
+                  <div className='flex gap-1 max-w-9/10'>
+                    <div
+                      className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-800'
+                      tabIndex={0} key={`chat-user-message-${idx}`}
+                    >
+                      <img
+                        alt='Uploaded image'
+                        className='max-w-full h-auto rounded-lg shadow-sm border'
+                        style={{ maxHeight: '200px' }}
+                        src={getFile(chat.image)}
+                      />
+                    </div>
+                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                      <UserIcon className='size-6' />
+                    </div>
+                  </div>
+                )}
                 {chat.author === 'user' && chat.messages.map((message, cidx) => (
-                    <div className='mb-1 w-fit max-w-7/10 bg-buttonPrimary px-4 py-2 text-buttonPrimary' tabIndex={0} key={`chat-user-message-${cidx}`}>
+                  <div
+                    className='flex gap-1 max-w-9/10'
+                    tabIndex={0}
+                    key={`chat-user-message-${cidx}`}>
+                    <div
+                      className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-800'
+                    >
                       {message}
                     </div>
+                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                      <UserIcon className='size-6' />
+                    </div>
+                  </div>
                 ))}
                 {chat.author === 'bot' && chat.messages.map((message, cidx) => (
-                    <div className='mb-1 w-fit max-w-7/10 bg-buttonPrimary px-4 py-2 text-buttonPrimary' tabIndex={0} key={`chat-bot-message-${cidx}`}
-                         dangerouslySetInnerHTML={{
-                           __html: processMessageForDisplay(message),
-                         }} />
+                  <div
+                    className='flex gap-1 max-w-9/10'
+                    tabIndex={0}
+                    key={`chat-bot-message-${cidx}`}>
+                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                      <SparklesIcon className='size-5' />
+                    </div>
+                    <div
+                      className='mb-2 w-fit max-w-9/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm
+                        text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800'
+                      dangerouslySetInnerHTML={{
+                        __html: processMessageForDisplay(message),
+                      }}
+                    />
+                  </div>
                 ))}
                 {chat.author === 'products' && (chat.products || []).map((product, pidx) => (
-                    <>
-                      <div key={`product-${pidx}`}>
-                        <ProductCard key={`${product.product_id}-${pidx}`}
-                                     result={product}
-                                     metadata={{
-                                       queryId: chat.requestId,
-                                     }}
-                                     index={pidx}
-                                     pwPrefix='sa'
-                                     isRecommendation={false}
-                                     hasFindSimilar={false} />
-                      </div>
-                    </>
+                  <ProductCard
+                                  result={product}
+                                  key={`${product.product_id}-${pidx}`}
+                                  metadata={{
+                                    queryId: chat.requestId,
+                                  }}
+                                  index={pidx}
+                                  pwPrefix='sa'
+                                  isRecommendation={false}
+                                  hasFindSimilar={false} />
                 ))}
               </div>
           ))}
           {(isWaiting || latestMessage) && (
-              <div className='chat-row'>
+              <div className='chat-row flex gap-2 items-end'>
                 {isWaiting && (
-                    <div className='flex w-fit gap-2 bg-buttonPrimary p-3'>
+                  <div className='flex gap-1 max-w-9/10'>
+                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                      <SparklesIcon className='size-5' />
+                    </div>
+                    <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
                       {[0, 1, 2].map((i) => (
-                          <div key={`loading-dot-${i}`}
-                               className='loading-dot rounded-full'
-                               style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }} />
+                          <div
+                            key={`loading-dot-${i}`}
+                            className='loading-dot rounded-full'
+                            style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
+                          />
                       ))}
+                    </div>
                     </div>
                 )}
                 {latestMessage && (
-                    <div className='mb-1 w-fit max-w-7/10 bg-buttonPrimary px-4 py-2 text-buttonPrimary'
-                         dangerouslySetInnerHTML={{
-                           __html: processMessageForDisplay(latestMessage),
-                         }} />
+                    <div
+                      className={`
+                        mb-2 w-fit max-w-7/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100
+                        rounded-lg border border-neutral-100 dark:border-neutral-800`}
+                      dangerouslySetInnerHTML={{
+                        __html: processMessageForDisplay(latestMessage),
+                      }}
+                    />
                 )}
               </div>
+          )}
+          {!isWaiting && suggestions.length > 0 && (
+            <div className='mt-2 flex items-end'>
+              <div className='flex flex-col gap-2'>
+                {suggestions.map((suggestion, idx) => (
+                  <div
+                    key={`suggestion-${idx}`}
+                    className='w-fit bg-sky-100 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
+                    rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
+                    onClick={() => sendMessage(suggestion)}
+                  >
+                    {suggestion}
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
           <div ref={(el) => {
             if (el) {
@@ -146,7 +230,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage }) =>
         <div className='flex-grow'></div>
         <div className='relative'>
           {showBottomArrow && (
-              <div className='absolute bottom-1 right-1 cursor-pointer' onClick={scrollToBottom}>
+              <div className='absolute bottom-2 right-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
+                   onClick={scrollToBottom}>
                 <DownArrowIcon />
               </div>
           )}

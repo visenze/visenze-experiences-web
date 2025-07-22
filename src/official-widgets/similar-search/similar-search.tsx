@@ -22,11 +22,12 @@ enum ScreenType {
 }
 
 interface SimilarSearchProps {
+  pid: string;
   imUrl: string;
   renderModalWithoutPortal?: boolean;
 }
 
-const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl, renderModalWithoutPortal }) => {
+const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
@@ -54,7 +55,6 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl, renderModalWithoutPortal
     image,
     boxData,
   });
-
   const onModalClose = (): void => {
     setDialogVisible(false);
     if (productResults.length > 0) {
@@ -191,7 +191,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ imUrl, renderModalWithoutPortal
 
   useEffect(() => {
     if (!productResults.length && dialogVisible) {
-      setImage({ imgUrl: imUrl });
+      setImage(pid ? { pid, imgUrl: imUrl } : { imgUrl: imUrl });
     }
   }, [dialogVisible]);
 
