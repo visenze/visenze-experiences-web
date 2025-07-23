@@ -22,11 +22,11 @@ enum ScreenType {
 }
 
 interface SlideOutDrawerProps {
-  imUrl: string;
+  pid: string;
   renderModalWithoutPortal?: boolean;
 }
 
-const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ imUrl, renderModalWithoutPortal }) => {
+const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ pid, renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
@@ -41,6 +41,7 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ imUrl, renderModalWithoutPort
   const root = useContext(RootContext);
 
   const {
+    mainImageUrl,
     productResults,
     autocompleteResults,
     productTypes,
@@ -195,13 +196,13 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ imUrl, renderModalWithoutPort
 
   useEffect(() => {
     if (!productResults.length && dialogVisible) {
-      setImage({ imgUrl: imUrl });
+      setImage({ pid, imgUrl: mainImageUrl });
     }
   }, [dialogVisible]);
 
   useEffect(() => {
     widgetClient.registerWidgetOpener((id, bypassIdCheck) => {
-      if (id === imUrl || bypassIdCheck) {
+      if (id === pid || bypassIdCheck) {
         openWidgetPopup();
       }
     });

@@ -1,13 +1,12 @@
 # Slide Out Drawer widget
 
-![status](https://img.shields.io/badge/status-stable-blue)
-![stable](https://img.shields.io/badge/since-1.0.0-blue)
+![status](https://img.shields.io/badge/status-alpha-red)
 
 ## Local development
 
 - To run the widget locally:
   1. Add your app key and placement ID to `dev-configs.ts`.
-  2. Add the product image URL in the `data-url` field of the widget selector.
+  2. Add the product ID in the `data-pid` field of the widget selector.
   3. Run:
      ```sh
      npm run start:slide-out-drawer

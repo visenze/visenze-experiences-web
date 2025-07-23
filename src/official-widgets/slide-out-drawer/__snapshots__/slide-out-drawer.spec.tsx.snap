@@ -270,7 +270,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                     <img
                       class="wigmix-reference-image md:h-full"
                       data-pw="ss-reference-image"
-                      src="test-imurl"
+                      src=""
                     />
                   </div>
                   <div
@@ -1530,7 +1530,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                     <img
                       class="wigmix-reference-image md:h-full"
                       data-pw="ss-reference-image"
-                      src="test-imurl"
+                      src=""
                     />
                   </div>
                   <div
