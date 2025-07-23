@@ -8,8 +8,8 @@ import { type AppPropsWithReferenceElement, AppWrapper } from '../../common/comp
 const ENABLE_CUSTOMIZATION = true;
 
 const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, widgetClient, element }) => {
-  const imUrl = element.dataset['url'] ?? '';
-  if (!imUrl) {
+  const pid = element.dataset['pid'] ?? '';
+  if (!pid) {
     return <></>;
   }
 
@@ -20,7 +20,7 @@ const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, widgetClient, ele
       defaultTexts={DEFAULT_TEXTS}
       defaultCustomizations={DEFAULT_CUSTOMIZATIONS}
       enableCustomization={ENABLE_CUSTOMIZATION}>
-      <SlideOutDrawer imUrl={imUrl} />
+      <SlideOutDrawer pid={pid} />
     </AppWrapper>
   );
 };

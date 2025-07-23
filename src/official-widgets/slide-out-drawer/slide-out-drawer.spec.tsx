@@ -95,7 +95,7 @@ describe('slide-out-drawer', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer pid='pid-1' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -110,7 +110,7 @@ describe('slide-out-drawer', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer pid='pid-1' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -126,7 +126,7 @@ describe('slide-out-drawer', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer pid='pid-1' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -139,7 +139,8 @@ describe('slide-out-drawer', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
-          im_url: 'test-imurl',
+          pid: 'pid-1',
+          qinfo: true,
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -150,7 +151,7 @@ describe('slide-out-drawer', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer pid='pid-1' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -182,7 +183,8 @@ describe('slide-out-drawer', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
-          im_url: 'test-imurl',
+          pid: 'pid-1',
+          qinfo: true,
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -193,7 +195,7 @@ describe('slide-out-drawer', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer pid='pid-1' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -203,7 +205,7 @@ describe('slide-out-drawer', () => {
     expect(modal).toBeNull();
 
     act(() => {
-      widgetClient.openWidget('test-imurl');
+      widgetClient.openWidget('pid-1');
     });
 
     modal = testComponent.queryByTestId('wigmix-modal');
@@ -215,7 +217,8 @@ describe('slide-out-drawer', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
-          im_url: 'test-imurl',
+          pid: 'pid-1',
+          qinfo: true,
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -224,7 +227,8 @@ describe('slide-out-drawer', () => {
       productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           q: '',
-          im_url: 'test-imurl',
+          pid: 'pid-1',
+          qinfo: true,
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -235,7 +239,7 @@ describe('slide-out-drawer', () => {
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-              <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
+              <SlideOutDrawer pid='pid-1' renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
         </RootContext.Provider>,
@@ -275,7 +279,8 @@ describe('slide-out-drawer', () => {
       ...mockVisearchClient,
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
-          im_url: 'test-imurl',
+          pid: 'pid-1',
+          qinfo: true,
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -284,7 +289,8 @@ describe('slide-out-drawer', () => {
       productMultisearchAutocomplete: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           q: '',
-          im_url: 'test-imurl',
+          pid: 'pid-1',
+          qinfo: true,
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -296,7 +302,7 @@ describe('slide-out-drawer', () => {
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
             <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
               <ResponsiveContext.Provider value={{ width: 600 }}>
-                <SlideOutDrawer imUrl='test-imurl' renderModalWithoutPortal={true} />
+                <SlideOutDrawer pid='pid-1' renderModalWithoutPortal={true} />
               </ResponsiveContext.Provider>
             </IntlProvider>
           </WidgetDataContext.Provider>
