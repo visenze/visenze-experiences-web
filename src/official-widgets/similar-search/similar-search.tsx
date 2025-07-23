@@ -11,6 +11,7 @@ import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import MagnifyingGlassIcon from '../../common/icons/MagnifyingGlassIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImageOrPid } from '../../common/types/image';
+import { isImageUrl } from '../../common/types/image';
 import type { BoxData } from '../../common/types/product';
 import { Actions, Category, Labels } from '../../common/types/tracking-constants';
 import { parseBox } from '../../common/utils';
@@ -43,6 +44,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
 
   const {
     imageId,
+    mainImageUrl,
     productResults,
     autocompleteResults,
     productTypes,
@@ -55,6 +57,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
     image,
     boxData,
   });
+
   const onModalClose = (): void => {
     setDialogVisible(false);
     if (productResults.length > 0) {
@@ -197,7 +200,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
 
   useEffect(() => {
     widgetClient.registerWidgetOpener((id, bypassIdCheck) => {
-      if (id === imUrl || bypassIdCheck) {
+      if ((id === imUrl || id === pid) || bypassIdCheck) {
         openWidgetPopup();
       }
     });
@@ -205,13 +208,26 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
 
   useEffect(() => {
     if (productResults.length > 0) {
-      if (image) {
-        appendSearchHistory(image);
+      const imageWithUrlAppended = image && mainImageUrl && !isImageUrl(image) ? {
+        ...image,
+        imgUrl: mainImageUrl,
+      } : image;
+      if (imageWithUrlAppended) {
+        appendSearchHistory(imageWithUrlAppended);
       }
       setScreen(ScreenType.RESULT);
-      setLastSuccessfulImage(image);
+      setLastSuccessfulImage(imageWithUrlAppended);
     }
   }, [productResults]);
+
+  useEffect(() => {
+    if (image && mainImageUrl && !isImageUrl(image)) {
+      setImage((prev) => ({
+        ...prev,
+        imgUrl: mainImageUrl,
+      }));
+    }
+  }, [mainImageUrl]);
 
   useEffect(() => {
     if (error) {
