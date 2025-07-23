@@ -78,7 +78,7 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
   }
 
   return (
-    <div className='w-full relative inset-x-1/2 -mx-[50vw] mb-12'>
+    <div className='w-full relative mb-12'>
       <div className='py-8 px-6'>
         <div className='max-w-6xl mx-auto' style={{ maxWidth: 'calc(100vw - var(--chat-width, 0px) - 3rem)' }}>
           <h2
