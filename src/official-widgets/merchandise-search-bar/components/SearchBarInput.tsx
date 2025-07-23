@@ -101,7 +101,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
       endContent={
         <div className='flex items-center pr-2'>
           {customizations.imageUpload?.enable && (
-            <button onClick={() => {
+            <button data-testid='wigmix-msb-gallery-button' onClick={() => {
               setShowDropdown(true);
               setShowImageUpload(true);
             }}>

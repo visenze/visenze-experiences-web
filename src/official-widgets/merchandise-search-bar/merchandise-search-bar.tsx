@@ -268,7 +268,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
         {showDropdown && showImageUpload ? (
           <OutsideAlerter>
             <div className='flex flex-col items-end gap-2 px-4 py-1 pt-4'>
-              <button onClick={() => {
+              <button data-testid='wigmix-msb-close-button' onClick={() => {
                 setShowDropdown(false);
                 setShowImageUpload(false);
               }}>
@@ -343,7 +343,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
         ) : showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0) ? (
           <OutsideAlerter>
             <div className='flex flex-col items-end gap-2 px-4 py-1 pt-4'>
-              <button onClick={() => {
+              <button data-testid='wigmix-msb-close-button' onClick={() => {
                 setShowDropdown(false);
                 setShowImageUpload(false);
               }}>
@@ -391,6 +391,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                         'p-2 text-small font-normal text-left',
                         darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-200',
                       )}
+                      data-testid='wigmix-msb-autocomplete-value'
                       style={{ color: darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || '' }}
                       key={result}
                       onClick={() => {
@@ -408,7 +409,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
           && (searchHistory.length > 0 || customizations.popularTerms?.enable || customizations.trendingProducts?.enable) ? (
           <OutsideAlerter>
             <div className='flex flex-col items-end gap-2 px-4 py-1 pt-4'>
-              <button onClick={() => {
+              <button data-testid='wigmix-msb-close-button' onClick={() => {
                 setShowDropdown(false);
                 setShowImageUpload(false);
               }}>
