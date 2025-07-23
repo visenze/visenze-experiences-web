@@ -20,6 +20,8 @@ describe('in-page-carousel', () => {
   const texts: LanguagePack = {
     en: {
       widgetTitle: 'In Page Carousel',
+      showMore: 'Show More',
+      showLess: 'Show Less',
     },
   };
   const mockVisearchClient: ViSearchClient = {
