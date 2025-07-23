@@ -24,15 +24,11 @@ describe('merchandise-search-bar', () => {
       uploadScreenTitle: 'upload',
       dragImageToSearch: 'drag here',
       tapToSearchImage: 'tap here',
-      tapProductGallery: 'tap to see images',
-      relatedProducts: 'products related',
-      recentSearches: 'searches related',
+      imageUploadTitle: 'Upload something',
       suggestions: 'suggested',
-      viewAllProducts: 'All products',
       popularChoices: 'Popular',
       trending: 'Trends',
       errorMessage: 'WE HAVE A PROBLEM HERE!',
-      imageUploadTitle: 'Upload something',
     },
   };
   const mockVisearchClient: ViSearchClient = {

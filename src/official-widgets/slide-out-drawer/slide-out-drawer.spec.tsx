@@ -24,7 +24,6 @@ describe('slide-out-drawer', () => {
       widgetTitle: 'Similar Search 532',
       searchBarButton: 'Show Me',
       searchBarPlaceholder: 'This is a search bar',
-      previousViews: 'History',
       errorDescription: 'Houston, we\'ve had a problem!',
       back: 'Exit',
       triggerCTA: 'CTA',

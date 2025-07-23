@@ -153,8 +153,8 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
                 data-pw='mlt-show-more-button'
                 onClick={() => setShowGrid(!showGrid)}>
                 {showGrid
-                  ? intl.formatMessage({ id: 'showLess', defaultMessage: 'Show Less' })
-                  : intl.formatMessage({ id: 'showMore', defaultMessage: 'Show More' })}
+                  ? intl.formatMessage({ id: 'showLess' })
+                  : intl.formatMessage({ id: 'showMore' })}
               </button>
             </div>
           </div>
