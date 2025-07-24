@@ -13,7 +13,8 @@ interface BuyTheLookProps {
 
 const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, displaySettings } = widgetConfig;
+  const { productDetails } = displaySettings;
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -157,19 +158,18 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
                   <div className='flex-1 flex flex-col justify-between min-w-0'>
                     <div>
                       <div className='text-xl font-semibold mb-1'>
-                        {productResults[selectedLookProductIndex]['title'] || 'Product'}
+                        {productResults[selectedLookProductIndex][productDetails['title']] || 'Product'}
                       </div>
                       <div className='text-gray-700 text-base mb-2'>
-                        {productResults[selectedLookProductIndex]['brand'] || 'Store'}
+                        {productResults[selectedLookProductIndex][productDetails['brand']] || 'Store'}
                       </div>
                       <div className='flex items-end gap-2 mb-2'>
                         <span className='text-2xl font-bold'>
-                          $
                           {((): string => {
                             const product = productResults[selectedLookProductIndex];
-                            const priceObj = product['price'];
+                            const priceObj = product[productDetails['price']];
                             const price = priceObj.value;
-                            return Number(price || 0).toFixed(2);
+                            return priceObj.currency + Number(price || 0).toFixed(2);
                           })()}
                         </span>
                       </div>
