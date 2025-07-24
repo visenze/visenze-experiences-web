@@ -196,7 +196,7 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ pid, renderModalWithoutPortal
 
   useEffect(() => {
     if (!productResults.length && dialogVisible) {
-      setImage({ pid, imgUrl: mainImageUrl });
+      setImage({ pid });
     }
   }, [dialogVisible]);
 
@@ -210,13 +210,26 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ pid, renderModalWithoutPortal
 
   useEffect(() => {
     if (productResults.length > 0) {
-      if (image) {
-        appendSearchHistory(image);
+      const imageWithUrlAppended = image && mainImageUrl && !isImageUrl(image) ? {
+        ...image,
+        imgUrl: mainImageUrl,
+      } : image;
+      if (imageWithUrlAppended) {
+        appendSearchHistory(imageWithUrlAppended);
       }
       setScreen(ScreenType.RESULT);
-      setLastSuccessfulImage(image);
+      setLastSuccessfulImage(imageWithUrlAppended);
     }
   }, [productResults]);
+
+  useEffect(() => {
+    if (image && mainImageUrl && !isImageUrl(image)) {
+      setImage((prev) => ({
+        ...prev,
+        imgUrl: mainImageUrl,
+      }));
+    }
+  }, [mainImageUrl]);
 
   useEffect(() => {
     if (error) {
