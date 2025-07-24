@@ -4,66 +4,43 @@ import type { LanguagePack } from '../../common/locales/locale';
 export const DEFAULT_TEXTS: LanguagePack = {
   en: {
     widgetTitle: 'Buy the look',
-    errorDescription: 'Sorry, something went wrong',
-    triggerCTA: 'Find Similar',
     addToCart: 'Add to Cart',
-    seeSimilar: 'See Similar',
   },
   es: {
     widgetTitle: 'Comprar la look',
-    errorDescription: 'Lo sentimos, algo salió mal',
-    triggerCTA: 'Encontrar similares',
     addToCart: 'Agregar al carrito',
-    seeSimilar: 'Ver similares',
   },
   fr: {
     widgetTitle: 'Acheter la look',
-    errorDescription: 'Désolé, quelque chose s\'est mal passé',
-    triggerCTA: 'Trouver Similaire',
     addToCart: 'Ajouter au panier',
-    seeSimilar: 'Voir Similaires',
   },
   pt: {
     widgetTitle: 'Comprar a look',
-    errorDescription: 'Desculpe, algo deu errado',
-    triggerCTA: 'Encontrar Semelhantes',
     addToCart: 'Adicionar ao carrinho',
-    seeSimilar: 'Ver Semelhantes',
   },
   de: {
     widgetTitle: 'Kämele',
-    errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
-    triggerCTA: 'Ähnliche finden',
     addToCart: 'In den Warenkorb',
-    seeSimilar: 'Ähnliche sehen',
   },
   it: {
     widgetTitle: 'Acquista la look',
-    errorDescription: 'Spiacenti, qualcosa è andato storto',
-    triggerCTA: 'Trova simili',
     addToCart: 'Aggiungi al carrello',
-    seeSimilar: 'Vedi simili',
+  },
+  pl: {
+    widgetTitle: 'Kup ten zestaw',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     widgetTitle: '구매하기',
-    errorDescription: '죄송합니다. 오류가 발생했습니다',
-    triggerCTA: '비슷한 상품 찾기',
     addToCart: '장바구니에 추가',
-    seeSimilar: '비슷한 상품 보기',
   },
   ja: {
     widgetTitle: '購入する',
-    errorDescription: '申し訳ありません。問題が発生しました',
-    triggerCTA: '類似商品を検索',
     addToCart: 'カートに追加',
-    seeSimilar: '類似商品を表示',
   },
   th: {
     widgetTitle: 'ซื้อ',
-    errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
-    triggerCTA: 'ค้นหาสินค้าที่คล้ายกัน',
     addToCart: 'เพิ่มสินค้าลงตะกร้า',
-    seeSimilar: 'ดูสินค้าคล้ายกัน',
   },
 };
 
