@@ -15,11 +15,11 @@
 }
 
 @layer components {
-  .wigmix-widget-title {
-    @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
-  }
   .wigmix-product-card {
     @apply border-width-productCard border-color-productCard rounded-radius-productCard;
+  }
+  .wigmix-widget-title {
+    @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
   }
   .wigmix-product-card-title {
     @apply text-mobile-productCardTitle md:text-tablet-productCardTitle lg:text-desktop-productCardTitle font-mobile-productCardTitle md:font-tablet-productCardTitle lg:font-desktop-productCardTitle;
@@ -33,4 +33,8 @@
   .wigmix-product-card-original-price {
     @apply text-mobile-productCardOriginalPrice md:text-tablet-productCardOriginalPrice lg:text-desktop-productCardOriginalPrice font-mobile-productCardOriginalPrice md:font-tablet-productCardOriginalPrice lg:font-desktop-productCardOriginalPrice;
   }
+}
+
+.slick-track {
+  margin-left: unset !important;
 }

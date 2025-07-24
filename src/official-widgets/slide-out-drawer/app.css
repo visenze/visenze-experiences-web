@@ -18,6 +18,9 @@
   .wigmix-widget-title {
     @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
   }
+  .wigmix-modal {
+    @apply text-mobile-body md:text-tablet-body lg:text-desktop-body font-mobile-body md:font-tablet-body lg:font-desktop-body;
+  }
   .wigmix-product-card {
     @apply border-width-productCard border-color-productCard rounded-radius-productCard;
   }
@@ -33,4 +36,12 @@
   .wigmix-product-card-original-price {
     @apply text-mobile-productCardOriginalPrice md:text-tablet-productCardOriginalPrice lg:text-desktop-productCardOriginalPrice font-mobile-productCardOriginalPrice md:font-tablet-productCardOriginalPrice lg:font-desktop-productCardOriginalPrice;
   }
+}
+
+.wigmix-modal-overlay.wigmix-modal-position-right {
+  padding-left: 75% !important;
+}
+
+.wigmix-modal-overlay.wigmix-modal-position-left {
+  padding-right: 75% !important;
 }

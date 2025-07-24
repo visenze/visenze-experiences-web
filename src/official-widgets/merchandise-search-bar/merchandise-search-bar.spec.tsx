@@ -24,11 +24,8 @@ describe('merchandise-search-bar', () => {
       uploadScreenTitle: 'upload',
       dragImageToSearch: 'drag here',
       tapToSearchImage: 'tap here',
-      tapProductGallery: 'tap to see images',
-      relatedProducts: 'products related',
-      recentSearches: 'searches related',
+      imageUploadTitle: 'Upload something',
       suggestions: 'suggested',
-      viewAllProducts: 'All products',
       popularChoices: 'Popular',
       trending: 'Trends',
       errorMessage: 'WE HAVE A PROBLEM HERE!',
@@ -140,9 +137,8 @@ describe('merchandise-search-bar', () => {
       jest.advanceTimersByTime(500);
     });
 
-    const modal = testComponent.queryByTestId('wigmix-modal');
-    // Check against a class name that is indicative of a closed modal
-    expect(modal!.className).toContain('ReactModal__Content--before-close');
+    const modal = testComponent.queryByTestId('wigmix-search-bar-overlay');
+    expect(modal).toBeNull();
   });
 
   it('should render upload image modal in mobile view', () => {
@@ -181,9 +177,8 @@ describe('merchandise-search-bar', () => {
       jest.advanceTimersByTime(500);
     });
 
-    const modal = testComponent.queryByTestId('wigmix-modal');
-    // Check against a class name that is indicative of a closed modal
-    expect(modal!.className).toContain('ReactModal__Content--before-close');
+    const modal = testComponent.queryByTestId('wigmix-search-bar-overlay');
+    expect(modal).toBeNull();
   });
 
   it('should search query successfully', () => {

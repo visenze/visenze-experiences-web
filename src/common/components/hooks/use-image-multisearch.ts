@@ -1,5 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
-import type { ProductSearchResponse, ProductSearchResponseSuccess, ProductType } from 'visearch-javascript-sdk';
+import type {
+  Product,
+  ProductSearchResponse,
+  ProductSearchResponseSuccess,
+  ProductType,
+} from 'visearch-javascript-sdk';
 import { WidgetDataContext } from '../../types/contexts';
 import { Actions, Category } from '../../types/tracking-constants';
 import type { SearchImageOrPid } from '../../types/image';
@@ -27,6 +32,7 @@ const getSearchParams = (
 
   if (isPid(img)) {
     params['pid'] = img.pid;
+    params['qinfo'] = true;
   } else if (isImageUrl(img)) {
     params['im_url'] = img.imgUrl;
   } else if (isImageFile(img)) {
@@ -73,6 +79,7 @@ export interface ImageMultisearch {
   productResults: ProcessedProduct[];
   autocompleteWithQuery: (query: string) => void;
   autocompleteResults: string[];
+  mainImageUrl: string;
 }
 
 const useImageMultisearch = ({
@@ -87,6 +94,7 @@ const useImageMultisearch = ({
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [productTypes, setProductTypes] = useState<ProductType[]>([]);
   const [error, setError] = useState<string>('');
+  const [mainImageUrl, setMainImageUrl] = useState<string>('');
   const [autocompleteResults, setAutocompleteResults] = useState<string[]>([]);
 
   const handleImageSuccess = (res: ProductSearchResponse): void => {
@@ -169,6 +177,8 @@ const useImageMultisearch = ({
       setProductResults(results);
       setMetadata(metadata);
       setImageId(response.im_id ?? '');
+      const qInfo = response['qinfo'] as Product ?? {};
+      setMainImageUrl(qInfo['main_image_url'] ?? '');
 
       const productTypes = parseToProductTypes(response);
       if (productTypes.length) {
@@ -210,6 +220,7 @@ const useImageMultisearch = ({
     resetSearch,
     autocompleteWithQuery,
     multisearchWithParams,
+    mainImageUrl,
   };
 };
 

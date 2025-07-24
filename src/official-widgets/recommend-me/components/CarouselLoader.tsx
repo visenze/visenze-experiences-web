@@ -1,112 +1,35 @@
 import { Skeleton } from '@heroui/skeleton';
-import { motion } from 'framer-motion';
 import type { FC, ReactElement } from 'react';
-import { useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
-import ProductCard from '../../../common/components/product-card/ProductCard';
-import type { ProcessedProduct } from '../../../common/types/product';
-
-const Typewriter: FC<{ texts: string[] }> = ({ texts }) => {
-  const [step, setStep] = useState<'TYPE' | 'DELETE'>('TYPE');
-  const [index, setIndex] = useState(0);
-  const [displayText, setDisplayText] = useState(texts[0]);
-
-  const typeTick = (i: number, fullText: string): void => {
-    setDisplayText(fullText.substring(0, i));
-    if (i === fullText.length) {
-      setTimeout(() => {
-        setStep('DELETE');
-      }, 3000);
-      return;
-    }
-    setTimeout(() => {
-      typeTick(i + 1, fullText);
-    }, 100);
-  };
-
-  const deleteTick = (i: number, fullText: string): void => {
-    setDisplayText(fullText.substring(0, i));
-    if (i === 0) {
-      if (index < texts.length - 1) {
-        setIndex((idx) => idx + 1);
-      }
-      setStep('TYPE');
-      return;
-    }
-    setTimeout(() => {
-      deleteTick(i - 1, fullText);
-    }, 20);
-  };
-
-  useEffect(() => {
-    if (step === 'TYPE') {
-      typeTick(0, texts[index]);
-    } else if (step === 'DELETE') {
-      deleteTick(texts[index].length, texts[index]);
-    }
-  }, [step]);
-
-  return <span>{displayText}</span>;
-};
 
 /**
  * A placeholder carousel that displays products as they are being received from the ongoing event stream.
  */
-const CarouselLoader: FC<{ results: ProcessedProduct[]; metadata: Record<string, any>; searchValue: string }> = ({ results, metadata, searchValue }): ReactElement => {
-  const intl = useIntl();
-  return (
-    <>
-      <div className='relative flex items-center pb-2 pt-4 text-primary'>
-        <span>{intl.formatMessage({ id: 'resultCarouselTitle' })}</span>
-        &nbsp;&quot;<div className='max-w-13/20 truncate font-bold'>{searchValue}</div>&quot;
-      </div>
-      <div className='no-scrollbar relative grid grid-cols-5 gap-x-4 overflow-scroll'>
-        {results.map((result, index) => (
-            <ProductCard key={`${result.product_id}-${index}`}
-                         index={index}
-                         result={result}
-                         metadata={metadata}
-                         hasFindSimilar={false}
-                         isRecommendation={false}
-                         pwPrefix='rm' />
-        ))}
-        {results.length <= 4 && [0, 1, 2, 3, 4].map((i) => (
-          <>
-            {i >= results.length && <Skeleton className='aspect-square w-full'></Skeleton>}
-          </>
-        ))}
-        <div className='absolute size-full bg-zinc-200 opacity-75 dark:bg-zinc-800'/>
+const SKELETON_CARD_COUNT = 5;
 
-        <div className='absolute flex size-full flex-col items-center justify-center gap-6 p-3 text-lg text-black lg:text-3xl'>
-          <motion.div
-            className='size-5 bg-blue-700 dark:bg-blue-400'
-            animate={{
-              scale: [1, 2, 2, 1, 1],
-              rotate: [0, 0, 180, 180, 0],
-              borderRadius: ['0%', '0%', '50%', '50%', '0%'],
-            }}
-            transition={{
-              duration: 2,
-              ease: 'easeInOut',
-              times: [0, 0.2, 0.5, 0.8, 1],
-              repeat: Infinity,
-              repeatDelay: 1,
-            }}
-          />
-          {results.length === 0 ? (
-            <Typewriter texts={[
-              intl.formatMessage({ id: 'resultLoading1' }),
-              intl.formatMessage({ id: 'resultLoading2' }),
-              intl.formatMessage({ id: 'resultLoading3' }),
-            ]} />
-          ) : (
-            <p className='rounded-xl p-1'>
-              {intl.formatMessage({ id: 'resultRendering' })}
-            </p>
-          )}
+const CarouselLoader: FC = (): ReactElement => {
+  // Match the ProductCard width and aspect ratio (2/3 or fallback to aspect-square)
+  const cardWidth = 200;
+  // const aspectRatio = '2/3'; // fallback to 'aspect-square' if needed
+
+  return (
+    <div
+      className='flex space-x-4 overflow-x-auto pb-4 no-scrollbar p-2 items-end text-primary'
+      data-pw='rm-product-loader-row'>
+      {Array.from({ length: SKELETON_CARD_COUNT }).map((_, i) => (
+        <div
+          key={`skeleton-${i}`}
+          className='group relative flex-shrink-0'
+          style={{ width: cardWidth, minWidth: cardWidth }}>
+          <div className='wigmix-product-card overflow-hidden'>
+            <Skeleton className='wigmix-product-card-image aspect-[2/3] w-full' style={{ height: cardWidth * 1.5 }} />
+            <div className='flex flex-col space-y-2 py-3'>
+              <Skeleton className='h-3 w-3/4 rounded' />
+              <Skeleton className='h-4 w-1/2 rounded' />
+            </div>
+          </div>
         </div>
-      </div>
-    </>
+      ))}
+    </div>
   );
 };
 
