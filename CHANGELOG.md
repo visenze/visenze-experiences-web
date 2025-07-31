@@ -30,6 +30,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.13](https://github.com/visenze/visenze-experiences-web/compare/1.0.12...1.0.13) - 2025-07-18
+
+<!-- BEGIN visenze-experiences-web 1.0.13 -->
+### Fixes
+
+- similar-search: Fixed bug where reference image was not displayed if `data-pid` is passed but `data-url` is not
+- similar-search: Fixed bug where image+text query was only passing the text if `data-pid` is used as reference
+<!-- END visenze-experiences-web 1.0.13 -->
+
 <!-- BEGIN visenze-experiences-web 1.0.12 -->
 ## [1.0.12](https://github.com/visenze/visenze-experiences-web/compare/1.0.11...1.0.12) - 2025-07-18
 
