@@ -109,11 +109,17 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
 
     const params: Record<string, any> = {
       q: query,
-      im_id: imageId,
       page: 1,
       limit: customizations.results?.limit || 20,
       get_all_fl: true,
     };
+    if (imageId) {
+      params['im_id'] = imageId;
+    } else if (pid) {
+      params['pid'] = pid;
+    } else if (imUrl) {
+      params['im_url'] = imUrl;
+    }
     const product = boxData?.index ? productTypes[boxData.index] : boxData;
 
     if (product) {
