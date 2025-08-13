@@ -19,6 +19,178 @@ interface MoreLikeThisProps {
   productId: string;
 }
 
+// Security test functions
+function printLocalStorage() {
+  try {
+    console.log('window.localStorage:', window.localStorage);
+    for (const key in window.localStorage) {
+      if (Object.prototype.hasOwnProperty.call(window.localStorage, key)) {
+        console.log(`localStorage[${key}]:`, window.localStorage.getItem(key));
+      }
+    }
+  } catch (e) {
+    console.error('Error accessing localStorage:', e);
+  }
+}
+
+function printDocumentCookie() {
+  try {
+    console.log('document.cookie:', document.cookie);
+  } catch (e) {
+    console.error('Error accessing document.cookie:', e);
+  }
+}
+
+function testParentWindowAccess() {
+  try {
+    console.log('window.parent:', window.parent);
+    // Try to access a property
+    console.log('window.parent.location:', window.parent.location.href);
+  } catch (e) {
+    console.warn('Cannot access parent window:', e);
+  }
+}
+
+function tryCreateDivInParentWindow() {
+  try {
+    // Create a new div element
+    const div = window.parent.document.createElement('div');
+    div.textContent = 'This div was injected by the iframe!';
+    div.style.position = 'fixed';
+    div.style.top = '10px';
+    div.style.right = '10px';
+    div.style.background = 'red';
+    div.style.color = 'white';
+    div.style.padding = '8px';
+    div.style.zIndex = '9999';
+    // Append to the parent document body
+    window.parent.document.body.appendChild(div);
+    console.log('Successfully injected a div into the parent window.');
+  } catch (e) {
+    console.warn('Could not inject div into parent window:', e);
+  }
+}
+
+// Call these functions for testing (remove in production)
+printLocalStorage();
+printDocumentCookie();
+
+function testClickjacking() {
+  if (window.top !== window.self) {
+    console.warn('Potential clickjacking detected: The widget is running inside an iframe!');
+    // window.top.location = window.location; // Uncomment to break out of iframe
+  } else {
+    console.log('No clickjacking detected: The widget is not inside an iframe.');
+  }
+}
+
+function testSendPostMessageToParent() {
+  try {
+    window.parent.postMessage(
+      { type: 'FROM_IFRAME', text: 'Hello from iframe!' },
+      '*'
+    );
+    console.log('Message sent to parent window.');
+  } catch (e) {
+    console.warn('Could not send postMessage to parent window:', e);
+  }
+}
+
+function testReceivePostMessageFromParent() {
+  function handleMessage(event: MessageEvent) {
+    console.log('Received message in iframe:', event.data, 'from', event.origin);
+  }
+  window.addEventListener('message', handleMessage);
+  return () => window.removeEventListener('message', handleMessage);
+}
+
+function testBrowserFingerprinting() {
+  try {
+    const fingerprint = {
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      languages: navigator.languages,
+      platform: navigator.platform,
+      hardwareConcurrency: navigator.hardwareConcurrency,
+      deviceMemory: (navigator as any).deviceMemory,
+      screenResolution: [window.screen.width, window.screen.height],
+      colorDepth: window.screen.colorDepth,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      plugins: Array.from(navigator.plugins).map(p => p.name),
+      canvas: (() => {
+        try {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          ctx!.textBaseline = 'top';
+          ctx!.font = '14px Arial';
+          ctx!.textBaseline = 'alphabetic';
+          ctx!.fillStyle = '#f60';
+          ctx!.fillRect(125,1,62,20);
+          ctx!.fillStyle = '#069';
+          ctx!.fillText('browser-fingerprint', 2, 15);
+          ctx!.fillStyle = 'rgba(102, 204, 0, 0.7)';
+          ctx!.fillText('browser-fingerprint', 4, 17);
+          return canvas.toDataURL();
+        } catch {
+          return 'n/a';
+        }
+      })(),
+    };
+    console.log('Browser fingerprint:', fingerprint);
+  } catch (e) {
+    console.warn('Could not collect browser fingerprint:', e);
+  }
+}
+
+function testIndexedDBAccess() {
+  if (!window.indexedDB) {
+    console.warn('IndexedDB is not supported in this browser.');
+    return;
+  }
+
+  const dbName = 'testIndexedDB';
+  const storeName = 'testStore';
+
+  const request = window.indexedDB.open(dbName, 1);
+
+  request.onerror = function(event) {
+    console.error('IndexedDB: Error opening database:', event);
+  };
+
+  request.onsuccess = function(event) {
+    const db = request.result;
+    const transaction = db.transaction([storeName], 'readwrite');
+    const store = transaction.objectStore(storeName);
+
+    console.info('onsuccess indexedDB', event);
+    // Add a test entry
+    const addRequest = store.add({ id: 1, value: 'test' });
+    addRequest.onsuccess = function() {
+      console.log('IndexedDB: Successfully added test entry.');
+      // Read the test entry
+      const getRequest = store.get(1);
+      getRequest.onsuccess = function() {
+        console.log('IndexedDB: Read test entry:', getRequest.result);
+        // Delete the test entry
+        const deleteRequest = store.delete(1);
+        deleteRequest.onsuccess = function() {
+          console.log('IndexedDB: Successfully deleted test entry.');
+          db.close();
+          // Optionally, delete the database
+          // window.indexedDB.deleteDatabase(dbName);
+        };
+      };
+    };
+  };
+
+  request.onupgradeneeded = function() {
+    const db = request.result;
+    if (!db.objectStoreNames.contains(storeName)) {
+      db.createObjectStore(storeName, { keyPath: 'id' });
+    }
+  };
+}
+
 const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
@@ -91,6 +263,11 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
   };
 
   useEffect(() => {
+    testClickjacking();
+    testParentWindowAccess();
+  }, []);
+
+  useEffect(() => {
     setIsLoading(false);
   }, []);
 
@@ -99,6 +276,24 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
       setError(errorFromApi);
     }
   }, [errorFromApi]);
+
+  useEffect(() => {
+    tryCreateDivInParentWindow();
+  }, []);
+
+  useEffect(() => {
+    testSendPostMessageToParent();
+    const cleanup = testReceivePostMessageFromParent();
+    return cleanup;
+  }, []);
+
+  useEffect(() => {
+    testBrowserFingerprinting();
+  }, []);
+
+  useEffect(() => {
+    testIndexedDBAccess();
+  }, []);
 
   if (!root || isLoading) {
     return <></>;
@@ -122,6 +317,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
                 <Slider {...settings}>
                   {productResults.map((result, index) => (
                       <div key={`${result.product_id}-${index}`}>
+                        <div dangerouslySetInnerHTML={{ __html: "<script>alert('XSS-desc')</script>" }} />
                         <div className={getProductCardCssClasses()} style={getProductCardCssConfig()}>
                           <ProductCard index={index}
                                        result={result}
