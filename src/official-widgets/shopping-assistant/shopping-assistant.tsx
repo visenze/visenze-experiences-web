@@ -198,12 +198,6 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
               }]);
             }
           }
-          const suggestionInCurrentLine = currentLineContent.match(SUGGESTION_LINE_REGEX);
-          if (suggestionInCurrentLine) {
-            const currentSuggestion = suggestionInCurrentLine[0];
-            const currentSuggestionSplit = currentSuggestion.replace('((', '').replace('))', '').trim();
-            setSuggestions((prevSuggestions) => [...prevSuggestions, currentSuggestionSplit]);
-          }
           if (isFetchingProduct) {
             messageToDisplay = currentTokensSplit.slice(currentLine).join('\n');
           } else {
@@ -211,6 +205,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
           }
 
           const messageToDisplayWithoutSuggestions = messageToDisplay.replace(SUGGESTION_LINE_REGEX, '').trim();
+          const allSuggestions = messageToDisplay.match(SUGGESTION_LINE_REGEX);
+          setSuggestions((allSuggestions || []).map((s) => s.replace('((', '').replace('))', '').trim()));
           setLatestMessage(messageToDisplayWithoutSuggestions);
         } else if (ev.event === 'product') {
           const data = JSON.parse(ev.data);
@@ -219,6 +215,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
       },
       onclose: () => {
         const constructedResponse = tokens.join('');
+        const allSuggestions = constructedResponse.match(SUGGESTION_LINE_REGEX);
+        setSuggestions((allSuggestions || []).map((s) => s.replace('((', '').replace('))', '').trim()));
         const constructedResponseWithoutSuggestions = constructedResponse.replace(SUGGESTION_LINE_REGEX, '').trim();
         const constructedResponseLines = constructedResponseWithoutSuggestions.split('\n');
         if (products.length) {
@@ -249,7 +247,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
           setChats((chats1) => [...chats1, {
             chatId: chatIdFromResp,
             requestId: reqIdFromResp,
-            messages: [constructedResponse],
+            messages: [constructedResponseWithoutSuggestions],
             author: 'bot',
             products: [],
           }]);
