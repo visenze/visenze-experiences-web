@@ -105,6 +105,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
     });
     setAllowUserInput(false);
     const params = new URLSearchParams({
+      ...widgetConfig.searchSettings,
       app_key: appSettings.appKey,
       placement_id: appSettings.placementId.toString(),
       chat_id: chatIdToUse,
