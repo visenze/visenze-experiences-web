@@ -5,7 +5,7 @@ import ProductCard from '../../../common/components/product-card/ProductCard';
 import SparklesIcon from '../../../common/icons/SparklesIcon';
 import UserIcon from '../../../common/icons/UserIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
-import { isImageDataUrl, type SearchImageOrPid } from '../../../common/types/image';
+import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
 import DownArrowIcon from '../icons/DownArrowIcon';
 
@@ -20,13 +20,15 @@ export interface Chat {
 
 interface ChatWindowProps {
   isWaiting: boolean;
+  showAllSuggestions: boolean;
+  setShowAllSuggestions: () => void;
   chats: Chat[];
   latestMessage: string;
   suggestions: string[];
   sendMessage: (message: string) => void;
 }
 
-const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, suggestions, sendMessage }) => {
+const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
@@ -39,6 +41,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
     }
     if (isImageDataUrl(image)) {
       return image.file;
+    }
+    if (isImageUrl(image)) {
+      return image.imgUrl;
     }
     return '';
   };
@@ -67,7 +72,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
       .replaceAll(/</g, '&lt;')
       .replaceAll(/>/g, '&gt;')
       // bold texts wrapped **like this**
-      .replaceAll(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+      .replaceAll(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+      .replaceAll(/\n/g, '<br>');
 
   const getProductGridCssClasses = (defaultGapX: string): string => {
     const cssConfigSrc = customizations.productGrid?.[breakpoint];
@@ -101,7 +107,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
           {chats.map((chat, idx) => (
               <div className={cn(
                   'w-full',
-                  chat.author === 'products' ? `grid grid-cols-3 md:max-w-9/10 lg:max-w-7/10 ${getProductGridCssClasses('gap-x-4')}` : 'flex flex-col',
+                  chat.author === 'products' ? `grid grid-cols-2 ${getProductGridCssClasses('gap-x-4')}` : 'flex flex-col',
                   chat.author === 'user' ? 'items-end' : '',
               )}
                    style={getProductGridCssConfig(chat.author === 'products')}
@@ -209,15 +215,30 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
             <div className='mt-2 flex items-end'>
               <div className='flex flex-col gap-2'>
                 {suggestions.map((suggestion, idx) => (
-                  <div
-                    key={`suggestion-${idx}`}
-                    className='w-fit bg-sky-100 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
+                  <>
+                    {(showAllSuggestions || idx <= 1) && (
+                      <div
+                        key={`suggestion-${idx}`}
+                        className='w-fit bg-sky-100 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
                     rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
-                    onClick={() => sendMessage(suggestion)}
-                  >
-                    {suggestion}
-                  </div>
+                        onClick={() => sendMessage(suggestion)}
+                      >
+                        {suggestion}
+                      </div>
+                    )}
+                  </>
                 ))}
+                {(!showAllSuggestions && suggestions.length >= 2) && (
+                  <div
+                    className='w-fit bg-sky-200 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
+                    rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
+                    onClick={() => {
+                      setShowAllSuggestions();
+                      scrollToBottom();
+                    }}>
+                    Show more...
+                  </div>
+                )}
               </div>
             </div>
           )}

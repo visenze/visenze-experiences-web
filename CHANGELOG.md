@@ -30,6 +30,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.14](https://github.com/visenze/visenze-experiences-web/compare/1.0.13...1.0.14) - 2025-08-20
+
+<!-- BEGIN visenze-experiences-web 1.0.14 -->
+This release fixes some interactions within shopping-assistant widget, which is still in beta status.
+<!-- END visenze-experiences-web 1.0.14 -->
+
 ## [1.0.13](https://github.com/visenze/visenze-experiences-web/compare/1.0.12...1.0.13) - 2025-07-18
 
 <!-- BEGIN visenze-experiences-web 1.0.13 -->

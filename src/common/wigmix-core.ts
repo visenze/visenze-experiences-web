@@ -1,7 +1,7 @@
 import type { Root } from 'react-dom/client';
 import type { ProductSearchResponse, ViSearchClient } from 'visearch-javascript-sdk';
 import type { ErrorHandler, SuccessHandler } from './types/function';
-import type { SearchImage } from './types/image';
+import type { SearchImage, SearchImageOrPid } from './types/image';
 import type { LanguagePack } from './locales/locale';
 
 export type Primitive = boolean | string | number;
@@ -323,6 +323,12 @@ export interface WidgetClient {
    * @since 1.0.0
    */
   forceErrorState: (errorState: WidgetErrorState, errorMessage?: string) => void;
+  /**
+   * Sends a chat message; applicable only for widget types that have chatbox-like interface.
+   *
+   * @since 1.0.14
+   */
+  sendChatMessage: (message: string, image?: SearchImageOrPid) => void;
 }
 
 type ViewportType = 'mobile' | 'tablet' | 'desktop';
@@ -1364,6 +1370,24 @@ export interface WidgetConfig {
        * @since 1.0.6
        */
       products: TrendingProduct[];
+    };
+    /**
+     * @internal
+     *
+     * @since 1.0.14
+     */
+    chatbot?: {
+      /**
+       * The chat agent to be used.
+       *
+       * This should be set by internal ViSenze personnel as the value needs to correspond
+       * to an internally recognized chat agent.
+       *
+       * @internal
+       *
+       * @since 1.0.14
+       */
+      chatAgent: string;
     };
   };
   /**

@@ -49,10 +49,13 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   const [chats, setChats] = useState<Chat[]>([]);
   const [chatId, setChatId] = useState('');
   const [isWaiting, setIsWaiting] = useState(true);
+  const [showAllSuggestions, setShowAllSuggestions] = useState(false);
   const [allowUserInput, setAllowUserInput] = useState(false);
   const [latestMessage, setLatestMessage] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showCameraDrawer, setShowCameraDrawer] = useState(false);
+  const [widgetOpenTrigger, setWidgetOpenTrigger] = useState(0);
+  const [sendChatTrigger, setSendChatTrigger] = useState<[string, SearchImageOrPid | undefined]>();
   const intl = useIntl();
   const openingMessages = [
     intl.formatMessage({ id: 'openingMessage1' }),
@@ -68,6 +71,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
       return;
     }
     setIsWaiting(true);
+    setShowAllSuggestions(false);
     setMessage('');
     setSuggestions([]);
     setChats((chats1) => [
@@ -103,6 +107,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
     });
     setAllowUserInput(false);
     const params = new URLSearchParams({
+      ...widgetConfig.searchSettings,
       app_key: appSettings.appKey,
       placement_id: appSettings.placementId.toString(),
       chat_id: chatIdToUse,
@@ -110,7 +115,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
       va_uid: uid,
       va_sid: sid,
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
-      chat_agent: 'shopping_assistant_v2',
+      chat_agent: customizations.chatbot?.chatAgent || 'shopping_assistant_v2',
     });
 
     const formData = new FormData();
@@ -193,12 +198,6 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
               }]);
             }
           }
-          const suggestionInCurrentLine = currentLineContent.match(SUGGESTION_LINE_REGEX);
-          if (suggestionInCurrentLine) {
-            const currentSuggestion = suggestionInCurrentLine[0];
-            const currentSuggestionSplit = currentSuggestion.replace('((', '').replace('))', '').trim();
-            setSuggestions((prevSuggestions) => [...prevSuggestions, currentSuggestionSplit]);
-          }
           if (isFetchingProduct) {
             messageToDisplay = currentTokensSplit.slice(currentLine).join('\n');
           } else {
@@ -206,6 +205,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
           }
 
           const messageToDisplayWithoutSuggestions = messageToDisplay.replace(SUGGESTION_LINE_REGEX, '').trim();
+          const allSuggestions = messageToDisplay.match(SUGGESTION_LINE_REGEX);
+          setSuggestions((allSuggestions || []).map((s) => s.replace('((', '').replace('))', '').trim()));
           setLatestMessage(messageToDisplayWithoutSuggestions);
         } else if (ev.event === 'product') {
           const data = JSON.parse(ev.data);
@@ -214,6 +215,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
       },
       onclose: () => {
         const constructedResponse = tokens.join('');
+        const allSuggestions = constructedResponse.match(SUGGESTION_LINE_REGEX);
+        setSuggestions((allSuggestions || []).map((s) => s.replace('((', '').replace('))', '').trim()));
         const constructedResponseWithoutSuggestions = constructedResponse.replace(SUGGESTION_LINE_REGEX, '').trim();
         const constructedResponseLines = constructedResponseWithoutSuggestions.split('\n');
         if (products.length) {
@@ -244,7 +247,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
           setChats((chats1) => [...chats1, {
             chatId: chatIdFromResp,
             requestId: reqIdFromResp,
-            messages: [constructedResponse],
+            messages: [constructedResponseWithoutSuggestions],
             author: 'bot',
             products: [],
           }]);
@@ -308,6 +311,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
 
   const newChat = (): void => {
     setIsWaiting(true);
+    setShowAllSuggestions(false);
     setAllowUserInput(false);
     setChats([]);
     setLatestMessage('');
@@ -336,7 +340,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   };
 
   const onChatButtonClick = useCallback((): void => {
-    openDialog();
+    setWidgetOpenTrigger(Math.random());
   }, []);
 
   const getScreen = (): ReactElement => (
@@ -363,7 +367,13 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
             </div>
           </div>
         </div>
-        <ChatWindow isWaiting={isWaiting} chats={chats} latestMessage={latestMessage} suggestions={suggestions} sendMessage={sendMessage} />
+        <ChatWindow isWaiting={isWaiting}
+                    chats={chats}
+                    latestMessage={latestMessage}
+                    suggestions={suggestions}
+                    showAllSuggestions={showAllSuggestions}
+                    setShowAllSuggestions={() => setShowAllSuggestions(true)}
+                    sendMessage={sendMessage} />
         <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
           {showCameraDrawer && (
             <div
@@ -466,8 +476,24 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   }, [image]);
 
   useEffect(() => {
-    widgetClient.registerWidgetOpener(() => {
+    if (widgetOpenTrigger) {
       openDialog();
+    }
+  }, [widgetOpenTrigger]);
+
+  useEffect(() => {
+    if (sendChatTrigger) {
+      setDialogVisible(true);
+      sendMessage(sendChatTrigger[0], sendChatTrigger[1]);
+    }
+  }, [sendChatTrigger]);
+
+  useEffect(() => {
+    widgetClient.registerWidgetOpener(() => {
+      setWidgetOpenTrigger(Math.random());
+    });
+    widgetClient.sendChatMessage = ((msg, img): void => {
+      setSendChatTrigger([msg, img]);
     });
   }, []);
 
@@ -491,7 +517,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
                             } />
         {dialogVisible && (
           <div className={cn(
-            'fixed inset-y-0 w-full md:w-1/4 bg-white',
+            'fixed inset-y-0 w-full md:w-3/10 md:min-w-96 bg-white',
             widgetConfig.customizations.popup?.position === 'right' ? 'right-0' : 'left-0',
           )}>
             {getScreen()}

@@ -318,6 +318,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     updateLocale,
     registerLocaleUpdater,
     forceErrorState: (): void => {}, // implemented in individual widgets
+    sendChatMessage: (): void => {}, // implemented in individual widgets
   };
 };
 
