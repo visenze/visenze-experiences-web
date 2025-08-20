@@ -53,6 +53,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   const [latestMessage, setLatestMessage] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showCameraDrawer, setShowCameraDrawer] = useState(false);
+  const [widgetOpenTrigger, setWidgetOpenTrigger] = useState(0);
+  const [sendChatTrigger, setSendChatTrigger] = useState<[string, SearchImageOrPid | undefined]>();
   const intl = useIntl();
   const openingMessages = [
     intl.formatMessage({ id: 'openingMessage1' }),
@@ -336,7 +338,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   };
 
   const onChatButtonClick = useCallback((): void => {
-    openDialog();
+    setWidgetOpenTrigger(Math.random());
   }, []);
 
   const getScreen = (): ReactElement => (
@@ -466,8 +468,24 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   }, [image]);
 
   useEffect(() => {
-    widgetClient.registerWidgetOpener(() => {
+    if (widgetOpenTrigger) {
       openDialog();
+    }
+  }, [widgetOpenTrigger]);
+
+  useEffect(() => {
+    if (sendChatTrigger) {
+      setDialogVisible(true);
+      sendMessage(sendChatTrigger[0], sendChatTrigger[1]);
+    }
+  }, [sendChatTrigger]);
+
+  useEffect(() => {
+    widgetClient.registerWidgetOpener(() => {
+      setWidgetOpenTrigger(Math.random());
+    });
+    widgetClient.sendChatMessage = ((msg, img): void => {
+      setSendChatTrigger([msg, img]);
     });
   }, []);
 

@@ -5,7 +5,7 @@ import ProductCard from '../../../common/components/product-card/ProductCard';
 import SparklesIcon from '../../../common/icons/SparklesIcon';
 import UserIcon from '../../../common/icons/UserIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
-import { isImageDataUrl, type SearchImageOrPid } from '../../../common/types/image';
+import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
 import DownArrowIcon from '../icons/DownArrowIcon';
 
@@ -40,6 +40,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
     if (isImageDataUrl(image)) {
       return image.file;
     }
+    if (isImageUrl(image)) {
+      return image.imgUrl;
+    }
     return '';
   };
 
@@ -67,7 +70,8 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
       .replaceAll(/</g, '&lt;')
       .replaceAll(/>/g, '&gt;')
       // bold texts wrapped **like this**
-      .replaceAll(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+      .replaceAll(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+      .replaceAll(/\n/g, '<br>');
 
   const getProductGridCssClasses = (defaultGapX: string): string => {
     const cssConfigSrc = customizations.productGrid?.[breakpoint];
