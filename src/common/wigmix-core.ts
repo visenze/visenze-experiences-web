@@ -1365,6 +1365,24 @@ export interface WidgetConfig {
        */
       products: TrendingProduct[];
     };
+    /**
+     * @internal
+     *
+     * @since 1.0.14
+     */
+    chatbot?: {
+      /**
+       * The chat agent to be used.
+       *
+       * This should be set by internal ViSenze personnel as the value needs to correspond
+       * to an internally recognized chat agent.
+       *
+       * @internal
+       *
+       * @since 1.0.14
+       */
+      chatAgent: string;
+    };
   };
   /**
    * Additional settings to be applied to the widget that are set from external platforms,
