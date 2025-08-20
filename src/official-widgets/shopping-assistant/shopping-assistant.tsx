@@ -517,7 +517,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
                             } />
         {dialogVisible && (
           <div className={cn(
-            'fixed inset-y-0 w-full md:w-1/4 bg-white',
+            'fixed inset-y-0 w-full md:w-3/10 md:min-w-96 bg-white',
             widgetConfig.customizations.popup?.position === 'right' ? 'right-0' : 'left-0',
           )}>
             {getScreen()}

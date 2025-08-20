@@ -107,7 +107,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
           {chats.map((chat, idx) => (
               <div className={cn(
                   'w-full',
-                  chat.author === 'products' ? `grid grid-cols-3 md:max-w-9/10 lg:max-w-7/10 ${getProductGridCssClasses('gap-x-4')}` : 'flex flex-col',
+                  chat.author === 'products' ? `grid grid-cols-2 ${getProductGridCssClasses('gap-x-4')}` : 'flex flex-col',
                   chat.author === 'user' ? 'items-end' : '',
               )}
                    style={getProductGridCssConfig(chat.author === 'products')}
