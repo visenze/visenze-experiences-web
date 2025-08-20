@@ -20,13 +20,15 @@ export interface Chat {
 
 interface ChatWindowProps {
   isWaiting: boolean;
+  showAllSuggestions: boolean;
+  setShowAllSuggestions: () => void;
   chats: Chat[];
   latestMessage: string;
   suggestions: string[];
   sendMessage: (message: string) => void;
 }
 
-const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, suggestions, sendMessage }) => {
+const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
@@ -213,15 +215,30 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
             <div className='mt-2 flex items-end'>
               <div className='flex flex-col gap-2'>
                 {suggestions.map((suggestion, idx) => (
-                  <div
-                    key={`suggestion-${idx}`}
-                    className='w-fit bg-sky-100 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
+                  <>
+                    {(showAllSuggestions || idx <= 1) && (
+                      <div
+                        key={`suggestion-${idx}`}
+                        className='w-fit bg-sky-100 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
                     rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
-                    onClick={() => sendMessage(suggestion)}
-                  >
-                    {suggestion}
-                  </div>
+                        onClick={() => sendMessage(suggestion)}
+                      >
+                        {suggestion}
+                      </div>
+                    )}
+                  </>
                 ))}
+                {(!showAllSuggestions && suggestions.length >= 2) && (
+                  <div
+                    className='w-fit bg-sky-200 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
+                    rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
+                    onClick={() => {
+                      setShowAllSuggestions();
+                      scrollToBottom();
+                    }}>
+                    Show more...
+                  </div>
+                )}
               </div>
             </div>
           )}

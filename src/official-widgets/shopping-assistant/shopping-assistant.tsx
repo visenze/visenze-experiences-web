@@ -49,6 +49,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   const [chats, setChats] = useState<Chat[]>([]);
   const [chatId, setChatId] = useState('');
   const [isWaiting, setIsWaiting] = useState(true);
+  const [showAllSuggestions, setShowAllSuggestions] = useState(false);
   const [allowUserInput, setAllowUserInput] = useState(false);
   const [latestMessage, setLatestMessage] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -70,6 +71,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
       return;
     }
     setIsWaiting(true);
+    setShowAllSuggestions(false);
     setMessage('');
     setSuggestions([]);
     setChats((chats1) => [
@@ -311,6 +313,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
 
   const newChat = (): void => {
     setIsWaiting(true);
+    setShowAllSuggestions(false);
     setAllowUserInput(false);
     setChats([]);
     setLatestMessage('');
@@ -366,7 +369,13 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
             </div>
           </div>
         </div>
-        <ChatWindow isWaiting={isWaiting} chats={chats} latestMessage={latestMessage} suggestions={suggestions} sendMessage={sendMessage} />
+        <ChatWindow isWaiting={isWaiting}
+                    chats={chats}
+                    latestMessage={latestMessage}
+                    suggestions={suggestions}
+                    showAllSuggestions={showAllSuggestions}
+                    setShowAllSuggestions={() => setShowAllSuggestions(true)}
+                    sendMessage={sendMessage} />
         <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
           {showCameraDrawer && (
             <div
