@@ -105,12 +105,12 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   },
   productGrid: {
     mobile: {
-      productsPerRow: 2,
+      productsPerRow: 3,
       marginVertical: 8,
       marginHorizontal: 16,
     },
     tablet: {
-      productsPerRow: 2,
+      productsPerRow: 4,
       marginVertical: 12,
       marginHorizontal: 8,
     },
