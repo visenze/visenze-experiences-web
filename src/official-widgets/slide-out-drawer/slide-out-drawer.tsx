@@ -120,8 +120,7 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ pid, renderModalWithoutPortal
 
     if (image && isPid(image)) {
       params['pid'] = image.pid;
-    }
-    if (image && isImageUrl(image)) {
+    } else if (image && isImageUrl(image)) {
       params['im_url'] = image.imgUrl;
     }
     const product = boxData?.index ? productTypes[boxData.index] : boxData;
