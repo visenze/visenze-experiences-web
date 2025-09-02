@@ -525,7 +525,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
       {breakpoint === 'mobile' && getMobileView()}
       {(breakpoint === 'tablet' || breakpoint === 'desktop') && getTabletAndDesktopView()}
       {customizations.generalLayout?.showViSenzeLogo && (
-        <Footer className='fixed bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl' />
+        <Footer darkMode={darkMode} className='fixed bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl' />
       )}
     </>
   );

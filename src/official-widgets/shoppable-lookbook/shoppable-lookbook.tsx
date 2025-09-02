@@ -21,7 +21,7 @@ interface ObjectDot {
 }
 
 const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -151,7 +151,7 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
 
               {/* ViSenze Footer */}
               {customizations.generalLayout?.showViSenzeLogo && (
-                  <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='sl-visenze-footer' />
+                  <Footer darkMode={darkMode} className='bg-transparent py-4 text-primary md:py-8' dataPw='sl-visenze-footer' />
               )}
             </>
         )}

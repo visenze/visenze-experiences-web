@@ -204,7 +204,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             backgroundColor: darkMode ? customizations.generalLayout?.backgroundColorDark : customizations.generalLayout?.backgroundColor,
           }}
         >
-          <Footer dataPw='ss-visenze-footer' />
+          <Footer darkMode={darkMode} dataPw='ss-visenze-footer' />
         </div>
       )}
     </>

@@ -220,7 +220,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
 
               {/* ViSenze Footer */}
               {customizations.generalLayout?.showViSenzeLogo && (
-                  <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='stl-visenze-footer'/>
+                  <Footer darkMode={darkMode} className='bg-transparent py-4 text-primary md:py-8' dataPw='stl-visenze-footer'/>
               )}
             </>
         )}

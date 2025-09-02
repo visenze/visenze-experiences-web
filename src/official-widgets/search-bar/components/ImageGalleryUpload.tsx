@@ -213,7 +213,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
           </div>
 
           {customizations.generalLayout?.showViSenzeLogo && (
-              <Footer className='sticky bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl' dataPw='cs-visenze-footer'/>
+              <Footer darkMode={darkMode} className='sticky bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl' dataPw='cs-visenze-footer'/>
           )}
         </div>
       </VisenzeModal>

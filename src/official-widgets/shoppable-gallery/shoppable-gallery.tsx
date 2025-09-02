@@ -111,7 +111,7 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ renderModalWithoutPortal 
 
           {/* ViSenze Footer */}
           {customizations.generalLayout?.showViSenzeLogo && (
-            <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='sg-visenze-footer'/>
+            <Footer darkMode={darkMode} className='bg-transparent py-4 text-primary md:py-8' dataPw='sg-visenze-footer'/>
           )}
         </div>
 

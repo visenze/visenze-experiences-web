@@ -326,7 +326,7 @@ exports[`icon-triggered-grid should render a successful response with default co
               </p>
               <img
                 class="h-5 object-center py-0.5 pl-1"
-                src="https://cdn.visenze.com/images/visenze-logo-sm.png"
+                src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
               />
             </div>
           </div>
@@ -2460,7 +2460,7 @@ exports[`icon-triggered-grid should render a successful response with default co
                 </p>
                 <img
                   class="h-5 object-center py-0.5 pl-1"
-                  src="https://cdn.visenze.com/images/visenze-logo-sm.png"
+                  src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
                 />
               </div>
             </div>
@@ -2475,7 +2475,7 @@ exports[`icon-triggered-grid should render a successful response with default co
               </p>
               <img
                 class="h-5 object-center py-0.5 pl-1"
-                src="https://cdn.visenze.com/images/visenze-logo-sm.png"
+                src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
               />
             </div>
           </div>
@@ -2595,7 +2595,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
               </p>
               <img
                 class="h-5 object-center py-0.5 pl-1"
-                src="https://cdn.visenze.com/images/visenze-logo-sm.png"
+                src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
               />
             </div>
           </div>
