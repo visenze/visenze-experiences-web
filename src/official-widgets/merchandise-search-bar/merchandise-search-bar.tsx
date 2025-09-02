@@ -105,7 +105,9 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
       setHasError(false);
     }
     const handler = setTimeout(() => {
-      setDebouncedQuery(query);
+      if (query && query.length >= 3) {
+        setDebouncedQuery(query);
+      }
     }, 300);
 
     return (): void => {
