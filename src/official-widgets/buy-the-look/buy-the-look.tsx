@@ -175,7 +175,7 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
                       </div>
                     </div>
                     <div className='flex flex-col gap-3 mt-4'>
-                      {widgetConfig.callbacks.onAddToCartToggle && (
+                      {widgetConfig.customizations.productCard?.addToCart?.enable && (
                         <button
                           className='py-3 px-6 rounded-none text-base font-bold tracking-wider w-full'
                           style={{
