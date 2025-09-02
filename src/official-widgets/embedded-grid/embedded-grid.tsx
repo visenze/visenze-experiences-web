@@ -14,7 +14,7 @@ interface EmbeddedGridProps {
 }
 
 const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
-  const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
+  const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,7 +76,7 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
 
               {/* ViSenze Footer */}
               {customizations.generalLayout?.showViSenzeLogo && (
-                  <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='eg-visenze-footer' />
+                  <Footer darkMode={darkMode} className='bg-transparent py-4 text-primary md:py-8' dataPw='eg-visenze-footer' />
               )}
             </>
         )}

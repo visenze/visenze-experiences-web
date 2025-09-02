@@ -1410,7 +1410,7 @@ exports[`slide-out-drawer should render a successful response with default confi
             </p>
             <img
               class="h-5 object-center py-0.5 pl-1"
-              src="https://cdn.visenze.com/images/visenze-logo-sm.png"
+              src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
             />
           </div>
         </div>
@@ -1628,7 +1628,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                 <div
                   class="wigmix-product-grid grid px-2 pb-3 "
                   data-pw="ss-product-result-grid"
-                  style="grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 8px; column-gap: 16px;"
+                  style="grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 8px; column-gap: 16px;"
                 >
                   <div
                     class="wigmix-product-card"
@@ -2670,7 +2670,7 @@ exports[`slide-out-drawer should render a successful response with default confi
             </p>
             <img
               class="h-5 object-center py-0.5 pl-1"
-              src="https://cdn.visenze.com/images/visenze-logo-sm.png"
+              src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
             />
           </div>
         </div>

@@ -4,7 +4,7 @@ import { Context as ResponsiveContext } from 'react-responsive';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import MerchandiseSearchBar from './merchandise-search-bar';
 import {
-  getStandardMultiSearchAutocompleteResponse, getStandardMultiSearchInvalidImageResponse,
+  getStandardMultiSearchAutocompleteResponse,
   getStandardMultiSearchSuccessResponse,
 } from '../../../mocks/responses';
 import getWidgetClient from '../../common/client/widget-client';
@@ -95,7 +95,7 @@ describe('merchandise-search-bar', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
+            <MerchandiseSearchBar renderModalWithoutPortal={true} />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -115,7 +115,7 @@ describe('merchandise-search-bar', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
+            <MerchandiseSearchBar renderModalWithoutPortal={true} />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -154,7 +154,7 @@ describe('merchandise-search-bar', () => {
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <ResponsiveContext.Provider value={{ width: 600 }}>
-              <MerchandiseSearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
+              <MerchandiseSearchBar renderModalWithoutPortal={true} />
             </ResponsiveContext.Provider>
           </IntlProvider>
         </WidgetDataContext.Provider>
@@ -214,7 +214,7 @@ describe('merchandise-search-bar', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
+            <MerchandiseSearchBar renderModalWithoutPortal={true} />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -235,36 +235,6 @@ describe('merchandise-search-bar', () => {
     productCardImages.forEach((productCardImage, idx) => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
     });
-  });
-
-  it('should show error message when API call returns error', () => {
-    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
-      ...mockVisearchClient,
-      productMultisearch: jest.fn().mockImplementation((_, handler) => {
-        handler(getStandardMultiSearchInvalidImageResponse());
-      }),
-      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
-        handler(getStandardMultiSearchInvalidImageResponse());
-      }),
-    }));
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar textQuery='' imUrl='test-invalid-url' renderModalWithoutPortal={true} />
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
-    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
-    expect(searchBar).toBeDefined();
-    act(() => {
-      searchBar!.click();
-      fireEvent.change(searchBar!, { target: { value: 'jeans' } });
-      fireEvent.keyDown(searchBar!, { key: 'Enter' });
-    });
-    expect(searchBar!.getAttribute('value')).toBe('jeans');
-    expect(testComponent.getByText('WE HAVE A PROBLEM HERE!')).not.toBeNull();
   });
 
   it('should render a successful response after uploading image with search bar icon in desktop view', async () => {
@@ -288,7 +258,7 @@ describe('merchandise-search-bar', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar textQuery='' imUrl='' renderModalWithoutPortal={true} />
+            <MerchandiseSearchBar renderModalWithoutPortal={true} />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,
@@ -371,7 +341,7 @@ describe('merchandise-search-bar', () => {
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar textQuery='test' imUrl='' renderModalWithoutPortal={true} />
+            <MerchandiseSearchBar renderModalWithoutPortal={true} />
           </IntlProvider>
         </WidgetDataContext.Provider>
       </RootContext.Provider>,

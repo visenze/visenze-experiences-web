@@ -453,7 +453,7 @@ exports[`search-bar should render upload image modal in desktop view 1`] = `
             </p>
             <img
               class="h-5 object-center py-0.5 pl-1"
-              src="https://cdn.visenze.com/images/visenze-logo-sm.png"
+              src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
             />
           </div>
         </div>
@@ -798,7 +798,7 @@ exports[`search-bar should render upload image modal in mobile view 1`] = `
             </p>
             <img
               class="h-5 object-center py-0.5 pl-1"
-              src="https://cdn.visenze.com/images/visenze-logo-sm.png"
+              src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
             />
           </div>
         </div>

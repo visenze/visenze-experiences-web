@@ -308,7 +308,10 @@ describe('ProductCard', () => {
     const findSimilarButton = testComponent.getByTestId('wigmix-find-similar-button');
     findSimilarButton.click();
 
-    expect(onFindSimilar).toHaveBeenNthCalledWith(1, testProduct);
+    expect(onFindSimilar).toHaveBeenNthCalledWith(1, {
+      imgUrl: testProduct.im_url,
+      pid: testProduct.product_id,
+    });
     // Tracking events should not be sent
     expect(localStorageSetItemSpy).not.toHaveBeenCalled();
     expect(sendEventSpy).not.toHaveBeenCalled();

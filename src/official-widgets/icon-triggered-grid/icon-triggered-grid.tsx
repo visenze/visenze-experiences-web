@@ -222,13 +222,13 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalW
                         </div>
                       </div>
                       {/* ViSenze Footer mobile */}
-                      <Footer className='mt-auto bg-transparent pt-4 md:hidden' dataPw='itg-visenze-footer-mobile' />
+                      <Footer darkMode={darkMode} className='mt-auto bg-transparent pt-4 md:hidden' dataPw='itg-visenze-footer-mobile' />
                     </div>
                 )}
 
                 {/* ViSenze Footer desktop */}
                 {customizations.generalLayout?.showViSenzeLogo && (
-                  <Footer className='mt-auto hidden bg-transparent md:flex' dataPw='itg-visenze-footer-desktop' />
+                  <Footer darkMode={darkMode} className='mt-auto hidden bg-transparent md:flex' dataPw='itg-visenze-footer-desktop' />
                 )}
               </div>
 

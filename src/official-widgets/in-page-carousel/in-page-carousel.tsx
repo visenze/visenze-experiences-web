@@ -164,7 +164,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
 
           {/* ViSenze Footer */}
           {customizations.generalLayout?.showViSenzeLogo && (
-            <Footer className='bg-transparent py-4 text-primary md:py-8' dataPw='mlt-visenze-footer' />
+            <Footer darkMode={darkMode} className='bg-transparent py-4 text-primary md:py-8' dataPw='mlt-visenze-footer' />
           )}
         </>
       )}

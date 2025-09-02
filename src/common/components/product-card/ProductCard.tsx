@@ -9,6 +9,7 @@ import HeartIcon from '../../icons/HeartIcon';
 import MagnifyingGlassIcon from '../../icons/MagnifyingGlassIcon';
 import { getCurrencyFormatter } from '../../locales/locale';
 import { WidgetDataContext } from '../../types/contexts';
+import type { SearchImageOrPid } from '../../types/image';
 import type { ProcessedProduct } from '../../types/product';
 import { Actions } from '../../types/tracking-constants';
 import type { WidgetConfig } from '../../wigmix-core';
@@ -17,7 +18,7 @@ interface ProductCardProps {
   result: ProcessedProduct;
   index: number;
   isRecommendation: boolean;
-  onFindSimilar?: (data: ProcessedProduct) => void;
+  onFindSimilar?: (data: SearchImageOrPid) => void;
   hasFindSimilar: boolean;
   pwPrefix: string;
   imageClasses?: string;
@@ -387,7 +388,7 @@ const ProductCard: FC<ProductCardProps> = ({
                       if (onFindSimilar) {
                         event.preventDefault();
                         event.stopPropagation();
-                        onFindSimilar(result);
+                        onFindSimilar({ imgUrl: result.im_url, pid: result.product_id });
                       }
                     }}
                     style={{

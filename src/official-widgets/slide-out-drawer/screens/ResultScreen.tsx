@@ -182,7 +182,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     key={`${result.product_id}-${index}`}
                     onFindSimilar={(data) => {
                       setSearch('');
-                      return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
+                      return onFindSimilar(data);
                     }}
                     index={index}
                     result={result}
@@ -204,7 +204,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             backgroundColor: darkMode ? customizations.generalLayout?.backgroundColorDark : customizations.generalLayout?.backgroundColor,
           }}
         >
-          <Footer dataPw='ss-visenze-footer' />
+          <Footer darkMode={darkMode} dataPw='ss-visenze-footer' />
         </div>
       )}
     </>

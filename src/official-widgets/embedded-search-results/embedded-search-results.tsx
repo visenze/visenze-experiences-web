@@ -479,10 +479,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                                            metadata={metadata}
                                            onFindSimilar={(data) => {
                                              if (!isLoading) {
-                                               findSimilarClickHandler({
-                                                 imgUrl: data.im_url,
-                                                 pid: data.product_id,
-                                               });
+                                               findSimilarClickHandler(data);
                                              }
                                            }}
                                            isRecommendation={true}
