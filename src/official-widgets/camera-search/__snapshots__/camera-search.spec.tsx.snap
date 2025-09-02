@@ -3323,12 +3323,22 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                     >
                       drag this
                     </p>
+                    <div
+                      class="w-full p-1 hidden md:block border-1 bg-gray-200 hover:opacity-90"
+                    >
+                      Or capture image with your camera
+                    </div>
                     <p
                       class="px-6 pt-3 w-8/12 md:hidden"
                     >
                       tap this
                     </p>
                   </div>
+                </div>
+                <div
+                  class="w-full p-1 rounded-md text-center mt-1 md:hidden border-1 bg-gray-200 hover:opacity-90 cursor-pointer"
+                >
+                  Or capture image with your camera
                 </div>
               </div>
               <div
@@ -3581,12 +3591,22 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                     >
                       drag this
                     </p>
+                    <div
+                      class="w-full p-1 hidden md:block border-1 bg-gray-200 hover:opacity-90"
+                    >
+                      Or capture image with your camera
+                    </div>
                     <p
                       class="px-6 pt-3 w-8/12 md:hidden"
                     >
                       tap this
                     </p>
                   </div>
+                </div>
+                <div
+                  class="w-full p-1 rounded-md text-center mt-1 md:hidden border-1 bg-gray-200 hover:opacity-90 cursor-pointer"
+                >
+                  Or capture image with your camera
                 </div>
               </div>
               <div
