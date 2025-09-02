@@ -7,19 +7,14 @@ import { type AppPropsWithReferenceElement, AppWrapper } from '../../common/comp
 // Set to true to enable customization via WidgetConfig
 const ENABLE_CUSTOMIZATION = true;
 
-const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, widgetClient, element }) => {
-  const textQuery = element.dataset['text'] ?? '';
-  const imUrl = element.dataset['url'] ?? '';
-
-  return (
+const App: FC<AppPropsWithReferenceElement> = ({ widgetConfig, widgetClient }) => (
     <AppWrapper widgetConfig={widgetConfig}
                 widgetClient={widgetClient}
                 defaultTexts={DEFAULT_TEXTS}
                 defaultCustomizations={DEFAULT_CUSTOMIZATIONS}
                 enableCustomization={ENABLE_CUSTOMIZATION}>
-      <MerchandiseSearchBar textQuery={textQuery} imUrl={imUrl} />
+      <MerchandiseSearchBar />
     </AppWrapper>
   );
-};
 
 export default App;

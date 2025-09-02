@@ -24,16 +24,12 @@ export interface SearchHistoryEntry {
 }
 
 interface SearchBarResultProps {
-  textQuery: string;
-  imUrl: string;
   renderModalWithoutPortal?: boolean;
 }
 
 const SEARCH_HISTORY_BASE_KEY = 'wigmix_internal_search_history_';
 
 const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
-  textQuery,
-  imUrl,
   renderModalWithoutPortal,
 }): ReactElement => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
@@ -51,7 +47,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
   const root = useContext(RootContext);
   const intl = useIntl();
   const { imageUrl, autocompleteResults, error } = useAutocomplete({
-    image,
+    image: undefined,
     query: debouncedQuery,
   });
 
@@ -118,15 +114,6 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
   }, [query]);
 
   useEffect(() => {
-    if (textQuery) {
-      setQuery(textQuery);
-    }
-    if (imUrl) {
-      setImage({
-        imgUrl: imUrl,
-      });
-    }
-
     const historyFromLocalStorage = localStorage.getItem(
       `${SEARCH_HISTORY_BASE_KEY}${widgetConfig.appSettings.appKey}`,
     );
