@@ -34,7 +34,7 @@ interface ResultScreenProps {
   metadata: Record<string, any>;
   onModalClose: () => void;
   onTextSearch: (text: string) => void;
-  onFindSimilar: (data: SearchImageOrPid) => void;
+  onFindSimilar: (data: SearchImageOrPid, isSearchHistory: boolean) => void;
   onKeywordUpdate: (q: string) => void;
   searchHistory: SearchImageOrPid[];
 }
@@ -159,7 +159,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 key={`image-history-${index}`}
                 className='aspect-square size-20 cursor-pointer object-contain'
                 src={getFile(searchImage)}
-                onClick={() => onFindSimilar(searchImage)}
+                onClick={() => onFindSimilar(searchImage, true)}
                 data-testid='wigmix-previous-views-image'
                 data-pw={`ss-previous-views-image-${index + 1}`}
               />
@@ -203,7 +203,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   <ProductCard key={`${result.product_id}-${index}`}
                                onFindSimilar={(data) => {
                                  setSearch('');
-                                 return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
+                                 return onFindSimilar(data, false);
                                }}
                                index={index}
                                result={result}
@@ -284,7 +284,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                           key={`image-history-${index}`}
                           className='aspect-square size-24 cursor-pointer rounded-lg object-contain'
                           src={getFile(searchImage)}
-                          onClick={() => onFindSimilar(searchImage)}
+                          onClick={() => onFindSimilar(searchImage, true)}
                           data-pw={`ss-previous-views-image-${index + 1}`}
                           data-testid='wigmix-previous-views-image'
                         />
@@ -359,7 +359,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     <ProductCard key={`${result.product_id}-${index}`}
                                  onFindSimilar={(data) => {
                                    setSearch('');
-                                   return onFindSimilar({ imgUrl: data.im_url, pid: data.product_id });
+                                   return onFindSimilar(data, false);
                                  }}
                                  index={index}
                                  result={result}

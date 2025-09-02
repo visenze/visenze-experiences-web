@@ -840,6 +840,27 @@ export interface WidgetConfig {
      * @since 1.0.11
      */
     onAddToCartToggle?: (add: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
+    /**
+     * Fires an event that indicates that a "find similar" request is sent to the widget.
+     *
+     * Some widget types internally define the action done after a "find similar" request is received.
+     * If such default behavior is not desired, you can define this callback with an operation
+     * that returns false, such as:
+     * ```ts
+     * onFindSimilar: (product) => {
+     *   // ... enter custom behavior ...
+     *
+     *   return false; // This line prevents the internal onFindSimilar behavior from firing
+     * },
+     * ```
+     *
+     * @param image The image used as the basis for "finding similar"
+     *
+     * @internal
+     *
+     * @since 1.0.15
+     */
+    onFindSimilar?: (image: SearchImageOrPid) => boolean | Promise<boolean>;
   };
   /**
    * Widget look-and-feel customization. The values for this section is set
@@ -1219,24 +1240,6 @@ export interface WidgetConfig {
          * @since 1.0.11
          */
         enable: boolean;
-        /**
-         * Position of the "add to cart" icon relative to the product card image.
-         *
-         * @since 1.0.11
-         */
-        position: ProductCardIconPosition;
-        /**
-         * Configurations for the add to cart icon, i.e. the icon when the product is not in the cart.
-         *
-         * @since 1.0.11
-         */
-        iconInactive: IconWithBackground;
-        /**
-         * Configurations for the remove from cart icon, i.e. the icon when the product is in the cart.
-         *
-         * @since 1.0.11
-         */
-        iconActive: IconWithBackground;
       };
       /**
        * Configuration for the image shown on product card.

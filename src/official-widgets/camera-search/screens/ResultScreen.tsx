@@ -263,7 +263,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                onFindSimilar={(data) => {
                                  setSearch('');
                                  return onFindSimilar({
-                                   image: { imgUrl: data.im_url, pid: data.product_id },
+                                   image: data,
                                    productTypes: [],
                                  });
                                }}
@@ -464,7 +464,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                  onFindSimilar={(data) => {
                                    setSearch('');
                                    return onFindSimilar({
-                                     image: { imgUrl: data.im_url, pid: data.product_id },
+                                     image: data,
                                      productTypes: [],
                                    });
                                  }}

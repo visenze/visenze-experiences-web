@@ -28,7 +28,7 @@ interface SlideOutDrawerProps {
 
 const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ pid, renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations } = widgetConfig;
+  const { appSettings, customizations, callbacks } = widgetConfig;
   const breakpoint = useBreakpoint();
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -82,7 +82,14 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ pid, renderModalWithoutPortal
     setSearchHistory([searchImage, ...previousSearches]);
   };
 
-  const onFindSimilar = (data: SearchImageOrPid): void => {
+  const onFindSimilar = async (data: SearchImageOrPid): Promise<void> => {
+    let executeDefault = true;
+    if (callbacks.onFindSimilar) {
+      executeDefault = await callbacks.onFindSimilar(data);
+    }
+    if (!executeDefault) {
+      return;
+    }
     if (image === data) {
       // Fake the search if same image
       setScreen(ScreenType.LOADING);

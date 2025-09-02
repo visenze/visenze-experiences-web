@@ -30,7 +30,7 @@ interface SimilarSearchProps {
 
 const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations } = widgetConfig;
+  const { appSettings, customizations, callbacks } = widgetConfig;
   const breakpoint = useBreakpoint();
   const intl = useIntl();
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -85,7 +85,17 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
     setSearchHistory([searchImage, ...previousSearches]);
   };
 
-  const onFindSimilar = (data: SearchImageOrPid): void => {
+  const onFindSimilar = async (data: SearchImageOrPid, isSearchHistory: boolean): Promise<void> => {
+    if (!isSearchHistory) {
+      // Follow the callback only if it is not from search history
+      let executeDefault = true;
+      if (callbacks.onFindSimilar) {
+        executeDefault = await callbacks.onFindSimilar(data);
+      }
+      if (!executeDefault) {
+        return;
+      }
+    }
     if (image === data) {
       // Fake the search if same image
       setScreen(ScreenType.LOADING);
