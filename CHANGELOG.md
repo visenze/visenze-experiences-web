@@ -30,6 +30,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.15](https://github.com/visenze/visenze-experiences-web/compare/1.0.14...1.0.15) - 2025-09-05
+
+<!-- BEGIN visenze-experiences-web 1.0.15 -->
+### Highlights
+
+The following widgets are available under stable status and will follow our versioning policy:
+- In-page carousel
+
+### Added
+
+- camera-search: Added entry point to activate device camera directly
+
+### Updated
+
+- All widgets: Updated brand logo
+<!-- END visenze-experiences-web 1.0.15 -->
+
 ## [1.0.14](https://github.com/visenze/visenze-experiences-web/compare/1.0.13...1.0.14) - 2025-08-20
 
 <!-- BEGIN visenze-experiences-web 1.0.14 -->

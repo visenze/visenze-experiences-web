@@ -164,6 +164,8 @@ describe('in-page-carousel', () => {
     });
     // Should now show grid
     expect(testComponent.getByTestId('ipc-product-result-grid')).not.toBeNull();
+    // Run snapshot test here as the grid view can only be achieved from here
+    expect(testComponent.asFragment()).toMatchSnapshot();
     // Click Show Less
     act(() => {
       fireEvent.click(testComponent.getByRole('button', { name: /show less/i }));
