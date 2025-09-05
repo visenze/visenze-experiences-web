@@ -51,6 +51,12 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
     const cssConfig = {} as CSSProperties;
     const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
+      if (!showGrid) {
+        cssConfig.width = `calc(100% / ${cssConfigSrc.productsPerRow})`;
+        if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
+          cssConfig.width = `calc(100% / ${cssConfigSrc.productsPerRow} - ${cssConfigSrc.marginHorizontal}px)`;
+        }
+      }
       if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
         cssConfig.marginLeft = cssConfigSrc.marginHorizontal / 2;
         cssConfig.marginRight = cssConfigSrc.marginHorizontal / 2;
@@ -64,7 +70,10 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
     const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.productsPerRow) {
-        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, 1fr)`;
+        cssConfig.gridTemplateColumns = `repeat(${cssConfigSrc.productsPerRow}, minmax(0, 1fr))`;
+      }
+      if (cssConfigSrc.marginVertical || cssConfigSrc.marginVertical === 0) {
+        cssConfig.rowGap = `${cssConfigSrc.marginVertical}px`;
       }
     }
     return cssConfig;
@@ -89,12 +98,12 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
   }
 
   const renderHorizontalScroll = (): React.ReactNode => (
-    <div className='relative text-primary' data-testid='mlt-product-result-carousel'>
+    <div className='relative text-primary' data-testid='ipc-product-result-carousel'>
       <div className='flex overflow-x-auto no-scrollbar pb-2' style={{ scrollSnapType: 'x mandatory' }}>
         {productResults.map((result, index) => (
           <div
             key={`${result.product_id}-${index}`}
-            className={`${getProductCardCssClasses()} min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start`}
+            className={`${getProductCardCssClasses()} flex-shrink-0 scroll-snap-align-start`}
             style={getProductCardCssConfig()}>
             <ProductCard
               index={index}
@@ -102,7 +111,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
               metadata={metadata}
               hasFindSimilar={true}
               isRecommendation={true}
-              pwPrefix='mlt'
+              pwPrefix='ipc'
             />
           </div>
         ))}
@@ -111,7 +120,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
   );
 
   const renderGrid = (): React.ReactNode => (
-    <div className='relative text-primary lg:px-10' data-testid='mlt-product-result-grid'>
+    <div className='relative text-primary' data-testid='ipc-product-result-grid'>
       <div className='grid' style={getProductGridCssConfig()}>
         {productResults.map((result, index) => (
           <div
@@ -124,7 +133,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
               metadata={metadata}
               hasFindSimilar={false}
               isRecommendation={true}
-              pwPrefix='mlt'
+              pwPrefix='ipc'
             />
           </div>
         ))}
@@ -138,7 +147,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
         <>
           <div className='flex justify-between'>
             {customizations.generalLayout?.showWidgetTitle && (
-              <div className='wigmix-widget-title py-2 text-primary' data-testid='mlt-widget-title'>
+              <div className='wigmix-widget-title py-2 text-primary' data-testid='ipc-widget-title'>
                 {intl.formatMessage({ id: 'widgetTitle' })}
               </div>
             )}
@@ -150,7 +159,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
                   borderColor: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor,
                   color: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor,
                  }}
-                data-pw='mlt-show-more-button'
+                data-pw='ipc-show-more-button'
                 onClick={() => setShowGrid(!showGrid)}>
                 {showGrid
                   ? intl.formatMessage({ id: 'showLess' })
@@ -164,7 +173,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
 
           {/* ViSenze Footer */}
           {customizations.generalLayout?.showViSenzeLogo && (
-            <Footer darkMode={darkMode} className='bg-transparent py-4 text-primary md:py-8' dataPw='mlt-visenze-footer' />
+            <Footer darkMode={darkMode} className='bg-transparent py-4 text-primary md:py-8' dataPw='ipc-visenze-footer' />
           )}
         </>
       )}
