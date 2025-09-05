@@ -67,17 +67,17 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     mobile: {
       productsPerRow: 3,
       marginHorizontal: 8,
-      marginVertical: 0,
+      marginVertical: 8,
     },
     tablet: {
       productsPerRow: 4,
       marginHorizontal: 16,
-      marginVertical: 0,
+      marginVertical: 16,
     },
     desktop: {
       productsPerRow: 6,
       marginHorizontal: 16,
-      marginVertical: 0,
+      marginVertical: 16,
     },
   },
   productCard: {
