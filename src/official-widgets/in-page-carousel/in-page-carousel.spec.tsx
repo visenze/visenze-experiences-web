@@ -157,19 +157,19 @@ describe('in-page-carousel', () => {
     );
 
     // Start in carousel view
-    expect(testComponent.getByTestId('mlt-product-result-carousel')).not.toBeNull();
+    expect(testComponent.getByTestId('ipc-product-result-carousel')).not.toBeNull();
     // Click Show More
     act(() => {
       fireEvent.click(testComponent.getByRole('button', { name: /show more/i }));
     });
     // Should now show grid
-    expect(testComponent.getByTestId('mlt-product-result-grid')).not.toBeNull();
+    expect(testComponent.getByTestId('ipc-product-result-grid')).not.toBeNull();
     // Click Show Less
     act(() => {
       fireEvent.click(testComponent.getByRole('button', { name: /show less/i }));
     });
     // Should return to carousel
-    expect(testComponent.getByTestId('mlt-product-result-carousel')).not.toBeNull();
+    expect(testComponent.getByTestId('ipc-product-result-carousel')).not.toBeNull();
   });
 
   it('should render a successful response with some customizations (footer, no title)', () => {
@@ -192,9 +192,9 @@ describe('in-page-carousel', () => {
     );
 
     // Check horizontal scroll rendered
-    expect(testComponent.getByTestId('mlt-product-result-carousel')).not.toBeNull();
+    expect(testComponent.getByTestId('ipc-product-result-carousel')).not.toBeNull();
     // Widget title should not be rendered
-    expect(testComponent.queryAllByTestId('mlt-widget-title').length).toEqual(0);
+    expect(testComponent.queryAllByTestId('ipc-widget-title').length).toEqual(0);
     // Show More button should be present
     expect(testComponent.getByRole('button', { name: /show more/i })).not.toBeNull();
   });

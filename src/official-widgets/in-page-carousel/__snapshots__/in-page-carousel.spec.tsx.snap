@@ -9,7 +9,7 @@ exports[`in-page-carousel should render a successful response with default confi
   >
     <div
       class="wigmix-widget-title py-2 text-primary"
-      data-testid="mlt-widget-title"
+      data-testid="ipc-widget-title"
     >
       In Page Carousel
     </div>
@@ -18,7 +18,7 @@ exports[`in-page-carousel should render a successful response with default confi
     >
       <button
         class="border rounded px-4 py-1 text-sm font-medium transition"
-        data-pw="mlt-show-more-button"
+        data-pw="ipc-show-more-button"
         style="border-color: #000000; color: rgb(0, 0, 0);"
       >
         Show More
@@ -27,22 +27,22 @@ exports[`in-page-carousel should render a successful response with default confi
   </div>
   <div
     class="relative text-primary"
-    data-testid="mlt-product-result-carousel"
+    data-testid="ipc-product-result-carousel"
   >
     <div
       class="flex overflow-x-auto no-scrollbar pb-2"
       style="scroll-snap-type: x mandatory;"
     >
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-1"
+            data-pw="ipc-product-result-card-1"
             data-testid="wigmix-product-card-anchor"
             href="https://product-1/?vsFromReqId=87654321&vsFromPid=pid-1&vsFromPos=1"
             rel=""
@@ -57,7 +57,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-1"
+                  data-pw="ipc-product-result-card-image-1"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-1"
                 />
@@ -90,15 +90,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-2"
+            data-pw="ipc-product-result-card-2"
             data-testid="wigmix-product-card-anchor"
             href="https://product-2/?vsFromReqId=87654321&vsFromPid=pid-2&vsFromPos=2"
             rel=""
@@ -113,7 +113,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-2"
+                  data-pw="ipc-product-result-card-image-2"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-2"
                 />
@@ -146,15 +146,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-3"
+            data-pw="ipc-product-result-card-3"
             data-testid="wigmix-product-card-anchor"
             href="https://product-3/?vsFromReqId=87654321&vsFromPid=pid-3&vsFromPos=3"
             rel=""
@@ -169,7 +169,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-3"
+                  data-pw="ipc-product-result-card-image-3"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-3"
                 />
@@ -202,15 +202,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-4"
+            data-pw="ipc-product-result-card-4"
             data-testid="wigmix-product-card-anchor"
             href="https://product-4/?vsFromReqId=87654321&vsFromPid=pid-4&vsFromPos=4"
             rel=""
@@ -225,7 +225,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-4"
+                  data-pw="ipc-product-result-card-image-4"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-4"
                 />
@@ -258,15 +258,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-5"
+            data-pw="ipc-product-result-card-5"
             data-testid="wigmix-product-card-anchor"
             href="https://product-5/?vsFromReqId=87654321&vsFromPid=pid-5&vsFromPos=5"
             rel=""
@@ -281,7 +281,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-5"
+                  data-pw="ipc-product-result-card-image-5"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-5"
                 />
@@ -314,15 +314,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-6"
+            data-pw="ipc-product-result-card-6"
             data-testid="wigmix-product-card-anchor"
             href="https://product-6/?vsFromReqId=87654321&vsFromPid=pid-6&vsFromPos=6"
             rel=""
@@ -337,7 +337,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-6"
+                  data-pw="ipc-product-result-card-image-6"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-6"
                 />
@@ -370,15 +370,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-7"
+            data-pw="ipc-product-result-card-7"
             data-testid="wigmix-product-card-anchor"
             href="https://product-7/?vsFromReqId=87654321&vsFromPid=pid-7&vsFromPos=7"
             rel=""
@@ -393,7 +393,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-7"
+                  data-pw="ipc-product-result-card-image-7"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-7"
                 />
@@ -426,15 +426,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-8"
+            data-pw="ipc-product-result-card-8"
             data-testid="wigmix-product-card-anchor"
             href="https://product-8/?vsFromReqId=87654321&vsFromPid=pid-8&vsFromPos=8"
             rel=""
@@ -449,7 +449,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-8"
+                  data-pw="ipc-product-result-card-image-8"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-8"
                 />
@@ -482,15 +482,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-9"
+            data-pw="ipc-product-result-card-9"
             data-testid="wigmix-product-card-anchor"
             href="https://product-9/?vsFromReqId=87654321&vsFromPid=pid-9&vsFromPos=9"
             rel=""
@@ -505,7 +505,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-9"
+                  data-pw="ipc-product-result-card-image-9"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-9"
                 />
@@ -538,15 +538,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-10"
+            data-pw="ipc-product-result-card-10"
             data-testid="wigmix-product-card-anchor"
             href="https://product-10/?vsFromReqId=87654321&vsFromPid=pid-10&vsFromPos=10"
             rel=""
@@ -561,7 +561,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-10"
+                  data-pw="ipc-product-result-card-image-10"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-10"
                 />
@@ -594,15 +594,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-11"
+            data-pw="ipc-product-result-card-11"
             data-testid="wigmix-product-card-anchor"
             href="https://product-11/?vsFromReqId=87654321&vsFromPid=pid-11&vsFromPos=11"
             rel=""
@@ -617,7 +617,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-11"
+                  data-pw="ipc-product-result-card-image-11"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-11"
                 />
@@ -650,15 +650,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-12"
+            data-pw="ipc-product-result-card-12"
             data-testid="wigmix-product-card-anchor"
             href="https://product-12/?vsFromReqId=87654321&vsFromPid=pid-12&vsFromPos=12"
             rel=""
@@ -673,7 +673,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-12"
+                  data-pw="ipc-product-result-card-image-12"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-12"
                 />
@@ -706,15 +706,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-13"
+            data-pw="ipc-product-result-card-13"
             data-testid="wigmix-product-card-anchor"
             href="https://product-13/?vsFromReqId=87654321&vsFromPid=pid-13&vsFromPos=13"
             rel=""
@@ -729,7 +729,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-13"
+                  data-pw="ipc-product-result-card-image-13"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-13"
                 />
@@ -762,15 +762,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-14"
+            data-pw="ipc-product-result-card-14"
             data-testid="wigmix-product-card-anchor"
             href="https://product-14/?vsFromReqId=87654321&vsFromPid=pid-14&vsFromPos=14"
             rel=""
@@ -785,7 +785,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-14"
+                  data-pw="ipc-product-result-card-image-14"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-14"
                 />
@@ -818,15 +818,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-15"
+            data-pw="ipc-product-result-card-15"
             data-testid="wigmix-product-card-anchor"
             href="https://product-15/?vsFromReqId=87654321&vsFromPid=pid-15&vsFromPos=15"
             rel=""
@@ -841,7 +841,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-15"
+                  data-pw="ipc-product-result-card-image-15"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-15"
                 />
@@ -874,15 +874,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-16"
+            data-pw="ipc-product-result-card-16"
             data-testid="wigmix-product-card-anchor"
             href="https://product-16/?vsFromReqId=87654321&vsFromPid=pid-16&vsFromPos=16"
             rel=""
@@ -897,7 +897,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-16"
+                  data-pw="ipc-product-result-card-image-16"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-16"
                 />
@@ -930,15 +930,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-17"
+            data-pw="ipc-product-result-card-17"
             data-testid="wigmix-product-card-anchor"
             href="https://product-17/?vsFromReqId=87654321&vsFromPid=pid-17&vsFromPos=17"
             rel=""
@@ -953,7 +953,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-17"
+                  data-pw="ipc-product-result-card-image-17"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-17"
                 />
@@ -986,15 +986,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-18"
+            data-pw="ipc-product-result-card-18"
             data-testid="wigmix-product-card-anchor"
             href="https://product-18/?vsFromReqId=87654321&vsFromPid=pid-18&vsFromPos=18"
             rel=""
@@ -1009,7 +1009,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-18"
+                  data-pw="ipc-product-result-card-image-18"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-18"
                 />
@@ -1042,15 +1042,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-19"
+            data-pw="ipc-product-result-card-19"
             data-testid="wigmix-product-card-anchor"
             href="https://product-19/?vsFromReqId=87654321&vsFromPid=pid-19&vsFromPos=19"
             rel=""
@@ -1065,7 +1065,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-19"
+                  data-pw="ipc-product-result-card-image-19"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-19"
                 />
@@ -1098,15 +1098,15 @@ exports[`in-page-carousel should render a successful response with default confi
         </div>
       </div>
       <div
-        class=" min-w-[180px] max-w-[220px] flex-shrink-0 scroll-snap-align-start"
-        style="margin-left: 8px; margin-right: 8px;"
+        class=" flex-shrink-0 scroll-snap-align-start"
+        style="width: calc(100% / 6 - 16px); margin-left: 8px; margin-right: 8px;"
       >
         <div
           class="wigmix-product-card"
         >
           <a
             class="cursor-pointer"
-            data-pw="mlt-product-result-card-20"
+            data-pw="ipc-product-result-card-20"
             data-testid="wigmix-product-card-anchor"
             href="https://product-20/?vsFromReqId=87654321&vsFromPid=pid-20&vsFromPos=20"
             rel=""
@@ -1121,7 +1121,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 <img
                   alt=""
                   class="wigmix-product-card-image object-cover"
-                  data-pw="mlt-product-result-card-image-20"
+                  data-pw="ipc-product-result-card-image-20"
                   data-testid="wigmix-product-card-image"
                   src="https://main-image-20"
                 />
