@@ -1,1 +1,1 @@
-module.exports = '1.0.15';
+module.exports = '1.0.16-snapshot.0';
