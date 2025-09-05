@@ -63,3 +63,11 @@
     filter: brightness(100%);
   }
 }
+
+.wigmix-modal-overlay.wigmix-modal-position-right {
+  padding-left: 65% !important;
+}
+
+.wigmix-modal-overlay.wigmix-modal-position-left {
+  padding-right: 65% !important;
+}

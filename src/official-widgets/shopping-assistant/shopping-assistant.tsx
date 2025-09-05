@@ -9,6 +9,8 @@ import ChatWindow from './components/ChatWindow';
 import NewChatIcon from './icons/NewChatIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
 import FileDropzone from '../../common/components/FileDropzone';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { DEFAULT_ENDPOINT } from '../../common/constants';
@@ -46,6 +48,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   const [message, setMessage] = useState('');
   const [image, setImage] = useState<SearchImageOrPid | undefined>();
   const root = useContext(RootContext);
+  const breakpoint = useBreakpoint();
   const [chats, setChats] = useState<Chat[]>([]);
   const [chatId, setChatId] = useState('');
   const [isWaiting, setIsWaiting] = useState(true);
@@ -515,14 +518,17 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
                                   className='wigmix-popup-trigger-icon default size-6'
                               />
                             } />
-        {dialogVisible && (
-          <div className={cn(
-            'fixed inset-y-0 w-full md:w-3/10 md:min-w-96 bg-white',
-            widgetConfig.customizations.popup?.position === 'right' ? 'right-0' : 'left-0',
-          )}>
-            {getScreen()}
-          </div>
-        )}
+        <ViSenzeModal
+            open={dialogVisible}
+            layout={breakpoint}
+            onClose={() => setDialogVisible(false)}
+            position={customizations.popup?.position || 'left'}
+            darkMode={darkMode}
+            fontFamily={customizations.generalLayout?.fontFamily}
+            placementId={`${appSettings.placementId}`}
+            renderWithoutPortal={false}>
+          {getScreen()}
+        </ViSenzeModal>
       </>
   );
 };
