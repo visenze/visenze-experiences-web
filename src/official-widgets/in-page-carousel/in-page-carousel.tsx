@@ -121,7 +121,7 @@ const InPageCarousel: FC<InPageCarouselProps> = ({ productId }) => {
 
   const renderGrid = (): React.ReactNode => (
     <div className='relative text-primary' data-testid='ipc-product-result-grid'>
-      <div className='grid' style={getProductGridCssConfig()}>
+      <div className='wigmix-product-grid grid' style={getProductGridCssConfig()}>
         {productResults.map((result, index) => (
           <div
             key={`${result.product_id}-${index}`}
