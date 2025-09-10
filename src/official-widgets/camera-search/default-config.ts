@@ -13,6 +13,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Sorry, something went wrong',
     back: 'Back',
     triggerCTA: 'Search by Image',
+    useCamera: 'Or capture image with your camera',
   },
   es: {
     uploadScreenTitle: 'MUESTRANOS QUÉ ESTÁS BUSCANDO',
@@ -25,6 +26,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Lo sentimos, algo salió mal',
     back: 'Atrás',
     triggerCTA: 'Buscar por imagen',
+    useCamera: 'O captura una imagen con tu cámara',
   },
   fr: {
     uploadScreenTitle: 'MONTREZ-NOUS CE QUE VOUS RECHERCHEZ',
@@ -37,6 +39,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: "Désolé, quelque chose s'est mal passé",
     back: 'Retour',
     triggerCTA: 'Rechercher par image',
+    useCamera: 'Ou capturer une image avec votre appareil photo',
   },
   pt: {
     uploadScreenTitle: 'MOSTRE-NOS O QUE VOCÊ ESTÁ PROCURANDO',
@@ -49,6 +52,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Desculpe, algo deu errado',
     back: 'Voltar',
     triggerCTA: 'Pesquisar por imagem',
+    useCamera: 'Ou capture uma imagem com sua câmera',
   },
   de: {
     uploadScreenTitle: 'ZEIG UNS, WAS DU SUCHST',
@@ -61,6 +65,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
     back: 'Zurück',
     triggerCTA: 'Suche per Bild',
+    useCamera: 'Oder ein Bild mit deiner Kamera aufnehmen',
   },
   it: {
     uploadScreenTitle: 'MOSTRACI COSA STAI CERCANDO',
@@ -73,6 +78,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Spiacenti, qualcosa è andato storto',
     back: 'Indietro',
     triggerCTA: 'Cerca tramite immagine',
+    useCamera: 'Oppure scatta una foto con la fotocamera',
   },
   pl: {
     uploadScreenTitle: 'POKAŻ NAM, CZEGO SZUKASZ',
@@ -85,6 +91,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Przepraszamy, coś poszło nie tak',
     back: 'Wstecz',
     triggerCTA: 'Wyszukaj za pomocą obrazu',
+    useCamera: 'Lub zrób zdjęcie aparatem',
   },
   ko: {
     uploadScreenTitle: '찾고 있는 것을 보여주세요',
@@ -97,6 +104,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: '죄송합니다. 오류가 발생했습니다',
     back: '뒤로',
     triggerCTA: '이미지로 검색',
+    useCamera: '또는 카메라로 이미지를 캡처하세요',
   },
   ja: {
     uploadScreenTitle: '探しているものを見せてください',
@@ -109,6 +117,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: '申し訳ありません。問題が発生しました',
     back: '戻る',
     triggerCTA: '画像で検索',
+    useCamera: 'またはカメラで画像を撮影してください',
   },
   th: {
     uploadScreenTitle: 'แสดงให้เราเห็นสิ่งที่คุณกำลังมองหา',
@@ -121,6 +130,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
     back: 'กลับ',
     triggerCTA: 'ค้นหาด้วยรูปภาพ',
+    useCamera: 'หรือถ่ายภาพด้วยกล้องของคุณ',
   },
 };
 

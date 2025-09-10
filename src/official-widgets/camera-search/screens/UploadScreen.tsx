@@ -232,7 +232,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                       e.preventDefault();
                       setIsManualCameraOpen(true);
                     }}>
-                      Or capture image with your camera
+                      {intl.formatMessage({ id: 'useCamera' })}
                     </div>
 
                     <p className='px-6 pt-3 w-8/12 md:hidden'>
@@ -246,7 +246,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                        e.preventDefault();
                        setIsManualCameraOpen(true);
                      }}>
-                  Or capture image with your camera
+                  {intl.formatMessage({ id: 'useCamera' })}
                 </div>
               </div>
 
