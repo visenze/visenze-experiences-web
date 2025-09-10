@@ -30,6 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.16](https://github.com/visenze/visenze-experiences-web/compare/1.0.15...1.0.16) - 2025-09-10
+
+<!-- BEGIN visenze-experiences-web 1.0.16 -->
+### Added
+
+- camera-search: Made the "capture image with your camera" button text localized and customizable
+<!-- END visenze-experiences-web 1.0.16 -->
+
 ## [1.0.15](https://github.com/visenze/visenze-experiences-web/compare/1.0.14...1.0.15) - 2025-09-05
 
 <!-- BEGIN visenze-experiences-web 1.0.15 -->
