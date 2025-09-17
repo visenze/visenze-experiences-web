@@ -2,6 +2,7 @@ import type { FC, ReactElement } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { ProductType } from 'visearch-javascript-sdk';
+import { CameraSearchMessageKey } from './default-config';
 import ResultScreen from './screens/ResultScreen';
 import UploadScreen from './screens/UploadScreen';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
@@ -195,7 +196,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
         return (
             <div className='flex size-full flex-col items-center justify-center gap-1 text-center'>
               <div className='font-bold'>
-                {intl.formatMessage({ id: 'errorDescription' })}
+                {intl.formatMessage({ id: CameraSearchMessageKey.errorDescription })}
               </div>
               <div>{error}</div>
               <button className='mt-3 w-fit rounded-md bg-buttonPrimary px-5 py-2 text-buttonPrimary'
@@ -210,7 +211,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
                           setScreen(ScreenType.UPLOAD);
                         }
                       }}>
-                {intl.formatMessage({ id: 'back' })}
+                {intl.formatMessage({ id: CameraSearchMessageKey.back })}
               </button>
             </div>
         );
@@ -296,7 +297,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
   return (
       <CroppingProvider boxData={boxData} setBoxData={setBoxData}>
         <PopupTriggerButton config={customizations.popup}
-                            text={intl.formatMessage({ id: 'triggerCTA' })}
+                            text={intl.formatMessage({ id: CameraSearchMessageKey.triggerCTA })}
                             darkMode={darkMode}
                             onClick={onCameraButtonClick}
                             defaultIcon={

@@ -2,6 +2,7 @@ import type { FC, ReactElement } from 'react';
 import { useIntl } from 'react-intl';
 import ChevronLeftIcon from '../../../common/icons/ChevronLeftIcon';
 import CloseIcon from '../../../common/icons/CloseIcon';
+import { CameraSearchMessageKey } from '../default-config';
 
 interface HeaderProps {
   onCloseHandler: () => void;
@@ -27,7 +28,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
             </div>
             {showTitle && (
               <div className='wigmix-widget-title hidden md:block' data-pw='cs-widget-title'>
-                {intl.formatMessage({ id: 'resultScreenTitle' })}
+                {intl.formatMessage({ id: CameraSearchMessageKey.resultScreenTitle })}
               </div>
             )}
           </>
@@ -36,7 +37,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
           <>
             {showTitle && (
               <div className='wigmix-widget-title px-16 text-center md:px-0' data-pw='cs-widget-title'>
-                {intl.formatMessage({ id: 'uploadScreenTitle' })}
+                {intl.formatMessage({ id: CameraSearchMessageKey.uploadScreenTitle })}
               </div>
             )}
           </>

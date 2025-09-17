@@ -22,6 +22,7 @@ import type { BoxData, ProcessedProduct } from '../../../common/types/product';
 import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
 import { flattenBox, getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 import Header from '../components/Header';
+import { CameraSearchMessageKey } from '../default-config';
 
 const swipeConfig = {
   delta: 10, // min distance(px) before a swipe starts. *See Notes*
@@ -290,7 +291,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             isClearable
             maxLength={QUERY_MAX_CHARACTER_LENGTH}
             type='filters'
-            placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
+            placeholder={intl.formatMessage({ id: CameraSearchMessageKey.searchBarPlaceholder })}
             value={search}
             onValueChange={(input): void => {
               setSearch(input);
@@ -335,7 +336,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 {!getReferenceImage() && (
                     <FileDropzone onImageUpload={onImageUpload} name='upload-icon'>
                       <p className='px-3 py-2 leading-6'>
-                        {intl.formatMessage({ id: 'dragImageToSearch' })}
+                        {intl.formatMessage({ id: CameraSearchMessageKey.dragImageToSearch })}
                       </p>
                     </FileDropzone>
                 )}
@@ -344,7 +345,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
               {searchHistory && searchHistory.length > 1 && (
                 <div>
                   <span>
-                    {intl.formatMessage({ id: 'previousViews' })}
+                    {intl.formatMessage({ id: CameraSearchMessageKey.previousViews })}
                   </span>
                   <div
                     className='no-scrollbar flex h-full flex-row gap-1 overflow-scroll pt-1'
@@ -430,7 +431,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                     isClearable
                     maxLength={QUERY_MAX_CHARACTER_LENGTH}
                     type='filters'
-                    placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
+                    placeholder={intl.formatMessage({ id: CameraSearchMessageKey.searchBarPlaceholder })}
                     value={search}
                     onClick={() => setShowInputSuggest(true)}
                     onBlur={() => setTimeout(() => setShowInputSuggest(false), 100)}

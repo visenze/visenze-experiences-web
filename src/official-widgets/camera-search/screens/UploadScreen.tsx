@@ -10,6 +10,7 @@ import { WidgetDataContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
 import Header from '../components/Header';
+import { CameraSearchMessageKey } from '../default-config';
 
 interface UploadScreenProps {
   onModalClose: () => void;
@@ -225,18 +226,18 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                     )}
 
                     <p className='hidden px-3 py-2 leading-6 md:block'>
-                      {intl.formatMessage({ id: 'dragImageToSearch' })}
+                      {intl.formatMessage({ id: CameraSearchMessageKey.dragImageToSearch })}
                     </p>
                     <div className='w-full p-1 hidden md:block border-1 bg-gray-200 hover:opacity-90' onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
                       setIsManualCameraOpen(true);
                     }}>
-                      {intl.formatMessage({ id: 'useCamera' })}
+                      {intl.formatMessage({ id: CameraSearchMessageKey.useCamera })}
                     </div>
 
                     <p className='px-6 pt-3 w-8/12 md:hidden'>
-                      {intl.formatMessage({ id: 'tapToSearchImage' })}
+                      {intl.formatMessage({ id: CameraSearchMessageKey.tapToSearchImage })}
                     </p>
                   </div>
                 </FileDropzone>
@@ -246,13 +247,13 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                        e.preventDefault();
                        setIsManualCameraOpen(true);
                      }}>
-                  {intl.formatMessage({ id: 'useCamera' })}
+                  {intl.formatMessage({ id: CameraSearchMessageKey.useCamera })}
                 </div>
               </div>
 
               <div className='py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0'>
                 <p className='px-16 pb-3 text-center md:px-0 md:text-left'>
-                  {intl.formatMessage({ id: 'tapProductGallery' })}
+                  {intl.formatMessage({ id: CameraSearchMessageKey.tapProductGallery })}
                 </p>
 
                 <div className='grid grid-cols-2 gap-2 px-5 md:gap-4 md:px-0'>
