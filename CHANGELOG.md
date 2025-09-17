@@ -30,6 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.17](https://github.com/visenze/visenze-experiences-web/compare/1.0.16...1.0.17)
+
+<!-- BEGIN visenze-experiences-web 1.0.17 -->
+### Added
+
+- All widgets: Send 'session_init' event to ViSenze analytics on widget initialization
+<!-- END visenze-experiences-web 1.0.17 -->
+
 ## [1.0.16](https://github.com/visenze/visenze-experiences-web/compare/1.0.15...1.0.16) - 2025-09-10
 
 <!-- BEGIN visenze-experiences-web 1.0.16 -->
