@@ -3,6 +3,7 @@ import { IntlProvider } from 'react-intl';
 import { Context as ResponsiveContext } from 'react-responsive';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import CameraSearch from './camera-search';
+import type { CameraSearchMessageKey } from './default-config';
 import { DEFAULT_CUSTOMIZATIONS } from './default-config';
 import {
   getStandardMultiSearchAutocompleteResponse,
@@ -12,7 +13,7 @@ import {
 } from '../../../mocks/responses';
 import getWidgetClient from '../../common/client/widget-client';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import type { LanguagePack } from '../../common/locales/locale';
+import type { DefaultLocales, LanguagePack } from '../../common/locales/locale';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { WidgetConfig } from '../../common/wigmix-core';
 
@@ -20,7 +21,7 @@ import type { WidgetConfig } from '../../common/wigmix-core';
 
 describe('camera-search', () => {
   let testComponent: RenderResult;
-  const texts: LanguagePack = {
+  const texts: LanguagePack<DefaultLocales.EN, CameraSearchMessageKey> = {
     en: {
       uploadScreenTitle: 'Camera Search 771',
       resultScreenTitle: 'Camera Search 117',
@@ -98,7 +99,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -113,7 +114,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -129,7 +130,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -153,7 +154,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -178,7 +179,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -214,7 +215,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <ResponsiveContext.Provider value={{ width: 600 }}>
                 <CameraSearch renderModalWithoutPortal={true} />
               </ResponsiveContext.Provider>
@@ -269,7 +270,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -320,7 +321,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <ResponsiveContext.Provider value={{ width: 600 }}>
                 <CameraSearch renderModalWithoutPortal={true} />
               </ResponsiveContext.Provider>
@@ -378,7 +379,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -432,7 +433,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -515,7 +516,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -580,7 +581,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -658,7 +659,7 @@ describe('camera-search', () => {
     testComponent = render(
         <RootContext.Provider value={document.body}>
           <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
               <CameraSearch renderModalWithoutPortal={true} />
             </IntlProvider>
           </WidgetDataContext.Provider>
@@ -706,7 +707,7 @@ describe('camera-search', () => {
     testComponent = render(
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+          <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
             <CameraSearch renderModalWithoutPortal={true} />
           </IntlProvider>
         </WidgetDataContext.Provider>
@@ -762,7 +763,7 @@ describe('camera-search', () => {
     testComponent = render(
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+          <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
             <CameraSearch renderModalWithoutPortal={true} />
           </IntlProvider>
         </WidgetDataContext.Provider>
@@ -818,7 +819,7 @@ describe('camera-search', () => {
     testComponent = render(
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+          <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
             <ResponsiveContext.Provider value={{ width: 600 }}>
               <CameraSearch renderModalWithoutPortal={true} />
             </ResponsiveContext.Provider>
@@ -881,7 +882,7 @@ describe('camera-search', () => {
     testComponent = render(
       <RootContext.Provider value={document.body}>
         <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+          <IntlProvider messages={texts.en} locale='en' defaultLocale='en'>
             <ResponsiveContext.Provider value={{ width: 600 }}>
               <CameraSearch renderModalWithoutPortal={true} />
             </ResponsiveContext.Provider>

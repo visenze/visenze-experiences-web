@@ -1,7 +1,21 @@
 import type { WidgetConfig } from '../../common/wigmix-core';
-import type { LanguagePack } from '../../common/locales/locale';
+import type { DefaultLocales, LanguagePack } from '../../common/locales/locale';
 
-export const DEFAULT_TEXTS: LanguagePack = {
+export enum CameraSearchMessageKey {
+  uploadScreenTitle = 'uploadScreenTitle',
+  resultScreenTitle = 'resultScreenTitle',
+  dragImageToSearch = 'dragImageToSearch',
+  tapToSearchImage = 'tapToSearchImage',
+  tapProductGallery = 'tapProductGallery',
+  searchBarPlaceholder = 'searchBarPlaceholder',
+  previousViews = 'previousViews',
+  errorDescription = 'errorDescription',
+  back = 'back',
+  triggerCTA = 'triggerCTA',
+  useCamera = 'useCamera',
+}
+
+export const DEFAULT_TEXTS: LanguagePack<DefaultLocales, CameraSearchMessageKey> = {
   en: {
     uploadScreenTitle: "SHOW US WHAT YOU'RE LOOKING FOR",
     resultScreenTitle: "HERE'S WHAT WE FOUND",

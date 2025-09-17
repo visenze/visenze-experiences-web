@@ -2,10 +2,23 @@ import { DEFAULT_LOCALE } from '../default-configs';
 import { deepMerge } from '../client/initialization';
 
 // Hierarchy: locale > text key > text value
-export type LanguagePack = Record<string, Record<string, string>>;
+export type LanguagePack<L extends string = string, K extends string = string> = Record<L, Record<K, string>>;
+
+export enum DefaultLocales {
+  EN = 'en',
+  ES = 'es',
+  FR = 'fr',
+  PT = 'pt',
+  DE = 'de',
+  IT = 'it',
+  PL = 'pl',
+  KO = 'ko',
+  JA = 'ja',
+  TH = 'th',
+}
 
 export const getLocaleTexts = (localeParam: string,
-                               presetTexts: LanguagePack,
+  presetTexts: LanguagePack,
                                customTexts: LanguagePack = {}): Record<string, string> => {
   const locale = localeParam || DEFAULT_LOCALE;
   const hasRegion = locale.indexOf('-') >= 0 || locale.indexOf('_') >= 0;
