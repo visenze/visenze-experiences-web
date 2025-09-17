@@ -11,6 +11,7 @@ import type {
 import { DEFAULT_CONFIGS } from '../default-configs';
 import getWidgetClient from './widget-client';
 import { DEFAULT_ENDPOINT } from '../constants';
+import { Actions } from '../types/tracking-constants';
 
 interface WidgetInitResult {
   widgetClient: WidgetClient;
@@ -209,6 +210,7 @@ const init = (
   setCssVariables(widgetConfig, widgetConfig.customizations.generalLayout.darkModeDefault);
   widgetConfig = populateProductDetailsAndAttrsToGet(widgetConfig, fieldMappings);
   const widgetClient = getWidgetClient(widgetConfig, widgetType, widgetVersion);
+  widgetClient.sendEvent(Actions.SESSION_INIT, {});
   return { widgetClient, widgetConfig };
 };
 

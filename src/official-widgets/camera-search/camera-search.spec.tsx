@@ -32,6 +32,7 @@ describe('camera-search', () => {
       errorDescription: 'Houston, we\'ve had a problem!',
       back: 'Exit',
       triggerCTA: 'CTA',
+      useCamera: 'Take a photo',
     },
   };
   const mockVisearchClient: ViSearchClient = {

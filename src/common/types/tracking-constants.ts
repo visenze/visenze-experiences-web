@@ -8,6 +8,7 @@ export enum Actions {
   PRODUCT_CLICK = 'product_click',
 
   RESULT_LOAD = 'result_load',
+  SESSION_INIT = 'session_init',
 }
 
 export enum Labels {
