@@ -1,6 +1,6 @@
 import { cn } from '@heroui/theme';
-import type { FC, ReactElement } from 'react';
-import { useContext, useEffect, useState } from 'react';
+import type { FC, MutableRefObject, ReactElement } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import ReactModal from 'react-modal';
 import Portal from '../portal';
 import ShadowWrapper, { RootContext } from '../shadow-wrapper';
@@ -13,9 +13,10 @@ interface ModalProps {
   children: ReactElement | ReactElement[];
   className?: string;
   position: 'left' | 'center' | 'right' | 'bottom';
+  portalRef?: MutableRefObject<HTMLDivElement | null>;
 }
 
-const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position }) => {
+const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position, portalRef }) => {
   const root = useContext(RootContext);
   let timeout;
   switch (layout) {
@@ -53,7 +54,7 @@ const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, pos
       overlayClassName={`wigmix-modal-overlay wigmix-modal-position-${position}`}
       testId='wigmix-modal'
       onRequestClose={onClose}
-      appElement={document.body}>
+      appElement={portalRef?.current || undefined}>
       {children}
     </ReactModal>
   );
@@ -74,6 +75,7 @@ interface VisenzeModalProps {
 }
 
 const ViSenzeModal: FC<VisenzeModalProps> = (props) => {
+  const portalRef = useRef(null);
   // At the moment, testing elements with ShadowWrapper is troublesome.
   // At least for the time being, add this property so that the modal can be rendered directly within the component
   // and therefore allowing it to be tested normally.
@@ -83,7 +85,9 @@ const ViSenzeModal: FC<VisenzeModalProps> = (props) => {
   return (
     <Portal idName={`visenze-widget-modal-portal-${props.placementId}${props.idSuffix ? `-${props.idSuffix}` : ''}`}>
       <ShadowWrapper darkMode={props.darkMode} fontFamily={props.fontFamily}>
-        <Modal {...props} />
+        <div ref={portalRef}>
+          <Modal portalRef={portalRef} {...props} />
+        </div>
       </ShadowWrapper>
     </Portal>
   );
