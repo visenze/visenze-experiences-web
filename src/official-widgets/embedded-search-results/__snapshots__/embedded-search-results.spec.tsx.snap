@@ -119,7 +119,7 @@ exports[`embedded-search-result should fail render with invalid im-url 1`] = `
               data-testid="wigmix-active-product"
             >
               <div
-                class="absolute right-1 top-1 z-20 rounded-full bg-white"
+                class="absolute end-1 top-1 z-20 rounded-full bg-white"
                 data-pw="esr-active-product-close"
                 data-testid="wigmix-active-product-close"
               >
@@ -473,7 +473,7 @@ exports[`embedded-search-result should render successfully with query and im-url
               data-testid="wigmix-active-product"
             >
               <div
-                class="absolute right-1 top-1 z-20 rounded-full bg-white"
+                class="absolute end-1 top-1 z-20 rounded-full bg-white"
                 data-pw="esr-active-product-close"
                 data-testid="wigmix-active-product-close"
               >
@@ -512,7 +512,7 @@ exports[`embedded-search-result should render successfully with query and im-url
               data-testid="wigmix-inactive-product"
             >
               <div
-                class="absolute right-1 top-1 z-20 rounded-full bg-white"
+                class="absolute end-1 top-1 z-20 rounded-full bg-white"
                 data-pw="esr-inactive-product-close"
                 data-testid="wigmix-inactive-product-close"
               >

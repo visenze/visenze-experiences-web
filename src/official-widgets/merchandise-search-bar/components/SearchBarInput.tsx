@@ -81,7 +81,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
         }
       }}
       startContent={
-        <div className='flex items-center pl-2'>
+        <div className='flex items-center ps-2'>
           <div
             className='cursor-pointer pe-1'
             onClick={() => {
@@ -99,7 +99,7 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
         </div>
       }
       endContent={
-        <div className='flex items-center pr-2'>
+        <div className='flex items-center pe-2'>
           {customizations.imageUpload?.enable && (
             <button data-testid='wigmix-msb-gallery-button' onClick={() => {
               setShowDropdown(true);

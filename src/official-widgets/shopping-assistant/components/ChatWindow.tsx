@@ -251,7 +251,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
         <div className='flex-grow'></div>
         <div className='relative'>
           {showBottomArrow && (
-              <div className='absolute bottom-2 right-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
+              <div className='absolute bottom-2 end-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
                    onClick={scrollToBottom}>
                 <DownArrowIcon />
               </div>

@@ -118,7 +118,7 @@ const MoreLikeThis: FC<MoreLikeThisProps> = ({ productId }) => {
               )}
 
               {/* Product Result Carousel */}
-              <div className='relative pr-1 text-primary lg:px-10' data-pw='mlt-product-result-carousel'>
+              <div className='relative pe-1 text-primary lg:px-10' data-pw='mlt-product-result-carousel'>
                 <Slider {...settings}>
                   {productResults.map((result, index) => (
                       <div key={`${result.product_id}-${index}`}>

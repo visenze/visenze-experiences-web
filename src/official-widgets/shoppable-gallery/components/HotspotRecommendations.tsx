@@ -70,7 +70,7 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({
                   renderWithoutPortal={renderModalWithoutPortal}>
       <div className='flex size-full flex-col bg-primary' data-pw='sg-hotspot-recommendations'>
         {/* Close Button Tablet/Desktop */}
-        <div className='absolute right-3 top-2 hidden cursor-pointer rounded-full bg-transparent p-1 hover:opacity-90 md:flex'
+        <div className='absolute end-3 top-2 hidden cursor-pointer rounded-full bg-transparent p-1 hover:opacity-90 md:flex'
              onClick={closeDrawerHandler}
              data-pw='sg-drawer-close-button-desktop'>
           <CloseIcon className='size-6'

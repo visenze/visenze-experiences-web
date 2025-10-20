@@ -224,7 +224,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                               {autocompleteResults.slice(0, suggestionMax).map((result, index) => (
                                   <ListboxItem
                                       tabIndex={0}
-                                      className='pr-4'
+                                      className='pe-4'
                                       key={result}
                                       endContent={(
                                           <MagnifyingGlassIcon color={darkMode
@@ -238,7 +238,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                                         emitSearchBarCallback(result, image);
                                       }}
                                   >
-                            <span className='pl-2 text-primary'
+                            <span className='ps-2 text-primary'
                                   data-pw={`sb-autocomplete-suggestion-${index + 1}`}
                                   data-testid='wigmix-sb-autocomplete-value'>{result}</span>
                                   </ListboxItem>
@@ -330,7 +330,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                               {searchHistory.slice(0, 4).map((entry) => (
                                 <ListboxItem
                                   tabIndex={0}
-                                  className='pr-4'
+                                  className='pe-4'
                                   key={String(entry.query)}
                                   endContent={(
                                     <MagnifyingGlassIcon color={darkMode
@@ -347,7 +347,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                                     }
                                   }}
                                 >
-                                  <span className='pl-2 text-primary' data-testid='wigmix-sb-recent-search'>{entry.query}</span>
+                                  <span className='ps-2 text-primary' data-testid='wigmix-sb-recent-search'>{entry.query}</span>
                                 </ListboxItem>
                               ))}
                             </ListboxSection>

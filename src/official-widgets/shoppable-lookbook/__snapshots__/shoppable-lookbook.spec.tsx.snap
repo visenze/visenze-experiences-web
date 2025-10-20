@@ -25,7 +25,7 @@ exports[`shoppable-lookbook should render a successful response with default con
     </div>
     <div
       class="wigmix-product-grid grid  
-              md:absolute md:right-0 md:top-0 md:h-full md:w-[59%] md:overflow-y-scroll"
+              md:absolute md:end-0 md:top-0 md:h-full md:w-[59%] md:overflow-y-scroll"
       data-pw="sl-product-result-grid"
       style="grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 16px; column-gap: 8px;"
     >
@@ -1061,7 +1061,7 @@ exports[`shoppable-lookbook should render a successful response with object hots
     </div>
     <div
       class="wigmix-product-grid grid  
-              md:absolute md:right-0 md:top-0 md:h-full md:w-[59%] md:overflow-y-scroll"
+              md:absolute md:end-0 md:top-0 md:h-full md:w-[59%] md:overflow-y-scroll"
       data-pw="sl-product-result-grid"
       style="grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 16px; column-gap: 8px;"
     >
@@ -2067,7 +2067,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
     </div>
     <div
       class="wigmix-product-grid grid  
-              md:absolute md:right-0 md:top-0 md:h-full md:w-[59%] md:overflow-y-scroll"
+              md:absolute md:end-0 md:top-0 md:h-full md:w-[59%] md:overflow-y-scroll"
       data-pw="sl-product-result-grid"
       style="grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 16px; column-gap: 8px;"
     >
@@ -3063,7 +3063,7 @@ exports[`shoppable-lookbook should render a successful response with some custom
       POWERED BY 
     </p>
     <img
-      class="h-5 object-center py-0.5 pl-1"
+      class="h-5 object-center py-0.5 ps-1"
       src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
     />
   </div>

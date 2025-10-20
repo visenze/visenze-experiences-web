@@ -20,7 +20,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
         isResultScreen
         ? (
           <>
-            <div className='absolute left-5 top-3 rounded-full bg-transparent p-1 hover:opacity-90'
+            <div className='absolute start-5 top-3 rounded-full bg-transparent p-1 hover:opacity-90'
                  onClick={onBackHandler}
                  data-pw='cs-back-button'>
               <ChevronLeftIcon color={iconColor} className='size-6 cursor-pointer' />
@@ -43,7 +43,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, onBackHandler, isResultScreen
         )
       }
 
-      <div className='absolute right-5 top-3 rounded-full bg-transparent p-1 hover:opacity-90'
+      <div className='absolute end-5 top-3 rounded-full bg-transparent p-1 hover:opacity-90'
            onClick={onCloseHandler}
            data-testid='wigmix-close-button'
            data-pw='cs-close-button'>

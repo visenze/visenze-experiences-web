@@ -110,7 +110,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
 
       {searchImage && (
         <div
-          className='absolute -right-1 -top-1 z-20 cursor-pointer rounded-full bg-white'
+          className='absolute -end-1 -top-1 z-20 cursor-pointer rounded-full bg-white'
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -136,7 +136,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
             </p>
 
             {/* Close Button */}
-            <div className='absolute right-5 top-3 rounded-full p-1 bg-transparent hover:opacity-90'
+            <div className='absolute end-5 top-3 rounded-full p-1 bg-transparent hover:opacity-90'
                  onClick={onCloseHandler} data-testid='wigmix-sb-close-button' data-pw='sb-close-button'>
               <CloseIcon className='size-6 cursor-pointer' />
             </div>

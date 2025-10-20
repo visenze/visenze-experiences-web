@@ -251,7 +251,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
               </div>
 
               <div className='py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0'>
-                <p className='px-16 pb-3 text-center md:px-0 md:text-left'>
+                <p className='px-16 pb-3 text-center md:px-0 md:text-start'>
                   {intl.formatMessage({ id: 'tapProductGallery' })}
                 </p>
 

@@ -219,7 +219,7 @@ exports[`slide-out-drawer should render a successful response with default confi
           class="h-full flex flex-col gap-4"
         >
           <div
-            class="relative flex w-full items-center border-b border-gray-200 py-4 pl-4 lg:rounded-t-3xl"
+            class="relative flex w-full items-center border-b border-gray-200 py-4 ps-4 lg:rounded-t-3xl"
           >
             <div
               class="wigmix-widget-title"
@@ -228,7 +228,7 @@ exports[`slide-out-drawer should render a successful response with default confi
               Similar Search 532
             </div>
             <div
-              class="absolute right-4 top-2 rounded-full bg-transparent p-1 hover:opacity-90 md:right-5 md:top-4"
+              class="absolute end-4 top-2 rounded-full bg-transparent p-1 hover:opacity-90 md:end-5 md:top-4"
               data-pw="ss-close-button"
               data-testid="wigmix-close-button"
             >
@@ -1409,7 +1409,7 @@ exports[`slide-out-drawer should render a successful response with default confi
               POWERED BY 
             </p>
             <img
-              class="h-5 object-center py-0.5 pl-1"
+              class="h-5 object-center py-0.5 ps-1"
               src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
             />
           </div>
@@ -1479,7 +1479,7 @@ exports[`slide-out-drawer should render a successful response with default confi
           class="h-full flex flex-col gap-4"
         >
           <div
-            class="relative flex w-full items-center border-b border-gray-200 py-4 pl-4 lg:rounded-t-3xl"
+            class="relative flex w-full items-center border-b border-gray-200 py-4 ps-4 lg:rounded-t-3xl"
           >
             <div
               class="wigmix-widget-title"
@@ -1488,7 +1488,7 @@ exports[`slide-out-drawer should render a successful response with default confi
               Similar Search 532
             </div>
             <div
-              class="absolute right-4 top-2 rounded-full bg-transparent p-1 hover:opacity-90 md:right-5 md:top-4"
+              class="absolute end-4 top-2 rounded-full bg-transparent p-1 hover:opacity-90 md:end-5 md:top-4"
               data-pw="ss-close-button"
               data-testid="wigmix-close-button"
             >
@@ -2669,7 +2669,7 @@ exports[`slide-out-drawer should render a successful response with default confi
               POWERED BY 
             </p>
             <img
-              class="h-5 object-center py-0.5 pl-1"
+              class="h-5 object-center py-0.5 ps-1"
               src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
             />
           </div>

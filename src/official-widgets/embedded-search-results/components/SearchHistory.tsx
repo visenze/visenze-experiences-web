@@ -67,7 +67,7 @@ const SearchHistory = ({
                 data-pw={`esr-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
                 data-testid={`wigmix-${entry.id === getActiveHistoryId() ? 'active-product' : 'inactive-product'}`}
               >
-                <div className='absolute right-1 top-1 z-20 rounded-full bg-white'
+                <div className='absolute end-1 top-1 z-20 rounded-full bg-white'
                    onClick={(event) => {
                      event.preventDefault();
                      event.stopPropagation();
