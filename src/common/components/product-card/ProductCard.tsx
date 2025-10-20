@@ -67,15 +67,12 @@ const getPrice = (
     productDetails: WidgetConfig['displaySettings']['productDetails'],
     result: ProcessedProduct,
 ): string => {
-  if (!customizations.productCard?.price?.show) {
-    return '';
-  }
   if (result[productDetails['price']]) {
     const priceNumber = +result[productDetails['price']].value;
     const currencyFormatter = currencyFormatterFactory(
         languageSettings,
         customizations,
-        !!customizations.productCard.price.hideDecimal,
+        !!customizations.productCard?.price.hideDecimal,
         result[productDetails['price']].currency,
     );
     return currencyFormatter.format(priceNumber);
@@ -89,9 +86,6 @@ const getOriginalPrice = (
     productDetails: WidgetConfig['displaySettings']['productDetails'],
     result: ProcessedProduct,
 ): string => {
-  if (!customizations.productCard?.originalPrice?.show || !customizations.productCard?.price?.show) {
-    return '';
-  }
   if (result[productDetails['original_price']]) {
     const priceNumber = +result[productDetails['original_price']].value;
     if (priceNumber === 0) {
@@ -100,12 +94,36 @@ const getOriginalPrice = (
     const currencyFormatter = currencyFormatterFactory(
         languageSettings,
         customizations,
-        !!customizations.productCard.originalPrice.hideDecimal,
+        !!customizations.productCard?.originalPrice.hideDecimal,
         result[productDetails['original_price']].currency,
     );
     return currencyFormatter.format(priceNumber);
   }
   return '';
+};
+
+const getDiscount = (
+    customizations: WidgetConfig['customizations'],
+    languageSettings: WidgetConfig['languageSettings'],
+    productDetails: WidgetConfig['displaySettings']['productDetails'],
+    result: ProcessedProduct,
+): string => {
+  const priceValue = result[productDetails['price']] ? +result[productDetails['price']].value : 0;
+  const originalPriceValue = result[productDetails['original_price']] ? +result[productDetails['original_price']].value : 0;
+  if (!priceValue || !originalPriceValue || priceValue >= originalPriceValue) {
+    return '';
+  }
+  const rounding = customizations.productCard?.discount?.rounding || 1;
+  if (customizations.productCard?.discount?.showPercentage) {
+    return `${Math.round((100 * (originalPriceValue - priceValue)) / originalPriceValue / rounding) * rounding}`;
+  }
+  const currencyFormatter = currencyFormatterFactory(
+      languageSettings,
+      customizations,
+      false,
+      result[productDetails['original_price']].currency,
+  );
+  return currencyFormatter.format(Math.round((originalPriceValue - priceValue) / rounding) * rounding);
 };
 
 const getProductUrlWithTrackingParams = (
@@ -231,6 +249,16 @@ const ProductCard: FC<ProductCardProps> = ({
     return cssConfig;
   };
 
+  const getProductDiscountColorStyle = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    if (!darkMode && customizations.productCard?.discount?.fontColor) {
+      cssConfig.color = customizations.productCard.discount.fontColor;
+    } else if (darkMode && customizations.productCard?.discount?.fontColorDark) {
+      cssConfig.color = customizations.productCard.discount.fontColorDark;
+    }
+    return cssConfig;
+  };
+
   const getMainImageToDisplay = (): string => {
     const imageSrc = customizations.productCard?.images?.mainImage || 'main';
     const mainImageUrl = result.im_url;
@@ -282,6 +310,10 @@ const ProductCard: FC<ProductCardProps> = ({
 
   const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
   const price = getPrice(customizations, languageSettings, productDetails, result);
+  const discount = getDiscount(customizations, languageSettings, productDetails, result);
+  const showPrice = !!customizations.productCard?.price?.show;
+  const showOriginalPrice = showPrice && !!customizations.productCard?.originalPrice?.show;
+  const showDiscount = showPrice && !!customizations.productCard?.discount?.show;
   const productUrl = getProductUrlWithTrackingParams(result[productDetails['product_url']], productTrackingMeta, isRecommendation);
   const mainImageUrl = getMainImageToDisplay();
   const hoverImageUrl = getHoverImageToDisplay(mainImageUrl);
@@ -435,28 +467,39 @@ const ProductCard: FC<ProductCardProps> = ({
               originalPrice && originalPrice !== price
                 ? (
                   <>
-                    {customizations.productCard?.originalPrice?.position === 'AFTER' && (
+                    {showPrice && customizations.productCard?.originalPrice?.position === 'AFTER' && (
                       <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
                         {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
                       </span>
                     )}
-                    <span className={cn(
-                        'wigmix-product-card-original-price',
-                        customizations.productCard?.originalPrice?.strikethrough ? 'line-through' : '',
+                    {showOriginalPrice && (
+                      <span className={cn(
+                          'wigmix-product-card-original-price',
+                          customizations.productCard?.originalPrice?.strikethrough ? 'line-through' : '',
+                      )}
+                            style={getProductOriginalPriceColorStyle()}>
+                        {intl.formatMessage({ id: 'originalPrice' }).replace('{originalPrice}', originalPrice)}
+                      </span>
                     )}
-                          style={getProductOriginalPriceColorStyle()}>
-                      {intl.formatMessage({ id: 'originalPrice' }).replace('{originalPrice}', originalPrice)}
-                    </span>
-                    {customizations.productCard?.originalPrice?.position === 'BEFORE' && (
+                    {showPrice && customizations.productCard?.originalPrice?.position === 'BEFORE' && (
                       <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
                         {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                      </span>
+                    )}
+                    {showDiscount && (
+                      <span className='wigmix-product-card-discount' style={getProductDiscountColorStyle()}>
+                        {intl.formatMessage({ id: 'discount' }).replace('{discount}', discount)}
                       </span>
                     )}
                   </>
                 ) : (
-                  <span className='wigmix-product-card-price'>
-                    {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
-                  </span>
+                  <>
+                    {showPrice && (
+                      <span className='wigmix-product-card-price'>
+                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                      </span>
+                    )}
+                  </>
                 )
             }
           </div>

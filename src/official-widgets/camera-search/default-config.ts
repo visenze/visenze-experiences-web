@@ -16,6 +16,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     useCamera: 'Or capture image with your camera',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} off',
   },
   es: {
     uploadScreenTitle: 'MUESTRANOS QUÉ ESTÁS BUSCANDO',
@@ -31,6 +32,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     useCamera: 'O captura una imagen con tu cámara',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
   },
   fr: {
     uploadScreenTitle: 'MONTREZ-NOUS CE QUE VOUS RECHERCHEZ',
@@ -46,6 +48,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     useCamera: 'Ou capturer une image avec votre appareil photo',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
   },
   pt: {
     uploadScreenTitle: 'MOSTRE-NOS O QUE VOCÊ ESTÁ PROCURANDO',
@@ -61,6 +64,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     useCamera: 'Ou capture uma imagem com sua câmera',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
   },
   de: {
     uploadScreenTitle: 'ZEIG UNS, WAS DU SUCHST',
@@ -76,6 +80,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     useCamera: 'Oder ein Bild mit deiner Kamera aufnehmen',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
   },
   it: {
     uploadScreenTitle: 'MOSTRACI COSA STAI CERCANDO',
@@ -91,6 +96,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     useCamera: 'Oppure scatta una foto con la fotocamera',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
   },
   pl: {
     uploadScreenTitle: 'POKAŻ NAM, CZEGO SZUKASZ',
@@ -106,6 +112,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     useCamera: 'Lub zrób zdjęcie aparatem',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
   },
   ko: {
     uploadScreenTitle: '찾고 있는 것을 보여주세요',
@@ -121,6 +128,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     useCamera: '또는 카메라로 이미지를 캡처하세요',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
   },
   ja: {
     uploadScreenTitle: '探しているものを見せてください',
@@ -136,6 +144,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     useCamera: 'またはカメラで画像を撮影してください',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
   },
   th: {
     uploadScreenTitle: 'แสดงให้เราเห็นสิ่งที่คุณกำลังมองหา',
@@ -151,6 +160,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     useCamera: 'หรือถ่ายภาพด้วยกล้องของคุณ',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
   },
 };
 

@@ -1201,6 +1201,43 @@ export interface WidgetConfig {
         strikethrough?: boolean;
       };
       /**
+       * Configuration for discount display.
+       *
+       * @since 1.0.18
+       */
+      discount?: HideableText & {
+        /**
+         * Font color for the discount.
+         *
+         * @since 1.0.18
+         */
+        fontColor: string;
+        /**
+         * Font color for the discount in dark mode.
+         *
+         * @since 1.0.18
+         */
+        fontColorDark: string;
+        /**
+         * Configures whether the discount value is displayed as the numeric difference between
+         * the original price and the discount price (<code>originalPrice - price</code>)
+         * or the percentage difference (code>(originalPrice - price) / originalPrice * 100%</code>).
+         *
+         * @since 1.0.18
+         */
+        showPercentage: boolean;
+        /**
+         * The unit to round the discount value against. For example, if the rounding unit is 5,
+         * a discount value of 17 will be rounded to 15, but if the rounding unit is 10,
+         * the same value will be rounded to 20.
+         *
+         * Values usually used are 1, 5, and 10.
+         *
+         * @since 1.0.18
+         */
+        rounding: number;
+      };
+      /**
        * Configuration for primary title field.
        *
        * @since 1.0.0

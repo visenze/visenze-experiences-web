@@ -6,51 +6,61 @@ export const DEFAULT_TEXTS: LanguagePack = {
     widgetTitle: 'You may also like',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} off',
   },
   es: {
     widgetTitle: 'También te puede gustar',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
   },
 };
 

@@ -33,6 +33,7 @@ describe('more-like-this', () => {
       widgetTitle: 'More Like This 319',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

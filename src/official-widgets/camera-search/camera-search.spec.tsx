@@ -35,6 +35,7 @@ describe('camera-search', () => {
       useCamera: 'Take a photo',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

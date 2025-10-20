@@ -10,6 +10,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     triggerCTA: 'Style Assistant',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} off',
   },
   es: {
     widgetTitle: 'Asistente de estilo',
@@ -19,6 +20,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     triggerCTA: 'Asistente de estilo',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
   },
   fr: {
     widgetTitle: 'Assistant de style',
@@ -28,6 +30,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     triggerCTA: 'Assistant de style',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
   },
   pt: {
     widgetTitle: 'Assistente de estilo',
@@ -37,6 +40,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     triggerCTA: 'Assistente de estilo',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
   },
   de: {
     widgetTitle: 'Stil-Assistent',
@@ -46,6 +50,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     triggerCTA: 'Stil-Assistent',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
   },
   it: {
     widgetTitle: 'Assistente di stile',
@@ -55,6 +60,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     triggerCTA: 'Assistente di stile',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
   },
   pl: {
     widgetTitle: 'Asystent Stylu',
@@ -64,6 +70,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     triggerCTA: 'Asystent Stylu',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
   },
   ko: {
     widgetTitle: '쇼핑 어시스턴트',
@@ -73,6 +80,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     triggerCTA: '스타일 어시스턴트',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
   },
   ja: {
     widgetTitle: 'スタイルアシスタント',
@@ -82,6 +90,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     triggerCTA: 'スタイルアシスタント',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
   },
   th: {
     widgetTitle: 'ช่วยเหลือสินค้า',
@@ -91,6 +100,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     triggerCTA: 'ผู้ช่วยด้านสไตล์',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
   },
 };
 

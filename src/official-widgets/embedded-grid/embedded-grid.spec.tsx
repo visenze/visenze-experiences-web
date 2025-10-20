@@ -22,6 +22,7 @@ describe('embedded-grid', () => {
       widgetTitle: 'Embedded Grid 103',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

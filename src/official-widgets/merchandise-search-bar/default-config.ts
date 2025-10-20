@@ -14,6 +14,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorMessage: 'You have entered an invalid query or image, please try again.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} off',
   },
   es: {
     searchBarPlaceholder: '¿Qué estás buscando?',
@@ -27,6 +28,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorMessage: 'Has introducido una consulta o imagen no válida, por favor, inténtalo de nuevo.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
   },
   fr: {
     searchBarPlaceholder: 'Que recherchez-vous ?',
@@ -40,6 +42,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorMessage: 'Vous avez saisi une requête ou une image non valide, veuillez réessayer.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
   },
   pt: {
     searchBarPlaceholder: 'O que você está procurando?',
@@ -53,6 +56,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorMessage: 'Você inseriu uma consulta ou imagem inválida, tente novamente.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
   },
   de: {
     searchBarPlaceholder: 'Wonach suchst du?',
@@ -67,6 +71,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorMessage: 'Du hast eine ungültige Anfrage oder ein ungültiges Bild eingegeben. Bitte versuche es erneut.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
   },
   it: {
     searchBarPlaceholder: 'Cosa stai cercando?',
@@ -80,6 +85,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorMessage: 'Hai inserito una query o un\'immagine non valida, riprova.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
   },
   pl: {
     searchBarPlaceholder: 'Czego szukasz?',
@@ -93,6 +99,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorMessage: 'Wprowadziłeś nieprawidłowe zapytanie lub obraz. Spróbuj ponownie.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
   },
   ko: {
     searchBarPlaceholder: '무엇을 찾고 계신가요?',
@@ -106,6 +113,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorMessage: '유효하지 않은 검색어 또는 이미지를 입력했습니다. 다시 시도해주세요.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
   },
   ja: {
     searchBarPlaceholder: '何をお探しですか？',
@@ -119,6 +127,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorMessage: '無効なクエリまたは画像を入力しました。もう一度お試しください。',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
   },
   th: {
     searchBarPlaceholder: 'คุณกำลังมองหาอะไร?',
@@ -132,6 +141,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorMessage: 'คุณได้ป้อนคำค้นหาหรือรูปภาพที่ไม่ถูกต้อง โปรดลองอีกครั้ง',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
   },
 };
 

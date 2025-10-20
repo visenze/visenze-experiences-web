@@ -31,6 +31,7 @@ describe('merchandise-search-bar', () => {
       errorMessage: 'WE HAVE A PROBLEM HERE!',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

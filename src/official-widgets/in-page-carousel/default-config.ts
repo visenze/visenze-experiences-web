@@ -8,6 +8,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showLess: 'Show Less',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} off',
   },
   es: {
     widgetTitle: 'También te puede gustar',
@@ -15,6 +16,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showLess: 'Mostrar Menos',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
@@ -22,6 +24,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showLess: 'Moins de produits',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
@@ -29,6 +32,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showLess: 'Mostrar Menos',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
@@ -36,6 +40,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showLess: 'Weniger Produkte',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
@@ -43,6 +48,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showLess: 'Mostra meno prodotti',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
@@ -50,6 +56,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showLess: 'Mniej produktów',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
@@ -57,6 +64,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showLess: '닫기',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
@@ -64,6 +72,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showLess: '閉じる',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
@@ -71,6 +80,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showLess: 'ปิด',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
   },
 };
 

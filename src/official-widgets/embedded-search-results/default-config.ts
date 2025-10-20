@@ -13,6 +13,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     systemError: 'Sorry, our system is experiencing difficulties, please try again later.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} off',
   },
   es: {
     filter: 'Filtrar',
@@ -25,6 +26,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     systemError: 'Lo sentimos, nuestro sistema está experimentando dificultades, por favor, inténtalo de nuevo más tarde.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
   },
   fr: {
     filter: 'Filtrer',
@@ -37,6 +39,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     systemError: 'Désolé, notre système rencontre des difficultés, veuillez réessayer ultérieurement.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
   },
   pt: {
     filter: 'Filtrar',
@@ -49,6 +52,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     systemError: 'Desculpe, nosso sistema está enfrentando dificuldades, tente novamente mais tarde.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
   },
   de: {
     filter: 'Filtern',
@@ -61,6 +65,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     systemError: 'Entschuldigung, unser System hat Schwierigkeiten. Bitte versuche es später noch einmal.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
   },
   it: {
     filter: 'Filtra',
@@ -73,6 +78,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     systemError: 'Spiacenti, il nostro sistema sta riscontrando delle difficoltà, riprova più tardi.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
   },
   pl: {
     filter: 'Filtruj',
@@ -85,6 +91,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     systemError: 'Przepraszamy, nasz system ma obecnie problemy. Spróbuj ponownie później.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
   },
   ko: {
     filter: '필터',
@@ -97,6 +104,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     systemError: '죄송합니다. 시스템에 오류가 발생했습니다. 나중에 다시 시도해주세요.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
   },
   ja: {
     filter: 'フィルター',
@@ -109,6 +117,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     systemError: '申し訳ございません。システムに問題が発生しています。後でもう一度お試しください。',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
   },
   th: {
     filter: 'ตัวกรอง',
@@ -121,6 +130,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     systemError: 'ขออภัย ระบบของเรากำลังมีปัญหา โปรดลองอีกครั้งในภายหลัง',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
   },
 };
 

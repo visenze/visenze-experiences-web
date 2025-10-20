@@ -25,6 +25,7 @@ describe('icon-triggered-grid', () => {
       triggerCTA: 'CTA',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

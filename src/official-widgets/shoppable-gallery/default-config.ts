@@ -9,6 +9,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResults: 'There are no results for this hotspot',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} off',
   },
   es: {
     errorDescription: 'Lo sentimos, algo salió mal',
@@ -17,6 +18,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResults: 'No hay resultados para este punto de interés',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
   },
   fr: {
     errorDescription: 'Désolé, quelque chose s\'est mal passé',
@@ -25,6 +27,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResults: 'Il n\'y a aucun résultat pour ce point d\'intérêt',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
   },
   pt: {
     errorDescription: 'Desculpe, algo deu errado',
@@ -33,6 +36,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResults: 'Não há resultados para este ponto de interesse',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
   },
   de: {
     errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
@@ -41,6 +45,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResults: 'Es gibt keine Ergebnisse für diesen Hotspot',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
   },
   it: {
     errorDescription: 'Spiacenti, qualcosa è andato storto',
@@ -49,6 +54,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResults: 'Non ci sono risultati per questo hotspot',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
   },
   pl: {
     errorDescription: 'Przepraszamy, coś poszło nie tak',
@@ -57,6 +63,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResults: 'Brak wyników dla tego punktu',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
   },
   ko: {
     errorDescription: '죄송합니다. 오류가 발생했습니다',
@@ -65,6 +72,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResults: '이 핫스팟에 대한 결과가 없습니다',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
   },
   ja: {
     errorDescription: '申し訳ありません。問題が発生しました',
@@ -73,6 +81,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResults: 'このホットスポットの結果はありません',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
   },
   th: {
     errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
@@ -81,6 +90,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noResults: 'ไม่มีผลลัพธ์สำหรับฮอตสปอตนี้',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
   },
 };
 

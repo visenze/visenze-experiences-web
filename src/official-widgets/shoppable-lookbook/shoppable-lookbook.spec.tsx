@@ -22,6 +22,7 @@ describe('shoppable-lookbook', () => {
       widgetTitle: 'Shoppable Lookbook 841',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

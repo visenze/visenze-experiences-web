@@ -12,6 +12,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     similarProductButton: 'Similar Products',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} off',
   },
   es: {
     widgetTitle: 'También te puede gustar',
@@ -23,6 +24,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     similarProductButton: 'Productos similares',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
@@ -34,6 +36,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     similarProductButton: 'Produits similaires',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
@@ -45,6 +48,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     similarProductButton: 'Produtos Semelhantes',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
@@ -56,6 +60,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     similarProductButton: 'Ähnliche Produkte',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
@@ -67,6 +72,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     similarProductButton: 'Prodotti Simili',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
@@ -78,6 +84,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     similarProductButton: 'Produkty Podobne',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
@@ -89,6 +96,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     similarProductButton: '비슷한 상품 찾기',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
@@ -100,6 +108,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     similarProductButton: '類似商品を検索',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
@@ -111,6 +120,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     similarProductButton: 'ค้นหาสินค้าที่คล้ายกัน',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
   },
 };
 

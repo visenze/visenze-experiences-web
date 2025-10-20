@@ -33,6 +33,7 @@ describe('shop-the-look', () => {
       widgetTitle: 'Shop The Look 319',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

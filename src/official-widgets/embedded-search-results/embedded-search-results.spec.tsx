@@ -32,6 +32,7 @@ describe('embedded-search-result', () => {
       systemError: 'Sorry, our system is experiencing difficulties, please try again later.',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

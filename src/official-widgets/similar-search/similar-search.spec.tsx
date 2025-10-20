@@ -29,6 +29,7 @@ describe('similar-search', () => {
       triggerCTA: 'CTA',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

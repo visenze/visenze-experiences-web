@@ -39,6 +39,7 @@ This can be used alongside the previously mentioned look-and-feel customization.
   | `wigmix-product-card-price-row`       | `div`        | 1.0.0           | Row containing both original and discounted prices   |
   | `wigmix-product-card-price`           | `span`       | 1.0.0           |                                                      |
   | `wigmix-product-card-original-price`  | `span`       | 1.0.0           |                                                      |
+  | `wigmix-product-card-discount`        | `span`       | 1.0.18          |                                                      |
   | `wigmix-find-similar-button`          | `button`     | 1.0.0           |                                                      |
   | `wigmix-find-similar-icon`            | `div`        | 1.0.0           |                                                      |
   | `wigmix-modal`                        | `div`        | 1.0.0           |                                                      |

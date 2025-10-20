@@ -30,6 +30,7 @@ describe('slide-out-drawer', () => {
       similarProductButton: 'Similar Products',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

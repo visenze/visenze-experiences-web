@@ -13,6 +13,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: 'The image or query was not found. Please try again later.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} off',
   },
   es: {
     widgetTitle: 'Personaliza tus recomendaciones',
@@ -24,6 +25,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: 'La imagen o la consulta no se encontraron. Por favor, inténtelo más tarde.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
   },
   fr: {
     widgetTitle: 'Personnalisez vos recommandations',
@@ -35,6 +37,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: 'L\'image ou la requête n\'a pas été trouvée. Veuillez réessayer plus tard.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
   },
   pt: {
     widgetTitle: 'Personalize suas recomendações',
@@ -46,6 +49,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: 'A imagem ou a consulta não foi encontrada. Por favor, tente novamente mais tarde.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
   },
   de: {
     widgetTitle: 'Personalisiere deine Empfehlungen',
@@ -57,6 +61,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: 'Die Bild oder die Abfrage wurde nicht gefunden. Bitte versuchen Sie es später erneut.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
   },
   it: {
     widgetTitle: 'Personalizza i tuoi suggerimenti',
@@ -68,6 +73,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: 'L\'immagine o la query non sono state trovate. Riprova più tardi.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
   },
   pl: {
     widgetTitle: 'Spersonalizuj swoje rekomendacje',
@@ -79,6 +85,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: 'Obraz lub zapytanie nie zostały znalezione. Spróbuj ponownie później.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
   },
   ko: {
     widgetTitle: '추천 맞춤 설정',
@@ -90,6 +97,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: '이미지 또는 쿼리가 찾을 수 없습니다. 나중에 다시 시도해주세요.',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
   },
   ja: {
     widgetTitle: 'おすすめをパーソナライズ',
@@ -101,6 +109,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: '画像またはクエリが見つかりませんでした。後で再試してください。',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
   },
   th: {
     widgetTitle: 'ปรับแต่งคำแนะนำของคุณ',
@@ -112,6 +121,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageOrQueryNotFound: 'ไม่พบภาพหรือคำค้น กรุณาลองอีกครั้ง',
     price: '{price}',
     originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
   },
 };
 

@@ -24,6 +24,7 @@ describe('in-page-carousel', () => {
       showLess: 'Show Less',
       price: '{price}',
       originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {
