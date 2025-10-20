@@ -99,6 +99,9 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalW
         openWidgetPopup();
       }
     });
+    widgetClient.registerWidgetCloser(() => {
+      setDialogVisible(false);
+    });
   }, []);
 
   useEffect(() => {

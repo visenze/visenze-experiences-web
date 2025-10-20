@@ -212,6 +212,9 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ pid, renderModalWithoutPortal
         openWidgetPopup();
       }
     });
+    widgetClient.registerWidgetCloser(() => {
+      setDialogVisible(false);
+    });
   }, []);
 
   useEffect(() => {

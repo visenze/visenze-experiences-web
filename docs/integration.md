@@ -184,7 +184,7 @@ visenzeWidget.hideWidget();
 The reference to the widget will stay and further programmatic access is possible;
 for example, the widget can be re-rendered by using the same `rerender` method from the previous section.
 
-### Opening the widget popup
+### Opening or closing the widget popup
 
 For widgets that have popup behavior, you may require a different way to open the popup
 from the existing click-on-provided-icon behavior.
@@ -199,6 +199,12 @@ you need to specify the product ID or URL to identify which popup needs to be op
 
 ```ts
 visenzeWidget.openWidget('<PRODUCT_ID_OR_URL>');
+```
+
+Similarly, a programmatic way to close widgets that have popup behavior is available:
+
+```ts
+visenzeWidget.closeWidget();
 ```
 
 ### Sending custom events

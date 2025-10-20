@@ -495,6 +495,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
     widgetClient.registerWidgetOpener(() => {
       setWidgetOpenTrigger(Math.random());
     });
+    widgetClient.registerWidgetCloser(() => {
+      setDialogVisible(false);
+    });
     widgetClient.sendChatMessage = ((msg, img): void => {
       setSendChatTrigger([msg, img]);
     });

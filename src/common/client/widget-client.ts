@@ -50,6 +50,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
   let renderStatus: WidgetRenderStatus = 'UNRENDERED';
   let roots: Root[] = [];
   let widgetOpeners: ((id: string, bypassIdCheck: boolean) => void)[] = [];
+  let widgetClosers: (() => void)[] = [];
   let darkModeTogglers: (() => void)[] = [];
   let configUpdaters: ((configOverride: WidgetConfig, isPartial: boolean) => void)[] = [];
   let localeUpdaters: ((locale: string) => void)[] = [];
@@ -244,12 +245,14 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
   };
 
   const hideWidget = (): void => {
+    closeWidget();
     // flush react script
     roots.forEach((root) => {
       root.render(null);
     });
     renderStatus = 'HIDDEN';
     widgetOpeners = [];
+    widgetClosers = [];
     darkModeTogglers = [];
     configUpdaters = [];
     localeUpdaters = [];
@@ -293,6 +296,14 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
 
   const openWidget = (id: string): void => {
     widgetOpeners.forEach((fn) => fn(id, widgetOpeners.length <= 1));
+  };
+
+  const registerWidgetCloser = (fn: () => void): void => {
+    widgetClosers.push(fn);
+  };
+
+  const closeWidget = (): void => {
+    widgetClosers.forEach((fn) => fn());
   };
 
   const registerDarkModeToggler = (fn: () => void): void => {
@@ -345,6 +356,8 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     renderMissing: (): void => {}, // implemented in initialization.ts
     openWidget,
     registerWidgetOpener,
+    closeWidget,
+    registerWidgetCloser,
     hideWidget,
     disposeWidget,
     toggleDarkMode,

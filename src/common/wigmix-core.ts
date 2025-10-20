@@ -283,6 +283,18 @@ export interface WidgetClient {
    */
   registerWidgetOpener: (fn: (id: string, bypassIdCheck: boolean) => void) => void;
   /**
+   * Closes the widget popup; applicable only for widget types that have popup behavior.
+   *
+   * @since 1.0.18
+   */
+  closeWidget: () => void;
+  /**
+   * @internal
+   *
+   * @since 1.0.18
+   */
+  registerWidgetCloser: (fn: () => void) => void;
+  /**
    * Hides the widget from view.
    *
    * @since 1.0.0
