@@ -44,6 +44,9 @@ This can be used alongside the previously mentioned look-and-feel customization.
   | `wigmix-find-similar-icon`            | `div`        | 1.0.0           |                                                      |
   | `wigmix-wishlist-button`              | `button`     | 1.0.18          |                                                      |
   | `wigmix-wishlist-icon`                | `div`        | 1.0.18          |                                                      |
+  | `wigmix-add-to-cart-button`           | `button`     | 1.0.18          |                                                      |
+  | `wigmix-add-to-cart-icon`             | `div`        | 1.0.18          |                                                      |
+  | `wigmix-add-to-cart-text`             | `span`       | 1.0.18          |                                                      |
   | `wigmix-modal`                        | `div`        | 1.0.0           |                                                      |
   | `wigmix-modal-overlay`                | `div`        | 1.0.0           |                                                      |
   | `wigmix-search-bar-overlay`           | `div`        | 1.0.7           |                                                      |

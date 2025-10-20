@@ -101,6 +101,7 @@ window.visenzeConfigs[5000] = {
   | `onProductClick`        | 1.0.0           | Fires whenever a product card is clicked on.                                                                                                                               |
   | `onSearchCallback`      | 1.0.0           | Fires whenever response from a search/recommendation API result is returned.                                                                                               |
   | `onAddToWishlistToggle` | 1.0.18          | Fires whenever a wishlist icon is clicked on.                                                                                                                              |
+  | `onAddToCartToggle`     | 1.0.18          | Fires whenever an add-to-cart icon is clicked on.                                                                                                                          |
   | `onSearchBarInput`      | 1.0.0           | Fires when there is an input change within the search bar (when exists), such as clicking enter in search bar, selecting an autocomplete option, or uploading a new image. |
 </details>
 

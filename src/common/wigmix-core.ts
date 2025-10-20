@@ -392,7 +392,7 @@ interface ImageWithLabel {
  *
  * @since 1.0.0
  */
-interface Icon {
+export interface Icon {
   /**
    * URL source of the icon.
    *
@@ -858,18 +858,16 @@ export interface WidgetConfig {
     /**
      * Fires an event that indicates that a product should be added to or removed from cart.
      *
-     * If defined, the callback should return whether the operation succeeds,
-     * and the icon shall be toggled only if the operation returns true.
+     * If defined, the callback should return whether the operation succeeds.
      *
-     * @param add True if the intention is to add to cart, false if the intention is to remove from cart
+     * The first parameter is left empty on purpose.
+     *
      * @param pid The product ID
      * @param productDetails (optional) Additional details of the product
      *
-     * @internal
-     *
-     * @since 1.0.11
+     * @since 1.0.18
      */
-    onAddToCartToggle?: (add: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
+    onAddToCartToggle?: (_: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
     /**
      * Fires an event that indicates that a "find similar" request is sent to the widget.
      *
@@ -1322,19 +1320,27 @@ export interface WidgetConfig {
         iconActive?: IconWithBackground;
       };
       /**
-       * Configuration for the "add to cart" feature within a product card image.
+       * Configuration for the "add to cart" button within a product card image.
        *
-       * @internal
-       *
-       * @since 1.0.11
+       * @since 1.0.18
        */
-      addToCart?: {
+      addToCart?: Icon & Partial<ColoredInterface> & {
         /**
-         * Whether the "add to cart" feature is enabled or not.
+         * Whether the "add to cart" button is enabled or not.
          *
-         * @since 1.0.11
+         * @since 1.0.18
          */
         enable: boolean;
+        /**
+         * Layout of icon and text contents of the add-to-cart button.
+         *
+         * - TEXT: text only
+         * - ICON_TEXT: icon, followed by text
+         * - TEXT_ICON: text, followed by icon
+         *
+         * @since 1.0.18
+         */
+        layout: 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
       };
       /**
        * Configuration for the image shown on product card.

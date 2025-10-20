@@ -11,6 +11,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     widgetTitle: 'Asistente de estilo',
@@ -21,6 +22,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     widgetTitle: 'Assistant de style',
@@ -31,6 +33,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     widgetTitle: 'Assistente de estilo',
@@ -41,6 +44,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     widgetTitle: 'Stil-Assistent',
@@ -51,6 +55,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     widgetTitle: 'Assistente di stile',
@@ -61,6 +66,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     widgetTitle: 'Asystent Stylu',
@@ -71,6 +77,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     widgetTitle: '쇼핑 어시스턴트',
@@ -81,6 +88,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     widgetTitle: 'スタイルアシスタント',
@@ -91,6 +99,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     widgetTitle: 'ช่วยเหลือสินค้า',
@@ -101,6 +110,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -212,6 +222,14 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     addToWishlist: {
       enable: false,
       position: 'top_right',
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
     images: {
       mainImage: 'main',

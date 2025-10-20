@@ -12,6 +12,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     widgetTitle: 'También te puede gustar',
@@ -23,6 +24,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
@@ -34,6 +36,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
@@ -45,6 +48,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
@@ -56,6 +60,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
@@ -67,6 +72,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
@@ -78,6 +84,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
@@ -89,6 +96,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
@@ -100,6 +108,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
@@ -111,6 +120,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -232,6 +242,14 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     addToWishlist: {
       enable: false,
       position: 'top_right',
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
     images: {
       mainImage: 'main',

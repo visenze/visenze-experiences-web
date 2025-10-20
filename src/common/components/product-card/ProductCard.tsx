@@ -2,8 +2,10 @@ import { Skeleton } from '@heroui/skeleton';
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import AddToCartButton from './AddToCartButton';
 import ResultLogicImpl from '../../client/result-logic';
 import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../default-configs';
+import CartIcon from '../../icons/CartIcon';
 import CustomizableIcon from '../../icons/CustomizableIcon';
 import EllipsisHorizontalIcon from '../../icons/EllipsisHorizontalIcon';
 import HeartFilledIcon from '../../icons/HeartFilledIcon';
@@ -163,9 +165,10 @@ const ProductCard: FC<ProductCardProps> = ({
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
-  const { onProductClick, onAddToWishlistToggle } = callbacks;
+  const { onProductClick, onAddToWishlistToggle, onAddToCartToggle } = callbacks;
   const [isLoading, setIsLoading] = useState(true);
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const intl = useIntl();
@@ -517,6 +520,30 @@ const ProductCard: FC<ProductCardProps> = ({
             }
           </div>
         </div>
+        {customizations.productCard?.addToCart?.enable && (
+            <AddToCartButton config={customizations.productCard}
+                             text={intl.formatMessage({ id: 'addToCart' })}
+                             darkMode={darkMode}
+                             onClick={async (e) => {
+                               e.preventDefault();
+                               e.stopPropagation();
+
+                               if (onAddToCartToggle) {
+                                 setIsAddingToCart(true);
+                                 await onAddToCartToggle(true, result.product_id, result);
+                                 setIsAddingToCart(false);
+                               }
+                             }}
+                             isAddingToCart={isAddingToCart}
+                             defaultIcon={
+                               <CartIcon
+                                   color={darkMode
+                                       ? customizations.productCard?.addToCart?.colorDark || ''
+                                       : customizations.productCard?.addToCart?.color || ''}
+                                   className='wigmix-add-to-cart-icon default size-6'
+                               />
+                             } />
+        )}
       </a>
     </div>
   );

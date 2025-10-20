@@ -10,6 +10,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     errorDescription: 'Lo sentimos, algo salió mal',
@@ -19,6 +20,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     errorDescription: 'Désolé, quelque chose s\'est mal passé',
@@ -28,6 +30,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     errorDescription: 'Desculpe, algo deu errado',
@@ -37,6 +40,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
@@ -46,6 +50,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     errorDescription: 'Spiacenti, qualcosa è andato storto',
@@ -55,6 +60,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     errorDescription: 'Przepraszamy, coś poszło nie tak',
@@ -64,6 +70,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     errorDescription: '죄송합니다. 오류가 발생했습니다',
@@ -73,6 +80,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     errorDescription: '申し訳ありません。問題が発生しました',
@@ -82,6 +90,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
@@ -91,6 +100,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -202,6 +212,14 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     addToWishlist: {
       enable: false,
       position: 'top_right',
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
     images: {
       mainImage: 'main',

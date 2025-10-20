@@ -17,6 +17,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     uploadScreenTitle: 'MUESTRANOS QUÉ ESTÁS BUSCANDO',
@@ -33,6 +34,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     uploadScreenTitle: 'MONTREZ-NOUS CE QUE VOUS RECHERCHEZ',
@@ -49,6 +51,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     uploadScreenTitle: 'MOSTRE-NOS O QUE VOCÊ ESTÁ PROCURANDO',
@@ -65,6 +68,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     uploadScreenTitle: 'ZEIG UNS, WAS DU SUCHST',
@@ -81,6 +85,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     uploadScreenTitle: 'MOSTRACI COSA STAI CERCANDO',
@@ -97,6 +102,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     uploadScreenTitle: 'POKAŻ NAM, CZEGO SZUKASZ',
@@ -113,6 +119,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     uploadScreenTitle: '찾고 있는 것을 보여주세요',
@@ -129,6 +136,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     uploadScreenTitle: '探しているものを見せてください',
@@ -145,6 +153,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     uploadScreenTitle: 'แสดงให้เราเห็นสิ่งที่คุณกำลังมองหา',
@@ -161,6 +170,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     price: '{price}',
     originalPrice: '{originalPrice}',
     discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -282,6 +292,14 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     addToWishlist: {
       enable: false,
       position: 'top_right',
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
     images: {
       mainImage: 'main',
