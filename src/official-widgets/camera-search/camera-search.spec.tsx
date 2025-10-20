@@ -33,6 +33,8 @@ describe('camera-search', () => {
       back: 'Exit',
       triggerCTA: 'CTA',
       useCamera: 'Take a photo',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
     },
   };
   const mockVisearchClient: ViSearchClient = {

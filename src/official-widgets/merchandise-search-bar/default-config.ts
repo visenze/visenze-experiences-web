@@ -12,6 +12,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Popular Choices',
     trending: 'Trending',
     errorMessage: 'You have entered an invalid query or image, please try again.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   es: {
     searchBarPlaceholder: '¿Qué estás buscando?',
@@ -23,6 +25,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Opciones populares',
     trending: 'Tendencias',
     errorMessage: 'Has introducido una consulta o imagen no válida, por favor, inténtalo de nuevo.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   fr: {
     searchBarPlaceholder: 'Que recherchez-vous ?',
@@ -34,6 +38,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Choix populaires',
     trending: 'Tendances',
     errorMessage: 'Vous avez saisi une requête ou une image non valide, veuillez réessayer.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   pt: {
     searchBarPlaceholder: 'O que você está procurando?',
@@ -45,6 +51,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Escolhas populares',
     trending: 'Tendências',
     errorMessage: 'Você inseriu uma consulta ou imagem inválida, tente novamente.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   de: {
     searchBarPlaceholder: 'Wonach suchst du?',
@@ -57,6 +65,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Beliebte Auswahl',
     trending: 'Im Trend',
     errorMessage: 'Du hast eine ungültige Anfrage oder ein ungültiges Bild eingegeben. Bitte versuche es erneut.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   it: {
     searchBarPlaceholder: 'Cosa stai cercando?',
@@ -68,6 +78,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Scelte popolari',
     trending: 'Di tendenza',
     errorMessage: 'Hai inserito una query o un\'immagine non valida, riprova.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   pl: {
     searchBarPlaceholder: 'Czego szukasz?',
@@ -79,6 +91,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Popularne wybory',
     trending: 'Na czasie',
     errorMessage: 'Wprowadziłeś nieprawidłowe zapytanie lub obraz. Spróbuj ponownie.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   ko: {
     searchBarPlaceholder: '무엇을 찾고 계신가요?',
@@ -90,6 +104,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: '인기 상품',
     trending: '트렌드',
     errorMessage: '유효하지 않은 검색어 또는 이미지를 입력했습니다. 다시 시도해주세요.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   ja: {
     searchBarPlaceholder: '何をお探しですか？',
@@ -101,6 +117,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: '人気の選択',
     trending: 'トレンド',
     errorMessage: '無効なクエリまたは画像を入力しました。もう一度お試しください。',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   th: {
     searchBarPlaceholder: 'คุณกำลังมองหาอะไร?',
@@ -112,6 +130,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'ตัวเลือกยอดนิยม',
     trending: 'กำลังมาแรง',
     errorMessage: 'คุณได้ป้อนคำค้นหาหรือรูปภาพที่ไม่ถูกต้อง โปรดลองอีกครั้ง',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
 };
 
@@ -181,6 +201,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: true,

@@ -1,6 +1,7 @@
 import { Skeleton } from '@heroui/skeleton';
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 import ResultLogicImpl from '../../client/result-logic';
 import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../default-configs';
 import CustomizableIcon from '../../icons/CustomizableIcon';
@@ -144,6 +145,7 @@ const ProductCard: FC<ProductCardProps> = ({
   const [isInWishlist, setIsInWishlist] = useState(false);
   const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
+  const intl = useIntl();
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
     widgetClient,
@@ -433,15 +435,28 @@ const ProductCard: FC<ProductCardProps> = ({
               originalPrice && originalPrice !== price
                 ? (
                   <>
-                    <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
-                      {price}
+                    {customizations.productCard?.originalPrice?.position === 'AFTER' && (
+                      <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
+                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                      </span>
+                    )}
+                    <span className={cn(
+                        'wigmix-product-card-original-price',
+                        customizations.productCard?.originalPrice?.strikethrough ? 'line-through' : '',
+                    )}
+                          style={getProductOriginalPriceColorStyle()}>
+                      {intl.formatMessage({ id: 'originalPrice' }).replace('{originalPrice}', originalPrice)}
                     </span>
-                    <span className='wigmix-product-card-original-price line-through' style={getProductOriginalPriceColorStyle()}>
-                      {originalPrice}
-                    </span>
+                    {customizations.productCard?.originalPrice?.position === 'BEFORE' && (
+                      <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
+                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                      </span>
+                    )}
                   </>
                 ) : (
-                  <span className='wigmix-product-card-price'>{price}</span>
+                  <span className='wigmix-product-card-price'>
+                    {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                  </span>
                 )
             }
           </div>

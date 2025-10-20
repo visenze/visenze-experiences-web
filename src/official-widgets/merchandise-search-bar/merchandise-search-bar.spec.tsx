@@ -29,6 +29,8 @@ describe('merchandise-search-bar', () => {
       popularChoices: 'Popular',
       trending: 'Trends',
       errorMessage: 'WE HAVE A PROBLEM HERE!',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
     },
   };
   const mockVisearchClient: ViSearchClient = {

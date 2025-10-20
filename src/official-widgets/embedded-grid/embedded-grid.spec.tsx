@@ -20,6 +20,8 @@ describe('embedded-grid', () => {
   const texts: LanguagePack = {
     en: {
       widgetTitle: 'Embedded Grid 103',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
     },
   };
   const mockVisearchClient: ViSearchClient = {

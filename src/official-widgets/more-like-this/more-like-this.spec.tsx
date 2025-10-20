@@ -31,6 +31,8 @@ describe('more-like-this', () => {
   const texts: LanguagePack = {
     en: {
       widgetTitle: 'More Like This 319',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
     },
   };
   const mockVisearchClient: ViSearchClient = {

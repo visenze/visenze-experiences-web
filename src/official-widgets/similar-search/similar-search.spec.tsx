@@ -27,6 +27,8 @@ describe('similar-search', () => {
       errorDescription: 'Houston, we\'ve had a problem!',
       back: 'Exit',
       triggerCTA: 'CTA',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
     },
   };
   const mockVisearchClient: ViSearchClient = {

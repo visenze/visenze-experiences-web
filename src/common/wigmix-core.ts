@@ -1187,6 +1187,18 @@ export interface WidgetConfig {
          * @since 1.0.4
          */
         hideDecimal?: boolean;
+        /**
+         * Position of the original price relative to the post-discount price.
+         *
+         * @since 1.0.18
+         */
+        position?: 'BEFORE' | 'AFTER';
+        /**
+         * Whether the original price, if different from the post-discount price, should be striked through.
+         *
+         * @since 1.0.18
+         */
+        strikethrough?: boolean;
       };
       /**
        * Configuration for primary title field.

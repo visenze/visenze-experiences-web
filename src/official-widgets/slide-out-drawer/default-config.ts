@@ -10,6 +10,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Back',
     triggerCTA: 'Find Similar',
     similarProductButton: 'Similar Products',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   es: {
     widgetTitle: 'También te puede gustar',
@@ -19,6 +21,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Atrás',
     triggerCTA: 'Encontrar similares',
     similarProductButton: 'Productos similares',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
@@ -28,6 +32,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Retour',
     triggerCTA: 'Trouver Similaire',
     similarProductButton: 'Produits similaires',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
@@ -37,6 +43,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Voltar',
     triggerCTA: 'Encontrar Semelhantes',
     similarProductButton: 'Produtos Semelhantes',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
@@ -46,6 +54,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Zurück',
     triggerCTA: 'Ähnliche finden',
     similarProductButton: 'Ähnliche Produkte',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
@@ -55,6 +65,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Indietro',
     triggerCTA: 'Trova simili',
     similarProductButton: 'Prodotti Simili',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
@@ -64,6 +76,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Wstecz',
     triggerCTA: 'Znajdź podobne',
     similarProductButton: 'Produkty Podobne',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
@@ -73,6 +87,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: '뒤로',
     triggerCTA: '비슷한 상품 찾기',
     similarProductButton: '비슷한 상품 찾기',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
@@ -82,6 +98,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: '戻る',
     triggerCTA: '類似商品を検索',
     similarProductButton: '類似商品を検索',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
@@ -91,6 +109,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'กลับ',
     triggerCTA: 'ค้นหาสินค้าที่คล้ายกัน',
     similarProductButton: 'ค้นหาสินค้าที่คล้ายกัน',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
 };
 
@@ -160,6 +180,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: true,

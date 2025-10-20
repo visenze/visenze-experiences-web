@@ -9,6 +9,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Sorry, something went wrong',
     back: 'Back',
     triggerCTA: 'Find Similar',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   es: {
     widgetTitle: 'También te puede gustar',
@@ -17,6 +19,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Lo sentimos, algo salió mal',
     back: 'Atrás',
     triggerCTA: 'Encontrar similares',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
@@ -25,6 +29,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Désolé, quelque chose s\'est mal passé',
     back: 'Retour',
     triggerCTA: 'Trouver Similaire',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
@@ -33,6 +39,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Desculpe, algo deu errado',
     back: 'Voltar',
     triggerCTA: 'Encontrar Semelhantes',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
@@ -41,6 +49,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Entschuldigung, etwas ist schiefgelaufen',
     back: 'Zurück',
     triggerCTA: 'Ähnliche finden',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
@@ -49,6 +59,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Spiacenti, qualcosa è andato storto',
     back: 'Indietro',
     triggerCTA: 'Trova simili',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
@@ -57,6 +69,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'Przepraszamy, coś poszło nie tak',
     back: 'Wstecz',
     triggerCTA: 'Znajdź podobne',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
@@ -65,6 +79,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: '죄송합니다. 오류가 발생했습니다',
     back: '뒤로',
     triggerCTA: '비슷한 상품 찾기',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
@@ -73,6 +89,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: '申し訳ありません。問題が発生しました',
     back: '戻る',
     triggerCTA: '類似商品を検索',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
@@ -81,6 +99,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     errorDescription: 'ขออภัย เกิดข้อผิดพลาดบางอย่าง',
     back: 'กลับ',
     triggerCTA: 'ค้นหาสินค้าที่คล้ายกัน',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
   },
 };
 
@@ -150,6 +170,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: true,

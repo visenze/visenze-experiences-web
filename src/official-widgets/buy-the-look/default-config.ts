@@ -4,42 +4,62 @@ import type { LanguagePack } from '../../common/locales/locale';
 export const DEFAULT_TEXTS: LanguagePack = {
   en: {
     widgetTitle: 'Buy the look',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
     addToCart: 'Add to Cart',
   },
   es: {
     widgetTitle: 'Comprar la look',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
     addToCart: 'Agregar al carrito',
   },
   fr: {
     widgetTitle: 'Acheter la look',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
     addToCart: 'Ajouter au panier',
   },
   pt: {
     widgetTitle: 'Comprar a look',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
     addToCart: 'Adicionar ao carrinho',
   },
   de: {
     widgetTitle: 'Kämele',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
     addToCart: 'In den Warenkorb',
   },
   it: {
     widgetTitle: 'Acquista la look',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
     addToCart: 'Aggiungi al carrello',
   },
   pl: {
     widgetTitle: 'Kup ten zestaw',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
     addToCart: 'Dodaj do koszyka',
   },
   ko: {
     widgetTitle: '구매하기',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
     addToCart: '장바구니에 추가',
   },
   ja: {
     widgetTitle: '購入する',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
     addToCart: 'カートに追加',
   },
   th: {
     widgetTitle: 'ซื้อ',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
     addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
@@ -110,6 +130,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: false,
