@@ -250,6 +250,10 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
         },
       },
     },
+    addToWishlist: {
+      enable: false,
+      position: 'top_right',
+    },
     images: {
       mainImage: 'main',
       hoverImage: 'additional',

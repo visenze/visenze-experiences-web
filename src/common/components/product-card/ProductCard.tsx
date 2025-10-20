@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import ResultLogicImpl from '../../client/result-logic';
 import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../default-configs';
 import CustomizableIcon from '../../icons/CustomizableIcon';
+import EllipsisHorizontalIcon from '../../icons/EllipsisHorizontalIcon';
 import HeartFilledIcon from '../../icons/HeartFilledIcon';
 import HeartIcon from '../../icons/HeartIcon';
 import MagnifyingGlassIcon from '../../icons/MagnifyingGlassIcon';
@@ -24,6 +25,8 @@ interface ProductCardProps {
   pwPrefix: string;
   imageClasses?: string;
   metadata: Record<string, any>;
+  isInWishlist: boolean;
+  setIsInWishlist: (pid: string, isInWishlist: boolean) => void;
 }
 
 const currencyFormatterFactory = (
@@ -154,13 +157,15 @@ const ProductCard: FC<ProductCardProps> = ({
   pwPrefix,
   imageClasses,
   metadata,
+  isInWishlist,
+  setIsInWishlist,
 }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
   const { onProductClick, onAddToWishlistToggle } = callbacks;
   const [isLoading, setIsLoading] = useState(true);
-  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const intl = useIntl();
@@ -370,10 +375,12 @@ const ProductCard: FC<ProductCardProps> = ({
                   event.stopPropagation();
 
                   if (onAddToWishlistToggle) {
-                    const isToggleSuccess = await onAddToWishlistToggle(!isInWishlist, result.product_id);
+                    setIsAddingToWishlist(true);
+                    const isToggleSuccess = await onAddToWishlistToggle(!isInWishlist, result.product_id, result);
                     if (isToggleSuccess) {
-                      setIsInWishlist((prev) => !prev);
+                      setIsInWishlist(result.product_id, !isInWishlist);
                     }
+                    setIsAddingToWishlist(false);
                   }
                 }}
                 style={{
@@ -384,32 +391,38 @@ const ProductCard: FC<ProductCardProps> = ({
                 data-pw={`${pwPrefix}-wishlist-button`}
                 data-testid='wigmix-wishlist-button'
               >
-                {wishlistIconConfig?.url ? (
-                  <CustomizableIcon
-                    height={20}
-                    width={20}
-                    className='wigmix-wishlist-icon custom'
-                    url={wishlistIconConfig?.url}
-                    color={darkMode
-                      ? (wishlistIconConfig?.colorDark || '')
-                      : (wishlistIconConfig?.color || '')}
-                  />
+                {isAddingToWishlist ? (
+                  <EllipsisHorizontalIcon />
                 ) : (
                   <>
-                    {isInWishlist ? (
-                      <HeartFilledIcon
-                          className='wigmix-wishlist-icon default size-5'
-                          color={darkMode
-                              ? (customizations.productCard?.addToWishlist?.iconActive?.colorDark || '')
-                              : (customizations.productCard?.addToWishlist?.iconActive?.color || '')}
+                    {wishlistIconConfig?.url ? (
+                      <CustomizableIcon
+                        height={20}
+                        width={20}
+                        className='wigmix-wishlist-icon custom'
+                        url={wishlistIconConfig?.url}
+                        color={darkMode
+                          ? (wishlistIconConfig?.colorDark || '')
+                          : (wishlistIconConfig?.color || '')}
                       />
                     ) : (
-                      <HeartIcon
-                          className='wigmix-wishlist-icon default size-5'
-                          color={darkMode
-                              ? (customizations.productCard?.addToWishlist?.iconInactive?.colorDark || '')
-                              : (customizations.productCard?.addToWishlist?.iconInactive?.color || '')}
-                      />
+                      <>
+                        {isInWishlist ? (
+                          <HeartFilledIcon
+                              className='wigmix-wishlist-icon default size-5'
+                              color={darkMode
+                                  ? (customizations.productCard?.addToWishlist?.iconActive?.colorDark || '')
+                                  : (customizations.productCard?.addToWishlist?.iconActive?.color || '')}
+                          />
+                        ) : (
+                          <HeartIcon
+                              className='wigmix-wishlist-icon default size-5'
+                              color={darkMode
+                                  ? (customizations.productCard?.addToWishlist?.iconInactive?.colorDark || '')
+                                  : (customizations.productCard?.addToWishlist?.iconInactive?.color || '')}
+                          />
+                        )}
+                      </>
                     )}
                   </>
                 )}

@@ -34,7 +34,8 @@ const SEARCH_HISTORY_BASE_KEY = 'wigmix_internal_search_history_';
 
 const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWithoutPortal }): ReactElement => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
@@ -281,6 +282,19 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                                                index={index}
                                                result={result}
                                                metadata={metadata}
+                                               isInWishlist={wishlistPids.includes(result.product_id)}
+                                               setIsInWishlist={(pid, isInWishlist) => {
+                                                 setWishlistPids((prev) => {
+                                                   const newPids = [...prev];
+                                                   if (isInWishlist && !newPids.includes(pid)) {
+                                                     newPids.push(pid);
+                                                   }
+                                                   if (!isInWishlist && newPids.includes(pid)) {
+                                                     newPids.splice(newPids.indexOf(pid), 1);
+                                                   }
+                                                   return newPids;
+                                                 });
+                                               }}
                                                hasFindSimilar={false}
                                                isRecommendation={false}
                                                pwPrefix='sb' />

@@ -248,18 +248,6 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     addToWishlist: {
       enable: false,
       position: 'top_right',
-      iconInactive: {
-        color: '#FFFFFF',
-        colorDark: '#FFFFFF',
-        backgroundColor: '#616161',
-        backgroundColorDark: '#616161',
-      },
-      iconActive: {
-        color: '#FFFFFF',
-        colorDark: '#FFFFFF',
-        backgroundColor: '#616161',
-        backgroundColorDark: '#616161',
-      },
     },
   },
   buttons: {

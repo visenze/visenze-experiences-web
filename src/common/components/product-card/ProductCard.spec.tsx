@@ -100,6 +100,8 @@ describe('ProductCard', () => {
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <ProductCard result={testProduct}
                          metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
                          index={0}
                          isRecommendation={false}
                          hasFindSimilar={false}
@@ -136,6 +138,8 @@ describe('ProductCard', () => {
                            },
                          }}
                          metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
                          index={0}
                          isRecommendation={false}
                          hasFindSimilar={true}
@@ -181,6 +185,8 @@ describe('ProductCard', () => {
                            },
                          }}
                          metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
                          index={0}
                          isRecommendation={false}
                          hasFindSimilar={true}
@@ -221,6 +227,8 @@ describe('ProductCard', () => {
                            },
                          }}
                          metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
                          index={0}
                          isRecommendation={false}
                          hasFindSimilar={false}
@@ -250,6 +258,8 @@ describe('ProductCard', () => {
           <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
             <ProductCard result={testProduct}
                          metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
                          index={0}
                          isRecommendation={false}
                          hasFindSimilar={false}
@@ -278,6 +288,8 @@ describe('ProductCard', () => {
                          metadata={{
                            queryId: 'test-query-id',
                          }}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
                          index={0}
                          isRecommendation={true}
                          hasFindSimilar={false}
@@ -321,6 +333,8 @@ describe('ProductCard', () => {
                          metadata={{
                            queryId: 'test-query-id',
                          }}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
                          index={0}
                          isRecommendation={true}
                          hasFindSimilar={true}

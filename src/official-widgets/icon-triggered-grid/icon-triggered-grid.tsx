@@ -39,7 +39,8 @@ const swipeConfig = {
 
 const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalWithoutPortal }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations } = widgetConfig;
+  const { appSettings, customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [error, setError] = useState('');
@@ -218,6 +219,19 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalW
                                            index={index}
                                            result={result}
                                            metadata={metadata}
+                                           isInWishlist={wishlistPids.includes(result.product_id)}
+                                           setIsInWishlist={(pid, isInWishlist) => {
+                                             setWishlistPids((prev) => {
+                                               const newPids = [...prev];
+                                               if (isInWishlist && !newPids.includes(pid)) {
+                                                 newPids.push(pid);
+                                               }
+                                               if (!isInWishlist && newPids.includes(pid)) {
+                                                 newPids.splice(newPids.indexOf(pid), 1);
+                                               }
+                                               return newPids;
+                                             });
+                                           }}
                                            hasFindSimilar={false}
                                            isRecommendation={true}
                                            pwPrefix='itg' />
@@ -249,6 +263,19 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalW
                                        index={index}
                                        result={result}
                                        metadata={metadata}
+                                       isInWishlist={wishlistPids.includes(result.product_id)}
+                                       setIsInWishlist={(pid, isInWishlist) => {
+                                         setWishlistPids((prev) => {
+                                           const newPids = [...prev];
+                                           if (isInWishlist && !newPids.includes(pid)) {
+                                             newPids.push(pid);
+                                           }
+                                           if (!isInWishlist && newPids.includes(pid)) {
+                                             newPids.splice(newPids.indexOf(pid), 1);
+                                           }
+                                           return newPids;
+                                         });
+                                       }}
                                        hasFindSimilar={false}
                                        isRecommendation={true}
                                        pwPrefix='itg' />

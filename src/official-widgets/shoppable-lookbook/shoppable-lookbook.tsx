@@ -22,7 +22,8 @@ interface ObjectDot {
 
 const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
@@ -142,6 +143,19 @@ const ShoppableLookbook: FC<ShoppableLookbookProps> = ({ productId }) => {
                                    index={index}
                                    result={result}
                                    metadata={metadata}
+                                   isInWishlist={wishlistPids.includes(result.product_id)}
+                                   setIsInWishlist={(pid, isInWishlist) => {
+                                     setWishlistPids((prev) => {
+                                       const newPids = [...prev];
+                                       if (isInWishlist && !newPids.includes(pid)) {
+                                         newPids.push(pid);
+                                       }
+                                       if (!isInWishlist && newPids.includes(pid)) {
+                                         newPids.splice(newPids.indexOf(pid), 1);
+                                       }
+                                       return newPids;
+                                     });
+                                   }}
                                    hasFindSimilar={false}
                                    isRecommendation={true}
                                    pwPrefix='sl' />

@@ -852,9 +852,7 @@ export interface WidgetConfig {
      * @param pid The product ID
      * @param productDetails (optional) Additional details of the product
      *
-     * @internal
-     *
-     * @since 1.0.11
+     * @since 1.0.18
      */
     onAddToWishlistToggle?: (add: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
     /**
@@ -893,6 +891,24 @@ export interface WidgetConfig {
      * @since 1.0.15
      */
     onFindSimilar?: (image: SearchImageOrPid) => boolean | Promise<boolean>;
+  };
+  /**
+   * Initial state of the widget.
+   *
+   * This structure is useful to preload some data into the widget.
+   *
+   * @since 1.0.18
+   */
+  initState?: {
+    /**
+     * Product IDs marked as already present in the wishlist.
+     *
+     * For products whose ID are present in this list, when they are returned in the search/recommendation results,
+     * the corresponding product card will have its wishlist state initially set to true instead of false.
+     *
+     * @since 1.0.18
+     */
+    wishlistProductIds: string[];
   };
   /**
    * Widget look-and-feel customization. The values for this section is set
@@ -1277,35 +1293,33 @@ export interface WidgetConfig {
       /**
        * Configuration for the "add to wishlist" feature within a product card image.
        *
-       * @internal
-       *
-       * @since 1.0.11
+       * @since 1.0.18
        */
       addToWishlist?: {
         /**
          * Whether the "add to wishlist" feature is enabled or not.
          *
-         * @since 1.0.11
+         * @since 1.0.18
          */
         enable: boolean;
         /**
          * Position of the "add to wishlist" icon relative to the product card image.
          *
-         * @since 1.0.11
+         * @since 1.0.18
          */
         position: ProductCardIconPosition;
         /**
          * Configurations for the add to wishlist icon, i.e. the icon when the product is not in the wishlist.
          *
-         * @since 1.0.11
+         * @since 1.0.18
          */
-        iconInactive: IconWithBackground;
+        iconInactive?: IconWithBackground;
         /**
          * Configurations for the remove from wishlist icon, i.e. the icon when the product is in the wishlist.
          *
-         * @since 1.0.11
+         * @since 1.0.18
          */
-        iconActive: IconWithBackground;
+        iconActive?: IconWithBackground;
       };
       /**
        * Configuration for the "add to cart" feature within a product card image.

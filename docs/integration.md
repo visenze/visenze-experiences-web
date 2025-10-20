@@ -94,13 +94,14 @@ window.visenzeConfigs[5000] = {
 <details>
   <summary>View the commonly used callbacks here.</summary>
 
-  | Class name           | Available since | Explanation                                                                                                                                                                |
-  |----------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-  | `preprocessResponse` | 1.0.0           | Pre-processes API response before being passed further down into the components.                                                                                           |
-  | `trackingCallback`   | 1.0.0           | Fires whenever an event is sent to ViSenze Analytics (precisely: when `sendEvent` is called).                                                                              |
-  | `onProductClick`     | 1.0.0           | Fires whenever a product card is clicked on.                                                                                                                               |
-  | `onSearchCallback`   | 1.0.0           | Fires whenever response from a search/recommendation API result is returned.                                                                                               |
-  | `onSearchBarInput`   | 1.0.0           | Fires when there is an input change within the search bar (when exists), such as clicking enter in search bar, selecting an autocomplete option, or uploading a new image. |
+  | Class name              | Available since | Explanation                                                                                                                                                                |
+  |-------------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+  | `preprocessResponse`    | 1.0.0           | Pre-processes API response before being passed further down into the components.                                                                                           |
+  | `trackingCallback`      | 1.0.0           | Fires whenever an event is sent to ViSenze Analytics (precisely: when `sendEvent` is called).                                                                              |
+  | `onProductClick`        | 1.0.0           | Fires whenever a product card is clicked on.                                                                                                                               |
+  | `onSearchCallback`      | 1.0.0           | Fires whenever response from a search/recommendation API result is returned.                                                                                               |
+  | `onAddToWishlistToggle` | 1.0.18          | Fires whenever a wishlist icon is clicked on.                                                                                                                              |
+  | `onSearchBarInput`      | 1.0.0           | Fires when there is an input change within the search bar (when exists), such as clicking enter in search bar, selecting an autocomplete option, or uploading a new image. |
 </details>
 
 The full list of available callbacks and the parameters for each available callback

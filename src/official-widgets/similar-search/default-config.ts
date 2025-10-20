@@ -229,6 +229,10 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
         backgroundColorDark: '#000000',
       },
     },
+    addToWishlist: {
+      enable: false,
+      position: 'top_right',
+    },
     images: {
       mainImage: 'main',
       hoverImage: 'additional',

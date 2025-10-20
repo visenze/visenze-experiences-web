@@ -76,10 +76,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
   activeHistory,
 }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const [search, setSearch] = useState('');
   const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
-  // const [showFullResults, setShowFullResults] = useState(false);
   const [showInputSuggest, setShowInputSuggest] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState<string[]>([]);
   const [autocompleteSuggestionsHeight, setAutocompleteSuggestionsHeight] = useState(0);
@@ -270,6 +270,19 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                index={index}
                                result={result}
                                metadata={metadata}
+                               isInWishlist={wishlistPids.includes(result.product_id)}
+                               setIsInWishlist={(pid, isInWishlist) => {
+                                 setWishlistPids((prev) => {
+                                   const newPids = [...prev];
+                                   if (isInWishlist && !newPids.includes(pid)) {
+                                     newPids.push(pid);
+                                   }
+                                   if (!isInWishlist && newPids.includes(pid)) {
+                                     newPids.splice(newPids.indexOf(pid), 1);
+                                   }
+                                   return newPids;
+                                 });
+                               }}
                                isRecommendation={false}
                                hasFindSimilar={true}
                                pwPrefix='cs' />
@@ -471,6 +484,19 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                  index={index}
                                  result={result}
                                  metadata={metadata}
+                                 isInWishlist={wishlistPids.includes(result.product_id)}
+                                 setIsInWishlist={(pid, isInWishlist) => {
+                                   setWishlistPids((prev) => {
+                                     const newPids = [...prev];
+                                     if (isInWishlist && !newPids.includes(pid)) {
+                                       newPids.push(pid);
+                                     }
+                                     if (!isInWishlist && newPids.includes(pid)) {
+                                       newPids.splice(newPids.indexOf(pid), 1);
+                                     }
+                                     return newPids;
+                                   });
+                                 }}
                                  isRecommendation={false}
                                  hasFindSimilar={true}
                                  pwPrefix='cs' />

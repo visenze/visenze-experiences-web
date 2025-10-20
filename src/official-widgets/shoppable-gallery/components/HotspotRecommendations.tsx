@@ -1,6 +1,6 @@
 import { cn } from '@heroui/theme';
 import type { FC } from 'react';
-import { memo, useContext, useMemo } from 'react';
+import { memo, useContext, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { ObjectProductResponse, ProductType } from 'visearch-javascript-sdk';
 import ImageCropThumbnail from '../../../common/components/crop/ImageCropThumbnail';
@@ -42,7 +42,8 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({
   renderModalWithoutPortal,
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const { selectedHotspot, setSelectedHotspot } = useContext(CroppingContext) ?? {};
   const intl = useIntl();
   const breakpoint = useBreakpoint();
@@ -110,6 +111,19 @@ const HotspotRecommendations: FC<HotspotRecommendationsProps> = ({
                              index={index}
                              result={result}
                              metadata={metadata}
+                             isInWishlist={wishlistPids.includes(result.product_id)}
+                             setIsInWishlist={(pid, isInWishlist) => {
+                               setWishlistPids((prev) => {
+                                 const newPids = [...prev];
+                                 if (isInWishlist && !newPids.includes(pid)) {
+                                   newPids.push(pid);
+                                 }
+                                 if (!isInWishlist && newPids.includes(pid)) {
+                                   newPids.splice(newPids.indexOf(pid), 1);
+                                 }
+                                 return newPids;
+                               });
+                             }}
                              hasFindSimilar={false}
                              isRecommendation={true}
                              pwPrefix='sg' />

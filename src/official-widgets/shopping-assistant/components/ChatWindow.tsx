@@ -30,7 +30,8 @@ interface ChatWindowProps {
 
 const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const [messageBottomRef, setMessageBottomRef] = useState<HTMLDivElement>();
@@ -171,6 +172,19 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                                   key={`${product.product_id}-${pidx}`}
                                   metadata={{
                                     queryId: chat.requestId,
+                                  }}
+                                  isInWishlist={wishlistPids.includes(product.product_id)}
+                                  setIsInWishlist={(pid, isInWishlist) => {
+                                    setWishlistPids((prev) => {
+                                      const newPids = [...prev];
+                                      if (isInWishlist && !newPids.includes(pid)) {
+                                        newPids.push(pid);
+                                      }
+                                      if (!isInWishlist && newPids.includes(pid)) {
+                                        newPids.splice(newPids.indexOf(pid), 1);
+                                      }
+                                      return newPids;
+                                    });
                                   }}
                                   index={pidx}
                                   pwPrefix='sa'
