@@ -106,6 +106,40 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     );
   };
 
+  const multisearchComplementary = (
+    params: Record<string, any>,
+    handleSuccess: SuccessHandler,
+    handleError: ErrorHandler,
+  ): void => {
+    const [success, error] = wrapCallbacks(onSearchCallback, handleSuccess, handleError);
+    visearch.productMultisearchComplementary(
+      {
+        ...params,
+        return_fields_mapping: true,
+        return_query_sys_meta: true,
+      },
+      success,
+      error,
+    );
+  };
+
+  const multisearchOutfitRecommendations = (
+    params: Record<string, any>,
+    handleSuccess: SuccessHandler,
+    handleError: ErrorHandler,
+  ): void => {
+    const [success, error] = wrapCallbacks(onSearchCallback, handleSuccess, handleError);
+    visearch.productMultisearchOutfitRecommendations(
+      {
+        ...params,
+        return_fields_mapping: true,
+        return_query_sys_meta: true,
+      },
+      success,
+      error,
+    );
+  };
+
   const multisearchAutocomplete = (
     params: Record<string, any>,
     handleSuccess: SuccessHandler,
@@ -303,6 +337,8 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     getRenderRoots,
     searchById,
     multisearchByImage,
+    multisearchComplementary,
+    multisearchOutfitRecommendations,
     multisearchAutocomplete,
     setRenderRoots,
     rerender: (): void => {}, // implemented in initialization.ts

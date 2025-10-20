@@ -216,6 +216,26 @@ export interface WidgetClient {
    */
   multisearchByImage: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
   /**
+   * Multisearch complementary suggestions.
+   *
+   * @param params Query parameters to be used for searching
+   * @param handleSuccess Callback to be executed upon search success
+   * @param handleError Callback to be executed upon search failure
+   *
+   * @since 1.0.18
+   */
+  multisearchComplementary: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
+  /**
+   * Multisearch outfit recommendations.
+   *
+   * @param params Query parameters to be used for searching
+   * @param handleSuccess Callback to be executed upon search success
+   * @param handleError Callback to be executed upon search failure
+   *
+   * @since 1.0.18
+   */
+  multisearchOutfitRecommendations: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
+  /**
    * Multisearch autocomplete.
    *
    * @param params Query parameters to be used for searching
