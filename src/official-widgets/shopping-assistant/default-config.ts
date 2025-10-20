@@ -8,6 +8,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage2: 'Tell us about what your styling needs and we will help you find the perfect item for you',
     chatBoxPlaceholder: 'Type your message',
     triggerCTA: 'Style Assistant',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     widgetTitle: 'Asistente de estilo',
@@ -15,6 +19,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage2: 'Cuéntanos sobre tus necesidades de estilo y te ayudaremos a encontrar el artículo perfecto para ti',
     chatBoxPlaceholder: 'Escribe tu mensaje',
     triggerCTA: 'Asistente de estilo',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     widgetTitle: 'Assistant de style',
@@ -22,6 +30,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage2: 'Parlez-nous de vos besoins en matière de style et nous vous aiderons à trouver l\'article parfait pour vous',
     chatBoxPlaceholder: 'Tapez votre message',
     triggerCTA: 'Assistant de style',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     widgetTitle: 'Assistente de estilo',
@@ -29,6 +41,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage2: 'Conte-nos sobre suas necessidades de estilo e nós o ajudaremos a encontrar o item perfeito para você',
     chatBoxPlaceholder: 'Digite sua mensagem',
     triggerCTA: 'Assistente de estilo',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     widgetTitle: 'Stil-Assistent',
@@ -36,6 +52,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage2: 'Erzähl uns von deinen Styling-Bedürfnissen und wir helfen dir, das perfekte Teil für dich zu finden',
     chatBoxPlaceholder: 'Gib deine Nachricht ein',
     triggerCTA: 'Stil-Assistent',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     widgetTitle: 'Assistente di stile',
@@ -43,6 +63,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage2: 'Parlaci delle tue esigenze di stile e ti aiuteremo a trovare l\'articolo perfetto per te',
     chatBoxPlaceholder: 'Digita il tuo messaggio',
     triggerCTA: 'Assistente di stile',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     widgetTitle: 'Asystent Stylu',
@@ -50,6 +74,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage2: 'Powiedz nam, jakie masz potrzeby stylizacyjne, a pomożemy Ci znaleźć idealny produkt',
     chatBoxPlaceholder: 'Wpisz swoją wiadomość',
     triggerCTA: 'Asystent Stylu',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     widgetTitle: '쇼핑 어시스턴트',
@@ -57,6 +85,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage2: '스타일링에 필요한 것을 알려주시면 딱 맞는 상품을 찾아드릴게요',
     chatBoxPlaceholder: '메시지를 입력하세요',
     triggerCTA: '스타일 어시스턴트',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     widgetTitle: 'スタイルアシスタント',
@@ -64,6 +96,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage2: 'スタイリングのニーズについて教えてください。あなたにぴったりのアイテムを見つけるお手伝いをします',
     chatBoxPlaceholder: 'メッセージを入力してください',
     triggerCTA: 'スタイルアシスタント',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     widgetTitle: 'ช่วยเหลือสินค้า',
@@ -71,6 +107,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     openingMessage2: 'บอกเราเกี่ยวกับความต้องการด้านสไตล์ของคุณ แล้วเราจะช่วยคุณค้นหาสินค้าที่สมบูรณ์แบบสำหรับคุณ',
     chatBoxPlaceholder: 'พิมพ์ข้อความของคุณ',
     triggerCTA: 'ผู้ช่วยด้านสไตล์',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -140,6 +180,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: true,
@@ -176,6 +218,18 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
           weight: 400,
         },
       },
+    },
+    addToWishlist: {
+      enable: false,
+      position: 'top_right',
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
     images: {
       mainImage: 'main',

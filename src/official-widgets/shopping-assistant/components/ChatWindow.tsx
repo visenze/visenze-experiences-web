@@ -30,7 +30,8 @@ interface ChatWindowProps {
 
 const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const [messageBottomRef, setMessageBottomRef] = useState<HTMLDivElement>();
@@ -172,6 +173,19 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                                   metadata={{
                                     queryId: chat.requestId,
                                   }}
+                                  isInWishlist={wishlistPids.includes(product.product_id)}
+                                  setIsInWishlist={(pid, isInWishlist) => {
+                                    setWishlistPids((prev) => {
+                                      const newPids = [...prev];
+                                      if (isInWishlist && !newPids.includes(pid)) {
+                                        newPids.push(pid);
+                                      }
+                                      if (!isInWishlist && newPids.includes(pid)) {
+                                        newPids.splice(newPids.indexOf(pid), 1);
+                                      }
+                                      return newPids;
+                                    });
+                                  }}
                                   index={pidx}
                                   pwPrefix='sa'
                                   isRecommendation={false}
@@ -251,7 +265,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
         <div className='flex-grow'></div>
         <div className='relative'>
           {showBottomArrow && (
-              <div className='absolute bottom-2 right-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
+              <div className='absolute bottom-2 end-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
                    onClick={scrollToBottom}>
                 <DownArrowIcon />
               </div>

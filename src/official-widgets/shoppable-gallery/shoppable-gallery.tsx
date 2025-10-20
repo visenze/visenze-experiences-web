@@ -126,10 +126,10 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ renderModalWithoutPortal 
             fontFamily={customizations.generalLayout?.fontFamily}
             placementId={`${appSettings.placementId}`}
             renderWithoutPortal={!!renderModalWithoutPortal}
-            className='left-[unset] top-[unset] h-[500px] w-[300px] rounded-xl'>
+            className='start-[unset] top-[unset] h-[500px] w-[300px] rounded-xl'>
             <div className='flex size-full flex-col bg-primary pt-1/5' data-pw='sg-image-hotspot-modal'>
               <div
-                className='absolute right-2 top-2 cursor-pointer rounded-full bg-transparent p-1 hover:opacity-90'
+                className='absolute end-2 top-2 cursor-pointer rounded-full bg-transparent p-1 hover:opacity-90'
                 onClick={onCloseHandler}
                 data-pw='sg-modal-close-button'>
                 <CloseIcon className='size-6'

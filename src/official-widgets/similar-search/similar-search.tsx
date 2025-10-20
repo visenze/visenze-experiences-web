@@ -220,6 +220,9 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
         openWidgetPopup();
       }
     });
+    widgetClient.registerWidgetCloser(() => {
+      setDialogVisible(false);
+    });
   }, []);
 
   useEffect(() => {

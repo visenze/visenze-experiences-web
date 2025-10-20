@@ -13,7 +13,7 @@ const Footer: FC<FooterProps> = ({ className, dataPw, darkMode }): ReactElement 
     <img src={darkMode
         ? 'https://cdn.visenze.com/images/visenze-rezolve-logo-white-md.png'
         : 'https://cdn.visenze.com/images/visenze-rezolve-logo-md.png'}
-      className='h-5 object-center py-0.5 pl-1'
+      className='h-5 object-center py-0.5 ps-1'
     />
   </div>
 );

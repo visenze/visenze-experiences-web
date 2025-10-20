@@ -28,7 +28,8 @@ interface ObjectDot {
 
 const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const root = useContext(RootContext);
   const imageRef = useRef<HTMLImageElement>(null);
   const [objectDots, setObjectDots] = useState<ObjectDot[]>([]);
@@ -140,7 +141,7 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
   }, [errorFromApi]);
 
   const getProductCarouselView = (): ReactElement => (
-    <div className='relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10' data-pw='stl-product-result-carousel'>
+    <div className='relative pe-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10' data-pw='stl-product-result-carousel'>
       <Slider {...settings}>
         {productResults.map((result, index) => (
             <div key={`${result.product_id}-${index}`}>
@@ -148,6 +149,19 @@ const ShopTheLook: FC<ShopTheLookProps> = ({ productId }) => {
                 <ProductCard index={index}
                              result={result}
                              metadata={metadata}
+                             isInWishlist={wishlistPids.includes(result.product_id)}
+                             setIsInWishlist={(pid, isInWishlist) => {
+                               setWishlistPids((prev) => {
+                                 const newPids = [...prev];
+                                 if (isInWishlist && !newPids.includes(pid)) {
+                                   newPids.push(pid);
+                                 }
+                                 if (!isInWishlist && newPids.includes(pid)) {
+                                   newPids.splice(newPids.indexOf(pid), 1);
+                                 }
+                                 return newPids;
+                               });
+                             }}
                              hasFindSimilar={false}
                              isRecommendation={true}
                              pwPrefix='stl' />

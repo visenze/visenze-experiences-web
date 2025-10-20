@@ -34,7 +34,8 @@ const SEARCH_HISTORY_BASE_KEY = 'wigmix_internal_search_history_';
 
 const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWithoutPortal }): ReactElement => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [image, setImage] = useState<SearchImage | undefined>();
@@ -224,7 +225,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                               {autocompleteResults.slice(0, suggestionMax).map((result, index) => (
                                   <ListboxItem
                                       tabIndex={0}
-                                      className='pr-4'
+                                      className='pe-4'
                                       key={result}
                                       endContent={(
                                           <MagnifyingGlassIcon color={darkMode
@@ -238,7 +239,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                                         emitSearchBarCallback(result, image);
                                       }}
                                   >
-                            <span className='pl-2 text-primary'
+                            <span className='ps-2 text-primary'
                                   data-pw={`sb-autocomplete-suggestion-${index + 1}`}
                                   data-testid='wigmix-sb-autocomplete-value'>{result}</span>
                                   </ListboxItem>
@@ -281,6 +282,19 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                                                index={index}
                                                result={result}
                                                metadata={metadata}
+                                               isInWishlist={wishlistPids.includes(result.product_id)}
+                                               setIsInWishlist={(pid, isInWishlist) => {
+                                                 setWishlistPids((prev) => {
+                                                   const newPids = [...prev];
+                                                   if (isInWishlist && !newPids.includes(pid)) {
+                                                     newPids.push(pid);
+                                                   }
+                                                   if (!isInWishlist && newPids.includes(pid)) {
+                                                     newPids.splice(newPids.indexOf(pid), 1);
+                                                   }
+                                                   return newPids;
+                                                 });
+                                               }}
                                                hasFindSimilar={false}
                                                isRecommendation={false}
                                                pwPrefix='sb' />
@@ -330,7 +344,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                               {searchHistory.slice(0, 4).map((entry) => (
                                 <ListboxItem
                                   tabIndex={0}
-                                  className='pr-4'
+                                  className='pe-4'
                                   key={String(entry.query)}
                                   endContent={(
                                     <MagnifyingGlassIcon color={darkMode
@@ -347,7 +361,7 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
                                     }
                                   }}
                                 >
-                                  <span className='pl-2 text-primary' data-testid='wigmix-sb-recent-search'>{entry.query}</span>
+                                  <span className='ps-2 text-primary' data-testid='wigmix-sb-recent-search'>{entry.query}</span>
                                 </ListboxItem>
                               ))}
                             </ListboxSection>

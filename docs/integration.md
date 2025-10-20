@@ -94,13 +94,15 @@ window.visenzeConfigs[5000] = {
 <details>
   <summary>View the commonly used callbacks here.</summary>
 
-  | Class name           | Available since | Explanation                                                                                                                                                                |
-  |----------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-  | `preprocessResponse` | 1.0.0           | Pre-processes API response before being passed further down into the components.                                                                                           |
-  | `trackingCallback`   | 1.0.0           | Fires whenever an event is sent to ViSenze Analytics (precisely: when `sendEvent` is called).                                                                              |
-  | `onProductClick`     | 1.0.0           | Fires whenever a product card is clicked on.                                                                                                                               |
-  | `onSearchCallback`   | 1.0.0           | Fires whenever response from a search/recommendation API result is returned.                                                                                               |
-  | `onSearchBarInput`   | 1.0.0           | Fires when there is an input change within the search bar (when exists), such as clicking enter in search bar, selecting an autocomplete option, or uploading a new image. |
+  | Class name              | Available since | Explanation                                                                                                                                                                |
+  |-------------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+  | `preprocessResponse`    | 1.0.0           | Pre-processes API response before being passed further down into the components.                                                                                           |
+  | `trackingCallback`      | 1.0.0           | Fires whenever an event is sent to ViSenze Analytics (precisely: when `sendEvent` is called).                                                                              |
+  | `onProductClick`        | 1.0.0           | Fires whenever a product card is clicked on.                                                                                                                               |
+  | `onSearchCallback`      | 1.0.0           | Fires whenever response from a search/recommendation API result is returned.                                                                                               |
+  | `onAddToWishlistToggle` | 1.0.18          | Fires whenever a wishlist icon is clicked on.                                                                                                                              |
+  | `onAddToCartToggle`     | 1.0.18          | Fires whenever an add-to-cart icon is clicked on.                                                                                                                          |
+  | `onSearchBarInput`      | 1.0.0           | Fires when there is an input change within the search bar (when exists), such as clicking enter in search bar, selecting an autocomplete option, or uploading a new image. |
 </details>
 
 The full list of available callbacks and the parameters for each available callback
@@ -184,7 +186,7 @@ visenzeWidget.hideWidget();
 The reference to the widget will stay and further programmatic access is possible;
 for example, the widget can be re-rendered by using the same `rerender` method from the previous section.
 
-### Opening the widget popup
+### Opening or closing the widget popup
 
 For widgets that have popup behavior, you may require a different way to open the popup
 from the existing click-on-provided-icon behavior.
@@ -199,6 +201,12 @@ you need to specify the product ID or URL to identify which popup needs to be op
 
 ```ts
 visenzeWidget.openWidget('<PRODUCT_ID_OR_URL>');
+```
+
+Similarly, a programmatic way to close widgets that have popup behavior is available:
+
+```ts
+visenzeWidget.closeWidget();
 ```
 
 ### Sending custom events

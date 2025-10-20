@@ -1,6 +1,8 @@
 import type { RenderResult } from '@testing-library/react';
 import { fireEvent, render } from '@testing-library/react';
+import { IntlProvider } from 'react-intl';
 import ProductCard from './ProductCard';
+import type { LanguagePack } from '../../locales/locale';
 import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 import type { WidgetClient, WidgetConfig } from '../../wigmix-core';
@@ -9,6 +11,13 @@ import type { WidgetClient, WidgetConfig } from '../../wigmix-core';
 
 describe('ProductCard', () => {
   let testComponent: RenderResult;
+  const texts: LanguagePack = {
+    en: {
+      price: '{price}',
+      originalPrice: '{originalPrice}',
+      discount: '{discount} off',
+    },
+  };
   const testProduct: ProcessedProduct = {
     product_id: 'test_pid',
     im_url: 'test_image_url',
@@ -88,12 +97,16 @@ describe('ProductCard', () => {
           darkMode: false,
           locale: 'en',
         }}>
-          <ProductCard result={testProduct}
-                       metadata={{}}
-                       index={0}
-                       isRecommendation={false}
-                       hasFindSimilar={false}
-                       pwPrefix='ut' />
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ProductCard result={testProduct}
+                         metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
+                         index={0}
+                         isRecommendation={false}
+                         hasFindSimilar={false}
+                         pwPrefix='ut' />
+          </IntlProvider>
         </WidgetDataContext.Provider>,
     );
     expect(testComponent.asFragment()).toMatchSnapshot();
@@ -106,6 +119,8 @@ describe('ProductCard', () => {
     } as any;
     widgetConfig.customizations.productCard!.originalPrice = {
       show: true,
+      position: 'AFTER',
+      strikethrough: true,
     } as any;
     testComponent = render(
         <WidgetDataContext.Provider value={{
@@ -114,18 +129,22 @@ describe('ProductCard', () => {
           darkMode: false,
           locale: 'en',
         }}>
-          <ProductCard result={{
-                         ...testProduct,
-                         original_price_field: {
-                           currency: 'USD',
-                           value: 0,
-                         },
-                      }}
-                       metadata={{}}
-                       index={0}
-                       isRecommendation={false}
-                       hasFindSimilar={true}
-                       pwPrefix='ut' />
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ProductCard result={{
+                           ...testProduct,
+                           original_price_field: {
+                             currency: 'USD',
+                             value: 0,
+                           },
+                         }}
+                         metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
+                         index={0}
+                         isRecommendation={false}
+                         hasFindSimilar={true}
+                         pwPrefix='ut' />
+          </IntlProvider>
         </WidgetDataContext.Provider>,
     );
 
@@ -147,6 +166,8 @@ describe('ProductCard', () => {
     } as any;
     widgetConfig.customizations.productCard!.originalPrice = {
       show: true,
+      position: 'AFTER',
+      strikethrough: true,
     } as any;
     testComponent = render(
         <WidgetDataContext.Provider value={{
@@ -155,18 +176,22 @@ describe('ProductCard', () => {
           darkMode: false,
           locale: 'en',
         }}>
-          <ProductCard result={{
-                         ...testProduct,
-                         original_price_field: {
-                           currency: 'USD',
-                           value: 125,
-                         },
-                       }}
-                       metadata={{}}
-                       index={0}
-                       isRecommendation={false}
-                       hasFindSimilar={true}
-                       pwPrefix='ut' />
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ProductCard result={{
+                           ...testProduct,
+                           original_price_field: {
+                             currency: 'USD',
+                             value: 125,
+                           },
+                         }}
+                         metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
+                         index={0}
+                         isRecommendation={false}
+                         hasFindSimilar={true}
+                         pwPrefix='ut' />
+          </IntlProvider>
         </WidgetDataContext.Provider>,
     );
 
@@ -182,6 +207,8 @@ describe('ProductCard', () => {
     widgetConfig.customizations.productCard!.originalPrice = {
       show: true,
       fontColor: '#FF0000',
+      position: 'AFTER',
+      strikethrough: true,
     } as any;
     widgetConfig.customizations.productCard!.price.fontColor = '#0000FF';
     testComponent = render(
@@ -191,18 +218,22 @@ describe('ProductCard', () => {
           darkMode: false,
           locale: 'en',
         }}>
-          <ProductCard result={{
-                         ...testProduct,
-                         original_price_field: {
-                           currency: 'USD',
-                           value: 125,
-                         },
-                       }}
-                       metadata={{}}
-                       index={0}
-                       isRecommendation={false}
-                       hasFindSimilar={false}
-                       pwPrefix='ut' />
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ProductCard result={{
+                           ...testProduct,
+                           original_price_field: {
+                             currency: 'USD',
+                             value: 125,
+                           },
+                         }}
+                         metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
+                         index={0}
+                         isRecommendation={false}
+                         hasFindSimilar={false}
+                         pwPrefix='ut' />
+          </IntlProvider>
         </WidgetDataContext.Provider>,
     );
 
@@ -224,12 +255,16 @@ describe('ProductCard', () => {
           darkMode: false,
           locale: 'en',
         }}>
-          <ProductCard result={testProduct}
-                       metadata={{}}
-                       index={0}
-                       isRecommendation={false}
-                       hasFindSimilar={false}
-                       pwPrefix='ut' />
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ProductCard result={testProduct}
+                         metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
+                         index={0}
+                         isRecommendation={false}
+                         hasFindSimilar={false}
+                         pwPrefix='ut' />
+          </IntlProvider>
         </WidgetDataContext.Provider>,
     );
 
@@ -248,14 +283,18 @@ describe('ProductCard', () => {
           darkMode: false,
           locale: 'en',
         }}>
-          <ProductCard result={testProduct}
-                       metadata={{
-                         queryId: 'test-query-id',
-                       }}
-                       index={0}
-                       isRecommendation={true}
-                       hasFindSimilar={false}
-                       pwPrefix='ut' />
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ProductCard result={testProduct}
+                         metadata={{
+                           queryId: 'test-query-id',
+                         }}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
+                         index={0}
+                         isRecommendation={true}
+                         hasFindSimilar={false}
+                         pwPrefix='ut' />
+          </IntlProvider>
         </WidgetDataContext.Provider>,
     );
 
@@ -289,15 +328,19 @@ describe('ProductCard', () => {
           darkMode: false,
           locale: 'en',
         }}>
-          <ProductCard result={testProduct}
-                       metadata={{
-                         queryId: 'test-query-id',
-                       }}
-                       index={0}
-                       isRecommendation={true}
-                       hasFindSimilar={true}
-                       onFindSimilar={onFindSimilar}
-                       pwPrefix='ut' />
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ProductCard result={testProduct}
+                         metadata={{
+                           queryId: 'test-query-id',
+                         }}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
+                         index={0}
+                         isRecommendation={true}
+                         hasFindSimilar={true}
+                         onFindSimilar={onFindSimilar}
+                         pwPrefix='ut' />
+          </IntlProvider>
         </WidgetDataContext.Provider>,
     );
 

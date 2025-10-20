@@ -14,6 +14,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Back',
     triggerCTA: 'Search by Image',
     useCamera: 'Or capture image with your camera',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     uploadScreenTitle: 'MUESTRANOS QUÉ ESTÁS BUSCANDO',
@@ -27,6 +31,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Atrás',
     triggerCTA: 'Buscar por imagen',
     useCamera: 'O captura una imagen con tu cámara',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     uploadScreenTitle: 'MONTREZ-NOUS CE QUE VOUS RECHERCHEZ',
@@ -40,6 +48,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Retour',
     triggerCTA: 'Rechercher par image',
     useCamera: 'Ou capturer une image avec votre appareil photo',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     uploadScreenTitle: 'MOSTRE-NOS O QUE VOCÊ ESTÁ PROCURANDO',
@@ -53,6 +65,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Voltar',
     triggerCTA: 'Pesquisar por imagem',
     useCamera: 'Ou capture uma imagem com sua câmera',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     uploadScreenTitle: 'ZEIG UNS, WAS DU SUCHST',
@@ -66,6 +82,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Zurück',
     triggerCTA: 'Suche per Bild',
     useCamera: 'Oder ein Bild mit deiner Kamera aufnehmen',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     uploadScreenTitle: 'MOSTRACI COSA STAI CERCANDO',
@@ -79,6 +99,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Indietro',
     triggerCTA: 'Cerca tramite immagine',
     useCamera: 'Oppure scatta una foto con la fotocamera',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     uploadScreenTitle: 'POKAŻ NAM, CZEGO SZUKASZ',
@@ -92,6 +116,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Wstecz',
     triggerCTA: 'Wyszukaj za pomocą obrazu',
     useCamera: 'Lub zrób zdjęcie aparatem',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     uploadScreenTitle: '찾고 있는 것을 보여주세요',
@@ -105,6 +133,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: '뒤로',
     triggerCTA: '이미지로 검색',
     useCamera: '또는 카메라로 이미지를 캡처하세요',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     uploadScreenTitle: '探しているものを見せてください',
@@ -118,6 +150,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: '戻る',
     triggerCTA: '画像で検索',
     useCamera: 'またはカメラで画像を撮影してください',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     uploadScreenTitle: 'แสดงให้เราเห็นสิ่งที่คุณกำลังมองหา',
@@ -131,6 +167,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'กลับ',
     triggerCTA: 'ค้นหาด้วยรูปภาพ',
     useCamera: 'หรือถ่ายภาพด้วยกล้องของคุณ',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -200,6 +240,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: true,
@@ -246,6 +288,18 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
         backgroundColor: '#FFFFFF',
         backgroundColorDark: '#000000',
       },
+    },
+    addToWishlist: {
+      enable: false,
+      position: 'top_right',
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
     images: {
       mainImage: 'main',

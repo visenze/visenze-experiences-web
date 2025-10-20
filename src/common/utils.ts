@@ -14,16 +14,11 @@ export const getFlattenProduct = (result: Product): ProcessedProduct => {
   };
 };
 
-// TODO add this field to visearch-javascript-sdk
-interface ProductWithAlternatives extends Product {
-  alternatives?: Product[];
-}
-
 export const getFlattenProducts = (results: Product[] = [], shouldDisplayAlternatives = false): ProcessedProduct[] => {
   if (!shouldDisplayAlternatives) {
     return results.map((r) => getFlattenProduct(r));
   }
-  const maxNumOfAlternatives = results.map((r) => ((r as ProductWithAlternatives).alternatives || []).length)
+  const maxNumOfAlternatives = results.map((r) => (r.alternatives || []).length)
       .reduce((a, b) => Math.max(a, b), 0);
   if (maxNumOfAlternatives === 0) {
     return results.map((r) => getFlattenProduct(r));
@@ -36,9 +31,8 @@ export const getFlattenProducts = (results: Product[] = [], shouldDisplayAlterna
   // Alt M of product 1, alt M of product 2, ..., alt M of product N
   for (let i = 0; i < maxNumOfAlternatives; i += 1) {
     for (const r of results) {
-      const rWithAlternatives = r as ProductWithAlternatives;
-      if (rWithAlternatives.alternatives?.[i]) {
-        output.push(getFlattenProduct(rWithAlternatives.alternatives[i]));
+      if (r.alternatives?.[i]) {
+        output.push(getFlattenProduct(r.alternatives[i]));
       }
     }
   }

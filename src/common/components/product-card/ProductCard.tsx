@@ -1,9 +1,13 @@
 import { Skeleton } from '@heroui/skeleton';
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
+import AddToCartButton from './AddToCartButton';
 import ResultLogicImpl from '../../client/result-logic';
 import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from '../../default-configs';
+import CartIcon from '../../icons/CartIcon';
 import CustomizableIcon from '../../icons/CustomizableIcon';
+import EllipsisHorizontalIcon from '../../icons/EllipsisHorizontalIcon';
 import HeartFilledIcon from '../../icons/HeartFilledIcon';
 import HeartIcon from '../../icons/HeartIcon';
 import MagnifyingGlassIcon from '../../icons/MagnifyingGlassIcon';
@@ -23,6 +27,8 @@ interface ProductCardProps {
   pwPrefix: string;
   imageClasses?: string;
   metadata: Record<string, any>;
+  isInWishlist: boolean;
+  setIsInWishlist: (pid: string, isInWishlist: boolean) => void;
 }
 
 const currencyFormatterFactory = (
@@ -66,15 +72,12 @@ const getPrice = (
     productDetails: WidgetConfig['displaySettings']['productDetails'],
     result: ProcessedProduct,
 ): string => {
-  if (!customizations.productCard?.price?.show) {
-    return '';
-  }
   if (result[productDetails['price']]) {
     const priceNumber = +result[productDetails['price']].value;
     const currencyFormatter = currencyFormatterFactory(
         languageSettings,
         customizations,
-        !!customizations.productCard.price.hideDecimal,
+        !!customizations.productCard?.price.hideDecimal,
         result[productDetails['price']].currency,
     );
     return currencyFormatter.format(priceNumber);
@@ -88,9 +91,6 @@ const getOriginalPrice = (
     productDetails: WidgetConfig['displaySettings']['productDetails'],
     result: ProcessedProduct,
 ): string => {
-  if (!customizations.productCard?.originalPrice?.show || !customizations.productCard?.price?.show) {
-    return '';
-  }
   if (result[productDetails['original_price']]) {
     const priceNumber = +result[productDetails['original_price']].value;
     if (priceNumber === 0) {
@@ -99,12 +99,36 @@ const getOriginalPrice = (
     const currencyFormatter = currencyFormatterFactory(
         languageSettings,
         customizations,
-        !!customizations.productCard.originalPrice.hideDecimal,
+        !!customizations.productCard?.originalPrice.hideDecimal,
         result[productDetails['original_price']].currency,
     );
     return currencyFormatter.format(priceNumber);
   }
   return '';
+};
+
+const getDiscount = (
+    customizations: WidgetConfig['customizations'],
+    languageSettings: WidgetConfig['languageSettings'],
+    productDetails: WidgetConfig['displaySettings']['productDetails'],
+    result: ProcessedProduct,
+): string => {
+  const priceValue = result[productDetails['price']] ? +result[productDetails['price']].value : 0;
+  const originalPriceValue = result[productDetails['original_price']] ? +result[productDetails['original_price']].value : 0;
+  if (!priceValue || !originalPriceValue || priceValue >= originalPriceValue) {
+    return '';
+  }
+  const rounding = customizations.productCard?.discount?.rounding || 1;
+  if (customizations.productCard?.discount?.showPercentage) {
+    return `${Math.round((100 * (originalPriceValue - priceValue)) / originalPriceValue / rounding) * rounding}`;
+  }
+  const currencyFormatter = currencyFormatterFactory(
+      languageSettings,
+      customizations,
+      false,
+      result[productDetails['original_price']].currency,
+  );
+  return currencyFormatter.format(Math.round((originalPriceValue - priceValue) / rounding) * rounding);
 };
 
 const getProductUrlWithTrackingParams = (
@@ -135,15 +159,19 @@ const ProductCard: FC<ProductCardProps> = ({
   pwPrefix,
   imageClasses,
   metadata,
+  isInWishlist,
+  setIsInWishlist,
 }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
   const { productDetails } = displaySettings;
-  const { onProductClick, onAddToWishlistToggle } = callbacks;
+  const { onProductClick, onAddToWishlistToggle, onAddToCartToggle } = callbacks;
   const [isLoading, setIsLoading] = useState(true);
-  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
+  const intl = useIntl();
   const { productTrackingMeta, onClick } = ResultLogicImpl({
     displaySettings,
     widgetClient,
@@ -229,6 +257,16 @@ const ProductCard: FC<ProductCardProps> = ({
     return cssConfig;
   };
 
+  const getProductDiscountColorStyle = (): CSSProperties => {
+    const cssConfig = {} as CSSProperties;
+    if (!darkMode && customizations.productCard?.discount?.fontColor) {
+      cssConfig.color = customizations.productCard.discount.fontColor;
+    } else if (darkMode && customizations.productCard?.discount?.fontColorDark) {
+      cssConfig.color = customizations.productCard.discount.fontColorDark;
+    }
+    return cssConfig;
+  };
+
   const getMainImageToDisplay = (): string => {
     const imageSrc = customizations.productCard?.images?.mainImage || 'main';
     const mainImageUrl = result.im_url;
@@ -280,6 +318,10 @@ const ProductCard: FC<ProductCardProps> = ({
 
   const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
   const price = getPrice(customizations, languageSettings, productDetails, result);
+  const discount = getDiscount(customizations, languageSettings, productDetails, result);
+  const showPrice = !!customizations.productCard?.price?.show;
+  const showOriginalPrice = showPrice && !!customizations.productCard?.originalPrice?.show;
+  const showDiscount = showPrice && !!customizations.productCard?.discount?.show;
   const productUrl = getProductUrlWithTrackingParams(result[productDetails['product_url']], productTrackingMeta, isRecommendation);
   const mainImageUrl = getMainImageToDisplay();
   const hoverImageUrl = getHoverImageToDisplay(mainImageUrl);
@@ -336,10 +378,12 @@ const ProductCard: FC<ProductCardProps> = ({
                   event.stopPropagation();
 
                   if (onAddToWishlistToggle) {
-                    const isToggleSuccess = await onAddToWishlistToggle(!isInWishlist, result.product_id);
+                    setIsAddingToWishlist(true);
+                    const isToggleSuccess = await onAddToWishlistToggle(!isInWishlist, result.product_id, result);
                     if (isToggleSuccess) {
-                      setIsInWishlist((prev) => !prev);
+                      setIsInWishlist(result.product_id, !isInWishlist);
                     }
+                    setIsAddingToWishlist(false);
                   }
                 }}
                 style={{
@@ -350,32 +394,38 @@ const ProductCard: FC<ProductCardProps> = ({
                 data-pw={`${pwPrefix}-wishlist-button`}
                 data-testid='wigmix-wishlist-button'
               >
-                {wishlistIconConfig?.url ? (
-                  <CustomizableIcon
-                    height={20}
-                    width={20}
-                    className='wigmix-wishlist-icon custom'
-                    url={wishlistIconConfig?.url}
-                    color={darkMode
-                      ? (wishlistIconConfig?.colorDark || '')
-                      : (wishlistIconConfig?.color || '')}
-                  />
+                {isAddingToWishlist ? (
+                  <EllipsisHorizontalIcon />
                 ) : (
                   <>
-                    {isInWishlist ? (
-                      <HeartFilledIcon
-                          className='wigmix-wishlist-icon default size-5'
-                          color={darkMode
-                              ? (customizations.productCard?.addToWishlist?.iconActive?.colorDark || '')
-                              : (customizations.productCard?.addToWishlist?.iconActive?.color || '')}
+                    {wishlistIconConfig?.url ? (
+                      <CustomizableIcon
+                        height={20}
+                        width={20}
+                        className='wigmix-wishlist-icon custom'
+                        url={wishlistIconConfig?.url}
+                        color={darkMode
+                          ? (wishlistIconConfig?.colorDark || '')
+                          : (wishlistIconConfig?.color || '')}
                       />
                     ) : (
-                      <HeartIcon
-                          className='wigmix-wishlist-icon default size-5'
-                          color={darkMode
-                              ? (customizations.productCard?.addToWishlist?.iconInactive?.colorDark || '')
-                              : (customizations.productCard?.addToWishlist?.iconInactive?.color || '')}
-                      />
+                      <>
+                        {isInWishlist ? (
+                          <HeartFilledIcon
+                              className='wigmix-wishlist-icon default size-5'
+                              color={darkMode
+                                  ? (customizations.productCard?.addToWishlist?.iconActive?.colorDark || '')
+                                  : (customizations.productCard?.addToWishlist?.iconActive?.color || '')}
+                          />
+                        ) : (
+                          <HeartIcon
+                              className='wigmix-wishlist-icon default size-5'
+                              color={darkMode
+                                  ? (customizations.productCard?.addToWishlist?.iconInactive?.colorDark || '')
+                                  : (customizations.productCard?.addToWishlist?.iconInactive?.color || '')}
+                          />
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -433,19 +483,67 @@ const ProductCard: FC<ProductCardProps> = ({
               originalPrice && originalPrice !== price
                 ? (
                   <>
-                    <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
-                      {price}
-                    </span>
-                    <span className='wigmix-product-card-original-price line-through' style={getProductOriginalPriceColorStyle()}>
-                      {originalPrice}
-                    </span>
+                    {showPrice && customizations.productCard?.originalPrice?.position === 'AFTER' && (
+                      <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
+                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                      </span>
+                    )}
+                    {showOriginalPrice && (
+                      <span className={cn(
+                          'wigmix-product-card-original-price',
+                          customizations.productCard?.originalPrice?.strikethrough ? 'line-through' : '',
+                      )}
+                            style={getProductOriginalPriceColorStyle()}>
+                        {intl.formatMessage({ id: 'originalPrice' }).replace('{originalPrice}', originalPrice)}
+                      </span>
+                    )}
+                    {showPrice && customizations.productCard?.originalPrice?.position === 'BEFORE' && (
+                      <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
+                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                      </span>
+                    )}
+                    {showDiscount && (
+                      <span className='wigmix-product-card-discount' style={getProductDiscountColorStyle()}>
+                        {intl.formatMessage({ id: 'discount' }).replace('{discount}', discount)}
+                      </span>
+                    )}
                   </>
                 ) : (
-                  <span className='wigmix-product-card-price'>{price}</span>
+                  <>
+                    {showPrice && (
+                      <span className='wigmix-product-card-price'>
+                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                      </span>
+                    )}
+                  </>
                 )
             }
           </div>
         </div>
+        {customizations.productCard?.addToCart?.enable && (
+            <AddToCartButton config={customizations.productCard}
+                             text={intl.formatMessage({ id: 'addToCart' })}
+                             darkMode={darkMode}
+                             onClick={async (e) => {
+                               e.preventDefault();
+                               e.stopPropagation();
+
+                               if (onAddToCartToggle) {
+                                 setIsAddingToCart(true);
+                                 await onAddToCartToggle(true, result.product_id, result);
+                                 setIsAddingToCart(false);
+                               }
+                             }}
+                             isAddingToCart={isAddingToCart}
+                             defaultIcon={
+                               <CartIcon
+                                   color={darkMode
+                                       ? customizations.productCard?.addToCart?.colorDark || ''
+                                       : customizations.productCard?.addToCart?.color || ''}
+                                   className='wigmix-add-to-cart-icon default size-6'
+                               />
+                             } />
+        )}
       </a>
     </div>
   );

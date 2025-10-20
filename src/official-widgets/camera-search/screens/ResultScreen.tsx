@@ -76,10 +76,10 @@ const ResultScreen: FC<ResultScreenProps> = ({
   activeHistory,
 }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const [search, setSearch] = useState('');
   const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
-  // const [showFullResults, setShowFullResults] = useState(false);
   const [showInputSuggest, setShowInputSuggest] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState<string[]>([]);
   const [autocompleteSuggestionsHeight, setAutocompleteSuggestionsHeight] = useState(0);
@@ -176,7 +176,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
           </div>
 
           <div
-            className={`no-scrollbar fixed left-3/20 top-14 m-auto flex w-2/3 items-center gap-1 overflow-scroll ${showFullResults ? 'block' : 'hidden'}`}
+            className={`no-scrollbar fixed start-3/20 top-14 m-auto flex w-2/3 items-center gap-1 overflow-scroll ${showFullResults ? 'block' : 'hidden'}`}
             data-pw='cs-previous-views'>
             <div className='flex gap-1'>
               {searchHistory?.map((searchImage, index) => {
@@ -230,7 +230,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
         <div
           className={cn(
-            showFullResults ? 'top-20 bottom-24 left-0 right-0' : 'top-11/20 bottom-14 left-3 right-3',
+            showFullResults ? 'top-20 bottom-24 start-0 end-0' : 'top-11/20 bottom-14 start-3 end-3',
             'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8 pb-4 px-4',
           )}
           {...minimizedDrawerHandler}>
@@ -270,6 +270,19 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                index={index}
                                result={result}
                                metadata={metadata}
+                               isInWishlist={wishlistPids.includes(result.product_id)}
+                               setIsInWishlist={(pid, isInWishlist) => {
+                                 setWishlistPids((prev) => {
+                                   const newPids = [...prev];
+                                   if (isInWishlist && !newPids.includes(pid)) {
+                                     newPids.push(pid);
+                                   }
+                                   if (!isInWishlist && newPids.includes(pid)) {
+                                     newPids.splice(newPids.indexOf(pid), 1);
+                                   }
+                                   return newPids;
+                                 });
+                               }}
                                isRecommendation={false}
                                hasFindSimilar={true}
                                pwPrefix='cs' />
@@ -282,7 +295,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
       <div
         className={cn(
           showFullResults ? 'opacity-100 pb-2 z-20' : 'opacity-0',
-          'absolute bottom-8 left-0 w-full pt-1 transition-all duration-700',
+          'absolute bottom-8 start-0 w-full pt-1 transition-all duration-700',
         )}>
         <div className='bg-primary px-4 pt-2'>
           {/* Refinement Text Bar */}
@@ -325,9 +338,9 @@ const ResultScreen: FC<ResultScreenProps> = ({
               iconColor={darkMode
                 ? customizations.generalLayout?.fontColorDark
                 : customizations.generalLayout?.fontColor} />
-      <div className='absolute bottom-8 left-0 top-16 w-full overflow-hidden'>
+      <div className='absolute bottom-8 start-0 top-16 w-full overflow-hidden'>
         <div className='flex h-full flex-row'>
-          <div className='relative left-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8'>
+          <div className='relative start-0 row-span-1 h-full w-1/3 border-r-2 border-gray-300 px-8'>
             <div className='flex h-19/20 flex-col justify-between px-2'>
               <div className='wigmix-reference-image-container flex w-full flex-col items-center rounded-md border border-gray-300 py-2 text-center'>
                 <HotspotContainer className='w-3/5' referenceImage={getReferenceImage()} productTypes={productTypes} />
@@ -417,7 +430,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                         });
                       }}>
                     {inputSuggestions.map((keyword, index) => (
-                      <ListboxItem key={keyword} className={cn(keyword === search ? 'bg-gray' : '', 'pl-8')}>
+                      <ListboxItem key={keyword} className={cn(keyword === search ? 'bg-gray' : '', 'ps-8')}>
                         <span className='text-base' data-pw={`cs-autocomplete-suggestion-${index + 1}`}>{keyword}</span>
                       </ListboxItem>
                     ))}
@@ -471,6 +484,19 @@ const ResultScreen: FC<ResultScreenProps> = ({
                                  index={index}
                                  result={result}
                                  metadata={metadata}
+                                 isInWishlist={wishlistPids.includes(result.product_id)}
+                                 setIsInWishlist={(pid, isInWishlist) => {
+                                   setWishlistPids((prev) => {
+                                     const newPids = [...prev];
+                                     if (isInWishlist && !newPids.includes(pid)) {
+                                       newPids.push(pid);
+                                     }
+                                     if (!isInWishlist && newPids.includes(pid)) {
+                                       newPids.splice(newPids.indexOf(pid), 1);
+                                     }
+                                     return newPids;
+                                   });
+                                 }}
                                  isRecommendation={false}
                                  hasFindSimilar={true}
                                  pwPrefix='cs' />

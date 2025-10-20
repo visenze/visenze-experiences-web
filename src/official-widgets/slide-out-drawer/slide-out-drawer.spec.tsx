@@ -28,6 +28,9 @@ describe('slide-out-drawer', () => {
       back: 'Exit',
       triggerCTA: 'CTA',
       similarProductButton: 'Similar Products',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

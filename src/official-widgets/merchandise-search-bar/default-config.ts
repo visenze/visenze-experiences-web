@@ -12,6 +12,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Popular Choices',
     trending: 'Trending',
     errorMessage: 'You have entered an invalid query or image, please try again.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     searchBarPlaceholder: '¿Qué estás buscando?',
@@ -23,6 +27,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Opciones populares',
     trending: 'Tendencias',
     errorMessage: 'Has introducido una consulta o imagen no válida, por favor, inténtalo de nuevo.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     searchBarPlaceholder: 'Que recherchez-vous ?',
@@ -34,6 +42,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Choix populaires',
     trending: 'Tendances',
     errorMessage: 'Vous avez saisi une requête ou une image non valide, veuillez réessayer.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     searchBarPlaceholder: 'O que você está procurando?',
@@ -45,6 +57,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Escolhas populares',
     trending: 'Tendências',
     errorMessage: 'Você inseriu uma consulta ou imagem inválida, tente novamente.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     searchBarPlaceholder: 'Wonach suchst du?',
@@ -57,6 +73,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Beliebte Auswahl',
     trending: 'Im Trend',
     errorMessage: 'Du hast eine ungültige Anfrage oder ein ungültiges Bild eingegeben. Bitte versuche es erneut.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     searchBarPlaceholder: 'Cosa stai cercando?',
@@ -68,6 +88,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Scelte popolari',
     trending: 'Di tendenza',
     errorMessage: 'Hai inserito una query o un\'immagine non valida, riprova.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     searchBarPlaceholder: 'Czego szukasz?',
@@ -79,6 +103,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'Popularne wybory',
     trending: 'Na czasie',
     errorMessage: 'Wprowadziłeś nieprawidłowe zapytanie lub obraz. Spróbuj ponownie.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     searchBarPlaceholder: '무엇을 찾고 계신가요?',
@@ -90,6 +118,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: '인기 상품',
     trending: '트렌드',
     errorMessage: '유효하지 않은 검색어 또는 이미지를 입력했습니다. 다시 시도해주세요.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     searchBarPlaceholder: '何をお探しですか？',
@@ -101,6 +133,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: '人気の選択',
     trending: 'トレンド',
     errorMessage: '無効なクエリまたは画像を入力しました。もう一度お試しください。',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     searchBarPlaceholder: 'คุณกำลังมองหาอะไร?',
@@ -112,6 +148,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     popularChoices: 'ตัวเลือกยอดนิยม',
     trending: 'กำลังมาแรง',
     errorMessage: 'คุณได้ป้อนคำค้นหาหรือรูปภาพที่ไม่ถูกต้อง โปรดลองอีกครั้ง',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -181,6 +221,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: true,
@@ -217,6 +259,18 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
           weight: 400,
         },
       },
+    },
+    addToWishlist: {
+      enable: false,
+      position: 'top_right',
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
     images: {
       mainImage: 'main',

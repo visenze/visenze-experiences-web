@@ -30,6 +30,9 @@ describe('search-bar', () => {
       suggestions: 'suggested',
       viewAllProducts: 'All products',
       errorMessage: 'WE HAVE A PROBLEM HERE!',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

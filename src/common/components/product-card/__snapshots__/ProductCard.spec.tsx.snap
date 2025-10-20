@@ -39,11 +39,7 @@ exports[`ProductCard should render with all fields hidden, open in new tabs 1`] 
         />
         <div
           class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
-        >
-          <span
-            class="wigmix-product-card-price"
-          />
-        </div>
+        />
       </div>
     </a>
   </div>

@@ -284,7 +284,7 @@ exports[`search-bar should render upload image modal in desktop view 1`] = `
               upload
             </p>
             <div
-              class="absolute right-5 top-3 rounded-full p-1 bg-transparent hover:opacity-90"
+              class="absolute end-5 top-3 rounded-full p-1 bg-transparent hover:opacity-90"
               data-pw="sb-close-button"
               data-testid="wigmix-sb-close-button"
             >
@@ -452,7 +452,7 @@ exports[`search-bar should render upload image modal in desktop view 1`] = `
               POWERED BY 
             </p>
             <img
-              class="h-5 object-center py-0.5 pl-1"
+              class="h-5 object-center py-0.5 ps-1"
               src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
             />
           </div>
@@ -629,7 +629,7 @@ exports[`search-bar should render upload image modal in mobile view 1`] = `
               upload
             </p>
             <div
-              class="absolute right-5 top-3 rounded-full p-1 bg-transparent hover:opacity-90"
+              class="absolute end-5 top-3 rounded-full p-1 bg-transparent hover:opacity-90"
               data-pw="sb-close-button"
               data-testid="wigmix-sb-close-button"
             >
@@ -797,7 +797,7 @@ exports[`search-bar should render upload image modal in mobile view 1`] = `
               POWERED BY 
             </p>
             <img
-              class="h-5 object-center py-0.5 pl-1"
+              class="h-5 object-center py-0.5 ps-1"
               src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
             />
           </div>

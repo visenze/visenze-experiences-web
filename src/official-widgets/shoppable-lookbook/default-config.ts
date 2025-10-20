@@ -4,33 +4,73 @@ import type { LanguagePack } from '../../common/locales/locale';
 export const DEFAULT_TEXTS: LanguagePack = {
   en: {
     widgetTitle: 'You may also like',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     widgetTitle: 'También te puede gustar',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -100,6 +140,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: true,
@@ -136,6 +178,18 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
           weight: 400,
         },
       },
+    },
+    addToWishlist: {
+      enable: false,
+      position: 'top_right',
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
     images: {
       mainImage: 'main',

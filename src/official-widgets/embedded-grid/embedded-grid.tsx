@@ -15,7 +15,8 @@ interface EmbeddedGridProps {
 
 const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -68,6 +69,19 @@ const EmbeddedGrid: FC<EmbeddedGridProps> = ({ productId }) => {
                                  index={index}
                                  result={result}
                                  metadata={metadata}
+                                 isInWishlist={wishlistPids.includes(result.product_id)}
+                                 setIsInWishlist={(pid, isInWishlist) => {
+                                   setWishlistPids((prev) => {
+                                     const newPids = [...prev];
+                                     if (isInWishlist && !newPids.includes(pid)) {
+                                       newPids.push(pid);
+                                     }
+                                     if (!isInWishlist && newPids.includes(pid)) {
+                                       newPids.splice(newPids.indexOf(pid), 1);
+                                     }
+                                     return newPids;
+                                   });
+                                 }}
                                  hasFindSimilar={false}
                                  isRecommendation={true}
                                  pwPrefix='eg' />

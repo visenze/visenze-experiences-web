@@ -1,5 +1,5 @@
 import type { CSSProperties, FC } from 'react';
-import { memo, useContext } from 'react';
+import { memo, useContext, useState } from 'react';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import { WidgetDataContext } from '../../../common/types/contexts';
@@ -16,7 +16,8 @@ interface CarouselProps {
 
 const Carousel: FC<CarouselProps> = ({ results, metadata }) => {
   const { widgetConfig } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const breakpoint = useBreakpoint();
 
   const getProductGridCssClasses = (defaultGapX: string): string => {
@@ -56,6 +57,19 @@ const Carousel: FC<CarouselProps> = ({ results, metadata }) => {
               index={index}
               result={result}
               metadata={metadata}
+              isInWishlist={wishlistPids.includes(result.product_id)}
+              setIsInWishlist={(pid, isInWishlist) => {
+                setWishlistPids((prev) => {
+                  const newPids = [...prev];
+                  if (isInWishlist && !newPids.includes(pid)) {
+                    newPids.push(pid);
+                  }
+                  if (!isInWishlist && newPids.includes(pid)) {
+                    newPids.splice(newPids.indexOf(pid), 1);
+                  }
+                  return newPids;
+                });
+              }}
               hasFindSimilar={false}
               isRecommendation={false}
               pwPrefix='rm'

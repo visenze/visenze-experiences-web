@@ -10,6 +10,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Back',
     triggerCTA: 'Find Similar',
     similarProductButton: 'Similar Products',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     widgetTitle: 'También te puede gustar',
@@ -19,6 +23,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Atrás',
     triggerCTA: 'Encontrar similares',
     similarProductButton: 'Productos similares',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     widgetTitle: 'Vous aimerez peut-être aussi',
@@ -28,6 +36,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Retour',
     triggerCTA: 'Trouver Similaire',
     similarProductButton: 'Produits similaires',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     widgetTitle: 'Você também pode gostar',
@@ -37,6 +49,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Voltar',
     triggerCTA: 'Encontrar Semelhantes',
     similarProductButton: 'Produtos Semelhantes',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     widgetTitle: 'Das könnte dir auch gefallen',
@@ -46,6 +62,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Zurück',
     triggerCTA: 'Ähnliche finden',
     similarProductButton: 'Ähnliche Produkte',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     widgetTitle: 'Potrebbe piacerti anche',
@@ -55,6 +75,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Indietro',
     triggerCTA: 'Trova simili',
     similarProductButton: 'Prodotti Simili',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     widgetTitle: 'Może Ci się spodobać',
@@ -64,6 +88,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'Wstecz',
     triggerCTA: 'Znajdź podobne',
     similarProductButton: 'Produkty Podobne',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     widgetTitle: '이 상품도 좋아하실 거예요',
@@ -73,6 +101,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: '뒤로',
     triggerCTA: '비슷한 상품 찾기',
     similarProductButton: '비슷한 상품 찾기',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     widgetTitle: 'こちらもおすすめです',
@@ -82,6 +114,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: '戻る',
     triggerCTA: '類似商品を検索',
     similarProductButton: '類似商品を検索',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     widgetTitle: 'คุณอาจจะชอบสิ่งนี้ด้วย',
@@ -91,6 +127,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     back: 'กลับ',
     triggerCTA: 'ค้นหาสินค้าที่คล้ายกัน',
     similarProductButton: 'ค้นหาสินค้าที่คล้ายกัน',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -160,6 +200,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: true,
@@ -200,18 +242,14 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     addToWishlist: {
       enable: false,
       position: 'top_right',
-      iconActive: {
-        color: '#000000',
-        colorDark: '#FFFFFF',
-        backgroundColor: '#FFFFFF',
-        backgroundColorDark: '#000000',
-      },
-      iconInactive: {
-        color: '#000000',
-        colorDark: '#FFFFFF',
-        backgroundColor: '#FFFFFF',
-        backgroundColorDark: '#000000',
-      },
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
     findSimilar: {
       enable: false,

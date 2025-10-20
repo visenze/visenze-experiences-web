@@ -36,7 +36,8 @@ interface EmbeddedSearchResultProps {
 
 const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl, renderModalWithoutPortal }): ReactElement => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations, displaySettings, searchSettings } = widgetConfig;
+  const { appSettings, customizations, displaySettings, searchSettings, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const { productDetails } = displaySettings;
   const [hasError, setHasError] = useState<boolean>(false);
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
@@ -477,6 +478,19 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
                               <ProductCard key={`${result.product_id}-${index}`} index={index}
                                            result={result}
                                            metadata={metadata}
+                                           isInWishlist={wishlistPids.includes(result.product_id)}
+                                           setIsInWishlist={(pid, isInWishlist) => {
+                                             setWishlistPids((prev) => {
+                                               const newPids = [...prev];
+                                               if (isInWishlist && !newPids.includes(pid)) {
+                                                 newPids.push(pid);
+                                               }
+                                               if (!isInWishlist && newPids.includes(pid)) {
+                                                 newPids.splice(newPids.indexOf(pid), 1);
+                                               }
+                                               return newPids;
+                                             });
+                                           }}
                                            onFindSimilar={(data) => {
                                              if (!isLoading) {
                                                findSimilarClickHandler(data);

@@ -355,7 +355,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
             {intl.formatMessage({ id: 'widgetTitle' })}
           </div>
 
-          <div className='flex items-center gap-2 pr-4'>
+          <div className='flex items-center gap-2 pe-4'>
             <div onClick={() => newChat()}>
               <PlusCircleIcon className='size-6 cursor-pointer'
                 color={darkMode
@@ -494,6 +494,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   useEffect(() => {
     widgetClient.registerWidgetOpener(() => {
       setWidgetOpenTrigger(Math.random());
+    });
+    widgetClient.registerWidgetCloser(() => {
+      setDialogVisible(false);
     });
     widgetClient.sendChatMessage = ((msg, img): void => {
       setSendChatTrigger([msg, img]);

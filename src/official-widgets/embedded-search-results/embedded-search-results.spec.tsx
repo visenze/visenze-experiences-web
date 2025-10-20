@@ -30,6 +30,9 @@ describe('embedded-search-result', () => {
       noSearchInputDescription: 'Enter a search term or select an image to find results matching your search.',
       imageOrQueryNotFound: 'You have provided an invalid image or query, please remove them and try again.',
       systemError: 'Sorry, our system is experiencing difficulties, please try again later.',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

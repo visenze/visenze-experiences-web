@@ -28,7 +28,7 @@ exports[`shop-the-look should render a successful response with default config 1
       </div>
     </div>
     <div
-      class="relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10"
+      class="relative pe-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10"
       data-pw="stl-product-result-carousel"
     >
       <div
@@ -1528,7 +1528,7 @@ exports[`shop-the-look should render a successful response with object hotspots 
       </div>
     </div>
     <div
-      class="relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10"
+      class="relative pe-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10"
       data-pw="stl-product-result-carousel"
     >
       <div
@@ -2998,7 +2998,7 @@ exports[`shop-the-look should render a successful response with some customizati
       </div>
     </div>
     <div
-      class="relative pr-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10"
+      class="relative pe-1 pt-4 md:w-13/20 lg:w-7/10 lg:px-10"
       data-pw="stl-product-result-carousel"
     >
       <div
@@ -4455,7 +4455,7 @@ exports[`shop-the-look should render a successful response with some customizati
       POWERED BY 
     </p>
     <img
-      class="h-5 object-center py-0.5 pl-1"
+      class="h-5 object-center py-0.5 ps-1"
       src="https://cdn.visenze.com/images/visenze-rezolve-logo-md.png"
     />
   </div>

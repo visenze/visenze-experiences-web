@@ -23,6 +23,9 @@ describe('icon-triggered-grid', () => {
       widgetTitle: 'Icon Triggered Grid 814',
       errorDescription: 'Houston, we\'ve had a problem!',
       triggerCTA: 'CTA',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

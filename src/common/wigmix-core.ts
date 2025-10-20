@@ -216,6 +216,26 @@ export interface WidgetClient {
    */
   multisearchByImage: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
   /**
+   * Multisearch complementary suggestions.
+   *
+   * @param params Query parameters to be used for searching
+   * @param handleSuccess Callback to be executed upon search success
+   * @param handleError Callback to be executed upon search failure
+   *
+   * @since 1.0.18
+   */
+  multisearchComplementary: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
+  /**
+   * Multisearch outfit recommendations.
+   *
+   * @param params Query parameters to be used for searching
+   * @param handleSuccess Callback to be executed upon search success
+   * @param handleError Callback to be executed upon search failure
+   *
+   * @since 1.0.18
+   */
+  multisearchOutfitRecommendations: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
+  /**
    * Multisearch autocomplete.
    *
    * @param params Query parameters to be used for searching
@@ -262,6 +282,18 @@ export interface WidgetClient {
    * @since 1.0.0
    */
   registerWidgetOpener: (fn: (id: string, bypassIdCheck: boolean) => void) => void;
+  /**
+   * Closes the widget popup; applicable only for widget types that have popup behavior.
+   *
+   * @since 1.0.18
+   */
+  closeWidget: () => void;
+  /**
+   * @internal
+   *
+   * @since 1.0.18
+   */
+  registerWidgetCloser: (fn: () => void) => void;
   /**
    * Hides the widget from view.
    *
@@ -360,7 +392,7 @@ interface ImageWithLabel {
  *
  * @since 1.0.0
  */
-interface Icon {
+export interface Icon {
   /**
    * URL source of the icon.
    *
@@ -820,26 +852,22 @@ export interface WidgetConfig {
      * @param pid The product ID
      * @param productDetails (optional) Additional details of the product
      *
-     * @internal
-     *
-     * @since 1.0.11
+     * @since 1.0.18
      */
     onAddToWishlistToggle?: (add: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
     /**
      * Fires an event that indicates that a product should be added to or removed from cart.
      *
-     * If defined, the callback should return whether the operation succeeds,
-     * and the icon shall be toggled only if the operation returns true.
+     * If defined, the callback should return whether the operation succeeds.
      *
-     * @param add True if the intention is to add to cart, false if the intention is to remove from cart
+     * The first parameter is left empty on purpose.
+     *
      * @param pid The product ID
      * @param productDetails (optional) Additional details of the product
      *
-     * @internal
-     *
-     * @since 1.0.11
+     * @since 1.0.18
      */
-    onAddToCartToggle?: (add: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
+    onAddToCartToggle?: (_: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
     /**
      * Fires an event that indicates that a "find similar" request is sent to the widget.
      *
@@ -861,6 +889,24 @@ export interface WidgetConfig {
      * @since 1.0.15
      */
     onFindSimilar?: (image: SearchImageOrPid) => boolean | Promise<boolean>;
+  };
+  /**
+   * Initial state of the widget.
+   *
+   * This structure is useful to preload some data into the widget.
+   *
+   * @since 1.0.18
+   */
+  initState?: {
+    /**
+     * Product IDs marked as already present in the wishlist.
+     *
+     * For products whose ID are present in this list, when they are returned in the search/recommendation results,
+     * the corresponding product card will have its wishlist state initially set to true instead of false.
+     *
+     * @since 1.0.18
+     */
+    wishlistProductIds: string[];
   };
   /**
    * Widget look-and-feel customization. The values for this section is set
@@ -1155,6 +1201,55 @@ export interface WidgetConfig {
          * @since 1.0.4
          */
         hideDecimal?: boolean;
+        /**
+         * Position of the original price relative to the post-discount price.
+         *
+         * @since 1.0.18
+         */
+        position?: 'BEFORE' | 'AFTER';
+        /**
+         * Whether the original price, if different from the post-discount price, should be striked through.
+         *
+         * @since 1.0.18
+         */
+        strikethrough?: boolean;
+      };
+      /**
+       * Configuration for discount display.
+       *
+       * @since 1.0.18
+       */
+      discount?: HideableText & {
+        /**
+         * Font color for the discount.
+         *
+         * @since 1.0.18
+         */
+        fontColor: string;
+        /**
+         * Font color for the discount in dark mode.
+         *
+         * @since 1.0.18
+         */
+        fontColorDark: string;
+        /**
+         * Configures whether the discount value is displayed as the numeric difference between
+         * the original price and the discount price (<code>originalPrice - price</code>)
+         * or the percentage difference (code>(originalPrice - price) / originalPrice * 100%</code>).
+         *
+         * @since 1.0.18
+         */
+        showPercentage: boolean;
+        /**
+         * The unit to round the discount value against. For example, if the rounding unit is 5,
+         * a discount value of 17 will be rounded to 15, but if the rounding unit is 10,
+         * the same value will be rounded to 20.
+         *
+         * Values usually used are 1, 5, and 10.
+         *
+         * @since 1.0.18
+         */
+        rounding: number;
       };
       /**
        * Configuration for primary title field.
@@ -1196,50 +1291,56 @@ export interface WidgetConfig {
       /**
        * Configuration for the "add to wishlist" feature within a product card image.
        *
-       * @internal
-       *
-       * @since 1.0.11
+       * @since 1.0.18
        */
       addToWishlist?: {
         /**
          * Whether the "add to wishlist" feature is enabled or not.
          *
-         * @since 1.0.11
+         * @since 1.0.18
          */
         enable: boolean;
         /**
          * Position of the "add to wishlist" icon relative to the product card image.
          *
-         * @since 1.0.11
+         * @since 1.0.18
          */
         position: ProductCardIconPosition;
         /**
          * Configurations for the add to wishlist icon, i.e. the icon when the product is not in the wishlist.
          *
-         * @since 1.0.11
+         * @since 1.0.18
          */
-        iconInactive: IconWithBackground;
+        iconInactive?: IconWithBackground;
         /**
          * Configurations for the remove from wishlist icon, i.e. the icon when the product is in the wishlist.
          *
-         * @since 1.0.11
+         * @since 1.0.18
          */
-        iconActive: IconWithBackground;
+        iconActive?: IconWithBackground;
       };
       /**
-       * Configuration for the "add to cart" feature within a product card image.
+       * Configuration for the "add to cart" button within a product card image.
        *
-       * @internal
-       *
-       * @since 1.0.11
+       * @since 1.0.18
        */
-      addToCart?: {
+      addToCart?: Icon & Partial<ColoredInterface> & {
         /**
-         * Whether the "add to cart" feature is enabled or not.
+         * Whether the "add to cart" button is enabled or not.
          *
-         * @since 1.0.11
+         * @since 1.0.18
          */
         enable: boolean;
+        /**
+         * Layout of icon and text contents of the add-to-cart button.
+         *
+         * - TEXT: text only
+         * - ICON_TEXT: icon, followed by text
+         * - TEXT_ICON: text, followed by icon
+         *
+         * @since 1.0.18
+         */
+        layout: 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
       };
       /**
        * Configuration for the image shown on product card.

@@ -31,6 +31,9 @@ describe('shop-the-look', () => {
   const texts: LanguagePack = {
     en: {
       widgetTitle: 'Shop The Look 319',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

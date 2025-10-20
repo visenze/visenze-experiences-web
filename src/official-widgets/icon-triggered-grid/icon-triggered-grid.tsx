@@ -39,7 +39,8 @@ const swipeConfig = {
 
 const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalWithoutPortal }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { appSettings, customizations } = widgetConfig;
+  const { appSettings, customizations, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const breakpoint = useBreakpoint();
   const [dialogVisible, setDialogVisible] = useState(false);
   const [error, setError] = useState('');
@@ -99,6 +100,9 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalW
         openWidgetPopup();
       }
     });
+    widgetClient.registerWidgetCloser(() => {
+      setDialogVisible(false);
+    });
   }, []);
 
   useEffect(() => {
@@ -144,7 +148,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalW
         <div className='relative flex size-full flex-col md:flex-row md:justify-between md:divide-x-1'>
           {/* Close Button */}
           <div
-            className='absolute right-3 top-3 z-10 cursor-pointer rounded-full border-none bg-transparent p-1 hover:opacity-90'
+            className='absolute end-3 top-3 z-10 cursor-pointer rounded-full border-none bg-transparent p-1 hover:opacity-90'
             onClick={onModalClose}
             data-testid='wigmix-close-button'
             data-pw='itg-close-button'>
@@ -179,7 +183,7 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalW
                 {breakpoint === 'mobile' && (
                     <div
                         className={cn(
-                            showFullResults ? 'top-1/4 bottom-14 left-0 right-0' : 'top-1/2 bottom-14 left-3 right-3',
+                            showFullResults ? 'top-1/4 bottom-14 start-0 end-0' : 'top-1/2 bottom-14 start-3 end-3',
                             'transition-all duration-1000 z-10 absolute rounded-xl bg-primary shadow-inner pt-8',
                         )}
                         {...minimizedDrawerHandler}>
@@ -215,6 +219,19 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalW
                                            index={index}
                                            result={result}
                                            metadata={metadata}
+                                           isInWishlist={wishlistPids.includes(result.product_id)}
+                                           setIsInWishlist={(pid, isInWishlist) => {
+                                             setWishlistPids((prev) => {
+                                               const newPids = [...prev];
+                                               if (isInWishlist && !newPids.includes(pid)) {
+                                                 newPids.push(pid);
+                                               }
+                                               if (!isInWishlist && newPids.includes(pid)) {
+                                                 newPids.splice(newPids.indexOf(pid), 1);
+                                               }
+                                               return newPids;
+                                             });
+                                           }}
                                            hasFindSimilar={false}
                                            isRecommendation={true}
                                            pwPrefix='itg' />
@@ -246,6 +263,19 @@ const IconTriggeredGrid: FC<IconTriggeredGridProps> = ({ productId, renderModalW
                                        index={index}
                                        result={result}
                                        metadata={metadata}
+                                       isInWishlist={wishlistPids.includes(result.product_id)}
+                                       setIsInWishlist={(pid, isInWishlist) => {
+                                         setWishlistPids((prev) => {
+                                           const newPids = [...prev];
+                                           if (isInWishlist && !newPids.includes(pid)) {
+                                             newPids.push(pid);
+                                           }
+                                           if (!isInWishlist && newPids.includes(pid)) {
+                                             newPids.splice(newPids.indexOf(pid), 1);
+                                           }
+                                           return newPids;
+                                         });
+                                       }}
                                        hasFindSimilar={false}
                                        isRecommendation={true}
                                        pwPrefix='itg' />

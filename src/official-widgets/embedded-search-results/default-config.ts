@@ -11,6 +11,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noSearchInputDescription: 'Enter a search term or select an image to find results.',
     imageOrQueryNotFound: 'You have provided an invalid image or query, please remove them and try again.',
     systemError: 'Sorry, our system is experiencing difficulties, please try again later.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     filter: 'Filtrar',
@@ -21,6 +25,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noSearchInputDescription: 'Ingresa un término de búsqueda o selecciona una imagen para encontrar resultados.',
     imageOrQueryNotFound: 'Has proporcionado una imagen o consulta no válida, por favor, elimínalas e inténtalo de nuevo.',
     systemError: 'Lo sentimos, nuestro sistema está experimentando dificultades, por favor, inténtalo de nuevo más tarde.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     filter: 'Filtrer',
@@ -31,6 +39,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noSearchInputDescription: 'Saisissez un terme de recherche ou sélectionnez une image pour trouver des résultats.',
     imageOrQueryNotFound: 'Vous avez fourni une image ou une requête invalide, veuillez les supprimer et réessayer.',
     systemError: 'Désolé, notre système rencontre des difficultés, veuillez réessayer ultérieurement.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     filter: 'Filtrar',
@@ -41,6 +53,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noSearchInputDescription: 'Insira um termo de pesquisa ou selecione uma imagem para encontrar resultados.',
     imageOrQueryNotFound: 'Você forneceu uma imagem ou consulta inválida, remova-as e tente novamente.',
     systemError: 'Desculpe, nosso sistema está enfrentando dificuldades, tente novamente mais tarde.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     filter: 'Filtern',
@@ -51,6 +67,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noSearchInputDescription: 'Gib einen Suchbegriff ein oder wähle ein Bild aus, um Ergebnisse zu finden.',
     imageOrQueryNotFound: 'Du hast ein ungültiges Bild oder eine ungültige Suchanfrage eingegeben. Bitte entferne sie und versuche es erneut.',
     systemError: 'Entschuldigung, unser System hat Schwierigkeiten. Bitte versuche es später noch einmal.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     filter: 'Filtra',
@@ -61,6 +81,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noSearchInputDescription: 'Inserisci un termine di ricerca o seleziona un\'immagine per trovare i risultati.',
     imageOrQueryNotFound: 'Hai fornito un\'immagine o una query non valida, rimuovile e riprova.',
     systemError: 'Spiacenti, il nostro sistema sta riscontrando delle difficoltà, riprova più tardi.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     filter: 'Filtruj',
@@ -71,6 +95,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noSearchInputDescription: 'Wprowadź hasło lub wybierz obraz, aby znaleźć wyniki.',
     imageOrQueryNotFound: 'Podano nieprawidłowy obraz lub zapytanie. Usuń je i spróbuj ponownie.',
     systemError: 'Przepraszamy, nasz system ma obecnie problemy. Spróbuj ponownie później.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     filter: '필터',
@@ -81,6 +109,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noSearchInputDescription: '검색어를 입력하거나 이미지를 선택하여 결과를 찾으세요.',
     imageOrQueryNotFound: '유효하지 않은 이미지 또는 검색어를 입력했습니다. 제거하고 다시 시도해주세요.',
     systemError: '죄송합니다. 시스템에 오류가 발생했습니다. 나중에 다시 시도해주세요.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     filter: 'フィルター',
@@ -91,6 +123,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noSearchInputDescription: '検索キーワードを入力するか、画像を選択して結果を見つけてください。',
     imageOrQueryNotFound: '無効な画像またはクエリが指定されました。削除してもう一度お試しください。',
     systemError: '申し訳ございません。システムに問題が発生しています。後でもう一度お試しください。',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     filter: 'ตัวกรอง',
@@ -101,6 +137,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     noSearchInputDescription: 'ป้อนคำค้นหาหรือเลือกรูปภาพเพื่อค้นหาผลลัพธ์',
     imageOrQueryNotFound: 'คุณได้ระบุรูปภาพหรือคำค้นหาที่ไม่ถูกต้อง โปรดนำออกแล้วลองใหม่อีกครั้ง',
     systemError: 'ขออภัย ระบบของเรากำลังมีปัญหา โปรดลองอีกครั้งในภายหลัง',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -170,6 +210,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: true,
@@ -216,6 +258,18 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
         backgroundColor: '#FFFFFF',
         backgroundColorDark: '#000000',
       },
+    },
+    addToWishlist: {
+      enable: false,
+      position: 'top_right',
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
     images: {
       mainImage: 'main',

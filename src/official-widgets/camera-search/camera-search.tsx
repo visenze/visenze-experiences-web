@@ -287,6 +287,9 @@ const CameraSearch: FC<CameraSearchProps> = ({ renderModalWithoutPortal }) => {
     widgetClient.registerWidgetOpener(() => {
       openWidgetPopup();
     });
+    widgetClient.registerWidgetCloser(() => {
+      setDialogVisible(false);
+    });
   }, []);
 
   if (!root) {

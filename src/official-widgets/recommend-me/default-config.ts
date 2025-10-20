@@ -11,6 +11,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     outfitRecommendationsTabButton: 'Outfit Recommendations',
     systemError: 'Something went wrong. Please try again later.',
     imageOrQueryNotFound: 'The image or query was not found. Please try again later.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} off',
+    addToCart: 'Add to Cart',
   },
   es: {
     widgetTitle: 'Personaliza tus recomendaciones',
@@ -20,6 +24,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     outfitRecommendationsTabButton: 'Recomendaciones para Outfits',
     systemError: 'Algo salió mal. Por favor, inténtelo más tarde.',
     imageOrQueryNotFound: 'La imagen o la consulta no se encontraron. Por favor, inténtelo más tarde.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de descuento',
+    addToCart: 'Agregar al carrito',
   },
   fr: {
     widgetTitle: 'Personnalisez vos recommandations',
@@ -29,6 +37,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     outfitRecommendationsTabButton: 'Recommandations pour Outfits',
     systemError: 'Une erreur est survenue. Veuillez réessayer plus tard.',
     imageOrQueryNotFound: 'L\'image ou la requête n\'a pas été trouvée. Veuillez réessayer plus tard.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de réduction',
+    addToCart: 'Ajouter au panier',
   },
   pt: {
     widgetTitle: 'Personalize suas recomendações',
@@ -38,6 +50,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     outfitRecommendationsTabButton: 'Recomendações de Roupas',
     systemError: 'Algo deu errado. Por favor, tente novamente mais tarde.',
     imageOrQueryNotFound: 'A imagem ou a consulta não foi encontrada. Por favor, tente novamente mais tarde.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} de desconto',
+    addToCart: 'Adicionar ao carrinho',
   },
   de: {
     widgetTitle: 'Personalisiere deine Empfehlungen',
@@ -47,6 +63,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     outfitRecommendationsTabButton: 'Empfehlungen für Outfits',
     systemError: 'Etwas ist schief gelaufen. Bitte versuchen Sie es später erneut.',
     imageOrQueryNotFound: 'Die Bild oder die Abfrage wurde nicht gefunden. Bitte versuchen Sie es später erneut.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} Rabatt',
+    addToCart: 'In den Warenkorb',
   },
   it: {
     widgetTitle: 'Personalizza i tuoi suggerimenti',
@@ -56,6 +76,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     outfitRecommendationsTabButton: 'Consigli per Outfit',
     systemError: 'Si è verificato un errore. Riprova più tardi.',
     imageOrQueryNotFound: 'L\'immagine o la query non sono state trovate. Riprova più tardi.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} di sconto',
+    addToCart: 'Aggiungi al carrello',
   },
   pl: {
     widgetTitle: 'Spersonalizuj swoje rekomendacje',
@@ -65,6 +89,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     outfitRecommendationsTabButton: 'Rekomendacje dla Outfitów',
     systemError: 'Wystąpił błąd. Spróbuj ponownie później.',
     imageOrQueryNotFound: 'Obraz lub zapytanie nie zostały znalezione. Spróbuj ponownie później.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} zniżki',
+    addToCart: 'Dodaj do koszyka',
   },
   ko: {
     widgetTitle: '추천 맞춤 설정',
@@ -74,6 +102,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     outfitRecommendationsTabButton: '추천 상품',
     systemError: '오류가 발생했습니다. 나중에 다시 시도해주세요.',
     imageOrQueryNotFound: '이미지 또는 쿼리가 찾을 수 없습니다. 나중에 다시 시도해주세요.',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 할인',
+    addToCart: '장바구니에 추가',
   },
   ja: {
     widgetTitle: 'おすすめをパーソナライズ',
@@ -83,6 +115,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     outfitRecommendationsTabButton: 'おすすめ商品',
     systemError: 'システムエラーが発生しました。後で再試してください。',
     imageOrQueryNotFound: '画像またはクエリが見つかりませんでした。後で再試してください。',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 割引',
+    addToCart: 'カートに追加',
   },
   th: {
     widgetTitle: 'ปรับแต่งคำแนะนำของคุณ',
@@ -92,6 +128,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     outfitRecommendationsTabButton: 'แนะนำชุด',
     systemError: 'เกิดข้อผิดพลาด กรุณาลองอีกครั้ง',
     imageOrQueryNotFound: 'ไม่พบภาพหรือคำค้น กรุณาลองอีกครั้ง',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: 'ลดราคา {discount}',
+    addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
 };
 
@@ -161,6 +201,8 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       },
       fontColor: '#9CA3AF',
       fontColorDark: '#9CA3AF',
+      position: 'AFTER',
+      strikethrough: true,
     },
     title: {
       show: false,
@@ -216,18 +258,14 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     addToWishlist: {
       enable: false,
       position: 'top_right',
-      iconInactive: {
-        color: '#FFFFFF',
-        colorDark: '#FFFFFF',
-        backgroundColor: '#616161',
-        backgroundColorDark: '#616161',
-      },
-      iconActive: {
-        color: '#FFFFFF',
-        colorDark: '#FFFFFF',
-        backgroundColor: '#616161',
-        backgroundColorDark: '#616161',
-      },
+    },
+    addToCart: {
+      enable: false,
+      color: '#FFFFFF',
+      colorDark: '#000000',
+      backgroundColor: '#000000',
+      backgroundColorDark: '#FFFFFF',
+      layout: 'ICON_TEXT',
     },
   },
   buttons: {

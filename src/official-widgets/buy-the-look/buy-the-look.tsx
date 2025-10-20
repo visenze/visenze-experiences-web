@@ -13,7 +13,8 @@ interface BuyTheLookProps {
 
 const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations, displaySettings } = widgetConfig;
+  const { customizations, displaySettings, initState } = widgetConfig;
+  const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const { productDetails } = displaySettings;
   const root = useContext(RootContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -149,6 +150,19 @@ const BuyTheLook: FC<BuyTheLookProps> = ({ productId }) => {
                         index={selectedLookProductIndex}
                         result={productResults[selectedLookProductIndex]}
                         metadata={metadata}
+                        isInWishlist={wishlistPids.includes(productResults[selectedLookProductIndex].product_id)}
+                        setIsInWishlist={(pid, isInWishlist) => {
+                          setWishlistPids((prev) => {
+                            const newPids = [...prev];
+                            if (isInWishlist && !newPids.includes(pid)) {
+                              newPids.push(pid);
+                            }
+                            if (!isInWishlist && newPids.includes(pid)) {
+                              newPids.splice(newPids.indexOf(pid), 1);
+                            }
+                            return newPids;
+                          });
+                        }}
                         hasFindSimilar={false}
                         isRecommendation={true}
                         pwPrefix='mlt' />

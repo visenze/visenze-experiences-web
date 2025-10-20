@@ -22,6 +22,9 @@ describe('in-page-carousel', () => {
       widgetTitle: 'In Page Carousel',
       showMore: 'Show More',
       showLess: 'Show Less',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {

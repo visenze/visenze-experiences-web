@@ -20,6 +20,9 @@ describe('shoppable-lookbook', () => {
   const texts: LanguagePack = {
     en: {
       widgetTitle: 'Shoppable Lookbook 841',
+      price: '{price}',
+      originalPrice: '{originalPrice}',
+      discount: '{discount} off',
     },
   };
   const mockVisearchClient: ViSearchClient = {
