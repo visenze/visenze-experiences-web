@@ -120,7 +120,7 @@ const getDiscount = (
   }
   const rounding = customizations.productCard?.discount?.rounding || 1;
   if (customizations.productCard?.discount?.showPercentage) {
-    return `${Math.round((100 * (originalPriceValue - priceValue)) / originalPriceValue / rounding) * rounding}`;
+    return `${Math.round((100 * (originalPriceValue - priceValue)) / originalPriceValue / rounding) * rounding}%`;
   }
   const currencyFormatter = currencyFormatterFactory(
       languageSettings,
