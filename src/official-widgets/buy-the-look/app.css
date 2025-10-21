@@ -36,6 +36,9 @@
   .wigmix-product-card-original-price {
     @apply text-mobile-productCardOriginalPrice md:text-tablet-productCardOriginalPrice lg:text-desktop-productCardOriginalPrice font-mobile-productCardOriginalPrice md:font-tablet-productCardOriginalPrice lg:font-desktop-productCardOriginalPrice;
   }
+  .wigmix-product-card-discount {
+    @apply text-mobile-productCardDiscount md:text-tablet-productCardDiscount lg:text-desktop-productCardDiscount font-mobile-productCardDiscount md:font-tablet-productCardDiscount lg:font-desktop-productCardDiscount;
+  }
 }
 
 .loading-dot {

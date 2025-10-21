@@ -26,7 +26,7 @@ const herouiPackagesForWidget = herouiPackagesForOfficialWidgets[widgetType]
 
 const getFontObj = (configName) => {
   const deviceTypes = ['mobile', 'tablet', 'desktop'];
-  const targetElements = ['heading', 'body', 'productCardTitle', 'productCardSecondaryTitle', 'productCardPrice', 'productCardOriginalPrice'];
+  const targetElements = ['heading', 'body', 'productCardTitle', 'productCardSecondaryTitle', 'productCardPrice', 'productCardOriginalPrice', 'productCardDiscount'];
   const fontSizeObj = {};
 
   deviceTypes.forEach(deviceType => {
