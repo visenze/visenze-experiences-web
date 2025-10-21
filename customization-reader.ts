@@ -18,6 +18,7 @@ import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_20 } from './src/offic
 import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_21 } from './src/official-widgets/in-page-carousel/default-config';
 import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_22 } from './src/official-widgets/slide-out-drawer/default-config';
 import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_23 } from './src/official-widgets/buy-the-look/default-config';
+import { DEFAULT_CUSTOMIZATIONS as DEFAULT_CUSTOMIZATIONS_24 } from './src/official-widgets/in-page-carousel-v3/default-config';
 
 const configs: Record<string, WidgetConfig['customizations']> = {
   7: DEFAULT_CUSTOMIZATIONS_7,
@@ -36,6 +37,7 @@ const configs: Record<string, WidgetConfig['customizations']> = {
   21: DEFAULT_CUSTOMIZATIONS_21,
   22: DEFAULT_CUSTOMIZATIONS_22,
   23: DEFAULT_CUSTOMIZATIONS_23,
+  24: DEFAULT_CUSTOMIZATIONS_24,
 };
 
 const args = process.argv.slice(2);

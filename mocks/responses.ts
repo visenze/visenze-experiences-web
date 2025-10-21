@@ -52,6 +52,16 @@ export const getStandardMultiSearchSuccessNoResultResponse = (): ProductSearchRe
   result: [],
 });
 
+export const getStandardMultiSearchPidNotFoundResponse = (): ProductSearchResponseError => ({
+  reqid: '12345678',
+  status: 'fail',
+  method: 'product/multisearch',
+  error: {
+    code: 122,
+    message: 'Query product_id not found.',
+  },
+});
+
 export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSuccess => ({
   im_id: 'im_id1234567890',
   reqid: '87654321',
@@ -67,6 +77,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-1',
       data: {
         product_url: 'https://product-1',
+        additional_image_url: [
+          'https://additional-image-1-1',
+          'https://additional-image-1-2',
+        ],
         price: {
           currency: 'USD',
           value: '19.3',
@@ -80,6 +94,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-2',
       data: {
         product_url: 'https://product-2',
+        additional_image_url: [
+          'https://additional-image-2-1',
+          'https://additional-image-2-2',
+        ],
         price: {
           currency: 'USD',
           value: '7.0',
@@ -93,6 +111,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-3',
       data: {
         product_url: 'https://product-3',
+        additional_image_url: [
+          'https://additional-image-3-1',
+          'https://additional-image-3-2',
+        ],
         price: {
           currency: 'USD',
           value: '15.5',
@@ -106,6 +128,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-4',
       data: {
         product_url: 'https://product-4',
+        additional_image_url: [
+          'https://additional-image-4-1',
+          'https://additional-image-4-2',
+        ],
         price: {
           currency: 'USD',
           value: '14.8',
@@ -119,6 +145,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-5',
       data: {
         product_url: 'https://product-5',
+        additional_image_url: [
+          'https://additional-image-5-1',
+          'https://additional-image-5-2',
+        ],
         price: {
           currency: 'USD',
           value: '14.8',
@@ -132,6 +162,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-6',
       data: {
         product_url: 'https://product-6',
+        additional_image_url: [
+          'https://additional-image-6-1',
+          'https://additional-image-6-2',
+        ],
         price: {
           currency: 'USD',
           value: '20.6',
@@ -145,6 +179,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-7',
       data: {
         product_url: 'https://product-7',
+        additional_image_url: [
+          'https://additional-image-7-1',
+          'https://additional-image-7-2',
+        ],
         price: {
           currency: 'USD',
           value: '23.0',
@@ -158,6 +196,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-8',
       data: {
         product_url: 'https://product-8',
+        additional_image_url: [
+          'https://additional-image-8-1',
+          'https://additional-image-8-2',
+        ],
         price: {
           currency: 'USD',
           value: '18.9',
@@ -171,6 +213,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-9',
       data: {
         product_url: 'https://product-9',
+        additional_image_url: [
+          'https://additional-image-9-1',
+          'https://additional-image-9-2',
+        ],
         price: {
           currency: 'USD',
           value: '7.0',
@@ -184,6 +230,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-10',
       data: {
         product_url: 'https://product-10',
+        additional_image_url: [
+          'https://additional-image-10-1',
+          'https://additional-image-10-2',
+        ],
         price: {
           currency: 'USD',
           value: '14.8',
@@ -197,6 +247,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-11',
       data: {
         product_url: 'https://product-11',
+        additional_image_url: [
+          'https://additional-image-11-1',
+          'https://additional-image-11-2',
+        ],
         price: {
           currency: 'USD',
           value: '3.0',
@@ -210,6 +264,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-12',
       data: {
         product_url: 'https://product-12',
+        additional_image_url: [
+          'https://additional-image-12-1',
+          'https://additional-image-12-2',
+        ],
         price: {
           currency: 'USD',
           value: '12.5',
@@ -223,6 +281,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-13',
       data: {
         product_url: 'https://product-13',
+        additional_image_url: [
+          'https://additional-image-13-1',
+          'https://additional-image-13-2',
+        ],
         price: {
           currency: 'USD',
           value: '19.6',
@@ -236,6 +298,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-14',
       data: {
         product_url: 'https://product-14',
+        additional_image_url: [
+          'https://additional-image-14-1',
+          'https://additional-image-14-2',
+        ],
         price: {
           currency: 'USD',
           value: '7.1',
@@ -249,6 +315,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-15',
       data: {
         product_url: 'https://product-15',
+        additional_image_url: [
+          'https://additional-image-15-1',
+          'https://additional-image-15-2',
+        ],
         price: {
           currency: 'USD',
           value: '23.3',
@@ -262,6 +332,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-16',
       data: {
         product_url: 'https://product-16',
+        additional_image_url: [
+          'https://additional-image-16-1',
+          'https://additional-image-16-2',
+        ],
         price: {
           currency: 'USD',
           value: '21.1',
@@ -275,6 +349,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-17',
       data: {
         product_url: 'https://product-17',
+        additional_image_url: [
+          'https://additional-image-17-1',
+          'https://additional-image-17-2',
+        ],
         price: {
           currency: 'USD',
           value: '6.5',
@@ -288,6 +366,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-18',
       data: {
         product_url: 'https://product-18',
+        additional_image_url: [
+          'https://additional-image-18-1',
+          'https://additional-image-18-2',
+        ],
         price: {
           currency: 'USD',
           value: '2.0',
@@ -301,6 +383,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-19',
       data: {
         product_url: 'https://product-19',
+        additional_image_url: [
+          'https://additional-image-19-1',
+          'https://additional-image-19-2',
+        ],
         price: {
           currency: 'USD',
           value: '7.0',
@@ -314,6 +400,10 @@ export const getStandardMultiSearchSuccessResponse = (): ProductSearchResponseSu
       main_image_url: 'https://main-image-20',
       data: {
         product_url: 'https://product-20',
+        additional_image_url: [
+          'https://additional-image-20-1',
+          'https://additional-image-20-2',
+        ],
         price: {
           currency: 'USD',
           value: '26.7',
