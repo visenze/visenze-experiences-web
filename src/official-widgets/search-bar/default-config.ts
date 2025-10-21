@@ -233,6 +233,27 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       position: 'AFTER',
       strikethrough: true,
     },
+    discount: {
+      show: false,
+      font: {
+        mobile: {
+          size: 12,
+          weight: 400,
+        },
+        tablet: {
+          size: 12,
+          weight: 400,
+        },
+        desktop: {
+          size: 14,
+          weight: 400,
+        },
+      },
+      fontColor: '#EF4444',
+      fontColorDark: '#EF4444',
+      showPercentage: true,
+      rounding: 1,
+    },
     title: {
       show: true,
       fieldSource: 'title',
