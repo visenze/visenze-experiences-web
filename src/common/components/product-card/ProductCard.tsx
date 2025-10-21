@@ -520,31 +520,28 @@ const ProductCard: FC<ProductCardProps> = ({
             }
           </div>
         </div>
-        {customizations.productCard?.addToCart?.enable && (
-            <AddToCartButton config={customizations.productCard}
-                             text={intl.formatMessage({ id: 'addToCart' })}
-                             darkMode={darkMode}
-                             onClick={async (e) => {
-                               e.preventDefault();
-                               e.stopPropagation();
-
-                               if (onAddToCartToggle) {
-                                 setIsAddingToCart(true);
-                                 await onAddToCartToggle(true, result.product_id, result);
-                                 setIsAddingToCart(false);
-                               }
-                             }}
-                             isAddingToCart={isAddingToCart}
-                             defaultIcon={
-                               <CartIcon
-                                   color={darkMode
-                                       ? customizations.productCard?.addToCart?.colorDark || ''
-                                       : customizations.productCard?.addToCart?.color || ''}
-                                   className='wigmix-add-to-cart-icon default size-6'
-                               />
-                             } />
-        )}
       </a>
+      {customizations.productCard?.addToCart?.enable && (
+          <AddToCartButton config={customizations.productCard}
+                           text={intl.formatMessage({ id: 'addToCart' })}
+                           darkMode={darkMode}
+                           onClick={async () => {
+                             if (onAddToCartToggle) {
+                               setIsAddingToCart(true);
+                               await onAddToCartToggle(true, result.product_id, result);
+                               setIsAddingToCart(false);
+                             }
+                           }}
+                           isAddingToCart={isAddingToCart}
+                           defaultIcon={
+                             <CartIcon
+                                 color={darkMode
+                                     ? customizations.productCard?.addToCart?.colorDark || ''
+                                     : customizations.productCard?.addToCart?.color || ''}
+                                 className='wigmix-add-to-cart-icon default size-6'
+                             />
+                           } />
+      )}
     </div>
   );
 };
