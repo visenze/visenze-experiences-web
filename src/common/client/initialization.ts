@@ -73,6 +73,7 @@ export const setCssVariables = (config: WidgetConfig, darkMode: boolean): void =
       productCardSecondaryTitle: config.customizations.productCard?.secondaryTitle?.font,
       productCardPrice: config.customizations.productCard?.price?.font,
       productCardOriginalPrice: config.customizations.productCard?.originalPrice?.font,
+      productCardDiscount: config.customizations.productCard?.discount?.font,
     };
     const colorCustomizations: Record<string, ColoredInterface | undefined> = {
       primary: config.customizations.generalLayout,
