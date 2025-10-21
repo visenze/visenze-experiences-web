@@ -27,6 +27,7 @@ export enum WidgetType {
   IN_PAGE_CAROUSEL = 'in_page_carousel',
   SLIDE_OUT_DRAWER = 'slide_out_drawer',
   BUY_THE_LOOK = 'buy_the_look',
+  IN_PAGE_CAROUSEL_V3 = 'in_page_carousel_v3',
 }
 
 export enum WidgetErrorState {

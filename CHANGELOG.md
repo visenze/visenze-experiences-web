@@ -30,7 +30,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
-## [1.0.17](https://github.com/visenze/visenze-experiences-web/compare/1.0.16...1.0.17)
+## [1.0.18](https://github.com/visenze/visenze-experiences-web/compare/1.0.17...1.0.18)
+
+<!-- BEGIN visenze-experiences-web 1.0.18 -->
+### Added
+
+- All widgets: Added `closeWidget` method to programmatically close popup-like widgets
+- All widgets: Added configurable display for price, original price, and discount
+- All widgets: Added configurations for add-to-cart button
+- All widgets: Added configurations for wishlist toggle icon
+
+### Changed
+
+- All widgets: Improved compatibility with RTL languages by converting most `left` and `right` CSS styling to `start` and `end`
+
+### Fixed
+
+- All widgets: Improved accessibility for popup-like widgets by setting `aria-hidden="true"` near the dialog portal instead of the document body
+<!-- END visenze-experiences-web 1.0.18 -->
+
+## [1.0.17](https://github.com/visenze/visenze-experiences-web/compare/1.0.16...1.0.17) - - 2025-09-17
 
 <!-- BEGIN visenze-experiences-web 1.0.17 -->
 ### Added
