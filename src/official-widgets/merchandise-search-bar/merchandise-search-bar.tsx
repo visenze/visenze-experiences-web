@@ -154,6 +154,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
         if (!ref.current || !event.target || !event.target.shadowRoot || !event.target.shadowRoot.contains(ref.current)) {
           setShowDropdown(false);
           setShowImageUpload(false);
+          setIsManualCameraOpen(false);
         }
       };
 
@@ -285,6 +286,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
               <button data-testid='wigmix-msb-close-button' onClick={() => {
                 setShowDropdown(false);
                 setShowImageUpload(false);
+                setIsManualCameraOpen(false);
               }}>
                 <CloseIcon
                   className='size-6'
@@ -412,6 +414,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
               <button data-testid='wigmix-msb-close-button' onClick={() => {
                 setShowDropdown(false);
                 setShowImageUpload(false);
+                setIsManualCameraOpen(false);
               }}>
                 <CloseIcon
                   className='size-6'
@@ -491,6 +494,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
               <button data-testid='wigmix-msb-close-button' onClick={() => {
                 setShowDropdown(false);
                 setShowImageUpload(false);
+                setIsManualCameraOpen(false);
               }}>
                 <CloseIcon
                   className='size-6'
