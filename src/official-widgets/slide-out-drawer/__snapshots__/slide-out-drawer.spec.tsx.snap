@@ -132,12 +132,22 @@ exports[`slide-out-drawer should open the popup when icon is clicked and display
         tabindex="-1"
       >
         <div
-          class="flex h-full items-center justify-center"
+          class="flex size-full flex-col items-center justify-center gap-1 text-center"
         >
-          <img
-            class="w-48 md:w-60"
-            src="https://cdn.visenze.com/images/loading-results.gif"
-          />
+          <div
+            class="font-bold"
+          >
+            Houston, we've had a problem!
+          </div>
+          <div>
+            Invalid image or im_url.
+          </div>
+          <button
+            class="mt-3 w-fit rounded-md bg-buttonPrimary px-5 py-2 text-buttonPrimary"
+            data-testid="wigmix-back"
+          >
+            Exit
+          </button>
         </div>
       </div>
     </div>
@@ -216,20 +226,20 @@ exports[`slide-out-drawer should render a successful response with default confi
         tabindex="-1"
       >
         <div
-          class="h-full flex flex-col gap-4"
+          class="h-full gap-4"
         >
           <div
             class="relative flex w-full items-center border-b border-gray-200 py-4 ps-4 lg:rounded-t-3xl"
           >
             <div
               class="wigmix-widget-title"
-              data-pw="ss-widget-title"
+              data-pw="sod-widget-title"
             >
               Similar Search 532
             </div>
             <div
               class="absolute end-4 top-2 rounded-full bg-transparent p-1 hover:opacity-90 md:end-5 md:top-4"
-              data-pw="ss-close-button"
+              data-pw="sod-close-button"
               data-testid="wigmix-close-button"
             >
               <div
@@ -256,20 +266,20 @@ exports[`slide-out-drawer should render a successful response with default confi
             class="size-full"
           >
             <div
-              class="flex h-full flex-col gap-4 overflow-y-scroll pb-8"
+              class="h-full gap-4 overflow-y-scroll pb-8"
             >
               <div
-                class="h-full px-2 flex flex-col gap-4"
+                class="px-2 gap-4"
               >
                 <div
-                  class="flex justify-between px-2"
+                  class="flex justify-between p-2"
                 >
                   <div
                     class="wigmix-reference-image-container w-1/2 flex items-center text-center"
                   >
                     <img
                       class="wigmix-reference-image md:h-full"
-                      data-pw="ss-reference-image"
+                      data-pw="sod-reference-image"
                       src=""
                     />
                   </div>
@@ -289,7 +299,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                 />
               </div>
               <div
-                class="flex gap-0 w-full px-4"
+                class="flex gap-0 w-full px-4 py-2"
               >
                 <button
                   class="font-bold px-4 rounded-l-md h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800"
@@ -325,7 +335,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <input
                             aria-label="This is a search bar"
                             class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-small peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground rounded-l-none"
-                            data-pw="ss-refinement-text-bar"
+                            data-pw="sod-refinement-text-bar"
                             data-slot="input"
                             data-testid="wigmix-text-bar"
                             id="react-aria-:r0:"
@@ -367,7 +377,7 @@ exports[`slide-out-drawer should render a successful response with default confi
               >
                 <div
                   class="wigmix-product-grid grid px-2 pb-3 "
-                  data-pw="ss-product-result-grid"
+                  data-pw="sod-product-result-grid"
                   style="grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; column-gap: 8px;"
                 >
                   <div
@@ -375,7 +385,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-1"
+                      data-pw="sod-product-result-card-1"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-1/"
                       rel=""
@@ -390,7 +400,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-1"
+                            data-pw="sod-product-result-card-image-1"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-1"
                           />
@@ -426,7 +436,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-2"
+                      data-pw="sod-product-result-card-2"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-2/"
                       rel=""
@@ -441,7 +451,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-2"
+                            data-pw="sod-product-result-card-image-2"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-2"
                           />
@@ -477,7 +487,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-3"
+                      data-pw="sod-product-result-card-3"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-3/"
                       rel=""
@@ -492,7 +502,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-3"
+                            data-pw="sod-product-result-card-image-3"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-3"
                           />
@@ -528,7 +538,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-4"
+                      data-pw="sod-product-result-card-4"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-4/"
                       rel=""
@@ -543,7 +553,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-4"
+                            data-pw="sod-product-result-card-image-4"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-4"
                           />
@@ -579,7 +589,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-5"
+                      data-pw="sod-product-result-card-5"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-5/"
                       rel=""
@@ -594,7 +604,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-5"
+                            data-pw="sod-product-result-card-image-5"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-5"
                           />
@@ -630,7 +640,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-6"
+                      data-pw="sod-product-result-card-6"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-6/"
                       rel=""
@@ -645,7 +655,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-6"
+                            data-pw="sod-product-result-card-image-6"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-6"
                           />
@@ -681,7 +691,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-7"
+                      data-pw="sod-product-result-card-7"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-7/"
                       rel=""
@@ -696,7 +706,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-7"
+                            data-pw="sod-product-result-card-image-7"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-7"
                           />
@@ -732,7 +742,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-8"
+                      data-pw="sod-product-result-card-8"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-8/"
                       rel=""
@@ -747,7 +757,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-8"
+                            data-pw="sod-product-result-card-image-8"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-8"
                           />
@@ -783,7 +793,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-9"
+                      data-pw="sod-product-result-card-9"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-9/"
                       rel=""
@@ -798,7 +808,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-9"
+                            data-pw="sod-product-result-card-image-9"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-9"
                           />
@@ -834,7 +844,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-10"
+                      data-pw="sod-product-result-card-10"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-10/"
                       rel=""
@@ -849,7 +859,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-10"
+                            data-pw="sod-product-result-card-image-10"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-10"
                           />
@@ -885,7 +895,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-11"
+                      data-pw="sod-product-result-card-11"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-11/"
                       rel=""
@@ -900,7 +910,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-11"
+                            data-pw="sod-product-result-card-image-11"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-11"
                           />
@@ -936,7 +946,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-12"
+                      data-pw="sod-product-result-card-12"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-12/"
                       rel=""
@@ -951,7 +961,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-12"
+                            data-pw="sod-product-result-card-image-12"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-12"
                           />
@@ -987,7 +997,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-13"
+                      data-pw="sod-product-result-card-13"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-13/"
                       rel=""
@@ -1002,7 +1012,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-13"
+                            data-pw="sod-product-result-card-image-13"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-13"
                           />
@@ -1038,7 +1048,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-14"
+                      data-pw="sod-product-result-card-14"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-14/"
                       rel=""
@@ -1053,7 +1063,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-14"
+                            data-pw="sod-product-result-card-image-14"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-14"
                           />
@@ -1089,7 +1099,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-15"
+                      data-pw="sod-product-result-card-15"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-15/"
                       rel=""
@@ -1104,7 +1114,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-15"
+                            data-pw="sod-product-result-card-image-15"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-15"
                           />
@@ -1140,7 +1150,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-16"
+                      data-pw="sod-product-result-card-16"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-16/"
                       rel=""
@@ -1155,7 +1165,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-16"
+                            data-pw="sod-product-result-card-image-16"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-16"
                           />
@@ -1191,7 +1201,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-17"
+                      data-pw="sod-product-result-card-17"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-17/"
                       rel=""
@@ -1206,7 +1216,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-17"
+                            data-pw="sod-product-result-card-image-17"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-17"
                           />
@@ -1242,7 +1252,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-18"
+                      data-pw="sod-product-result-card-18"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-18/"
                       rel=""
@@ -1257,7 +1267,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-18"
+                            data-pw="sod-product-result-card-image-18"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-18"
                           />
@@ -1293,7 +1303,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-19"
+                      data-pw="sod-product-result-card-19"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-19/"
                       rel=""
@@ -1308,7 +1318,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-19"
+                            data-pw="sod-product-result-card-image-19"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-19"
                           />
@@ -1344,7 +1354,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-20"
+                      data-pw="sod-product-result-card-20"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-20/"
                       rel=""
@@ -1359,7 +1369,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-20"
+                            data-pw="sod-product-result-card-image-20"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-20"
                           />
@@ -1401,7 +1411,7 @@ exports[`slide-out-drawer should render a successful response with default confi
         >
           <div
             class="z-10 flex w-full justify-center items-center"
-            data-pw="ss-visenze-footer"
+            data-pw="sod-visenze-footer"
           >
             <p
               class="text-xs"
@@ -1476,20 +1486,20 @@ exports[`slide-out-drawer should render a successful response with default confi
         tabindex="-1"
       >
         <div
-          class="h-full flex flex-col gap-4"
+          class="h-full gap-4"
         >
           <div
             class="relative flex w-full items-center border-b border-gray-200 py-4 ps-4 lg:rounded-t-3xl"
           >
             <div
               class="wigmix-widget-title"
-              data-pw="ss-widget-title"
+              data-pw="sod-widget-title"
             >
               Similar Search 532
             </div>
             <div
               class="absolute end-4 top-2 rounded-full bg-transparent p-1 hover:opacity-90 md:end-5 md:top-4"
-              data-pw="ss-close-button"
+              data-pw="sod-close-button"
               data-testid="wigmix-close-button"
             >
               <div
@@ -1516,20 +1526,20 @@ exports[`slide-out-drawer should render a successful response with default confi
             class="size-full"
           >
             <div
-              class="flex h-full flex-col gap-4 overflow-y-scroll pb-8"
+              class="h-full gap-4 overflow-y-scroll pb-8"
             >
               <div
-                class="h-full px-2 flex flex-col gap-4"
+                class="px-2 gap-4"
               >
                 <div
-                  class="flex justify-between px-2"
+                  class="flex justify-between p-2"
                 >
                   <div
                     class="wigmix-reference-image-container w-1/2 flex items-center text-center"
                   >
                     <img
                       class="wigmix-reference-image md:h-full"
-                      data-pw="ss-reference-image"
+                      data-pw="sod-reference-image"
                       src=""
                     />
                   </div>
@@ -1549,7 +1559,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                 />
               </div>
               <div
-                class="flex gap-0 w-full px-4"
+                class="flex gap-0 w-full px-4 py-2"
               >
                 <button
                   class="font-bold px-4 rounded-l-md h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800"
@@ -1585,7 +1595,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <input
                             aria-label="This is a search bar"
                             class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-small peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground rounded-l-none"
-                            data-pw="ss-refinement-text-bar"
+                            data-pw="sod-refinement-text-bar"
                             data-slot="input"
                             data-testid="wigmix-text-bar"
                             id="react-aria-:r5:"
@@ -1627,7 +1637,7 @@ exports[`slide-out-drawer should render a successful response with default confi
               >
                 <div
                   class="wigmix-product-grid grid px-2 pb-3 "
-                  data-pw="ss-product-result-grid"
+                  data-pw="sod-product-result-grid"
                   style="grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 8px; column-gap: 16px;"
                 >
                   <div
@@ -1635,7 +1645,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-1"
+                      data-pw="sod-product-result-card-1"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-1/"
                       rel=""
@@ -1650,7 +1660,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-1"
+                            data-pw="sod-product-result-card-image-1"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-1"
                           />
@@ -1686,7 +1696,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-2"
+                      data-pw="sod-product-result-card-2"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-2/"
                       rel=""
@@ -1701,7 +1711,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-2"
+                            data-pw="sod-product-result-card-image-2"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-2"
                           />
@@ -1737,7 +1747,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-3"
+                      data-pw="sod-product-result-card-3"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-3/"
                       rel=""
@@ -1752,7 +1762,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-3"
+                            data-pw="sod-product-result-card-image-3"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-3"
                           />
@@ -1788,7 +1798,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-4"
+                      data-pw="sod-product-result-card-4"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-4/"
                       rel=""
@@ -1803,7 +1813,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-4"
+                            data-pw="sod-product-result-card-image-4"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-4"
                           />
@@ -1839,7 +1849,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-5"
+                      data-pw="sod-product-result-card-5"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-5/"
                       rel=""
@@ -1854,7 +1864,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-5"
+                            data-pw="sod-product-result-card-image-5"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-5"
                           />
@@ -1890,7 +1900,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-6"
+                      data-pw="sod-product-result-card-6"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-6/"
                       rel=""
@@ -1905,7 +1915,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-6"
+                            data-pw="sod-product-result-card-image-6"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-6"
                           />
@@ -1941,7 +1951,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-7"
+                      data-pw="sod-product-result-card-7"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-7/"
                       rel=""
@@ -1956,7 +1966,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-7"
+                            data-pw="sod-product-result-card-image-7"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-7"
                           />
@@ -1992,7 +2002,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-8"
+                      data-pw="sod-product-result-card-8"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-8/"
                       rel=""
@@ -2007,7 +2017,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-8"
+                            data-pw="sod-product-result-card-image-8"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-8"
                           />
@@ -2043,7 +2053,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-9"
+                      data-pw="sod-product-result-card-9"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-9/"
                       rel=""
@@ -2058,7 +2068,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-9"
+                            data-pw="sod-product-result-card-image-9"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-9"
                           />
@@ -2094,7 +2104,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-10"
+                      data-pw="sod-product-result-card-10"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-10/"
                       rel=""
@@ -2109,7 +2119,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-10"
+                            data-pw="sod-product-result-card-image-10"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-10"
                           />
@@ -2145,7 +2155,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-11"
+                      data-pw="sod-product-result-card-11"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-11/"
                       rel=""
@@ -2160,7 +2170,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-11"
+                            data-pw="sod-product-result-card-image-11"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-11"
                           />
@@ -2196,7 +2206,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-12"
+                      data-pw="sod-product-result-card-12"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-12/"
                       rel=""
@@ -2211,7 +2221,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-12"
+                            data-pw="sod-product-result-card-image-12"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-12"
                           />
@@ -2247,7 +2257,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-13"
+                      data-pw="sod-product-result-card-13"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-13/"
                       rel=""
@@ -2262,7 +2272,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-13"
+                            data-pw="sod-product-result-card-image-13"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-13"
                           />
@@ -2298,7 +2308,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-14"
+                      data-pw="sod-product-result-card-14"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-14/"
                       rel=""
@@ -2313,7 +2323,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-14"
+                            data-pw="sod-product-result-card-image-14"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-14"
                           />
@@ -2349,7 +2359,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-15"
+                      data-pw="sod-product-result-card-15"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-15/"
                       rel=""
@@ -2364,7 +2374,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-15"
+                            data-pw="sod-product-result-card-image-15"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-15"
                           />
@@ -2400,7 +2410,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-16"
+                      data-pw="sod-product-result-card-16"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-16/"
                       rel=""
@@ -2415,7 +2425,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-16"
+                            data-pw="sod-product-result-card-image-16"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-16"
                           />
@@ -2451,7 +2461,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-17"
+                      data-pw="sod-product-result-card-17"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-17/"
                       rel=""
@@ -2466,7 +2476,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-17"
+                            data-pw="sod-product-result-card-image-17"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-17"
                           />
@@ -2502,7 +2512,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-18"
+                      data-pw="sod-product-result-card-18"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-18/"
                       rel=""
@@ -2517,7 +2527,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-18"
+                            data-pw="sod-product-result-card-image-18"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-18"
                           />
@@ -2553,7 +2563,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-19"
+                      data-pw="sod-product-result-card-19"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-19/"
                       rel=""
@@ -2568,7 +2578,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-19"
+                            data-pw="sod-product-result-card-image-19"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-19"
                           />
@@ -2604,7 +2614,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                   >
                     <a
                       class="cursor-pointer"
-                      data-pw="ss-product-result-card-20"
+                      data-pw="sod-product-result-card-20"
                       data-testid="wigmix-product-card-anchor"
                       href="https://product-20/"
                       rel=""
@@ -2619,7 +2629,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                           <img
                             alt=""
                             class="wigmix-product-card-image object-cover"
-                            data-pw="ss-product-result-card-image-20"
+                            data-pw="sod-product-result-card-image-20"
                             data-testid="wigmix-product-card-image"
                             src="https://main-image-20"
                           />
@@ -2661,7 +2671,7 @@ exports[`slide-out-drawer should render a successful response with default confi
         >
           <div
             class="z-10 flex w-full justify-center items-center"
-            data-pw="ss-visenze-footer"
+            data-pw="sod-visenze-footer"
           >
             <p
               class="text-xs"

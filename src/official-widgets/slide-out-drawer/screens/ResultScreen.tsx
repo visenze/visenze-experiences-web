@@ -1,4 +1,5 @@
 import { Input } from '@heroui/input';
+import { Skeleton } from '@heroui/skeleton';
 import { cn } from '@heroui/theme';
 import { useContext, useEffect, useState } from 'react';
 import type { FC } from 'react';
@@ -8,32 +9,28 @@ import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import { QUERY_MAX_CHARACTER_LENGTH } from '../../../common/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
-import { isImageDataUrl, isImageUrl } from '../../../common/types/image';
-import type { SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 import Header from '../components/Header';
 
 interface ResultScreenProps {
   productResults: ProcessedProduct[];
-  image?: SearchImageOrPid;
-  autocompleteResults?: string[];
+  imageUrl: string;
   metadata: Record<string, any>;
   onModalClose: () => void;
   onTextSearch: (text: string) => void;
-  onFindSimilar: (data: SearchImageOrPid) => void;
   onKeywordUpdate: (q: string) => void;
-  searchHistory: SearchImageOrPid[];
+  isStreaming: boolean;
 }
 
 const ResultScreen: FC<ResultScreenProps> = ({
   productResults,
-  image,
+  imageUrl,
   metadata,
   onModalClose,
   onTextSearch = (): void => {},
-  onFindSimilar = (): void => {},
   onKeywordUpdate,
+  isStreaming,
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations, initState } = widgetConfig;
@@ -44,19 +41,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
   const [isRecommendInputFocused, setIsRecommendInputFocused] = useState(false);
   const breakpoint = useBreakpoint();
   const intl = useIntl();
-
-  const getFile = (searchImage: SearchImageOrPid | undefined): string => {
-    if (!searchImage) {
-      return '';
-    }
-    if (isImageUrl(searchImage)) {
-      return searchImage.imgUrl;
-    }
-    if (isImageDataUrl(searchImage)) {
-      return searchImage.file;
-    }
-    return '';
-  };
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -72,21 +56,21 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   return (
     <>
-      <div className='h-full flex flex-col gap-4'>
+      <div className='h-full gap-4'>
         <Header
           onCloseHandler={onModalClose}
           showTitle={customizations.generalLayout?.showWidgetTitle}
           iconColor={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor}
         />
         <div className='size-full'>
-          <div className='flex h-full flex-col gap-4 overflow-y-scroll pb-8'>
-            <div className='h-full px-2 flex flex-col gap-4'>
-              <div className='flex justify-between px-2'>
+          <div className='h-full gap-4 overflow-y-scroll pb-8'>
+            <div className='px-2 gap-4'>
+              <div className='flex justify-between p-2'>
                 <div className='wigmix-reference-image-container w-1/2 flex items-center text-center'>
                   <img
-                    src={getFile(image)}
+                    src={imageUrl}
                     className='wigmix-reference-image md:h-full'
-                    data-pw='ss-reference-image'
+                    data-pw='sod-reference-image'
                   />
                 </div>
 
@@ -116,7 +100,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             </div>
 
             {/* Search input bar with Recommend me button */}
-            <div className='flex gap-0 w-full px-4'>
+            <div className='flex gap-0 w-full px-4 py-2'>
               <button
                 className={`font-bold px-4 rounded-l-md h-10 text-sm transition-colors ${
                   isRecommendInputFocused
@@ -167,46 +151,62 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   onBlur={(): void => {
                     setIsRecommendInputFocused(false);
                   }}
-                  data-pw='ss-refinement-text-bar'
+                  data-pw='sod-refinement-text-bar'
                   data-testid='wigmix-text-bar'
                 />
               </div>
             </div>
 
             <div className='w-full flex flex-col px-2 gap-4 mb-28'>
-              <div
-                className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
-                style={getProductGridCssConfig(customizations, breakpoint)}
-                data-pw='ss-product-result-grid'>
-                {productResults.map((result, index) => (
-                  <ProductCard
-                    key={`${result.product_id}-${index}`}
-                    onFindSimilar={(data) => {
-                      setSearch('');
-                      return onFindSimilar(data);
-                    }}
-                    index={index}
-                    result={result}
-                    metadata={metadata}
-                    isInWishlist={wishlistPids.includes(result.product_id)}
-                    setIsInWishlist={(pid, isInWishlist) => {
-                      setWishlistPids((prev) => {
-                        const newPids = [...prev];
-                        if (isInWishlist && !newPids.includes(pid)) {
-                          newPids.push(pid);
-                        }
-                        if (!isInWishlist && newPids.includes(pid)) {
-                          newPids.splice(newPids.indexOf(pid), 1);
-                        }
-                        return newPids;
-                      });
-                    }}
-                    isRecommendation={false}
-                    hasFindSimilar={true}
-                    pwPrefix='ss'
-                  />
-                ))}
-              </div>
+              {isStreaming && (
+                  <div className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
+                       style={getProductGridCssConfig(customizations, breakpoint)}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={`skeleton-${i}`}
+                             className='group relative flex-shrink-0'
+                             style={{ width: 200, minWidth: 200 }}>
+                          <div className='wigmix-product-card overflow-hidden'>
+                            <Skeleton className='wigmix-product-card-image aspect-[2/3] w-full' style={{ height: 300 }} />
+                            <div className='flex flex-col space-y-2 py-3'>
+                              <Skeleton className='h-3 w-3/4 rounded' />
+                              <Skeleton className='h-4 w-1/2 rounded' />
+                            </div>
+                          </div>
+                        </div>
+                    ))}
+                  </div>
+              )}
+              {!isStreaming && (
+                <div
+                  className={`wigmix-product-grid grid px-2 pb-3 ${getProductGridCssClasses(customizations, breakpoint, 'grid-cols-3', 'gap-x-2', 'gap-y-3')}`}
+                  style={getProductGridCssConfig(customizations, breakpoint)}
+                  data-pw='sod-product-result-grid'>
+                  {productResults.map((result, index) => (
+                    <ProductCard
+                      key={`${result.product_id}-${index}`}
+                      index={index}
+                      result={result}
+                      metadata={metadata}
+                      isInWishlist={wishlistPids.includes(result.product_id)}
+                      setIsInWishlist={(pid, isInWishlist) => {
+                        setWishlistPids((prev) => {
+                          const newPids = [...prev];
+                          if (isInWishlist && !newPids.includes(pid)) {
+                            newPids.push(pid);
+                          }
+                          if (!isInWishlist && newPids.includes(pid)) {
+                            newPids.splice(newPids.indexOf(pid), 1);
+                          }
+                          return newPids;
+                        });
+                      }}
+                      isRecommendation={false}
+                      hasFindSimilar={false}
+                      pwPrefix='sod'
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -218,7 +218,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             backgroundColor: darkMode ? customizations.generalLayout?.backgroundColorDark : customizations.generalLayout?.backgroundColor,
           }}
         >
-          <Footer darkMode={darkMode} dataPw='ss-visenze-footer' />
+          <Footer darkMode={darkMode} dataPw='sod-visenze-footer' />
         </div>
       )}
     </>

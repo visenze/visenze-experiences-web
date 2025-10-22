@@ -14,7 +14,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, showTitle, iconColor }): Reac
   return (
     <div className='relative flex w-full items-center border-b border-gray-200 py-4 ps-4 lg:rounded-t-3xl'>
       {showTitle && (
-        <div className='wigmix-widget-title' data-pw='ss-widget-title'>
+        <div className='wigmix-widget-title' data-pw='sod-widget-title'>
           {intl.formatMessage({ id: 'widgetTitle' })}
         </div>
       )}
@@ -23,7 +23,7 @@ const Header: FC<HeaderProps> = ({ onCloseHandler, showTitle, iconColor }): Reac
         className='absolute end-4 top-2 rounded-full bg-transparent p-1 hover:opacity-90 md:end-5 md:top-4'
         onClick={onCloseHandler}
         data-testid='wigmix-close-button'
-        data-pw='ss-close-button'>
+        data-pw='sod-close-button'>
         <CloseIcon className='size-6 cursor-pointer' color={iconColor} />
       </div>
     </div>
