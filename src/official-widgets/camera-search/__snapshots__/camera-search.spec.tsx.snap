@@ -3324,7 +3324,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                       drag this
                     </p>
                     <div
-                      class="w-full p-1 hidden md:block border-1 bg-gray-200 hover:opacity-90"
+                      class="w-full p-1 hidden md:block bg-gray-100 dark:bg-neutral-800 hover:opacity-90"
                     >
                       Take a photo
                     </div>
@@ -3336,7 +3336,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                   </div>
                 </div>
                 <div
-                  class="w-full p-1 rounded-md text-center mt-1 md:hidden border-1 bg-gray-200 hover:opacity-90 cursor-pointer"
+                  class="w-full p-1 rounded-md text-center mt-1 md:hidden border-1 bg-gray-100 dark:bg-neutral-800 hover:opacity-90 cursor-pointer"
                 >
                   Take a photo
                 </div>
@@ -3592,7 +3592,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                       drag this
                     </p>
                     <div
-                      class="w-full p-1 hidden md:block border-1 bg-gray-200 hover:opacity-90"
+                      class="w-full p-1 hidden md:block bg-gray-100 dark:bg-neutral-800 hover:opacity-90"
                     >
                       Take a photo
                     </div>
@@ -3604,7 +3604,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                   </div>
                 </div>
                 <div
-                  class="w-full p-1 rounded-md text-center mt-1 md:hidden border-1 bg-gray-200 hover:opacity-90 cursor-pointer"
+                  class="w-full p-1 rounded-md text-center mt-1 md:hidden border-1 bg-gray-100 dark:bg-neutral-800 hover:opacity-90 cursor-pointer"
                 >
                   Take a photo
                 </div>

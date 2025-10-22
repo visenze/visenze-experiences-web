@@ -330,7 +330,7 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
                   type="file"
                 />
                 <div
-                  class="wigmix-reference-image-container flex h-52 flex-col lg:aspect-square items-center justify-center text-center py-8 md:py-0 border border-gray md:border-0 bg-gray-100"
+                  class="wigmix-reference-image-container flex w-full h-48 flex-col lg:aspect-square items-center justify-center text-center py-8 md:py-0 border border-gray md:border-0 bg-gray-100"
                 >
                   <div
                     class="size-20"
@@ -369,6 +369,11 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
                     tap here
                   </p>
                 </div>
+              </div>
+              <div
+                class="w-full flex text-center justify-center cursor-pointer p-1 mt-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:opacity-90"
+              >
+                Take a photo
               </div>
             </div>
           </div>
@@ -603,7 +608,7 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
                   type="file"
                 />
                 <div
-                  class="wigmix-reference-image-container flex h-52 flex-col lg:aspect-square items-center justify-center text-center py-8 md:py-0 border border-gray md:border-0 bg-gray-100"
+                  class="wigmix-reference-image-container flex w-full h-48 flex-col lg:aspect-square items-center justify-center text-center py-8 md:py-0 border border-gray md:border-0 bg-gray-100"
                 >
                   <div
                     class="size-20"
@@ -642,6 +647,11 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
                     tap here
                   </p>
                 </div>
+              </div>
+              <div
+                class="w-full flex text-center justify-center cursor-pointer p-1 mt-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:opacity-90"
+              >
+                Take a photo
               </div>
             </div>
           </div>

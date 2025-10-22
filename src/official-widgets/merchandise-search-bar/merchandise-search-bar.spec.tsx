@@ -25,6 +25,7 @@ describe('merchandise-search-bar', () => {
       dragImageToSearch: 'drag here',
       tapToSearchImage: 'tap here',
       imageUploadTitle: 'Upload something',
+      useCamera: 'Take a photo',
       suggestions: 'suggested',
       popularChoices: 'Popular',
       trending: 'Trends',

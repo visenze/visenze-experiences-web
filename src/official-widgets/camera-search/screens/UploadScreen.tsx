@@ -1,11 +1,15 @@
 import { cn } from '@heroui/theme';
 import type { FC, ReactNode } from 'react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import Webcam from 'react-webcam';
 import FileDropzone from '../../../common/components/FileDropzone';
 import Footer from '../../../common/components/Footer';
+import ArrowPathIcon from '../../../common/icons/ArrowPathIcon';
+import CameraIcon from '../../../common/icons/CameraIcon';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 import UploadIcon from '../../../common/icons/UploadIcon';
+import UturnLeftIcon from '../../../common/icons/UturnLeftIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
 import { Actions, Category, Labels } from '../../../common/types/tracking-constants';
@@ -17,14 +21,11 @@ interface UploadScreenProps {
 }
 
 const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) => {
+  const webcamRef = useRef<Webcam>(null);
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [isManualCameraOpen, setIsManualCameraOpen] = useState(false);
-  const [mediaStream, setMediaStream] = useState<MediaStream>();
-  const [capturedImage, setCapturedImage] = useState<string>();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const capturedImageRef = useRef<HTMLImageElement>(null);
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const intl = useIntl();
 
   const onGallerySelect = (index: number): void => {
@@ -90,27 +91,22 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
     };
   }, []);
 
-  useEffect(() => {
-    if (isManualCameraOpen) {
-      navigator.mediaDevices.getUserMedia({ video: true })
-          .then((stream) => {
-            if (videoRef.current) {
-              videoRef.current.srcObject = stream;
-              videoRef.current.play();
-            }
-            setMediaStream(stream);
-          })
-          .catch(() => {
-            setIsManualCameraOpen(false);
-            if (mediaStream) {
-              mediaStream.getTracks().forEach((t) => {
-                t.stop();
-              });
-            }
-            setMediaStream(undefined);
-          });
+  const capture = useCallback(() => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (imageSrc) {
+        fetch(imageSrc)
+            .then((res) => res.blob())
+            .then((blob) => {
+              const file = new File([blob], `${Date.now()}`, { type: 'image/png' });
+              const imageFile = { files: [file], file: imageSrc };
+
+              onImageUpload(imageFile);
+              setIsManualCameraOpen(false);
+            });
+      }
     }
-  }, [isManualCameraOpen]);
+  }, [webcamRef]);
 
   return (
     <div className='size-full flex flex-col'>
@@ -120,82 +116,43 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                 ? customizations.generalLayout?.fontColorDark
                 : customizations.generalLayout?.fontColor} />
       {isManualCameraOpen && (
-          <div className='w-full px-4 md:pb-12'>
-            <div className='flex justify-center'>
-              {capturedImage && (
-                  <img ref={capturedImageRef} src={capturedImage} />
-              )}
-              <video ref={videoRef} id='video' style={{
-                display: capturedImage ? 'none' : '',
-              }}>
-                Video stream not available.
-              </video>
-              <canvas ref={canvasRef} className='hidden'></canvas>
+          <div
+              className='bg-transparent shadow-lg flex flex-col items-center p-4'
+              style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, minHeight: 340 }}
+          >
+            <div className='w-full flex justify-center'>
+              <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat='image/jpeg'
+                  className='rounded-lg max-w-full'
+                  videoConstraints={{ facingMode }}
+              />
             </div>
-            <div className='flex gap-2 mt-2'>
-              {capturedImage && (
-                  <>
-                    <div className='p-1 cursor-pointer w-full text-center bg-gray-200 hover:opacity-90'
-                         onClick={() => {
-                           setCapturedImage(undefined);
-                         }}>
-                      Re-take
-                    </div>
-                    <div className='p-1 cursor-pointer w-full text-center bg-gray-200 hover:opacity-90'
-                         onClick={() => {
-                           const b64Data = capturedImage.replace('data:image/png;base64,', '');
-                           const byteCharacters = atob(b64Data);
-                           const byteNumbers = new Array(byteCharacters.length);
-                           for (let i = 0; i < byteCharacters.length; i += 1) {
-                             byteNumbers[i] = byteCharacters.charCodeAt(i);
-                           }
-                           const byteArray = new Uint8Array(byteNumbers);
-                           const blob = new Blob([byteArray], { type: 'image/png' });
-                           onImageUpload({ files: [blob as File], file: capturedImage });
-
-                           if (mediaStream) {
-                             mediaStream.getTracks().forEach((t) => {
-                               t.stop();
-                             });
-                           }
-                           setMediaStream(undefined);
-                           setIsManualCameraOpen(false);
-                         }}>
-                      Use photo
-                    </div>
-                  </>
-              )}
-              {!capturedImage && (
-                  <>
-                    <div className='p-1 cursor-pointer w-full text-center bg-gray-200 hover:opacity-90'
-                         onClick={() => {
-                           if (mediaStream) {
-                             mediaStream.getTracks().forEach((t) => {
-                               t.stop();
-                             });
-                           }
-                           setMediaStream(undefined);
-                           setIsManualCameraOpen(false);
-                         }}>
-                      Cancel
-                    </div>
-                    <div className='p-1 cursor-pointer w-full text-center bg-gray-200 hover:opacity-90'
-                         onClick={() => {
-                           if (canvasRef?.current && videoRef?.current) {
-                             const canvas = canvasRef.current;
-                             const context = canvas.getContext('2d');
-                             const { videoWidth: width, videoHeight: height } = videoRef.current;
-                             canvas.height = height;
-                             canvas.width = width;
-                             context?.drawImage(videoRef.current, 0, 0, width, height);
-                             const data = canvas.toDataURL('image/png');
-                             setCapturedImage(data);
-                           }
-                         }}>
-                      Capture
-                    </div>
-                  </>
-              )}
+            <div className='w-full flex gap-2 mt-2'>
+              <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
+                      onClick={() => setIsManualCameraOpen(false)}>
+                <UturnLeftIcon
+                    className='size-5 cursor-pointer'
+                    color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                />
+              </button>
+              <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
+                      onClick={capture}>
+                <CameraIcon
+                    className='size-5 cursor-pointer'
+                    color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                />
+              </button>
+              <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
+                      onClick={() => {
+                        setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
+                      }}>
+                <ArrowPathIcon
+                    className='size-5 cursor-pointer'
+                    color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                />
+              </button>
             </div>
           </div>
       )}
@@ -227,7 +184,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                     <p className='hidden px-3 py-2 leading-6 md:block'>
                       {intl.formatMessage({ id: 'dragImageToSearch' })}
                     </p>
-                    <div className='w-full p-1 hidden md:block border-1 bg-gray-200 hover:opacity-90' onClick={(e) => {
+                    <div className='w-full p-1 hidden md:block bg-gray-100 dark:bg-neutral-800 hover:opacity-90' onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
                       setIsManualCameraOpen(true);
@@ -240,7 +197,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
                     </p>
                   </div>
                 </FileDropzone>
-                <div className='w-full p-1 rounded-md text-center mt-1 md:hidden border-1 bg-gray-200 hover:opacity-90 cursor-pointer'
+                <div className='w-full p-1 rounded-md text-center mt-1 md:hidden border-1 bg-gray-100 dark:bg-neutral-800 hover:opacity-90 cursor-pointer'
                      onClick={(e) => {
                        e.stopPropagation();
                        e.preventDefault();
@@ -289,7 +246,7 @@ const UploadScreen: FC<UploadScreenProps> = ({ onModalClose, onImageUpload }) =>
           </div>
       )}
 
-      {customizations.generalLayout?.showViSenzeLogo && (
+      {customizations.generalLayout?.showViSenzeLogo && !isManualCameraOpen && (
         <Footer darkMode={darkMode} className='sticky bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl' dataPw='cs-visenze-footer'/>
       )}
     </div>
