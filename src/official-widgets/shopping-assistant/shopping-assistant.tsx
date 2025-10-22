@@ -14,11 +14,13 @@ import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { DEFAULT_ENDPOINT } from '../../common/constants';
+import ArrowPathIcon from '../../common/icons/ArrowPathIcon';
 import CameraIcon from '../../common/icons/CameraIcon';
 import CloseIcon from '../../common/icons/CloseIcon';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import PlusCircleIcon from '../../common/icons/PlusCircleIcon';
 import UploadIcon from '../../common/icons/UploadIcon';
+import UturnLeftIcon from '../../common/icons/UturnLeftIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 import { isImageFile, type SearchImage, type SearchImageOrPid } from '../../common/types/image';
 import type { ProcessedProduct } from '../../common/types/product';
@@ -59,6 +61,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
   const [showCameraDrawer, setShowCameraDrawer] = useState(false);
   const [widgetOpenTrigger, setWidgetOpenTrigger] = useState(0);
   const [sendChatTrigger, setSendChatTrigger] = useState<[string, SearchImageOrPid | undefined]>();
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const intl = useIntl();
   const openingMessages = [
     intl.formatMessage({ id: 'openingMessage1' }),
@@ -383,35 +386,40 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
               className='absolute inset-x-0 bottom-0 z-50 bg-white dark:bg-neutral-800 shadow-lg flex flex-col items-center p-4 animate-slideup'
               style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, minHeight: 340 }}
             >
-              <div className='flex w-full justify-between items-center mb-2'>
-                <span className='font-semibold text-lg'>Camera Capture</span>
-                <button onClick={() => setShowCameraDrawer(false)}>
-                  <CloseIcon
-                    className='size-6 cursor-pointer'
-                    color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
-                  />
-                </button>
-              </div>
               <div className='w-full flex justify-center'>
                 <Webcam
                   audio={false}
                   ref={webcamRef}
                   screenshotFormat='image/jpeg'
                   className='rounded-lg max-w-full'
-                  videoConstraints={{ facingMode: 'user' }}
+                  videoConstraints={{ facingMode }}
                 />
               </div>
-              <button onClick={capture} className='w-full flex items-center justify-center gap-2 mt-4 bg-blue-400 text-white px-4 py-2 rounded'>
-                <CameraIcon
-                  className='size-5 cursor-pointer'
-                  color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
-                />
-                <span
-                  style={{ color: darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '') }}
-                >
-                  Capture photo
-                </span>
-              </button>
+              <div className='w-full flex gap-2 mt-2'>
+                <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1 text-neutral-900 dark:text-neutral-100'
+                        onClick={() => setShowCameraDrawer(false)}>
+                  <UturnLeftIcon
+                      className='size-5 cursor-pointer'
+                      color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                  />
+                </button>
+                <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1 text-neutral-900 dark:text-neutral-100'
+                        onClick={capture}>
+                  <CameraIcon
+                      className='size-5 cursor-pointer'
+                      color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                  />
+                </button>
+                <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1 text-neutral-900 dark:text-neutral-100'
+                        onClick={() => {
+                  setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
+                }}>
+                  <ArrowPathIcon
+                      className='size-5 cursor-pointer'
+                      color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                  />
+                </button>
+              </div>
             </div>
           )}
           <div className='flex justify-end gap-2'>

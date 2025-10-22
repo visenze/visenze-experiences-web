@@ -35,6 +35,8 @@ describe('slide-out-drawer', () => {
   };
   const mockVisearchClient: ViSearchClient = {
     setKeys: jest.fn(),
+    getUid: jest.fn(),
+    getSid: jest.fn(),
     productSearchById: jest.fn(),
   } as Partial<ViSearchClient> as ViSearchClient;
   let widgetConfig: WidgetConfig;

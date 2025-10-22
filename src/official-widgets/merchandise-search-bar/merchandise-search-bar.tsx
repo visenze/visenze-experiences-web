@@ -1,7 +1,8 @@
 import { cn } from '@heroui/theme';
 import type { FC, ReactElement } from 'react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import Webcam from 'react-webcam';
 import SearchBarInput from './components/SearchBarInput';
 import FileDropzone from '../../common/components/FileDropzone';
 import useAutocomplete from '../../common/components/hooks/use-autocomplete';
@@ -9,9 +10,12 @@ import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useSearchAsYouType from '../../common/components/hooks/use-search-as-you-type';
 import ProductCard from '../../common/components/product-card/ProductCard';
 import { RootContext } from '../../common/components/shadow-wrapper';
+import ArrowPathIcon from '../../common/icons/ArrowPathIcon';
+import CameraIcon from '../../common/icons/CameraIcon';
 import CloseIcon from '../../common/icons/CloseIcon';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import UploadIcon from '../../common/icons/UploadIcon';
+import UturnLeftIcon from '../../common/icons/UturnLeftIcon';
 import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
@@ -32,6 +36,7 @@ const SEARCH_HISTORY_BASE_KEY = 'wigmix_internal_search_history_';
 const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
   renderModalWithoutPortal,
 }): ReactElement => {
+  const webcamRef = useRef<Webcam>(null);
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations, initState } = widgetConfig;
   const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
@@ -44,6 +49,8 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [suggestionMax, setSuggestionMax] = useState(6);
   const [relatedMax] = useState(8);
+  const [isManualCameraOpen, setIsManualCameraOpen] = useState(false);
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const breakpoint = useBreakpoint();
   const root = useContext(RootContext);
   const intl = useIntl();
@@ -187,6 +194,23 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
     }
   };
 
+  const capture = useCallback(() => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (imageSrc) {
+        fetch(imageSrc)
+            .then((res) => res.blob())
+            .then((blob) => {
+              const file = new File([blob], `${Date.now()}`, { type: 'image/png' });
+              const imageFile = { files: [file], file: imageSrc };
+
+              onImageUpload(imageFile);
+              setIsManualCameraOpen(false);
+            });
+      }
+    }
+  }, [webcamRef]);
+
   const getGalleryCards = (): React.ReactNode => {
     if (customizations) {
       return Object.entries(customizations.imageUpload?.images || []).map(([, imageWithLabel], index) => (
@@ -269,66 +293,118 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
               </button>
             </div>
 
-            <div className='flex flex-col-reverse lg:flex-row-reverse divide-gray-200 py-1 px-4'>
-              <div className='px-4 py-1 w-full lg:3/4 overflow-x-scroll'>
-                <p className='text-large font-semibold leading-6 text-primary pb-1'>
-                  {intl.formatMessage({ id: 'suggestions' })}
-                </p>
-                <div className='flex py-2 overflow-x-scroll gap-x-3'>{getGalleryCards()}</div>
-              </div>
-
-              <div className='px-4 py-1 w-full lg:w-1/4'>
-                <p className='text-large font-semibold leading-6 text-primary pb-1'>
-                  {intl.formatMessage({ id: 'imageUploadTitle' })}
-                </p>
-                <div className='flex flex-col gap-2 pt-2'>
-                  <FileDropzone onImageUpload={onImageUpload} name='msb-image-upload'>
-                    <div
-                      className={cn(
-                        'wigmix-reference-image-container flex h-52 flex-col lg:aspect-square items-center justify-center text-center',
-                        'py-8 md:py-0 border border-gray md:border-0',
-                        darkMode ? 'bg-gray-800' : 'bg-gray-100',
-                      )}>
-                      {customizations.imageUpload?.icon?.url ? (
-                        <CustomizableIcon
-                          height={80}
-                          width={80}
-                          url={customizations.imageUpload.icon.url}
-                          color={
-                            darkMode
-                              ? customizations.imageUpload.icon.colorDark || ''
-                              : customizations.imageUpload.icon.color || ''
-                          }
-                        />
-                      ) : (
-                        <UploadIcon
-                          className='size-20'
-                          color={
-                            darkMode
-                              ? customizations.imageUpload?.icon?.colorDark || ''
-                              : customizations.imageUpload?.icon?.color || ''
-                          }
-                        />
-                      )}
-
-                      <p
-                        className='hidden px-3 py-2 leading-6 md:block'
-                        style={{ color: darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || '' }}
-                      >
-                        {intl.formatMessage({ id: 'dragImageToSearch' })}
-                      </p>
-
-                      <p
-                        className='pt-3 leading-6 md:hidden'
-                        style={{ color: darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || '' }}
-                      >
-                        {intl.formatMessage({ id: 'tapToSearchImage' })}
-                      </p>
-                    </div>
-                  </FileDropzone>
+            {isManualCameraOpen && (
+                <div
+                    className='bg-transparent shadow-lg flex flex-col items-center p-4'
+                    style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, minHeight: 340 }}
+                >
+                  <div className='w-full flex justify-center'>
+                    <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat='image/jpeg'
+                        className='rounded-lg max-w-full'
+                        videoConstraints={{ facingMode }}
+                    />
+                  </div>
+                  <div className='w-full flex gap-2 mt-2'>
+                    <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
+                            onClick={() => setIsManualCameraOpen(false)}>
+                      <UturnLeftIcon
+                          className='size-5 cursor-pointer'
+                          color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                      />
+                    </button>
+                    <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
+                            onClick={capture}>
+                      <CameraIcon
+                          className='size-5 cursor-pointer'
+                          color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                      />
+                    </button>
+                    <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
+                            onClick={() => {
+                              setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
+                            }}>
+                      <ArrowPathIcon
+                          className='size-5 cursor-pointer'
+                          color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
+                      />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
+            )}
+            {!isManualCameraOpen && (
+                <>
+                  <div className='flex flex-col-reverse lg:flex-row-reverse divide-gray-200 py-1 px-4'>
+                    <div className='px-4 py-1 w-full lg:3/4 overflow-x-scroll'>
+                      <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                        {intl.formatMessage({ id: 'suggestions' })}
+                      </p>
+                      <div className='flex py-2 overflow-x-scroll gap-x-3'>{getGalleryCards()}</div>
+                    </div>
+
+                    <div className='px-4 py-1 w-full lg:w-1/4'>
+                      <p className='text-large font-semibold leading-6 text-primary pb-1'>
+                        {intl.formatMessage({ id: 'imageUploadTitle' })}
+                      </p>
+                      <div className='flex flex-col gap-2 pt-2'>
+                        <FileDropzone onImageUpload={onImageUpload} name='msb-image-upload'>
+                          <div
+                              className={cn(
+                                  'wigmix-reference-image-container flex w-full h-48 flex-col lg:aspect-square items-center justify-center text-center',
+                                  'py-8 md:py-0 border border-gray md:border-0',
+                                  darkMode ? 'bg-gray-800' : 'bg-gray-100',
+                              )}>
+                            {customizations.imageUpload?.icon?.url ? (
+                                <CustomizableIcon
+                                    height={80}
+                                    width={80}
+                                    url={customizations.imageUpload.icon.url}
+                                    color={
+                                      darkMode
+                                          ? customizations.imageUpload.icon.colorDark || ''
+                                          : customizations.imageUpload.icon.color || ''
+                                    }
+                                />
+                            ) : (
+                                <UploadIcon
+                                    className='size-20'
+                                    color={
+                                      darkMode
+                                          ? customizations.imageUpload?.icon?.colorDark || ''
+                                          : customizations.imageUpload?.icon?.color || ''
+                                    }
+                                />
+                            )}
+
+                            <p
+                                className='hidden px-3 py-2 leading-6 md:block'
+                                style={{ color: darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || '' }}
+                            >
+                              {intl.formatMessage({ id: 'dragImageToSearch' })}
+                            </p>
+
+                            <p
+                                className='pt-3 leading-6 md:hidden'
+                                style={{ color: darkMode ? customizations.generalLayout?.fontColorDark || '' : customizations.generalLayout?.fontColor || '' }}
+                            >
+                              {intl.formatMessage({ id: 'tapToSearchImage' })}
+                            </p>
+                          </div>
+                        </FileDropzone>
+                        <div className='w-full flex text-center justify-center cursor-pointer p-1 mt-2
+                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:opacity-90'
+                             onClick={() => {
+                               setIsManualCameraOpen(true);
+                             }}>
+                          {intl.formatMessage({ id: 'useCamera' })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+            )}
           </OutsideAlerter>
         ) : showDropdown && query && (autocompleteResults.length > 0 || searchAsYouTypeResults.length > 0) ? (
           <OutsideAlerter>
