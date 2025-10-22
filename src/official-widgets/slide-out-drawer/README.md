@@ -1,6 +1,7 @@
 # Slide Out Drawer widget
 
-![status](https://img.shields.io/badge/status-alpha-red)
+![status](https://img.shields.io/badge/status-stable-blue)
+![stable](https://img.shields.io/badge/since-1.0.19-blue)
 
 ## Local development
 
