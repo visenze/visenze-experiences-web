@@ -227,7 +227,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
           )}
           {!isWaiting && suggestions.length > 0 && (
             <div className='mt-2 flex items-end'>
-              <div className='flex flex-col gap-2'>
+              <div className='flex flex-wrap gap-2'>
                 {suggestions.map((suggestion, idx) => (
                   <>
                     {(showAllSuggestions || idx <= 1) && (
