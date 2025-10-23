@@ -388,7 +388,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                             </p>
                           </div>
                         </FileDropzone>
-                        <div className='w-full flex text-center justify-center cursor-pointer p-1 mt-2
+                        <div className='w-full lg:hidden flex text-center justify-center cursor-pointer p-1 mt-2
                         bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:opacity-90'
                              onClick={() => {
                                setIsManualCameraOpen(true);

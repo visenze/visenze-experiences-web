@@ -371,7 +371,7 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
                 </div>
               </div>
               <div
-                class="w-full flex text-center justify-center cursor-pointer p-1 mt-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:opacity-90"
+                class="w-full lg:hidden flex text-center justify-center cursor-pointer p-1 mt-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:opacity-90"
               >
                 Take a photo
               </div>
@@ -649,7 +649,7 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
                 </div>
               </div>
               <div
-                class="w-full flex text-center justify-center cursor-pointer p-1 mt-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:opacity-90"
+                class="w-full lg:hidden flex text-center justify-center cursor-pointer p-1 mt-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:opacity-90"
               >
                 Take a photo
               </div>
