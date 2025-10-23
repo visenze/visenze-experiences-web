@@ -84,7 +84,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
     }
   }, [results]);
 
-  const suggestionSearch = (isOutfitRecommendations: boolean): void => {
+  const suggestionSearch = (isComplementary: boolean): void => {
     if (isLoading) {
       return;
     }
@@ -94,8 +94,8 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
     };
     params['pid'] = productId;
 
-    if (isOutfitRecommendations) {
-      widgetClient.multisearchOutfitRecommendations(params, handleSuccess, handleError);
+    if (isComplementary) {
+      widgetClient.multisearchComplementary(params, handleSuccess, handleError);
     } else {
       widgetClient.multisearchByImage(params, handleSuccess, handleError);
     }
@@ -137,7 +137,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
         <button
             className='px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors'
             onClick={() => suggestionSearch(true)}>
-          {intl.formatMessage({ id: 'outfitRecommendations' })}
+          {intl.formatMessage({ id: 'complementaryProducts' })}
         </button>
       </div>
 
