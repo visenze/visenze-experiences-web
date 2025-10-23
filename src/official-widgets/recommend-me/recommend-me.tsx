@@ -37,11 +37,12 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
 
   const handleError = (errorMsg: string): void => {
     setHasError(true);
-    if (errorMsg.includes('im_url') || errorMsg.includes('image')) {
+    if (errorMsg.includes('im_url') || errorMsg.includes('image') || errorMsg.includes('no outfit')) {
       setError(intl.formatMessage({ id: 'imageOrQueryNotFound' }));
     } else {
       setError(intl.formatMessage({ id: 'systemError' }));
     }
+    setIsLoading(false);
   };
 
   const handleSuccess = (res: ProductSearchResponse): void => {
@@ -83,20 +84,21 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
     }
   }, [results]);
 
-  const suggestionSearch = (): void => {
+  const suggestionSearch = (isOutfitRecommendations: boolean): void => {
+    if (isLoading) {
+      return;
+    }
     setIsLoading(true);
     const params: Record<string, any> = {
       ...searchSettings,
     };
     params['pid'] = productId;
 
-    widgetClient.multisearchByImage(
-      params,
-      (res) => {
-        handleSuccess(res);
-      },
-      handleError,
-    );
+    if (isOutfitRecommendations) {
+      widgetClient.multisearchOutfitRecommendations(params, handleSuccess, handleError);
+    } else {
+      widgetClient.multisearchByImage(params, handleSuccess, handleError);
+    }
   };
 
   useEffect(() => {
@@ -124,18 +126,24 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
             {intl.formatMessage({ id: 'widgetTitle' })}
           </div>
         )}
-
-        {/* Tab buttons */}
-        <div className='flex gap-2'>
-          <button
-            className='px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-semibold transition-colors'
-            onClick={() => suggestionSearch()}>
-            {intl.formatMessage({ id: 'similarItemsTabButton' })}
-          </button>
-        </div>
       </div>
 
-      <div className='text-sm pb-2 text-primary'>{intl.formatMessage({ id: 'widgetDescription' })}</div>
+      <div className='flex gap-2 pt-1'>
+        <button
+            className='px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors'
+            onClick={() => suggestionSearch(false)}>
+          {intl.formatMessage({ id: 'similarProducts' })}
+        </button>
+        <button
+            className='px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors'
+            onClick={() => suggestionSearch(true)}>
+          {intl.formatMessage({ id: 'outfitRecommendations' })}
+        </button>
+      </div>
+
+      <div className='text-sm py-2 text-primary'>
+        {intl.formatMessage({ id: 'searchBarInstructions' })}
+      </div>
 
       {/* Search input bar with Recommend me button */}
       <div className='flex gap-0 border border-gray-300 rounded overflow-hidden w-full'>
