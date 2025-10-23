@@ -318,6 +318,7 @@ exports[`icon-triggered-grid should render a successful response with default co
             <div
               class="z-10 w-full justify-center items-center mt-auto hidden bg-transparent md:flex"
               data-pw="itg-visenze-footer-desktop"
+              dir="ltr"
             >
               <p
                 class="text-xs"
@@ -2452,6 +2453,7 @@ exports[`icon-triggered-grid should render a successful response with default co
               <div
                 class="z-10 flex w-full justify-center items-center mt-auto bg-transparent pt-4 md:hidden"
                 data-pw="itg-visenze-footer-mobile"
+                dir="ltr"
               >
                 <p
                   class="text-xs"
@@ -2467,6 +2469,7 @@ exports[`icon-triggered-grid should render a successful response with default co
             <div
               class="z-10 w-full justify-center items-center mt-auto hidden bg-transparent md:flex"
               data-pw="itg-visenze-footer-desktop"
+              dir="ltr"
             >
               <p
                 class="text-xs"
@@ -2587,6 +2590,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
             <div
               class="z-10 w-full justify-center items-center mt-auto hidden bg-transparent md:flex"
               data-pw="itg-visenze-footer-desktop"
+              dir="ltr"
             >
               <p
                 class="text-xs"

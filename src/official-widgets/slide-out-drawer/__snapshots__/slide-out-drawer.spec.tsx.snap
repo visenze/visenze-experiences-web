@@ -1412,6 +1412,7 @@ exports[`slide-out-drawer should render a successful response with default confi
           <div
             class="z-10 flex w-full justify-center items-center"
             data-pw="sod-visenze-footer"
+            dir="ltr"
           >
             <p
               class="text-xs"
@@ -2672,6 +2673,7 @@ exports[`slide-out-drawer should render a successful response with default confi
           <div
             class="z-10 flex w-full justify-center items-center"
             data-pw="sod-visenze-footer"
+            dir="ltr"
           >
             <p
               class="text-xs"

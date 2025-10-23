@@ -8,7 +8,7 @@ interface FooterProps {
 }
 
 const Footer: FC<FooterProps> = ({ className, dataPw, darkMode }): ReactElement => (
-  <div className={cn('z-10 flex w-full justify-center items-center', className)} data-pw={dataPw}>
+  <div dir='ltr' className={cn('z-10 flex w-full justify-center items-center', className)} data-pw={dataPw}>
     <p className='text-xs'>POWERED BY </p>
     <img src={darkMode
         ? 'https://cdn.visenze.com/images/visenze-rezolve-logo-white-md.png'

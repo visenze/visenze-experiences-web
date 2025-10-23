@@ -1739,6 +1739,7 @@ exports[`camera-search should render a successful response with default config i
         </div>
         <div
           class="z-10 flex w-full justify-center items-center fixed bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl"
+          dir="ltr"
         >
           <p
             class="text-xs"
@@ -3154,6 +3155,7 @@ exports[`camera-search should render a successful response with default config i
         </div>
         <div
           class="z-10 flex w-full justify-center items-center fixed bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl"
+          dir="ltr"
         >
           <p
             class="text-xs"
@@ -3421,6 +3423,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
           <div
             class="z-10 flex w-full justify-center items-center sticky bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl"
             data-pw="cs-visenze-footer"
+            dir="ltr"
           >
             <p
               class="text-xs"
@@ -3689,6 +3692,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
           <div
             class="z-10 flex w-full justify-center items-center sticky bottom-0 bg-primary py-2 md:absolute lg:rounded-b-3xl"
             data-pw="cs-visenze-footer"
+            dir="ltr"
           >
             <p
               class="text-xs"

@@ -4448,6 +4448,7 @@ exports[`shop-the-look should render a successful response with some customizati
   <div
     class="z-10 flex w-full justify-center items-center bg-transparent py-4 text-primary md:py-8"
     data-pw="stl-visenze-footer"
+    dir="ltr"
   >
     <p
       class="text-xs"

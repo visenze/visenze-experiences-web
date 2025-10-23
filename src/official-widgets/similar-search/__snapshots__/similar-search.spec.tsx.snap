@@ -1844,6 +1844,7 @@ exports[`similar-search should render a successful response with default config 
         <div
           class="z-10 flex w-full justify-center items-center fixed bottom-0 py-2 md:absolute lg:rounded-b-3xl"
           data-pw="ss-visenze-footer"
+          dir="ltr"
         >
           <p
             class="text-xs"
@@ -3567,6 +3568,7 @@ exports[`similar-search should render a successful response with default config 
         <div
           class="z-10 flex w-full justify-center items-center fixed bottom-0 py-2 md:absolute lg:rounded-b-3xl"
           data-pw="ss-visenze-footer"
+          dir="ltr"
         >
           <p
             class="text-xs"
