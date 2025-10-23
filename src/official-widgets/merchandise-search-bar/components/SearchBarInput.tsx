@@ -57,10 +57,6 @@ const SearchBarInput: FC<SearchBarInputProps> = ({
         setShowDropdown(true);
         setShowImageUpload(false);
       }}
-      onBlur={() => setTimeout(() => {
-        setShowDropdown(false);
-        setShowImageUpload(false);
-      }, 100)}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
           emitSearchBarCallback();

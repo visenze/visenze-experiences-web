@@ -110,7 +110,11 @@ const SearchBar: FC<SearchBarResultProps> = ({ textQuery, imUrl, renderModalWith
       setHasError(false);
     }
     const handler = setTimeout(() => {
-      setDebouncedQuery(query);
+      if (query && query.length >= 3) {
+        setDebouncedQuery(query);
+      } else {
+        setDebouncedQuery('');
+      }
     }, 300);
 
     return (): void => {

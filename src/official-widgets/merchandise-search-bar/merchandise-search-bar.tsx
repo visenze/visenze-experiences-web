@@ -48,7 +48,6 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
   const [hasError, setHasError] = useState(false);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([]);
   const [suggestionMax, setSuggestionMax] = useState(6);
-  const [relatedMax] = useState(8);
   const [isManualCameraOpen, setIsManualCameraOpen] = useState(false);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const breakpoint = useBreakpoint();
@@ -115,6 +114,8 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
     const handler = setTimeout(() => {
       if (query && query.length >= 3) {
         setDebouncedQuery(query);
+      } else {
+        setDebouncedQuery('');
       }
     }, 300);
 
@@ -264,16 +265,8 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
               }
               emitSearchBarCallback(query, image);
             }}
-            setShowDropdown={(s) => {
-              if (s) {
-                setShowDropdown(true);
-              }
-            }}
-            setShowImageUpload={(s) => {
-              if (s) {
-                setShowImageUpload(s);
-              }
-            }}
+            setShowDropdown={setShowDropdown}
+            setShowImageUpload={setShowImageUpload}
             placementId={`${widgetConfig.appSettings.placementId}`}
             renderModalWithoutPortal={!!renderModalWithoutPortal}
           />
@@ -429,7 +422,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                   {intl.formatMessage({ id: 'suggestions' })}
                 </p>
                 <div className='flex py-2 w-full overflow-x-auto gap-x-3'>
-                  {searchAsYouTypeResults.slice(0, relatedMax).map((result, index) => (
+                  {searchAsYouTypeResults.slice(0, 8).map((result, index) => (
                     <div
                       className='size-1/8'
                       key={`${result.product_id}-${index}`}
@@ -466,7 +459,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                 <p className='text-large font-semibold leading-6 text-primary pb-1'>
                   {intl.formatMessage({ id: 'popularChoices' })}
                 </p>
-                <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-2 pt-2'>
                   {autocompleteResults.slice(0, suggestionMax).map((result) => (
                     <button
                       className={cn(
@@ -488,7 +481,9 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
             </div>
           </OutsideAlerter>
         ) : showDropdown
-          && (searchHistory.length > 0 || customizations.popularTerms?.enable || customizations.trendingProducts?.enable) ? (
+          && (searchHistory.length > 0
+            || (customizations.popularTerms?.enable && (customizations.popularTerms?.terms || []).length > 0)
+            || (customizations.trendingProducts?.enable && (customizations.trendingProducts?.products || []).length > 0)) ? (
           <OutsideAlerter>
             <div className='flex flex-col items-end gap-2 px-4 py-1 pt-4'>
               <button data-testid='wigmix-msb-close-button' onClick={() => {
@@ -555,7 +550,7 @@ const MerchandiseSearchBar: FC<SearchBarResultProps> = ({
                   <p className='text-large font-semibold leading-6 text-primary pb-1'>
                     {intl.formatMessage({ id: 'popularChoices' })}
                   </p>
-                  <div className='flex flex-col gap-2'>
+                  <div className='flex flex-col gap-2 pt-2'>
                     {popularTerms.map((term) => (
                       <button
                         className={cn(

@@ -84,6 +84,11 @@ const useAutocomplete = ({
   useEffect(() => {
     if (query || image) {
       autocomplete();
+    } else {
+      setError('');
+      setImageUrl('');
+      setImageId('');
+      setAutocompleteResults([]);
     }
   }, [query, image]);
 

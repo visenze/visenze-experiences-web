@@ -83,6 +83,11 @@ const useSearchAsYouType = ({
   useEffect(() => {
     if (query || image) {
       searchAsYouType();
+    } else {
+      setSearchAsYouTypeResults([]);
+      setMetadata({});
+      setError('');
+      setProductCount(0);
     }
   }, [query, image]);
 
