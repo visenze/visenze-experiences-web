@@ -80,3 +80,8 @@
 .wigmix-modal-overlay.wigmix-modal-position-left {
   padding-right: 60% !important;
 }
+
+.wigmix-modal-mobile,
+.wigmix-modal-tablet {
+  overflow: hidden !important;
+}

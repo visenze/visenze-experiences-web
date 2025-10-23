@@ -45,14 +45,14 @@ const ResultScreen: FC<ResultScreenProps> = ({
 
   return (
     <>
-      <div className='h-full gap-4'>
+      <div className='h-full'>
         <Header
           onCloseHandler={onModalClose}
           showTitle={customizations.generalLayout?.showWidgetTitle}
           iconColor={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor}
         />
         <div className='size-full'>
-          <div className='h-full gap-4 overflow-y-scroll pb-8'>
+          <div className='h-full overflow-y-scroll pb-8'>
             <div className='px-2 gap-4'>
               <div className='flex justify-between p-2'>
                 <div className='wigmix-reference-image-container w-1/2 flex items-center text-center'>
