@@ -292,6 +292,12 @@ exports[`slide-out-drawer should render a successful response with default confi
                     >
                       Similar Products
                     </button>
+                    <button
+                      class="text-sm px-2 py-1 rounded-full"
+                      style="background-color: rgb(247, 249, 252); color: rgb(61, 83, 133);"
+                    >
+                      Complementary Products
+                    </button>
                   </div>
                 </div>
                 <div
@@ -303,7 +309,7 @@ exports[`slide-out-drawer should render a successful response with default confi
               >
                 <button
                   class="font-bold px-4 rounded-l-md h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800"
-                  data-pw="rm-recommend-me-button"
+                  data-pw="sod-recommend-me-button"
                   disabled=""
                 >
                   <span>
@@ -1553,6 +1559,12 @@ exports[`slide-out-drawer should render a successful response with default confi
                     >
                       Similar Products
                     </button>
+                    <button
+                      class="text-sm px-2 py-1 rounded-full"
+                      style="background-color: rgb(247, 249, 252); color: rgb(61, 83, 133);"
+                    >
+                      Complementary Products
+                    </button>
                   </div>
                 </div>
                 <div
@@ -1564,7 +1576,7 @@ exports[`slide-out-drawer should render a successful response with default confi
               >
                 <button
                   class="font-bold px-4 rounded-l-md h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800"
-                  data-pw="rm-recommend-me-button"
+                  data-pw="sod-recommend-me-button"
                   disabled=""
                 >
                   <span>

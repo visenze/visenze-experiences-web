@@ -37,6 +37,7 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ pid, renderModalWithoutPortal
   const [imageUrl, setImageUrl] = useState('');
   const [isWaitingForRm, setIsWaitingForRm] = useState(false);
   const [rmProductResults, setRmProductResults] = useState<ProcessedProduct[]>();
+  const [isComplementary, setIsComplementary] = useState(false);
   const root = useContext(RootContext);
 
   const {
@@ -47,6 +48,7 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ pid, renderModalWithoutPortal
   } = useImageMultisearch({
     image,
     boxData: undefined,
+    isComplementary,
   });
 
   const {
@@ -121,7 +123,20 @@ const SlideOutDrawer: FC<SlideOutDrawerProps> = ({ pid, renderModalWithoutPortal
             metadata={metadata}
             onModalClose={onModalClose}
             onTextSearch={onTextSearch}
-            onKeywordUpdate={() => {}}
+            onSimilarSearch={() => {
+              if (isWaitingForRm) {
+                return;
+              }
+              setRmProductResults(undefined);
+              setIsComplementary(false);
+            }}
+            onComplementarySearch={() => {
+              if (isWaitingForRm) {
+                return;
+              }
+              setRmProductResults(undefined);
+              setIsComplementary(true);
+            }}
             isStreaming={isWaitingForRm}
           />
         );

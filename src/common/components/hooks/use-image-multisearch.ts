@@ -67,6 +67,7 @@ const parseResults = (res: ProductSearchResponseSuccess, boxData?: BoxData): Pro
 interface ImageMultisearchProps {
   image: SearchImageOrPid | undefined;
   boxData: BoxData | undefined;
+  isComplementary?: boolean;
 }
 
 export interface ImageMultisearch {
@@ -85,6 +86,7 @@ export interface ImageMultisearch {
 const useImageMultisearch = ({
   image,
   boxData,
+  isComplementary,
 }: ImageMultisearchProps): ImageMultisearch => {
   const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
   const { searchSettings } = widgetConfig;
@@ -146,7 +148,11 @@ const useImageMultisearch = ({
     if (image) {
       const product = getProductType(boxData);
       const params = getSearchParams(image, imageId, searchSettings, boxData, product);
-      widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
+      if (isComplementary) {
+        widgetClient.multisearchComplementary(params, handleImageSuccess, handleError);
+      } else {
+        widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
+      }
     } else {
       resetSearch();
     }
@@ -154,7 +160,11 @@ const useImageMultisearch = ({
 
   const multisearchWithParams = (params: Record<string, any>): void => {
     params = {...params, ...searchSettings };
-    widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
+    if (isComplementary) {
+      widgetClient.multisearchComplementary(params, handleImageSuccess, handleError);
+    } else {
+      widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
+    }
   };
 
   const autocompleteWithQuery = (q: string): void => {
@@ -201,6 +211,12 @@ const useImageMultisearch = ({
       multisearch();
     }
   }, [boxData]);
+
+  useEffect(() => {
+    if (image) {
+      multisearch();
+    }
+  }, [isComplementary]);
 
   useEffect(() => {
     if (image) {

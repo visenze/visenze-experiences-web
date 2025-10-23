@@ -1,7 +1,7 @@
 import { Input } from '@heroui/input';
 import { Skeleton } from '@heroui/skeleton';
 import { cn } from '@heroui/theme';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import type { FC } from 'react';
 import { useIntl } from 'react-intl';
 import Footer from '../../../common/components/Footer';
@@ -19,7 +19,8 @@ interface ResultScreenProps {
   metadata: Record<string, any>;
   onModalClose: () => void;
   onTextSearch: (text: string) => void;
-  onKeywordUpdate: (q: string) => void;
+  onSimilarSearch: () => void;
+  onComplementarySearch: () => void;
   isStreaming: boolean;
 }
 
@@ -28,31 +29,19 @@ const ResultScreen: FC<ResultScreenProps> = ({
   imageUrl,
   metadata,
   onModalClose,
-  onTextSearch = (): void => {},
-  onKeywordUpdate,
+  onTextSearch,
+  onSimilarSearch,
+  onComplementarySearch,
   isStreaming,
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations, initState } = widgetConfig;
   const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const [search, setSearch] = useState('');
-  const [activeSearch, setActiveSearch] = useState<'similar' | 'suggested' | null>('similar');
-  const [debouncedOnKeywordUpdate, setDebouncedOnKeywordUpdate] = useState<string | null>(null);
+  const [activeSearch, setActiveSearch] = useState<'similar' | 'complementary' | null>('similar');
   const [isRecommendInputFocused, setIsRecommendInputFocused] = useState(false);
   const breakpoint = useBreakpoint();
   const intl = useIntl();
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      if (debouncedOnKeywordUpdate != null) {
-        onKeywordUpdate(debouncedOnKeywordUpdate);
-      }
-    }, 300);
-
-    return (): void => {
-      clearTimeout(handler);
-    };
-  }, [debouncedOnKeywordUpdate]);
 
   return (
     <>
@@ -87,11 +76,36 @@ const ResultScreen: FC<ResultScreenProps> = ({
                       color: darkMode ? customizations.buttons?.secondary?.fontColorDark : customizations.buttons?.secondary?.fontColor,
                     }}
                     onClick={() => {
+                      if (isStreaming) {
+                        return;
+                      }
                       setActiveSearch('similar');
                       setSearch('');
-                      onTextSearch('');
+                      onSimilarSearch();
                     }}>
-                    {intl.formatMessage({ id: 'similarProductButton' })}
+                    {intl.formatMessage({ id: 'similarProducts' })}
+                  </button>
+
+                  <button
+                    className={cn(
+                        'text-sm px-2 py-1 rounded-full',
+                    )}
+                    style={activeSearch === 'complementary' ? {
+                      backgroundColor: darkMode ? customizations.buttons?.primary?.backgroundColorDark : customizations.buttons?.primary?.backgroundColor,
+                      color: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor,
+                    } : {
+                      backgroundColor: darkMode ? customizations.buttons?.secondary?.backgroundColorDark : customizations.buttons?.secondary?.backgroundColor,
+                      color: darkMode ? customizations.buttons?.secondary?.fontColorDark : customizations.buttons?.secondary?.fontColor,
+                    }}
+                    onClick={() => {
+                      if (isStreaming) {
+                        return;
+                      }
+                      setActiveSearch('complementary');
+                      setSearch('');
+                      onComplementarySearch();
+                    }}>
+                    {intl.formatMessage({ id: 'complementaryProducts' })}
                   </button>
                 </div>
               </div>
@@ -115,7 +129,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   setActiveSearch(null);
                   onTextSearch(search);
                 }}
-                data-pw='rm-recommend-me-button'>
+                data-pw='sod-recommend-me-button'>
                 <span>{intl.formatMessage({ id: 'searchBarButton' })}</span>
               </button>
 
@@ -132,7 +146,6 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   value={search}
                   onValueChange={(input): void => {
                     setSearch(input);
-                    setDebouncedOnKeywordUpdate(input);
                   }}
                   onKeyDown={(event): void => {
                     if (event.key === 'Enter') {
