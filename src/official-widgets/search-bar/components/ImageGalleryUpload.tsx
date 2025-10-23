@@ -177,7 +177,7 @@ const ImageGalleryUpload: FC<ImageGalleryUploadProps> = ({ imageUploadHandler, p
                 </FileDropzone>
               </div>
 
-              <div className='py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0'>
+              <div className='py-5 md:w-2/3 md:border-s-2 md:border-gray-300 md:px-12 md:pt-0'>
                 <p className='px-14 pb-3 text-center text-primary md:px-0 md:text-left'>
                   {intl.formatMessage({ id: 'tapProductGallery' })}
                 </p>

@@ -116,7 +116,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
             {/* Search input bar with Recommend me button */}
             <div className='flex gap-0 w-full px-4 py-2'>
               <button
-                className={`font-bold px-4 rounded-l-md h-10 text-sm transition-colors ${
+                className={`font-bold px-4 rounded-s-md h-10 text-sm transition-colors ${
                   isRecommendInputFocused
                     ? 'bg-gray-600 hover:bg-gray-700 text-white'
                     : 'bg-gray-300 hover:bg-gray-400 text-gray-800'
@@ -140,8 +140,8 @@ const ResultScreen: FC<ResultScreenProps> = ({
                   type='filters'
                   placeholder={intl.formatMessage({ id: 'searchBarPlaceholder' })}
                   classNames={{
-                    inputWrapper: 'rounded-l-none',
-                    input: 'rounded-l-none',
+                    inputWrapper: 'rounded-s-none',
+                    input: 'rounded-s-none',
                   }}
                   value={search}
                   onValueChange={(input): void => {

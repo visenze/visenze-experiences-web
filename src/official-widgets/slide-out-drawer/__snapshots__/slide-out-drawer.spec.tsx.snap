@@ -308,7 +308,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                 class="flex gap-0 w-full px-4 py-2"
               >
                 <button
-                  class="font-bold px-4 rounded-l-md h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800"
+                  class="font-bold px-4 rounded-s-md h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800"
                   data-pw="sod-recommend-me-button"
                   disabled=""
                 >
@@ -330,7 +330,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                       data-slot="main-wrapper"
                     >
                       <div
-                        class="relative w-full inline-flex tap-highlight-transparent flex-row items-center shadow-sm px-3 gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-10 min-h-10 rounded-medium transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-l-none"
+                        class="relative w-full inline-flex tap-highlight-transparent flex-row items-center shadow-sm px-3 gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-10 min-h-10 rounded-medium transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-s-none"
                         data-slot="input-wrapper"
                         style="cursor: text;"
                       >
@@ -340,7 +340,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                         >
                           <input
                             aria-label="This is a search bar"
-                            class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-small peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground rounded-l-none"
+                            class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-small peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground rounded-s-none"
                             data-pw="sod-refinement-text-bar"
                             data-slot="input"
                             data-testid="wigmix-text-bar"
@@ -1575,7 +1575,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                 class="flex gap-0 w-full px-4 py-2"
               >
                 <button
-                  class="font-bold px-4 rounded-l-md h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800"
+                  class="font-bold px-4 rounded-s-md h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800"
                   data-pw="sod-recommend-me-button"
                   disabled=""
                 >
@@ -1597,7 +1597,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                       data-slot="main-wrapper"
                     >
                       <div
-                        class="relative w-full inline-flex tap-highlight-transparent flex-row items-center shadow-sm px-3 gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-10 min-h-10 rounded-medium transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-l-none"
+                        class="relative w-full inline-flex tap-highlight-transparent flex-row items-center shadow-sm px-3 gap-3 bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 h-10 min-h-10 rounded-medium transition-background motion-reduce:transition-none !duration-150 outline-none group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-2 group-data-[focus-visible=true]:ring-offset-background rounded-s-none"
                         data-slot="input-wrapper"
                         style="cursor: text;"
                       >
@@ -1607,7 +1607,7 @@ exports[`slide-out-drawer should render a successful response with default confi
                         >
                           <input
                             aria-label="This is a search bar"
-                            class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-small peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground rounded-l-none"
+                            class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-small peer pe-6 input-search-cancel-button-none group-data-[has-value=true]:text-default-foreground rounded-s-none"
                             data-pw="sod-refinement-text-bar"
                             data-slot="input"
                             data-testid="wigmix-text-bar"

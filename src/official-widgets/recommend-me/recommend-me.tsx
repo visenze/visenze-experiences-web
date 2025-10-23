@@ -168,7 +168,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
         <div className='relative flex-1'>
           <Input
             classNames={{
-              inputWrapper: 'border-l-0 rounded-r bg-default-100 text-primary',
+              inputWrapper: 'border-s-0 rounded-e bg-default-100 text-primary',
             }}
             disabled={isStreaming}
             isClearable

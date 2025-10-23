@@ -371,7 +371,7 @@ exports[`search-bar should render upload image modal in desktop view 1`] = `
                 </div>
               </div>
               <div
-                class="py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0"
+                class="py-5 md:w-2/3 md:border-s-2 md:border-gray-300 md:px-12 md:pt-0"
               >
                 <p
                   class="px-14 pb-3 text-center text-primary md:px-0 md:text-left"
@@ -717,7 +717,7 @@ exports[`search-bar should render upload image modal in mobile view 1`] = `
                 </div>
               </div>
               <div
-                class="py-5 md:w-2/3 md:border-l-2 md:border-gray-300 md:px-12 md:pt-0"
+                class="py-5 md:w-2/3 md:border-s-2 md:border-gray-300 md:px-12 md:pt-0"
               >
                 <p
                   class="px-14 pb-3 text-center text-primary md:px-0 md:text-left"
