@@ -1,6 +1,6 @@
 {
   "name": "visenze-experiences-web",
-  "version": "1.0.19-snapshot.0",
+  "version": "1.0.19",
   "description": "A collection of widgets to instantly add ViSenze-powered product search functionality into websites",
   "scripts": {
     "build": "npm run build:camera-search && npm run build:similar-search && npm run build:shopping-assistant && npm run build:recommend-me && npm run build:more-like-this && npm run build:shop-the-look && npm run build:embedded-grid && npm run build:shoppable-lookbook && npm run build:shoppable-gallery && npm run build:icon-triggered-grid && npm run build:search-bar && npm run build:embedded-search-results && npm run build:merchandise-search-bar && npm run build:in-page-carousel && npm run build:slide-out-drawer && npm run build:buy-the-look && npm run build:in-page-carousel-v3",

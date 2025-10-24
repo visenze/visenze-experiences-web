@@ -30,7 +30,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
-## [1.0.18](https://github.com/visenze/visenze-experiences-web/compare/1.0.17...1.0.18)
+## [1.0.19](https://github.com/visenze/visenze-experiences-web/compare/1.0.18...1.0.19) - 2025-10-24
+
+<!-- BEGIN visenze-experiences-web 1.0.19 -->
+### Highlights
+
+The following widgets are available under stable status and will follow our versioning policy:
+- Merchandise search bar
+- Slide-out drawer
+- In-page carousel V3 (in-page carousel using `product/multisearch` endpoint)
+
+### Changed
+
+- camera-search: Updated camera interface to allow switching front/back camera
+- All widgets: Further improved compatibility with RTL languages + updated "Powered by ViSenze" footer (not localizable) to always be LTR
+
+### Fixed
+
+- All widgets: Added missing default discount display and wishlist toggle icon color settings
+<!-- END visenze-experiences-web 1.0.19 -->
+
+## [1.0.18](https://github.com/visenze/visenze-experiences-web/compare/1.0.17...1.0.18) - 2025-10-21
 
 <!-- BEGIN visenze-experiences-web 1.0.18 -->
 ### Added
