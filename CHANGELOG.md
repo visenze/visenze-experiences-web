@@ -30,6 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.20](https://github.com/visenze/visenze-experiences-web/compare/1.0.19...1.0.20) - 2025-11-07
+
+<!-- BEGIN visenze-experiences-web 1.0.20 -->
+### Updated
+
+- All widgets: Updated brand logo
+<!-- END visenze-experiences-web 1.0.20 -->
+
 ## [1.0.19](https://github.com/visenze/visenze-experiences-web/compare/1.0.18...1.0.19) - 2025-10-24
 
 <!-- BEGIN visenze-experiences-web 1.0.19 -->
