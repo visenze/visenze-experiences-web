@@ -11,9 +11,9 @@ const Footer: FC<FooterProps> = ({ className, dataPw, darkMode }): ReactElement 
   <div dir='ltr' className={cn('z-10 flex w-full justify-center items-center', className)} data-pw={dataPw}>
     <p className='text-xs'>POWERED BY </p>
     <img src={darkMode
-        ? 'https://cdn.visenze.com/images/visenze-rezolve-logo-white-md.png'
-        : 'https://cdn.visenze.com/images/visenze-rezolve-logo-md.png'}
-      className='h-5 object-center py-0.5 ps-1'
+        ? 'https://cdn.visenze.com/images/rezolve-logo-white-md.png'
+        : 'https://cdn.visenze.com/images/rezolve-logo-md.png'}
+      className='h-6 object-center pb-1 ps-1.5'
     />
   </div>
 );
