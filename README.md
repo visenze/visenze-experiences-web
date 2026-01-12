@@ -6,6 +6,14 @@ Each widget can operate as a standalone component to be deployed in an e-commerc
 
 The widgets use React, HeroUI (formerly known as NextUI) and Tailwind CSS.
 
+## Documentation
+
+See the [docs](docs/) folder for complete documentation, including:
+- [Integration Guide](docs/integration.md)
+- [Customization Guide](docs/customization.md)
+- [Versioning Policy](docs/versioning.md)
+- [Architecture & Technical Docs](docs/architecture/)
+
 ## Repository structure
 
 ```txt
