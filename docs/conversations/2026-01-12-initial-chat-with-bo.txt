@@ -1,0 +1,161 @@
+Liu Bo
+0 minutes 3 seconds0:03
+Liu Bo 0 minutes 3 seconds
+So I put together like a document, just an overview right about a few sections. First is you know the core context like the two areas, one is the console, one is the widget, what do they do, what's the goal and who is using it right? I'm not gonna jump into like how they.
+Liu Bo 0 minutes 23 seconds
+They use it and stuff like that. You can. There's an attached document on the core functionality and the workflows, right? So this part you can probably read up a own own time, but we can just quickly go through that.
+Liu Bo 0 minutes 39 seconds
+Then there is 2 sections more on the technical portion in in terms of like the architecture, what's the stack that we use? What are some of the dependencies? How do we deploy the infra? Where's the code right? So we can look at the the code.
+Liu Bo 0 minutes 58 seconds
+Maintenance and operations, that's the console and then one section for the widget. Then the last section is more about who do we communicate, right? Who is the current owner for it? And moving forward, how do we do this?
+Liu Bo 1 minute 13 seconds
+So there's that. And finally I would give you first right the access to the console, the repo, so that you can take a look. Then after that, maybe someday this week we can come back and talk in details on how do we move forward.
+Liu Bo 1 minute 34 seconds
+Right, so.
+Liu Bo 1 minute 37 seconds
+High level in terms of what this is about, right? So I'll just, I'll just merge it to. So what I'm going to do is do a overview, then I do a demo, then we'll jump in back to the slides.
+1:53
+1 minute 53 seconds
+Sounds good.
+LB
+
+Liu Bo
+1 minute 53 seconds1:53
+Liu Bo 1 minute 53 seconds
+Right. Hopefully we can cover within like 30 minutes or so. So high level wise the console does two groups of people. One is definitely the customers, right and the customers we are looking at product managers who.
+Liu Bo 2 minutes 10 seconds
+You know, source for solutions or vendors like us and then you know they they try it out, test it out, understand the workflow and then work with their integration team, right? Mostly engineers and maybe even their analysts.
+Liu Bo 41 minutes 54 seconds
+So yeah, I think that's that's.
+DM
+Daniel Moniz
+41 minutes 58 seconds41:58
+Daniel Moniz 41 minutes 58 seconds
+Yeah, I think that's a pretty good start. The the, um, the next things I think are really getting.
+LB
+Liu Bo
+41 minutes 59 seconds41:59
+Liu Bo 41 minutes 59 seconds
+That's about it.
+DM
+Daniel Moniz
+42 minutes 7 seconds42:07
+Daniel Moniz 42 minutes 7 seconds
+Links to repos and things. Did you? Did you have them in here?
+LB
+Liu Bo
+42 minutes 11 seconds42:11
+Liu Bo 42 minutes 11 seconds
+Yeah, I got a ripple. I got both of them. So this is to the console, right? And then this is to the the widget. So I'm gonna get you. So I've invited you to the console, right? Which is supposed to be resolve engineering account.
+DM
+Daniel Moniz
+42 minutes 18 seconds42:18
+Daniel Moniz 42 minutes 18 seconds
+OK.
+LB
+Liu Bo
+42 minutes 28 seconds42:28
+Liu Bo 42 minutes 28 seconds
+So you are the admin. You can create catalogs and apps and whatever within here. So there shouldn't be any issue then in terms of code repo, right? So we have the console, the widget.
+DM
+Daniel Moniz
+42 minutes 34 seconds42:34
+Daniel Moniz 42 minutes 34 seconds
+OK.
+LB
+Liu Bo
+42 minutes 43 seconds42:43
+Liu Bo 42 minutes 43 seconds
+The widget customized over here is when.
+Liu Bo 42 minutes 49 seconds
+Our customers want layout changes or flow changes and they engage us to do that, right? So we have created some customized for them and we have uploaded to a customized or a centralized customized widget.
+Liu Bo 43 minutes 7 seconds
+Repo for for each customer, right? We're going to hand over or rather in the future this this task or this responsibility will be handed over to Jason's team, right? So.
+Liu Bo 43 minutes 24 seconds
+So not just more of a for your information, yeah.
+Liu Bo 43 minutes 29 seconds
+But uh.
+DM
+Daniel Moniz
+43 minutes 30 seconds43:30
+Daniel Moniz 43 minutes 30 seconds
+OK, like Jason Chester, you mean?
+LB
+Liu Bo
+43 minutes 32 seconds43:32
+Liu Bo 43 minutes 32 seconds
+Oh yeah, Jason's. Yes, right. But why is it?
+DM
+Daniel Moniz
+43 minutes 33 seconds43:33
+Daniel Moniz 43 minutes 33 seconds
+OK.
+LB
+Liu Bo
+43 minutes 38 seconds43:38
+Liu Bo 43 minutes 38 seconds
+Important for you is that recall the flow right where they need to upload the widget right? So that is via the console to the back end. So it will be via you as an interface to get it live and deployed.
+DM
+Daniel Moniz
+43 minutes 51 seconds43:51
+Daniel Moniz 43 minutes 51 seconds
+That makes sense. Yeah. And then I guess, assuming everything's working there, there's not a lot we have to do. As long as that pipeline is is working, they can customize and do what they want. Yeah, OK.
+LB
+Liu Bo
+44 minutes 1 second44:01
+Liu Bo 44 minutes 1 second
+All right.
+Liu Bo 44 minutes 4 seconds
+Correct, right.
+Liu Bo 44 minutes 7 seconds
+CI/CD I can give you access later on. Not the key thing right now, but yeah, I'll get you access to to this for three things first. Yeah, and then I'll get you to access this three documents, two slides and this Word document.
+Liu Bo 44 minutes 26 seconds
+Document should be good enough to kick start.
+Liu Bo 44 minutes 32 seconds
+Yeah, then you can let me know who do you want to get access to this. I believe you should be.
+Liu Bo 44 minutes 43 seconds
+Edit permission. We just make sure that first.
+Liu Bo 44 minutes 49 seconds
+So that you can also share with whoever you need to share with. Um, yeah.
+DM
+Daniel Moniz
+44 minutes 58 seconds44:58
+Daniel Moniz 44 minutes 58 seconds
+Cool. I'll probably just share with everyone on my team so they have a bunch of links. Yep.
+LB
+Liu Bo
+45 minutes 3 seconds45:03
+Liu Bo 45 minutes 3 seconds
+And in terms of code repo, I recall you had a a list of names for the voice. Would that be the same members, uh, that I'll share it with?
+DM
+Daniel Moniz
+45 minutes 14 seconds45:14
+Daniel Moniz 45 minutes 14 seconds
+Should be the same. Um, yeah, the team hasn't.
+LB
+Liu Bo
+45 minutes 16 seconds45:16
+Liu Bo 45 minutes 16 seconds
+OK.
+DM
+Daniel Moniz
+45 minutes 19 seconds45:19
+Daniel Moniz 45 minutes 19 seconds
+Hasn't changed. Should be the same. There may be one more person, but.
+LB
+Liu Bo
+45 minutes 22 seconds45:22
+Liu Bo 45 minutes 22 seconds
+OK.
+DM
+Daniel Moniz
+45 minutes 25 seconds45:25
+Daniel Moniz 45 minutes 25 seconds
+Depends. Well, this they gave you. There was a guy we didn't put on the on the project, so but yeah, OK.
+LB
+Liu Bo
+45 minutes 28 seconds45:28
+Liu Bo 45 minutes 28 seconds
+OK.
+Liu Bo 45 minutes 31 seconds
+OK, sounds good. And of course you can comment, right? If let's say certain things is missing here and you would like to know, just comment, then we'll put it in, then it'll be easy as well.
