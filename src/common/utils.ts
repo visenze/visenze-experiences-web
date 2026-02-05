@@ -18,8 +18,7 @@ export const getFlattenProducts = (results: Product[] = [], shouldDisplayAlterna
   if (!shouldDisplayAlternatives) {
     return results.map((r) => getFlattenProduct(r));
   }
-  const maxNumOfAlternatives = results.map((r) => (r.alternatives || []).length)
-    .reduce((a, b) => Math.max(a, b), 0);
+  const maxNumOfAlternatives = results.map((r) => (r.alternatives || []).length).reduce((a, b) => Math.max(a, b), 0);
   if (maxNumOfAlternatives === 0) {
     return results.map((r) => getFlattenProduct(r));
   }
@@ -95,12 +94,18 @@ export const getFacets = (productDetails: WidgetConfig['displaySettings']['produ
   return facets;
 };
 
-export const getFacetNameByKey = (productDetails: WidgetConfig['displaySettings']['productDetails'], key: string): string => {
+export const getFacetNameByKey = (
+  productDetails: WidgetConfig['displaySettings']['productDetails'],
+  key: string,
+): string => {
   const entry = Object.entries(productDetails).find(([, value]) => value === key);
   return entry?.[0] ?? '';
 };
 
-export const getFilterQueries = (productDetails: WidgetConfig['displaySettings']['productDetails'], filters: Record<FacetType, any>): string[] => {
+export const getFilterQueries = (
+  productDetails: WidgetConfig['displaySettings']['productDetails'],
+  filters: Record<FacetType, any>,
+): string[] => {
   const filterQueries: string[] = [];
   const addQuotesToStrings = (inputSet: Set<string>): Set<string> => {
     const outputSet = new Set<string>();
@@ -116,7 +121,9 @@ export const getFilterQueries = (productDetails: WidgetConfig['displaySettings']
     filterQueries.push(`${productDetails['price']}:${filters.price[0]},${filters.price[1]}`);
   }
   if (filters.category.size > 0) {
-    filterQueries.push(`${productDetails['category']}:${Array.from(addQuotesToStrings(filters.category)).join(' OR ')}`);
+    filterQueries.push(
+      `${productDetails['category']}:${Array.from(addQuotesToStrings(filters.category)).join(' OR ')}`,
+    );
   }
   if (filters.gender.size > 0) {
     filterQueries.push(`${productDetails['gender']}:${Array.from(addQuotesToStrings(filters.gender)).join(' OR ')}`);
