@@ -42,7 +42,7 @@ interface ShoppingAssistantProps {
   renderModalWithoutPortal?: boolean;
 }
 
-const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
+const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPortal }) => {
   const webcamRef = useRef<Webcam>(null);
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
@@ -537,7 +537,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = () => {
             darkMode={darkMode}
             fontFamily={customizations.generalLayout?.fontFamily}
             placementId={`${appSettings.placementId}`}
-            renderWithoutPortal={false}>
+            renderWithoutPortal={!!renderModalWithoutPortal}>
           {getScreen()}
         </ViSenzeModal>
       </>

@@ -1,0 +1,979 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`buy-the-look should match snapshot for default desktop layout 1`] = `
+<DocumentFragment>
+  <div
+    class="w-full relative mb-12"
+  >
+    <div
+      class="py-8 px-6"
+    >
+      <div
+        class="max-w-6xl mx-auto"
+        style="max-width: calc(100vw - var(--chat-width, 0px) - 3rem);"
+      >
+        <h2
+          class="text-2xl font-bold mb-6"
+          style="color: rgb(0, 0, 0);"
+        >
+          Buy the look
+        </h2>
+        <div
+          class="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6"
+        >
+          <div
+            class="overflow-hidden shadow-lg lg:col-span-2 flex"
+          >
+            <img
+              alt="Product Title Main"
+              class="w-full object-cover"
+              src="https://main-image-main"
+            />
+          </div>
+          <div
+            class="lg:col-span-3 p-0 shadow-lg overflow-hidden"
+            style="background-color: rgb(255, 255, 255);"
+          >
+            <div
+              class="flex border-b border-gray-200 mb-4 overflow-x-auto p-4"
+            >
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-black px-3 py-2"
+                data-product-id="pid-1"
+                data-product-image="https://main-image-1"
+                data-product-price="19.3"
+                data-product-title="Product Title 1"
+                data-product-url="/product/pid-1"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 1"
+                    class="size-full object-cover"
+                    src="https://main-image-1"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-2"
+                data-product-image="https://main-image-2"
+                data-product-price="7.0"
+                data-product-title="Product Title 2"
+                data-product-url="/product/pid-2"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 2"
+                    class="size-full object-cover"
+                    src="https://main-image-2"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-3"
+                data-product-image="https://main-image-3"
+                data-product-price="15.5"
+                data-product-title="Product Title 3"
+                data-product-url="/product/pid-3"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 3"
+                    class="size-full object-cover"
+                    src="https://main-image-3"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-4"
+                data-product-image="https://main-image-4"
+                data-product-price="14.8"
+                data-product-title="Product Title 4"
+                data-product-url="/product/pid-4"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 4"
+                    class="size-full object-cover"
+                    src="https://main-image-4"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-5"
+                data-product-image="https://main-image-5"
+                data-product-price="14.8"
+                data-product-title="Product Title 5"
+                data-product-url="/product/pid-5"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 5"
+                    class="size-full object-cover"
+                    src="https://main-image-5"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-6"
+                data-product-image="https://main-image-6"
+                data-product-price="20.6"
+                data-product-title="Product Title 6"
+                data-product-url="/product/pid-6"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 6"
+                    class="size-full object-cover"
+                    src="https://main-image-6"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-7"
+                data-product-image="https://main-image-7"
+                data-product-price="23.0"
+                data-product-title="Product Title 7"
+                data-product-url="/product/pid-7"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 7"
+                    class="size-full object-cover"
+                    src="https://main-image-7"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-8"
+                data-product-image="https://main-image-8"
+                data-product-price="18.9"
+                data-product-title="Product Title 8"
+                data-product-url="/product/pid-8"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 8"
+                    class="size-full object-cover"
+                    src="https://main-image-8"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-9"
+                data-product-image="https://main-image-9"
+                data-product-price="7.0"
+                data-product-title="Product Title 9"
+                data-product-url="/product/pid-9"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 9"
+                    class="size-full object-cover"
+                    src="https://main-image-9"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-10"
+                data-product-image="https://main-image-10"
+                data-product-price="14.8"
+                data-product-title="Product Title 10"
+                data-product-url="/product/pid-10"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 10"
+                    class="size-full object-cover"
+                    src="https://main-image-10"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-11"
+                data-product-image="https://main-image-11"
+                data-product-price="3.0"
+                data-product-title="Product Title 11"
+                data-product-url="/product/pid-11"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 11"
+                    class="size-full object-cover"
+                    src="https://main-image-11"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-12"
+                data-product-image="https://main-image-12"
+                data-product-price="12.5"
+                data-product-title="Product Title 12"
+                data-product-url="/product/pid-12"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 12"
+                    class="size-full object-cover"
+                    src="https://main-image-12"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-13"
+                data-product-image="https://main-image-13"
+                data-product-price="19.6"
+                data-product-title="Product Title 13"
+                data-product-url="/product/pid-13"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 13"
+                    class="size-full object-cover"
+                    src="https://main-image-13"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-14"
+                data-product-image="https://main-image-14"
+                data-product-price="7.1"
+                data-product-title="Product Title 14"
+                data-product-url="/product/pid-14"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 14"
+                    class="size-full object-cover"
+                    src="https://main-image-14"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-15"
+                data-product-image="https://main-image-15"
+                data-product-price="23.3"
+                data-product-title="Product Title 15"
+                data-product-url="/product/pid-15"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 15"
+                    class="size-full object-cover"
+                    src="https://main-image-15"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-16"
+                data-product-image="https://main-image-16"
+                data-product-price="21.1"
+                data-product-title="Product Title 16"
+                data-product-url="/product/pid-16"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 16"
+                    class="size-full object-cover"
+                    src="https://main-image-16"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-17"
+                data-product-image="https://main-image-17"
+                data-product-price="6.5"
+                data-product-title="Product Title 17"
+                data-product-url="/product/pid-17"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 17"
+                    class="size-full object-cover"
+                    src="https://main-image-17"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-18"
+                data-product-image="https://main-image-18"
+                data-product-price="2.0"
+                data-product-title="Product Title 18"
+                data-product-url="/product/pid-18"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 18"
+                    class="size-full object-cover"
+                    src="https://main-image-18"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-19"
+                data-product-image="https://main-image-19"
+                data-product-price="7.0"
+                data-product-title="Product Title 19"
+                data-product-url="/product/pid-19"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 19"
+                    class="size-full object-cover"
+                    src="https://main-image-19"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-20"
+                data-product-image="https://main-image-20"
+                data-product-price="26.7"
+                data-product-title="Product Title 20"
+                data-product-url="/product/pid-20"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 20"
+                    class="size-full object-cover"
+                    src="https://main-image-20"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="flex flex-col md:flex-row gap-6 px-6 pb-6 pt-4"
+            >
+              <div
+                class="flex-shrink-0 flex justify-center items-start w-full md:w-72"
+              >
+                <div
+                  class=""
+                  style="margin-left: 8px; margin-right: 8px;"
+                >
+                  <div
+                    class="wigmix-product-card"
+                  >
+                    <a
+                      class="cursor-pointer"
+                      data-pw="mlt-product-result-card-1"
+                      data-testid="wigmix-product-card-anchor"
+                      href="https://product-1/?vsFromReqId=87654321&vsFromPid=pid-1&vsFromPos=1"
+                      rel=""
+                      target=""
+                    >
+                      <div
+                        class="wigmix-product-card-image-container"
+                      >
+                        <div
+                          class="relative flex justify-center"
+                        >
+                          <img
+                            alt=""
+                            class="wigmix-product-card-image object-cover"
+                            data-pw="mlt-product-result-card-image-1"
+                            data-testid="wigmix-product-card-image"
+                            src="https://main-image-1"
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class="wigmix-product-card-details pt-2"
+                      >
+                        <span
+                          class="wigmix-product-card-title line-clamp-1"
+                        />
+                        <span
+                          class="wigmix-product-card-secondary-title line-clamp-1"
+                        />
+                        <div
+                          class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
+                        />
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="flex-1 flex flex-col justify-between min-w-0"
+              >
+                <div>
+                  <div
+                    class="text-xl font-semibold mb-1"
+                  >
+                    Product Title 1
+                  </div>
+                  <div
+                    class="text-gray-700 text-base mb-2"
+                  >
+                    Product Brand 1
+                  </div>
+                  <div
+                    class="flex items-end gap-2 mb-2"
+                  >
+                    <span
+                      class="text-2xl font-bold"
+                    >
+                      USD19.30
+                    </span>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-col gap-3 mt-4"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`buy-the-look should render correctly in mobile layout 1`] = `
+<DocumentFragment>
+  <div
+    class="w-full relative mb-12"
+  >
+    <div
+      class="py-8 px-6"
+    >
+      <div
+        class="max-w-6xl mx-auto"
+        style="max-width: calc(100vw - var(--chat-width, 0px) - 3rem);"
+      >
+        <h2
+          class="text-2xl font-bold mb-6"
+          style="color: rgb(0, 0, 0);"
+        >
+          Buy the look
+        </h2>
+        <div
+          class="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6"
+        >
+          <div
+            class="overflow-hidden shadow-lg lg:col-span-2 flex"
+          >
+            <img
+              alt="Product Title Main"
+              class="w-full object-cover"
+              src="https://main-image-main"
+            />
+          </div>
+          <div
+            class="lg:col-span-3 p-0 shadow-lg overflow-hidden"
+            style="background-color: rgb(255, 255, 255);"
+          >
+            <div
+              class="flex border-b border-gray-200 mb-4 overflow-x-auto p-4"
+            >
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-black px-3 py-2"
+                data-product-id="pid-1"
+                data-product-image="https://main-image-1"
+                data-product-price="19.3"
+                data-product-title="Product Title 1"
+                data-product-url="/product/pid-1"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 1"
+                    class="size-full object-cover"
+                    src="https://main-image-1"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-2"
+                data-product-image="https://main-image-2"
+                data-product-price="7.0"
+                data-product-title="Product Title 2"
+                data-product-url="/product/pid-2"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 2"
+                    class="size-full object-cover"
+                    src="https://main-image-2"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-3"
+                data-product-image="https://main-image-3"
+                data-product-price="15.5"
+                data-product-title="Product Title 3"
+                data-product-url="/product/pid-3"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 3"
+                    class="size-full object-cover"
+                    src="https://main-image-3"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-4"
+                data-product-image="https://main-image-4"
+                data-product-price="14.8"
+                data-product-title="Product Title 4"
+                data-product-url="/product/pid-4"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 4"
+                    class="size-full object-cover"
+                    src="https://main-image-4"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-5"
+                data-product-image="https://main-image-5"
+                data-product-price="14.8"
+                data-product-title="Product Title 5"
+                data-product-url="/product/pid-5"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 5"
+                    class="size-full object-cover"
+                    src="https://main-image-5"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-6"
+                data-product-image="https://main-image-6"
+                data-product-price="20.6"
+                data-product-title="Product Title 6"
+                data-product-url="/product/pid-6"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 6"
+                    class="size-full object-cover"
+                    src="https://main-image-6"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-7"
+                data-product-image="https://main-image-7"
+                data-product-price="23.0"
+                data-product-title="Product Title 7"
+                data-product-url="/product/pid-7"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 7"
+                    class="size-full object-cover"
+                    src="https://main-image-7"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-8"
+                data-product-image="https://main-image-8"
+                data-product-price="18.9"
+                data-product-title="Product Title 8"
+                data-product-url="/product/pid-8"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 8"
+                    class="size-full object-cover"
+                    src="https://main-image-8"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-9"
+                data-product-image="https://main-image-9"
+                data-product-price="7.0"
+                data-product-title="Product Title 9"
+                data-product-url="/product/pid-9"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 9"
+                    class="size-full object-cover"
+                    src="https://main-image-9"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-10"
+                data-product-image="https://main-image-10"
+                data-product-price="14.8"
+                data-product-title="Product Title 10"
+                data-product-url="/product/pid-10"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 10"
+                    class="size-full object-cover"
+                    src="https://main-image-10"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-11"
+                data-product-image="https://main-image-11"
+                data-product-price="3.0"
+                data-product-title="Product Title 11"
+                data-product-url="/product/pid-11"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 11"
+                    class="size-full object-cover"
+                    src="https://main-image-11"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-12"
+                data-product-image="https://main-image-12"
+                data-product-price="12.5"
+                data-product-title="Product Title 12"
+                data-product-url="/product/pid-12"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 12"
+                    class="size-full object-cover"
+                    src="https://main-image-12"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-13"
+                data-product-image="https://main-image-13"
+                data-product-price="19.6"
+                data-product-title="Product Title 13"
+                data-product-url="/product/pid-13"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 13"
+                    class="size-full object-cover"
+                    src="https://main-image-13"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-14"
+                data-product-image="https://main-image-14"
+                data-product-price="7.1"
+                data-product-title="Product Title 14"
+                data-product-url="/product/pid-14"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 14"
+                    class="size-full object-cover"
+                    src="https://main-image-14"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-15"
+                data-product-image="https://main-image-15"
+                data-product-price="23.3"
+                data-product-title="Product Title 15"
+                data-product-url="/product/pid-15"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 15"
+                    class="size-full object-cover"
+                    src="https://main-image-15"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-16"
+                data-product-image="https://main-image-16"
+                data-product-price="21.1"
+                data-product-title="Product Title 16"
+                data-product-url="/product/pid-16"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 16"
+                    class="size-full object-cover"
+                    src="https://main-image-16"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-17"
+                data-product-image="https://main-image-17"
+                data-product-price="6.5"
+                data-product-title="Product Title 17"
+                data-product-url="/product/pid-17"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 17"
+                    class="size-full object-cover"
+                    src="https://main-image-17"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-18"
+                data-product-image="https://main-image-18"
+                data-product-price="2.0"
+                data-product-title="Product Title 18"
+                data-product-url="/product/pid-18"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 18"
+                    class="size-full object-cover"
+                    src="https://main-image-18"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-19"
+                data-product-image="https://main-image-19"
+                data-product-price="7.0"
+                data-product-title="Product Title 19"
+                data-product-url="/product/pid-19"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 19"
+                    class="size-full object-cover"
+                    src="https://main-image-19"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex-shrink-0 cursor-pointer border-b-2 border-transparent px-3 py-2"
+                data-product-id="pid-20"
+                data-product-image="https://main-image-20"
+                data-product-price="26.7"
+                data-product-title="Product Title 20"
+                data-product-url="/product/pid-20"
+              >
+                <div
+                  class="w-32 h-48 bg-gray-100 overflow-hidden rounded relative"
+                >
+                  <img
+                    alt="Product Title 20"
+                    class="size-full object-cover"
+                    src="https://main-image-20"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="flex flex-col md:flex-row gap-6 px-6 pb-6 pt-4"
+            >
+              <div
+                class="flex-shrink-0 flex justify-center items-start w-full md:w-72"
+              >
+                <div
+                  class=""
+                  style="margin-left: 8px; margin-right: 8px;"
+                >
+                  <div
+                    class="wigmix-product-card"
+                  >
+                    <a
+                      class="cursor-pointer"
+                      data-pw="mlt-product-result-card-1"
+                      data-testid="wigmix-product-card-anchor"
+                      href="https://product-1/?vsFromReqId=87654321&vsFromPid=pid-1&vsFromPos=1"
+                      rel=""
+                      target=""
+                    >
+                      <div
+                        class="wigmix-product-card-image-container"
+                      >
+                        <div
+                          class="relative flex justify-center"
+                        >
+                          <img
+                            alt=""
+                            class="wigmix-product-card-image object-cover"
+                            data-pw="mlt-product-result-card-image-1"
+                            data-testid="wigmix-product-card-image"
+                            src="https://main-image-1"
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class="wigmix-product-card-details pt-2"
+                      >
+                        <span
+                          class="wigmix-product-card-title line-clamp-1"
+                        />
+                        <span
+                          class="wigmix-product-card-secondary-title line-clamp-1"
+                        />
+                        <div
+                          class="wigmix-product-card-price-row flex flex-wrap items-center gap-1"
+                        />
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="flex-1 flex flex-col justify-between min-w-0"
+              >
+                <div>
+                  <div
+                    class="text-xl font-semibold mb-1"
+                  >
+                    Product Title 1
+                  </div>
+                  <div
+                    class="text-gray-700 text-base mb-2"
+                  >
+                    Product Brand 1
+                  </div>
+                  <div
+                    class="flex items-end gap-2 mb-2"
+                  >
+                    <span
+                      class="text-2xl font-bold"
+                    >
+                      USD19.30
+                    </span>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-col gap-3 mt-4"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`buy-the-look should render empty when recommendation response has error (pid not found) 1`] = `<DocumentFragment />`;

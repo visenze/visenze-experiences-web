@@ -106,6 +106,17 @@ module.exports = {
             tsx: 'never',
           },
         ],
+        'import/no-extraneous-dependencies': ['error', {
+          devDependencies: [
+            '**/*.spec.tsx',
+            '**/*.spec.ts',
+            '**/*.test.tsx',
+            '**/*.test.ts',
+            '**/test-utils/**',
+            '**/mocks/**',
+            'jest-setup.ts',
+          ],
+        }],
         // broken for any union type
         '@typescript-eslint/indent': 'off',
         // tailwind rules
