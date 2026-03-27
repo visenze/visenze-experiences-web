@@ -9,7 +9,7 @@ export const getFlattenProduct = (result: Product): ProcessedProduct => {
   return {
     im_url: result.main_image_url,
     product_id: result.product_id,
-    best_images: result.best_images || undefined,
+    best_images: result.best_images?.length ? result.best_images : undefined,
     ...result.data,
   };
 };
@@ -18,8 +18,7 @@ export const getFlattenProducts = (results: Product[] = [], shouldDisplayAlterna
   if (!shouldDisplayAlternatives) {
     return results.map((r) => getFlattenProduct(r));
   }
-  const maxNumOfAlternatives = results.map((r) => (r.alternatives || []).length)
-      .reduce((a, b) => Math.max(a, b), 0);
+  const maxNumOfAlternatives = results.map((r) => (r.alternatives || []).length).reduce((a, b) => Math.max(a, b), 0);
   if (maxNumOfAlternatives === 0) {
     return results.map((r) => getFlattenProduct(r));
   }
@@ -58,24 +57,20 @@ export const parseBox = (box: CroppedBox | number[] | undefined | null): string 
 };
 
 const removeDecimalPlace = (value: number): string => {
-  return value.toString().split('.')[0];
+  return Math.trunc(value).toString();
 };
 
 export const parseToProductTypes = (res: ProductSearchResponseSuccess): ProductType[] => {
   if (res.product_types?.length) {
     return res.product_types;
-  } else if ('objects' in res) {
-    const productTypes: ProductType[] = [];
-    res.objects?.map((objResult) => {
-      productTypes.push({
-        box: objResult.box,
-        attributes: objResult.attributes,
-        score: objResult.score,
-        type: objResult.type,
-        box_type: '',
-      });
-    });
-    return productTypes;
+  } else if ('objects' in res && res.objects?.length) {
+    return res.objects.map((objResult) => ({
+      box: objResult.box,
+      attributes: objResult.attributes,
+      score: objResult.score,
+      type: objResult.type,
+      box_type: '',
+    }));
   }
   return [];
 };
@@ -99,18 +94,18 @@ export const getFacets = (productDetails: WidgetConfig['displaySettings']['produ
   return facets;
 };
 
-export const getFacetNameByKey = (productDetails: WidgetConfig['displaySettings']['productDetails'], key: string): string => {
-  let facetName = '';
-  Object.entries(productDetails).find(([name, value]) => {
-    if (value === key) {
-      facetName = name;
-    }
-  });
-
-  return facetName;
+export const getFacetNameByKey = (
+  productDetails: WidgetConfig['displaySettings']['productDetails'],
+  key: string,
+): string => {
+  const entry = Object.entries(productDetails).find(([, value]) => value === key);
+  return entry?.[0] ?? '';
 };
 
-export const getFilterQueries = (productDetails: WidgetConfig['displaySettings']['productDetails'], filters: Record<FacetType, any>): string[] => {
+export const getFilterQueries = (
+  productDetails: WidgetConfig['displaySettings']['productDetails'],
+  filters: Record<FacetType, any>,
+): string[] => {
   const filterQueries: string[] = [];
   const addQuotesToStrings = (inputSet: Set<string>): Set<string> => {
     const outputSet = new Set<string>();
@@ -126,7 +121,9 @@ export const getFilterQueries = (productDetails: WidgetConfig['displaySettings']
     filterQueries.push(`${productDetails['price']}:${filters.price[0]},${filters.price[1]}`);
   }
   if (filters.category.size > 0) {
-    filterQueries.push(`${productDetails['category']}:${Array.from(addQuotesToStrings(filters.category)).join(' OR ')}`);
+    filterQueries.push(
+      `${productDetails['category']}:${Array.from(addQuotesToStrings(filters.category)).join(' OR ')}`,
+    );
   }
   if (filters.gender.size > 0) {
     filterQueries.push(`${productDetails['gender']}:${Array.from(addQuotesToStrings(filters.gender)).join(' OR ')}`);
