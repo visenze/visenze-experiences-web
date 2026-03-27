@@ -1,4 +1,5 @@
 import { act, fireEvent, render, type RenderResult, waitFor } from '@testing-library/react';
+import type { ReactElement } from 'react';
 import { IntlProvider } from 'react-intl';
 import { Context as ResponsiveContext } from 'react-responsive';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
@@ -11,7 +12,7 @@ import getWidgetClient from '../../common/client/widget-client';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import type { LanguagePack } from '../../common/locales/locale';
 import { WidgetDataContext } from '../../common/types/contexts';
-import type { WidgetConfig } from '../../common/wigmix-core';
+import type { WidgetClient, WidgetConfig } from '../../common/wigmix-core';
 import { DEFAULT_CUSTOMIZATIONS } from '../camera-search/default-config';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -40,6 +41,40 @@ describe('merchandise-search-bar', () => {
     productSearchById: jest.fn(),
   } as Partial<ViSearchClient> as ViSearchClient;
   let widgetConfig: WidgetConfig;
+
+  interface RenderOptions {
+    widgetClient: WidgetClient;
+    darkMode?: boolean;
+    mobileWidth?: number;
+  }
+
+  const renderSearchBar = ({ widgetClient, darkMode = false, mobileWidth }: RenderOptions): RenderResult => {
+    const component = (
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <MerchandiseSearchBar renderModalWithoutPortal={true} />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>
+    );
+
+    const wrappedComponent: ReactElement = mobileWidth
+      ? (
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode, locale: 'en' }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <ResponsiveContext.Provider value={{ width: mobileWidth }}>
+                <MerchandiseSearchBar renderModalWithoutPortal={true} />
+              </ResponsiveContext.Provider>
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>
+      )
+      : component;
+
+    return render(wrappedComponent);
+  };
 
   const originalWarn = console.warn.bind(console.warn);
 
@@ -95,15 +130,7 @@ describe('merchandise-search-bar', () => {
 
   it('should render the search bar', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => mockVisearchClient);
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar renderModalWithoutPortal={true} />
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
+    testComponent = renderSearchBar({ widgetClient });
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
 
@@ -115,15 +142,7 @@ describe('merchandise-search-bar', () => {
         handler(getStandardMultiSearchAutocompleteResponse());
       }),
     }));
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar renderModalWithoutPortal={true} />
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
+    testComponent = renderSearchBar({ widgetClient });
     act(() => {
       const popupTriggerButton = testComponent.getByTestId('wigmix-msb-gallery-button');
       popupTriggerButton.click();
@@ -153,17 +172,7 @@ describe('merchandise-search-bar', () => {
         handler(getStandardMultiSearchAutocompleteResponse());
       }),
     }));
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <ResponsiveContext.Provider value={{ width: 600 }}>
-              <MerchandiseSearchBar renderModalWithoutPortal={true} />
-            </ResponsiveContext.Provider>
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
+    testComponent = renderSearchBar({ widgetClient, mobileWidth: 600 });
     act(() => {
       const popupTriggerButton = testComponent.getByTestId('wigmix-msb-gallery-button');
       popupTriggerButton.click();
@@ -214,15 +223,7 @@ describe('merchandise-search-bar', () => {
         handler(getStandardMultiSearchAutocompleteResponse());
       }),
     }));
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar renderModalWithoutPortal={true} />
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
+    testComponent = renderSearchBar({ widgetClient });
     const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
     expect(searchBar).toBeDefined();
     act(() => {
@@ -258,15 +259,7 @@ describe('merchandise-search-bar', () => {
         handler(getStandardMultiSearchAutocompleteResponse());
       }),
     }));
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar renderModalWithoutPortal={true} />
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
+    testComponent = renderSearchBar({ widgetClient });
 
     act(() => {
       const galleryButton = testComponent.queryByTestId('wigmix-msb-gallery-button');
@@ -341,15 +334,7 @@ describe('merchandise-search-bar', () => {
         handler(getStandardMultiSearchAutocompleteResponse());
       }),
     }));
-    testComponent = render(
-      <RootContext.Provider value={document.body}>
-        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
-          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
-            <MerchandiseSearchBar renderModalWithoutPortal={true} />
-          </IntlProvider>
-        </WidgetDataContext.Provider>
-      </RootContext.Provider>,
-    );
+    testComponent = renderSearchBar({ widgetClient });
     const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
     expect(searchBar).toBeDefined();
     act(() => {
@@ -363,5 +348,287 @@ describe('merchandise-search-bar', () => {
     const autocompleteResults = testComponent.queryAllByTestId('wigmix-msb-autocomplete-value');
     // length of array should be 2
     expect(autocompleteResults.length).toBeGreaterThan(0);
+  });
+
+  it('should display error message when autocomplete fails', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler({
+          reqid: '12345',
+          status: 'fail',
+          method: 'product/multisearch/autocomplete',
+          error: {
+            code: 208,
+            message: 'Invalid image or query.',
+          },
+        });
+      }),
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+      fireEvent.change(searchBar!, { target: { value: 'invalid' } });
+      jest.advanceTimersByTime(500);
+    });
+    // Error message should be displayed in the dropdown
+    const errorMessage = testComponent.queryByText('WE HAVE A PROBLEM HERE!');
+    expect(errorMessage).toBeTruthy();
+  });
+
+  it('should display popular terms when dropdown is open and no query', () => {
+    widgetConfig.customizations.popularTerms = {
+      enable: true,
+      terms: ['shoes', 'dress', 'jacket'],
+    };
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation(),
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+    });
+    // Popular terms should be displayed
+    expect(testComponent.queryByText('shoes')).toBeTruthy();
+    expect(testComponent.queryByText('dress')).toBeTruthy();
+    expect(testComponent.queryByText('jacket')).toBeTruthy();
+    expect(testComponent.queryByText('Popular')).toBeTruthy();
+  });
+
+  it('should display trending products when dropdown is open and no query', () => {
+    widgetConfig.customizations.trendingProducts = {
+      enable: true,
+      products: [
+        { productId: 'trend-1', imUrl: 'https://trend-1.jpg', title: 'Trending Product 1', price: { currency: 'USD', value: 99 }, productUrl: 'https://product-1' },
+        { productId: 'trend-2', imUrl: 'https://trend-2.jpg', title: 'Trending Product 2', price: { currency: 'USD', value: 149 }, productUrl: 'https://product-2' },
+      ],
+    };
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation(),
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+    });
+    // Trending section should be displayed
+    expect(testComponent.queryByText('Trends')).toBeTruthy();
+  });
+
+  it('should invoke onSearchBarInput callback when search is triggered', () => {
+    const onSearchBarInputMock = jest.fn();
+    widgetConfig.callbacks = {
+      onSearchBarInput: onSearchBarInputMock,
+    };
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+      fireEvent.change(searchBar!, { target: { value: 'test query' } });
+      fireEvent.keyDown(searchBar!, { key: 'Enter' });
+    });
+    expect(onSearchBarInputMock).toHaveBeenCalled();
+  });
+
+  it('should not trigger autocomplete for queries shorter than 3 characters', () => {
+    const productMultisearchAutocompleteMock = jest.fn().mockImplementation((_, handler) => {
+      handler(getStandardMultiSearchAutocompleteResponse());
+    });
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: productMultisearchAutocompleteMock,
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+      fireEvent.change(searchBar!, { target: { value: 'ab' } });
+      jest.advanceTimersByTime(500);
+    });
+    // Autocomplete should not be called for short queries
+    expect(productMultisearchAutocompleteMock).not.toHaveBeenCalled();
+  });
+
+  it('should trigger autocomplete for queries with 3 or more characters', () => {
+    const productMultisearchAutocompleteMock = jest.fn().mockImplementation((_, handler) => {
+      handler(getStandardMultiSearchAutocompleteResponse());
+    });
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: productMultisearchAutocompleteMock,
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+      fireEvent.change(searchBar!, { target: { value: 'abc' } });
+      jest.advanceTimersByTime(500);
+    });
+    // Autocomplete should be called for longer queries
+    expect(productMultisearchAutocompleteMock).toHaveBeenCalled();
+  });
+
+  it('should save search query to history when search is performed', () => {
+    const localStorageSetItemSpy = jest.spyOn(Storage.prototype, 'setItem');
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+      fireEvent.change(searchBar!, { target: { value: 'test search query' } });
+      fireEvent.keyDown(searchBar!, { key: 'Enter' });
+    });
+    expect(localStorageSetItemSpy).toHaveBeenCalledWith(
+      'wigmix_internal_search_history_test-app-key',
+      expect.stringContaining('test search query'),
+    );
+    localStorageSetItemSpy.mockRestore();
+  });
+
+  it('should load search history from localStorage on mount', () => {
+    const mockHistory = [
+      { query: 'previous search', timestamp: Date.now() },
+    ];
+    jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(JSON.stringify(mockHistory));
+    widgetConfig.customizations.popularTerms = { enable: false, terms: [] };
+    widgetConfig.customizations.trendingProducts = { enable: false, products: [] };
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation(),
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+    });
+    // Note: The search history is loaded but display depends on component implementation
+    // Verify localStorage was accessed
+    expect(Storage.prototype.getItem).toHaveBeenCalledWith('wigmix_internal_search_history_test-app-key');
+  });
+
+  it('should close dropdown when clicking outside', () => {
+    widgetConfig.customizations.popularTerms = {
+      enable: true,
+      terms: ['shoes'],
+    };
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation(),
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+    });
+    // Dropdown should be open
+    expect(testComponent.queryByText('shoes')).toBeTruthy();
+    // Click outside
+    act(() => {
+      fireEvent.mouseDown(document.body);
+    });
+    // Dropdown should be closed
+    expect(testComponent.queryByText('shoes')).toBeNull();
+  });
+
+  it('should detect image URL pasted in search bar and trigger image search', () => {
+    const onSearchBarInputMock = jest.fn();
+    widgetConfig.callbacks = {
+      onSearchBarInput: onSearchBarInputMock,
+    };
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+      fireEvent.change(searchBar!, { target: { value: 'https://example.com/image.jpg' } });
+      jest.advanceTimersByTime(500);
+    });
+    // Input should be cleared when image URL is detected
+    expect(searchBar!.getAttribute('value')).toBe('');
+  });
+
+  it('should render in dark mode with correct styling', () => {
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = renderSearchBar({ widgetClient, darkMode: true });
+    expect(testComponent.asFragment()).toMatchSnapshot();
+  });
+
+  it('should select popular term and update query', () => {
+    widgetConfig.customizations.popularTerms = {
+      enable: true,
+      terms: ['trending shoes', 'summer dress'],
+    };
+    const onSearchBarInputMock = jest.fn();
+    widgetConfig.callbacks = {
+      onSearchBarInput: onSearchBarInputMock,
+    };
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation(),
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const searchBar = testComponent.queryByTestId('wigmix-msb-search-bar-input');
+    act(() => {
+      searchBar!.click();
+    });
+    // Click on a popular term
+    const popularTerm = testComponent.getByText('trending shoes');
+    act(() => {
+      popularTerm.click();
+    });
+    // Callback should be invoked with the selected term
+    expect(onSearchBarInputMock).toHaveBeenCalledWith('trending shoes', undefined);
+  });
+
+  it('should not show image upload button when imageUpload is disabled', () => {
+    widgetConfig.customizations.imageUpload = {
+      ...widgetConfig.customizations.imageUpload!,
+      enable: false,
+    };
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_merchandise_search_bar', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch: jest.fn().mockImplementation(),
+      productMultisearchAutocomplete: jest.fn().mockImplementation(),
+    }));
+    testComponent = renderSearchBar({ widgetClient });
+    const galleryButton = testComponent.queryByTestId('wigmix-msb-gallery-button');
+    expect(galleryButton).toBeNull();
   });
 });

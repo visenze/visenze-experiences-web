@@ -1,0 +1,334 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`shoppable-gallery should match snapshot for default layout 1`] = `
+<DocumentFragment>
+  <div>
+    <div
+      class="wigmix-product-grid grid "
+      data-pw="sg-gallery-products-grid"
+      style="grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 12px; column-gap: 12px;"
+    >
+      <div
+        data-pw="sg-gallery-product-1"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-1.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-2"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-2.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-3"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-3.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-4"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-4.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-5"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-5.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-6"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-6.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-7"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-7.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-8"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-8.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-9"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-9.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-10"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-10.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-11"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-11.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-12"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-12.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-13"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-13.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-14"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-14.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-15"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-15.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-16"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-16.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-17"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-17.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-18"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-18.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-19"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-19.jpg"
+            />
+          </div>
+        </a>
+      </div>
+      <div
+        data-pw="sg-gallery-product-20"
+      >
+        <a
+          class="cursor-pointer"
+        >
+          <div
+            class="group aspect-square overflow-hidden"
+          >
+            <img
+              class="size-full object-cover transition duration-200 group-hover:scale-110"
+              src="https://gallery-image-20.jpg"
+            />
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

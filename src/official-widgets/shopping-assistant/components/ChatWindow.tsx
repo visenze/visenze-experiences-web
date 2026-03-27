@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
+import { type CSSProperties, type FC, Fragment, useContext, useEffect, useState } from 'react';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import SparklesIcon from '../../../common/icons/SparklesIcon';
@@ -229,10 +229,9 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
             <div className='mt-2 flex items-end'>
               <div className='flex flex-wrap gap-2'>
                 {suggestions.map((suggestion, idx) => (
-                  <>
+                  <Fragment key={`suggestion-${idx}`}>
                     {(showAllSuggestions || idx <= 1) && (
                       <div
-                        key={`suggestion-${idx}`}
                         className='w-fit bg-sky-100 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
                     rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
                         onClick={() => sendMessage(suggestion)}
@@ -240,7 +239,7 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                         {suggestion}
                       </div>
                     )}
-                  </>
+                  </Fragment>
                 ))}
                 {(!showAllSuggestions && suggestions.length >= 2) && (
                   <div
