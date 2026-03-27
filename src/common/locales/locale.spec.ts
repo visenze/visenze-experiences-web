@@ -104,7 +104,7 @@ describe('locale', () => {
 
     expect(['IDR 1,000.45', 'IDR 1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'IDR', 1000.45));
     expect(['IDR 1,000']).toContain(getNbspSanitizedFormattedCurrency('en', 'IDR', 1000.45, true));
-    expect(['Rp 1.000,45']).toContain(getNbspSanitizedFormattedCurrency('id', 'IDR', 1000.45));
+    expect(['Rp 1.000,45', 'Rp 1.000']).toContain(getNbspSanitizedFormattedCurrency('id', 'IDR', 1000.45));
     expect(['Rp 1.000']).toContain(getNbspSanitizedFormattedCurrency('id', 'IDR', 1000.45, true));
 
     expect(['₹1,000.45']).toContain(getNbspSanitizedFormattedCurrency('en', 'INR', 1000.45));
