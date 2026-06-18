@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.21](https://github.com/visenze/visenze-experiences-web/compare/1.0.20...1.0.21) - [Unreleased]
+
+<!-- BEGIN visenze-experiences-web 1.0.21 -->
+### Changed
+
+- Upgrade visearch-javascript-sdk to 5.2.0.
+- Set default endpoint to `multimodal.search.rezolve.com`
+
+<!-- END visenze-experiences-web 1.0.21 -->
+
 ## [1.0.20](https://github.com/visenze/visenze-experiences-web/compare/1.0.19...1.0.20) - 2025-11-07
 
 <!-- BEGIN visenze-experiences-web 1.0.20 -->
