@@ -21,6 +21,8 @@ The widgets use React, HeroUI (formerly known as NextUI) and Tailwind CSS.
 
 ## Local development
 
+First run `npm install`.
+
 Each widget is designed to be distributed as a separate bundle.
 The exact steps for local development vary slightly between different widgets, but generally follow the same idea.
 Using `similar-search` as example:
