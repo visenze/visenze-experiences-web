@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import GalleryImage from './components/GalleryImage';
 import HotspotRecommendations from './components/HotspotRecommendations';
+import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../common/client/endpoint';
 import Footer from '../../common/components/Footer';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useRecommendationSearch from '../../common/components/hooks/use-recommendation-search';
@@ -53,8 +54,13 @@ const ShoppableGallery: FC<ShoppableGalleryProps> = ({ renderModalWithoutPortal 
  // Retrieve gallery products
   useEffect(() => {
     const fetchGalleryProducts = async (): Promise<void> => {
+      const manualEndpoint = getManualEndpoint(appSettings.placementId);
+      const base = resolveBaseEndpoint(appSettings, manualEndpoint);
+      const browsePath = usesCloudPaths(appSettings, manualEndpoint)
+        ? '/v1/visearch/linked/gallery/browse'
+        : '/v1/product/linked/gallery/browse';
       const response = await fetch(
-        `${appSettings.endpoint}/v1/product/linked/gallery/browse?placement_id=${appSettings.placementId}&app_key=${appSettings.appKey}&limit=100`,
+        `${base}${browsePath}?placement_id=${appSettings.placementId}&app_key=${appSettings.appKey}&limit=100`,
       );
       const data = await response.json();
       setGalleryProducts(getFlattenProducts(data.result));

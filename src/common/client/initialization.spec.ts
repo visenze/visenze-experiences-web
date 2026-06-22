@@ -75,6 +75,64 @@ describe('initialization', () => {
     jest.clearAllMocks();
   });
 
+  const buildClient = (): void => {
+    const widgetFactoryCallback = initWidgetFactory(
+      WidgetType.CAMERA_SEARCH,
+      '1.0.0',
+      jest.fn(),
+      false,
+      defaultCustomizations(),
+    );
+    widgetFactoryCallback(widgetConfig, {}, false);
+  };
+
+  describe('cloud endpoint wiring (setKeys)', () => {
+    afterEach(() => {
+      delete (window as any).visenzeConfigs;
+    });
+
+    it('forwards cloud and omits endpoint when cloud is set and no manual endpoint', () => {
+      widgetConfig.appSettings.cloud = 'aws';
+      buildClient();
+      const keys = (mockViSearchClient.setKeys as jest.Mock).mock.calls[0][0];
+      expect(keys.cloud).toBe('aws');
+      expect(keys.endpoint).toBeUndefined();
+    });
+
+    it('ignores the API endpoint when cloud is set', () => {
+      widgetConfig.appSettings.cloud = 'azure';
+      widgetConfig.appSettings.endpoint = 'https://api.example.com';
+      buildClient();
+      const keys = (mockViSearchClient.setKeys as jest.Mock).mock.calls[0][0];
+      expect(keys.cloud).toBe('azure');
+      expect(keys.endpoint).toBeUndefined();
+    });
+
+    it('forwards the manual endpoint over cloud (manual wins) and still forwards cloud', () => {
+      (window as any).visenzeConfigs = { 1234: { appSettings: { endpoint: 'https://manual.example.com' } } };
+      widgetConfig.appSettings.cloud = 'aws';
+      buildClient();
+      const keys = (mockViSearchClient.setKeys as jest.Mock).mock.calls[0][0];
+      expect(keys.endpoint).toBe('https://manual.example.com');
+      expect(keys.cloud).toBe('aws');
+    });
+
+    it('forwards the API endpoint when no cloud is set', () => {
+      widgetConfig.appSettings.endpoint = 'https://api.example.com';
+      buildClient();
+      const keys = (mockViSearchClient.setKeys as jest.Mock).mock.calls[0][0];
+      expect(keys.endpoint).toBe('https://api.example.com');
+      expect(keys.cloud).toBeUndefined();
+    });
+
+    it('falls back to DEFAULT_ENDPOINT with no cloud and no endpoint (today behavior)', () => {
+      buildClient();
+      const keys = (mockViSearchClient.setKeys as jest.Mock).mock.calls[0][0];
+      expect(keys.endpoint).toBe('https://multimodal.search.rezolve.com');
+      expect(keys.cloud).toBeUndefined();
+    });
+  });
+
   it('initWidgetFactory should send session_init event on callback', () => {
     const widgetFactoryCallback = initWidgetFactory(
       WidgetType.CAMERA_SEARCH,

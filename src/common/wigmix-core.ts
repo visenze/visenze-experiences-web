@@ -665,6 +665,16 @@ export interface WidgetConfig {
      */
     endpoint?: string;
     /**
+     * (optional) Cloud deployment target. Set to 'aws' or 'azure' to route requests to the
+     * cloud-specific domains with their updated API paths. When set, it overrides the API-provided
+     * `endpoint` — but a manually specified endpoint (via window.visenzeConfigs) still wins.
+     *
+     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
+     *
+     * @since 1.0.0
+     */
+    cloud?: 'aws' | 'azure';
+    /**
      * Dimensions of the image to be considered for the algorithm.
      *
      * The ViSearch SDK by default resize image uploaded to 512x512;

@@ -1,0 +1,57 @@
+import { DEFAULT_ENDPOINT } from '../constants';
+
+type AppSettingsLike = { endpoint?: string; cloud?: 'aws' | 'azure' };
+
+/**
+ * Cloud-specific API domains. This deliberately mirrors the cloud→domain map inside
+ * `visearch-javascript-sdk` (see its `getEndpoint`), because the direct-`fetch` call sites in this
+ * repo (gallery browse, dev field-mapping fetch) bypass the SDK and must resolve the domain
+ * themselves. Keep in sync with the SDK constants.
+ */
+export const CLOUD_DOMAINS: Record<'aws' | 'azure', string> = {
+  aws: 'https://multisearch-aw.rezolve.com',
+  azure: 'https://multisearch-az.rezolve.com',
+};
+
+const CLOUD_ORIGINS = new Set(Object.values(CLOUD_DOMAINS).map((d) => new URL(d).origin));
+
+/**
+ * Resolve the base API domain, following precedence: manual endpoint > cloud > API endpoint > default.
+ */
+export const resolveBaseEndpoint = (settings: AppSettingsLike, manualEndpoint?: string): string => {
+  if (manualEndpoint) {
+    return manualEndpoint;
+  }
+  if (settings.cloud && CLOUD_DOMAINS[settings.cloud]) {
+    return CLOUD_DOMAINS[settings.cloud];
+  }
+  if (settings.endpoint) {
+    return settings.endpoint;
+  }
+  return DEFAULT_ENDPOINT;
+};
+
+/**
+ * Whether to use the new cloud API paths. Mirrors the SDK's `isCloudDomain`: an explicit endpoint
+ * (manual, or the API endpoint when no cloud is set) only triggers cloud paths if its origin is a
+ * known cloud domain; otherwise `cloud` drives it.
+ */
+export const usesCloudPaths = (settings: AppSettingsLike, manualEndpoint?: string): boolean => {
+  const explicit = manualEndpoint ?? (settings.cloud ? undefined : settings.endpoint);
+  if (explicit) {
+    try {
+      return CLOUD_ORIGINS.has(new URL(explicit).origin);
+    } catch {
+      return false;
+    }
+  }
+  return settings.cloud === 'aws' || settings.cloud === 'azure';
+};
+
+/**
+ * Read a developer-supplied manual endpoint (highest precedence) from the host page's
+ * `window.visenzeConfigs[placementId].appSettings.endpoint` channel.
+ */
+export const getManualEndpoint = (placementId: string | number): string | undefined =>
+  (window as unknown as { visenzeConfigs?: Record<string, { appSettings?: { endpoint?: string } }> })
+    .visenzeConfigs?.[placementId]?.appSettings?.endpoint;

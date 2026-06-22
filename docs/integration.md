@@ -75,6 +75,25 @@ in order for the settings to be properly overridden.
 The full list of available parameters can be seen in the `WidgetConfig` object in `wigmix-core.ts`.
 Parameters marked as `@internal` are only for internal usage and not recommended to be set within the configuration object.
 
+### Cloud endpoint (`appSettings.cloud`)
+
+`appSettings.cloud` selects a cloud-specific deployment domain (with its updated API paths) instead
+of the legacy domain. It is normally populated automatically by the ViSenze widget initialization API
+based on the account's deployment region, so integrators rarely set it manually.
+
+| `appSettings.cloud` | Domain used |
+|---------------------|-------------|
+| `'aws'`             | `https://multisearch-aw.rezolve.com` |
+| `'azure'`           | `https://multisearch-az.rezolve.com` |
+| unset               | the API-provided `endpoint`, else the default legacy domain |
+
+Endpoint resolution precedence (highest first):
+
+1. A manually specified `appSettings.endpoint` (via `window.visenzeConfigs`) — always wins.
+2. `appSettings.cloud` — when set, the API-provided `endpoint` is ignored.
+3. The API-provided `appSettings.endpoint`.
+4. The built-in default endpoint.
+
 ## Callbacks
 
 ViSenze widgets provide some pre-defined callback events such as after tracking (`trackingCallback`), after product search (`onSearchCallback`), and after product click (`onProductClick`).

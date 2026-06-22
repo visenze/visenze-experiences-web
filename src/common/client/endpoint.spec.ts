@@ -1,0 +1,85 @@
+import { CLOUD_DOMAINS, getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from './endpoint';
+import { DEFAULT_ENDPOINT } from '../constants';
+
+describe('endpoint resolver', () => {
+  describe('resolveBaseEndpoint (precedence: manual > cloud > API endpoint > default)', () => {
+    it('returns DEFAULT_ENDPOINT when nothing is set', () => {
+      expect(resolveBaseEndpoint({})).toBe(DEFAULT_ENDPOINT);
+    });
+
+    it('returns the API endpoint when set and no cloud', () => {
+      expect(resolveBaseEndpoint({ endpoint: 'https://api.example.com' })).toBe('https://api.example.com');
+    });
+
+    it('returns the aws cloud domain when cloud=aws', () => {
+      expect(resolveBaseEndpoint({ cloud: 'aws' })).toBe(CLOUD_DOMAINS.aws);
+    });
+
+    it('returns the azure cloud domain when cloud=azure', () => {
+      expect(resolveBaseEndpoint({ cloud: 'azure' })).toBe(CLOUD_DOMAINS.azure);
+    });
+
+    it('ignores the API endpoint when cloud is set (cloud wins)', () => {
+      expect(resolveBaseEndpoint({ cloud: 'aws', endpoint: 'https://api.example.com' })).toBe(CLOUD_DOMAINS.aws);
+    });
+
+    it('returns the manual endpoint over cloud (manual wins)', () => {
+      expect(resolveBaseEndpoint({ cloud: 'aws', endpoint: 'https://api.example.com' }, 'https://manual.example.com')).toBe('https://manual.example.com');
+    });
+  });
+
+  describe('usesCloudPaths (mirrors SDK isCloudDomain)', () => {
+    it('is false when nothing is set', () => {
+      expect(usesCloudPaths({})).toBe(false);
+    });
+
+    it('is false for a legacy API endpoint', () => {
+      expect(usesCloudPaths({ endpoint: 'https://search.visenze.com' })).toBe(false);
+    });
+
+    it('is true when cloud=aws', () => {
+      expect(usesCloudPaths({ cloud: 'aws' })).toBe(true);
+    });
+
+    it('is true when cloud=azure', () => {
+      expect(usesCloudPaths({ cloud: 'azure' })).toBe(true);
+    });
+
+    it('is true when cloud set even if a legacy API endpoint is also present (endpoint ignored)', () => {
+      expect(usesCloudPaths({ cloud: 'aws', endpoint: 'https://search.visenze.com' })).toBe(true);
+    });
+
+    it('is true when a manual endpoint points at a known cloud domain', () => {
+      expect(usesCloudPaths({}, CLOUD_DOMAINS.azure)).toBe(true);
+    });
+
+    it('is false when a manual endpoint points at a non-cloud domain, overriding cloud', () => {
+      expect(usesCloudPaths({ cloud: 'aws' }, 'https://search.visenze.com')).toBe(false);
+    });
+
+    it('is false for a malformed explicit endpoint', () => {
+      expect(usesCloudPaths({ endpoint: 'not a url' })).toBe(false);
+    });
+  });
+
+  describe('getManualEndpoint', () => {
+    afterEach(() => {
+      delete (window as any).visenzeConfigs;
+    });
+
+    it('returns undefined when window.visenzeConfigs is absent', () => {
+      expect(getManualEndpoint('5000')).toBeUndefined();
+    });
+
+    it('reads the manual endpoint for the given placement id', () => {
+      (window as any).visenzeConfigs = { 5000: { appSettings: { endpoint: 'https://manual.example.com' } } };
+      expect(getManualEndpoint('5000')).toBe('https://manual.example.com');
+      expect(getManualEndpoint(5000)).toBe('https://manual.example.com');
+    });
+
+    it('returns undefined for a placement id with no manual endpoint', () => {
+      (window as any).visenzeConfigs = { 5000: { appSettings: {} } };
+      expect(getManualEndpoint('9999')).toBeUndefined();
+    });
+  });
+});

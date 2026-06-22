@@ -33,6 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.21](https://github.com/visenze/visenze-experiences-web/compare/1.0.20...1.0.21) - [Unreleased]
 
 <!-- BEGIN visenze-experiences-web 1.0.21 -->
+
+### Added
+
+- All widgets: Added `appSettings.cloud` (`'aws'` | `'azure'`) to route requests to cloud-specific domains with their updated API paths. When set, it overrides the API-provided endpoint; a manually specified endpoint still takes highest priority.
+
 ### Changed
 
 - Upgrade visearch-javascript-sdk to 5.2.0.

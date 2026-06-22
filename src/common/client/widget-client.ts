@@ -3,6 +3,7 @@ import ViSearch, { type ProductSearchResponse, type ViSearchClient } from 'visea
 import type { Primitive, WidgetClient, WidgetConfig, WidgetRenderStatus } from '../wigmix-core';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
 import { DEFAULT_ENDPOINT } from '../constants';
+import { getManualEndpoint } from './endpoint';
 
 const validateBatchEvents = (
   events: Record<string, string>[],
@@ -45,7 +46,8 @@ const wrapCallbacks = (
 
 const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion: string, visearchFactory: () => ViSearchClient = () => ViSearch()): WidgetClient => {
   const { appSettings, callbacks, disableAnalytics, isCustomScript } = config;
-  const { appKey, placementId, strategyId, endpoint, gtmTracking, resizeSettings, uid } = appSettings;
+  const { appKey, placementId, strategyId, endpoint, cloud, gtmTracking, resizeSettings, uid } = appSettings;
+  const manualEndpoint = getManualEndpoint(placementId);
   const { onSearchCallback } = callbacks;
   let renderStatus: WidgetRenderStatus = 'UNRENDERED';
   let roots: Root[] = [];
@@ -62,7 +64,15 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     placement_id: placementId,
     strategy_id: strategyId,
     app_key: appKey,
-    endpoint: endpoint || DEFAULT_ENDPOINT,
+    // Precedence: manual endpoint (JS) > cloud > API endpoint > default.
+    // When cloud is set (and no manual endpoint), omit endpoint so the SDK resolves the
+    // cloud-specific domain + paths itself.
+    ...(manualEndpoint
+      ? { endpoint: manualEndpoint }
+      : cloud
+        ? {}
+        : { endpoint: endpoint || DEFAULT_ENDPOINT }),
+    ...(cloud ? { cloud } : {}),
     gtm_tracking: gtmTracking,
     resize_settings: resizeSettings || {},
   });
