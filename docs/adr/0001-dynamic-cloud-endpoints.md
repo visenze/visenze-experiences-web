@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-06-22
 - **Related:** `visearch-sdk-javascript` PR #94 (new cloud domains), SDK `>= 5.2.0`;
-  superseded planning docs `cloud-endpoints-api-plan.md`, `widget-init-flow.md`
+  `widget-init-flow.md` (boot flow + when the endpoint is read)
 
 ## Context
 
