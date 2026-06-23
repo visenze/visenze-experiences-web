@@ -1,5 +1,6 @@
 import { CLOUD_DOMAINS, getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from './endpoint';
 import { DEFAULT_ENDPOINT } from '../constants';
+import type { Cloud } from '../types/cloud';
 
 describe('endpoint resolver', () => {
   describe('resolveBaseEndpoint (precedence: manual > cloud > API endpoint > default)', () => {
@@ -42,6 +43,10 @@ describe('endpoint resolver', () => {
     it('treats a blank manual endpoint as unset so cloud can win', () => {
       expect(resolveBaseEndpoint({ cloud: 'aws', endpoint: 'https://api.example.com' }, '')).toBe(CLOUD_DOMAINS.aws);
       expect(resolveBaseEndpoint({ cloud: 'azure' }, ' ')).toBe(CLOUD_DOMAINS.azure);
+    });
+
+    it('falls back to DEFAULT_ENDPOINT when a cloud has no configured domain', () => {
+      expect(resolveBaseEndpoint({ cloud: 'gcp' as Cloud, endpoint: 'https://api.example.com' })).toBe(DEFAULT_ENDPOINT);
     });
   });
 
@@ -90,6 +95,10 @@ describe('endpoint resolver', () => {
     it('treats a blank manual endpoint as unset so cloud can drive path selection', () => {
       expect(usesCloudPaths({ cloud: 'aws' }, '')).toBe(true);
       expect(usesCloudPaths({ cloud: 'azure' }, ' ')).toBe(true);
+    });
+
+    it('does not use cloud paths when a cloud has no configured domain', () => {
+      expect(usesCloudPaths({ cloud: 'gcp' as Cloud })).toBe(false);
     });
   });
 

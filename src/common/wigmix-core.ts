@@ -1,8 +1,9 @@
 import type { Root } from 'react-dom/client';
 import type { ProductSearchResponse, ViSearchClient } from 'visearch-javascript-sdk';
+import type { LanguagePack } from './locales/locale';
+import type { Cloud } from './types/cloud';
 import type { ErrorHandler, SuccessHandler } from './types/function';
 import type { SearchImage, SearchImageOrPid } from './types/image';
-import type { LanguagePack } from './locales/locale';
 
 export type Primitive = boolean | string | number;
 
@@ -673,7 +674,7 @@ export interface WidgetConfig {
      *
      * @since 1.0.21
      */
-    cloud?: 'aws' | 'azure';
+    cloud?: Cloud;
     /**
      * Dimensions of the image to be considered for the algorithm.
      *

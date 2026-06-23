@@ -1,6 +1,7 @@
+import type { Cloud } from '../types/cloud';
 import { DEFAULT_ENDPOINT } from '../constants';
 
-type AppSettingsLike = { endpoint?: string; cloud?: 'aws' | 'azure' };
+type AppSettingsLike = { endpoint?: string; cloud?: Cloud };
 
 /**
  * Cloud-specific API domains. This deliberately mirrors the cloud→domain map inside
@@ -8,12 +9,14 @@ type AppSettingsLike = { endpoint?: string; cloud?: 'aws' | 'azure' };
  * repo (gallery browse, dev field-mapping fetch) bypass the SDK and must resolve the domain
  * themselves. Keep in sync with the SDK constants.
  */
-export const CLOUD_DOMAINS: Record<'aws' | 'azure', string> = {
+export const CLOUD_DOMAINS: Partial<Record<Cloud, string>> = {
   aws: 'https://multisearch-aw.rezolve.com',
   azure: 'https://multisearch-az.rezolve.com',
 };
 
 const CLOUD_ORIGINS = new Set(Object.values(CLOUD_DOMAINS).map((d) => new URL(d).origin));
+
+const getCloudDomain = (cloud?: Cloud): string | undefined => (cloud ? CLOUD_DOMAINS[cloud] : undefined);
 
 const normalizeEndpoint = (endpoint?: string): string | undefined => {
   const trimmed = endpoint?.trim();
@@ -28,8 +31,12 @@ export const resolveBaseEndpoint = (settings: AppSettingsLike, manualEndpoint?: 
   if (normalizedManualEndpoint) {
     return normalizedManualEndpoint;
   }
-  if (settings.cloud && CLOUD_DOMAINS[settings.cloud]) {
-    return CLOUD_DOMAINS[settings.cloud];
+  const cloudDomain = getCloudDomain(settings.cloud);
+  if (cloudDomain) {
+    return cloudDomain;
+  }
+  if (settings.cloud) {
+    return DEFAULT_ENDPOINT;
   }
   const normalizedEndpoint = normalizeEndpoint(settings.endpoint);
   if (normalizedEndpoint) {
@@ -52,7 +59,7 @@ export const usesCloudPaths = (settings: AppSettingsLike, manualEndpoint?: strin
       return false;
     }
   }
-  return settings.cloud === 'aws' || settings.cloud === 'azure';
+  return Boolean(getCloudDomain(settings.cloud));
 };
 
 /**
