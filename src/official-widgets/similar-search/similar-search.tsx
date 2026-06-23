@@ -56,6 +56,7 @@ const SimilarSearch: FC<SimilarSearchProps> = ({ pid, imUrl, renderModalWithoutP
   } = useImageMultisearch({
     image,
     boxData,
+    routeByMsApiId: true,
   });
 
   const onModalClose = (): void => {
