@@ -37,11 +37,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - All widgets: Added `appSettings.cloud` (`'aws'` | `'azure'`) to route requests to cloud-specific domains with their updated API paths. When set, it overrides the API-provided endpoint; a manually specified endpoint still takes highest priority.
+- in-page-carousel-v3, similar-search: Added `appSettings.msApiId` support to route multisearch-family requests to regular multisearch (`'1'`), complementary (`'2'`), or outfit recommendations (`'3'`). A non-blank manual override in `window.visenzeConfigs[placementId].appSettings.msApiId` takes precedence over the API-provided value.
 
 ### Changed
 
 - Upgrade visearch-javascript-sdk to 5.2.0.
 - Set default endpoint to `multimodal.search.rezolve.com`
+
+### Fixed
+
+- (internal) Stabilized similar-search snapshots by assigning a fixed refinement search input ID.
+- (internal) Ignored generated `dist/` output in Jest test discovery.
 
 <!-- END visenze-experiences-web 1.0.21 -->
 
