@@ -15,18 +15,25 @@ export const CLOUD_DOMAINS: Record<'aws' | 'azure', string> = {
 
 const CLOUD_ORIGINS = new Set(Object.values(CLOUD_DOMAINS).map((d) => new URL(d).origin));
 
+const normalizeEndpoint = (endpoint?: string): string | undefined => {
+  const trimmed = endpoint?.trim();
+  return trimmed || undefined;
+};
+
 /**
  * Resolve the base API domain, following precedence: manual endpoint > cloud > API endpoint > default.
  */
 export const resolveBaseEndpoint = (settings: AppSettingsLike, manualEndpoint?: string): string => {
-  if (manualEndpoint) {
-    return manualEndpoint;
+  const normalizedManualEndpoint = normalizeEndpoint(manualEndpoint);
+  if (normalizedManualEndpoint) {
+    return normalizedManualEndpoint;
   }
   if (settings.cloud && CLOUD_DOMAINS[settings.cloud]) {
     return CLOUD_DOMAINS[settings.cloud];
   }
-  if (settings.endpoint) {
-    return settings.endpoint;
+  const normalizedEndpoint = normalizeEndpoint(settings.endpoint);
+  if (normalizedEndpoint) {
+    return normalizedEndpoint;
   }
   return DEFAULT_ENDPOINT;
 };
@@ -37,7 +44,7 @@ export const resolveBaseEndpoint = (settings: AppSettingsLike, manualEndpoint?: 
  * known cloud domain; otherwise `cloud` drives it.
  */
 export const usesCloudPaths = (settings: AppSettingsLike, manualEndpoint?: string): boolean => {
-  const explicit = manualEndpoint ?? (settings.cloud ? undefined : settings.endpoint);
+  const explicit = normalizeEndpoint(manualEndpoint) ?? (settings.cloud ? undefined : normalizeEndpoint(settings.endpoint));
   if (explicit) {
     try {
       return CLOUD_ORIGINS.has(new URL(explicit).origin);
@@ -53,5 +60,5 @@ export const usesCloudPaths = (settings: AppSettingsLike, manualEndpoint?: strin
  * `window.visenzeConfigs[placementId].appSettings.endpoint` channel.
  */
 export const getManualEndpoint = (placementId: string | number): string | undefined =>
-  (window as unknown as { visenzeConfigs?: Record<string, { appSettings?: { endpoint?: string } }> })
-    .visenzeConfigs?.[placementId]?.appSettings?.endpoint;
+  normalizeEndpoint((window as unknown as { visenzeConfigs?: Record<string, { appSettings?: { endpoint?: string } }> })
+    .visenzeConfigs?.[placementId]?.appSettings?.endpoint);

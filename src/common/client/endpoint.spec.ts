@@ -11,6 +11,14 @@ describe('endpoint resolver', () => {
       expect(resolveBaseEndpoint({ endpoint: 'https://api.example.com' })).toBe('https://api.example.com');
     });
 
+    it('trims the API endpoint when set and no cloud', () => {
+      expect(resolveBaseEndpoint({ endpoint: ' https://api.example.com ' })).toBe('https://api.example.com');
+    });
+
+    it('treats a blank API endpoint as unset', () => {
+      expect(resolveBaseEndpoint({ endpoint: ' ' })).toBe(DEFAULT_ENDPOINT);
+    });
+
     it('returns the aws cloud domain when cloud=aws', () => {
       expect(resolveBaseEndpoint({ cloud: 'aws' })).toBe(CLOUD_DOMAINS.aws);
     });
@@ -25,6 +33,15 @@ describe('endpoint resolver', () => {
 
     it('returns the manual endpoint over cloud (manual wins)', () => {
       expect(resolveBaseEndpoint({ cloud: 'aws', endpoint: 'https://api.example.com' }, 'https://manual.example.com')).toBe('https://manual.example.com');
+    });
+
+    it('trims the manual endpoint when present', () => {
+      expect(resolveBaseEndpoint({ cloud: 'aws' }, ' https://manual.example.com ')).toBe('https://manual.example.com');
+    });
+
+    it('treats a blank manual endpoint as unset so cloud can win', () => {
+      expect(resolveBaseEndpoint({ cloud: 'aws', endpoint: 'https://api.example.com' }, '')).toBe(CLOUD_DOMAINS.aws);
+      expect(resolveBaseEndpoint({ cloud: 'azure' }, ' ')).toBe(CLOUD_DOMAINS.azure);
     });
   });
 
@@ -53,12 +70,22 @@ describe('endpoint resolver', () => {
       expect(usesCloudPaths({}, CLOUD_DOMAINS.azure)).toBe(true);
     });
 
+    it('trims explicit endpoints before detecting cloud domains', () => {
+      expect(usesCloudPaths({}, ` ${CLOUD_DOMAINS.azure} `)).toBe(true);
+      expect(usesCloudPaths({ endpoint: ` ${CLOUD_DOMAINS.aws} ` })).toBe(true);
+    });
+
     it('is false when a manual endpoint points at a non-cloud domain, overriding cloud', () => {
       expect(usesCloudPaths({ cloud: 'aws' }, 'https://search.visenze.com')).toBe(false);
     });
 
     it('is false for a malformed explicit endpoint', () => {
       expect(usesCloudPaths({ endpoint: 'not a url' })).toBe(false);
+    });
+
+    it('treats a blank manual endpoint as unset so cloud can drive path selection', () => {
+      expect(usesCloudPaths({ cloud: 'aws' }, '')).toBe(true);
+      expect(usesCloudPaths({ cloud: 'azure' }, ' ')).toBe(true);
     });
   });
 
@@ -75,6 +102,15 @@ describe('endpoint resolver', () => {
       (window as any).visenzeConfigs = { 5000: { appSettings: { endpoint: 'https://manual.example.com' } } };
       expect(getManualEndpoint('5000')).toBe('https://manual.example.com');
       expect(getManualEndpoint(5000)).toBe('https://manual.example.com');
+    });
+
+    it('trims manual endpoints and treats blank values as unset', () => {
+      (window as any).visenzeConfigs = {
+        5000: { appSettings: { endpoint: ' https://manual.example.com ' } },
+        6000: { appSettings: { endpoint: ' ' } },
+      };
+      expect(getManualEndpoint('5000')).toBe('https://manual.example.com');
+      expect(getManualEndpoint('6000')).toBeUndefined();
     });
 
     it('returns undefined for a placement id with no manual endpoint', () => {
