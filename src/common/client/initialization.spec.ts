@@ -125,7 +125,7 @@ describe('initialization', () => {
       expect(keys.cloud).toBeUndefined();
     });
 
-    it('falls back to DEFAULT_ENDPOINT with no cloud and no endpoint (today behavior)', () => {
+    it('falls back to LEGACY_ENDPOINT with no cloud and no endpoint (today behavior)', () => {
       buildClient();
       const keys = (mockViSearchClient.setKeys as jest.Mock).mock.calls[0][0];
       expect(keys.endpoint).toBe('https://multimodal.search.rezolve.com');

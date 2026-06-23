@@ -1,11 +1,11 @@
 import { CLOUD_DOMAINS, getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from './endpoint';
-import { DEFAULT_ENDPOINT } from '../constants';
+import { LEGACY_ENDPOINT } from '../constants';
 import type { Cloud } from '../types/cloud';
 
 describe('endpoint resolver', () => {
   describe('resolveBaseEndpoint (precedence: manual > cloud > API endpoint > default)', () => {
-    it('returns DEFAULT_ENDPOINT when nothing is set', () => {
-      expect(resolveBaseEndpoint({})).toBe(DEFAULT_ENDPOINT);
+    it('returns LEGACY_ENDPOINT when nothing is set', () => {
+      expect(resolveBaseEndpoint({})).toBe(LEGACY_ENDPOINT);
     });
 
     it('returns the API endpoint when set and no cloud', () => {
@@ -17,7 +17,7 @@ describe('endpoint resolver', () => {
     });
 
     it('treats a blank API endpoint as unset', () => {
-      expect(resolveBaseEndpoint({ endpoint: ' ' })).toBe(DEFAULT_ENDPOINT);
+      expect(resolveBaseEndpoint({ endpoint: ' ' })).toBe(LEGACY_ENDPOINT);
     });
 
     it('returns the aws cloud domain when cloud=aws', () => {
@@ -45,8 +45,8 @@ describe('endpoint resolver', () => {
       expect(resolveBaseEndpoint({ cloud: 'azure' }, ' ')).toBe(CLOUD_DOMAINS.azure);
     });
 
-    it('falls back to DEFAULT_ENDPOINT when a cloud has no configured domain', () => {
-      expect(resolveBaseEndpoint({ cloud: 'gcp' as Cloud, endpoint: 'https://api.example.com' })).toBe(DEFAULT_ENDPOINT);
+    it('falls back to LEGACY_ENDPOINT when a cloud has no configured domain', () => {
+      expect(resolveBaseEndpoint({ cloud: 'gcp' as Cloud, endpoint: 'https://api.example.com' })).toBe(LEGACY_ENDPOINT);
     });
   });
 

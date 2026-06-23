@@ -1,5 +1,5 @@
 import type { Cloud } from '../types/cloud';
-import { DEFAULT_ENDPOINT } from '../constants';
+import { LEGACY_ENDPOINT } from '../constants';
 
 type AppSettingsLike = { endpoint?: string; cloud?: Cloud };
 
@@ -39,13 +39,13 @@ export const resolveBaseEndpoint = (settings: AppSettingsLike, manualEndpoint?: 
     return cloudDomain;
   }
   if (settings.cloud) {
-    return DEFAULT_ENDPOINT;
+    return LEGACY_ENDPOINT;
   }
   const normalizedEndpoint = normalizeEndpoint(settings.endpoint);
   if (normalizedEndpoint) {
     return normalizedEndpoint;
   }
-  return DEFAULT_ENDPOINT;
+  return LEGACY_ENDPOINT;
 };
 
 /**

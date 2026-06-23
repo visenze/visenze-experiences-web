@@ -19,7 +19,7 @@ Paths also change on the cloud domains (e.g. `/v1/product/...` → `/v1/visearch
 and `/v2/widget-configs` → `/v2/widget/configs`).
 
 Widgets previously pinned every request to a single endpoint: `widget-client.ts` always sent
-`endpoint: endpoint || DEFAULT_ENDPOINT` to the SDK. Because an explicit `endpoint` is the
+`endpoint: endpoint || LEGACY_ENDPOINT` to the SDK. Because an explicit `endpoint` is the
 highest-priority signal in the SDK, a `cloud` field alone would have been silently ignored. We needed
 a way to route a widget to its cloud domain **without breaking the large base of already-deployed
 widget bundles** that rely on the server-provided endpoint.
@@ -29,7 +29,7 @@ widget bundles** that rely on the server-provided endpoint.
 Add an optional `appSettings.cloud` (`'aws' | 'azure'`) and have the widget arbitrate the endpoint
 with a fixed precedence:
 
-**manual endpoint (JS) > `cloud` > API-provided endpoint > `DEFAULT_ENDPOINT`**
+**manual endpoint (JS) > `cloud` > API-provided endpoint > `LEGACY_ENDPOINT`**
 
 1. **Type** — `cloud?: 'aws' | 'azure'` on `WidgetConfig.appSettings`.
 2. **SDK-routed calls** — `widget-client.ts` forwards `cloud` to `visearch.setKeys` and, when `cloud`

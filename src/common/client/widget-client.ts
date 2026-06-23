@@ -2,7 +2,7 @@ import type { Root } from 'react-dom/client';
 import ViSearch, { type ProductSearchResponse, type ViSearchClient } from 'visearch-javascript-sdk';
 import type { Primitive, WidgetClient, WidgetConfig, WidgetRenderStatus } from '../wigmix-core';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
-import { DEFAULT_ENDPOINT } from '../constants';
+import { LEGACY_ENDPOINT } from '../constants';
 import { getManualEndpoint } from './endpoint';
 
 const validateBatchEvents = (
@@ -71,7 +71,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
       ? { endpoint: manualEndpoint }
       : cloud
         ? {}
-        : { endpoint: endpoint || DEFAULT_ENDPOINT }),
+        : { endpoint: endpoint || LEGACY_ENDPOINT }),
     ...(cloud ? { cloud } : {}),
     gtm_tracking: gtmTracking,
     resize_settings: resizeSettings || {},
