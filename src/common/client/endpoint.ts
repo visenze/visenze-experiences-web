@@ -3,6 +3,9 @@ import { DEFAULT_ENDPOINT } from '../constants';
 
 type AppSettingsLike = { endpoint?: string; cloud?: Cloud };
 
+export const AWS_ENDPOINT = 'https://multisearch-aw.rezolve.com';
+export const AZURE_ENDPOINT = 'https://multisearch-az.rezolve.com';
+
 /**
  * Cloud-specific API domains. This deliberately mirrors the cloud→domain map inside
  * `visearch-javascript-sdk` (see its `getEndpoint`), because the direct-`fetch` call sites in this
@@ -10,8 +13,8 @@ type AppSettingsLike = { endpoint?: string; cloud?: Cloud };
  * themselves. Keep in sync with the SDK constants.
  */
 export const CLOUD_DOMAINS: Partial<Record<Cloud, string>> = {
-  aws: 'https://multisearch-aw.rezolve.com',
-  azure: 'https://multisearch-az.rezolve.com',
+  aws: AWS_ENDPOINT,
+  azure: AZURE_ENDPOINT,
 };
 
 const CLOUD_ORIGINS = new Set(Object.values(CLOUD_DOMAINS).map((d) => new URL(d).origin));
