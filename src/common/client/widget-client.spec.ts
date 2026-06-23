@@ -28,6 +28,10 @@ describe('widget-client multisearch dispatch', () => {
 
   const noop = (): void => {};
 
+  afterEach(() => {
+    delete (window as any).visenzeConfigs;
+  });
+
   it('routes to productMultisearch when msApiId is "1"', () => {
     const c = makeClient('1');
     c.multisearch({ im_url: 'x' }, noop, noop);
@@ -58,5 +62,23 @@ describe('widget-client multisearch dispatch', () => {
     expect(c.multi).toHaveBeenCalledTimes(1);
     expect(c.complementary).not.toHaveBeenCalled();
     expect(c.outfit).not.toHaveBeenCalled();
+  });
+
+  it('routes using manual msApiId over appSettings.msApiId', () => {
+    (window as any).visenzeConfigs = { 1234: { appSettings: { msApiId: '2' } } };
+    const c = makeClient('3');
+    c.multisearch({ im_url: 'x' }, noop, noop);
+    expect(c.complementary).toHaveBeenCalledTimes(1);
+    expect(c.outfit).not.toHaveBeenCalled();
+    expect(c.multi).not.toHaveBeenCalled();
+  });
+
+  it('ignores blank manual msApiId so appSettings.msApiId can route', () => {
+    (window as any).visenzeConfigs = { 1234: { appSettings: { msApiId: ' ' } } };
+    const c = makeClient('3');
+    c.multisearch({ im_url: 'x' }, noop, noop);
+    expect(c.outfit).toHaveBeenCalledTimes(1);
+    expect(c.complementary).not.toHaveBeenCalled();
+    expect(c.multi).not.toHaveBeenCalled();
   });
 });

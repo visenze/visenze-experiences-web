@@ -4,7 +4,7 @@ import type { Primitive, WidgetClient, WidgetConfig, WidgetRenderStatus } from '
 import type { ErrorHandler, SuccessHandler } from '../types/function';
 import { LEGACY_ENDPOINT } from '../constants';
 import { getManualEndpoint } from './endpoint';
-import { MsApiType, resolveMsApiType } from './ms-api';
+import { getManualMsApiId, MsApiType, resolveMsApiType } from './ms-api';
 
 const validateBatchEvents = (
   events: Record<string, string>[],
@@ -152,7 +152,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     );
   };
 
-  const msApiType = resolveMsApiType(appSettings.msApiId);
+  const msApiType = resolveMsApiType(getManualMsApiId(placementId) ?? appSettings.msApiId);
 
   const multisearch = (
     params: Record<string, any>,

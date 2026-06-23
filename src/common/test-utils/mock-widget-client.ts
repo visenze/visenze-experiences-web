@@ -11,6 +11,8 @@ export const createMockVisearchClient = (overrides: Partial<ViSearchClient> = {}
         setKeys: jest.fn(),
         productSearchById: jest.fn(),
         productMultisearch: jest.fn(),
+        productMultisearchComplementary: jest.fn(),
+        productMultisearchOutfitRecommendations: jest.fn(),
         productMultisearchAutocomplete: jest.fn(),
         productRecommendations: jest.fn(),
         ...overrides,

@@ -1,4 +1,4 @@
-import { MsApiType, resolveMsApiType } from './ms-api';
+import { getManualMsApiId, MsApiType, resolveMsApiType } from './ms-api';
 
 describe('resolveMsApiType', () => {
   it('maps "1"/"2"/"3" strings to the matching API type', () => {
@@ -27,5 +27,21 @@ describe('resolveMsApiType', () => {
     expect(resolveMsApiType('abc')).toBe(MsApiType.MULTISEARCH);
     expect(warnSpy).toHaveBeenCalledTimes(2);
     warnSpy.mockRestore();
+  });
+});
+
+describe('getManualMsApiId', () => {
+  afterEach(() => {
+    delete (window as any).visenzeConfigs;
+  });
+
+  it('returns the manual msApiId for the placement', () => {
+    (window as any).visenzeConfigs = { 1234: { appSettings: { msApiId: '2' } } };
+    expect(getManualMsApiId(1234)).toBe('2');
+  });
+
+  it('treats blank manual msApiId strings as unset', () => {
+    (window as any).visenzeConfigs = { 1234: { appSettings: { msApiId: '   ' } } };
+    expect(getManualMsApiId(1234)).toBeUndefined();
   });
 });
