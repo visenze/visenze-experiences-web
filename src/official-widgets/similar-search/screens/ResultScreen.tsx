@@ -239,6 +239,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
         <div className='bg-primary px-3 pt-2'>
           {/* Refinement Text Bar */}
           <Input
+            id='wigmix-similar-search-refinement-text-bar'
             isClearable
             maxLength={QUERY_MAX_CHARACTER_LENGTH}
             type='filters'
@@ -337,6 +338,7 @@ const ResultScreen: FC<ResultScreenProps> = ({
                 {/* Refinement Text Bar */}
                 <div className='relative z-20 px-2'>
                   <Input
+                    id='wigmix-similar-search-refinement-text-bar'
                     isClearable
                     maxLength={QUERY_MAX_CHARACTER_LENGTH}
                     type='filters'
