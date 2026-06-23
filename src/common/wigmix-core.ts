@@ -218,6 +218,17 @@ export interface WidgetClient {
    */
   multisearchByImage: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
   /**
+   * Multisearch dispatch that routes to the multisearch / complementary / outfit-recommendations
+   * API based on `appSettings.msApiId`.
+   *
+   * @param params Query parameters to be used for searching
+   * @param handleSuccess Callback to be executed upon search success
+   * @param handleError Callback to be executed upon search failure
+   *
+   * @since 1.0.21
+   */
+  multisearch: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
+  /**
    * Multisearch complementary suggestions.
    *
    * @param params Query parameters to be used for searching
@@ -675,6 +686,16 @@ export interface WidgetConfig {
      * @since 1.0.21
      */
     cloud?: Cloud;
+    /**
+     * (optional) Multi-search family API selector. Chooses which API the multisearch-based widgets
+     * call: 1 = multisearch, 2 = complementary, 3 = outfit-recommendations. Blank or unrecognized
+     * values fall back to multisearch. Injected as a string by the widget-init backend.
+     *
+     * @internal This value is expected to be set automatically by Rezolve widget initialization API.
+     *
+     * @since 1.0.21
+     */
+    msApiId?: string | number;
     /**
      * Dimensions of the image to be considered for the algorithm.
      *

@@ -4,6 +4,7 @@ import type { Primitive, WidgetClient, WidgetConfig, WidgetRenderStatus } from '
 import type { ErrorHandler, SuccessHandler } from '../types/function';
 import { LEGACY_ENDPOINT } from '../constants';
 import { getManualEndpoint } from './endpoint';
+import { MsApiType, resolveMsApiType } from './ms-api';
 
 const validateBatchEvents = (
   events: Record<string, string>[],
@@ -149,6 +150,25 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
       success,
       error,
     );
+  };
+
+  const msApiType = resolveMsApiType(appSettings.msApiId);
+
+  const multisearch = (
+    params: Record<string, any>,
+    handleSuccess: SuccessHandler,
+    handleError: ErrorHandler,
+  ): void => {
+    switch (msApiType) {
+      case MsApiType.COMPLEMENTARY:
+        multisearchComplementary(params, handleSuccess, handleError);
+        break;
+      case MsApiType.OUTFIT:
+        multisearchOutfitRecommendations(params, handleSuccess, handleError);
+        break;
+      default:
+        multisearchByImage(params, handleSuccess, handleError);
+    }
   };
 
   const multisearchAutocomplete = (
@@ -358,6 +378,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     getRenderRoots,
     searchById,
     multisearchByImage,
+    multisearch,
     multisearchComplementary,
     multisearchOutfitRecommendations,
     multisearchAutocomplete,
