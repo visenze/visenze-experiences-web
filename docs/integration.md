@@ -149,6 +149,8 @@ instead of a manual endpoint:
 Some multisearch-based widgets can route to different API variants based on `appSettings.msApiId`.
 This value is normally injected by the Rezolve widget initialization API, but you can override it
 manually through `window.visenzeConfigs` for local validation or controlled rollout.
+The route is resolved once when the widget client is initialized; changing `msApiId` after the widget
+has loaded does not reroute existing widget instances.
 
 Manual `msApiId` resolution precedence (highest first):
 

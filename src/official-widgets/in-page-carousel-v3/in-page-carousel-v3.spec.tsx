@@ -97,7 +97,16 @@ describe('in-page-carousel-v3', () => {
   it('calls the complementary API when msApiId is "2"', () => {
     widgetConfig.appSettings.msApiId = '2';
     const productMultisearch = jest.fn();
-    const productMultisearchComplementary = jest.fn().mockImplementation((_, handler) => {
+    const productMultisearchComplementary = jest.fn().mockImplementation((params, handler) => {
+      expect(params).toEqual({
+        pid: 'pid-found',
+        limit: 20,
+        sort_by: '',
+        facets: ['price', 'brand'],
+        facets_show_count: true,
+        return_fields_mapping: true,
+        return_query_sys_meta: true,
+      });
       handler(getStandardMultiSearchSuccessResponse());
     });
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_in_page_carousel_v3', 'VERSION', () => ({

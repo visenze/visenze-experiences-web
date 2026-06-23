@@ -214,7 +214,12 @@ describe('similar-search', () => {
   it('calls the outfit-recommendations API when msApiId is "3"', () => {
     widgetConfig.appSettings.msApiId = '3';
     const productMultisearch = jest.fn();
-    const productMultisearchOutfitRecommendations = jest.fn().mockImplementation((_, handler) => {
+    const productMultisearchOutfitRecommendations = jest.fn().mockImplementation((params, handler) => {
+      expect(params).toEqual({
+        im_url: 'test-imurl',
+        return_fields_mapping: true,
+        return_query_sys_meta: true,
+      });
       handler(getStandardMultiSearchSuccessResponse());
     });
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
