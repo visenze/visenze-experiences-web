@@ -29,19 +29,19 @@ const normalizeEndpoint = (endpoint?: string): string | undefined => {
 /**
  * Resolve the base API domain, following precedence: manual endpoint > cloud > API endpoint > default.
  */
-export const resolveBaseEndpoint = (settings: AppSettingsLike, manualEndpoint?: string): string => {
+export const resolveBaseEndpoint = (apiAppSettings: AppSettingsLike, manualEndpoint?: string): string => {
   const normalizedManualEndpoint = normalizeEndpoint(manualEndpoint);
   if (normalizedManualEndpoint) {
     return normalizedManualEndpoint;
   }
-  const cloudDomain = getCloudDomain(settings.cloud);
+  const cloudDomain = getCloudDomain(apiAppSettings.cloud);
   if (cloudDomain) {
     return cloudDomain;
   }
-  if (settings.cloud) {
+  if (apiAppSettings.cloud) {
     return LEGACY_ENDPOINT;
   }
-  const normalizedEndpoint = normalizeEndpoint(settings.endpoint);
+  const normalizedEndpoint = normalizeEndpoint(apiAppSettings.endpoint);
   if (normalizedEndpoint) {
     return normalizedEndpoint;
   }
@@ -53,8 +53,8 @@ export const resolveBaseEndpoint = (settings: AppSettingsLike, manualEndpoint?: 
  * (manual, or the API endpoint when no cloud is set) only triggers cloud paths if its origin is a
  * known cloud domain; otherwise `cloud` drives it.
  */
-export const usesCloudPaths = (settings: AppSettingsLike, manualEndpoint?: string): boolean => {
-  const explicit = normalizeEndpoint(manualEndpoint) ?? (settings.cloud ? undefined : normalizeEndpoint(settings.endpoint));
+export const usesCloudPaths = (apiAppSettings: AppSettingsLike, manualEndpoint?: string): boolean => {
+  const explicit = normalizeEndpoint(manualEndpoint) ?? (apiAppSettings.cloud ? undefined : normalizeEndpoint(apiAppSettings.endpoint));
   if (explicit) {
     try {
       return CLOUD_ORIGINS.has(new URL(explicit).origin);
@@ -62,7 +62,7 @@ export const usesCloudPaths = (settings: AppSettingsLike, manualEndpoint?: strin
       return false;
     }
   }
-  return Boolean(getCloudDomain(settings.cloud));
+  return Boolean(getCloudDomain(apiAppSettings.cloud));
 };
 
 /**
