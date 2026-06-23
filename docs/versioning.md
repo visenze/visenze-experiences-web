@@ -2,7 +2,7 @@
 
 ## Versioning Policy
 
-ViSenze widgets follow [semantic versioning](https://semver.org/) and there will only be one version number representing all widgets simultaneously.
+Rezolve widgets follow [semantic versioning](https://semver.org/) and there will only be one version number representing all widgets simultaneously.
 
 Using version number `x.y.z` as example:
 
@@ -33,7 +33,7 @@ The following internal implementations are not covered under versioning policy a
 
 ## Support Status
 
-ViSenze widgets follow this end-of-life (EOL) schedule:
+Rezolve widgets follow this end-of-life (EOL) schedule:
 
 - A patch version (e.g. `1.0.0`) will be EOL immediately after the release of the next patch version (e.g. `1.0.1`).
 - A minor version (e.g. `1.0.z`) will be EOL six (6) months after the release of the next minor version (e.g. `1.1.0`). 

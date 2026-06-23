@@ -2,7 +2,7 @@
 
 ## Code Snippet
 
-The most basic method to integrate ViSenze widgets to your website is by inserting code snippet
+The most basic method to integrate Rezolve widgets to your website is by inserting code snippet
 to the page(s) in which you would like for the widgets to appear.
 
 1. Add a container (typically a `<div>`) in which the widget will be inserted to your web page:
@@ -16,11 +16,11 @@ to the page(s) in which you would like for the widgets to appear.
    <div class="ps-widget-<PLACEMENT_ID>" data-pid="<PRODUCT_ID>"></div>
    ```
 
-2. Add the code snippet which will populate the ViSenze widget to the above container.
+2. Add the code snippet which will populate the widget to the above container.
    The code snippet looks like:
    ```html
    <script type="text/javascript">
-   !function(x,e,t,n,r,i,a){var o=localStorage.getItem("va-uid")||function x(){let e=new Date().getTime(),t="xxxxxxxx.xxxx.4xxx.yxxx.xxxxxxxxxxxx".replace(/[xy]/g,x=>{let t=(e+16*Math.random())%16|0;return e=Math.floor(e/16),("x"===x?t:3&t|8).toString(16)});return t}(),c=x.getElementsByTagName(e)[0],d=x.createElement(e),g=new URL(`https://search.visenze.com/v2/widget-init?app_key=${t}&placement_id=${n}&container=${r}&uid=${o}`);i&&(g+=`&contexts=${i}`),d.async=!0,d.src=g,d.onload=function(){a&&a()},c.parentNode.insertBefore(d,c)}(document,"script","<APP_KEY>","<PLACEMENT_ID>",".ps-widget-<PLACEMENT_ID>");
+   !function(x,e,t,n,r,i,a){var o=localStorage.getItem("va-uid")||function x(){let e=new Date().getTime(),t="xxxxxxxx.xxxx.4xxx.yxxx.xxxxxxxxxxxx".replace(/[xy]/g,x=>{let t=(e+16*Math.random())%16|0;return e=Math.floor(e/16),("x"===x?t:3&t|8).toString(16)});return t}(),c=x.getElementsByTagName(e)[0],d=x.createElement(e),g=new URL(`https://multimodal.search.rezolve.com/v2/widget-init?app_key=${t}&placement_id=${n}&container=${r}&uid=${o}`);i&&(g+=`&contexts=${i}`),d.async=!0,d.src=g,d.onload=function(){a&&a()},c.parentNode.insertBefore(d,c)}(document,"script","<APP_KEY>","<PLACEMENT_ID>",".ps-widget-<PLACEMENT_ID>");
    </script>
    ```
    While you're welcome to copy the above code and populate the fields accordingly,
@@ -66,8 +66,8 @@ in order for the settings to be properly overridden.
 
   | Parameter name     | Available since | Explanation                                                                                            |
   |--------------------|-----------------|--------------------------------------------------------------------------------------------------------|
-  | `searchSettings`   | 1.0.0           | Additional key-value parameters that will be sent to ViSenze search/recommendation APIs.               |
-  | `trackingSettings` | 1.0.0           | Additional key-value parameters that will be sent to ViSenze analytics API.                            |
+  | `searchSettings`   | 1.0.0           | Additional key-value parameters that will be sent to Rezolve search/recommendation APIs.               |
+  | `trackingSettings` | 1.0.0           | Additional key-value parameters that will be sent to Rezolve analytics API.                            |
   | `languageSettings` | 1.0.0           | Localization- and internationalization-related settings. See section on l10n and 18n for more details. |
   | `callbacks`        | 1.0.0           | Callbacks settings. See section on callbacks for more details.                                         |
 </details>
@@ -78,7 +78,7 @@ Parameters marked as `@internal` are only for internal usage and not recommended
 ### Cloud endpoint (`appSettings.cloud`)
 
 `appSettings.cloud` selects a cloud-specific deployment domain (with its updated API paths) instead
-of the legacy domain. It is normally populated automatically by the ViSenze widget initialization API
+of the legacy domain. It is normally populated automatically by the Rezolve widget initialization API
 based on the account's deployment region, so integrators rarely set it manually.
 
 | `appSettings.cloud` | Domain used |
@@ -145,7 +145,7 @@ As the result, the effect of setting locale is limited to changing how currencie
 ### Currency
 
 The currency is determined through the following hierarchy:
-- The currency value from the product data returned from ViSenze API.
+- The currency value from the product data returned from Rezolve API.
 - The value of `languageSettings.currency` field in the widget configuration object.
 - The default currency set within the widget customization interface.
 - Default value (`USD`).
@@ -155,7 +155,7 @@ is used to display the currency in the specified locale.
 
 ## Programmatic Access
 
-ViSenze widgets can be accessed from the web page's `window` object for the purpose of
+Rezolve widgets can be accessed from the web page's `window` object for the purpose of
 debugging, accessing certain metadata, or programmatically controlling the widget (e.g. opening or hiding).
 
 ```ts
@@ -267,7 +267,7 @@ visenzeWidget.sendEvent('event_name', {
 
 ### Toggling dark mode
 
-ViSenze widgets support dark mode theming. If your website has toggles between light and dark mode,
+Rezolve widgets support dark mode theming. If your website has toggles between light and dark mode,
 you can make the widgets follow suit by using the `toggleDarkMode` method:
 
 ```ts

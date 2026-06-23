@@ -30,7 +30,7 @@ below.) So `endpoint` is effectively **immutable per widget instance, decided at
  HOST PAGE
    │  runs snippet (docs/integration.md)
    ▼
- GET https://search.visenze.com/v2/widget-init?app_key=…&placement_id=…
+ GET https://multimodal.search.rezolve.com/v2/widget-init?app_key=…&placement_id=…
    │
    ▼  WidgetInitService.getInitConfigScript()  (visenze-product-search)
    │    fetches init template from CDN, then string-replaces $APP_KEY, $PLACEMENT_ID,

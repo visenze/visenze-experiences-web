@@ -7,7 +7,7 @@
 
 ## Context
 
-ViSenze introduced cloud-specific deployment domains with updated API paths, replacing the legacy
+Rezolve introduced cloud-specific deployment domains with updated API paths, replacing the legacy
 shared domains:
 
 | Cloud | Legacy domain | New cloud domain |

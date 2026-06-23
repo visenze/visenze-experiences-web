@@ -1,6 +1,6 @@
 ## Overview
 
-A collection of ViSenze-powered product-search/recommendation **widgets** for e-commerce websites. Each widget is built and distributed as a **standalone bundle**, but they share a large body of common code (client, components, types, customization/localization machinery). Stack: React 18, HeroUI (formerly NextUI), Tailwind CSS, TypeScript, Webpack.
+A collection of Rezolve-powered product-search/recommendation **widgets** for e-commerce websites. Each widget is built and distributed as a **standalone bundle**, but they share a large body of common code (client, components, types, customization/localization machinery). Stack: React 18, HeroUI (formerly NextUI), Tailwind CSS, TypeScript, Webpack.
 
 ## Commands
 
@@ -50,7 +50,7 @@ Both live in `src/common/client/initialization.ts`. Key steps in `init()`:
 `render()` mounts React via `createRoot` into the element(s) matched by `displaySettings.cssSelector` (default `.ps-widget-<placementId>`). `isMultiRender` decides single vs. all matching elements. The client exposes `rerender(selector?)` and `renderMissing()` for re-mounting.
 
 ### Endpoint resolution (cloud vs legacy)
-Which ViSenze domain a widget talks to is decided by precedence **manual endpoint (`window.visenzeConfigs[placementId].appSettings.endpoint`) > `appSettings.cloud` (`'aws'`/`'azure'`) > API-provided `appSettings.endpoint` > `LEGACY_ENDPOINT`**. SDK-routed calls get this by passing `cloud` to `visearch.setKeys` in `widget-client.ts` (omitting `endpoint` so the SDK resolves the cloud domain + paths). Direct `fetch()` sites that bypass the SDK (shoppable-gallery browse, dev field-mapping fetch) use the `src/common/client/endpoint.ts` helpers (`resolveBaseEndpoint`, `usesCloudPaths`, `getManualEndpoint`) which mirror the same precedence and the SDK's cloud→domain map. Setting `cloud` is additive and backwards-compatible — see `docs/adr/0001-dynamic-cloud-endpoints.md`.
+Which Rezolve domain a widget talks to is decided by precedence **manual endpoint (`window.visenzeConfigs[placementId].appSettings.endpoint`) > `appSettings.cloud` (`'aws'`/`'azure'`) > API-provided `appSettings.endpoint` > `LEGACY_ENDPOINT`**. SDK-routed calls get this by passing `cloud` to `visearch.setKeys` in `widget-client.ts` (omitting `endpoint` so the SDK resolves the cloud domain + paths). Direct `fetch()` sites that bypass the SDK (shoppable-gallery browse, dev field-mapping fetch) use the `src/common/client/endpoint.ts` helpers (`resolveBaseEndpoint`, `usesCloudPaths`, `getManualEndpoint`) which mirror the same precedence and the SDK's cloud→domain map. Setting `cloud` is additive and backwards-compatible — see `docs/adr/0001-dynamic-cloud-endpoints.md`.
 
 ### Rendering wrapper chain
 `App` (per widget) → `AppWrapper` (`src/common/components/app-wrapper.tsx`) → `ShadowWrapper` → `IntlProvider` → widget screen components.
