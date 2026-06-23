@@ -50,6 +50,10 @@ describe('endpoint resolver', () => {
       expect(usesCloudPaths({})).toBe(false);
     });
 
+     it('treats an empty manual endpoint as unset (so cloud still enables cloud paths)', () => {
+       expect(usesCloudPaths({ cloud: 'aws' }, '')).toBe(true);
+     });
+
     it('is false for a legacy API endpoint', () => {
       expect(usesCloudPaths({ endpoint: 'https://search.visenze.com' })).toBe(false);
     });
