@@ -1,8 +1,9 @@
 import type { Root } from 'react-dom/client';
 import type { ProductSearchResponse, ViSearchClient } from 'visearch-javascript-sdk';
+import type { LanguagePack } from './locales/locale';
+import type { Cloud } from './types/cloud';
 import type { ErrorHandler, SuccessHandler } from './types/function';
 import type { SearchImage, SearchImageOrPid } from './types/image';
-import type { LanguagePack } from './locales/locale';
 
 export type Primitive = boolean | string | number;
 
@@ -35,7 +36,7 @@ export enum WidgetErrorState {
 }
 
 /**
- * Client for programmatic access to ViSenze widgets.
+ * Client for programmatic access to Rezolve widgets.
  */
 export interface WidgetClient {
   /**
@@ -106,7 +107,7 @@ export interface WidgetClient {
    */
   getRenderStatus: () => WidgetRenderStatus;
   /**
-   * Sends an event to ViSenze Analytics.
+   * Sends an event to Rezolve Analytics.
    *
    * @param action Action name
    * @param params Query parameters
@@ -128,7 +129,7 @@ export interface WidgetClient {
     failure?: ErrorHandler,
   ) => Promise<void>;
   /**
-   * Sends a list of events to ViSenze Analytics.
+   * Sends a list of events to Rezolve Analytics.
    *
    * @param action Action name
    * @param params List of query parameters for events
@@ -153,7 +154,7 @@ export interface WidgetClient {
     failure?: ErrorHandler,
   ) => Promise<void>;
   /**
-   * ViSearch client, as defined in ViSenze JavaScript SDK.
+   * ViSearch client, as defined in Rezolve JavaScript SDK.
    *
    * @since 1.0.0
    */
@@ -253,7 +254,7 @@ export interface WidgetClient {
   /**
    * Triggers rendering for the widgets, including all of existing, already rendered widgets.
    *
-   * For recommendations widget, this will also trigger a new call to ViSenze API.
+   * For recommendations widget, this will also trigger a new call to Rezolve API.
    *
    * @param selector (optional) New selector to render the widget on
    *
@@ -264,7 +265,7 @@ export interface WidgetClient {
    * Triggers rendering for the widgets that are not present in the designated selectors,
    * typically when the selectors are dynamically added to the page.
    *
-   * For recommendations widget, this will also trigger a new call to ViSenze API.
+   * For recommendations widget, this will also trigger a new call to Rezolve API.
    *
    * @since 1.0.6
    */
@@ -613,7 +614,7 @@ export interface TrendingProduct {
 }
 
 /**
- * Configuration for ViSenze widgets.
+ * Configuration for Rezolve widgets.
  */
 export interface WidgetConfig {
   /**
@@ -623,29 +624,29 @@ export interface WidgetConfig {
    */
   appSettings: {
     /**
-     * ViSenze app key; obtainable from Discovery Suite console.
+     * Rezolve app key; obtainable from Discovery Suite console.
      *
-     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
+     * @internal This value is expected to be set automatically by Rezolve widget initialization API.
      *
      * @since 1.0.0
      */
     appKey: string;
     /**
-     * ViSenze placement ID; obtainable from Discovery Suite console.
+     * Rezolve placement ID; obtainable from Discovery Suite console.
      *
-     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
+     * @internal This value is expected to be set automatically by Rezolve widget initialization API.
      *
      * @since 1.0.0
      */
     placementId: string | number;
     /**
-     * (optional) ViSenze strategy ID; obtainable from Discovery Suite console.
+     * (optional) Rezolve strategy ID; obtainable from Discovery Suite console.
      *
      * @since 1.0.0
      */
     strategyId?: string | number;
     /**
-     * (optional) UID used to override ViSenze tracking parameter.
+     * (optional) UID used to override Rezolve tracking parameter.
      *
      * @since 1.0.0
      */
@@ -657,13 +658,23 @@ export interface WidgetConfig {
      */
     gtmTracking?: boolean;
     /**
-     * ViSenze search/recommendations API endpoint.
+     * Rezolve search/recommendations API endpoint.
      *
-     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
+     * @internal This value is expected to be set automatically by Rezolve widget initialization API.
      *
      * @since 1.0.0
      */
     endpoint?: string;
+    /**
+     * (optional) Cloud deployment target. Set to 'aws' or 'azure' to route requests to the
+     * cloud-specific domains with their updated API paths. When set, it overrides the API-provided
+     * `endpoint` — but a manually specified endpoint (via window.visenzeConfigs) still wins.
+     *
+     * @internal This value is expected to be set automatically by Rezolve widget initialization API.
+     *
+     * @since 1.0.21
+     */
+    cloud?: Cloud;
     /**
      * Dimensions of the image to be considered for the algorithm.
      *
@@ -700,7 +711,7 @@ export interface WidgetConfig {
     /**
      * CSS selector on which the widget will be rendered on.
      *
-     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
+     * @internal This value is expected to be set automatically by Rezolve widget initialization API.
      *
      * @since 1.0.0
      */
@@ -708,20 +719,20 @@ export interface WidgetConfig {
     /**
      * Field mapping for product card. The fields are based on the schema of the Discovery Suite catalog.
      *
-     * @internal This value is expected to be set automatically by ViSenze widget initialization API.
+     * @internal This value is expected to be set automatically by Rezolve widget initialization API.
      *
      * @since 1.0.0
      */
     productDetails: Record<string, string>;
   };
   /**
-   * Additional key-value parameters that will be sent to ViSenze search/recommendation APIs.
+   * Additional key-value parameters that will be sent to Rezolve search/recommendation APIs.
    *
    * @since 1.0.0
    */
   searchSettings: Record<string, any>;
   /**
-   * Additional key-value parameters that will be sent to ViSenze analytics API.
+   * Additional key-value parameters that will be sent to Rezolve analytics API.
    *
    * @since 1.0.0
    */
@@ -780,7 +791,7 @@ export interface WidgetConfig {
      */
     preprocessResponse?: (resp: ProductSearchResponse) => void;
     /**
-     * Fires whenever an event is sent to ViSenze Analytics (precisely: when `sendEvent` is called).
+     * Fires whenever an event is sent to Rezolve Analytics (precisely: when `sendEvent` is called).
      *
      * @param action The action that is being recorded
      * @param params The attached metadata related to the action
@@ -828,7 +839,7 @@ export interface WidgetConfig {
      * },
      * ```
      *
-     * @param resp Response from ViSenze search/recommendation API
+     * @param resp Response from Rezolve search/recommendation API
      *
      * @since 1.0.0
      */
@@ -951,7 +962,7 @@ export interface WidgetConfig {
        */
       showWidgetTitle: boolean;
       /**
-       * Whether to show "Powered by ViSenze" footer in appropriate places.
+       * Whether to show "Powered by Rezolve" footer in appropriate places.
        *
        * @since 1.0.0
        */

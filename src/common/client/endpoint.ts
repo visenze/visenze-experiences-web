@@ -1,0 +1,74 @@
+import type { Cloud } from '../types/cloud';
+import { LEGACY_ENDPOINT } from '../constants';
+
+type AppSettingsLike = { endpoint?: string; cloud?: Cloud };
+
+export const AWS_ENDPOINT = 'https://multisearch-aw.rezolve.com';
+export const AZURE_ENDPOINT = 'https://multisearch-az.rezolve.com';
+
+/**
+ * Cloud-specific API domains. This deliberately mirrors the cloud→domain map inside
+ * `visearch-javascript-sdk` (see its `getEndpoint`), because the direct-`fetch` call sites in this
+ * repo (shoppable-gallery browse, shopping-assistant, recommend-me, and the dev field-mapping fetch)
+ * bypass the SDK and must resolve the domain themselves. Keep in sync with the SDK constants.
+ */
+export const CLOUD_DOMAINS: Partial<Record<Cloud, string>> = {
+  aws: AWS_ENDPOINT,
+  azure: AZURE_ENDPOINT,
+};
+
+const CLOUD_ORIGINS = new Set(Object.values(CLOUD_DOMAINS).map((d) => new URL(d).origin));
+
+const getCloudDomain = (cloud?: Cloud): string | undefined => (cloud ? CLOUD_DOMAINS[cloud] : undefined);
+
+const normalizeEndpoint = (endpoint?: string): string | undefined => {
+  const trimmed = endpoint?.trim();
+  return trimmed || undefined;
+};
+
+/**
+ * Resolve the base API domain, following precedence: manual endpoint > cloud > API endpoint > default.
+ */
+export const resolveBaseEndpoint = (apiAppSettings: AppSettingsLike, manualEndpoint?: string): string => {
+  const normalizedManualEndpoint = normalizeEndpoint(manualEndpoint);
+  if (normalizedManualEndpoint) {
+    return normalizedManualEndpoint;
+  }
+  const cloudDomain = getCloudDomain(apiAppSettings.cloud);
+  if (cloudDomain) {
+    return cloudDomain;
+  }
+  if (apiAppSettings.cloud) {
+    return LEGACY_ENDPOINT;
+  }
+  const normalizedEndpoint = normalizeEndpoint(apiAppSettings.endpoint);
+  if (normalizedEndpoint) {
+    return normalizedEndpoint;
+  }
+  return LEGACY_ENDPOINT;
+};
+
+/**
+ * Whether to use the new cloud API paths. Mirrors the SDK's `isCloudDomain`: an explicit endpoint
+ * (manual, or the API endpoint when no cloud is set) only triggers cloud paths if its origin is a
+ * known cloud domain; otherwise `cloud` drives it.
+ */
+export const usesCloudPaths = (apiAppSettings: AppSettingsLike, manualEndpoint?: string): boolean => {
+  const explicit = normalizeEndpoint(manualEndpoint) ?? (apiAppSettings.cloud ? undefined : normalizeEndpoint(apiAppSettings.endpoint));
+  if (explicit) {
+    try {
+      return CLOUD_ORIGINS.has(new URL(explicit).origin);
+    } catch {
+      return false;
+    }
+  }
+  return Boolean(getCloudDomain(apiAppSettings.cloud));
+};
+
+/**
+ * Read a developer-supplied manual endpoint (highest precedence) from the host page's
+ * `window.visenzeConfigs[placementId].appSettings.endpoint` channel.
+ */
+export const getManualEndpoint = (placementId: string | number): string | undefined =>
+  normalizeEndpoint((window as unknown as { visenzeConfigs?: Record<string, { appSettings?: { endpoint?: string } }> })
+    .visenzeConfigs?.[placementId]?.appSettings?.endpoint);

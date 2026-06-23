@@ -9,6 +9,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     appKey: '',
     placementId: '',
     endpoint: '',
+    cloud: 'aws',
   },
   displaySettings: {
     cssSelector: '.search-bar-widget',

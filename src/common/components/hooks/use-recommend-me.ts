@@ -3,7 +3,7 @@ import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 import { getFlattenProduct } from '../../utils';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { DEFAULT_ENDPOINT } from '../../constants';
+import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../client/endpoint';
 
 interface RecommendMeProps {
   productId: string;
@@ -21,7 +21,8 @@ const useRecommendMe = ({
   productId,
 }: RecommendMeProps): RecommendMe => {
   const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
-  const { appKey, placementId, endpoint } = widgetConfig.appSettings;
+  const { appSettings } = widgetConfig;
+  const { appKey, placementId } = appSettings;
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [requestId, setRequestId] = useState('');
@@ -53,8 +54,15 @@ const useRecommendMe = ({
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
     });
 
+    // Resolve the API base + path, honouring manual endpoint > cloud > API endpoint > default
+    const manualEndpoint = getManualEndpoint(placementId);
+    const base = resolveBaseEndpoint(appSettings, manualEndpoint);
+    const recommendMePath = usesCloudPaths(appSettings, manualEndpoint)
+      ? '/v1/search/chat/recommend-me'
+      : '/v1/product/multisearch/chat/recommend-me';
+
     // Listen to the event stream and retrieve relevant data based on the event type
-    fetchEventSource(`${endpoint || DEFAULT_ENDPOINT}/v1/product/multisearch/chat/recommend-me?${params.toString()}`, {
+    fetchEventSource(`${base}${recommendMePath}?${params.toString()}`, {
       async onopen() {
         setIsStreaming(true);
       },

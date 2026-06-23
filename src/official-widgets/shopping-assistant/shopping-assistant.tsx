@@ -8,12 +8,12 @@ import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
 import NewChatIcon from './icons/NewChatIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
+import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../common/client/endpoint';
 import FileDropzone from '../../common/components/FileDropzone';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import { DEFAULT_ENDPOINT } from '../../common/constants';
 import ArrowPathIcon from '../../common/icons/ArrowPathIcon';
 import CameraIcon from '../../common/icons/CameraIcon';
 import CloseIcon from '../../common/icons/CloseIcon';
@@ -129,7 +129,14 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       formData.append('image', imageToSend.files[0]);
     }
 
-    fetchEventSource(`${appSettings.endpoint || DEFAULT_ENDPOINT}/v1/product/multisearch/chat/shopping-assistant?${params.toString()}`, {
+    // Resolve the API base + path, honouring manual endpoint > cloud > API endpoint > default
+    const manualEndpoint = getManualEndpoint(appSettings.placementId);
+    const base = resolveBaseEndpoint(appSettings, manualEndpoint);
+    const shoppingAssistantPath = usesCloudPaths(appSettings, manualEndpoint)
+      ? '/v1/search/chat/shopping-assistant'
+      : '/v1/product/multisearch/chat/shopping-assistant';
+
+    fetchEventSource(`${base}${shoppingAssistantPath}?${params.toString()}`, {
       method: 'POST',
       body: formData,
       openWhenHidden: true,

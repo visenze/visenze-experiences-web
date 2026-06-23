@@ -1,6 +1,6 @@
-# ViSenze Product Search Widgets
+# Rezolve Product Search Widgets
 
-This is the repository for all ViSenze widgets aiming to accelerate development and deployment of ViSenze-powered Shopping Experiences.
+This is the repository for all Rezolve widgets aiming to accelerate development and deployment of Rezolve-powered Shopping Experiences.
 
 Each widget can operate as a standalone component to be deployed in an e-commerce website and can be build and distributed independently from each other. 
 
@@ -10,10 +10,10 @@ The widgets use React, HeroUI (formerly known as NextUI) and Tailwind CSS.
 
 ```txt
 ├─ common               <- Folder for common code used across different widgets
-   ├─ client            <- Client connecting with ViSenze APIs
+   ├─ client            <- Client connecting with Rezolve MS APIs
    ├─ components        <- Common React components
    ├─ types             <- TypeScript typing
-├── official-widgets    <- Widgets built and officially supported by ViSenze
+├── official-widgets    <- Widgets built and officially supported by Rezolve
    ├─ camera-search 
    ├─ similar-search
    ├─ etc.

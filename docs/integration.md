@@ -2,7 +2,7 @@
 
 ## Code Snippet
 
-The most basic method to integrate ViSenze widgets to your website is by inserting code snippet
+The most basic method to integrate Rezolve widgets to your website is by inserting code snippet
 to the page(s) in which you would like for the widgets to appear.
 
 1. Add a container (typically a `<div>`) in which the widget will be inserted to your web page:
@@ -16,11 +16,11 @@ to the page(s) in which you would like for the widgets to appear.
    <div class="ps-widget-<PLACEMENT_ID>" data-pid="<PRODUCT_ID>"></div>
    ```
 
-2. Add the code snippet which will populate the ViSenze widget to the above container.
+2. Add the code snippet which will populate the widget to the above container.
    The code snippet looks like:
    ```html
    <script type="text/javascript">
-   !function(x,e,t,n,r,i,a){var o=localStorage.getItem("va-uid")||function x(){let e=new Date().getTime(),t="xxxxxxxx.xxxx.4xxx.yxxx.xxxxxxxxxxxx".replace(/[xy]/g,x=>{let t=(e+16*Math.random())%16|0;return e=Math.floor(e/16),("x"===x?t:3&t|8).toString(16)});return t}(),c=x.getElementsByTagName(e)[0],d=x.createElement(e),g=new URL(`https://search.visenze.com/v2/widget-init?app_key=${t}&placement_id=${n}&container=${r}&uid=${o}`);i&&(g+=`&contexts=${i}`),d.async=!0,d.src=g,d.onload=function(){a&&a()},c.parentNode.insertBefore(d,c)}(document,"script","<APP_KEY>","<PLACEMENT_ID>",".ps-widget-<PLACEMENT_ID>");
+   !function(x,e,t,n,r,i,a){var o=localStorage.getItem("va-uid")||function x(){let e=new Date().getTime(),t="xxxxxxxx.xxxx.4xxx.yxxx.xxxxxxxxxxxx".replace(/[xy]/g,x=>{let t=(e+16*Math.random())%16|0;return e=Math.floor(e/16),("x"===x?t:3&t|8).toString(16)});return t}(),c=x.getElementsByTagName(e)[0],d=x.createElement(e),g=new URL(`https://multimodal.search.rezolve.com/v2/widget-init?app_key=${t}&placement_id=${n}&container=${r}&uid=${o}`);i&&(g+=`&contexts=${i}`),d.async=!0,d.src=g,d.onload=function(){a&&a()},c.parentNode.insertBefore(d,c)}(document,"script","<APP_KEY>","<PLACEMENT_ID>",".ps-widget-<PLACEMENT_ID>");
    </script>
    ```
    While you're welcome to copy the above code and populate the fields accordingly,
@@ -66,14 +66,83 @@ in order for the settings to be properly overridden.
 
   | Parameter name     | Available since | Explanation                                                                                            |
   |--------------------|-----------------|--------------------------------------------------------------------------------------------------------|
-  | `searchSettings`   | 1.0.0           | Additional key-value parameters that will be sent to ViSenze search/recommendation APIs.               |
-  | `trackingSettings` | 1.0.0           | Additional key-value parameters that will be sent to ViSenze analytics API.                            |
+  | `searchSettings`   | 1.0.0           | Additional key-value parameters that will be sent to Rezolve search/recommendation APIs.               |
+  | `trackingSettings` | 1.0.0           | Additional key-value parameters that will be sent to Rezolve analytics API.                            |
   | `languageSettings` | 1.0.0           | Localization- and internationalization-related settings. See section on l10n and 18n for more details. |
   | `callbacks`        | 1.0.0           | Callbacks settings. See section on callbacks for more details.                                         |
 </details>
 
 The full list of available parameters can be seen in the `WidgetConfig` object in `wigmix-core.ts`.
 Parameters marked as `@internal` are only for internal usage and not recommended to be set within the configuration object.
+
+### Cloud endpoint (`appSettings.cloud`)
+
+`appSettings.cloud` selects a cloud-specific deployment domain (with its updated API paths) instead
+of the legacy domain. It is normally populated automatically by the Rezolve widget initialization API
+based on the account's deployment region, so integrators rarely set it manually.
+
+| `appSettings.cloud` | Domain used |
+|---------------------|-------------|
+| `'aws'`             | `https://multisearch-aw.rezolve.com` |
+| `'azure'`           | `https://multisearch-az.rezolve.com` |
+| unset               | the API-provided `endpoint`, else the default legacy domain |
+
+Endpoint resolution precedence (highest first):
+
+1. A manually specified `appSettings.endpoint` (via `window.visenzeConfigs`) — always wins.
+2. `appSettings.cloud` — when set, the API-provided `endpoint` is ignored.
+3. The API-provided `appSettings.endpoint`.
+4. The built-in default endpoint.
+
+#### Overriding the endpoint manually
+
+A manually specified `appSettings.endpoint` is the highest-priority signal — it overrides both the
+`appSettings.cloud` value and the `endpoint` returned from the Rezolve widget initialization API.
+This is useful when you need to pin a widget to a specific domain (e.g. to test against a staging
+environment, or to route traffic through your own proxy) regardless of what the API decides.
+
+Set it on the `visenzeConfigs` object for the placement, **before** the widget code snippet is
+inserted to the page:
+
+```html
+<script type="text/javascript">
+  // e.g. for placement ID 5000
+  window.visenzeConfigs = window.visenzeConfigs || {};
+  window.visenzeConfigs[5000] = {
+    appSettings: {
+      // This wins over any `cloud` value and any API-provided endpoint.
+      endpoint: 'https://your-custom-domain.example.com',
+    },
+  };
+</script>
+<!-- ...widget code snippet goes here, after the config above... -->
+```
+
+With the manual endpoint set, the widget sends all SDK-routed requests to your domain, and the
+direct-`fetch` call sites (shoppable-gallery browse, dev field-mapping fetch) resolve the same domain
+via `resolveBaseEndpoint`.
+
+> **Note on API paths:** the cloud domains use updated API paths (e.g. `/v1/visearch/...`,
+> `/v2/widget/configs`) while the legacy domains use the original paths. When you set a manual
+> endpoint, cloud paths are used **only if the endpoint's origin matches a known cloud domain**
+> (`multisearch-aw.rezolve.com` or `multisearch-az.rezolve.com`); any other origin falls back to the
+> legacy paths. Note that adding `appSettings.cloud` alongside a manual endpoint does **not** change
+> this — once a manual endpoint is set, its origin alone decides which paths are used.
+
+If you only want to switch between the AWS and Azure cloud deployments (rather than an arbitrary
+domain) and have the correct cloud paths applied automatically, prefer setting `appSettings.cloud`
+instead of a manual endpoint:
+
+```html
+<script type="text/javascript">
+  window.visenzeConfigs = window.visenzeConfigs || {};
+  window.visenzeConfigs[5000] = {
+    appSettings: {
+      cloud: 'aws', // or 'azure' — overrides the API-provided endpoint, applies cloud paths
+    },
+  };
+</script>
+```
 
 ## Callbacks
 
@@ -126,7 +195,7 @@ As the result, the effect of setting locale is limited to changing how currencie
 ### Currency
 
 The currency is determined through the following hierarchy:
-- The currency value from the product data returned from ViSenze API.
+- The currency value from the product data returned from Rezolve API.
 - The value of `languageSettings.currency` field in the widget configuration object.
 - The default currency set within the widget customization interface.
 - Default value (`USD`).
@@ -136,7 +205,7 @@ is used to display the currency in the specified locale.
 
 ## Programmatic Access
 
-ViSenze widgets can be accessed from the web page's `window` object for the purpose of
+Rezolve widgets can be accessed from the web page's `window` object for the purpose of
 debugging, accessing certain metadata, or programmatically controlling the widget (e.g. opening or hiding).
 
 ```ts
@@ -248,7 +317,7 @@ visenzeWidget.sendEvent('event_name', {
 
 ### Toggling dark mode
 
-ViSenze widgets support dark mode theming. If your website has toggles between light and dark mode,
+Rezolve widgets support dark mode theming. If your website has toggles between light and dark mode,
 you can make the widgets follow suit by using the `toggleDarkMode` method:
 
 ```ts

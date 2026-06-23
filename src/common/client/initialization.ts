@@ -10,7 +10,7 @@ import type {
 } from '../wigmix-core';
 import { DEFAULT_CONFIGS } from '../default-configs';
 import getWidgetClient from './widget-client';
-import { DEFAULT_ENDPOINT } from '../constants';
+import { resolveBaseEndpoint, usesCloudPaths } from './endpoint';
 import { Actions } from '../types/tracking-constants';
 
 interface WidgetInitResult {
@@ -322,9 +322,13 @@ export const devInitWidget = async (
 ): Promise<void> => {
   let fieldsMapping = fieldsMappingParam;
   if (shouldRetrieveFieldsMapping) {
-    const widgetConfigResponse = await fetch((devConfigs.appSettings?.endpoint || DEFAULT_ENDPOINT)
-        + `/v2/widget-configs?app_key=${devConfigs.appSettings?.appKey}`
-        + `&placement_id=${devConfigs.appSettings?.placementId}&return_fields_mappings=true`);
+    // In dev there is no window.visenzeConfigs; treat devConfigs.appSettings.endpoint as the manual
+    // endpoint (an explicit dev endpoint wins, otherwise `cloud` drives resolution).
+    const devAppSettings = devConfigs.appSettings ?? {};
+    const base = resolveBaseEndpoint(devAppSettings, devAppSettings.endpoint);
+    const configPath = usesCloudPaths(devAppSettings, devAppSettings.endpoint) ? '/v2/widget/configs' : '/v2/widget-configs';
+    const widgetConfigResponse = await fetch(`${base}${configPath}?app_key=${devAppSettings.appKey}`
+        + `&placement_id=${devAppSettings.placementId}&return_fields_mappings=true`);
     const widgetConfigObject = await widgetConfigResponse.json();
     fieldsMapping = widgetConfigObject.fields_mappings;
   }

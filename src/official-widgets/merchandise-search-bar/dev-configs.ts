@@ -9,6 +9,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     appKey: '',
     placementId: '',
     endpoint: '',
+    cloud: 'aws',
   },
   searchSettings: {
     facets_limit: 10,

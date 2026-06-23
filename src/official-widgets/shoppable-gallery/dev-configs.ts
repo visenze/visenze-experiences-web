@@ -9,6 +9,9 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     appKey: '',
     placementId: '',
     endpoint: '',
+    // Set to 'aws' or 'azure' to test the cloud-specific domains + paths locally.
+    // Leave unset (or set endpoint above) to use the legacy domain.
+    // cloud: 'aws',
   },
   displaySettings: {
     cssSelector: '.shoppable-gallery-widget',

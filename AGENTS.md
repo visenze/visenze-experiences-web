@@ -1,6 +1,6 @@
 ## Overview
 
-A collection of ViSenze-powered product-search/recommendation **widgets** for e-commerce websites. Each widget is built and distributed as a **standalone bundle**, but they share a large body of common code (client, components, types, customization/localization machinery). Stack: React 18, HeroUI (formerly NextUI), Tailwind CSS, TypeScript, Webpack.
+A collection of Rezolve-powered product-search/recommendation **widgets** for e-commerce websites. Each widget is built and distributed as a **standalone bundle**, but they share a large body of common code (client, components, types, customization/localization machinery). Stack: React 18, HeroUI (formerly NextUI), Tailwind CSS, TypeScript, Webpack.
 
 ## Commands
 
@@ -49,6 +49,9 @@ Both live in `src/common/client/initialization.ts`. Key steps in `init()`:
 
 `render()` mounts React via `createRoot` into the element(s) matched by `displaySettings.cssSelector` (default `.ps-widget-<placementId>`). `isMultiRender` decides single vs. all matching elements. The client exposes `rerender(selector?)` and `renderMissing()` for re-mounting.
 
+### Endpoint resolution (cloud vs legacy)
+Which Rezolve domain a widget talks to is decided by precedence **manual endpoint (`window.visenzeConfigs[placementId].appSettings.endpoint`) > `appSettings.cloud` (`'aws'`/`'azure'`) > API-provided `appSettings.endpoint` > `LEGACY_ENDPOINT`**. SDK-routed calls get this by passing `cloud` to `visearch.setKeys` in `widget-client.ts` (omitting `endpoint` so the SDK resolves the cloud domain + paths). Direct `fetch()` sites that bypass the SDK (shoppable-gallery browse, dev field-mapping fetch) use the `src/common/client/endpoint.ts` helpers (`resolveBaseEndpoint`, `usesCloudPaths`, `getManualEndpoint`) which mirror the same precedence and the SDK's cloud→domain map. Setting `cloud` is additive and backwards-compatible — see `docs/adr/0001-dynamic-cloud-endpoints.md`.
+
 ### Rendering wrapper chain
 `App` (per widget) → `AppWrapper` (`src/common/components/app-wrapper.tsx`) → `ShadowWrapper` → `IntlProvider` → widget screen components.
 - `AppWrapper` holds the live config in React state and registers callbacks on the client: `registerConfigUpdater`, `registerDarkModeToggler`, `registerLocaleUpdater`. It provides everything via `WidgetDataContext` (`widgetConfig`, `widgetClient`, `darkMode`, `locale`). A module-level `configInternalExt` is a deliberate workaround so dark-mode/locale togglers see the latest config.
@@ -59,11 +62,11 @@ Styles are injected into a per-widget Shadow DOM, not the page. `webpack.util.js
 
 ### Shared code (`src/common/`)
 - `wigmix-core.ts` — the canonical type module. `WidgetType` enum (source of truth for all widget types), `WidgetConfig` (heavily JSDoc'd config schema), `WidgetClient`, `RecursivePartial<T>`, color/font/border types.
-- `client/` — `initialization.ts`, `widget-client.ts` (ViSearch SDK wrapper, events, search/recommendation calls), `widget-client.ts` companions.
+- `client/` — `initialization.ts`, `widget-client.ts` (ViSearch SDK wrapper, events, search/recommendation calls), `endpoint.ts` (resolves the API base domain + cloud-vs-legacy paths; see endpoint resolution below).
 - `components/` — shared UI: `app-wrapper`, `shadow-wrapper`, `product-card/ProductCard.tsx`, `crop/`, `hotspots/`, `modal/`, `popup-trigger-button/`, providers, hooks (`hooks/use-*` for multisearch/autocomplete/recommendations/breakpoints).
 - `locales/` — i18n language packs (used with `react-intl`).
 - `types/` — contexts, tracking constants, function types.
-- `default-configs.ts`, `constants.ts` — shared defaults and `DEFAULT_ENDPOINT`.
+- `default-configs.ts`, `constants.ts` — shared defaults and `LEGACY_ENDPOINT`.
 
 ### Per-widget structure
 `src/official-widgets/<widget>/`: `index.tsx`, `index-dev.tsx`, `app.tsx`, `default-config.ts` (`DEFAULT_CUSTOMIZATIONS`, `DEFAULT_TEXTS`), `dev-configs.ts`, `index.html`, `<widget>.tsx` (main component), `components/`, `screens/`, plus `*.spec.tsx` + `__snapshots__/`.
@@ -82,4 +85,4 @@ Styles are injected into a per-widget Shadow DOM, not the page. `webpack.util.js
 - Coverage is collected by default and excludes `app.tsx`, `index.tsx`, `index-dev.tsx`, `dev-configs.ts`.
 
 ## Further docs
-`docs/integration.md` (how host pages embed widgets via `.ps-widget-<id>` + snippet), `docs/customization.md` (the `customizations` config), `docs/versioning.md`. `README.md` has the quick-start.
+`docs/integration.md` (how host pages embed widgets via `.ps-widget-<id>` + snippet, incl. the `cloud` option), `docs/customization.md` (the `customizations` config), `docs/versioning.md`, `docs/widget-init-flow.md` (boot flow + when the endpoint is read), `docs/adr/` (architecture decision records). `README.md` has the quick-start.
