@@ -9,8 +9,8 @@ export const AZURE_ENDPOINT = 'https://multisearch-az.rezolve.com';
 /**
  * Cloud-specific API domains. This deliberately mirrors the cloud→domain map inside
  * `visearch-javascript-sdk` (see its `getEndpoint`), because the direct-`fetch` call sites in this
- * repo (gallery browse, dev field-mapping fetch) bypass the SDK and must resolve the domain
- * themselves. Keep in sync with the SDK constants.
+ * repo (shoppable-gallery browse, shopping-assistant, recommend-me, and the dev field-mapping fetch)
+ * bypass the SDK and must resolve the domain themselves. Keep in sync with the SDK constants.
  */
 export const CLOUD_DOMAINS: Partial<Record<Cloud, string>> = {
   aws: AWS_ENDPOINT,

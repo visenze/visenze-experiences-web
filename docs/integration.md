@@ -94,6 +94,56 @@ Endpoint resolution precedence (highest first):
 3. The API-provided `appSettings.endpoint`.
 4. The built-in default endpoint.
 
+#### Overriding the endpoint manually
+
+A manually specified `appSettings.endpoint` is the highest-priority signal — it overrides both the
+`appSettings.cloud` value and the `endpoint` returned from the Rezolve widget initialization API.
+This is useful when you need to pin a widget to a specific domain (e.g. to test against a staging
+environment, or to route traffic through your own proxy) regardless of what the API decides.
+
+Set it on the `visenzeConfigs` object for the placement, **before** the widget code snippet is
+inserted to the page:
+
+```html
+<script type="text/javascript">
+  // e.g. for placement ID 5000
+  window.visenzeConfigs = window.visenzeConfigs || {};
+  window.visenzeConfigs[5000] = {
+    appSettings: {
+      // This wins over any `cloud` value and any API-provided endpoint.
+      endpoint: 'https://your-custom-domain.example.com',
+    },
+  };
+</script>
+<!-- ...widget code snippet goes here, after the config above... -->
+```
+
+With the manual endpoint set, the widget sends all SDK-routed requests to your domain, and the
+direct-`fetch` call sites (shoppable-gallery browse, dev field-mapping fetch) resolve the same domain
+via `resolveBaseEndpoint`.
+
+> **Note on API paths:** the cloud domains use updated API paths (e.g. `/v1/visearch/...`,
+> `/v2/widget/configs`) while the legacy domains use the original paths. When you set a manual
+> endpoint, cloud paths are used **only if the endpoint's origin matches a known cloud domain**
+> (`multisearch-aw.rezolve.com` or `multisearch-az.rezolve.com`); any other origin falls back to the
+> legacy paths. Note that adding `appSettings.cloud` alongside a manual endpoint does **not** change
+> this — once a manual endpoint is set, its origin alone decides which paths are used.
+
+If you only want to switch between the AWS and Azure cloud deployments (rather than an arbitrary
+domain) and have the correct cloud paths applied automatically, prefer setting `appSettings.cloud`
+instead of a manual endpoint:
+
+```html
+<script type="text/javascript">
+  window.visenzeConfigs = window.visenzeConfigs || {};
+  window.visenzeConfigs[5000] = {
+    appSettings: {
+      cloud: 'aws', // or 'azure' — overrides the API-provided endpoint, applies cloud paths
+    },
+  };
+</script>
+```
+
 ## Callbacks
 
 ViSenze widgets provide some pre-defined callback events such as after tracking (`trackingCallback`), after product search (`onSearchCallback`), and after product click (`onProductClick`).

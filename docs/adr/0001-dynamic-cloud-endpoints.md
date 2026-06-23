@@ -36,8 +36,8 @@ with a fixed precedence:
    is set with no manual endpoint, omits `endpoint` so the SDK resolves the cloud domain + paths.
 3. **Direct-fetch calls** — a new `src/common/client/endpoint.ts` resolver (`CLOUD_DOMAINS`,
    `resolveBaseEndpoint`, `usesCloudPaths`, `getManualEndpoint`) mirrors the SDK's resolution for the
-   two call sites that bypass the SDK: the shoppable-gallery browse fetch and the dev-only
-   field-mapping fetch.
+   call sites that bypass the SDK: the shoppable-gallery browse fetch, the shopping-assistant fetch,
+   the recommend-me fetch, and the dev-only field-mapping fetch.
 4. **Provenance** — the manual endpoint and the API endpoint both collapse into `appSettings.endpoint`
    (the host init script merges `window.visenzeConfigs` before `initWidget`). The widget recovers the
    manual one by reading `window.visenzeConfigs[placementId].appSettings.endpoint` directly.
@@ -72,6 +72,6 @@ never needs to know the cloud domain map — the widget/SDK owns it.
 ## Implementation
 
 Shipped under widget version `1.0.21`. Files: `wigmix-core.ts`, `widget-client.ts`,
-`endpoint.ts` (new) + `endpoint.spec.ts`, `initialization.ts`, `shoppable-gallery.tsx`, per-widget
-`dev-configs.ts`, `docs/integration.md`. Covered by unit tests for the resolver and the `setKeys`
-wiring.
+`endpoint.ts` (new) + `endpoint.spec.ts`, `initialization.ts`, `shoppable-gallery.tsx`,
+`shopping-assistant.tsx`, `use-recommend-me.ts`, per-widget `dev-configs.ts`, `docs/integration.md`.
+Covered by unit tests for the resolver and the `setKeys` wiring.
