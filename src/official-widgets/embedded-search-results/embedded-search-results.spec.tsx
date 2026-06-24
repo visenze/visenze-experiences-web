@@ -655,4 +655,29 @@ describe('embedded-search-result', () => {
       expect(productCardImage.getAttribute('src')).toEqual(`https://main-image-${scrambledOrder[idx] + 1}`);
     });
   });
+
+  it('calls productMultisearchOutfitRecommendations when msApiId is "3"', () => {
+    widgetConfig.appSettings.msApiId = '3';
+    const productMultisearch = jest.fn();
+    const productMultisearchOutfitRecommendations = jest.fn().mockImplementation((_, handler) => {
+      handler(getStandardMultiSearchSuccessResponse());
+    });
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch,
+      productMultisearchOutfitRecommendations,
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <EmbeddedSearchResults textQuery='testQuery' imUrl='' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    expect(productMultisearchOutfitRecommendations).toHaveBeenCalledTimes(1);
+    expect(productMultisearch).not.toHaveBeenCalled();
+  });
 });
