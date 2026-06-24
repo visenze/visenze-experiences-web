@@ -6,6 +6,36 @@ Each widget can operate as a standalone component to be deployed in an e-commerc
 
 The widgets use React, HeroUI (formerly known as NextUI) and Tailwind CSS.
 
+## Official Widgets
+
+| Widget | Path | APIs Used |
+|--------|------|-----------|
+| in-page-carousel | `src/official-widgets/in-page-carousel` | Product Search by ID |
+| embedded-grid | `src/official-widgets/embedded-grid` | Product Search by ID |
+| shop-the-look | `src/official-widgets/shop-the-look` | Product Search by ID |
+| search-bar | `src/official-widgets/search-bar` | Multisearch Autocomplete, Multisearch |
+| in-page-carousel-v3 | `src/official-widgets/in-page-carousel-v3` | Multisearch |
+| similar-search | `src/official-widgets/similar-search` | Multisearch |
+| recommend-me | `src/official-widgets/recommend-me` | Recommend Me, Multisearch |
+| camera-search | `src/official-widgets/camera-search` | Multisearch |
+| embedded-search-results | `src/official-widgets/embedded-search-results` | Multisearch |
+| shoppable-lookbook | `src/official-widgets/shoppable-lookbook` | Product Search by ID |
+| icon-triggered-grid | `src/official-widgets/icon-triggered-grid` | Product Search by ID |
+| buy-the-look | `src/official-widgets/buy-the-look` | Product Search by ID |
+| more-like-this | `src/official-widgets/more-like-this` | Product Search by ID |
+| slide-out-drawer | `src/official-widgets/slide-out-drawer` | Multisearch, Recommend Me |
+| merchandise-search-bar | `src/official-widgets/merchandise-search-bar` | Multisearch Autocomplete, Multisearch |
+| shoppable-gallery | `src/official-widgets/shoppable-gallery` | Product Search by ID, Gallery Browse |
+| shopping-assistant | `src/official-widgets/shopping-assistant` | Shopping Assistant |
+
+**API reference:**
+- **Product Search by ID** — `productSearchById` (SDK); legacy Recommendations endpoint
+- **Multisearch** — `productMultisearch` / `productMultisearchComplementary` / `productMultisearchOutfitRecommendations` (SDK); routable via `msApiId`
+- **Multisearch Autocomplete** — `productMultisearchAutocomplete` (SDK)
+- **Recommend Me** — `/v1/product/multisearch/chat/recommend-me` (direct fetch, SSE)
+- **Gallery Browse** — `/v1/product/linked/gallery/browse` (direct fetch, legacy API)
+- **Shopping Assistant** — `/v1/product/multisearch/chat/shopping-assistant` (direct fetch, SSE)
+
 ## Repository structure
 
 ```txt
