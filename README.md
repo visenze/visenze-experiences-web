@@ -10,22 +10,22 @@ The widgets use React, HeroUI (formerly known as NextUI) and Tailwind CSS.
 
 | Widget | Path | APIs Used |
 |--------|------|-----------|
-| in-page-carousel | `src/official-widgets/in-page-carousel` | Product Search by ID |
-| embedded-grid | `src/official-widgets/embedded-grid` | Product Search by ID |
-| shop-the-look | `src/official-widgets/shop-the-look` | Product Search by ID |
+| in-page-carousel | `src/official-widgets/in-page-carousel` | Legacy Recommendations |
+| embedded-grid | `src/official-widgets/embedded-grid` | Legacy Recommendations |
+| shop-the-look | `src/official-widgets/shop-the-look` | Legacy Recommendations |
 | search-bar | `src/official-widgets/search-bar` | Multisearch Autocomplete, Multisearch |
 | in-page-carousel-v3 | `src/official-widgets/in-page-carousel-v3` | Multisearch |
 | similar-search | `src/official-widgets/similar-search` | Multisearch |
 | recommend-me | `src/official-widgets/recommend-me` | Recommend Me, Multisearch |
 | camera-search | `src/official-widgets/camera-search` | Multisearch |
 | embedded-search-results | `src/official-widgets/embedded-search-results` | Multisearch |
-| shoppable-lookbook | `src/official-widgets/shoppable-lookbook` | Product Search by ID |
-| icon-triggered-grid | `src/official-widgets/icon-triggered-grid` | Product Search by ID |
-| buy-the-look | `src/official-widgets/buy-the-look` | Product Search by ID |
-| more-like-this | `src/official-widgets/more-like-this` | Product Search by ID |
+| shoppable-lookbook | `src/official-widgets/shoppable-lookbook` | Legacy Recommendations |
+| icon-triggered-grid | `src/official-widgets/icon-triggered-grid` | Legacy Recommendations |
+| buy-the-look | `src/official-widgets/buy-the-look` | Legacy Recommendations |
+| more-like-this | `src/official-widgets/more-like-this` | Legacy Recommendations |
 | slide-out-drawer | `src/official-widgets/slide-out-drawer` | Multisearch, Recommend Me |
 | merchandise-search-bar | `src/official-widgets/merchandise-search-bar` | Multisearch Autocomplete, Multisearch |
-| shoppable-gallery | `src/official-widgets/shoppable-gallery` | Product Search by ID, Gallery Browse |
+| shoppable-gallery | `src/official-widgets/shoppable-gallery` | Legacy Recommendations, Gallery Browse |
 | shopping-assistant | `src/official-widgets/shopping-assistant` | Shopping Assistant |
 
 **API reference:**

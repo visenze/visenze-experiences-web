@@ -21,7 +21,7 @@ describe('resolveMsApiType', () => {
     warnSpy.mockRestore();
   });
 
-  it('falls back to multisearch and warns once for unrecognized non-blank values', () => {
+  it('falls back to multisearch and warns for unrecognized non-blank values', () => {
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     expect(resolveMsApiType('456')).toBe(MsApiType.MULTISEARCH);
     expect(resolveMsApiType('abc')).toBe(MsApiType.MULTISEARCH);
