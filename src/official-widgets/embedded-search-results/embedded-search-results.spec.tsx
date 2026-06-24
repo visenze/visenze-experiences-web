@@ -659,7 +659,12 @@ describe('embedded-search-result', () => {
   it('calls productMultisearchOutfitRecommendations when msApiId is "3"', () => {
     widgetConfig.appSettings.msApiId = '3';
     const productMultisearch = jest.fn();
-    const productMultisearchOutfitRecommendations = jest.fn().mockImplementation((_, handler) => {
+    const productMultisearchOutfitRecommendations = jest.fn().mockImplementation((params, handler) => {
+      expect(params).toMatchObject({
+        q: 'testQuery',
+        page: 1,
+        limit: 24,
+      });
       handler(getStandardMultiSearchSuccessResponse());
     });
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_embedded_search_results', 'VERSION', () => ({
