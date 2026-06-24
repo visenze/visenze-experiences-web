@@ -46,7 +46,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- (internal) Stabilized similar-search snapshots by assigning a fixed refinement search input ID.
 - (internal) Ignored generated `dist/` output in Jest test discovery.
 
 <!-- END visenze-experiences-web 1.0.21 -->
