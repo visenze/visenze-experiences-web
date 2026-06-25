@@ -6,6 +6,9 @@ module.exports = module.exports = {
     '\\.(css|scss)$': '<rootDir>/mocks/empty-mock.ts',
   },
   testEnvironment: 'jsdom',
+  testPathIgnorePatterns: [
+    '<rootDir>/dist/',
+  ],
   setupFiles: [
     './jest-setup.ts',
   ],

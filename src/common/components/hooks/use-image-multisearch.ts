@@ -68,6 +68,7 @@ interface ImageMultisearchProps {
   image: SearchImageOrPid | undefined;
   boxData: BoxData | undefined;
   isComplementary?: boolean;
+  routeByMsApiId?: boolean;
 }
 
 export interface ImageMultisearch {
@@ -87,6 +88,7 @@ const useImageMultisearch = ({
   image,
   boxData,
   isComplementary,
+  routeByMsApiId,
 }: ImageMultisearchProps): ImageMultisearch => {
   const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
   const { searchSettings } = widgetConfig;
@@ -148,10 +150,12 @@ const useImageMultisearch = ({
     if (image) {
       const product = getProductType(boxData);
       const params = getSearchParams(image, imageId, searchSettings, boxData, product);
-      if (isComplementary) {
+      if (routeByMsApiId) {
+        widgetClient.multisearchRouter(params, handleImageSuccess, handleError);
+      } else if (isComplementary) {
         widgetClient.multisearchComplementary(params, handleImageSuccess, handleError);
       } else {
-        widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
+        widgetClient.multisearch(params, handleImageSuccess, handleError);
       }
     } else {
       resetSearch();
@@ -159,11 +163,13 @@ const useImageMultisearch = ({
   };
 
   const multisearchWithParams = (params: Record<string, any>): void => {
-    params = {...params, ...searchSettings };
-    if (isComplementary) {
+    params = { ...params, ...searchSettings };
+    if (routeByMsApiId) {
+      widgetClient.multisearchRouter(params, handleImageSuccess, handleError);
+    } else if (isComplementary) {
       widgetClient.multisearchComplementary(params, handleImageSuccess, handleError);
     } else {
-      widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
+      widgetClient.multisearch(params, handleImageSuccess, handleError);
     }
   };
 

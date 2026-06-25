@@ -211,6 +211,43 @@ describe('similar-search', () => {
     expect(modal).not.toBeNull();
   });
 
+  it('calls the outfit-recommendations API when msApiId is "3"', () => {
+    widgetConfig.appSettings.msApiId = '3';
+    const productMultisearch = jest.fn();
+    const productMultisearchOutfitRecommendations = jest.fn().mockImplementation((params, handler) => {
+      expect(params).toEqual({
+        im_url: 'test-imurl',
+        return_fields_mapping: true,
+        return_query_sys_meta: true,
+      });
+      handler(getStandardMultiSearchSuccessResponse());
+    });
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch,
+      productMultisearchOutfitRecommendations,
+      productMultisearchAutocomplete: jest.fn().mockImplementation((_, handler) => {
+        handler(getStandardMultiSearchAutocompleteResponse());
+      }),
+    }));
+    testComponent = render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <SimilarSearch pid='' imUrl='test-imurl' renderModalWithoutPortal={true} />
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+    );
+
+    act(() => {
+      widgetClient.openWidget('test-imurl');
+    });
+
+    expect(productMultisearchOutfitRecommendations).toHaveBeenCalledTimes(1);
+    expect(productMultisearch).not.toHaveBeenCalled();
+  });
+
   it('should render a successful response with default config in desktop view', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_similar_search', 'VERSION', () => ({
       ...mockVisearchClient,

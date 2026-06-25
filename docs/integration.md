@@ -144,6 +144,40 @@ instead of a manual endpoint:
 </script>
 ```
 
+#### Overriding the multisearch API manually
+
+Some multisearch-based widgets can route to different API variants based on `appSettings.msApiId`.
+This value is normally injected by the Rezolve widget initialization API, but you can override it
+manually through `window.visenzeConfigs` for local validation or controlled rollout.
+The route is resolved once when the widget client is initialized; changing `msApiId` after the widget
+has loaded does not reroute existing widget instances.
+
+Manual `msApiId` resolution precedence (highest first):
+
+1. A non-blank manually specified `appSettings.msApiId` via `window.visenzeConfigs`.
+2. The API-provided `appSettings.msApiId`.
+3. The built-in default: regular multisearch.
+
+Supported values:
+
+| `appSettings.msApiId` | API route |
+|-----------------------|-----------|
+| `'1'`                 | regular multisearch |
+| `'2'`                 | complementary |
+| `'3'`                 | outfit recommendations |
+| unset / blank         | regular multisearch |
+
+```html
+<script type="text/javascript">
+  window.visenzeConfigs = window.visenzeConfigs || {};
+  window.visenzeConfigs[5000] = {
+    appSettings: {
+      msApiId: '3', // routes supported widgets to outfit recommendations
+    },
+  };
+</script>
+```
+
 ## Callbacks
 
 ViSenze widgets provide some pre-defined callback events such as after tracking (`trackingCallback`), after product search (`onSearchCallback`), and after product click (`onProductClick`).

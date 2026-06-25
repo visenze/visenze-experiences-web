@@ -9,7 +9,8 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     appKey: '',
     placementId: '',
     endpoint: '',
-    cloud: 'aws',
+    msApiId: 1,
+    // cloud: 'aws',
   },
   displaySettings: {
     cssSelector: '.in-page-carousel-v3-widget',

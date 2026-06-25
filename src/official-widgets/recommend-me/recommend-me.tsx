@@ -97,7 +97,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
     if (isComplementary) {
       widgetClient.multisearchComplementary(params, handleSuccess, handleError);
     } else {
-      widgetClient.multisearchByImage(params, handleSuccess, handleError);
+      widgetClient.multisearch(params, handleSuccess, handleError);
     }
   };
 

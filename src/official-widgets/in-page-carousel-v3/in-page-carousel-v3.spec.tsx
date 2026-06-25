@@ -94,6 +94,40 @@ describe('in-page-carousel-v3', () => {
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
 
+  it('calls the complementary API when msApiId is "2"', () => {
+    widgetConfig.appSettings.msApiId = '2';
+    const productMultisearch = jest.fn();
+    const productMultisearchComplementary = jest.fn().mockImplementation((params, handler) => {
+      expect(params).toEqual({
+        pid: 'pid-found',
+        limit: 20,
+        sort_by: '',
+        facets: ['price', 'brand'],
+        facets_show_count: true,
+        return_fields_mapping: true,
+        return_query_sys_meta: true,
+      });
+      handler(getStandardMultiSearchSuccessResponse());
+    });
+    const widgetClient = getWidgetClient(widgetConfig, 'wigmix_in_page_carousel_v3', 'VERSION', () => ({
+      ...mockVisearchClient,
+      productMultisearch,
+      productMultisearchComplementary,
+    }));
+    testComponent = render(
+      <RootContext.Provider value={document.body}>
+        <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <InPageCarouselV3 productId='pid-found' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>
+      </RootContext.Provider>,
+    );
+
+    expect(productMultisearchComplementary).toHaveBeenCalledTimes(1);
+    expect(productMultisearch).not.toHaveBeenCalled();
+  });
+
   it('should render a successful response with default config (carousel view)', () => {
     const widgetClient = getWidgetClient(widgetConfig, 'wigmix_in_page_carousel_v3', 'VERSION', () => ({
       ...mockVisearchClient,

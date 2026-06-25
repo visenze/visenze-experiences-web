@@ -175,7 +175,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
     }
     params['limit'] = customizations.results?.limit || 24;
 
-    widgetClient.multisearchByImage(params, (res) => {
+    widgetClient.multisearchRouter(params, (res) => {
       handleSuccess(res, shouldResetFacets);
 
       // Only add to history if image URL is used
