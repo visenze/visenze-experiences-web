@@ -29,8 +29,7 @@ export const resolveMsApiType = (raw: string | number | undefined): MsApiType =>
 };
 
 export const getManualMsApiId = (placementId: string | number): string | number | undefined => {
-  const manualMsApiId = (window as unknown as { visenzeConfigs?: Record<string, { appSettings?: { msApiId?: string | number } }> })
-    .visenzeConfigs?.[placementId]?.appSettings?.msApiId;
+  const manualMsApiId = window.visenzeConfigs?.[placementId]?.appSettings?.msApiId;
 
   if (typeof manualMsApiId === 'string' && manualMsApiId.trim() === '') {
     return undefined;
