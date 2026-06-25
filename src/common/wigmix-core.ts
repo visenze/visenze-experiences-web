@@ -216,7 +216,7 @@ export interface WidgetClient {
    *
    * @since 1.0.0
    */
-  multisearchByImage: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
+  multisearch: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
   /**
    * Multisearch dispatch that routes to the multisearch / complementary / outfit-recommendations
    * API based on `appSettings.msApiId`.

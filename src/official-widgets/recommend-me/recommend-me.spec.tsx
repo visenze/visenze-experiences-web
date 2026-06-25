@@ -189,7 +189,7 @@ describe('recommend-me', () => {
 
   // --- 2.2 Search interactions ---
 
-  it('should call multisearchByImage (productMultisearch) when clicking "Similar Products"', () => {
+  it('should call multisearch (productMultisearch) when clicking "Similar Products"', () => {
     const mockProductMultisearch = jest.fn();
     renderRecommendMe('pid-found', {
       productMultisearch: mockProductMultisearch,

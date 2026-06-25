@@ -20,7 +20,7 @@ also need a client-level override path for local validation and controlled rollo
 existing manual `endpoint` override in `window.visenzeConfigs`.
 
 Before this change, callers had to choose explicit `WidgetClient` methods such as
-`multisearchByImage()` or `multisearchComplementary()` at each call site. That made backend-driven
+`multisearch()` or `multisearchComplementary()` at each call site. That made backend-driven
 API routing awkward and would have required widget-specific branching for every supported route.
 
 ## Decision

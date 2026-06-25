@@ -47,7 +47,7 @@ below.) So `endpoint` is effectively **immutable per widget instance, decided at
    ▼  SDK stores endpoint
    │
    ▼  RUNTIME — every search call reuses the stored endpoint:
-        multisearchByImage / multisearchComplementary / productSearchById / …
+        multisearch / multisearchComplementary / productSearchById / …
         (similar-search, camera-search, recommend-me go through here)
         shoppable-gallery: separate direct fetch(`${base}/…`)  ◄── resolves endpoint again
 ```

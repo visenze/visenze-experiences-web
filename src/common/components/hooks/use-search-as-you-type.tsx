@@ -77,7 +77,7 @@ const useSearchAsYouType = ({
       }
     }
 
-    widgetClient.multisearchByImage(params, handleSearchAsYouTypeSuccess, handleError);
+    widgetClient.multisearch(params, handleSearchAsYouTypeSuccess, handleError);
   };
 
   useEffect(() => {

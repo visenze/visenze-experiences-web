@@ -155,7 +155,7 @@ const useImageMultisearch = ({
       } else if (isComplementary) {
         widgetClient.multisearchComplementary(params, handleImageSuccess, handleError);
       } else {
-        widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
+        widgetClient.multisearch(params, handleImageSuccess, handleError);
       }
     } else {
       resetSearch();
@@ -169,7 +169,7 @@ const useImageMultisearch = ({
     } else if (isComplementary) {
       widgetClient.multisearchComplementary(params, handleImageSuccess, handleError);
     } else {
-      widgetClient.multisearchByImage(params, handleImageSuccess, handleError);
+      widgetClient.multisearch(params, handleImageSuccess, handleError);
     }
   };
 

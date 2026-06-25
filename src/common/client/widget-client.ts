@@ -101,7 +101,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     );
   };
 
-  const multisearchByImage = (
+  const multisearch = (
     params: Record<string, any>,
     handleSuccess: SuccessHandler,
     handleError: ErrorHandler,
@@ -167,7 +167,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
         multisearchOutfitRecommendations(params, handleSuccess, handleError);
         break;
       default:
-        multisearchByImage(params, handleSuccess, handleError);
+        multisearch(params, handleSuccess, handleError);
     }
   };
 
@@ -377,7 +377,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     getRenderStatus,
     getRenderRoots,
     searchById,
-    multisearchByImage,
+    multisearch,
     multisearchRouter,
     multisearchComplementary,
     multisearchOutfitRecommendations,
