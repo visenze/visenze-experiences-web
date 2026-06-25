@@ -41,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Widget client: Renamed `WidgetClient.multisearchByImage` to `multisearch` (direct image multisearch call).
+- Widget client: Renamed `WidgetClient.multisearch` to `multisearchRouter` (msApiId-based dispatcher).
 - Upgrade visearch-javascript-sdk to 5.2.0.
 - Set default endpoint to `multimodal.search.rezolve.com`
 
