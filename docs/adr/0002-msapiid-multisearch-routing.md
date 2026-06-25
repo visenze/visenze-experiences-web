@@ -28,7 +28,7 @@ API routing awkward and would have required widget-specific branching for every 
 Add one central multisearch-family dispatcher on `WidgetClient`:
 
 ```ts
-widgetClient.multisearch(params, handleSuccess, handleError);
+widgetClient.multisearchRouter(params, handleSuccess, handleError);
 ```
 
 The dispatcher resolves the target SDK method once when `getWidgetClient()` constructs the client,
@@ -44,10 +44,10 @@ Implementation details:
 
 1. **Type and resolver** — `appSettings.msApiId?: string | number` is part of `WidgetConfig`, with
    `MsApiType`, `resolveMsApiType()`, and `getManualMsApiId()` in `src/common/client/ms-api.ts`.
-2. **Client dispatcher** — `widget-client.ts` adds `WidgetClient.multisearch()` and routes to
+2. **Client dispatcher** — `widget-client.ts` adds `WidgetClient.multisearchRouter()` and routes to
    `productMultisearch`, `productMultisearchComplementary`, or
    `productMultisearchOutfitRecommendations`.
-3. **Widget opt-in** — `in-page-carousel-v3` calls `WidgetClient.multisearch()` for recommendation
+3. **Widget opt-in** — `in-page-carousel-v3` calls `WidgetClient.multisearchRouter()` for recommendation
    multisearch. `similar-search` opts into the same dispatcher through
    `useImageMultisearch({ routeByMsApiId: true })`.
 4. **Existing routes preserved** — camera-search and slide-out-drawer keep direct routing and are not
@@ -71,7 +71,7 @@ Implementation details:
 - Preserves backwards compatibility: missing or blank `msApiId` behaves as regular multisearch.
 - Allows host pages to override routing manually without backend changes:
   `window.visenzeConfigs[placementId].appSettings.msApiId = '2' | '3'`.
-- Keeps widget adoption explicit: only widgets that call `WidgetClient.multisearch()` are affected.
+- Keeps widget adoption explicit: only widgets that call `WidgetClient.multisearchRouter()` are affected.
 
 **Negative / trade-offs**
 - Reading `window.visenzeConfigs` creates the same coupling used by manual endpoint overrides.

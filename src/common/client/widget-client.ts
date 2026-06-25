@@ -154,7 +154,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
 
   const msApiType = resolveMsApiType(getManualMsApiId(placementId) ?? appSettings.msApiId);
 
-  const multisearch = (
+  const multisearchRouter = (
     params: Record<string, any>,
     handleSuccess: SuccessHandler,
     handleError: ErrorHandler,
@@ -378,7 +378,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     getRenderRoots,
     searchById,
     multisearchByImage,
-    multisearch,
+    multisearchRouter,
     multisearchComplementary,
     multisearchOutfitRecommendations,
     multisearchAutocomplete,

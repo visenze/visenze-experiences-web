@@ -95,7 +95,7 @@ const useRecommendationMultiSearch = ({
       params['filters'] = getFilterQueries(productDetails, filters);
     }
 
-    widgetClient.multisearch({ ...params, ...widgetConfig.searchSettings }, handleSuccess, handleError);
+    widgetClient.multisearchRouter({ ...params, ...widgetConfig.searchSettings }, handleSuccess, handleError);
   };
 
   const getMetadata = (): Record<string, any> => {

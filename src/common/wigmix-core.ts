@@ -227,7 +227,7 @@ export interface WidgetClient {
    *
    * @since 1.0.21
    */
-  multisearch: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
+  multisearchRouter: (params: Record<string, any>, handleSuccess: SuccessHandler, handleError: ErrorHandler) => void;
   /**
    * Multisearch complementary suggestions.
    *

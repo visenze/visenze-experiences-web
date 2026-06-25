@@ -7,7 +7,7 @@ describe('widget-client multisearch dispatch', () => {
     multi: jest.Mock;
     complementary: jest.Mock;
     outfit: jest.Mock;
-    multisearch: ReturnType<typeof getWidgetClient>['multisearch'];
+    multisearch: ReturnType<typeof getWidgetClient>['multisearchRouter'];
   } => {
     const multi = jest.fn();
     const complementary = jest.fn();
@@ -23,7 +23,7 @@ describe('widget-client multisearch dispatch', () => {
       productMultisearchComplementary: complementary,
       productMultisearchOutfitRecommendations: outfit,
     } as Partial<ViSearchClient> as ViSearchClient));
-    return { multi, complementary, outfit, multisearch: client.multisearch };
+    return { multi, complementary, outfit, multisearch: client.multisearchRouter };
   };
 
   const noop = (): void => {};

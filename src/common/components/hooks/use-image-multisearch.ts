@@ -151,7 +151,7 @@ const useImageMultisearch = ({
       const product = getProductType(boxData);
       const params = getSearchParams(image, imageId, searchSettings, boxData, product);
       if (routeByMsApiId) {
-        widgetClient.multisearch(params, handleImageSuccess, handleError);
+        widgetClient.multisearchRouter(params, handleImageSuccess, handleError);
       } else if (isComplementary) {
         widgetClient.multisearchComplementary(params, handleImageSuccess, handleError);
       } else {
@@ -165,7 +165,7 @@ const useImageMultisearch = ({
   const multisearchWithParams = (params: Record<string, any>): void => {
     params = { ...params, ...searchSettings };
     if (routeByMsApiId) {
-      widgetClient.multisearch(params, handleImageSuccess, handleError);
+      widgetClient.multisearchRouter(params, handleImageSuccess, handleError);
     } else if (isComplementary) {
       widgetClient.multisearchComplementary(params, handleImageSuccess, handleError);
     } else {
