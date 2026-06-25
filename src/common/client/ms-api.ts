@@ -20,7 +20,7 @@ export const resolveMsApiType = (raw: string | number | undefined): MsApiType =>
   }
 
   const value = Number(raw);
-  if (value === MsApiType.MULTISEARCH || value === MsApiType.COMPLEMENTARY || value === MsApiType.OUTFIT) {
+  if (MsApiType[value] !== undefined) {
     return value;
   }
 
