@@ -142,6 +142,20 @@ export const DEFAULT_TEXTS: LanguagePack = {
     discount: 'ลดราคา {discount}',
     addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
+  zh: {
+    filter: '筛选',
+    noResults: '未找到结果',
+    noResultsDescription: '我们找不到与您的搜索匹配的商品。',
+    searchBarPlaceholder: '您在寻找什么？',
+    noSearchInput: '没有搜索输入',
+    noSearchInputDescription: '输入搜索词或选择图片以查找结果。',
+    imageOrQueryNotFound: '您提供了无效的图片或查询，请移除后重试。',
+    systemError: '抱歉，系统暂时遇到问题，请稍后再试。',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 折扣',
+    addToCart: '加入购物车',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {

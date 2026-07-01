@@ -102,6 +102,16 @@ export const DEFAULT_TEXTS: LanguagePack = {
     discount: 'ลดราคา {discount}',
     addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
+  zh: {
+    errorDescription: '抱歉，出现了一些问题',
+    errorResolution: '请刷新后重试',
+    hotspotRecommendationsTitle: '这张照片中的商品',
+    noResults: '此热点没有结果',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 折扣',
+    addToCart: '加入购物车',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
