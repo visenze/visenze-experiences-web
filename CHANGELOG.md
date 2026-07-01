@@ -38,6 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `zh` default texts to all widgets.
 
+<!-- END visenze-experiences-web 1.0.22 -->
+
 ## [1.0.21](https://github.com/visenze/visenze-experiences-web/compare/1.0.20...1.0.21)
 
 <!-- BEGIN visenze-experiences-web 1.0.21 -->
