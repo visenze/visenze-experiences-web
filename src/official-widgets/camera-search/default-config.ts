@@ -172,6 +172,23 @@ export const DEFAULT_TEXTS: LanguagePack = {
     discount: 'ลดราคา {discount}',
     addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
+  zh: {
+    uploadScreenTitle: '告诉我们您在寻找什么',
+    resultScreenTitle: '这是我们找到的结果',
+    dragImageToSearch: '拖放图片进行搜索，或点击浏览',
+    tapToSearchImage: '点击此处搜索图片',
+    tapProductGallery: '或点击下方的热门商品图库',
+    searchBarPlaceholder: '在此输入以优化结果...',
+    previousViews: '搜索记录',
+    errorDescription: '抱歉，出现了一些问题',
+    back: '返回',
+    triggerCTA: '以图搜索',
+    useCamera: '或使用相机拍摄图片',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 折扣',
+    addToCart: '加入购物车',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {

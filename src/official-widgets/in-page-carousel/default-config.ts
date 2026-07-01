@@ -92,6 +92,15 @@ export const DEFAULT_TEXTS: LanguagePack = {
     discount: 'ลดราคา {discount}',
     addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
+  zh: {
+    widgetTitle: '您可能也喜欢',
+    showMore: '显示更多',
+    showLess: '显示更少',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 折扣',
+    addToCart: '加入购物车',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {

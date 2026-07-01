@@ -122,6 +122,18 @@ export const DEFAULT_TEXTS: LanguagePack = {
     discount: 'ลดราคา {discount}',
     addToCart: 'เพิ่มสินค้าลงตะกร้า',
   },
+  zh: {
+    widgetTitle: '您可能也喜欢',
+    searchBarPlaceholder: '在此输入以优化结果...',
+    previousViews: '搜索记录',
+    errorDescription: '抱歉，出现了一些问题',
+    back: '返回',
+    triggerCTA: '查找相似商品',
+    price: '{price}',
+    originalPrice: '{originalPrice}',
+    discount: '{discount} 折扣',
+    addToCart: '加入购物车',
+  },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {

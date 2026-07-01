@@ -30,7 +30,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
-## [1.0.21](https://github.com/visenze/visenze-experiences-web/compare/1.0.20...1.0.21) - [Unreleased]
+## [1.0.22](https://github.com/visenze/visenze-experiences-web/compare/1.0.21...1.0.22)
+
+<!-- BEGIN visenze-experiences-web 1.0.22 -->
+
+### Added
+
+- Add `zh` default texts to all widgets.
+
+## [1.0.21](https://github.com/visenze/visenze-experiences-web/compare/1.0.20...1.0.21)
 
 <!-- BEGIN visenze-experiences-web 1.0.21 -->
 
