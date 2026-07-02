@@ -5,7 +5,6 @@ The shopping-assistant widget sends entries from `searchSettings` as query param
 The configuration must be defined before the widget-init script runs. The following example configures placement `6643`:
 
 ```html
-<div class="ps-widget-6643"></div>
 
 <script type="text/javascript">
   window.visenzeConfigs = window.visenzeConfigs || {};
@@ -16,9 +15,12 @@ The configuration must be defined before the widget-init script runs. The follow
   };
 </script>
 
+// get the script from Placement's Integrate Widget page, look something like this
+<div class="ps-widget-6643"></div>
+
 <script type="text/javascript">
-!function(x,e,t,n,r,i,a){var o=localStorage.getItem("va-uid")||function x(){let e=new Date().getTime(),t="xxxxxxxx.xxxx.4xxx.yxxx.xxxxxxxxxxxx".replace(/[xy]/g,x=>{let t=(e+16*Math.random())%16|0;return e=Math.floor(e/16),("x"===x?t:3&t|8).toString(16)});return t}(),c=x.getElementsByTagName(e)[0],d=x.createElement(e),g=new URL(`https://search-dev.visenze.com/v2/widget-init?app_key=${t}&placement_id=${n}&container=${r}&uid=${o}`);i&&(g+=`&contexts=${i}`),d.async=!0,d.src=g,d.onload=function(){a&&a()},c.parentNode.insertBefore(d,c)}(document,"script","8b7ebae3c13848c9bbfe946f3aa42735","6643",".ps-widget-6643");
-</script>
+   !function(x,e,t,n,r,i,a){var o=localStorage.getItem("va-uid")||function x(){let e=new Date().getTime(),t="xxxxxxxx.xxxx.4xxx.yxxx.xxxxxxxxxxxx".replace(/[xy]/g,x=>{let t=(e+16*Math.random())%16|0;return e=Math.floor(e/16),("x"===x?t:3&t|8).toString(16)});return t}(),c=x.getElementsByTagName(e)[0],d=x.createElement(e),g=new URL(`https://multimodal.search.rezolve.com/v2/widget-init?app_key=${t}&placement_id=${n}&container=${r}&uid=${o}`);i&&(g+=`&contexts=${i}`),d.async=!0,d.src=g,d.onload=function(){a&&a()},c.parentNode.insertBefore(d,c)}(document,"script","<APP_KEY>","<PLACEMENT_ID>",".ps-widget-<PLACEMENT_ID>");
+   </script>
 ```
 
 Configuration is keyed by placement ID, so `window.visenzeConfigs[6643]` applies only to placement `6643`. Use the relevant placement ID in both the configuration and widget-init snippet when adapting this example.
