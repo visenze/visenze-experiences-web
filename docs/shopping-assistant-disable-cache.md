@@ -12,6 +12,11 @@ The configuration must be defined before the widget-init script runs. The follow
     searchSettings: {
       disable_cache: true,
     },
+    customizations: {
+      chatbot: {
+        chatAgent: 'shopping_assistant_v2',
+      },
+    },
   };
 </script>
 
@@ -24,6 +29,8 @@ The configuration must be defined before the widget-init script runs. The follow
 ```
 
 Configuration is keyed by placement ID, so `window.visenzeConfigs[6643]` applies only to placement `6643`. Use the relevant placement ID in both the configuration and widget-init snippet when adapting this example.
+
+The optional `customizations.chatbot.chatAgent` setting controls the `chat_agent` parameter sent to the shopping-assistant API. Setting it to `shopping_assistant_v2` explicitly pins the widget to that agent.
 
 ## Verify the request
 
