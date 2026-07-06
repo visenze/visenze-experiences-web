@@ -412,6 +412,128 @@ describe('shopping-assistant', () => {
         expect(queryAllModal('.wigmix-product-card').length).toBe(1);
         expect(getTextInBody('Let me know if you need more!')).toBeTruthy();
       });
+
+      it('should render card and keep the description for the new trailing-token format', () => {
+        renderAssistant();
+        openDialogAndWait();
+
+        const stream = sendMessageAndGetStreamController('Show me dresses');
+
+        stream.emitEvent('chat_id', { value: 'chat-123' });
+        stream.emitEvent('reqid', { value: 'req-123' });
+
+        stream.emitEvent('chat_token', { value: 'Here are dresses:\n' });
+        stream.emitEvent('chat_token', { value: '- Floral dress: a vibrant look. ' });
+        stream.emitEvent('product', {
+          product_id: 'pid-1',
+          main_image_url: 'https://img.jpg',
+          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'Floral' },
+        });
+        stream.emitEvent('chat_token', { value: '[[pid-1]]' });
+        stream.emitEvent('chat_token', { value: '\n' });
+        stream.closeStream();
+
+        act(() => { jest.runAllTimers(); });
+
+        expect(queryAllModal('.wigmix-product-card').length).toBe(1);
+        expect(getTextInBody('Floral dress: a vibrant look.')).toBeTruthy();
+        expect(getTextInBody('[[pid-1]]')).toBeNull();
+      });
+
+      it('should stream the card live (before close) once the token and product arrive', () => {
+        renderAssistant();
+        openDialogAndWait();
+
+        const stream = sendMessageAndGetStreamController('Live card');
+
+        stream.emitEvent('chat_id', { value: 'chat-123' });
+        stream.emitEvent('reqid', { value: 'req-123' });
+
+        stream.emitEvent('chat_token', { value: 'Nice pick: a bold red. ' });
+        stream.emitEvent('product', {
+          product_id: 'pid-9',
+          main_image_url: 'https://img.jpg',
+          data: { product_url: 'https://p9', price: { currency: 'USD', value: '20' }, title: 'Red' },
+        });
+        stream.emitEvent('chat_token', { value: '[[pid-9]]' });
+
+        // Assert BEFORE closing the stream — proves the live grid renders mid-stream.
+        expect(queryAllModal('.wigmix-product-card').length).toBe(1);
+
+        stream.closeStream();
+      });
+
+      it('should parse a product token split across SSE chunks', () => {
+        renderAssistant();
+        openDialogAndWait();
+
+        const stream = sendMessageAndGetStreamController('Split token');
+
+        stream.emitEvent('chat_id', { value: 'chat-123' });
+        stream.emitEvent('reqid', { value: 'req-123' });
+
+        stream.emitEvent('chat_token', { value: 'Item desc ' });
+        stream.emitEvent('chat_token', { value: '[[pi' });
+        // Partial, unclosed token must not leak into the bubble.
+        expect(getTextInBody('[[pi')).toBeNull();
+        stream.emitEvent('chat_token', { value: 'd-1]]' });
+        stream.emitEvent('product', {
+          product_id: 'pid-1',
+          main_image_url: 'https://img.jpg',
+          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
+        });
+        stream.closeStream();
+
+        act(() => { jest.runAllTimers(); });
+
+        expect(queryAllModal('.wigmix-product-card').length).toBe(1);
+        expect(getTextInBody('[[pid-1]]')).toBeNull();
+      });
+
+      it('should strip the token but render no card when the product payload never arrives', () => {
+        renderAssistant();
+        openDialogAndWait();
+
+        const stream = sendMessageAndGetStreamController('Missing payload');
+
+        stream.emitEvent('chat_id', { value: 'chat-123' });
+        stream.emitEvent('reqid', { value: 'req-123' });
+
+        stream.emitEvent('chat_token', { value: 'Missing item: desc here [[pid-x]]\n' });
+        stream.closeStream();
+
+        act(() => { jest.runAllTimers(); });
+
+        expect(queryAllModal('.wigmix-product-card').length).toBe(0);
+        expect(getTextInBody('[[pid-x]]')).toBeNull();
+        expect(getTextInBody('Missing item: desc here')).toBeTruthy();
+      });
+
+      it('should drop the whole line for the old leading-token format', () => {
+        renderAssistant();
+        openDialogAndWait();
+
+        const stream = sendMessageAndGetStreamController('Old format');
+
+        stream.emitEvent('chat_id', { value: 'chat-123' });
+        stream.emitEvent('reqid', { value: 'req-123' });
+
+        stream.emitEvent('chat_token', { value: 'Intro line:\n' });
+        stream.emitEvent('chat_token', { value: '- [[pid-1]] leadingdroptext' });
+        stream.emitEvent('product', {
+          product_id: 'pid-1',
+          main_image_url: 'https://img.jpg',
+          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'CardTitle' },
+        });
+        stream.emitEvent('chat_token', { value: '\n' });
+        stream.closeStream();
+
+        act(() => { jest.runAllTimers(); });
+
+        expect(queryAllModal('.wigmix-product-card').length).toBe(1);
+        expect(getTextInBody('leadingdroptext')).toBeNull();
+        expect(getTextInBody('Intro line:')).toBeTruthy();
+      });
     });
 
     describe('suggestion chips streaming', () => {
