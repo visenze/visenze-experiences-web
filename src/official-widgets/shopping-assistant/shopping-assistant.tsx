@@ -34,6 +34,7 @@ import { getFlattenProduct } from '../../common/utils';
 // LEADING_PRODUCT_REGEX detects the old, line-leading form so its whole line can be dropped.
 const LEADING_PRODUCT_REGEX = /^(?:\d+\.? |- )?\[\[[^\]]+]]/;
 const SUGGESTION_LINE_REGEX = /\(\(([^)]+)\)\)/g;
+const INCOMPLETE_PRODUCT_TOKEN_REGEX = /\[\[[^\]]*$/;
 
 // Clean the accumulated text for display:
 // - Old format (token leads the line): drop the whole line; the product card replaces it.
@@ -51,7 +52,7 @@ const stripTokensForDisplay = (text: string): string => text
   .filter((line): line is string => line !== null)
   .join('\n')
   .replace(SUGGESTION_LINE_REGEX, '')
-  .replace(/\[\[[^\]]*$/, '');
+  .replace(INCOMPLETE_PRODUCT_TOKEN_REGEX, '');
 
 // Resolve referenced products in first-appearance order. A product is included only when
 // its token is present in the text AND its payload has arrived via a `product` event.
