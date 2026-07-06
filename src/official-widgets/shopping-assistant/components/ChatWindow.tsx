@@ -40,8 +40,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const [messageBottomRef, setMessageBottomRef] = useState<HTMLDivElement>();
-  // Tracks pids that have already fired a PRODUCT_VIEW, so a card that streams in live and is
-  // later re-mounted as a committed row (a different DOM subtree) doesn't count a second view.
+  // Tracks `${requestId}:${productId}` pairs that have already fired a PRODUCT_VIEW, so a card
+  // that streams in live and is later re-mounted as a committed row (a different DOM subtree)
+  // doesn't count a second view. Keyed by request too, so the same product in a later response
+  // still gets its own view.
   const viewedProductIdsRef = useRef<Set<string>>(new Set());
 
   const getFile = (image: SearchImageOrPid | undefined): string => {
@@ -114,7 +116,9 @@ const ChatWindow: FC<ChatWindowProps> = ({
     return cssConfig;
   };
 
-  const renderProductCard = (product: ProcessedProduct, pidx: number, requestId: string): ReactElement => (
+  const renderProductCard = (product: ProcessedProduct, pidx: number, requestId: string): ReactElement => {
+    const viewedKey = `${requestId}:${product.product_id}`;
+    return (
       <ProductCard
           result={product}
           key={`${product.product_id}-${pidx}`}
@@ -138,11 +142,12 @@ const ChatWindow: FC<ChatWindowProps> = ({
           pwPrefix='sa'
           isRecommendation={false}
           hasFindSimilar={false}
-          skipViewTracking={viewedProductIdsRef.current.has(product.product_id)}
-          onProductViewed={(pid) => {
-            viewedProductIdsRef.current.add(pid);
+          skipViewTracking={viewedProductIdsRef.current.has(viewedKey)}
+          onProductViewed={() => {
+            viewedProductIdsRef.current.add(viewedKey);
           }} />
-  );
+    );
+  };
 
   return (
       <>

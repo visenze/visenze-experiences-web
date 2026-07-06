@@ -83,10 +83,15 @@ end-state layout.
 - The hybrid old+new format support is a deliberate temporary safety net while the backend prompt
   format is unstable; it adds one branch (`LEADING_PRODUCT_REGEX`) that has no purpose once the
   backend format fully stabilizes and could be simplified away later.
-- A card rendered live during streaming does not yet carry the request's `queryId` (it is passed
-  as `''` until the response closes and the card is recommitted with the real `requestId`), so a
-  product-card click in the small window while the stream is still open is tracked with an empty
-  query id.
+- A card rendered live during streaming and later re-mounted as a committed row (a different DOM
+  subtree, since the live grid and the committed `chats` row are separate render locations) would
+  otherwise mount a second `IntersectionObserver` and double-count `PRODUCT_VIEW`. `ChatWindow`
+  guards against this with a `viewedProductIdsRef` set, keyed by `${requestId}:${productId}` and
+  checked via an optional `skipViewTracking`/`onProductViewed` pair on `ProductCard`: a card that
+  already fired its view while streaming live is not counted again on remount, while a card that
+  streamed but was never actually seen still fires normally once visible. Keying by request (not
+  just product ID) intentionally lets the same product recommended again in a later response earn
+  its own view, and requires no explicit reset on "New Chat".
 - A partial, not-yet-closed token or suggestion fragment can still cause a brief cosmetic flash of
   surrounding text before the closing `]]`/`))` arrives; this is a transient rendering artifact,
   not a data-correctness issue.
@@ -94,7 +99,9 @@ end-state layout.
 ## Implementation
 
 Shipped on `feature/prompt` (PR #134), targeting widget version `1.0.23-snapshot.0`. Files:
-`shopping-assistant.tsx`, `shopping-assistant.spec.tsx`, `components/ChatWindow.tsx`.
+`shopping-assistant.tsx`, `shopping-assistant.spec.tsx`, `components/ChatWindow.tsx`,
+`common/components/product-card/ProductCard.tsx` (the optional `skipViewTracking`/
+`onProductViewed` guard, backward compatible for every other consumer of `ProductCard`).
 
 Verification covered:
 
@@ -105,5 +112,12 @@ Verification covered:
 - A `[[pid]]` token split across two separate `chat_token` chunks is still recognized once
   complete, with no partial-token leak into the displayed text.
 - A `[[pid]]` token with no matching `product` event is stripped from display but renders no card.
+- A live card carries the current SSE request ID (not an empty one) into its tracking metadata.
+- A card transitioning from the live grid to the committed row fires exactly one `PRODUCT_VIEW`,
+  verified by driving a mocked `IntersectionObserver` before and after the stream closes.
+- The same product ID appearing in two different responses (different request IDs) still earns
+  a `PRODUCT_VIEW` for each response — the dedup key does not over-suppress across requests.
+- A live product resolving after its token (no accompanying text change) still triggers
+  auto-scroll.
 - Suggestion (`((...))`) parsing and the existing `RESULT_LOAD` tracking event on stream close
   (gated on at least one resolved product) are unchanged.

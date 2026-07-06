@@ -619,6 +619,66 @@ describe('shopping-assistant', () => {
         }
       });
 
+      it('should not suppress PRODUCT_VIEW for the same product across different requests', () => {
+        const originalIntersectionObserver = (window as any).IntersectionObserver;
+        const observerCallbacks: Array<(entries: Array<{ isIntersecting: boolean }>) => void> = [];
+        (window as any).IntersectionObserver = jest.fn((callback: (entries: Array<{ isIntersecting: boolean }>) => void) => ({
+          observe: jest.fn(() => {
+            observerCallbacks.push(callback);
+          }),
+          unobserve: jest.fn(),
+          disconnect: jest.fn(),
+        }));
+
+        try {
+          const { widgetClient } = renderAssistant();
+          const sendEventSpy = jest.spyOn(widgetClient, 'sendEvent');
+          openDialogAndWait();
+
+          // First response references pid-1 under req-1
+          const stream1 = sendMessageAndGetStreamController('First request');
+          stream1.emitEvent('chat_id', { value: 'chat-123' });
+          stream1.emitEvent('reqid', { value: 'req-1' });
+          stream1.emitEvent('chat_token', { value: 'Nice pick: [[pid-1]]' });
+          stream1.emitEvent('product', {
+            product_id: 'pid-1',
+            main_image_url: 'https://img.jpg',
+            data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
+          });
+
+          act(() => {
+            observerCallbacks[observerCallbacks.length - 1]([{ isIntersecting: true }]);
+          });
+
+          stream1.closeStream();
+          act(() => {
+            jest.runAllTimers();
+          });
+
+          // Second, unrelated response references the same pid-1 under a different req id
+          const stream2 = sendMessageAndGetStreamController('Second request');
+          stream2.emitEvent('chat_id', { value: 'chat-456' });
+          stream2.emitEvent('reqid', { value: 'req-2' });
+          stream2.emitEvent('chat_token', { value: 'Also this: [[pid-1]]' });
+          stream2.emitEvent('product', {
+            product_id: 'pid-1',
+            main_image_url: 'https://img.jpg',
+            data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
+          });
+
+          act(() => {
+            observerCallbacks[observerCallbacks.length - 1]([{ isIntersecting: true }]);
+          });
+
+          stream2.closeStream();
+
+          const viewCalls = sendEventSpy.mock.calls.filter(([action]) => action === Actions.PRODUCT_VIEW).length;
+          expect(viewCalls).toBe(2);
+        } finally {
+          (window as any).IntersectionObserver = originalIntersectionObserver;
+        }
+      });
+
       it('should scroll into view when a live product resolves after its token', () => {
         renderAssistant();
         openDialogAndWait();
