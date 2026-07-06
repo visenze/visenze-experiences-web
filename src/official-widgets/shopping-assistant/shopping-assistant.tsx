@@ -27,16 +27,53 @@ import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import { getFlattenProduct } from '../../common/utils';
 
-// Product line can look like one of these:
-// [[pid]] **title** - ...
-// - [[pid]] **title** - ...
-// 1. [[pid]] **title** - ...
-const PRODUCT_LINE_REGEX = /^(?:\d+\.? |- )?\[\[(.*)]]/;
+// A product reference is a token that can appear anywhere in the assistant's text:
+//   [[<product_id>]]
+// Old format put the token at the START of the line (e.g. "- [[pid]] **title** ...");
+// the new format puts it at the END (e.g. "- <description> ... [[pid]]").
+// LEADING_PRODUCT_REGEX detects the old, line-leading form so its whole line can be dropped.
+const LEADING_PRODUCT_REGEX = /^(?:\d+\.? |- )?\[\[[^\]]+]]/;
 const SUGGESTION_LINE_REGEX = /\(\(([^)]+)\)\)/g;
+const INCOMPLETE_PRODUCT_TOKEN_REGEX = /\[\[[^\]]*$/;
 
-// Sometimes an image can be returned by the bot, in a markdown-compatible format:
-//     ![title](im_url)
-const IMAGE_LINE_REGEX = /^ *!\[/;
+// Clean the accumulated text for display:
+// - Old format (token leads the line): drop the whole line; the product card replaces it.
+// - New format (token inline/trailing): strip only the token, keep the surrounding description.
+// Also removes ((suggestion)) tokens and any trailing, not-yet-closed "[[..." fragment
+// that is still mid-stream, so partial tokens never flash in the bubble.
+const stripTokensForDisplay = (text: string): string => text
+  .split('\n')
+  .map((line): string | null => {
+    if (LEADING_PRODUCT_REGEX.test(line)) {
+      return null;
+    }
+    return line.replace(/\[\[[^\]]+]]/g, '');
+  })
+  .filter((line): line is string => line !== null)
+  .join('\n')
+  .replace(SUGGESTION_LINE_REGEX, '')
+  .replace(INCOMPLETE_PRODUCT_TOKEN_REGEX, '');
+
+// Resolve referenced products in first-appearance order. A product is included only when
+// its token is present in the text AND its payload has arrived via a `product` event.
+const resolveProducts = (text: string, products: ProcessedProduct[]): ProcessedProduct[] => {
+  const tokenRegex = /\[\[([^\]]+)]]/g;
+  const seen = new Set<string>();
+  const ordered: ProcessedProduct[] = [];
+  let match = tokenRegex.exec(text);
+  while (match) {
+    const pid = match[1];
+    if (!seen.has(pid)) {
+      const product = products.find((p) => p.product_id === pid);
+      if (product) {
+        seen.add(pid);
+        ordered.push(product);
+      }
+    }
+    match = tokenRegex.exec(text);
+  }
+  return ordered;
+};
 
 interface ShoppingAssistantProps {
   renderModalWithoutPortal?: boolean;
@@ -57,6 +94,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const [showAllSuggestions, setShowAllSuggestions] = useState(false);
   const [allowUserInput, setAllowUserInput] = useState(false);
   const [latestMessage, setLatestMessage] = useState('');
+  const [streamingProducts, setStreamingProducts] = useState<ProcessedProduct[]>([]);
+  const [streamingRequestId, setStreamingRequestId] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showCameraDrawer, setShowCameraDrawer] = useState(false);
   const [widgetOpenTrigger, setWidgetOpenTrigger] = useState(0);
@@ -80,6 +119,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setShowAllSuggestions(false);
     setMessage('');
     setSuggestions([]);
+    setStreamingProducts([]);
+    setStreamingRequestId('');
     setChats((chats1) => [
       ...chats1,
       {
@@ -94,12 +135,6 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     let chatIdFromResp = '';
     let reqIdFromResp = '';
     const tokens: string[] = [];
-    let currentLine = 0;
-    let latestPid = '';
-    let lastLineWithProduct = 0;
-    let messageToDisplay = '';
-    let isFetchingProduct = false;
-    let hasReceivedFirstToken = false;
     const chatIdToUse = chatIdParam || chatId;
     const products: ProcessedProduct[] = [];
     // Retrieve user id and session id from ViSearch client
@@ -145,127 +180,59 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           chatIdFromResp = JSON.parse(ev.data).value;
         } else if (ev.event === 'reqid') {
           reqIdFromResp = JSON.parse(ev.data).value;
+          setStreamingRequestId(reqIdFromResp);
         } else if (ev.event === 'chat_token') {
           setIsWaiting(false);
-          if (!hasReceivedFirstToken) {
-            hasReceivedFirstToken = true;
-          }
-          const token = JSON.parse(ev.data).value;
-          tokens.push(token);
-          const newlines = token.split('\n').length - 1;
-          const currentTokens = tokens.join('');
-          const currentTokensSplit = currentTokens.split('\n');
-          if (newlines && currentLine === lastLineWithProduct) {
-            currentLine += newlines;
-            const productToDisplay = products.filter((prod) => prod.product_id === latestPid);
-            if (productToDisplay.length) {
-              setChats((chats1) => {
-                if (chats1[chats1.length - 1].author !== 'products') {
-                  return [
-                    ...chats1,
-                    {
-                      chatId: chatIdFromResp,
-                      requestId: reqIdFromResp,
-                      messages: [],
-                      author: 'products',
-                      products: [productToDisplay[0]],
-                    },
-                  ];
-                }
-                return chats1.map((ch, idx) => {
-                  if (idx === chats1.length - 1) {
-                    return {
-                      ...ch,
-                      products: (ch.products || []).concat(productToDisplay[0]),
-                    };
-                  }
-                  return ch;
-                });
-              });
-            }
-          } else if (newlines) {
-            currentLine += newlines;
-          }
-          const currentLineContent = currentTokensSplit[currentLine];
-          const pidInCurrentLine = currentLineContent.match(PRODUCT_LINE_REGEX);
-          if (pidInCurrentLine && lastLineWithProduct < currentLine) {
-            [, latestPid] = pidInCurrentLine;
-            lastLineWithProduct = currentLine;
-            if (!isFetchingProduct) {
-              isFetchingProduct = true;
-              const tokensToDisplay: string[] = [];
-              // Traverse the lines until the first PID line is found
-              // eslint-disable-next-line no-restricted-syntax
-              for (const tkn of currentTokensSplit) {
-                if (tkn && tkn.match(PRODUCT_LINE_REGEX)) {
-                  break;
-                }
-                tokensToDisplay.push(tkn);
-              }
-              setChats((chats1) => [...chats1, {
-                chatId: chatIdFromResp,
-                requestId: reqIdFromResp,
-                messages: [tokensToDisplay.join('\n').trim()],
-                author: 'bot',
-                products: [],
-              }]);
-            }
-          }
-          if (isFetchingProduct) {
-            messageToDisplay = currentTokensSplit.slice(currentLine).join('\n');
-          } else {
-            messageToDisplay = currentTokens;
-          }
-
-          const messageToDisplayWithoutSuggestions = messageToDisplay.replace(SUGGESTION_LINE_REGEX, '').trim();
-          const allSuggestions = messageToDisplay.match(SUGGESTION_LINE_REGEX);
+          tokens.push(JSON.parse(ev.data).value);
+          const currentText = tokens.join('');
+          const allSuggestions = currentText.match(SUGGESTION_LINE_REGEX);
           setSuggestions((allSuggestions || []).map((s) => s.replace('((', '').replace('))', '').trim()));
-          setLatestMessage(messageToDisplayWithoutSuggestions);
+          setLatestMessage(stripTokensForDisplay(currentText).trim());
+          setStreamingProducts(resolveProducts(currentText, products));
         } else if (ev.event === 'product') {
-          const data = JSON.parse(ev.data);
-          products.push(getFlattenProduct(data));
+          products.push(getFlattenProduct(JSON.parse(ev.data)));
+          setStreamingProducts(resolveProducts(tokens.join(''), products));
         }
       },
       onclose: () => {
-        const constructedResponse = tokens.join('');
-        const allSuggestions = constructedResponse.match(SUGGESTION_LINE_REGEX);
+        const currentText = tokens.join('');
+        const allSuggestions = currentText.match(SUGGESTION_LINE_REGEX);
         setSuggestions((allSuggestions || []).map((s) => s.replace('((', '').replace('))', '').trim()));
-        const constructedResponseWithoutSuggestions = constructedResponse.replace(SUGGESTION_LINE_REGEX, '').trim();
-        const constructedResponseLines = constructedResponseWithoutSuggestions.split('\n');
-        if (products.length) {
-          const tokensToDisplay: string[] = [];
-          // Traverse the lines in reverse until the first PID line is found
-          // eslint-disable-next-line no-restricted-syntax
-          for (const tkn of [...constructedResponseLines].reverse()) {
-            if (tkn && (tkn.match(PRODUCT_LINE_REGEX) || tkn.match(IMAGE_LINE_REGEX))) {
-              break;
-            }
-            tokensToDisplay.push(tkn);
-          }
+        const finalText = stripTokensForDisplay(currentText).trim();
+        const finalProducts = resolveProducts(currentText, products);
+        if (finalProducts.length) {
           const requestMetadata = {
             queryId: reqIdFromResp,
             cat: Category.RESULT,
           };
           widgetClient.sendEvent(Actions.RESULT_LOAD, requestMetadata);
           widgetClient.setLastTrackingMeta(requestMetadata);
-          const afterText = tokensToDisplay.reverse().join('\n').trim();
-          setChats((chats1) => [...chats1, {
-            chatId: chatIdFromResp,
-            requestId: reqIdFromResp,
-            messages: [afterText],
-            author: 'bot',
-            products: [],
-          }]);
-        } else {
-          setChats((chats1) => [...chats1, {
-            chatId: chatIdFromResp,
-            requestId: reqIdFromResp,
-            messages: [constructedResponseWithoutSuggestions],
-            author: 'bot',
-            products: [],
-          }]);
         }
+        setChats((chats1) => {
+          const newChats = [...chats1];
+          if (finalText) {
+            newChats.push({
+              chatId: chatIdFromResp,
+              requestId: reqIdFromResp,
+              messages: [finalText],
+              author: 'bot',
+              products: [],
+            });
+          }
+          if (finalProducts.length) {
+            newChats.push({
+              chatId: chatIdFromResp,
+              requestId: reqIdFromResp,
+              messages: [],
+              author: 'products',
+              products: finalProducts,
+            });
+          }
+          return newChats;
+        });
         setLatestMessage('');
+        setStreamingProducts([]);
+        setStreamingRequestId('');
         setAllowUserInput(true);
       },
       onerror: (err) => {
@@ -329,6 +296,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setChats([]);
     setLatestMessage('');
     setSuggestions([]);
+    setStreamingProducts([]);
+    setStreamingRequestId('');
 
     const renderChat = (idx: number, cId: string): void => {
       if (idx > openingMessages.length) {
@@ -384,6 +353,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                     chats={chats}
                     latestMessage={latestMessage}
                     suggestions={suggestions}
+                    streamingProducts={streamingProducts}
+                    streamingRequestId={streamingRequestId}
                     showAllSuggestions={showAllSuggestions}
                     setShowAllSuggestions={() => setShowAllSuggestions(true)}
                     sendMessage={sendMessage} />

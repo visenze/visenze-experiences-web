@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import { type CSSProperties, type FC, Fragment, useContext, useEffect, useState } from 'react';
+import { type CSSProperties, type FC, Fragment, type ReactElement, useContext, useEffect, useRef, useState } from 'react';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import SparklesIcon from '../../../common/icons/SparklesIcon';
@@ -26,15 +26,25 @@ interface ChatWindowProps {
   latestMessage: string;
   suggestions: string[];
   sendMessage: (message: string) => void;
+  streamingProducts?: ProcessedProduct[];
+  streamingRequestId?: string;
 }
 
-const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions }) => {
+const ChatWindow: FC<ChatWindowProps> = ({
+  isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions,
+  streamingProducts = [], streamingRequestId = '',
+}) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations, initState } = widgetConfig;
   const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const [messageBottomRef, setMessageBottomRef] = useState<HTMLDivElement>();
+  // Tracks `${requestId}:${productId}` pairs that have already fired a PRODUCT_VIEW, so a card
+  // that streams in live and is later re-mounted as a committed row (a different DOM subtree)
+  // doesn't count a second view. Keyed by request too, so the same product in a later response
+  // still gets its own view.
+  const viewedProductIdsRef = useRef<Set<string>>(new Set());
 
   const getFile = (image: SearchImageOrPid | undefined): string => {
     if (!image) {
@@ -68,6 +78,10 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
     scrollToBottom();
   }, [latestMessage]);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [streamingProducts.length]);
+
   const processMessageForDisplay = (message: string): string => message
       // quick sanitization
       .replaceAll(/</g, '&lt;')
@@ -100,6 +114,39 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
       }
     }
     return cssConfig;
+  };
+
+  const renderProductCard = (product: ProcessedProduct, pidx: number, requestId: string): ReactElement => {
+    const viewedKey = `${requestId}:${product.product_id}`;
+    return (
+      <ProductCard
+          result={product}
+          key={`${product.product_id}-${pidx}`}
+          metadata={{
+            queryId: requestId,
+          }}
+          isInWishlist={wishlistPids.includes(product.product_id)}
+          setIsInWishlist={(pid, isInWishlist) => {
+            setWishlistPids((prev) => {
+              const newPids = [...prev];
+              if (isInWishlist && !newPids.includes(pid)) {
+                newPids.push(pid);
+              }
+              if (!isInWishlist && newPids.includes(pid)) {
+                newPids.splice(newPids.indexOf(pid), 1);
+              }
+              return newPids;
+            });
+          }}
+          index={pidx}
+          pwPrefix='sa'
+          isRecommendation={false}
+          hasFindSimilar={false}
+          skipViewTracking={viewedProductIdsRef.current.has(viewedKey)}
+          onProductViewed={() => {
+            viewedProductIdsRef.current.add(viewedKey);
+          }} />
+    );
   };
 
   return (
@@ -166,64 +213,49 @@ const ChatWindow: FC<ChatWindowProps> = ({ isWaiting, chats, latestMessage, sugg
                     />
                   </div>
                 ))}
-                {chat.author === 'products' && (chat.products || []).map((product, pidx) => (
-                  <ProductCard
-                                  result={product}
-                                  key={`${product.product_id}-${pidx}`}
-                                  metadata={{
-                                    queryId: chat.requestId,
-                                  }}
-                                  isInWishlist={wishlistPids.includes(product.product_id)}
-                                  setIsInWishlist={(pid, isInWishlist) => {
-                                    setWishlistPids((prev) => {
-                                      const newPids = [...prev];
-                                      if (isInWishlist && !newPids.includes(pid)) {
-                                        newPids.push(pid);
-                                      }
-                                      if (!isInWishlist && newPids.includes(pid)) {
-                                        newPids.splice(newPids.indexOf(pid), 1);
-                                      }
-                                      return newPids;
-                                    });
-                                  }}
-                                  index={pidx}
-                                  pwPrefix='sa'
-                                  isRecommendation={false}
-                                  hasFindSimilar={false} />
-                ))}
+                {chat.author === 'products' && (chat.products || []).map((product, pidx) => renderProductCard(product, pidx, chat.requestId))}
               </div>
           ))}
-          {(isWaiting || latestMessage) && (
-              <div className='chat-row flex gap-2 items-end'>
-                {isWaiting && (
-                  <div className='flex gap-1 max-w-9/10'>
-                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                      <SparklesIcon className='size-5' />
-                    </div>
-                    <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
-                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                      {[0, 1, 2].map((i) => (
-                          <div
-                            key={`loading-dot-${i}`}
-                            className='loading-dot rounded-full'
-                            style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
-                          />
-                      ))}
-                    </div>
-                    </div>
-                )}
-                {latestMessage && (
+          {(isWaiting || latestMessage || streamingProducts.length > 0) && (
+              <>
+                <div className='chat-row flex gap-2 items-end'>
+                  {isWaiting && (
+                    <div className='flex gap-1 max-w-9/10'>
+                      <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                        <SparklesIcon className='size-5' />
+                      </div>
+                      <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
+                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                        {[0, 1, 2].map((i) => (
+                            <div
+                              key={`loading-dot-${i}`}
+                              className='loading-dot rounded-full'
+                              style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
+                            />
+                        ))}
+                      </div>
+                      </div>
+                  )}
+                  {latestMessage && (
+                      <div
+                        className={`
+                          mb-2 w-fit max-w-7/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100
+                          rounded-lg border border-neutral-100 dark:border-neutral-800`}
+                        dangerouslySetInnerHTML={{
+                          __html: processMessageForDisplay(latestMessage),
+                        }}
+                      />
+                  )}
+                </div>
+                {streamingRequestId && streamingProducts.length > 0 && (
                     <div
-                      className={`
-                        mb-2 w-fit max-w-7/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100
-                        rounded-lg border border-neutral-100 dark:border-neutral-800`}
-                      dangerouslySetInnerHTML={{
-                        __html: processMessageForDisplay(latestMessage),
-                      }}
-                    />
+                      className={cn('w-full grid grid-cols-2', getProductGridCssClasses('gap-x-4'))}
+                      style={getProductGridCssConfig(true)}>
+                      {streamingProducts.map((product, pidx) => renderProductCard(product, pidx, streamingRequestId))}
+                    </div>
                 )}
-              </div>
+              </>
           )}
           {!isWaiting && suggestions.length > 0 && (
             <div className='mt-2 flex items-end'>

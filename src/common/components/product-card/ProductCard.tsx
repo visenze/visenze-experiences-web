@@ -29,6 +29,8 @@ interface ProductCardProps {
   metadata: Record<string, any>;
   isInWishlist: boolean;
   setIsInWishlist: (pid: string, isInWishlist: boolean) => void;
+  skipViewTracking?: boolean;
+  onProductViewed?: (productId: string) => void;
 }
 
 const currencyFormatterFactory = (
@@ -161,6 +163,8 @@ const ProductCard: FC<ProductCardProps> = ({
   metadata,
   isInWishlist,
   setIsInWishlist,
+  skipViewTracking = false,
+  onProductViewed = (): void => {},
 }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { displaySettings, callbacks, customizations, languageSettings } = widgetConfig;
@@ -185,9 +189,12 @@ const ProductCard: FC<ProductCardProps> = ({
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting && productTrackingMeta) {
+        if (entry.isIntersecting) {
           observer.disconnect();
-          widgetClient.sendEvent(Actions.PRODUCT_VIEW, productTrackingMeta);
+          if (productTrackingMeta && !skipViewTracking) {
+            widgetClient.sendEvent(Actions.PRODUCT_VIEW, productTrackingMeta);
+            onProductViewed(result.product_id);
+          }
         }
       });
     }, {
@@ -203,7 +210,7 @@ const ProductCard: FC<ProductCardProps> = ({
     return (): void => {
       observer.disconnect();
     };
-  }, [targetRef]);
+  }, [targetRef, skipViewTracking]);
 
   const createFindSimilarPositionClasses = (): string => {
     const position = customizations.productCard?.findSimilar?.position || 'bottom_right';
