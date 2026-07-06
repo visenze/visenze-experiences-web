@@ -248,7 +248,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       />
                   )}
                 </div>
-                {streamingProducts.length > 0 && (
+                {streamingRequestId && streamingProducts.length > 0 && (
                     <div
                       className={cn('w-full grid grid-cols-2', getProductGridCssClasses('gap-x-4'))}
                       style={getProductGridCssConfig(true)}>
