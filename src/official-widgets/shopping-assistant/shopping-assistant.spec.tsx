@@ -3,6 +3,7 @@ import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
 import ShoppingAssistant from './shopping-assistant';
 import { createMockWidgetClient, createWidgetConfig, renderWidget } from '../../common/test-utils';
+import { Actions } from '../../common/types/tracking-constants';
 
 // Mock @microsoft/fetch-event-source to control SSE streaming in tests
 const mockFetchEventSource = jest.fn();
@@ -533,6 +534,114 @@ describe('shopping-assistant', () => {
         expect(queryAllModal('.wigmix-product-card').length).toBe(1);
         expect(getTextInBody('leadingdroptext')).toBeNull();
         expect(getTextInBody('Intro line:')).toBeTruthy();
+      });
+
+      it('should carry the current request id into a live (pre-close) product card', () => {
+        const { widgetClient } = renderAssistant();
+        const sendEventSpy = jest.spyOn(widgetClient, 'sendEvent');
+        openDialogAndWait();
+
+        const stream = sendMessageAndGetStreamController('Show me shoes live');
+
+        stream.emitEvent('chat_id', { value: 'chat-123' });
+        stream.emitEvent('reqid', { value: 'req-123' });
+
+        stream.emitEvent('chat_token', { value: 'Nice pick: [[pid-1]]' });
+        stream.emitEvent('product', {
+          product_id: 'pid-1',
+          main_image_url: 'https://img.jpg',
+          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
+        });
+
+        const anchor = document.body.querySelector('[data-testid="wigmix-product-card-anchor"]') as HTMLAnchorElement;
+        expect(anchor).toBeTruthy();
+        anchor.click();
+
+        expect(sendEventSpy).toHaveBeenCalledWith(Actions.PRODUCT_CLICK, expect.objectContaining({ queryId: 'req-123' }));
+
+        stream.closeStream();
+      });
+
+      it('should fire PRODUCT_VIEW exactly once as a card transitions from the live grid to the committed row', () => {
+        const originalIntersectionObserver = (window as any).IntersectionObserver;
+        // Only track callbacks whose observer actually attaches to a node via `.observe()` —
+        // ProductCard's ref-callback pattern constructs one throwaway observer per render
+        // before `targetRef` is set, which never calls `.observe()` and never intersects for real.
+        const observerCallbacks: Array<(entries: Array<{ isIntersecting: boolean }>) => void> = [];
+        (window as any).IntersectionObserver = jest.fn((callback: (entries: Array<{ isIntersecting: boolean }>) => void) => ({
+          observe: jest.fn(() => {
+            observerCallbacks.push(callback);
+          }),
+          unobserve: jest.fn(),
+          disconnect: jest.fn(),
+        }));
+
+        try {
+          const { widgetClient } = renderAssistant();
+          const sendEventSpy = jest.spyOn(widgetClient, 'sendEvent');
+          openDialogAndWait();
+
+          const stream = sendMessageAndGetStreamController('Show me a dedup test');
+
+          stream.emitEvent('chat_id', { value: 'chat-123' });
+          stream.emitEvent('reqid', { value: 'req-123' });
+          stream.emitEvent('chat_token', { value: 'Nice pick: [[pid-1]]' });
+          stream.emitEvent('product', {
+            product_id: 'pid-1',
+            main_image_url: 'https://img.jpg',
+            data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
+          });
+
+          expect(queryAllModal('.wigmix-product-card').length).toBe(1);
+          expect(observerCallbacks.length).toBe(1);
+
+          act(() => {
+            observerCallbacks[0]([{ isIntersecting: true }]);
+          });
+
+          const viewCallsWhileLive = sendEventSpy.mock.calls.filter(([action]) => action === Actions.PRODUCT_VIEW).length;
+          expect(viewCallsWhileLive).toBe(1);
+
+          stream.closeStream();
+          act(() => {
+            jest.runAllTimers();
+          });
+
+          expect(observerCallbacks.length).toBe(2);
+          act(() => {
+            observerCallbacks[1]([{ isIntersecting: true }]);
+          });
+
+          const viewCallsAfterClose = sendEventSpy.mock.calls.filter(([action]) => action === Actions.PRODUCT_VIEW).length;
+          expect(viewCallsAfterClose).toBe(1);
+        } finally {
+          (window as any).IntersectionObserver = originalIntersectionObserver;
+        }
+      });
+
+      it('should scroll into view when a live product resolves after its token', () => {
+        renderAssistant();
+        openDialogAndWait();
+
+        const stream = sendMessageAndGetStreamController('Show me a live scroll test');
+
+        stream.emitEvent('chat_id', { value: 'chat-123' });
+        stream.emitEvent('reqid', { value: 'req-123' });
+        stream.emitEvent('chat_token', { value: 'Nice pick: [[pid-1]]\n' });
+
+        const scrollSpy = Element.prototype.scrollIntoView as jest.Mock;
+        const callsBeforeProduct = scrollSpy.mock.calls.length;
+
+        stream.emitEvent('product', {
+          product_id: 'pid-1',
+          main_image_url: 'https://img.jpg',
+          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
+        });
+
+        expect(queryAllModal('.wigmix-product-card').length).toBe(1);
+        expect(scrollSpy.mock.calls.length).toBeGreaterThan(callsBeforeProduct);
+
+        stream.closeStream();
       });
     });
 

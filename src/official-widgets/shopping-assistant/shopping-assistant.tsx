@@ -94,6 +94,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const [allowUserInput, setAllowUserInput] = useState(false);
   const [latestMessage, setLatestMessage] = useState('');
   const [streamingProducts, setStreamingProducts] = useState<ProcessedProduct[]>([]);
+  const [streamingRequestId, setStreamingRequestId] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showCameraDrawer, setShowCameraDrawer] = useState(false);
   const [widgetOpenTrigger, setWidgetOpenTrigger] = useState(0);
@@ -118,6 +119,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setMessage('');
     setSuggestions([]);
     setStreamingProducts([]);
+    setStreamingRequestId('');
     setChats((chats1) => [
       ...chats1,
       {
@@ -177,6 +179,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           chatIdFromResp = JSON.parse(ev.data).value;
         } else if (ev.event === 'reqid') {
           reqIdFromResp = JSON.parse(ev.data).value;
+          setStreamingRequestId(reqIdFromResp);
         } else if (ev.event === 'chat_token') {
           setIsWaiting(false);
           tokens.push(JSON.parse(ev.data).value);
@@ -228,6 +231,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
         });
         setLatestMessage('');
         setStreamingProducts([]);
+        setStreamingRequestId('');
         setAllowUserInput(true);
       },
       onerror: (err) => {
@@ -292,6 +296,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setLatestMessage('');
     setSuggestions([]);
     setStreamingProducts([]);
+    setStreamingRequestId('');
 
     const renderChat = (idx: number, cId: string): void => {
       if (idx > openingMessages.length) {
@@ -348,6 +353,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                     latestMessage={latestMessage}
                     suggestions={suggestions}
                     streamingProducts={streamingProducts}
+                    streamingRequestId={streamingRequestId}
                     showAllSuggestions={showAllSuggestions}
                     setShowAllSuggestions={() => setShowAllSuggestions(true)}
                     sendMessage={sendMessage} />

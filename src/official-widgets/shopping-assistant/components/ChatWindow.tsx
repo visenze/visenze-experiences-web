@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import { type CSSProperties, type FC, Fragment, type ReactElement, useContext, useEffect, useState } from 'react';
+import { type CSSProperties, type FC, Fragment, type ReactElement, useContext, useEffect, useRef, useState } from 'react';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import SparklesIcon from '../../../common/icons/SparklesIcon';
@@ -27,10 +27,12 @@ interface ChatWindowProps {
   suggestions: string[];
   sendMessage: (message: string) => void;
   streamingProducts?: ProcessedProduct[];
+  streamingRequestId?: string;
 }
 
 const ChatWindow: FC<ChatWindowProps> = ({
-  isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions, streamingProducts = [],
+  isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions,
+  streamingProducts = [], streamingRequestId = '',
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations, initState } = widgetConfig;
@@ -38,6 +40,9 @@ const ChatWindow: FC<ChatWindowProps> = ({
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const [messageBottomRef, setMessageBottomRef] = useState<HTMLDivElement>();
+  // Tracks pids that have already fired a PRODUCT_VIEW, so a card that streams in live and is
+  // later re-mounted as a committed row (a different DOM subtree) doesn't count a second view.
+  const viewedProductIdsRef = useRef<Set<string>>(new Set());
 
   const getFile = (image: SearchImageOrPid | undefined): string => {
     if (!image) {
@@ -70,6 +75,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
   useEffect(() => {
     scrollToBottom();
   }, [latestMessage]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [streamingProducts.length]);
 
   const processMessageForDisplay = (message: string): string => message
       // quick sanitization
@@ -128,7 +137,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
           index={pidx}
           pwPrefix='sa'
           isRecommendation={false}
-          hasFindSimilar={false} />
+          hasFindSimilar={false}
+          skipViewTracking={viewedProductIdsRef.current.has(product.product_id)}
+          onProductViewed={(pid) => {
+            viewedProductIdsRef.current.add(pid);
+          }} />
   );
 
   return (
@@ -234,7 +247,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                     <div
                       className={cn('w-full grid grid-cols-2', getProductGridCssClasses('gap-x-4'))}
                       style={getProductGridCssConfig(true)}>
-                      {streamingProducts.map((product, pidx) => renderProductCard(product, pidx, ''))}
+                      {streamingProducts.map((product, pidx) => renderProductCard(product, pidx, streamingRequestId))}
                     </div>
                 )}
               </>
