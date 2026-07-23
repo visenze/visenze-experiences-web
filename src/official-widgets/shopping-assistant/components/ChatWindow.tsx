@@ -10,6 +10,8 @@ import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../../comm
 import type { ProcessedProduct } from '../../../common/types/product';
 import DownArrowIcon from '../icons/DownArrowIcon';
 
+const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
+
 export interface Chat {
   chatId: string;
   requestId: string;
@@ -118,6 +120,28 @@ const ChatWindow: FC<ChatWindowProps> = ({
     return cssConfig;
   };
 
+  const getAccessibleStatus = (): string => {
+    if (isWaiting) {
+      return intl.formatMessage({ id: 'a11yAssistantThinking' });
+    }
+    const lastChat = chats[chats.length - 1];
+    const previousChat = chats[chats.length - 2];
+    if (!lastChat) {
+      return '';
+    }
+    const statusParts: string[] = [];
+    if (lastChat.author === 'bot') {
+      statusParts.push(lastChat.messages.join(' '));
+    }
+    if (lastChat.author === 'products') {
+      if (previousChat?.author === 'bot') {
+        statusParts.push(previousChat.messages.join(' '));
+      }
+      statusParts.push(intl.formatMessage({ id: 'a11yProductResultsShown' }, { count: lastChat.products?.length || 0 }));
+    }
+    return statusParts.join(' ').trim();
+  };
+
   const renderProductCard = (product: ProcessedProduct, pidx: number, requestId: string): ReactElement => {
     const viewedKey = `${requestId}:${product.product_id}`;
     return (
@@ -153,7 +177,12 @@ const ChatWindow: FC<ChatWindowProps> = ({
 
   return (
       <>
-        <div className='overflow-y-auto h-full px-4 my-4 space-y-3' onScroll={handleScroll}>
+        <div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
+          {getAccessibleStatus()}
+        </div>
+        <div className='overflow-y-auto h-full px-4 my-4 space-y-3'
+             aria-label={intl.formatMessage({ id: 'a11yChatMessages' })}
+             onScroll={handleScroll}>
           {chats.map((chat, idx) => (
               <div className={cn(
                   'w-full',
@@ -170,7 +199,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       key={`chat-user-message-${idx}`}
                     >
                       <img
-                        alt='Uploaded image'
+                        alt={intl.formatMessage({ id: 'a11yUploadedImage' })}
                         className='max-w-full h-auto rounded-lg shadow-sm border'
                         style={{ maxHeight: '200px' }}
                         src={getFile(chat.image)}
@@ -228,6 +257,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       </div>
                       <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
                         bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                        <span className='sr-only'>{intl.formatMessage({ id: 'a11yAssistantThinking' })}</span>
                         {[0, 1, 2].map((i) => (
                             <div
                               key={`loading-dot-${i}`}
@@ -266,8 +296,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
                     {(showAllSuggestions || idx <= 1) && (
                       <button
                         type='button'
-                        className='w-fit bg-sky-100 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
-                          rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
+                        className={cn(
+                            'w-fit bg-sky-100 dark:bg-stone-700 p-2 text-xs text-blue-900 dark:text-blue-50',
+                            'rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer',
+                            FOCUS_VISIBLE_CLASSES,
+                        )}
                         onClick={() => sendMessage(suggestion)}
                       >
                         {suggestion}
@@ -278,8 +311,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 {(!showAllSuggestions && suggestions.length >= 2) && (
                   <button
                     type='button'
-                    className='w-fit bg-sky-200 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
-                      rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
+                    className={cn(
+                        'w-fit bg-sky-200 dark:bg-stone-700 p-2 text-xs text-blue-900 dark:text-blue-50',
+                        'rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer',
+                        FOCUS_VISIBLE_CLASSES,
+                    )}
                     onClick={() => {
                       setShowAllSuggestions();
                       scrollToBottom();
@@ -302,7 +338,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
               <button
                 type='button'
                 aria-label={intl.formatMessage({ id: 'a11yScrollToLatestMessage' })}
-                className='absolute bottom-2 end-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors border-0'
+                className={cn(
+                    'absolute bottom-2 end-2 cursor-pointer rounded-full shadow p-1 border-0',
+                    'bg-white text-neutral-900 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 transition-colors',
+                    FOCUS_VISIBLE_CLASSES,
+                )}
                 onClick={scrollToBottom}>
                 <DownArrowIcon />
               </button>

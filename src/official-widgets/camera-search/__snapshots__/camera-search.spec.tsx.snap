@@ -3304,8 +3304,8 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                 class="px-1/5 md:w-1/3 md:px-10"
               >
                 <div
-                  class="cursor-pointer h-full"
-                  role="presentation"
+                  class="cursor-pointer h-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
+                  role="button"
                   tabindex="0"
                 >
                   <input
@@ -3574,8 +3574,8 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                 class="px-1/5 md:w-1/3 md:px-10"
               >
                 <div
-                  class="cursor-pointer h-full"
-                  role="presentation"
+                  class="cursor-pointer h-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
+                  role="button"
                   tabindex="0"
                 >
                   <input

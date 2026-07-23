@@ -32,6 +32,7 @@ jest.mock('@heroui/input', () => ({
     <div data-testid='chat-textarea-wrapper'>
       <textarea
         data-testid='chat-textarea'
+        aria-label={props['aria-label']}
         value={props.value}
         placeholder={props.placeholder}
         onChange={props.onChange}
@@ -236,7 +237,7 @@ describe('shopping-assistant', () => {
       openDialogAndWait();
 
       expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeTruthy();
-      expect(document.body.querySelector(`[aria-label="${texts['en']['a11yUploadImage']}"]`)).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yUploadImage'], hidden: true })).toBeTruthy();
     });
 
     it('should expose send as a named button', () => {
@@ -246,6 +247,20 @@ describe('shopping-assistant', () => {
       expect(testComponent.getByRole('button', { name: texts['en']['a11ySendMessage'], hidden: true })).toBeTruthy();
     });
 
+    it('should expose an accessible name for the chat input', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true })).toBeTruthy();
+    });
+
+    it('should expose the dialog title as a heading', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('heading', { name: texts['en']['widgetTitle'], hidden: true })).toBeTruthy();
+    });
+
     it('should localize accessible names for non-English locales', () => {
       renderAssistant({}, 'es');
       openDialogAndWait();
@@ -253,6 +268,7 @@ describe('shopping-assistant', () => {
       expect(testComponent.getByRole('button', { name: texts['es']['a11yStartNewChat'], hidden: true })).toBeTruthy();
       expect(testComponent.getByRole('button', { name: texts['es']['a11yOpenCamera'], hidden: true })).toBeTruthy();
       expect(testComponent.getByRole('button', { name: texts['es']['a11ySendMessage'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('textbox', { name: texts['es']['a11yChatInput'], hidden: true })).toBeTruthy();
       expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true })).toBeNull();
     });
 
@@ -284,6 +300,77 @@ describe('shopping-assistant', () => {
 
       expect(testComponent.queryByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true })).toBeNull();
       expect(document.activeElement).toBe(openCameraButton);
+    });
+
+    it('should trap keyboard focus inside the camera drawer', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
+      });
+
+      const cameraDialog = testComponent.getByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true });
+      const closeCameraButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseCamera'], hidden: true });
+      const takePhotoButton = testComponent.getByRole('button', { name: texts['en']['a11yTakePhoto'], hidden: true });
+      const switchCameraButton = testComponent.getByRole('button', { name: texts['en']['a11ySwitchCamera'], hidden: true });
+
+      expect(document.activeElement).toBe(closeCameraButton);
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Tab', code: 'Tab' });
+      });
+      expect(document.activeElement).toBe(takePhotoButton);
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Tab', code: 'Tab' });
+      });
+      expect(document.activeElement).toBe(switchCameraButton);
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Tab', code: 'Tab' });
+      });
+      expect(document.activeElement).toBe(closeCameraButton);
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Tab', code: 'Tab', shiftKey: true });
+      });
+      expect(document.activeElement).toBe(switchCameraButton);
+    });
+
+    it('should expose a polite status for waiting and committed assistant responses', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      const stream = sendMessageAndGetStreamController('Hello');
+
+      expect(testComponent.getByRole('status', { hidden: true }).textContent).toBe(texts['en']['a11yAssistantThinking']);
+
+      stream.emitEvent('chat_id', { value: 'chat-123' });
+      stream.emitEvent('reqid', { value: 'req-123' });
+      stream.emitEvent('chat_token', { value: 'Here is a jacket.' });
+      stream.closeStream();
+
+      expect(testComponent.getByRole('status', { hidden: true }).textContent).toContain('Here is a jacket.');
+    });
+
+    it('should announce committed product result counts without relying on visual cards', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      const stream = sendMessageAndGetStreamController('Find a jacket');
+
+      stream.emitEvent('chat_id', { value: 'chat-123' });
+      stream.emitEvent('reqid', { value: 'req-123' });
+      stream.emitEvent('chat_token', { value: 'Here is one option. [[product-1]]' });
+      stream.emitEvent('product', {
+        product_id: 'product-1',
+        main_image_url: 'https://image-1',
+        data: { title: 'Jacket' },
+      });
+      stream.closeStream();
+
+      expect(testComponent.getByRole('status', { hidden: true }).textContent).toContain('Product results shown: 1');
     });
   });
 
