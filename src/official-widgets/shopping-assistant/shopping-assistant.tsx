@@ -258,6 +258,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
 
   const handleCameraDrawerKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>): void => {
     if (event.key === 'Escape') {
+      event.stopPropagation();
       closeCameraDrawer();
       return;
     }
