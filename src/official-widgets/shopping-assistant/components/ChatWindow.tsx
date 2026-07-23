@@ -43,7 +43,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
   const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
-  const [messageBottomRef, setMessageBottomRef] = useState<HTMLDivElement>();
+  const messageScrollRef = useRef<HTMLDivElement>(null);
   // Tracks `${requestId}:${productId}` pairs that have already fired a PRODUCT_VIEW, so a card
   // that streams in live and is later re-mounted as a committed row (a different DOM subtree)
   // doesn't count a second view. Keyed by request too, so the same product in a later response
@@ -69,8 +69,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
   };
 
   const scrollToBottom = (): void => {
-    if (messageBottomRef) {
-      messageBottomRef.scrollIntoView({ behavior: 'instant' });
+    const scrollContainer = messageScrollRef.current;
+    if (scrollContainer) {
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      setShowBottomArrow(false);
     }
   };
 
@@ -182,6 +184,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
         </div>
         <div className='overflow-y-auto h-full px-4 my-4 space-y-3'
              aria-label={intl.formatMessage({ id: 'a11yChatMessages' })}
+             ref={messageScrollRef}
              onScroll={handleScroll}>
           {chats.map((chat, idx) => (
               <div className={cn(
@@ -326,11 +329,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
               </div>
             </div>
           )}
-          <div ref={(el) => {
-            if (el) {
-              setMessageBottomRef(el);
-            }
-          }}></div>
         </div>
         <div className='flex-grow'></div>
         <div className='relative'>

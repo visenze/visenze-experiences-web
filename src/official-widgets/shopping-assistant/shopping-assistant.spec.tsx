@@ -844,7 +844,7 @@ describe('shopping-assistant', () => {
         }
       });
 
-      it('should scroll into view when a live product resolves after its token', () => {
+      it('should scroll the chat container vertically when a live product resolves after its token', () => {
         renderAssistant();
         openDialogAndWait();
 
@@ -854,8 +854,10 @@ describe('shopping-assistant', () => {
         stream.emitEvent('reqid', { value: 'req-123' });
         stream.emitEvent('chat_token', { value: 'Nice pick: [[pid-1]]\n' });
 
+        const chatContainer = document.body.querySelector(`[aria-label="${texts['en']['a11yChatMessages']}"]`) as HTMLDivElement;
+        Object.defineProperty(chatContainer, 'scrollHeight', { configurable: true, value: 500 });
         const scrollSpy = Element.prototype.scrollIntoView as jest.Mock;
-        const callsBeforeProduct = scrollSpy.mock.calls.length;
+        scrollSpy.mockClear();
 
         stream.emitEvent('product', {
           product_id: 'pid-1',
@@ -864,7 +866,8 @@ describe('shopping-assistant', () => {
         });
 
         expect(queryAllModal('.wigmix-product-card').length).toBe(1);
-        expect(scrollSpy.mock.calls.length).toBeGreaterThan(callsBeforeProduct);
+        expect(chatContainer.scrollTop).toBe(500);
+        expect(scrollSpy).not.toHaveBeenCalled();
 
         stream.closeStream();
       });
