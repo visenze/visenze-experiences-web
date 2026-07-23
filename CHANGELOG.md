@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.23](https://github.com/visenze/visenze-experiences-web/compare/1.0.22...1.0.23)
+
+<!-- BEGIN visenze-experiences-web 1.0.23 -->
+
+### Added
+
+- Support new token format for product ID.
+
+<!-- END visenze-experiences-web 1.0.23 -->
+
 ## [1.0.22](https://github.com/visenze/visenze-experiences-web/compare/1.0.21...1.0.22)
 
 <!-- BEGIN visenze-experiences-web 1.0.22 -->
