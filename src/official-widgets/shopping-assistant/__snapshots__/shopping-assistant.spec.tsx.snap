@@ -3,6 +3,7 @@
 exports[`shopping-assistant core rendering should match snapshot for closed state 1`] = `
 <DocumentFragment>
   <button
+    aria-label="Style Assistant"
     class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
     data-testid="wigmix-popup-trigger-button"
     style="background-color: rgb(255, 255, 255);"

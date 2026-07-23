@@ -1,5 +1,6 @@
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, Fragment, type ReactElement, useContext, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import SparklesIcon from '../../../common/icons/SparklesIcon';
@@ -8,6 +9,8 @@ import { WidgetDataContext } from '../../../common/types/contexts';
 import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
 import DownArrowIcon from '../icons/DownArrowIcon';
+
+const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
 
 export interface Chat {
   chatId: string;
@@ -36,10 +39,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations, initState } = widgetConfig;
+  const intl = useIntl();
   const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
-  const [messageBottomRef, setMessageBottomRef] = useState<HTMLDivElement>();
+  const messageScrollRef = useRef<HTMLDivElement>(null);
   // Tracks `${requestId}:${productId}` pairs that have already fired a PRODUCT_VIEW, so a card
   // that streams in live and is later re-mounted as a committed row (a different DOM subtree)
   // doesn't count a second view. Keyed by request too, so the same product in a later response
@@ -65,8 +69,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
   };
 
   const scrollToBottom = (): void => {
-    if (messageBottomRef) {
-      messageBottomRef.scrollIntoView({ behavior: 'instant' });
+    const scrollContainer = messageScrollRef.current;
+    if (scrollContainer) {
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      setShowBottomArrow(false);
     }
   };
 
@@ -116,6 +122,28 @@ const ChatWindow: FC<ChatWindowProps> = ({
     return cssConfig;
   };
 
+  const getAccessibleStatus = (): string => {
+    if (isWaiting) {
+      return intl.formatMessage({ id: 'a11yAssistantThinking' });
+    }
+    const lastChat = chats[chats.length - 1];
+    const previousChat = chats[chats.length - 2];
+    if (!lastChat) {
+      return '';
+    }
+    const statusParts: string[] = [];
+    if (lastChat.author === 'bot') {
+      statusParts.push(lastChat.messages.join(' '));
+    }
+    if (lastChat.author === 'products') {
+      if (previousChat?.author === 'bot') {
+        statusParts.push(previousChat.messages.join(' '));
+      }
+      statusParts.push(intl.formatMessage({ id: 'a11yProductResultsShown' }, { count: lastChat.products?.length || 0 }));
+    }
+    return statusParts.join(' ').trim();
+  };
+
   const renderProductCard = (product: ProcessedProduct, pidx: number, requestId: string): ReactElement => {
     const viewedKey = `${requestId}:${product.product_id}`;
     return (
@@ -151,7 +179,13 @@ const ChatWindow: FC<ChatWindowProps> = ({
 
   return (
       <>
-        <div className='overflow-y-auto h-full px-4 my-4 space-y-3' onScroll={handleScroll}>
+        <div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
+          {getAccessibleStatus()}
+        </div>
+        <div className='overflow-y-auto h-full px-4 my-4 space-y-3'
+             aria-label={intl.formatMessage({ id: 'a11yChatMessages' })}
+             ref={messageScrollRef}
+             onScroll={handleScroll}>
           {chats.map((chat, idx) => (
               <div className={cn(
                   'w-full',
@@ -163,11 +197,12 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 {chat.author === 'user' && chat.image && (
                   <div className='flex gap-1 max-w-9/10'>
                     <div
-                      className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-800'
-                      tabIndex={0} key={`chat-user-message-${idx}`}
+                      className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800
+                        rounded-lg border border-neutral-100 dark:border-neutral-800'
+                      key={`chat-user-message-${idx}`}
                     >
                       <img
-                        alt='Uploaded image'
+                        alt={intl.formatMessage({ id: 'a11yUploadedImage' })}
                         className='max-w-full h-auto rounded-lg shadow-sm border'
                         style={{ maxHeight: '200px' }}
                         src={getFile(chat.image)}
@@ -182,7 +217,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 {chat.author === 'user' && chat.messages.map((message, cidx) => (
                   <div
                     className='flex gap-1 max-w-9/10'
-                    tabIndex={0}
                     key={`chat-user-message-${cidx}`}>
                     <div
                       className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-800'
@@ -198,7 +232,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 {chat.author === 'bot' && chat.messages.map((message, cidx) => (
                   <div
                     className='flex gap-1 max-w-9/10'
-                    tabIndex={0}
                     key={`chat-bot-message-${cidx}`}>
                     <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
                       bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
@@ -227,6 +260,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       </div>
                       <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
                         bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                        <span className='sr-only'>{intl.formatMessage({ id: 'a11yAssistantThinking' })}</span>
                         {[0, 1, 2].map((i) => (
                             <div
                               key={`loading-dot-${i}`}
@@ -263,43 +297,53 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 {suggestions.map((suggestion, idx) => (
                   <Fragment key={`suggestion-${idx}`}>
                     {(showAllSuggestions || idx <= 1) && (
-                      <div
-                        className='w-fit bg-sky-100 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
-                    rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
+                      <button
+                        type='button'
+                        className={cn(
+                            'w-fit bg-sky-100 dark:bg-stone-700 p-2 text-xs text-blue-900 dark:text-blue-50',
+                            'rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer',
+                            FOCUS_VISIBLE_CLASSES,
+                        )}
                         onClick={() => sendMessage(suggestion)}
                       >
                         {suggestion}
-                      </div>
+                      </button>
                     )}
                   </Fragment>
                 ))}
                 {(!showAllSuggestions && suggestions.length >= 2) && (
-                  <div
-                    className='w-fit bg-sky-200 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
-                    rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
+                  <button
+                    type='button'
+                    className={cn(
+                        'w-fit bg-sky-200 dark:bg-stone-700 p-2 text-xs text-blue-900 dark:text-blue-50',
+                        'rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer',
+                        FOCUS_VISIBLE_CLASSES,
+                    )}
                     onClick={() => {
                       setShowAllSuggestions();
                       scrollToBottom();
                     }}>
-                    Show more...
-                  </div>
+                    {intl.formatMessage({ id: 'showMore' })}
+                  </button>
                 )}
               </div>
             </div>
           )}
-          <div ref={(el) => {
-            if (el) {
-              setMessageBottomRef(el);
-            }
-          }}></div>
         </div>
         <div className='flex-grow'></div>
         <div className='relative'>
           {showBottomArrow && (
-              <div className='absolute bottom-2 end-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
-                   onClick={scrollToBottom}>
+              <button
+                type='button'
+                aria-label={intl.formatMessage({ id: 'a11yScrollToLatestMessage' })}
+                className={cn(
+                    'absolute bottom-2 end-2 cursor-pointer rounded-full shadow p-1 border-0',
+                    'bg-white text-neutral-900 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 transition-colors',
+                    FOCUS_VISIBLE_CLASSES,
+                )}
+                onClick={scrollToBottom}>
                 <DownArrowIcon />
-              </div>
+              </button>
           )}
         </div>
       </>

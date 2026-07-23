@@ -15,6 +15,7 @@ exports[`similar-search should open the popup when icon is clicked and display e
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -94,6 +95,7 @@ exports[`similar-search should open the popup when icon is clicked and display e
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -153,6 +155,7 @@ exports[`similar-search should open the popup when icon is clicked and display e
 exports[`similar-search should render a custom icon if configured as such 1`] = `
 <DocumentFragment>
   <button
+    aria-label="CTA"
     class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
     data-testid="wigmix-popup-trigger-button"
     style="background-color: rgb(255, 255, 255);"
@@ -178,6 +181,7 @@ exports[`similar-search should render a successful response with default config 
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -380,6 +384,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-1"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -454,6 +459,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-2"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -528,6 +534,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-3"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -602,6 +609,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-4"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -676,6 +684,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-5"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -750,6 +759,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-6"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -824,6 +834,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-7"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -898,6 +909,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-8"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -972,6 +984,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-9"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1046,6 +1059,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-10"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1120,6 +1134,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-11"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1194,6 +1209,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-12"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1268,6 +1284,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-13"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1342,6 +1359,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-14"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1416,6 +1434,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-15"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1490,6 +1509,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-16"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1564,6 +1584,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-17"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1638,6 +1659,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-18"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1712,6 +1734,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-19"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1786,6 +1809,7 @@ exports[`similar-search should render a successful response with default config 
                               src="https://main-image-20"
                             />
                             <button
+                              aria-label="Find similar products"
                               class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                               data-pw="ss-find-similar-button"
                               data-testid="wigmix-find-similar-button"
@@ -1880,6 +1904,7 @@ exports[`similar-search should render a successful response with default config 
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -2041,6 +2066,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-1"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2115,6 +2141,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-2"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2189,6 +2216,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-3"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2263,6 +2291,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-4"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2337,6 +2366,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-5"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2411,6 +2441,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-6"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2485,6 +2516,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-7"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2559,6 +2591,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-8"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2633,6 +2666,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-9"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2707,6 +2741,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-10"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2781,6 +2816,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-11"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2855,6 +2891,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-12"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -2929,6 +2966,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-13"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3003,6 +3041,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-14"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3077,6 +3116,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-15"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3151,6 +3191,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-16"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3225,6 +3266,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-17"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3299,6 +3341,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-18"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3373,6 +3416,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-19"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3447,6 +3491,7 @@ exports[`similar-search should render a successful response with default config 
                             src="https://main-image-20"
                           />
                           <button
+                            aria-label="Find similar products"
                             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
                             data-pw="ss-find-similar-button"
                             data-testid="wigmix-find-similar-button"
@@ -3594,6 +3639,7 @@ exports[`similar-search should render a successful response with default config 
 exports[`similar-search should render the standard icon 1`] = `
 <DocumentFragment>
   <button
+    aria-label="CTA"
     class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
     data-testid="wigmix-popup-trigger-button"
     style="background-color: rgb(255, 255, 255);"

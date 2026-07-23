@@ -6,13 +6,16 @@ import { WidgetDataContext } from '../types/contexts';
 import type { SearchImage } from '../types/image';
 import { Actions, Category, Labels } from '../types/tracking-constants';
 
+const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
+
 interface FileDropzoneProps {
   onImageUpload: (image: SearchImage) => void;
   children: ReactNode;
   name?: string;
+  ariaLabel?: string;
 }
 
-const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name }) => {
+const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name, ariaLabel }) => {
   const { widgetClient } = useContext(WidgetDataContext);
   const MAX_IMAGE_FILE_SIZE = 10000000;
 
@@ -52,8 +55,11 @@ const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name }) 
   });
 
   return (
-    <div className='cursor-pointer h-full' {...getRootProps()}>
-      <input {...getInputProps()} data-testid={`wigmix-${name}-dropzone`} data-pw={`${name}-dropzone`} />
+    <div
+      className={`cursor-pointer h-full ${FOCUS_VISIBLE_CLASSES}`}
+      {...getRootProps({ 'aria-label': ariaLabel, 'role': 'button' })}
+    >
+      <input {...getInputProps({ 'aria-label': ariaLabel })} data-testid={`wigmix-${name}-dropzone`} data-pw={`${name}-dropzone`} />
       {children}
     </div>
   );

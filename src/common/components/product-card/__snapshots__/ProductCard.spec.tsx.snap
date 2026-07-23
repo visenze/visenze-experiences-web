@@ -197,6 +197,7 @@ exports[`ProductCard should render with standard fields, find similar enabled wi
             src="test_image_url"
           />
           <button
+            aria-label="Find similar products"
             class="wigmix-find-similar-button absolute bottom-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
             data-pw="ut-find-similar-button"
             data-testid="wigmix-find-similar-button"
@@ -266,6 +267,7 @@ exports[`ProductCard should render with standard fields, find similar enabled, w
             src="test_image_url"
           />
           <button
+            aria-label="Find similar products"
             class="wigmix-find-similar-button absolute top-3 right-3 z-5 rounded-full bg-white p-1 hover:opacity-90"
             data-pw="ut-find-similar-button"
             data-testid="wigmix-find-similar-button"

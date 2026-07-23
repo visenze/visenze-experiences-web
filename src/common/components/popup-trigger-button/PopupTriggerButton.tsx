@@ -32,6 +32,7 @@ const PopupTriggerButton: FC<PopupTriggerButtonProps> = ({ config, text, darkMod
               ? config?.triggerIcon?.backgroundColorDark || 'transparent'
               : config?.triggerIcon?.backgroundColor || 'transparent',
         }}
+        aria-label={text}
         data-testid='wigmix-popup-trigger-button'
         onClick={onClick}
       >

@@ -67,6 +67,21 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .loading-dot {
+    animation: none;
+  }
+
+  .wigmix-camera-drawer {
+    animation: none !important;
+  }
+
+  .ReactModal__Content {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
 .wigmix-modal-overlay.wigmix-modal-position-right {
   padding-left: 65% !important;
 }

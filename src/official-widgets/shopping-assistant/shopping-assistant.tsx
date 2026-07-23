@@ -1,7 +1,7 @@
 import { Textarea } from '@heroui/input';
 import { cn } from '@heroui/theme';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { type FC, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { type FC, type KeyboardEvent, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Webcam from 'react-webcam';
 import type { Chat } from './components/ChatWindow';
@@ -35,6 +35,7 @@ import { getFlattenProduct } from '../../common/utils';
 const LEADING_PRODUCT_REGEX = /^(?:\d+\.? |- )?\[\[[^\]]+]]/;
 const SUGGESTION_LINE_REGEX = /\(\(([^)]+)\)\)/g;
 const INCOMPLETE_PRODUCT_TOKEN_REGEX = /\[\[[^\]]*$/;
+const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
 
 // Clean the accumulated text for display:
 // - Old format (token leads the line): drop the whole line; the product card replaces it.
@@ -101,7 +102,12 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const [widgetOpenTrigger, setWidgetOpenTrigger] = useState(0);
   const [sendChatTrigger, setSendChatTrigger] = useState<[string, SearchImageOrPid | undefined]>();
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
+  const openCameraButtonRef = useRef<HTMLButtonElement>(null);
+  const closeCameraButtonRef = useRef<HTMLButtonElement>(null);
+  const takePhotoButtonRef = useRef<HTMLButtonElement>(null);
+  const switchCameraButtonRef = useRef<HTMLButtonElement>(null);
   const intl = useIntl();
+  const dialogTitleId = `wigmix-shopping-assistant-title-${appSettings.placementId}`;
   const openingMessages = [
     intl.formatMessage({ id: 'openingMessage1' }),
     intl.formatMessage({ id: 'openingMessage2' }),
@@ -245,6 +251,44 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setImage(data);
   };
 
+  const closeCameraDrawer = useCallback((): void => {
+    setShowCameraDrawer(false);
+    openCameraButtonRef.current?.focus();
+  }, []);
+
+  const handleCameraDrawerKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key === 'Escape') {
+      event.stopPropagation();
+      closeCameraDrawer();
+      return;
+    }
+    if (event.key !== 'Tab') {
+      return;
+    }
+    const focusableControls = [
+      closeCameraButtonRef.current,
+      takePhotoButtonRef.current,
+      switchCameraButtonRef.current,
+    ].filter((control): control is HTMLButtonElement => !!control && !control.disabled);
+    if (!focusableControls.length) {
+      return;
+    }
+    const activeIndex = focusableControls.indexOf(document.activeElement as HTMLButtonElement);
+    let nextIndex = activeIndex + 1;
+    if (event.shiftKey) {
+      nextIndex = activeIndex - 1;
+    }
+    if (nextIndex < 0) {
+      nextIndex = focusableControls.length - 1;
+    }
+    if (nextIndex >= focusableControls.length) {
+      nextIndex = 0;
+    }
+
+    event.preventDefault();
+    focusableControls[nextIndex].focus();
+  }, [closeCameraDrawer]);
+
   const capture = useCallback(() => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
@@ -256,11 +300,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
             const imageFile = { files: [file], file: imageSrc };
 
             onImageUpload(imageFile);
-            setShowCameraDrawer(false);
+            closeCameraDrawer();
           });
       }
     }
-  }, [webcamRef]);
+  }, [closeCameraDrawer, webcamRef]);
 
   const openDialog = (): void => {
     if (dialogVisible) {
@@ -328,25 +372,34 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const getScreen = (): ReactElement => (
       <div className='flex h-full flex-col bg-white dark:bg-neutral-700 border-x border-neutral-300 dark:border-neutral-800'>
         <div className='flex w-full py-4 justify-between shadow'>
-          <div className='wigmix-widget-title flex items-center gap-2 px-4'
+          <h2 id={dialogTitleId}
+            className='wigmix-widget-title flex items-center gap-2 px-4 m-0'
             style={{ color: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor }}
           >
             {intl.formatMessage({ id: 'widgetTitle' })}
-          </div>
+          </h2>
 
           <div className='flex items-center gap-2 pe-4'>
-            <div onClick={() => newChat()}>
+            <button
+              type='button'
+              aria-label={intl.formatMessage({ id: 'a11yStartNewChat' })}
+              className={cn('p-0 bg-transparent border-0', FOCUS_VISIBLE_CLASSES)}
+              onClick={() => newChat()}>
               <PlusCircleIcon className='size-6 cursor-pointer'
                 color={darkMode
                   ? (customizations.generalLayout?.fontColorDark || '')
                   : (customizations.generalLayout?.fontColor || '')} />
-            </div>
-            <div onClick={() => setDialogVisible(false)}>
+            </button>
+            <button
+              type='button'
+              aria-label={intl.formatMessage({ id: 'a11yCloseShoppingAssistant' })}
+              className={cn('p-0 bg-transparent border-0', FOCUS_VISIBLE_CLASSES)}
+              onClick={() => setDialogVisible(false)}>
               <CloseIcon className='size-6 cursor-pointer'
                 color={darkMode
                   ? (customizations.generalLayout?.fontColorDark || '')
                   : (customizations.generalLayout?.fontColor || '')} />
-            </div>
+            </button>
           </div>
         </div>
         <ChatWindow isWaiting={isWaiting}
@@ -361,8 +414,13 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
         <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
           {showCameraDrawer && (
             <div
-              className='absolute inset-x-0 bottom-0 z-50 bg-white dark:bg-neutral-800 shadow-lg flex flex-col items-center p-4 animate-slideup'
+              role='dialog'
+              aria-modal='true'
+              aria-label={intl.formatMessage({ id: 'a11yCameraDrawer' })}
+              tabIndex={-1}
+              className='wigmix-camera-drawer absolute inset-x-0 bottom-0 z-50 bg-white dark:bg-neutral-800 shadow-lg flex flex-col items-center p-4 animate-slideup'
               style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, minHeight: 340 }}
+              onKeyDown={handleCameraDrawerKeyDown}
             >
               <div className='w-full flex justify-center'>
                 <Webcam
@@ -374,21 +432,42 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                 />
               </div>
               <div className='w-full flex gap-2 mt-2'>
-                <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1 text-neutral-900 dark:text-neutral-100'
-                        onClick={() => setShowCameraDrawer(false)}>
+                <button ref={closeCameraButtonRef}
+                        className={cn(
+                            'w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1',
+                            'text-neutral-900 dark:text-neutral-100',
+                            FOCUS_VISIBLE_CLASSES,
+                        )}
+                        type='button'
+                        aria-label={intl.formatMessage({ id: 'a11yCloseCamera' })}
+                        onClick={closeCameraDrawer}>
                   <UturnLeftIcon
                       className='size-5 cursor-pointer'
                       color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
                   />
                 </button>
-                <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1 text-neutral-900 dark:text-neutral-100'
+                <button ref={takePhotoButtonRef}
+                        className={cn(
+                            'w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1',
+                            'text-neutral-900 dark:text-neutral-100',
+                            FOCUS_VISIBLE_CLASSES,
+                        )}
+                        type='button'
+                        aria-label={intl.formatMessage({ id: 'a11yTakePhoto' })}
                         onClick={capture}>
                   <CameraIcon
                       className='size-5 cursor-pointer'
                       color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
                   />
                 </button>
-                <button className='w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1 text-neutral-900 dark:text-neutral-100'
+                <button ref={switchCameraButtonRef}
+                        className={cn(
+                            'w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1',
+                            'text-neutral-900 dark:text-neutral-100',
+                            FOCUS_VISIBLE_CLASSES,
+                        )}
+                        type='button'
+                        aria-label={intl.formatMessage({ id: 'a11ySwitchCamera' })}
                         onClick={() => {
                   setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
                 }}>
@@ -401,15 +480,20 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
             </div>
           )}
           <div className='flex justify-end gap-2'>
-            <div className={cn('p-2 border border-gray dark:border-neutral-500 rounded-md')} onClick={() => setShowCameraDrawer(true)}>
+            <button
+              ref={openCameraButtonRef}
+              type='button'
+              aria-label={intl.formatMessage({ id: 'a11yOpenCamera' })}
+              className={cn('p-2 border border-gray dark:border-neutral-500 rounded-md bg-transparent', FOCUS_VISIBLE_CLASSES)}
+              onClick={() => setShowCameraDrawer(true)}>
               <CameraIcon
                 className='size-5 cursor-pointer'
                 color={darkMode
                   ? (customizations.generalLayout?.fontColorDark || '')
                   : (customizations.generalLayout?.fontColor || '')}
               />
-            </div>
-            <FileDropzone onImageUpload={onImageUpload} name='cs-upload-icon'>
+            </button>
+            <FileDropzone onImageUpload={onImageUpload} name='cs-upload-icon' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
               <div className={cn('p-2 border border-gray dark:border-neutral-500 rounded-md')}>
                 {customizations.imageUpload?.icon?.url ? (
                     <CustomizableIcon
@@ -429,7 +513,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
               </div>
             </FileDropzone>
           </div>
-          <Textarea value={message}
+          <Textarea aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
+                    value={message}
                     placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
                     minRows={1}
                     onChange={(e) => setMessage(e.target.value)}
@@ -443,17 +528,24 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                       }
                     }}
                     endContent={
-                      <SubmitChatIcon
-                        onClickHandler={() => {
-                        if (!allowUserInput) {
-                          return;
-                        }
-                        sendMessage(message);
-                      }}
-                      color={darkMode
-                        ? (customizations.generalLayout?.fontColorDark || '')
-                        : (customizations.generalLayout?.fontColor || '')}
-                      />
+                      <button
+                        type='button'
+                        aria-label={intl.formatMessage({ id: 'a11ySendMessage' })}
+                        disabled={!allowUserInput}
+                        className={cn('p-0 bg-transparent border-0 disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
+                        onClick={() => {
+                          if (!allowUserInput) {
+                            return;
+                          }
+                          sendMessage(message);
+                        }}
+                      >
+                        <SubmitChatIcon
+                          color={darkMode
+                            ? (customizations.generalLayout?.fontColorDark || '')
+                            : (customizations.generalLayout?.fontColor || '')}
+                        />
+                      </button>
                     }
           />
         </div>
@@ -463,6 +555,12 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   useEffect(() => {
     sendMessage(undefined, image);
   }, [image]);
+
+  useEffect(() => {
+    if (showCameraDrawer) {
+      closeCameraButtonRef.current?.focus();
+    }
+  }, [showCameraDrawer]);
 
   useEffect(() => {
     if (widgetOpenTrigger) {
@@ -515,6 +613,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
             darkMode={darkMode}
             fontFamily={customizations.generalLayout?.fontFamily}
             placementId={`${appSettings.placementId}`}
+            ariaLabelledBy={dialogTitleId}
             renderWithoutPortal={!!renderModalWithoutPortal}>
           {getScreen()}
         </ViSenzeModal>

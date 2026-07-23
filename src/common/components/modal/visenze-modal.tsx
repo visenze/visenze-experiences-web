@@ -14,9 +14,11 @@ interface ModalProps {
   className?: string;
   position: 'left' | 'center' | 'right' | 'bottom';
   portalRef?: MutableRefObject<HTMLDivElement | null>;
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
 }
 
-const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position, portalRef }) => {
+const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position, portalRef, ariaLabel, ariaLabelledBy }) => {
   const root = useContext(RootContext);
   let timeout;
   switch (layout) {
@@ -54,6 +56,8 @@ const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, pos
       overlayClassName={`wigmix-modal-overlay wigmix-modal-position-${position}`}
       testId='wigmix-modal'
       onRequestClose={onClose}
+      contentLabel={ariaLabel}
+      aria={ariaLabelledBy ? { labelledby: ariaLabelledBy } : undefined}
       appElement={portalRef?.current || document.body}>
       {children}
     </ReactModal>
@@ -72,6 +76,8 @@ interface VisenzeModalProps {
   darkMode: boolean;
   fontFamily: string;
   renderWithoutPortal: boolean;
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
 }
 
 const ViSenzeModal: FC<VisenzeModalProps> = (props) => {

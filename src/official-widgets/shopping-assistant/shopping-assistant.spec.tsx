@@ -32,6 +32,7 @@ jest.mock('@heroui/input', () => ({
     <div data-testid='chat-textarea-wrapper'>
       <textarea
         data-testid='chat-textarea'
+        aria-label={props['aria-label']}
         value={props.value}
         placeholder={props.placeholder}
         onChange={props.onChange}
@@ -73,12 +74,14 @@ describe('shopping-assistant', () => {
 
   const renderAssistant = (
     visearchOverrides: Partial<ViSearchClient> = {},
+    locale = 'en',
   ): ReturnType<typeof createTestClient> => {
     const { widgetConfig, widgetClient, mockVisearchClient } = createTestClient(visearchOverrides);
     testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
       widgetConfig,
       widgetClient,
-      messages: texts['en'],
+      locale,
+      messages: texts[locale],
       rootElement: modalRoot,
     });
     return { widgetConfig, widgetClient, mockVisearchClient };
@@ -194,9 +197,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const headerActionsArea = document.body.querySelector('.wigmix-modal .flex.items-center.gap-2.pe-4');
-      const clickableDivs = (headerActionsArea as Element).querySelectorAll(':scope > div');
-      const closeButton = clickableDivs[1];
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true });
 
       act(() => {
         fireEvent.click(closeButton);
@@ -206,6 +207,170 @@ describe('shopping-assistant', () => {
       });
 
       expect(queryModal('.wigmix-modal')).toBeNull();
+    });
+  });
+
+  describe('accessibility', () => {
+    it('should expose an accessible name for the popup trigger', () => {
+      renderAssistant();
+
+      expect(testComponent.getByRole('button', { name: texts['en']['triggerCTA'] })).toBeTruthy();
+    });
+
+    it('should expose a named dialog after opening', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('dialog', { name: texts['en']['widgetTitle'], hidden: true })).toBeTruthy();
+    });
+
+    it('should expose header actions as named buttons', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true })).toBeTruthy();
+    });
+
+    it('should expose image action controls as named buttons', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yUploadImage'], hidden: true })).toBeTruthy();
+    });
+
+    it('should expose send as a named button', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('button', { name: texts['en']['a11ySendMessage'], hidden: true })).toBeTruthy();
+    });
+
+    it('should expose an accessible name for the chat input', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true })).toBeTruthy();
+    });
+
+    it('should expose the dialog title as a heading', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('heading', { name: texts['en']['widgetTitle'], hidden: true })).toBeTruthy();
+    });
+
+    it('should localize accessible names for non-English locales', () => {
+      renderAssistant({}, 'es');
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('button', { name: texts['es']['a11yStartNewChat'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['es']['a11yOpenCamera'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['es']['a11ySendMessage'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('textbox', { name: texts['es']['a11yChatInput'], hidden: true })).toBeTruthy();
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true })).toBeNull();
+    });
+
+    it('should not place static chat messages in the tab order', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(getTextInBody('Let\'s get started')?.closest('[tabindex="0"]')).toBeNull();
+      expect(getTextInBody('Tell us about what your styling needs')?.closest('[tabindex="0"]')).toBeNull();
+    });
+
+    it('should expose the camera drawer as a labelled dialog and restore focus when closed', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      const openCameraButton = testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true });
+      act(() => {
+        fireEvent.click(openCameraButton);
+      });
+
+      const cameraDialog = testComponent.getByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true });
+      const closeCameraButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseCamera'], hidden: true });
+      expect(cameraDialog).toBeTruthy();
+      expect(document.activeElement).toBe(closeCameraButton);
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Escape', code: 'Escape' });
+      });
+
+      expect(testComponent.queryByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true })).toBeNull();
+      expect(document.activeElement).toBe(openCameraButton);
+    });
+
+    it('should trap keyboard focus inside the camera drawer', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
+      });
+
+      const cameraDialog = testComponent.getByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true });
+      const closeCameraButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseCamera'], hidden: true });
+      const takePhotoButton = testComponent.getByRole('button', { name: texts['en']['a11yTakePhoto'], hidden: true });
+      const switchCameraButton = testComponent.getByRole('button', { name: texts['en']['a11ySwitchCamera'], hidden: true });
+
+      expect(document.activeElement).toBe(closeCameraButton);
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Tab', code: 'Tab' });
+      });
+      expect(document.activeElement).toBe(takePhotoButton);
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Tab', code: 'Tab' });
+      });
+      expect(document.activeElement).toBe(switchCameraButton);
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Tab', code: 'Tab' });
+      });
+      expect(document.activeElement).toBe(closeCameraButton);
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Tab', code: 'Tab', shiftKey: true });
+      });
+      expect(document.activeElement).toBe(switchCameraButton);
+    });
+
+    it('should expose a polite status for waiting and committed assistant responses', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      const stream = sendMessageAndGetStreamController('Hello');
+
+      expect(testComponent.getByRole('status', { hidden: true }).textContent).toBe(texts['en']['a11yAssistantThinking']);
+
+      stream.emitEvent('chat_id', { value: 'chat-123' });
+      stream.emitEvent('reqid', { value: 'req-123' });
+      stream.emitEvent('chat_token', { value: 'Here is a jacket.' });
+      stream.closeStream();
+
+      expect(testComponent.getByRole('status', { hidden: true }).textContent).toContain('Here is a jacket.');
+    });
+
+    it('should announce committed product result counts without relying on visual cards', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      const stream = sendMessageAndGetStreamController('Find a jacket');
+
+      stream.emitEvent('chat_id', { value: 'chat-123' });
+      stream.emitEvent('reqid', { value: 'req-123' });
+      stream.emitEvent('chat_token', { value: 'Here is one option. [[product-1]]' });
+      stream.emitEvent('product', {
+        product_id: 'product-1',
+        main_image_url: 'https://image-1',
+        data: { title: 'Jacket' },
+      });
+      stream.closeStream();
+
+      expect(testComponent.getByRole('status', { hidden: true }).textContent).toContain('Product results shown: 1');
     });
   });
 
@@ -679,7 +844,7 @@ describe('shopping-assistant', () => {
         }
       });
 
-      it('should scroll into view when a live product resolves after its token', () => {
+      it('should scroll the chat container vertically when a live product resolves after its token', () => {
         renderAssistant();
         openDialogAndWait();
 
@@ -689,8 +854,10 @@ describe('shopping-assistant', () => {
         stream.emitEvent('reqid', { value: 'req-123' });
         stream.emitEvent('chat_token', { value: 'Nice pick: [[pid-1]]\n' });
 
+        const chatContainer = document.body.querySelector(`[aria-label="${texts['en']['a11yChatMessages']}"]`) as HTMLDivElement;
+        Object.defineProperty(chatContainer, 'scrollHeight', { configurable: true, value: 500 });
         const scrollSpy = Element.prototype.scrollIntoView as jest.Mock;
-        const callsBeforeProduct = scrollSpy.mock.calls.length;
+        scrollSpy.mockClear();
 
         stream.emitEvent('product', {
           product_id: 'pid-1',
@@ -699,7 +866,8 @@ describe('shopping-assistant', () => {
         });
 
         expect(queryAllModal('.wigmix-product-card').length).toBe(1);
-        expect(scrollSpy.mock.calls.length).toBeGreaterThan(callsBeforeProduct);
+        expect(chatContainer.scrollTop).toBe(500);
+        expect(scrollSpy).not.toHaveBeenCalled();
 
         stream.closeStream();
       });
@@ -741,10 +909,10 @@ describe('shopping-assistant', () => {
         expect(getTextInBody('opt1')).toBeTruthy();
         expect(getTextInBody('opt2')).toBeTruthy();
         // "Show more..." should appear
-        expect(getTextInBody('Show more...')).toBeTruthy();
+        expect(getTextInBody(texts['en']['showMore'])).toBeTruthy();
 
         // Click "Show more..."
-        const showMore = getTextInBody('Show more...');
+        const showMore = getTextInBody(texts['en']['showMore']);
         act(() => {
           fireEvent.click(showMore as HTMLElement);
         });
@@ -1429,11 +1597,10 @@ describe('shopping-assistant', () => {
         fireEvent.change(textarea, { target: { value: 'Submit test' } });
       });
 
-      const submitWrapper = document.body.querySelector('[data-testid="chat-submit-button"]');
-      const clickable = (submitWrapper as Element).querySelector('svg') || (submitWrapper as Element).firstElementChild;
+      const submitButton = testComponent.getByRole('button', { name: texts['en']['a11ySendMessage'], hidden: true });
 
       act(() => {
-        fireEvent.click(clickable as Element);
+        fireEvent.click(submitButton);
       });
 
       expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
@@ -1503,9 +1670,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const inputArea = queryModal('.wigmix-modal .relative.flex.flex-col.gap-2');
-      const toolbarButtons = (inputArea as Element).querySelectorAll('.p-2.border');
-      const cameraButton = toolbarButtons[0];
+      const cameraButton = testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true });
 
       act(() => {
         fireEvent.click(cameraButton);
@@ -1518,15 +1683,11 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const inputArea = queryModal('.wigmix-modal .relative.flex.flex-col.gap-2');
-      const toolbarButtons = (inputArea as Element).querySelectorAll('.p-2.border');
-
       act(() => {
-        fireEvent.click(toolbarButtons[0]);
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
       });
 
-      const drawerButtons = document.body.querySelectorAll('.animate-slideup button');
-      const backButton = drawerButtons[0];
+      const backButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseCamera'], hidden: true });
 
       act(() => {
         fireEvent.click(backButton);
@@ -1553,9 +1714,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const headerActionsArea = document.body.querySelector('.wigmix-modal .flex.items-center.gap-2.pe-4');
-      const clickableDivs = (headerActionsArea as Element).querySelectorAll(':scope > div');
-      const newChatButton = clickableDivs[0];
+      const newChatButton = testComponent.getByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true });
 
       act(() => {
         fireEvent.click(newChatButton);
