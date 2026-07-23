@@ -73,12 +73,14 @@ describe('shopping-assistant', () => {
 
   const renderAssistant = (
     visearchOverrides: Partial<ViSearchClient> = {},
+    locale = 'en',
   ): ReturnType<typeof createTestClient> => {
     const { widgetConfig, widgetClient, mockVisearchClient } = createTestClient(visearchOverrides);
     testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
       widgetConfig,
       widgetClient,
-      messages: texts['en'],
+      locale,
+      messages: texts[locale],
       rootElement: modalRoot,
     });
     return { widgetConfig, widgetClient, mockVisearchClient };
@@ -194,7 +196,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const closeButton = testComponent.getByRole('button', { name: 'Close shopping assistant', hidden: true });
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true });
 
       act(() => {
         fireEvent.click(closeButton);
@@ -225,23 +227,33 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      expect(testComponent.getByRole('button', { name: 'Start new chat', hidden: true })).toBeTruthy();
-      expect(testComponent.getByRole('button', { name: 'Close shopping assistant', hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true })).toBeTruthy();
     });
 
     it('should expose image action controls as named buttons', () => {
       renderAssistant();
       openDialogAndWait();
 
-      expect(testComponent.getByRole('button', { name: 'Open camera', hidden: true })).toBeTruthy();
-      expect(document.body.querySelector('[aria-label="Upload image"]')).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeTruthy();
+      expect(document.body.querySelector(`[aria-label="${texts['en']['a11yUploadImage']}"]`)).toBeTruthy();
     });
 
     it('should expose send as a named button', () => {
       renderAssistant();
       openDialogAndWait();
 
-      expect(testComponent.getByRole('button', { name: 'Send message', hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11ySendMessage'], hidden: true })).toBeTruthy();
+    });
+
+    it('should localize accessible names for non-English locales', () => {
+      renderAssistant({}, 'es');
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('button', { name: texts['es']['a11yStartNewChat'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['es']['a11yOpenCamera'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['es']['a11ySendMessage'], hidden: true })).toBeTruthy();
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true })).toBeNull();
     });
 
     it('should not place static chat messages in the tab order', () => {
@@ -250,6 +262,28 @@ describe('shopping-assistant', () => {
 
       expect(getTextInBody('Let\'s get started')?.closest('[tabindex="0"]')).toBeNull();
       expect(getTextInBody('Tell us about what your styling needs')?.closest('[tabindex="0"]')).toBeNull();
+    });
+
+    it('should expose the camera drawer as a labelled dialog and restore focus when closed', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      const openCameraButton = testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true });
+      act(() => {
+        fireEvent.click(openCameraButton);
+      });
+
+      const cameraDialog = testComponent.getByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true });
+      const closeCameraButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseCamera'], hidden: true });
+      expect(cameraDialog).toBeTruthy();
+      expect(document.activeElement).toBe(closeCameraButton);
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Escape', code: 'Escape' });
+      });
+
+      expect(testComponent.queryByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true })).toBeNull();
+      expect(document.activeElement).toBe(openCameraButton);
     });
   });
 
@@ -785,10 +819,10 @@ describe('shopping-assistant', () => {
         expect(getTextInBody('opt1')).toBeTruthy();
         expect(getTextInBody('opt2')).toBeTruthy();
         // "Show more..." should appear
-        expect(getTextInBody('Show more...')).toBeTruthy();
+        expect(getTextInBody(texts['en']['showMore'])).toBeTruthy();
 
         // Click "Show more..."
-        const showMore = getTextInBody('Show more...');
+        const showMore = getTextInBody(texts['en']['showMore']);
         act(() => {
           fireEvent.click(showMore as HTMLElement);
         });
@@ -1473,7 +1507,7 @@ describe('shopping-assistant', () => {
         fireEvent.change(textarea, { target: { value: 'Submit test' } });
       });
 
-      const submitButton = testComponent.getByRole('button', { name: 'Send message', hidden: true });
+      const submitButton = testComponent.getByRole('button', { name: texts['en']['a11ySendMessage'], hidden: true });
 
       act(() => {
         fireEvent.click(submitButton);
@@ -1546,7 +1580,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const cameraButton = testComponent.getByRole('button', { name: 'Open camera', hidden: true });
+      const cameraButton = testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true });
 
       act(() => {
         fireEvent.click(cameraButton);
@@ -1560,10 +1594,10 @@ describe('shopping-assistant', () => {
       openDialogAndWait();
 
       act(() => {
-        fireEvent.click(testComponent.getByRole('button', { name: 'Open camera', hidden: true }));
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
       });
 
-      const backButton = testComponent.getByRole('button', { name: 'Close camera', hidden: true });
+      const backButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseCamera'], hidden: true });
 
       act(() => {
         fireEvent.click(backButton);
@@ -1590,7 +1624,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const newChatButton = testComponent.getByRole('button', { name: 'Start new chat', hidden: true });
+      const newChatButton = testComponent.getByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true });
 
       act(() => {
         fireEvent.click(newChatButton);

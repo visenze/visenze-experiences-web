@@ -15,6 +15,7 @@ exports[`slide-out-drawer should open the popup when icon is clicked and display
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -94,6 +95,7 @@ exports[`slide-out-drawer should open the popup when icon is clicked and display
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -163,6 +165,7 @@ exports[`slide-out-drawer should open the popup when icon is clicked and display
 exports[`slide-out-drawer should render a custom icon if configured as such 1`] = `
 <DocumentFragment>
   <button
+    aria-label="CTA"
     class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
     data-testid="wigmix-popup-trigger-button"
     style="background-color: rgb(255, 255, 255);"
@@ -188,6 +191,7 @@ exports[`slide-out-drawer should render a successful response with default confi
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -1455,6 +1459,7 @@ exports[`slide-out-drawer should render a successful response with default confi
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -2712,6 +2717,7 @@ exports[`slide-out-drawer should render a successful response with default confi
 exports[`slide-out-drawer should render the standard icon 1`] = `
 <DocumentFragment>
   <button
+    aria-label="CTA"
     class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
     data-testid="wigmix-popup-trigger-button"
     style="background-color: rgb(255, 255, 255);"

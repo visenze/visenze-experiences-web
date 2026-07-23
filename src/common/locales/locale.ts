@@ -4,6 +4,64 @@ import { deepMerge } from '../client/initialization';
 // Hierarchy: locale > text key > text value
 export type LanguagePack = Record<string, Record<string, string>>;
 
+export const COMMON_TEXTS: LanguagePack = {
+  en: {
+    a11yAddToWishlist: 'Add to wishlist',
+    a11yRemoveFromWishlist: 'Remove from wishlist',
+    a11yFindSimilarProducts: 'Find similar products',
+  },
+  es: {
+    a11yAddToWishlist: 'Agregar a la lista de deseos',
+    a11yRemoveFromWishlist: 'Eliminar de la lista de deseos',
+    a11yFindSimilarProducts: 'Encontrar productos similares',
+  },
+  fr: {
+    a11yAddToWishlist: 'Ajouter a la liste de souhaits',
+    a11yRemoveFromWishlist: 'Retirer de la liste de souhaits',
+    a11yFindSimilarProducts: 'Trouver des produits similaires',
+  },
+  pt: {
+    a11yAddToWishlist: 'Adicionar a lista de desejos',
+    a11yRemoveFromWishlist: 'Remover da lista de desejos',
+    a11yFindSimilarProducts: 'Encontrar produtos similares',
+  },
+  de: {
+    a11yAddToWishlist: 'Zur Wunschliste hinzufugen',
+    a11yRemoveFromWishlist: 'Von der Wunschliste entfernen',
+    a11yFindSimilarProducts: 'Ahnliche Produkte finden',
+  },
+  it: {
+    a11yAddToWishlist: 'Aggiungi alla lista dei desideri',
+    a11yRemoveFromWishlist: 'Rimuovi dalla lista dei desideri',
+    a11yFindSimilarProducts: 'Trova prodotti simili',
+  },
+  pl: {
+    a11yAddToWishlist: 'Dodaj do listy zyczen',
+    a11yRemoveFromWishlist: 'Usun z listy zyczen',
+    a11yFindSimilarProducts: 'Znajdz podobne produkty',
+  },
+  ko: {
+    a11yAddToWishlist: '위시리스트에 추가',
+    a11yRemoveFromWishlist: '위시리스트에서 제거',
+    a11yFindSimilarProducts: '비슷한 상품 찾기',
+  },
+  ja: {
+    a11yAddToWishlist: 'ほしい物リストに追加',
+    a11yRemoveFromWishlist: 'ほしい物リストから削除',
+    a11yFindSimilarProducts: '類似商品を探す',
+  },
+  th: {
+    a11yAddToWishlist: 'เพิ่มในรายการโปรด',
+    a11yRemoveFromWishlist: 'ลบออกจากรายการโปรด',
+    a11yFindSimilarProducts: 'ค้นหาสินค้าที่คล้ายกัน',
+  },
+  zh: {
+    a11yAddToWishlist: '加入心愿单',
+    a11yRemoveFromWishlist: '从心愿单移除',
+    a11yFindSimilarProducts: '查找相似商品',
+  },
+};
+
 export const getLocaleTexts = (localeParam: string,
                                presetTexts: LanguagePack,
                                customTexts: LanguagePack = {}): Record<string, string> => {
@@ -24,6 +82,10 @@ export const getLocaleTexts = (localeParam: string,
     });
     return textsWithRegionVariants;
   })();
+  const commonTexts = hasRegion
+    ? deepMerge(COMMON_TEXTS[locale] || {}, COMMON_TEXTS[lang] || COMMON_TEXTS[DEFAULT_LOCALE])
+    : COMMON_TEXTS[locale] || COMMON_TEXTS[DEFAULT_LOCALE];
+  finalTexts = deepMerge(finalTexts, commonTexts);
   if (hasRegion && customTexts[lang]) {
     finalTexts = deepMerge(customTexts[lang], finalTexts);
   }

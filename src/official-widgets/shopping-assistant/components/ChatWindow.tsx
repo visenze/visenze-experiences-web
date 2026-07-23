@@ -1,5 +1,6 @@
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, Fragment, type ReactElement, useContext, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import SparklesIcon from '../../../common/icons/SparklesIcon';
@@ -36,6 +37,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations, initState } = widgetConfig;
+  const intl = useIntl();
   const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
@@ -282,7 +284,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       setShowAllSuggestions();
                       scrollToBottom();
                     }}>
-                    Show more...
+                    {intl.formatMessage({ id: 'showMore' })}
                   </button>
                 )}
               </div>
@@ -299,7 +301,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
           {showBottomArrow && (
               <button
                 type='button'
-                aria-label='Scroll to latest message'
+                aria-label={intl.formatMessage({ id: 'a11yScrollToLatestMessage' })}
                 className='absolute bottom-2 end-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors border-0'
                 onClick={scrollToBottom}>
                 <DownArrowIcon />

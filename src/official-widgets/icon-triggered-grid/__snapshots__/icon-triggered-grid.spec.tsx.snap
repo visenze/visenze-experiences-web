@@ -15,6 +15,7 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -116,6 +117,7 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -207,6 +209,7 @@ exports[`icon-triggered-grid should open the popup when icon is clicked and disp
 exports[`icon-triggered-grid should render a custom icon if configured as such 1`] = `
 <DocumentFragment>
   <button
+    aria-label="CTA"
     class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
     data-testid="wigmix-popup-trigger-button"
     style="background-color: rgb(255, 255, 255);"
@@ -232,6 +235,7 @@ exports[`icon-triggered-grid should render a successful response with default co
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -1346,6 +1350,7 @@ exports[`icon-triggered-grid should render a successful response with default co
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -2510,6 +2515,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
   />
   <div>
     <button
+      aria-label="CTA"
       class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
       data-testid="wigmix-popup-trigger-button"
       style="background-color: rgb(255, 255, 255);"
@@ -3608,6 +3614,7 @@ exports[`icon-triggered-grid should render a successful response with some custo
 exports[`icon-triggered-grid should render the standard icon 1`] = `
 <DocumentFragment>
   <button
+    aria-label="CTA"
     class="wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md px-1"
     data-testid="wigmix-popup-trigger-button"
     style="background-color: rgb(255, 255, 255);"
