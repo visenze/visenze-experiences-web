@@ -194,9 +194,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const headerActionsArea = document.body.querySelector('.wigmix-modal .flex.items-center.gap-2.pe-4');
-      const clickableDivs = (headerActionsArea as Element).querySelectorAll(':scope > div');
-      const closeButton = clickableDivs[1];
+      const closeButton = testComponent.getByRole('button', { name: 'Close shopping assistant', hidden: true });
 
       act(() => {
         fireEvent.click(closeButton);
@@ -206,6 +204,52 @@ describe('shopping-assistant', () => {
       });
 
       expect(queryModal('.wigmix-modal')).toBeNull();
+    });
+  });
+
+  describe('accessibility', () => {
+    it('should expose an accessible name for the popup trigger', () => {
+      renderAssistant();
+
+      expect(testComponent.getByRole('button', { name: texts['en']['triggerCTA'] })).toBeTruthy();
+    });
+
+    it('should expose a named dialog after opening', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('dialog', { name: texts['en']['widgetTitle'], hidden: true })).toBeTruthy();
+    });
+
+    it('should expose header actions as named buttons', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('button', { name: 'Start new chat', hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: 'Close shopping assistant', hidden: true })).toBeTruthy();
+    });
+
+    it('should expose image action controls as named buttons', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('button', { name: 'Open camera', hidden: true })).toBeTruthy();
+      expect(document.body.querySelector('[aria-label="Upload image"]')).toBeTruthy();
+    });
+
+    it('should expose send as a named button', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(testComponent.getByRole('button', { name: 'Send message', hidden: true })).toBeTruthy();
+    });
+
+    it('should not place static chat messages in the tab order', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(getTextInBody('Let\'s get started')?.closest('[tabindex="0"]')).toBeNull();
+      expect(getTextInBody('Tell us about what your styling needs')?.closest('[tabindex="0"]')).toBeNull();
     });
   });
 
@@ -1429,11 +1473,10 @@ describe('shopping-assistant', () => {
         fireEvent.change(textarea, { target: { value: 'Submit test' } });
       });
 
-      const submitWrapper = document.body.querySelector('[data-testid="chat-submit-button"]');
-      const clickable = (submitWrapper as Element).querySelector('svg') || (submitWrapper as Element).firstElementChild;
+      const submitButton = testComponent.getByRole('button', { name: 'Send message', hidden: true });
 
       act(() => {
-        fireEvent.click(clickable as Element);
+        fireEvent.click(submitButton);
       });
 
       expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
@@ -1503,9 +1546,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const inputArea = queryModal('.wigmix-modal .relative.flex.flex-col.gap-2');
-      const toolbarButtons = (inputArea as Element).querySelectorAll('.p-2.border');
-      const cameraButton = toolbarButtons[0];
+      const cameraButton = testComponent.getByRole('button', { name: 'Open camera', hidden: true });
 
       act(() => {
         fireEvent.click(cameraButton);
@@ -1518,15 +1559,11 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const inputArea = queryModal('.wigmix-modal .relative.flex.flex-col.gap-2');
-      const toolbarButtons = (inputArea as Element).querySelectorAll('.p-2.border');
-
       act(() => {
-        fireEvent.click(toolbarButtons[0]);
+        fireEvent.click(testComponent.getByRole('button', { name: 'Open camera', hidden: true }));
       });
 
-      const drawerButtons = document.body.querySelectorAll('.animate-slideup button');
-      const backButton = drawerButtons[0];
+      const backButton = testComponent.getByRole('button', { name: 'Close camera', hidden: true });
 
       act(() => {
         fireEvent.click(backButton);
@@ -1553,9 +1590,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const headerActionsArea = document.body.querySelector('.wigmix-modal .flex.items-center.gap-2.pe-4');
-      const clickableDivs = (headerActionsArea as Element).querySelectorAll(':scope > div');
-      const newChatButton = clickableDivs[0];
+      const newChatButton = testComponent.getByRole('button', { name: 'Start new chat', hidden: true });
 
       act(() => {
         fireEvent.click(newChatButton);

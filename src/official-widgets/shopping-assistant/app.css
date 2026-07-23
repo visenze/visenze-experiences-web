@@ -67,6 +67,12 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .loading-dot {
+    animation: none;
+  }
+}
+
 .wigmix-modal-overlay.wigmix-modal-position-right {
   padding-left: 65% !important;
 }

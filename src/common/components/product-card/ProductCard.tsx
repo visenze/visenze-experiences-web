@@ -398,6 +398,7 @@ const ProductCard: FC<ProductCardProps> = ({
                     ? (wishlistIconConfig?.backgroundColorDark || '')
                     : (wishlistIconConfig?.backgroundColor || ''),
                 }}
+                aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
                 data-pw={`${pwPrefix}-wishlist-button`}
                 data-testid='wigmix-wishlist-button'
               >
@@ -453,6 +454,7 @@ const ProductCard: FC<ProductCardProps> = ({
                           ? (customizations.productCard?.findSimilar?.icon?.backgroundColorDark || '')
                           : (customizations.productCard?.findSimilar?.icon?.backgroundColor || ''),
                     }}
+                    aria-label='Find similar products'
                     data-pw={`${pwPrefix}-find-similar-button`}
                     data-testid='wigmix-find-similar-button'
                 >

@@ -163,8 +163,9 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 {chat.author === 'user' && chat.image && (
                   <div className='flex gap-1 max-w-9/10'>
                     <div
-                      className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-800'
-                      tabIndex={0} key={`chat-user-message-${idx}`}
+                      className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800
+                        rounded-lg border border-neutral-100 dark:border-neutral-800'
+                      key={`chat-user-message-${idx}`}
                     >
                       <img
                         alt='Uploaded image'
@@ -182,7 +183,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 {chat.author === 'user' && chat.messages.map((message, cidx) => (
                   <div
                     className='flex gap-1 max-w-9/10'
-                    tabIndex={0}
                     key={`chat-user-message-${cidx}`}>
                     <div
                       className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-800'
@@ -198,7 +198,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 {chat.author === 'bot' && chat.messages.map((message, cidx) => (
                   <div
                     className='flex gap-1 max-w-9/10'
-                    tabIndex={0}
                     key={`chat-bot-message-${cidx}`}>
                     <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
                       bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
@@ -263,26 +262,28 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 {suggestions.map((suggestion, idx) => (
                   <Fragment key={`suggestion-${idx}`}>
                     {(showAllSuggestions || idx <= 1) && (
-                      <div
+                      <button
+                        type='button'
                         className='w-fit bg-sky-100 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
-                    rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
+                          rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
                         onClick={() => sendMessage(suggestion)}
                       >
                         {suggestion}
-                      </div>
+                      </button>
                     )}
                   </Fragment>
                 ))}
                 {(!showAllSuggestions && suggestions.length >= 2) && (
-                  <div
+                  <button
+                    type='button'
                     className='w-fit bg-sky-200 dark:bg-stone-500 p-2 text-xs text-blue-900 dark:text-blue-100
-                    rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
+                      rounded-lg border border-neutral-100 dark:border-neutral-800 cursor-pointer'
                     onClick={() => {
                       setShowAllSuggestions();
                       scrollToBottom();
                     }}>
                     Show more...
-                  </div>
+                  </button>
                 )}
               </div>
             </div>
@@ -296,10 +297,13 @@ const ChatWindow: FC<ChatWindowProps> = ({
         <div className='flex-grow'></div>
         <div className='relative'>
           {showBottomArrow && (
-              <div className='absolute bottom-2 end-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
-                   onClick={scrollToBottom}>
+              <button
+                type='button'
+                aria-label='Scroll to latest message'
+                className='absolute bottom-2 end-2 cursor-pointer rounded-full shadow p-1 bg-white hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors border-0'
+                onClick={scrollToBottom}>
                 <DownArrowIcon />
-              </div>
+              </button>
           )}
         </div>
       </>
