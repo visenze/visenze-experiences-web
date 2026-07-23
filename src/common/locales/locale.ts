@@ -16,19 +16,19 @@ export const COMMON_TEXTS: LanguagePack = {
     a11yFindSimilarProducts: 'Encontrar productos similares',
   },
   fr: {
-    a11yAddToWishlist: 'Ajouter a la liste de souhaits',
+    a11yAddToWishlist: 'Ajouter à la liste de souhaits',
     a11yRemoveFromWishlist: 'Retirer de la liste de souhaits',
     a11yFindSimilarProducts: 'Trouver des produits similaires',
   },
   pt: {
-    a11yAddToWishlist: 'Adicionar a lista de desejos',
+    a11yAddToWishlist: 'Adicionar à lista de desejos',
     a11yRemoveFromWishlist: 'Remover da lista de desejos',
     a11yFindSimilarProducts: 'Encontrar produtos similares',
   },
   de: {
-    a11yAddToWishlist: 'Zur Wunschliste hinzufugen',
+    a11yAddToWishlist: 'Zur Wunschliste hinzufügen',
     a11yRemoveFromWishlist: 'Von der Wunschliste entfernen',
-    a11yFindSimilarProducts: 'Ahnliche Produkte finden',
+    a11yFindSimilarProducts: 'Ähnliche Produkte finden',
   },
   it: {
     a11yAddToWishlist: 'Aggiungi alla lista dei desideri',
@@ -36,9 +36,9 @@ export const COMMON_TEXTS: LanguagePack = {
     a11yFindSimilarProducts: 'Trova prodotti simili',
   },
   pl: {
-    a11yAddToWishlist: 'Dodaj do listy zyczen',
-    a11yRemoveFromWishlist: 'Usun z listy zyczen',
-    a11yFindSimilarProducts: 'Znajdz podobne produkty',
+    a11yAddToWishlist: 'Dodaj do listy życzeń',
+    a11yRemoveFromWishlist: 'Usuń z listy życzeń',
+    a11yFindSimilarProducts: 'Znajdź podobne produkty',
   },
   ko: {
     a11yAddToWishlist: '위시리스트에 추가',
