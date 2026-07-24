@@ -6,6 +6,8 @@ Each widget can operate as a standalone component to be deployed in an e-commerc
 
 The widgets use React, HeroUI (formerly known as NextUI) and Tailwind CSS.
 
+Note: for staging testing, please remove the `cloud` under `appSettings` config. Otherwise the widget will always try to connect to production.
+
 ## Official Widgets
 
 | Widget | Path | APIs Used |
