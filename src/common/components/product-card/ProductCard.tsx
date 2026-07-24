@@ -333,11 +333,16 @@ const ProductCard: FC<ProductCardProps> = ({
   const showDiscount = showPrice && !!customizations.productCard?.discount?.show;
   // Describe the image for screen readers; falls back to the secondary title when the primary title is hidden.
   const productImageAlt = productTitle || productSecondaryTitle;
+  const hasVisibleLinkText = !!(
+    productTitle
+      || productSecondaryTitle
+      || (showPrice && price)
+      || (showOriginalPrice && originalPrice)
+      || (showDiscount && discount)
+  );
   // Guarantee the product link always has an accessible name. When it already exposes rendered text
-  // (title/secondary title, or the price when shown), let the link name derive from that content;
-  // otherwise supply a fallback. The price is only rendered when `showPrice` is true, so an unshown
-  // price must not suppress the fallback.
-  const productLinkAriaLabel = productTitle || productSecondaryTitle || (showPrice && price)
+  // let the link name derive from that content; otherwise supply a fallback.
+  const productLinkAriaLabel = hasVisibleLinkText
       ? undefined
       : intl.formatMessage({ id: 'a11yViewProduct', defaultMessage: 'View product' });
   const productUrl = getProductUrlWithTrackingParams(result[productDetails['product_url']], productTrackingMeta, isRecommendation);

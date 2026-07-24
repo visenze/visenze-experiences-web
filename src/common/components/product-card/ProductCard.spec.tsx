@@ -280,6 +280,46 @@ describe('ProductCard', () => {
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
 
+  it('should not add fallback aria-label when only original price is visible', () => {
+    widgetConfig.customizations.productCard!.title.show = false;
+    widgetConfig.customizations.productCard!.originalPrice = {
+      show: true,
+      position: 'AFTER',
+      strikethrough: true,
+    } as any;
+    const productWithoutPrice = {
+      ...testProduct,
+      price_field: undefined,
+      original_price_field: {
+        currency: 'USD',
+        value: 125,
+      },
+    } as ProcessedProduct;
+
+    testComponent = render(
+        <WidgetDataContext.Provider value={{
+          widgetClient,
+          widgetConfig,
+          darkMode: false,
+          locale: 'en',
+        }}>
+          <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+            <ProductCard result={productWithoutPrice}
+                         metadata={{}}
+                         isInWishlist={false}
+                         setIsInWishlist={() => {}}
+                         index={0}
+                         isRecommendation={false}
+                         hasFindSimilar={false}
+                         pwPrefix='ut' />
+          </IntlProvider>
+        </WidgetDataContext.Provider>,
+    );
+
+    const productCardAnchor = testComponent.getByTestId('wigmix-product-card-anchor');
+    expect(productCardAnchor.getAttribute('aria-label')).toBeNull();
+  });
+
   it('should send tracking events when clicking on product card', () => {
     testComponent = render(
         <WidgetDataContext.Provider value={{
