@@ -55,7 +55,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 1"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-1"
                   data-testid="wigmix-product-card-image"
@@ -111,7 +111,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 2"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-2"
                   data-testid="wigmix-product-card-image"
@@ -167,7 +167,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 3"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-3"
                   data-testid="wigmix-product-card-image"
@@ -223,7 +223,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 4"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-4"
                   data-testid="wigmix-product-card-image"
@@ -279,7 +279,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 5"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-5"
                   data-testid="wigmix-product-card-image"
@@ -335,7 +335,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 6"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-6"
                   data-testid="wigmix-product-card-image"
@@ -391,7 +391,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 7"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-7"
                   data-testid="wigmix-product-card-image"
@@ -447,7 +447,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 8"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-8"
                   data-testid="wigmix-product-card-image"
@@ -503,7 +503,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 9"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-9"
                   data-testid="wigmix-product-card-image"
@@ -559,7 +559,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 10"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-10"
                   data-testid="wigmix-product-card-image"
@@ -615,7 +615,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 11"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-11"
                   data-testid="wigmix-product-card-image"
@@ -671,7 +671,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 12"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-12"
                   data-testid="wigmix-product-card-image"
@@ -727,7 +727,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 13"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-13"
                   data-testid="wigmix-product-card-image"
@@ -783,7 +783,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 14"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-14"
                   data-testid="wigmix-product-card-image"
@@ -839,7 +839,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 15"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-15"
                   data-testid="wigmix-product-card-image"
@@ -895,7 +895,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 16"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-16"
                   data-testid="wigmix-product-card-image"
@@ -951,7 +951,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 17"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-17"
                   data-testid="wigmix-product-card-image"
@@ -1007,7 +1007,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 18"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-18"
                   data-testid="wigmix-product-card-image"
@@ -1063,7 +1063,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 19"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-19"
                   data-testid="wigmix-product-card-image"
@@ -1119,7 +1119,7 @@ exports[`in-page-carousel should render a successful response with default confi
                 class="relative flex justify-center"
               >
                 <img
-                  alt=""
+                  alt="Product Title 20"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-20"
                   data-testid="wigmix-product-card-image"
@@ -1218,7 +1218,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 1"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-1"
                   data-testid="wigmix-product-card-image"
@@ -1281,7 +1281,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 2"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-2"
                   data-testid="wigmix-product-card-image"
@@ -1344,7 +1344,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 3"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-3"
                   data-testid="wigmix-product-card-image"
@@ -1407,7 +1407,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 4"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-4"
                   data-testid="wigmix-product-card-image"
@@ -1470,7 +1470,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 5"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-5"
                   data-testid="wigmix-product-card-image"
@@ -1533,7 +1533,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 6"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-6"
                   data-testid="wigmix-product-card-image"
@@ -1596,7 +1596,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 7"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-7"
                   data-testid="wigmix-product-card-image"
@@ -1659,7 +1659,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 8"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-8"
                   data-testid="wigmix-product-card-image"
@@ -1722,7 +1722,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 9"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-9"
                   data-testid="wigmix-product-card-image"
@@ -1785,7 +1785,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 10"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-10"
                   data-testid="wigmix-product-card-image"
@@ -1848,7 +1848,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 11"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-11"
                   data-testid="wigmix-product-card-image"
@@ -1911,7 +1911,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 12"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-12"
                   data-testid="wigmix-product-card-image"
@@ -1974,7 +1974,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 13"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-13"
                   data-testid="wigmix-product-card-image"
@@ -2037,7 +2037,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 14"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-14"
                   data-testid="wigmix-product-card-image"
@@ -2100,7 +2100,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 15"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-15"
                   data-testid="wigmix-product-card-image"
@@ -2163,7 +2163,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 16"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-16"
                   data-testid="wigmix-product-card-image"
@@ -2226,7 +2226,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 17"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-17"
                   data-testid="wigmix-product-card-image"
@@ -2289,7 +2289,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 18"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-18"
                   data-testid="wigmix-product-card-image"
@@ -2352,7 +2352,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 19"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-19"
                   data-testid="wigmix-product-card-image"
@@ -2415,7 +2415,7 @@ exports[`in-page-carousel should toggle between carousel and grid view when Show
                   />
                 </div>
                 <img
-                  alt=""
+                  alt="Product Title 20"
                   class="wigmix-product-card-image object-cover"
                   data-pw="ipc-product-result-card-image-20"
                   data-testid="wigmix-product-card-image"

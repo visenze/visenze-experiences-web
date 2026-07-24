@@ -30,6 +30,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.25](https://github.com/visenze/visenze-experiences-web/compare/1.0.24...1.0.25)
+
+<!-- BEGIN visenze-experiences-web 1.0.25 -->
+
+### Fixed
+
+- shopping-assistant: Added `role="log"` to the chat message list and a group label for suggested replies, and labelled the camera preview for screen readers.
+- shopping-assistant: Adjusted default price and original-price text colours to meet WCAG AA (4.5:1) contrast on light backgrounds.
+- All widgets: Product card link now always exposes an accessible name, with image `alt` derived from the product title.
+- All widgets: Added `type="button"` to the popup trigger button to prevent unintended form submission.
+
+<!-- END visenze-experiences-web 1.0.25 -->
+
 ## [1.0.24](https://github.com/visenze/visenze-experiences-web/compare/1.0.23...1.0.24)
 
 <!-- BEGIN visenze-experiences-web 1.0.24 -->

@@ -6,6 +6,7 @@ exports[`ProductCard should render with all fields hidden, open in new tabs 1`] 
     class="wigmix-product-card"
   >
     <a
+      aria-label="View product"
       class="cursor-pointer"
       data-pw="ut-product-result-card-1"
       data-testid="wigmix-product-card-anchor"
@@ -66,7 +67,7 @@ exports[`ProductCard should render with secondary title field, price fields with
           class="relative flex justify-center"
         >
           <img
-            alt=""
+            alt="product_title"
             class="wigmix-product-card-image object-cover aspect-square"
             data-pw="ut-product-result-card-image-1"
             data-testid="wigmix-product-card-image"
@@ -136,7 +137,7 @@ exports[`ProductCard should render with standard fields 1`] = `
             />
           </div>
           <img
-            alt=""
+            alt="product_title"
             class="wigmix-product-card-image object-cover aspect-square"
             data-pw="ut-product-result-card-image-1"
             data-testid="wigmix-product-card-image"
@@ -190,7 +191,7 @@ exports[`ProductCard should render with standard fields, find similar enabled wi
           class="relative flex justify-center"
         >
           <img
-            alt=""
+            alt="product_title"
             class="wigmix-product-card-image object-cover aspect-square"
             data-pw="ut-product-result-card-image-1"
             data-testid="wigmix-product-card-image"
@@ -260,7 +261,7 @@ exports[`ProductCard should render with standard fields, find similar enabled, w
           class="relative flex justify-center"
         >
           <img
-            alt=""
+            alt="product_title"
             class="wigmix-product-card-image object-cover aspect-square"
             data-pw="ut-product-result-card-image-1"
             data-testid="wigmix-product-card-image"
