@@ -140,7 +140,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 1"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-1"
                       data-testid="wigmix-product-card-image"
@@ -194,7 +194,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 2"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-2"
                       data-testid="wigmix-product-card-image"
@@ -248,7 +248,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 3"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-3"
                       data-testid="wigmix-product-card-image"
@@ -302,7 +302,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 4"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-4"
                       data-testid="wigmix-product-card-image"
@@ -356,7 +356,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 5"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-5"
                       data-testid="wigmix-product-card-image"
@@ -410,7 +410,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 6"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-6"
                       data-testid="wigmix-product-card-image"
@@ -464,7 +464,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 7"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-7"
                       data-testid="wigmix-product-card-image"
@@ -518,7 +518,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 8"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-8"
                       data-testid="wigmix-product-card-image"
@@ -572,7 +572,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 9"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-9"
                       data-testid="wigmix-product-card-image"
@@ -626,7 +626,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 10"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-10"
                       data-testid="wigmix-product-card-image"
@@ -680,7 +680,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 11"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-11"
                       data-testid="wigmix-product-card-image"
@@ -734,7 +734,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 12"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-12"
                       data-testid="wigmix-product-card-image"
@@ -788,7 +788,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 13"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-13"
                       data-testid="wigmix-product-card-image"
@@ -842,7 +842,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 14"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-14"
                       data-testid="wigmix-product-card-image"
@@ -896,7 +896,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 15"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-15"
                       data-testid="wigmix-product-card-image"
@@ -950,7 +950,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 16"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-16"
                       data-testid="wigmix-product-card-image"
@@ -1004,7 +1004,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 17"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-17"
                       data-testid="wigmix-product-card-image"
@@ -1058,7 +1058,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 18"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-18"
                       data-testid="wigmix-product-card-image"
@@ -1112,7 +1112,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 19"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-19"
                       data-testid="wigmix-product-card-image"
@@ -1166,7 +1166,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                     class="relative flex justify-center"
                   >
                     <img
-                      alt=""
+                      alt="Product Brand 20"
                       class="wigmix-product-card-image object-cover"
                       data-pw="rm-product-result-card-image-20"
                       data-testid="wigmix-product-card-image"

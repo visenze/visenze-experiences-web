@@ -27,6 +27,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: 'Assistant is thinking',
     a11yProductResultsShown: 'Product results shown: {count}',
     a11yChatMessages: 'Shopping assistant messages',
+    a11yCameraPreview: 'Camera preview — point at the item to search',
+    a11ySuggestedReplies: 'Suggested replies',
+    a11yViewProduct: 'View product',
     showMore: 'Show more...',
   },
   es: {
@@ -54,6 +57,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: 'El asistente está pensando',
     a11yProductResultsShown: 'Resultados de productos mostrados: {count}',
     a11yChatMessages: 'Mensajes del asistente de compras',
+    a11yCameraPreview: 'Vista previa de la cámara: apunta al artículo para buscar',
+    a11ySuggestedReplies: 'Respuestas sugeridas',
+    a11yViewProduct: 'Ver producto',
     showMore: 'Mostrar más...',
   },
   fr: {
@@ -81,6 +87,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: 'L\'assistant réfléchit',
     a11yProductResultsShown: 'Résultats de produits affichés : {count}',
     a11yChatMessages: 'Messages de l\'assistant shopping',
+    a11yCameraPreview: 'Aperçu de la caméra — pointez vers l\'article à rechercher',
+    a11ySuggestedReplies: 'Réponses suggérées',
+    a11yViewProduct: 'Voir le produit',
     showMore: 'Afficher plus...',
   },
   pt: {
@@ -108,6 +117,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: 'O assistente está pensando',
     a11yProductResultsShown: 'Resultados de produtos exibidos: {count}',
     a11yChatMessages: 'Mensagens do assistente de compras',
+    a11yCameraPreview: 'Pré-visualização da câmera — aponte para o item para pesquisar',
+    a11ySuggestedReplies: 'Respostas sugeridas',
+    a11yViewProduct: 'Ver produto',
     showMore: 'Mostrar mais...',
   },
   de: {
@@ -135,6 +147,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: 'Der Assistent denkt nach',
     a11yProductResultsShown: 'Angezeigte Produktergebnisse: {count}',
     a11yChatMessages: 'Nachrichten des Shopping-Assistenten',
+    a11yCameraPreview: 'Kameravorschau – richten Sie sie auf den zu suchenden Artikel',
+    a11ySuggestedReplies: 'Vorgeschlagene Antworten',
+    a11yViewProduct: 'Produkt ansehen',
     showMore: 'Mehr anzeigen...',
   },
   it: {
@@ -162,6 +177,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: 'L\'assistente sta pensando',
     a11yProductResultsShown: 'Risultati prodotto mostrati: {count}',
     a11yChatMessages: 'Messaggi dell\'assistente shopping',
+    a11yCameraPreview: 'Anteprima della fotocamera: inquadra l\'articolo da cercare',
+    a11ySuggestedReplies: 'Risposte suggerite',
+    a11yViewProduct: 'Visualizza prodotto',
     showMore: 'Mostra altro...',
   },
   pl: {
@@ -189,6 +207,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: 'Asystent myśli',
     a11yProductResultsShown: 'Wyświetlone wyniki produktów: {count}',
     a11yChatMessages: 'Wiadomości asystenta zakupów',
+    a11yCameraPreview: 'Podgląd kamery — skieruj ją na przedmiot, aby wyszukać',
+    a11ySuggestedReplies: 'Sugerowane odpowiedzi',
+    a11yViewProduct: 'Zobacz produkt',
     showMore: 'Pokaż więcej...',
   },
   ko: {
@@ -216,6 +237,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: '어시스턴트가 생각 중입니다',
     a11yProductResultsShown: '표시된 상품 결과: {count}',
     a11yChatMessages: '쇼핑 어시스턴트 메시지',
+    a11yCameraPreview: '카메라 미리보기 — 검색할 항목을 향하게 하세요',
+    a11ySuggestedReplies: '추천 답변',
+    a11yViewProduct: '상품 보기',
     showMore: '더 보기...',
   },
   ja: {
@@ -243,6 +267,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: 'アシスタントが考えています',
     a11yProductResultsShown: '表示された商品結果: {count}',
     a11yChatMessages: 'ショッピングアシスタントのメッセージ',
+    a11yCameraPreview: 'カメラプレビュー — 検索する商品にカメラを向けてください',
+    a11ySuggestedReplies: '候補の返信',
+    a11yViewProduct: '商品を見る',
     showMore: 'もっと見る...',
   },
   th: {
@@ -270,6 +297,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: 'ผู้ช่วยกำลังคิด',
     a11yProductResultsShown: 'แสดงผลลัพธ์สินค้า: {count}',
     a11yChatMessages: 'ข้อความผู้ช่วยช้อปปิ้ง',
+    a11yCameraPreview: 'ตัวอย่างกล้อง — เล็งไปที่สินค้าที่ต้องการค้นหา',
+    a11ySuggestedReplies: 'คำตอบที่แนะนำ',
+    a11yViewProduct: 'ดูสินค้า',
     showMore: 'แสดงเพิ่มเติม...',
   },
   zh: {
@@ -297,6 +327,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yAssistantThinking: '助手正在思考',
     a11yProductResultsShown: '已显示商品结果：{count}',
     a11yChatMessages: '购物助手消息',
+    a11yCameraPreview: '相机预览 — 将镜头对准要搜索的商品',
+    a11ySuggestedReplies: '推荐回复',
+    a11yViewProduct: '查看商品',
     showMore: '显示更多...',
   },
 };
@@ -346,7 +379,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
           weight: 400,
         },
       },
-      fontColor: '#EF4444',
+      fontColor: '#B91C1C',
       fontColorDark: '#EF4444',
     },
     originalPrice: {
@@ -365,7 +398,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
           weight: 400,
         },
       },
-      fontColor: '#9CA3AF',
+      fontColor: '#6B7280',
       fontColorDark: '#9CA3AF',
       position: 'AFTER',
       strikethrough: true,

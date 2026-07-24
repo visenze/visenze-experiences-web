@@ -429,6 +429,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                   screenshotFormat='image/jpeg'
                   className='rounded-lg max-w-full'
                   videoConstraints={{ facingMode }}
+                  aria-label={intl.formatMessage({ id: 'a11yCameraPreview' })}
                 />
               </div>
               <div className='w-full flex gap-2 mt-2'>

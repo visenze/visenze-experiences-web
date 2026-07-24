@@ -182,7 +182,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
         <div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
           {getAccessibleStatus()}
         </div>
-        <div className='overflow-y-auto h-full px-4 my-4 space-y-3'
+        <div role='log'
+             className='overflow-y-auto h-full px-4 my-4 space-y-3'
              aria-label={intl.formatMessage({ id: 'a11yChatMessages' })}
              ref={messageScrollRef}
              onScroll={handleScroll}>
@@ -293,7 +294,9 @@ const ChatWindow: FC<ChatWindowProps> = ({
           )}
           {!isWaiting && suggestions.length > 0 && (
             <div className='mt-2 flex items-end'>
-              <div className='flex flex-wrap gap-2'>
+              <div className='flex flex-wrap gap-2'
+                   role='group'
+                   aria-label={intl.formatMessage({ id: 'a11ySuggestedReplies' })}>
                 {suggestions.map((suggestion, idx) => (
                   <Fragment key={`suggestion-${idx}`}>
                     {(showAllSuggestions || idx <= 1) && (

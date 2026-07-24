@@ -326,6 +326,15 @@ const ProductCard: FC<ProductCardProps> = ({
   const originalPrice = getOriginalPrice(customizations, languageSettings, productDetails, result);
   const price = getPrice(customizations, languageSettings, productDetails, result);
   const discount = getDiscount(customizations, languageSettings, productDetails, result);
+  const productTitle = getProductTitle(customizations, productDetails, result);
+  const productSecondaryTitle = getProductSecondaryTitle(customizations, productDetails, result);
+  // Describe the image for screen readers; falls back to the secondary title when the primary title is hidden.
+  const productImageAlt = productTitle || productSecondaryTitle;
+  // Guarantee the product link always has an accessible name. When it already exposes text
+  // (title/secondary title/price), let the link name derive from that content; otherwise supply a fallback.
+  const productLinkAriaLabel = productTitle || productSecondaryTitle || price
+      ? undefined
+      : intl.formatMessage({ id: 'a11yViewProduct', defaultMessage: 'View product' });
   const showPrice = !!customizations.productCard?.price?.show;
   const showOriginalPrice = showPrice && !!customizations.productCard?.originalPrice?.show;
   const showDiscount = showPrice && !!customizations.productCard?.discount?.show;
@@ -339,6 +348,7 @@ const ProductCard: FC<ProductCardProps> = ({
   return (
     <div className='wigmix-product-card'>
       <a className='cursor-pointer'
+         aria-label={productLinkAriaLabel}
          ref={(r) => {
            if (r) {
              setTargetRef(r);
@@ -363,7 +373,7 @@ const ProductCard: FC<ProductCardProps> = ({
                    `wigmix-product-card-image object-cover ${imageClasses || ''}`,
                    customizations.productCard?.imageAspectRatio ? '' : 'aspect-square',
                  )}
-                 src={mainImageUrl} alt=''
+                 src={mainImageUrl} alt={productImageAlt}
                  style={{ aspectRatio: customizations.productCard?.imageAspectRatio || '' }}
                  onLoad={() => {
                    setIsLoading(false);
@@ -485,10 +495,10 @@ const ProductCard: FC<ProductCardProps> = ({
         </div>
         <div className='wigmix-product-card-details pt-2'>
           <span className='wigmix-product-card-title line-clamp-1'>
-            {getProductTitle(customizations, productDetails, result)}
+            {productTitle}
           </span>
           <span className='wigmix-product-card-secondary-title line-clamp-1'>
-            {getProductSecondaryTitle(customizations, productDetails, result)}
+            {productSecondaryTitle}
           </span>
           <div className='wigmix-product-card-price-row flex flex-wrap items-center gap-1'>
             {

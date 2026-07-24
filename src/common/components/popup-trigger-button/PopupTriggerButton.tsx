@@ -23,6 +23,7 @@ const PopupTriggerButton: FC<PopupTriggerButtonProps> = ({ config, text, darkMod
   return (<>
     {!config?.triggerIcon?.hide && (
       <button
+        type='button'
         className={cn(
             'wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md',
             config?.triggerIcon?.layout === 'ICON' ? 'px-1' : 'px-2',
