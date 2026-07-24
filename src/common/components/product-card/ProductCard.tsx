@@ -328,16 +328,18 @@ const ProductCard: FC<ProductCardProps> = ({
   const discount = getDiscount(customizations, languageSettings, productDetails, result);
   const productTitle = getProductTitle(customizations, productDetails, result);
   const productSecondaryTitle = getProductSecondaryTitle(customizations, productDetails, result);
-  // Describe the image for screen readers; falls back to the secondary title when the primary title is hidden.
-  const productImageAlt = productTitle || productSecondaryTitle;
-  // Guarantee the product link always has an accessible name. When it already exposes text
-  // (title/secondary title/price), let the link name derive from that content; otherwise supply a fallback.
-  const productLinkAriaLabel = productTitle || productSecondaryTitle || price
-      ? undefined
-      : intl.formatMessage({ id: 'a11yViewProduct', defaultMessage: 'View product' });
   const showPrice = !!customizations.productCard?.price?.show;
   const showOriginalPrice = showPrice && !!customizations.productCard?.originalPrice?.show;
   const showDiscount = showPrice && !!customizations.productCard?.discount?.show;
+  // Describe the image for screen readers; falls back to the secondary title when the primary title is hidden.
+  const productImageAlt = productTitle || productSecondaryTitle;
+  // Guarantee the product link always has an accessible name. When it already exposes rendered text
+  // (title/secondary title, or the price when shown), let the link name derive from that content;
+  // otherwise supply a fallback. The price is only rendered when `showPrice` is true, so an unshown
+  // price must not suppress the fallback.
+  const productLinkAriaLabel = productTitle || productSecondaryTitle || (showPrice && price)
+      ? undefined
+      : intl.formatMessage({ id: 'a11yViewProduct', defaultMessage: 'View product' });
   const productUrl = getProductUrlWithTrackingParams(result[productDetails['product_url']], productTrackingMeta, isRecommendation);
   const mainImageUrl = getMainImageToDisplay();
   const hoverImageUrl = getHoverImageToDisplay(mainImageUrl);

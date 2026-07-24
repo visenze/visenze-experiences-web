@@ -412,6 +412,7 @@ exports[`buy-the-look should match snapshot for default desktop layout 1`] = `
                     class="wigmix-product-card"
                   >
                     <a
+                      aria-label="View product"
                       class="cursor-pointer"
                       data-pw="mlt-product-result-card-1"
                       data-testid="wigmix-product-card-anchor"
@@ -900,6 +901,7 @@ exports[`buy-the-look should render correctly in mobile layout 1`] = `
                     class="wigmix-product-card"
                   >
                     <a
+                      aria-label="View product"
                       class="cursor-pointer"
                       data-pw="mlt-product-result-card-1"
                       data-testid="wigmix-product-card-anchor"

@@ -272,6 +272,11 @@ describe('ProductCard', () => {
     const productCardImage = testComponent.getByTestId('wigmix-product-card-image');
     fireEvent.load(productCardImage);
 
+    // With title and price hidden the link renders no visible text, so it must still expose
+    // an accessible name via the fallback aria-label.
+    const productCardAnchor = testComponent.getByTestId('wigmix-product-card-anchor');
+    expect(productCardAnchor.getAttribute('aria-label')).toBe('View product');
+
     expect(testComponent.asFragment()).toMatchSnapshot();
   });
 

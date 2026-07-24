@@ -6,6 +6,7 @@ exports[`ProductCard should render with all fields hidden, open in new tabs 1`] 
     class="wigmix-product-card"
   >
     <a
+      aria-label="View product"
       class="cursor-pointer"
       data-pw="ut-product-result-card-1"
       data-testid="wigmix-product-card-anchor"
