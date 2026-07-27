@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "shopping-assistant",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:shopping-assistant"],
+      "port": 8080
+    }
+  ]
+}

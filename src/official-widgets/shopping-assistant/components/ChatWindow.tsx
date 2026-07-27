@@ -33,6 +33,49 @@ interface ChatWindowProps {
   streamingRequestId?: string;
 }
 
+// Waited between each newly-revealed product card while a reply is still streaming in, so
+// cards appear one at a time instead of all popping in together. One interval per `products`
+// array (not recreated per card) ticks forward and self-clears once every card is revealed —
+// it can't run forever. When more products arrive, `products.length` changing tears down the
+// old interval and starts a fresh one, picking up from wherever the reveal currently is. Only
+// applies to the live, in-progress grid; once a reply is committed to history all of its
+// products are shown at once (matches the committed message text, which also renders
+// instantly rather than replaying its typewriter effect).
+const PRODUCT_REVEAL_DELAY_MS = 200;
+
+interface RevealedProductsProps {
+  products: ProcessedProduct[];
+  requestId: string;
+  renderCard: (product: ProcessedProduct, pidx: number, requestId: string) => ReactElement;
+}
+
+const RevealedProducts: FC<RevealedProductsProps> = ({ products, requestId, renderCard }) => {
+  const [revealedCount, setRevealedCount] = useState(0);
+
+  useEffect((): (() => void) | undefined => {
+    const interval = setInterval((): void => {
+      setRevealedCount((count) => {
+        if (count >= products.length) {
+          clearInterval(interval);
+          return count;
+        }
+        const next = count + 1;
+        if (next >= products.length) {
+          clearInterval(interval);
+        }
+        return next;
+      });
+    }, PRODUCT_REVEAL_DELAY_MS);
+    return (): void => clearInterval(interval);
+  }, [products.length]);
+
+  return (
+    <>
+      {products.slice(0, revealedCount).map((product, pidx) => renderCard(product, pidx, requestId))}
+    </>
+  );
+};
+
 const ChatWindow: FC<ChatWindowProps> = ({
   isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions,
   streamingProducts = [], streamingRequestId = '',
@@ -287,7 +330,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
                     <div
                       className={cn('w-full grid grid-cols-2', getProductGridCssClasses('gap-x-4'))}
                       style={getProductGridCssConfig(true)}>
-                      {streamingProducts.map((product, pidx) => renderProductCard(product, pidx, streamingRequestId))}
+                      <RevealedProducts
+                        key={streamingRequestId}
+                        products={streamingProducts}
+                        requestId={streamingRequestId}
+                        renderCard={renderProductCard} />
                     </div>
                 )}
               </>

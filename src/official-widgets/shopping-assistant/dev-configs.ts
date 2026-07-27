@@ -6,10 +6,11 @@ const customCss = `
 
 export const devConfigs: RecursivePartial<WidgetConfig> = {
   appSettings: {
-    appKey: '',
-    placementId: '',
+    appKey: 'fd5f2fc733394af787d985a753590963',
+    placementId: '10766',
     endpoint: '',
     cloud: 'aws', // remove this if you are testing in staging environment
+    elevenLabsApiKey: 'sk_5270407a9576b2f483025f0e4ad068b1022b5964687461d0', // set to enable voice input/output; leave blank to disable
   },
   displaySettings: {
     cssSelector: '.shopping-assistant-widget',

@@ -697,6 +697,18 @@ export interface WidgetConfig {
      */
     msApiId?: string | number;
     /**
+     * (optional) ElevenLabs API key that gates voice capability in the shopping-assistant
+     * widget: voice input is captured via the browser's built-in speech recognition, and
+     * assistant replies to voice messages are spoken aloud via ElevenLabs text-to-speech.
+     * When unset, all voice UI is hidden and no ElevenLabs requests are made.
+     *
+     * WARNING: this key is embedded in client-side code and is visible to end users. Use a
+     * restricted, minimal-permission key and rotate it regularly.
+     *
+     * @since 1.0.26
+     */
+    elevenLabsApiKey?: string;
+    /**
      * Dimensions of the image to be considered for the algorithm.
      *
      * The ViSearch SDK by default resize image uploaded to 512x512;
@@ -1525,6 +1537,13 @@ export interface WidgetConfig {
        * @since 1.0.14
        */
       chatAgent: string;
+      /**
+       * (optional) ElevenLabs voice ID used for spoken replies. Defaults to the widget's
+       * built-in voice when unset. Only takes effect when `appSettings.elevenLabsApiKey` is set.
+       *
+       * @since 1.0.26
+       */
+      voiceId?: string;
     };
   };
   /**

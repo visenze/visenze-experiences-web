@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- shopping-assistant: Optional voice input/output, gated on `appSettings.elevenLabsApiKey` (new; also new `customizations.chatbot.voiceId`). Press-and-hold the mic button to speak — live captions appear in the input via the browser's speech recognition, and releasing sends the message. Replies to voice messages are read aloud via ElevenLabs text-to-speech, sentence-by-sentence as the reply streams in. The on-screen reply text for voice turns holds briefly until narration is about to start, then reveals as a typewriter in step with the audio, so text and voice feel like one synchronized stream instead of racing each other.
 
 ### Fixed
 
