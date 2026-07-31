@@ -162,7 +162,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       va_uid: uid,
       va_sid: sid,
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
-      chat_agent: customizations.chatbot?.chatAgent || 'shopping_assistant_v2',
+      chat_agent: customizations.chatbot?.chatAgent || 'shopping_closer_voice_v2',
     });
 
     const formData = new FormData();
