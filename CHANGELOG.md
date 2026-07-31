@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.26](https://github.com/visenze/visenze-experiences-web/compare/1.0.25...1.0.26)
+
+<!-- BEGIN visenze-experiences-web 1.0.26 -->
+
+### Changed
+
+- Update default `chat_agent` to `shopping_closer_voice_v2` for Shopping Assistant.
+
+<!-- END visenze-experiences-web 1.0.26 -->
+
 ## [1.0.25](https://github.com/visenze/visenze-experiences-web/compare/1.0.24...1.0.25)
 
 <!-- BEGIN visenze-experiences-web 1.0.25 -->
