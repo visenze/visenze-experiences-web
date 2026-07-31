@@ -1489,7 +1489,7 @@ describe('shopping-assistant', () => {
         expect(url).toContain('va_uid=test-uid');
         expect(url).toContain('va_sid=test-sid');
         expect(url).toContain('q=test+query');
-        expect(url).toContain('chat_agent=shopping_assistant_v2');
+        expect(url).toContain('chat_agent=shopping_closer_voice_v2');
       });
 
       it('should use POST method for SSE request', () => {
