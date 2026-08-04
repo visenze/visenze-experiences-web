@@ -57,7 +57,7 @@ const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name, ar
   return (
     <div
       className={`cursor-pointer h-full ${FOCUS_VISIBLE_CLASSES}`}
-      {...getRootProps({ 'aria-label': ariaLabel, 'role': 'button' })}
+      {...getRootProps({ 'aria-hidden': true, 'title': ariaLabel, 'role': 'button' })}
     >
       <input {...getInputProps({ 'aria-label': ariaLabel })} data-testid={`wigmix-${name}-dropzone`} data-pw={`${name}-dropzone`} />
       {children}

@@ -106,6 +106,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const closeCameraButtonRef = useRef<HTMLButtonElement>(null);
   const takePhotoButtonRef = useRef<HTMLButtonElement>(null);
   const switchCameraButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerButtonRef = useRef<HTMLButtonElement>(null);
+  const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const intl = useIntl();
   const dialogTitleId = `wigmix-shopping-assistant-title-${appSettings.placementId}`;
   const openingMessages = [
@@ -256,6 +258,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     openCameraButtonRef.current?.focus();
   }, []);
 
+  const closeDialog = useCallback((): void => {
+    setDialogVisible(false);
+    triggerButtonRef.current?.focus();
+  }, []);
+
   const handleCameraDrawerKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>): void => {
     if (event.key === 'Escape') {
       event.stopPropagation();
@@ -273,7 +280,12 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     if (!focusableControls.length) {
       return;
     }
-    const activeIndex = focusableControls.indexOf(document.activeElement as HTMLButtonElement);
+    // document.activeElement doesn't pierce the Shadow DOM the widget renders in (it only
+    // reports the shadow host), so it never matches these controls in production. Reading
+    // activeElement off the event's own root (the Shadow DOM when present, else document)
+    // works in both contexts.
+    const activeRoot = event.currentTarget.getRootNode() as Document | ShadowRoot;
+    const activeIndex = focusableControls.indexOf(activeRoot.activeElement as HTMLButtonElement);
     let nextIndex = activeIndex + 1;
     if (event.shiftKey) {
       nextIndex = activeIndex - 1;
@@ -370,7 +382,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   }, []);
 
   const getScreen = (): ReactElement => (
-      <div className='flex h-full flex-col bg-white dark:bg-neutral-700 border-x border-neutral-300 dark:border-neutral-800'>
+      <div aria-label='Shopping-Assistant' className='flex h-full flex-col bg-white dark:bg-neutral-700 border-x border-neutral-300 dark:border-neutral-800'>
         <div className='flex w-full py-4 justify-between shadow'>
           <h2 id={dialogTitleId}
             className='wigmix-widget-title flex items-center gap-2 px-4 m-0'
@@ -383,6 +395,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
             <button
               type='button'
               aria-label={intl.formatMessage({ id: 'a11yStartNewChat' })}
+              title={intl.formatMessage({ id: 'a11yStartNewChat' })}
               className={cn('p-0 bg-transparent border-0', FOCUS_VISIBLE_CLASSES)}
               onClick={() => newChat()}>
               <PlusCircleIcon className='size-6 cursor-pointer'
@@ -393,8 +406,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
             <button
               type='button'
               aria-label={intl.formatMessage({ id: 'a11yCloseShoppingAssistant' })}
+              title={intl.formatMessage({ id: 'a11yCloseShoppingAssistant' })}
               className={cn('p-0 bg-transparent border-0', FOCUS_VISIBLE_CLASSES)}
-              onClick={() => setDialogVisible(false)}>
+              onClick={closeDialog}>
               <CloseIcon className='size-6 cursor-pointer'
                 color={darkMode
                   ? (customizations.generalLayout?.fontColorDark || '')
@@ -441,6 +455,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                         )}
                         type='button'
                         aria-label={intl.formatMessage({ id: 'a11yCloseCamera' })}
+                        title={intl.formatMessage({ id: 'a11yCloseCamera' })}
                         onClick={closeCameraDrawer}>
                   <UturnLeftIcon
                       className='size-5 cursor-pointer'
@@ -455,6 +470,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                         )}
                         type='button'
                         aria-label={intl.formatMessage({ id: 'a11yTakePhoto' })}
+                        title={intl.formatMessage({ id: 'a11yTakePhoto' })}
                         onClick={capture}>
                   <CameraIcon
                       className='size-5 cursor-pointer'
@@ -469,6 +485,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                         )}
                         type='button'
                         aria-label={intl.formatMessage({ id: 'a11ySwitchCamera' })}
+                        title={intl.formatMessage({ id: 'a11ySwitchCamera' })}
                         onClick={() => {
                   setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
                 }}>
@@ -485,6 +502,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
               ref={openCameraButtonRef}
               type='button'
               aria-label={intl.formatMessage({ id: 'a11yOpenCamera' })}
+              title={intl.formatMessage({ id: 'a11yOpenCamera' })}
               className={cn('p-2 border border-gray dark:border-neutral-500 rounded-md bg-transparent', FOCUS_VISIBLE_CLASSES)}
               onClick={() => setShowCameraDrawer(true)}>
               <CameraIcon
@@ -514,7 +532,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
               </div>
             </FileDropzone>
           </div>
-          <Textarea aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
+          <Textarea ref={chatInputRef}
+                    aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
                     value={message}
                     placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
                     minRows={1}
@@ -532,6 +551,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                       <button
                         type='button'
                         aria-label={intl.formatMessage({ id: 'a11ySendMessage' })}
+                        title={intl.formatMessage({ id: 'a11ySendMessage' })}
                         disabled={!allowUserInput}
                         className={cn('p-0 bg-transparent border-0 disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
                         onClick={() => {
@@ -564,6 +584,20 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   }, [showCameraDrawer]);
 
   useEffect(() => {
+    if (!dialogVisible) {
+      return undefined;
+    }
+    // react-modal grabs focus onto its own content wrapper right after mount (based on
+    // document.activeElement, which can't see into the widget's Shadow DOM so it always thinks
+    // nothing is focused yet). A same-tick focus call here loses that race. Deferring to a
+    // macrotask runs after react-modal's own focus handling has settled, so this call wins.
+    const timeoutId = window.setTimeout(() => {
+      chatInputRef.current?.focus();
+    }, 0);
+    return (): void => window.clearTimeout(timeoutId);
+  }, [dialogVisible]);
+
+  useEffect(() => {
     if (widgetOpenTrigger) {
       openDialog();
     }
@@ -581,7 +615,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       setWidgetOpenTrigger(Math.random());
     });
     widgetClient.registerWidgetCloser(() => {
-      setDialogVisible(false);
+      closeDialog();
     });
     widgetClient.sendChatMessage = ((msg, img): void => {
       setSendChatTrigger([msg, img]);
@@ -594,7 +628,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
 
   return (
       <>
-        <PopupTriggerButton config={customizations.popup}
+        <PopupTriggerButton ref={triggerButtonRef}
+                            config={customizations.popup}
                             text={intl.formatMessage({ id: 'triggerCTA' })}
                             darkMode={darkMode}
                             onClick={onChatButtonClick}
@@ -609,7 +644,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
         <ViSenzeModal
             open={dialogVisible}
             layout={breakpoint}
-            onClose={() => setDialogVisible(false)}
+            onClose={closeDialog}
             position={customizations.popup?.position || 'left'}
             darkMode={darkMode}
             fontFamily={customizations.generalLayout?.fontFamily}

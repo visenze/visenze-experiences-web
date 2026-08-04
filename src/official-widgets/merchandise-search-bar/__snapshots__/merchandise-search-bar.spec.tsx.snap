@@ -428,6 +428,7 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
               >
                 <input
                   accept="image/png,image/jpeg,image/jpg,image/gif"
+                  aria-hidden="true"
                   data-pw="msb-image-upload-dropzone"
                   data-testid="wigmix-msb-image-upload-dropzone"
                   multiple=""
@@ -706,6 +707,7 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
               >
                 <input
                   accept="image/png,image/jpeg,image/jpg,image/gif"
+                  aria-hidden="true"
                   data-pw="msb-image-upload-dropzone"
                   data-testid="wigmix-msb-image-upload-dropzone"
                   multiple=""

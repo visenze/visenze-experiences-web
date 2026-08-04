@@ -3314,6 +3314,7 @@ exports[`camera-search should render the gallery in desktop view 1`] = `
                 >
                   <input
                     accept="image/png,image/jpeg,image/jpg,image/gif"
+                    aria-hidden="true"
                     data-pw="cs-upload-icon-dropzone"
                     data-testid="wigmix-cs-upload-icon-dropzone"
                     multiple=""
@@ -3585,6 +3586,7 @@ exports[`camera-search should render the gallery in mobile view 1`] = `
                 >
                   <input
                     accept="image/png,image/jpeg,image/jpg,image/gif"
+                    aria-hidden="true"
                     data-pw="cs-upload-icon-dropzone"
                     data-testid="wigmix-cs-upload-icon-dropzone"
                     multiple=""
