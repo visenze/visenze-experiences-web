@@ -6,7 +6,7 @@ import { WidgetDataContext } from '../types/contexts';
 import type { SearchImage } from '../types/image';
 import { Actions, Category, Labels } from '../types/tracking-constants';
 
-const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
+const FOCUS_VISIBLE_CLASSES = 'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-600 dark:focus-within:outline-blue-300';
 
 interface FileDropzoneProps {
   onImageUpload: (image: SearchImage) => void;
@@ -57,9 +57,12 @@ const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name, ar
   return (
     <div
       className={`cursor-pointer h-full ${FOCUS_VISIBLE_CLASSES}`}
-      {...getRootProps({ 'aria-hidden': true, 'title': ariaLabel, 'role': 'button' })}
-    >
-      <input {...getInputProps({ 'aria-label': ariaLabel })} data-testid={`wigmix-${name}-dropzone`} data-pw={`${name}-dropzone`} />
+      {...getRootProps({ tabIndex: -1 })}>
+      <input
+        {...getInputProps({ 'aria-label': ariaLabel, 'role': 'button', 'tabIndex': 0 })}
+        data-testid={`wigmix-${name}-dropzone`}
+        data-pw={`${name}-dropzone`}
+      />
       {children}
     </div>
   );
