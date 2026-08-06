@@ -30,6 +30,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.27](https://github.com/visenze/visenze-experiences-web/compare/1.0.26...1.0.27)
+
+<!-- BEGIN visenze-experiences-web 1.0.27 -->
+
+### Fixed
+
+- shopping-assistant: Focus visible outline on the image-upload dropzone now shows on keyboard focus of its inner input (`focus-within`) instead of only the (non-focusable) drop area, and the drop area no longer sits in the tab order.
+- shopping-assistant: Focus moves to the first newly revealed suggested-reply button when "show all" is expanded, to the chat input when the dialog opens, and back to the popup trigger button when the dialog closes.
+- shopping-assistant: Chat message list now announces newly streamed messages to screen readers via `aria-live="polite"`.
+- shopping-assistant: Tab-cycling through the camera drawer's controls now correctly detects focus when the widget renders inside a Shadow DOM, instead of always falling back to the first control.
+- shopping-assistant: Added an accessible name to the chat dialog and `title` tooltips to icon-only buttons (new chat, close, camera controls, send message).
+- shopping-assistant: Added `lang="en"` to the standalone widget demo page.
+- All widgets: Popup trigger button now forwards a ref so it can receive programmatic focus.
+
+<!-- END visenze-experiences-web 1.0.27 -->
+
 ## [1.0.26](https://github.com/visenze/visenze-experiences-web/compare/1.0.25...1.0.26)
 
 <!-- BEGIN visenze-experiences-web 1.0.26 -->
