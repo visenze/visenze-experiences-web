@@ -422,9 +422,9 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
               class="flex flex-col gap-2 pt-2"
             >
               <div
-                class="cursor-pointer h-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
-                role="button"
-                tabindex="0"
+                class="cursor-pointer h-full focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-600 dark:focus-within:outline-blue-300"
+                role="presentation"
+                tabindex="-1"
               >
                 <input
                   accept="image/png,image/jpeg,image/jpg,image/gif"
@@ -432,7 +432,7 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
                   data-testid="wigmix-msb-image-upload-dropzone"
                   multiple=""
                   style="border: 0px; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
-                  tabindex="-1"
+                  tabindex="0"
                   type="file"
                 />
                 <div
@@ -700,9 +700,9 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
               class="flex flex-col gap-2 pt-2"
             >
               <div
-                class="cursor-pointer h-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
-                role="button"
-                tabindex="0"
+                class="cursor-pointer h-full focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-600 dark:focus-within:outline-blue-300"
+                role="presentation"
+                tabindex="-1"
               >
                 <input
                   accept="image/png,image/jpeg,image/jpg,image/gif"
@@ -710,7 +710,7 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
                   data-testid="wigmix-msb-image-upload-dropzone"
                   multiple=""
                   style="border: 0px; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); height: 1px; margin: 0px -1px -1px 0px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
-                  tabindex="-1"
+                  tabindex="0"
                   type="file"
                 />
                 <div

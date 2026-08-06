@@ -254,7 +254,7 @@ describe('shopping-assistant', () => {
       openDialogAndWait();
 
       expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeTruthy();
-      expect(testComponent.getByRole('button', { name: texts['en']['a11yUploadImage'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' })).toBeTruthy();
     });
 
     it('should expose send as a named button', () => {
