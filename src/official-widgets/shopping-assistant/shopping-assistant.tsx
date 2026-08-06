@@ -382,7 +382,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   }, []);
 
   const getScreen = (): ReactElement => (
-      <div aria-label='Shopping-Assistant' className='flex h-full flex-col bg-white dark:bg-neutral-700 border-x border-neutral-300 dark:border-neutral-800'>
+      <div aria-label={intl.formatMessage({ id: 'widgetTitle' })} className='flex h-full flex-col bg-white dark:bg-neutral-700 border-x border-neutral-300 dark:border-neutral-800'>
         <div className='flex w-full py-4 justify-between shadow'>
           <h2 id={dialogTitleId}
             className='wigmix-widget-title flex items-center gap-2 px-4 m-0'
