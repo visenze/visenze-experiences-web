@@ -38,16 +38,6 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
     productId,
   });
 
-  // Convert the raw streamed text (e.g. "**Levi's Shirt**") into safe HTML (bold tags, line
-  // breaks) for display, mirroring shopping-assistant's ChatWindow.processMessageForDisplay.
-  const processMessageForDisplay = (message: string): string => message
-      // quick sanitization
-      .replaceAll(/</g, '&lt;')
-      .replaceAll(/>/g, '&gt;')
-      // bold texts wrapped **like this**
-      .replaceAll(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-      .replaceAll(/\n/g, '<br>');
-
   const handleError = (errorMsg: string): void => {
     setHasError(true);
     if (errorMsg.includes('im_url') || errorMsg.includes('image') || errorMsg.includes('no outfit')) {
@@ -222,15 +212,6 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
       {/* Product card carousels */}
       {!hasError && (
         <div className='flex flex-col'>
-          {latestMessage && (
-            <div
-              className={cn(
-                'mb-2 w-fit max-w-full bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100 rounded-lg',
-                'border border-neutral-100 dark:border-neutral-800',
-              )}
-              dangerouslySetInnerHTML={{ __html: processMessageForDisplay(latestMessage) }}
-            />
-          )}
           {(isStreaming || isLoading)
             ? <CarouselLoader />
             : <Carousel results={mergedResults} metadata={metadata} latestMessage={latestMessage} />}
