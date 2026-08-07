@@ -14,6 +14,12 @@ import { Actions, Category } from '../../common/types/tracking-constants';
 import { getFlattenProducts } from '../../common/utils';
 
 const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
+// Same ring, but drawn inward: the search bar wraps its button/input in an `overflow-hidden`
+// container (for the rounded border), which clips an outward-offset outline before it can show.
+const FOCUS_VISIBLE_INSET_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 '
+  + 'focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
+const FOCUS_WITHIN_INSET_CLASSES = 'focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 '
+  + 'focus-within:outline-blue-600 dark:focus-within:outline-blue-300';
 
 interface RecommendMeProps {
   productId: string;
@@ -163,7 +169,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
                 ? 'bg-gray-600 hover:bg-gray-700 text-white'
                 : 'bg-gray-300 hover:bg-gray-400 text-gray-800'
             }`,
-            FOCUS_VISIBLE_CLASSES,
+            FOCUS_VISIBLE_INSET_CLASSES,
           )}
           disabled={isStreaming || !searchBarValue.trim()}
           onClick={() => {
@@ -181,7 +187,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
           <Input
             aria-label={intl.formatMessage({ id: 'a11ySearchBarInput' })}
             classNames={{
-              inputWrapper: 'border-s-0 rounded-e bg-default-100 text-primary',
+              inputWrapper: cn('border-s-0 rounded-e bg-default-100 text-primary', FOCUS_WITHIN_INSET_CLASSES),
             }}
             disabled={isStreaming}
             isClearable

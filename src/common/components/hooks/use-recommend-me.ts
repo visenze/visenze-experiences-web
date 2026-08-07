@@ -19,7 +19,7 @@ const INCOMPLETE_PRODUCT_TOKEN_REGEX = /\[\[[^\]]*$/;
 // - New format (token inline/trailing): strip only the token, keep the surrounding description.
 // Also removes ((suggestion)) tokens and any trailing, not-yet-closed "[[..." fragment
 // that is still mid-stream, so partial tokens never flash in the bubble.
-const stripTokensForDisplay = (text: string): string => text
+export const stripTokensForDisplay = (text: string): string => text
   .split('\n')
   .map((line): string | null => {
     if (LEADING_PRODUCT_REGEX.test(line)) {
@@ -33,8 +33,10 @@ const stripTokensForDisplay = (text: string): string => text
   .replace(INCOMPLETE_PRODUCT_TOKEN_REGEX, '');
 
 // Resolve referenced products in first-appearance order. A product is included only when
-// its token is present in the text AND its payload has arrived via a `product` event.
-const resolveProducts = (text: string, products: ProcessedProduct[]): ProcessedProduct[] => {
+// its token is present in the text AND its payload has arrived via a `product` event —
+// if the token streams in before the matching `product` event, the card stays hidden
+// until that event catches up (the next `chat_token`/`product` event re-resolves it).
+export const resolveProducts = (text: string, products: ProcessedProduct[]): ProcessedProduct[] => {
   const tokenRegex = /\[\[([^\]]+)]]/g;
   const seen = new Set<string>();
   const ordered: ProcessedProduct[] = [];

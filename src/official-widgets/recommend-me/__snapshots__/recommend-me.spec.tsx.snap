@@ -38,7 +38,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
       class="flex gap-0 border border-gray-300 rounded overflow-hidden w-full"
     >
       <button
-        class="font-bold px-4 rounded-none h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
+        class="font-bold px-4 rounded-none h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
         data-pw="rm-recommend-me-button"
         disabled=""
       >
@@ -60,7 +60,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
             data-slot="main-wrapper"
           >
             <div
-              class="relative w-full inline-flex tap-highlight-transparent flex-row items-center shadow-sm px-3 gap-3 border-medium border-default-200 data-[hover=true]:border-default-400 group-data-[focus=true]:border-default-foreground h-10 min-h-10 rounded-none transition-background !duration-150 transition-colors motion-reduce:transition-none border-s-0 rounded-e bg-default-100 text-primary"
+              class="relative w-full inline-flex tap-highlight-transparent flex-row items-center shadow-sm px-3 gap-3 border-medium border-default-200 data-[hover=true]:border-default-400 group-data-[focus=true]:border-default-foreground h-10 min-h-10 rounded-none transition-background !duration-150 transition-colors motion-reduce:transition-none border-s-0 rounded-e bg-default-100 text-primary focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-blue-600 dark:focus-within:outline-blue-300"
               data-slot="input-wrapper"
               style="cursor: text;"
             >
@@ -124,7 +124,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
         </div>
         <div
           aria-label="Recommended products"
-          class="flex space-x-4 overflow-x-auto pb-4 no-scrollbar p-2 items-end text-primary"
+          class="flex space-x-4 overflow-x-auto pb-4 no-scrollbar p-2 items-end text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
           data-pw="rm-product-result-row"
           role="list"
           tabindex="0"
@@ -1274,7 +1274,7 @@ exports[`recommend-me should match snapshot for default layout 1`] = `
       class="flex gap-0 border border-gray-300 rounded overflow-hidden w-full"
     >
       <button
-        class="font-bold px-4 rounded-none h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
+        class="font-bold px-4 rounded-none h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
         data-pw="rm-recommend-me-button"
         disabled=""
       >
@@ -1296,7 +1296,7 @@ exports[`recommend-me should match snapshot for default layout 1`] = `
             data-slot="main-wrapper"
           >
             <div
-              class="relative w-full inline-flex tap-highlight-transparent flex-row items-center shadow-sm px-3 gap-3 border-medium border-default-200 data-[hover=true]:border-default-400 group-data-[focus=true]:border-default-foreground h-10 min-h-10 rounded-none transition-background !duration-150 transition-colors motion-reduce:transition-none border-s-0 rounded-e bg-default-100 text-primary"
+              class="relative w-full inline-flex tap-highlight-transparent flex-row items-center shadow-sm px-3 gap-3 border-medium border-default-200 data-[hover=true]:border-default-400 group-data-[focus=true]:border-default-foreground h-10 min-h-10 rounded-none transition-background !duration-150 transition-colors motion-reduce:transition-none border-s-0 rounded-e bg-default-100 text-primary focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-blue-600 dark:focus-within:outline-blue-300"
               data-slot="input-wrapper"
               style="cursor: text;"
             >
@@ -1358,7 +1358,7 @@ exports[`recommend-me should match snapshot for default layout 1`] = `
         />
         <div
           aria-label="Recommended products"
-          class="flex space-x-4 overflow-x-auto pb-4 no-scrollbar p-2 items-end text-primary"
+          class="flex space-x-4 overflow-x-auto pb-4 no-scrollbar p-2 items-end text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
           data-pw="rm-product-result-row"
           role="list"
           tabindex="0"
