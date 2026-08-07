@@ -1,5 +1,6 @@
 import { cn } from '@heroui/theme';
-import type { FC, ReactElement } from 'react';
+import type { ReactElement, Ref } from 'react';
+import { forwardRef } from 'react';
 import CustomizableIcon from '../../icons/CustomizableIcon';
 import type { WidgetConfig } from '../../wigmix-core';
 
@@ -11,7 +12,7 @@ interface PopupTriggerButtonProps {
   defaultIcon: ReactElement;
 }
 
-const PopupTriggerButton: FC<PopupTriggerButtonProps> = ({ config, text, darkMode, onClick, defaultIcon }) => {
+const PopupTriggerButton = forwardRef<HTMLButtonElement, PopupTriggerButtonProps>(({ config, text, darkMode, onClick, defaultIcon }, ref: Ref<HTMLButtonElement>) => {
   let fontColor = config?.triggerIcon?.color;
   if (!fontColor || fontColor === 'DEFAULT_ICON_COLOR') {
     fontColor = config?.triggerIcon?.fontColor || 'inherit';
@@ -23,6 +24,7 @@ const PopupTriggerButton: FC<PopupTriggerButtonProps> = ({ config, text, darkMod
   return (<>
     {!config?.triggerIcon?.hide && (
       <button
+        ref={ref}
         type='button'
         className={cn(
             'wigmix-popup-trigger-button flex items-center gap-2 py-1 rounded-md',
@@ -63,6 +65,6 @@ const PopupTriggerButton: FC<PopupTriggerButtonProps> = ({ config, text, darkMod
       </button>
     )}
   </>);
-};
+});
 
 export default PopupTriggerButton;

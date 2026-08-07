@@ -44,6 +44,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const messageScrollRef = useRef<HTMLDivElement>(null);
+  const firstExtraSuggestionRef = useRef<HTMLButtonElement>(null);
   // Tracks `${requestId}:${productId}` pairs that have already fired a PRODUCT_VIEW, so a card
   // that streams in live and is later re-mounted as a committed row (a different DOM subtree)
   // doesn't count a second view. Keyed by request too, so the same product in a later response
@@ -87,6 +88,12 @@ const ChatWindow: FC<ChatWindowProps> = ({
   useEffect(() => {
     scrollToBottom();
   }, [streamingProducts.length]);
+
+  useEffect(() => {
+    if (showAllSuggestions) {
+      firstExtraSuggestionRef.current?.focus();
+    }
+  }, [showAllSuggestions]);
 
   const processMessageForDisplay = (message: string): string => message
       // quick sanitization
@@ -185,6 +192,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
         <div role='log'
              className='overflow-y-auto h-full px-4 my-4 space-y-3'
              aria-label={intl.formatMessage({ id: 'a11yChatMessages' })}
+             aria-live='polite'
+             aria-relevant='additions'
              ref={messageScrollRef}
              onScroll={handleScroll}>
           {chats.map((chat, idx) => (
@@ -301,6 +310,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                   <Fragment key={`suggestion-${idx}`}>
                     {(showAllSuggestions || idx <= 1) && (
                       <button
+                        ref={idx === 2 ? firstExtraSuggestionRef : undefined}
                         type='button'
                         className={cn(
                             'w-fit bg-sky-100 dark:bg-stone-700 p-2 text-xs text-blue-900 dark:text-blue-50',
@@ -314,7 +324,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                     )}
                   </Fragment>
                 ))}
-                {(!showAllSuggestions && suggestions.length >= 2) && (
+                {(!showAllSuggestions && suggestions.length > 2) && (
                   <button
                     type='button'
                     className={cn(
@@ -339,6 +349,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
               <button
                 type='button'
                 aria-label={intl.formatMessage({ id: 'a11yScrollToLatestMessage' })}
+                title={intl.formatMessage({ id: 'a11yScrollToLatestMessage' })}
                 className={cn(
                     'absolute bottom-2 end-2 cursor-pointer rounded-full shadow p-1 border-0',
                     'bg-white text-neutral-900 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 transition-colors',
