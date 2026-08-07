@@ -358,8 +358,9 @@ describe('recommend-me', () => {
         // Initially: loader visible, no products
         expect(testComponent.container.querySelector('[data-pw="rm-product-loader-row"]')).toBeTruthy();
 
-        // First product arrives
+        // First product arrives, followed by its [[product_id]] token in the text
         stream.emitProduct(createMockProduct(1));
+        stream.emitEvent('chat_token', { value: '[[sse-pid-1]] ' });
 
         act(() => {
           jest.runAllTimers();
@@ -368,15 +369,17 @@ describe('recommend-me', () => {
         // Loader still visible during streaming, but product should be queued
         expect(testComponent.container.querySelector('[data-pw="rm-product-loader-row"]')).toBeTruthy();
 
-        // Second product arrives
+        // Second product arrives, followed by its token
         stream.emitProduct(createMockProduct(2));
+        stream.emitEvent('chat_token', { value: '[[sse-pid-2]] ' });
 
         act(() => {
           jest.runAllTimers();
         });
 
-        // Third product arrives
+        // Third product arrives, followed by its token
         stream.emitProduct(createMockProduct(3));
+        stream.emitEvent('chat_token', { value: '[[sse-pid-3]] ' });
 
         act(() => {
           jest.runAllTimers();
@@ -406,9 +409,10 @@ describe('recommend-me', () => {
         stream.openStream();
         stream.emitEvent('reqid', { value: 'req-456' });
 
-        // Emit 5 products one by one
+        // Emit 5 products one by one, each followed by its [[product_id]] token in the text
         [1, 2, 3, 4, 5].forEach((i) => {
           stream.emitProduct(createMockProduct(i));
+          stream.emitEvent('chat_token', { value: `[[sse-pid-${i}]] ` });
         });
 
         act(() => {
@@ -446,6 +450,71 @@ describe('recommend-me', () => {
         // After stream closes: loader gone, carousel visible
         expect(testComponent.container.querySelector('[data-pw="rm-product-loader-row"]')).toBeNull();
         expect(testComponent.container.querySelector('[data-pw="rm-product-result-carousel"]')).toBeTruthy();
+      });
+    });
+
+    describe('chat_token / heartbeat / stop_token handling', () => {
+      it('should order products by first-appearance of their [[product_id]] token, not arrival order', () => {
+        renderRecommendMe('pid-found');
+
+        const stream = sendQueryAndGetStreamController('red shoes');
+        stream.openStream();
+        stream.emitEvent('reqid', { value: 'req-token-order' });
+
+        // Product 2's payload arrives first...
+        stream.emitProduct(createMockProduct(2));
+        // ...but its token only appears in the text after product 1's token.
+        stream.emitEvent('chat_token', { value: 'Here are two options: ' });
+        stream.emitEvent('chat_token', { value: '[[sse-pid-1]] a nice pair. ' });
+        // Product 1's payload arrives after its token has already streamed.
+        stream.emitProduct(createMockProduct(1));
+        stream.emitEvent('chat_token', { value: '[[sse-pid-2]] another pair.' });
+
+        stream.emitEvent('stop_token', {});
+        stream.closeStream();
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        const brands = Array.from(testComponent.container.querySelectorAll('.wigmix-product-card-secondary-title'))
+          .map((el) => el.textContent);
+        expect(brands).toEqual(['SSE Brand 1', 'SSE Brand 2']);
+      });
+
+      it('should ignore heartbeat events without affecting streaming state or products', () => {
+        renderRecommendMe('pid-found');
+        const input = testComponent.container.querySelector('input') as HTMLInputElement;
+
+        const stream = sendQueryAndGetStreamController('red shoes');
+        stream.openStream();
+        stream.emitEvent('reqid', { value: 'req-heartbeat' });
+        stream.emitEvent('heartbeat', {});
+        stream.emitEvent('heartbeat', {});
+
+        // Heartbeat should not end the stream or throw
+        expect(input.disabled).toBe(true);
+
+        stream.closeStream();
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(input.disabled).toBe(false);
+      });
+
+      it('should stop the stream when a stop_token event is received', () => {
+        renderRecommendMe('pid-found');
+        const input = testComponent.container.querySelector('input') as HTMLInputElement;
+
+        const stream = sendQueryAndGetStreamController('red shoes');
+        stream.openStream();
+        expect(input.disabled).toBe(true);
+
+        stream.emitEvent('stop_token', {});
+
+        expect(input.disabled).toBe(false);
       });
     });
 
@@ -565,6 +634,207 @@ describe('recommend-me', () => {
         expect(url).toContain('brand');
         expect(url).toContain('price');
       });
+    });
+  });
+
+  describe('token processing', () => {
+    it('recognizes a [[product_id]] token that arrives split across multiple chat_token chunks', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-split-token' });
+      stream.emitProduct(createMockProduct(1));
+
+      // The real backend splits tokens mid-string across chunks (e.g. "Levi's" as "L", "ev", "i's").
+      stream.emitEvent('chat_token', { value: 'Here is a match: ' });
+      stream.emitEvent('chat_token', { value: '[[sse-' });
+      stream.emitEvent('chat_token', { value: 'pid-1' });
+      stream.emitEvent('chat_token', { value: ']]' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const carousel = testComponent.container.querySelector('[data-pw="rm-product-result-carousel"]');
+      const productCards = carousel?.querySelectorAll('.wigmix-product-card');
+      expect(productCards?.length).toBe(1);
+    });
+
+    it('does not crash or render a card for a [[product_id]] token whose product event never arrives', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-missing-payload' });
+      stream.emitEvent('chat_token', { value: 'Here is something: [[sse-pid-missing]]' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const carousel = testComponent.container.querySelector('[data-pw="rm-product-result-carousel"]');
+      expect(carousel).toBeTruthy();
+      const productCards = carousel?.querySelectorAll('.wigmix-product-card');
+      expect(productCards?.length).toBe(0);
+    });
+
+    it('does not duplicate a product when its [[product_id]] token appears twice in the streamed text', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-dup-token' });
+      stream.emitProduct(createMockProduct(1));
+      stream.emitEvent('chat_token', { value: 'Check this out: [[sse-pid-1]]. ' });
+      stream.emitEvent('chat_token', { value: 'Again, [[sse-pid-1]] is great.' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const carousel = testComponent.container.querySelector('[data-pw="rm-product-result-carousel"]');
+      const productCards = carousel?.querySelectorAll('.wigmix-product-card');
+      expect(productCards?.length).toBe(1);
+    });
+
+    it('never leaks raw [[...]] or ((...)) markers into the visible text', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-no-leak' });
+      stream.emitProduct(createMockProduct(1));
+      stream.emitEvent('chat_token', { value: 'Try this: [[sse-pid-1]] and maybe ((a red dress)) too.' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(testComponent.container.textContent).not.toContain('[[');
+      expect(testComponent.container.textContent).not.toContain('((');
+    });
+
+    it('orders three products by first token appearance even when their product events arrive in a different sequence', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-order-three' });
+
+      // Arrival order is 3, 1, 2 - token order in the text will be 2, 3, 1.
+      stream.emitProduct(createMockProduct(3));
+      stream.emitProduct(createMockProduct(1));
+      stream.emitEvent('chat_token', { value: 'Recommended: [[sse-pid-2]] then ' });
+      stream.emitProduct(createMockProduct(2));
+      stream.emitEvent('chat_token', { value: '[[sse-pid-3]] then [[sse-pid-1]].' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const brands = Array.from(testComponent.container.querySelectorAll('.wigmix-product-card-secondary-title'))
+        .map((el) => el.textContent);
+      expect(brands).toEqual(['SSE Brand 2', 'SSE Brand 3', 'SSE Brand 1']);
+    });
+  });
+
+  describe('accessibility', () => {
+    it('announces the loading state via the sr-only status region while streaming', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+
+      const status = testComponent.getByRole('status');
+      expect(status.textContent).toBe('Loading recommendations');
+    });
+
+    it('announces the result count and streamed message in the sr-only status region once streaming ends', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-status-update' });
+      stream.emitProduct(createMockProduct(1));
+      stream.emitEvent('chat_token', { value: 'Here you go: [[sse-pid-1]].' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const status = testComponent.getByRole('status');
+      expect(status.textContent).toContain('Product results shown: 1');
+      expect(status.textContent).toContain('Here you go:');
+    });
+
+    it('marks the visible error message with role="alert"', () => {
+      const mockProductMultisearch = jest.fn().mockImplementation((_params, _success, errorHandler) => {
+        errorHandler('Invalid image or im_url.');
+      });
+      const { widgetConfig, widgetClient } = createTestClient({
+        productMultisearch: mockProductMultisearch,
+      });
+      testComponent = renderWidget(<RecommendMe productId='pid-found' />, {
+        widgetConfig,
+        widgetClient,
+        messages: texts['en'],
+      });
+
+      act(() => {
+        fireEvent.click(testComponent.getByText('Similar Products'));
+      });
+
+      const alertEl = testComponent.getByRole('alert');
+      expect(alertEl.textContent).toBe('The image or query was not found. Please try again later.');
+    });
+
+    it('exposes a real aria-label on the free-text search input', () => {
+      renderRecommendMe('pid-found');
+
+      const input = testComponent.container.querySelector('input') as HTMLInputElement;
+      const label = input.getAttribute('aria-label');
+      expect(label).toBeTruthy();
+      expect(label).toBe('Type your recommendation query');
+    });
+
+    it('exposes role="list" on the carousel and role="listitem" on each product wrapper', () => {
+      const mockProductMultisearch = jest.fn().mockImplementation((_params, successHandler) => {
+        successHandler(getStandardMultiSearchSuccessResponse());
+      });
+      const { widgetConfig, widgetClient } = createTestClient({
+        productMultisearch: mockProductMultisearch,
+      });
+      testComponent = renderWidget(<RecommendMe productId='pid-found' />, {
+        widgetConfig,
+        widgetClient,
+        messages: texts['en'],
+      });
+
+      act(() => {
+        fireEvent.click(testComponent.getByText('Similar Products'));
+      });
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const list = testComponent.container.querySelector('[data-pw="rm-product-result-row"]');
+      expect(list?.getAttribute('role')).toBe('list');
+      const listItems = list?.querySelectorAll('[role="listitem"]');
+      expect(listItems?.length).toBeGreaterThan(0);
     });
   });
 

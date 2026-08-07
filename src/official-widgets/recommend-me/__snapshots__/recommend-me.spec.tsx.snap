@@ -19,12 +19,12 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
       class="flex gap-2 pt-1"
     >
       <button
-        class="px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors"
+        class="px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
       >
         Similar Products
       </button>
       <button
-        class="px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors"
+        class="px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
       >
         Complementary Products
       </button>
@@ -38,7 +38,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
       class="flex gap-0 border border-gray-300 rounded overflow-hidden w-full"
     >
       <button
-        class="font-bold px-4 rounded-none h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800"
+        class="font-bold px-4 rounded-none h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
         data-pw="rm-recommend-me-button"
         disabled=""
       >
@@ -69,12 +69,12 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
                 data-slot="inner-wrapper"
               >
                 <input
-                  aria-label="an outfit to go with this"
+                  aria-label="Type your recommendation query"
                   autocomplete="off"
                   class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-small peer pe-6 input-search-cancel-button-none"
                   data-pw="rm-recommend-me-search-bar"
                   data-slot="input"
-                  id="react-aria-:r5k:"
+                  id="react-aria-:r7l:"
                   maxlength="500"
                   placeholder="an outfit to go with this"
                   title=""
@@ -115,11 +115,23 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
         data-pw="rm-product-result-carousel"
       >
         <div
+          aria-atomic="true"
+          aria-live="polite"
+          class="sr-only"
+          role="status"
+        >
+          Product results shown: 20
+        </div>
+        <div
+          aria-label="Recommended products"
           class="flex space-x-4 overflow-x-auto pb-4 no-scrollbar p-2 items-end text-primary"
           data-pw="rm-product-result-row"
+          role="list"
+          tabindex="0"
         >
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -174,6 +186,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -228,6 +241,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -282,6 +296,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -336,6 +351,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -390,6 +406,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -444,6 +461,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -498,6 +516,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -552,6 +571,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -606,6 +626,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -660,6 +681,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -714,6 +736,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -768,6 +791,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -822,6 +846,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -876,6 +901,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -930,6 +956,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -984,6 +1011,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -1038,6 +1066,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -1092,6 +1121,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -1146,6 +1176,7 @@ exports[`recommend-me should match snapshot after loading search results 1`] = `
           </div>
           <div
             class=" group relative flex-shrink-0"
+            role="listitem"
             style="column-gap: 8px; width: 200px;"
           >
             <div
@@ -1224,12 +1255,12 @@ exports[`recommend-me should match snapshot for default layout 1`] = `
       class="flex gap-2 pt-1"
     >
       <button
-        class="px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors"
+        class="px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
       >
         Similar Products
       </button>
       <button
-        class="px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors"
+        class="px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
       >
         Complementary Products
       </button>
@@ -1243,7 +1274,7 @@ exports[`recommend-me should match snapshot for default layout 1`] = `
       class="flex gap-0 border border-gray-300 rounded overflow-hidden w-full"
     >
       <button
-        class="font-bold px-4 rounded-none h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800"
+        class="font-bold px-4 rounded-none h-10 text-sm transition-colors bg-gray-300 hover:bg-gray-400 text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
         data-pw="rm-recommend-me-button"
         disabled=""
       >
@@ -1274,7 +1305,7 @@ exports[`recommend-me should match snapshot for default layout 1`] = `
                 data-slot="inner-wrapper"
               >
                 <input
-                  aria-label="an outfit to go with this"
+                  aria-label="Type your recommendation query"
                   autocomplete="off"
                   class="w-full font-normal bg-transparent !outline-none placeholder:text-foreground-500 focus-visible:outline-none data-[has-start-content=true]:ps-1.5 data-[has-end-content=true]:pe-1.5 file:cursor-pointer file:bg-transparent file:border-0 autofill:bg-transparent bg-clip-text text-small peer pe-6 input-search-cancel-button-none"
                   data-pw="rm-recommend-me-search-bar"
@@ -1320,8 +1351,17 @@ exports[`recommend-me should match snapshot for default layout 1`] = `
         data-pw="rm-product-result-carousel"
       >
         <div
+          aria-atomic="true"
+          aria-live="polite"
+          class="sr-only"
+          role="status"
+        />
+        <div
+          aria-label="Recommended products"
           class="flex space-x-4 overflow-x-auto pb-4 no-scrollbar p-2 items-end text-primary"
           data-pw="rm-product-result-row"
+          role="list"
+          tabindex="0"
         />
       </div>
     </div>

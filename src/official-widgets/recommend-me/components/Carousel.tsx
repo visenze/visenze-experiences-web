@@ -1,5 +1,6 @@
 import type { CSSProperties, FC } from 'react';
 import { memo, useContext, useState } from 'react';
+import { useIntl } from 'react-intl';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import { WidgetDataContext } from '../../../common/types/contexts';
@@ -12,13 +13,15 @@ import type { ProcessedProduct } from '../../../common/types/product';
 interface CarouselProps {
   results: ProcessedProduct[];
   metadata: Record<string, any>;
+  latestMessage?: string;
 }
 
-const Carousel: FC<CarouselProps> = ({ results, metadata }) => {
+const Carousel: FC<CarouselProps> = ({ results, metadata, latestMessage = '' }) => {
   const { widgetConfig } = useContext(WidgetDataContext);
   const { customizations, initState } = widgetConfig;
   const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
   const breakpoint = useBreakpoint();
+  const intl = useIntl();
 
   const getProductGridCssClasses = (defaultGapX: string): string => {
     const cssConfigSrc = customizations.productGrid?.[breakpoint];
@@ -45,12 +48,22 @@ const Carousel: FC<CarouselProps> = ({ results, metadata }) => {
 
   return (
     <div data-pw='rm-product-result-carousel'>
+      <div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
+        {[
+          latestMessage,
+          results.length ? intl.formatMessage({ id: 'a11yProductResultsShown' }, { count: results.length }) : '',
+        ].filter(Boolean).join(' ')}
+      </div>
       <div
         className='flex space-x-4 overflow-x-auto pb-4 no-scrollbar p-2 items-end text-primary'
+        role='list'
+        aria-label={intl.formatMessage({ id: 'a11yRecommendedProducts' })}
+        tabIndex={0}
         data-pw='rm-product-result-row'>
         {results.map((result, index) => (
           <div
             key={`${result.product_id}-${index}`}
+            role='listitem'
             className={`${getProductGridCssClasses('gap-x-4')} group relative flex-shrink-0`}
             style={{ ...getProductGridCssConfig(), width: '200px' }}>
             <ProductCard

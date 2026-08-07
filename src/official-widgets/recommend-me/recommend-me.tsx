@@ -1,4 +1,5 @@
 import { Input } from '@heroui/input';
+import { cn } from '@heroui/theme';
 import { type FC, useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { ProductSearchResponse } from 'visearch-javascript-sdk';
@@ -11,6 +12,8 @@ import { WidgetDataContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import { getFlattenProducts } from '../../common/utils';
+
+const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
 
 interface RecommendMeProps {
   productId: string;
@@ -31,9 +34,19 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
   const root = useContext(RootContext);
   const intl = useIntl();
 
-  const { productResults, recommendMeWithQuery, isStreaming, requestId } = useRecommendMe({
+  const { productResults, recommendMeWithQuery, isStreaming, requestId, latestMessage } = useRecommendMe({
     productId,
   });
+
+  // Convert the raw streamed text (e.g. "**Levi's Shirt**") into safe HTML (bold tags, line
+  // breaks) for display, mirroring shopping-assistant's ChatWindow.processMessageForDisplay.
+  const processMessageForDisplay = (message: string): string => message
+      // quick sanitization
+      .replaceAll(/</g, '&lt;')
+      .replaceAll(/>/g, '&gt;')
+      // bold texts wrapped **like this**
+      .replaceAll(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+      .replaceAll(/\n/g, '<br>');
 
   const handleError = (errorMsg: string): void => {
     setHasError(true);
@@ -130,12 +143,18 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
 
       <div className='flex gap-2 pt-1'>
         <button
-            className='px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors'
+            className={cn(
+              'px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors',
+              FOCUS_VISIBLE_CLASSES,
+            )}
             onClick={() => suggestionSearch(false)}>
           {intl.formatMessage({ id: 'similarProducts' })}
         </button>
         <button
-            className='px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors'
+            className={cn(
+              'px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors',
+              FOCUS_VISIBLE_CLASSES,
+            )}
             onClick={() => suggestionSearch(true)}>
           {intl.formatMessage({ id: 'complementaryProducts' })}
         </button>
@@ -148,11 +167,14 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
       {/* Search input bar with Recommend me button */}
       <div className='flex gap-0 border border-gray-300 rounded overflow-hidden w-full'>
         <button
-          className={`font-bold px-4 rounded-none h-10 text-sm transition-colors ${
-            isRecommendInputFocused
-              ? 'bg-gray-600 hover:bg-gray-700 text-white'
-              : 'bg-gray-300 hover:bg-gray-400 text-gray-800'
-          }`}
+          className={cn(
+            `font-bold px-4 rounded-none h-10 text-sm transition-colors ${
+              isRecommendInputFocused
+                ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                : 'bg-gray-300 hover:bg-gray-400 text-gray-800'
+            }`,
+            FOCUS_VISIBLE_CLASSES,
+          )}
           disabled={isStreaming || !searchBarValue.trim()}
           onClick={() => {
             if (!searchBarValue) {
@@ -167,6 +189,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
 
         <div className='relative flex-1'>
           <Input
+            aria-label={intl.formatMessage({ id: 'a11ySearchBarInput' })}
             classNames={{
               inputWrapper: 'border-s-0 rounded-e bg-default-100 text-primary',
             }}
@@ -194,12 +217,23 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
         </div>
       </div>
 
-      {hasError && <div className='w-full text-center text-red-500 py-8'>{error}</div>}
+      {hasError && <div className='w-full text-center text-red-500 py-8' role='alert'>{error}</div>}
 
       {/* Product card carousels */}
       {!hasError && (
         <div className='flex flex-col'>
-          {(isStreaming || isLoading) ? <CarouselLoader /> : <Carousel results={mergedResults} metadata={metadata} />}
+          {latestMessage && (
+            <div
+              className={cn(
+                'mb-2 w-fit max-w-full bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100 rounded-lg',
+                'border border-neutral-100 dark:border-neutral-800',
+              )}
+              dangerouslySetInnerHTML={{ __html: processMessageForDisplay(latestMessage) }}
+            />
+          )}
+          {(isStreaming || isLoading)
+            ? <CarouselLoader />
+            : <Carousel results={mergedResults} metadata={metadata} latestMessage={latestMessage} />}
         </div>
       )}
     </div>
