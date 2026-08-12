@@ -1779,7 +1779,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const dropzone = testComponent.getByRole('button', { name: texts['en']['a11yUploadImage'], hidden: true });
+      const dropzone = testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' });
       expect(dropzone).toBeTruthy();
     });
   });
@@ -1813,6 +1813,7 @@ describe('shopping-assistant', () => {
   describe('voice input and output', () => {
     let mockRecognitionInstances: MockSpeechRecognition[] = [];
     let mockAudioInstances: any[] = [];
+    let mockUtteranceInstances: any[] = [];
     const originalFetch = global.fetch;
 
     class MockSpeechRecognition {
@@ -1847,6 +1848,19 @@ describe('shopping-assistant', () => {
       this.src = src;
       mockAudioInstances.push(this);
     });
+
+    // ElevenLabs-failure fallback path: a mock for the browser's native SpeechSynthesis API.
+    const MockSpeechSynthesisUtterance = jest.fn().mockImplementation(function mockUtteranceImpl(this: any, text?: string): void {
+      this.text = text;
+      this.onstart = null;
+      this.onend = null;
+      this.onerror = null;
+      mockUtteranceInstances.push(this);
+    });
+    const mockSpeechSynthesis = {
+      speak: jest.fn((utterance: any) => { utterance.onstart?.(); }),
+      cancel: jest.fn(),
+    };
 
     const makeResult = (transcript: string, isFinal: boolean): any => ({ isFinal, length: 1, 0: { transcript } });
 
@@ -1914,6 +1928,9 @@ describe('shopping-assistant', () => {
     beforeEach(() => {
       mockRecognitionInstances = [];
       mockAudioInstances = [];
+      mockUtteranceInstances = [];
+      mockSpeechSynthesis.speak.mockClear();
+      mockSpeechSynthesis.cancel.mockClear();
       URL.createObjectURL = jest.fn(() => 'blob:mock');
       URL.revokeObjectURL = jest.fn();
     });
@@ -1922,6 +1939,8 @@ describe('shopping-assistant', () => {
       delete (window as any).SpeechRecognition;
       delete (window as any).webkitSpeechRecognition;
       delete (window as any).Audio;
+      delete (window as any).SpeechSynthesisUtterance;
+      delete (window as any).speechSynthesis;
       global.fetch = originalFetch;
     });
 
@@ -2007,11 +2026,12 @@ describe('shopping-assistant', () => {
     it('speaks the assistant reply only when the triggering message was sent by voice', async () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       (window as any).Audio = MockAudio;
-      global.fetch = jest.fn()
-        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
 
       renderVoiceAssistant();
       openDialogAndWait();
+
+      global.fetch = jest.fn()
+        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
 
       await speakAndRelease('red dress');
 
@@ -2035,34 +2055,42 @@ describe('shopping-assistant', () => {
     it('speaks each completed sentence as it streams in, before the reply finishes, and plays them in order', async () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       (window as any).Audio = MockAudio;
-      global.fetch = jest.fn()
-        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio-1'], { type: 'audio/mpeg' })) })
-        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio-2'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
 
       renderVoiceAssistant();
       openDialogAndWait();
 
+      global.fetch = jest.fn()
+        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio-1'], { type: 'audio/mpeg' })) })
+        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio-2'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
+
       await speakAndRelease('tell me more');
       const [, options] = mockFetchEventSource.mock.calls[0];
 
-      // First sentence completes mid-stream — its TTS call and playback should start
-      // immediately, well before the reply (or the SSE stream) has finished.
+      // First sentence completes mid-stream with nothing after it yet — a trailing [[pid]] token
+      // might still be in flight, so it's held back rather than spoken right away.
       act(() => {
         options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'This is a great choice. ' }) });
       });
       await flushMicrotasks();
 
       const ttsCalls = (): any[] => (global.fetch as jest.Mock).mock.calls.filter(([callUrl]: [string]) => callUrl.includes('voice/synthesize'));
+      expect(ttsCalls()).toHaveLength(0);
+      expect(mockAudioInstances).toHaveLength(0);
+
+      // Second sentence streams in — now that real text (not a product token) follows the first
+      // sentence, there's nothing left to wait for, so it speaks immediately...
+      act(() => {
+        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'It pairs well with boots.' }) });
+      });
+      await flushMicrotasks();
+
       expect(ttsCalls()).toHaveLength(1);
       expect(JSON.parse(ttsCalls()[0][1].body).text).toBe('This is a great choice.');
       expect(mockAudioInstances).toHaveLength(1);
       expect(mockAudioInstances[0].play).toHaveBeenCalled();
 
-      // Second sentence streams in and finishes while the first clip is still "playing" —
-      // it should be synthesized right away (not held back until the first clip ends)...
-      act(() => {
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'It pairs well with boots.' }) });
-      });
+      // ...while the second sentence, still being the last thing seen, waits for the stream to
+      // close before it's confirmed nothing else is coming.
       await act(async () => {
         options.onclose();
         await flushMicrotasks();
@@ -2087,13 +2115,14 @@ describe('shopping-assistant', () => {
     it('holds the streaming reply text until playback starts, then reveals it as a typewriter', async () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       (window as any).Audio = MockAudio;
+
+      renderVoiceAssistant();
+      openDialogAndWait();
+
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
         blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })),
       }) as unknown as typeof fetch;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
 
       await speakAndRelease('tell me more');
       const [, options] = mockFetchEventSource.mock.calls[0];
@@ -2101,11 +2130,14 @@ describe('shopping-assistant', () => {
       act(() => {
         options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Great choice. ' }) });
       });
+      // Nothing else follows, so the sentence is held back until the stream closes confirms no
+      // trailing [[pid]] token is coming.
       await act(async () => {
+        options.onclose();
         await flushMicrotasks();
       });
 
-      // The completed sentence is sent to speech immediately...
+      // The sentence is sent to speech once the stream confirms nothing else is coming...
       expect(global.fetch).toHaveBeenCalled();
       // ...but the on-screen text stays hidden until audio playback actually starts.
       expect(getTextInBody('Great')).toBeFalsy();
@@ -2125,13 +2157,14 @@ describe('shopping-assistant', () => {
     it('shows the product card as soon as it resolves, independent of narration progress, and never repeats its opening text', async () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       (window as any).Audio = MockAudio;
+
+      renderVoiceAssistant();
+      openDialogAndWait();
+
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
         blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })),
       }) as unknown as typeof fetch;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
 
       await speakAndRelease('show me a jacket');
       const [, options] = mockFetchEventSource.mock.calls[0];
@@ -2153,13 +2186,19 @@ describe('shopping-assistant', () => {
 
       // The card is already resolved and streams into the live grid well before its narration
       // has even started playing, let alone finished — it doesn't wait on the response or speech.
+      // The sentence's [[pid]] token already arrived in the same chunk, but nothing follows it
+      // yet either, so it still waits for the stream to close before being spoken.
       act(() => {
         jest.advanceTimersByTime(200);
       });
       expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
 
-      act(() => {
+      await act(async () => {
         options.onclose();
+        await flushMicrotasks();
+      });
+
+      act(() => {
         jest.advanceTimersByTime(30 * 5);
       });
 
@@ -2191,11 +2230,12 @@ describe('shopping-assistant', () => {
     it('uses the configured voiceId for spoken replies', async () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       (window as any).Audio = MockAudio;
-      global.fetch = jest.fn()
-        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
 
       renderVoiceAssistant({ voiceEnabled: true }, 'custom-voice-id');
       openDialogAndWait();
+
+      global.fetch = jest.fn()
+        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
 
       await speakAndRelease('red dress');
 
@@ -2215,13 +2255,14 @@ describe('shopping-assistant', () => {
     it('speaks replies to typed messages when voice reading is enabled', async () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       (window as any).Audio = MockAudio;
+
+      renderVoiceAssistant();
+      openDialogAndWait();
+
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
         blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })),
       }) as unknown as typeof fetch;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
 
       const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
       act(() => {
@@ -2247,10 +2288,11 @@ describe('shopping-assistant', () => {
     it('does not narrate typed or microphone replies after voice reading is disabled', async () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       (window as any).Audio = MockAudio;
-      global.fetch = jest.fn();
 
       renderVoiceAssistant();
       openDialogAndWait();
+
+      global.fetch = jest.fn();
 
       const toggle = testComponent.getByRole('button', {
         name: texts['en']['a11yDisableVoiceReading'],
@@ -2298,11 +2340,12 @@ describe('shopping-assistant', () => {
     it('stops any playing reply when a new recording starts (barge-in)', async () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       (window as any).Audio = MockAudio;
-      global.fetch = jest.fn()
-        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
 
       renderVoiceAssistant();
       openDialogAndWait();
+
+      global.fetch = jest.fn()
+        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
 
       await speakAndRelease('red dress');
       const [, options] = mockFetchEventSource.mock.calls[0];
@@ -2322,6 +2365,39 @@ describe('shopping-assistant', () => {
       });
 
       expect(mockAudioInstances[0].pause).toHaveBeenCalled();
+    });
+
+    it('falls back to the browser speech synthesis API when the voice proxy call fails', async () => {
+      (window as any).SpeechRecognition = MockSpeechRecognition;
+      (window as any).SpeechSynthesisUtterance = MockSpeechSynthesisUtterance;
+      (window as any).speechSynthesis = mockSpeechSynthesis;
+
+      renderVoiceAssistant();
+      openDialogAndWait();
+
+      global.fetch = jest.fn().mockRejectedValue(new Error('voice proxy unavailable'));
+
+      await speakAndRelease('red dress');
+      const [, options] = mockFetchEventSource.mock.calls[0];
+      act(() => {
+        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Great choice!' }) });
+      });
+      await act(async () => {
+        options.onclose();
+        await flushMicrotasks();
+      });
+
+      // The ElevenLabs proxy call rejected, so the reply is narrated with the browser's own
+      // voice instead — the reply still gets spoken and revealed, just without the cloned voice.
+      expect(mockSpeechSynthesis.speak).toHaveBeenCalledTimes(1);
+      expect(mockUtteranceInstances[0].text).toBe('Great choice!');
+
+      await revealAll();
+      expect(getTextInBody('Great choice!')).toBeTruthy();
+
+      act(() => {
+        mockUtteranceInstances[0].onend?.();
+      });
     });
   });
 });

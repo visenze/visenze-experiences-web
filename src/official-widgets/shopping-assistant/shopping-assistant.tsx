@@ -39,7 +39,7 @@ import { getFlattenProduct } from '../../common/utils';
 const LEADING_PRODUCT_REGEX = /^(?:\d+\.? |- )?\[\[[^\]]+]]/;
 const SUGGESTION_LINE_REGEX = /\(\(([^)]+)\)\)/g;
 const RESERVED_ACTION_TOKEN_REGEX = /<<\s*(ADD_TO_CART|ADD_TO_LIKE|ADD_TO_WISHLIST)\s*:\s*([^>\s]+)\s*>>/g;
-const INCOMPLETE_RESERVED_ACTION_TOKEN_REGEX = /<<(?:ADD_TO(?:_[A-Z]+)?(?::[^>]*)?)$/;
+const INCOMPLETE_RESERVED_ACTION_TOKEN_REGEX = /<<(?:ADD_TO(?:_[A-Z]*)?(?::[^>]*)?)$/;
 const INCOMPLETE_PRODUCT_TOKEN_REGEX = /\[\[[^\]]*$/;
 const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
 
@@ -688,6 +688,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     if (dialogVisible) {
       return;
     }
+    const shouldSpeakOpening = !!appSettings.voiceEnabled && voiceReadingEnabledRef.current;
     const renderChat = (idx: number, cId: string): void => {
       if (idx > openingMessages.length) {
         setIsWaiting(false);
@@ -701,6 +702,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           author: 'bot',
           messages: openingMessages.slice(0, idx),
         }]);
+        if (shouldSpeakOpening) {
+          speak(openingMessages[idx - 1], 0, null);
+        }
         renderChat(idx + 1, cId);
       }, 2000);
     };
@@ -730,6 +734,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setStreamingProducts([]);
     setStreamingRequestId('');
 
+    const shouldSpeakOpening = !!appSettings.voiceEnabled && voiceReadingEnabledRef.current;
     const renderChat = (idx: number, cId: string): void => {
       if (idx > openingMessages.length) {
         setIsWaiting(false);
@@ -743,6 +748,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           author: 'bot',
           messages: openingMessages.slice(0, idx),
         }]);
+        if (shouldSpeakOpening) {
+          speak(openingMessages[idx - 1], 0, null);
+        }
         renderChat(idx + 1, cId);
       });
     };

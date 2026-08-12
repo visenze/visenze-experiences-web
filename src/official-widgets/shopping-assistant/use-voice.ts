@@ -67,6 +67,7 @@ interface QueuedSpeech {
   session: number;
   revealTarget: number;
   productId: string | null;
+  text: string;
 }
 
 // Waited before actually stopping recognition on release, so trailing words aren't clipped.
@@ -82,6 +83,12 @@ const getSpeechRecognitionCtor = (): (new () => SpeechRecognitionLike) | undefin
 };
 
 const isVoiceSupported = (): boolean => !!getSpeechRecognitionCtor();
+
+// Used as a last resort when the ElevenLabs proxy call fails (offline, quota, outage, etc.)
+// so a reply is still narrated, just with the browser's own voice instead of the cloned one.
+const isBrowserSpeechSynthesisSupported = (): boolean => typeof window !== 'undefined'
+  && !!window.speechSynthesis
+  && typeof SpeechSynthesisUtterance !== 'undefined';
 
 const useVoice = ({
   enabled,
@@ -105,6 +112,7 @@ const useVoice = ({
   const finalizeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrlRef = useRef<string | null>(null);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const speechQueueRef = useRef<QueuedSpeech[]>([]);
   const isPlayingRef = useRef(false);
   const playSessionRef = useRef(0);
@@ -144,6 +152,10 @@ const useVoice = ({
     if (audioUrlRef.current) {
       URL.revokeObjectURL(audioUrlRef.current);
       audioUrlRef.current = null;
+    }
+    if (utteranceRef.current) {
+      window.speechSynthesis?.cancel();
+      utteranceRef.current = null;
     }
   };
 
@@ -302,11 +314,43 @@ const useVoice = ({
       })
       .catch((err) => {
         console.error(err);
-        isPlayingRef.current = false;
-        if (item.session === playSessionRef.current) {
+        if (item.session !== playSessionRef.current) {
+          isPlayingRef.current = false;
+          return;
+        }
+        if (!isBrowserSpeechSynthesisSupported()) {
+          isPlayingRef.current = false;
           onSpeechEndRef.current?.(item.revealTarget, item.productId);
           playNext();
+          return;
         }
+        // The voice API call itself failed (network, quota, outage) — fall back to the
+        // browser's own speech synthesis so the reply is still narrated, just without the
+        // cloned voice.
+        const utterance = new SpeechSynthesisUtterance(item.text);
+        utteranceRef.current = utterance;
+        const advance = (): void => {
+          if (utteranceRef.current === utterance) {
+            utteranceRef.current = null;
+          }
+          isPlayingRef.current = false;
+          if (item.session !== playSessionRef.current) {
+            return;
+          }
+          onSpeechEndRef.current?.(item.revealTarget, item.productId);
+          gapTimerRef.current = setTimeout((): void => {
+            gapTimerRef.current = null;
+            playNext();
+          }, SPEECH_GAP_MS);
+        };
+        utterance.onstart = (): void => {
+          if (item.session === playSessionRef.current) {
+            onSpeechStartRef.current?.(item.revealTarget, item.productId);
+          }
+        };
+        utterance.onend = advance;
+        utterance.onerror = advance;
+        window.speechSynthesis.speak(utterance);
       });
   };
 
@@ -321,7 +365,7 @@ const useVoice = ({
     const session = playSessionRef.current;
     const promise = synthesizeSpeech(baseUrl, appKey, placementId, sanitized, voiceId || DEFAULT_VOICE_ID);
     promise.catch(() => {});
-    speechQueueRef.current.push({ promise, session, revealTarget, productId });
+    speechQueueRef.current.push({ promise, session, revealTarget, productId, text: sanitized });
     playNext();
     return true;
   };
