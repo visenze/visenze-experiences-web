@@ -9,21 +9,21 @@ describe('elevenlabs-api', () => {
   });
 
   describe('synthesizeSpeech', () => {
-    it('sends text to the ElevenLabs TTS endpoint with the correct URL, headers, and body', async () => {
+    it('sends text to the voice proxy endpoint with the correct URL, headers, and body', async () => {
       const mockBlob = new Blob(['audio-bytes'], { type: 'audio/mpeg' });
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
         blob: jest.fn().mockResolvedValue(mockBlob),
       }) as unknown as typeof fetch;
 
-      const result = await synthesizeSpeech('test-key', 'Hello there', 'voice-123');
+      const result = await synthesizeSpeech('https://api.example.com', 'app-key', 'placement-1', 'Hello there', 'voice-123');
 
       expect(result).toBe(mockBlob);
       expect(global.fetch).toHaveBeenCalledWith(
-        'https://api.elevenlabs.io/v1/text-to-speech/voice-123?output_format=mp3_44100_128',
+        'https://api.example.com/v1/voice/synthesize/voice-123?app_key=app-key&placement_id=placement-1&output_format=mp3_44100_128',
         {
           method: 'POST',
-          headers: { 'xi-api-key': 'test-key', 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
           body: JSON.stringify({
             text: 'Hello there',
             model_id: 'eleven_multilingual_v2',
@@ -33,9 +33,24 @@ describe('elevenlabs-api', () => {
       );
     });
 
-    it('throws when the response is not ok', async () => {
-      global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500 }) as unknown as typeof fetch;
-      await expect(synthesizeSpeech('key', 'text', DEFAULT_VOICE_ID)).rejects.toThrow('ElevenLabs TTS failed: 500');
+    it('throws the proxy error message when the response body is JSON', async () => {
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: false,
+        status: 413,
+        json: jest.fn().mockResolvedValue({ error: { code: 413, message: 'Voice synthesis text is too large.' } }),
+      }) as unknown as typeof fetch;
+      await expect(synthesizeSpeech('https://api.example.com', 'app-key', 'placement-1', 'text', DEFAULT_VOICE_ID))
+        .rejects.toThrow('Voice synthesis text is too large.');
+    });
+
+    it('falls back to a generic message when the response body is not JSON', async () => {
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: jest.fn().mockRejectedValue(new Error('not json')),
+      }) as unknown as typeof fetch;
+      await expect(synthesizeSpeech('https://api.example.com', 'app-key', 'placement-1', 'text', DEFAULT_VOICE_ID))
+        .rejects.toThrow('Voice synthesis failed with HTTP 500');
     });
   });
 

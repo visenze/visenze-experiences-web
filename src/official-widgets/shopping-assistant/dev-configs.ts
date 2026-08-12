@@ -10,7 +10,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     placementId: '10766',
     endpoint: '',
     cloud: 'aws', // remove this if you are testing in staging environment
-    elevenLabsApiKey: 'sk_5270407a9576b2f483025f0e4ad068b1022b5964687461d0', // set to enable voice input/output; leave blank to disable
+    voiceEnabled: true, // enable to test voice input/output locally (backend resolves the ElevenLabs credential)
   },
   displaySettings: {
     cssSelector: '.shopping-assistant-widget',

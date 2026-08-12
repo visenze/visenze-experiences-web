@@ -37,6 +37,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: 'Disable voice reading',
     voiceInputError: 'Voice input unavailable',
     showMore: 'Show more...',
+    nowDescribing: 'Now Describing',
+    holdMicToRecord: 'Hold the mic to record',
   },
   es: {
     widgetTitle: 'Asistente de estilo',
@@ -73,6 +75,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: 'Desactivar lectura en voz alta',
     voiceInputError: 'Entrada de voz no disponible',
     showMore: 'Mostrar más...',
+    nowDescribing: 'Describiendo ahora',
+    holdMicToRecord: 'Mantén presionado el micrófono para grabar',
   },
   fr: {
     widgetTitle: 'Assistant de style',
@@ -109,6 +113,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: 'Désactiver la lecture vocale',
     voiceInputError: 'Saisie vocale indisponible',
     showMore: 'Afficher plus...',
+    nowDescribing: 'En cours de description',
+    holdMicToRecord: 'Maintenez le micro enfoncé pour enregistrer',
   },
   pt: {
     widgetTitle: 'Assistente de estilo',
@@ -145,6 +151,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: 'Desativar leitura em voz alta',
     voiceInputError: 'Entrada de voz indisponível',
     showMore: 'Mostrar mais...',
+    nowDescribing: 'Descrevendo agora',
+    holdMicToRecord: 'Mantenha o microfone pressionado para gravar',
   },
   de: {
     widgetTitle: 'Stil-Assistent',
@@ -181,6 +189,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: 'Sprachausgabe deaktivieren',
     voiceInputError: 'Spracheingabe nicht verfügbar',
     showMore: 'Mehr anzeigen...',
+    nowDescribing: 'Wird jetzt beschrieben',
+    holdMicToRecord: 'Mikrofon gedrückt halten, um aufzunehmen',
   },
   it: {
     widgetTitle: 'Assistente di stile',
@@ -217,6 +227,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: 'Disattiva lettura vocale',
     voiceInputError: 'Input vocale non disponibile',
     showMore: 'Mostra altro...',
+    nowDescribing: 'Descrizione in corso',
+    holdMicToRecord: 'Tieni premuto il microfono per registrare',
   },
   pl: {
     widgetTitle: 'Asystent Stylu',
@@ -253,6 +265,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: 'Wyłącz odczytywanie głosowe',
     voiceInputError: 'Wprowadzanie głosowe niedostępne',
     showMore: 'Pokaż więcej...',
+    nowDescribing: 'Teraz opisywane',
+    holdMicToRecord: 'Przytrzymaj mikrofon, aby nagrywać',
   },
   ko: {
     widgetTitle: '쇼핑 어시스턴트',
@@ -289,6 +303,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: '음성 읽기 끄기',
     voiceInputError: '음성 입력을 사용할 수 없습니다',
     showMore: '더 보기...',
+    nowDescribing: '지금 설명 중',
+    holdMicToRecord: '마이크를 길게 눌러 녹음하세요',
   },
   ja: {
     widgetTitle: 'スタイルアシスタント',
@@ -325,6 +341,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: '音声読み上げをオフ',
     voiceInputError: '音声入力は利用できません',
     showMore: 'もっと見る...',
+    nowDescribing: '説明中',
+    holdMicToRecord: 'マイクを長押しして録音',
   },
   th: {
     widgetTitle: 'ช่วยเหลือสินค้า',
@@ -361,6 +379,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: 'ปิดการอ่านข้อความด้วยเสียง',
     voiceInputError: 'ไม่สามารถใช้การป้อนด้วยเสียงได้',
     showMore: 'แสดงเพิ่มเติม...',
+    nowDescribing: 'กำลังอธิบาย',
+    holdMicToRecord: 'กดค้างที่ไมโครโฟนเพื่อบันทึกเสียง',
   },
   zh: {
     widgetTitle: '购物助手',
@@ -397,6 +417,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yDisableVoiceReading: '关闭语音朗读',
     voiceInputError: '语音输入不可用',
     showMore: '显示更多...',
+    nowDescribing: '正在描述',
+    holdMicToRecord: '按住麦克风进行录音',
   },
 };
 

@@ -1,5 +1,4 @@
 import { Textarea } from '@heroui/input';
-import { Spinner } from '@heroui/spinner';
 import { cn } from '@heroui/theme';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { type FC, type KeyboardEvent, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -89,8 +88,14 @@ const resolveProducts = (text: string, products: ProcessedProduct[]): ProcessedP
 // (so numbered list markers like "1." don't get mistaken for a sentence boundary).
 const SENTENCE_BOUNDARY_REGEX = /(?<![0-9])[.!?](?=\s|$)/g;
 
-interface SpeakableChunkResult {
+interface SpeakableSentence {
   chunk: string;
+  revealTarget: number;
+  productId: string | null;
+}
+
+interface ExtractSpeakableSentencesResult {
+  sentences: SpeakableSentence[];
   spokenLength: number;
 }
 
@@ -101,26 +106,87 @@ interface CompletedResponse {
   products: ProcessedProduct[];
 }
 
+const PRODUCT_TOKEN_REGEX = /\[\[([^\]]+)]]/g;
+// Matches one or more `[[pid]]` tokens (each optionally preceded by whitespace) sitting right
+// after a sentence's closing punctuation, e.g. "...outfit. [[pid2]] Next, ...". Without this, a
+// token placed after the period rather than before it would fall just past the sentence boundary
+// and get attributed to the following sentence instead — tagging the wrong product as focused.
+const TRAILING_PRODUCT_TOKEN_REGEX = /^(?:\s*\[\[[^\]]+]])+/;
+
+// Per the [[product_id]] token convention (see the comment at the top of this file), a sentence
+// describing a product ends with that product's token. If more than one appears in a sentence,
+// the last one wins.
+const lastProductIdIn = (rawSentence: string): string | null => {
+  let pid: string | null = null;
+  let match = PRODUCT_TOKEN_REGEX.exec(rawSentence);
+  while (match) {
+    [, pid] = match;
+    match = PRODUCT_TOKEN_REGEX.exec(rawSentence);
+  }
+  return pid;
+};
+
 // Given the raw, monotonically-growing token text streamed so far (tokens.join('') — NOT the
 // stripped display text, whose length can shrink/shift as product tokens resolve or an
 // incomplete trailing "[[" gets trimmed) and how much of it has already been sent to speech,
-// returns the next complete-sentence chunk that's safe to speak now (cleaned of [[pid]]/
-// ((suggestion)) markers) — or '' if the reply hasn't finished a full sentence yet — and the
-// new spokenLength to remember.
-const extractSpeakableChunk = (rawText: string, spokenLength: number): SpeakableChunkResult => {
+// returns every complete sentence found in the unspoken tail (not just the last one, so two+
+// sentences completing between two chat_token events — or the whole leftover tail at stream
+// close — are each spoken as their own clip instead of being bundled into one), each cleaned of
+// [[pid]]/((suggestion)) markers and tagged with the product it's describing (or null). Also
+// returns the new spokenLength to remember. `includeTrailing` (used only at stream close) also
+// emits any non-empty text left over after the final sentence boundary (or the whole tail, if no
+// boundary was ever found) as one last synthetic sentence.
+const extractSpeakableSentences = (
+  rawText: string,
+  spokenLength: number,
+  { includeTrailing = false }: { includeTrailing?: boolean } = {},
+): ExtractSpeakableSentencesResult => {
   const unspoken = rawText.slice(spokenLength);
-  let lastEnd = -1;
-  const regex = new RegExp(SENTENCE_BOUNDARY_REGEX);
-  let match = regex.exec(unspoken);
+  const boundaryRegex = new RegExp(SENTENCE_BOUNDARY_REGEX);
+  const sentences: SpeakableSentence[] = [];
+  let segmentStart = 0;
+  let match = boundaryRegex.exec(unspoken);
   while (match) {
-    lastEnd = match.index + 1;
-    match = regex.exec(unspoken);
+    let segmentEnd = match.index + 1;
+    const trailingTokens = TRAILING_PRODUCT_TOKEN_REGEX.exec(unspoken.slice(segmentEnd));
+    if (trailingTokens) {
+      segmentEnd += trailingTokens[0].length;
+    }
+    // A `[[pid]]` trailing a sentence's punctuation often streams in as a separate, later
+    // chat_token event (sometimes after an intervening `product` event) rather than in the same
+    // chunk as the period. If nothing but whitespace — or an unterminated "[[" — follows what
+    // we've matched so far, the token may still be in flight: wait for more text rather than
+    // flushing now, or the token would land on the *next* sentence instead of this one. Not
+    // applicable once the stream has closed (`includeTrailing`), since no more text is coming.
+    const remainder = unspoken.slice(segmentEnd);
+    if (!includeTrailing && (/^\s*$/.test(remainder) || INCOMPLETE_PRODUCT_TOKEN_REGEX.test(remainder))) {
+      break;
+    }
+    const rawSentence = unspoken.slice(segmentStart, segmentEnd);
+    const chunk = stripTokensForDisplay(rawSentence).trim();
+    if (chunk) {
+      sentences.push({
+        chunk,
+        revealTarget: stripTokensForDisplay(rawText.slice(0, spokenLength + segmentEnd)).trim().length,
+        productId: lastProductIdIn(rawSentence),
+      });
+    }
+    segmentStart = segmentEnd;
+    match = boundaryRegex.exec(unspoken);
   }
-  if (lastEnd === -1) {
-    return { chunk: '', spokenLength };
+  if (includeTrailing && segmentStart < unspoken.length) {
+    const rawSentence = unspoken.slice(segmentStart);
+    const chunk = stripTokensForDisplay(rawSentence).trim();
+    if (chunk) {
+      sentences.push({
+        chunk,
+        revealTarget: stripTokensForDisplay(rawText).trim().length,
+        productId: lastProductIdIn(rawSentence),
+      });
+    }
+    segmentStart = unspoken.length;
   }
-  const chunk = stripTokensForDisplay(unspoken.slice(0, lastEnd)).trim();
-  return { chunk, spokenLength: spokenLength + lastEnd };
+  return { sentences, spokenLength: spokenLength + segmentStart };
 };
 
 interface ShoppingAssistantProps {
@@ -131,6 +197,10 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const webcamRef = useRef<Webcam>(null);
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
+  // Resolve the API base, honouring manual endpoint > cloud > API endpoint > default; shared by
+  // the chat SSE call below and the voice proxy call in useVoice.
+  const manualEndpoint = getManualEndpoint(appSettings.placementId);
+  const apiBase = resolveBaseEndpoint(appSettings, manualEndpoint);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [image, setImage] = useState<SearchImageOrPid | undefined>();
@@ -150,6 +220,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const [voiceRevealTarget, setVoiceRevealTarget] = useState(0);
   const [voiceRevealDelayMs, setVoiceRevealDelayMs] = useState(30);
   const [streamingProducts, setStreamingProducts] = useState<ProcessedProduct[]>([]);
+  const [focusedProductId, setFocusedProductId] = useState<string | null>(null);
   const [streamingRequestId, setStreamingRequestId] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showCameraDrawer, setShowCameraDrawer] = useState(false);
@@ -170,7 +241,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   ];
   // Bridges sendMessage (declared below) to the speak() implementation from useVoice
   // (instantiated after sendMessage, since its onTranscript callback calls sendMessage).
-  const speakRef = useRef<(text: string, revealTarget: number) => boolean>(() => false);
+  const speakRef = useRef<(text: string, revealTarget: number, productId: string | null) => boolean>(() => false);
   const hasPendingSpeechRef = useRef<() => boolean>(() => false);
   const latestMessageRef = useRef('');
   const typewriterTextRef = useRef('');
@@ -190,12 +261,17 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   // Keeping one monotonically-growing cursor avoids restarting from the beginning whenever a
   // new SSE token extends latestMessage.
   useEffect((): (() => void) | undefined => {
-    if (isVoiceReply && !isSpeechPlaying) {
+    if (!isVoiceReply) {
+      if (typewriterTextRef.current !== latestMessage) {
+        typewriterTextRef.current = latestMessage;
+        setTypewriterText(latestMessage);
+      }
       return undefined;
     }
-    const revealTarget = isVoiceReply
-      ? Math.min(voiceRevealTarget, latestMessage.length)
-      : latestMessage.length;
+    if (!isSpeechPlaying) {
+      return undefined;
+    }
+    const revealTarget = Math.min(voiceRevealTarget, latestMessage.length);
     if (typewriterTextRef.current.length >= revealTarget) {
       return undefined;
     }
@@ -211,7 +287,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       if (next.length >= revealTarget) {
         clearInterval(interval);
       }
-    }, isVoiceReply ? voiceRevealDelayMs : 30);
+    }, voiceRevealDelayMs);
     return (): void => clearInterval(interval);
   }, [isSpeechPlaying, isVoiceReply, latestMessage, voiceRevealDelayMs, voiceRevealTarget]);
 
@@ -255,6 +331,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setIsSpeechPlaying(false);
     setIsVoiceReply(false);
     setVoiceRevealTarget(0);
+    setFocusedProductId(null);
     setAllowUserInput(true);
     setShowResponseExtras(true);
   };
@@ -283,10 +360,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setSuggestions([]);
     setStreamingProducts([]);
     setStreamingRequestId('');
+    setFocusedProductId(null);
     pendingResponseCommitRef.current = null;
     latestMessageRef.current = '';
     typewriterTextRef.current = '';
-    const shouldSpeakReply = !!appSettings.elevenLabsApiKey && voiceReadingEnabledRef.current;
+    const shouldSpeakReply = !!appSettings.voiceEnabled && voiceReadingEnabledRef.current;
     setIsVoiceReply(shouldSpeakReply);
     setIsSpeechPlaying(false);
     setVoiceRevealTarget(0);
@@ -337,14 +415,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       formData.append('image', imageToSend.files[0]);
     }
 
-    // Resolve the API base + path, honouring manual endpoint > cloud > API endpoint > default
-    const manualEndpoint = getManualEndpoint(appSettings.placementId);
-    const base = resolveBaseEndpoint(appSettings, manualEndpoint);
     const shoppingAssistantPath = usesCloudPaths(appSettings, manualEndpoint)
       ? '/v1/search/chat/shopping-assistant'
       : '/v1/product/multisearch/chat/shopping-assistant';
 
-    fetchEventSource(`${base}${shoppingAssistantPath}?${params.toString()}`, {
+    fetchEventSource(`${apiBase}${shoppingAssistantPath}?${params.toString()}`, {
       method: 'POST',
       body: formData,
       openWhenHidden: true,
@@ -387,12 +462,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           setLatestMessage(displayText);
           setStreamingProducts(resolveProducts(currentText, products));
           if (shouldSpeakReply && voiceReadingEnabledRef.current) {
-            const { chunk, spokenLength: newSpokenLength } = extractSpeakableChunk(currentText, spokenLength);
-            if (chunk) {
-              const revealTarget = stripTokensForDisplay(currentText.slice(0, newSpokenLength)).trim().length;
-              speakRef.current(chunk, revealTarget);
-              spokenLength = newSpokenLength;
-            }
+            const { sentences, spokenLength: newSpokenLength } = extractSpeakableSentences(currentText, spokenLength);
+            sentences.forEach(({ chunk, revealTarget, productId }) => {
+              speakRef.current(chunk, revealTarget, productId);
+            });
+            spokenLength = newSpokenLength;
           }
         } else if (ev.event === 'product') {
           products.push(getFlattenProduct(JSON.parse(ev.data)));
@@ -415,10 +489,10 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           products: finalProducts,
         };
         if (shouldSpeakReply && voiceReadingEnabledRef.current) {
-          const remaining = stripTokensForDisplay(currentText.slice(spokenLength)).trim();
-          if (remaining) {
-            speakRef.current(remaining, finalText.length);
-          }
+          const { sentences } = extractSpeakableSentences(currentText, spokenLength, { includeTrailing: true });
+          sentences.forEach(({ chunk, revealTarget, productId }) => {
+            speakRef.current(chunk, revealTarget, productId);
+          });
           if (hasPendingSpeechRef.current()) {
             pendingResponseCommitRef.current = (): void => commitResponse(completedResponse);
           } else {
@@ -451,12 +525,15 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     hasPendingSpeech,
     stopAudio,
   } = useVoice({
-    apiKey: appSettings.elevenLabsApiKey,
+    enabled: appSettings.voiceEnabled,
+    appKey: appSettings.appKey,
+    placementId: appSettings.placementId,
+    baseUrl: apiBase,
     voiceId: customizations.chatbot?.voiceId,
     onTranscript: (text): void => {
       sendMessage(text);
     },
-    onSpeechStart: (revealTarget, durationMs): void => {
+    onSpeechStart: (revealTarget, productId, durationMs): void => {
       const remainingCharacters = Math.max(1, revealTarget - typewriterTextRef.current.length);
       const delay = durationMs
         ? Math.max(15, Math.min(80, durationMs / remainingCharacters))
@@ -465,6 +542,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       setVoiceRevealTarget(revealTarget);
       setIsWaiting(false);
       setIsSpeechPlaying(true);
+      setFocusedProductId(productId);
     },
     onSpeechEnd: (revealTarget): void => {
       const revealed = latestMessageRef.current.slice(0, revealTarget);
@@ -474,6 +552,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     },
     onSpeechQueueEnd: (): void => {
       setIsSpeechPlaying(false);
+      setFocusedProductId(null);
       const pendingCommit = pendingResponseCommitRef.current;
       if (pendingCommit) {
         pendingResponseCommitRef.current = null;
@@ -491,6 +570,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     const pendingCommit = pendingResponseCommitRef.current;
     pendingResponseCommitRef.current = null;
     stopAudio();
+    setFocusedProductId(null);
     pendingCommit?.();
     startRecording();
   };
@@ -506,6 +586,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       setIsSpeechPlaying(false);
       setIsVoiceReply(false);
       setIsWaiting(false);
+      setFocusedProductId(null);
       pendingCommit?.();
     }
   };
@@ -518,7 +599,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
 
   const renderVoiceButtonIcon = (): ReactElement => {
     if (voiceStatus === 'transcribing') {
-      return <Spinner size='sm' aria-label={intl.formatMessage({ id: 'a11yTranscribingVoice' })} />;
+      return <MicrophoneIcon
+        className='size-5 cursor-pointer' color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')} />;
     }
     if (voiceStatus === 'recording') {
       return <StopIcon className='size-5 cursor-pointer animate-pulse' color='#EF4444' />;
@@ -643,6 +725,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setIsVoiceReply(false);
     setIsSpeechPlaying(false);
     setVoiceRevealTarget(0);
+    setFocusedProductId(null);
     setSuggestions([]);
     setStreamingProducts([]);
     setStreamingRequestId('');
@@ -734,8 +817,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                     chats={chats}
                     latestMessage={typewriterText}
                     suggestions={showResponseExtras ? suggestions : []}
-                    streamingProducts={showResponseExtras ? streamingProducts : []}
+                    streamingProducts={streamingProducts}
                     streamingRequestId={streamingRequestId}
+                    focusedProductId={focusedProductId}
                     showAllSuggestions={showAllSuggestions}
                     setShowAllSuggestions={() => setShowAllSuggestions(true)}
                     sendMessage={sendMessage} />
@@ -846,41 +930,41 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
               </div>
             </FileDropzone>
             {voiceEnabled && (
-              <button
-                type='button'
-                aria-label={intl.formatMessage({
-                  id: voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yStartVoiceInput',
-                })}
-                aria-pressed={voiceStatus === 'recording'}
-                title={hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : undefined}
-                disabled={(voiceStatus === 'idle' && !allowUserInput && !isSpeechPlaying) || voiceStatus === 'transcribing'}
-                className={cn('p-2 border border-gray dark:border-neutral-500 rounded-md bg-transparent disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
-                onMouseDown={startVoiceRecording}
-                onMouseUp={stopRecording}
-                onMouseLeave={stopRecording}
-                onTouchStart={(e) => {
-                  e.preventDefault();
-                  startVoiceRecording();
-                }}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
-                  stopRecording();
-                }}
-                onKeyDown={(e) => {
-                  if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                <button
+                  type='button'
+                  aria-label={intl.formatMessage({
+                    id: voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yStartVoiceInput',
+                  })}
+                  aria-pressed={voiceStatus === 'recording'}
+                  title={hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
+                  disabled={(voiceStatus === 'idle' && !allowUserInput && !isSpeechPlaying) || voiceStatus === 'transcribing'}
+                  className={cn('p-2 border border-gray dark:border-neutral-500 rounded-md bg-transparent disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
+                  onMouseDown={startVoiceRecording}
+                  onMouseUp={stopRecording}
+                  onMouseLeave={stopRecording}
+                  onTouchStart={(e) => {
                     e.preventDefault();
                     startVoiceRecording();
-                  }
-                }}
-                onKeyUp={(e) => {
-                  if (e.key === ' ' || e.key === 'Enter') {
+                  }}
+                  onTouchEnd={(e) => {
                     e.preventDefault();
                     stopRecording();
-                  }
-                }}
-              >
-                {renderVoiceButtonIcon()}
-              </button>
+                  }}
+                  onKeyDown={(e) => {
+                    if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                      e.preventDefault();
+                      startVoiceRecording();
+                    }
+                  }}
+                  onKeyUp={(e) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      e.preventDefault();
+                      stopRecording();
+                    }
+                  }}
+                >
+                  {renderVoiceButtonIcon()}
+                </button>
             )}
           </div>
           <Textarea ref={chatInputRef}
@@ -939,6 +1023,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       const pendingCommit = pendingResponseCommitRef.current;
       pendingResponseCommitRef.current = null;
       stopAudio();
+      setFocusedProductId(null);
       pendingCommit?.();
     }
     // react-modal grabs focus onto its own content wrapper right after mount (based on

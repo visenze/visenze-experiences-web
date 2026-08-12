@@ -697,17 +697,19 @@ export interface WidgetConfig {
      */
     msApiId?: string | number;
     /**
-     * (optional) ElevenLabs API key that gates voice capability in the shopping-assistant
-     * widget: voice input is captured via the browser's built-in speech recognition, and
-     * assistant replies to voice messages are spoken aloud via ElevenLabs text-to-speech.
-     * When unset, all voice UI is hidden and no ElevenLabs requests are made.
+     * (optional) Gates voice capability in the shopping-assistant widget: voice input is
+     * captured via the browser's built-in speech recognition, and assistant replies to voice
+     * messages are spoken aloud via ElevenLabs text-to-speech. When unset (or false), all voice
+     * UI is hidden and no voice requests are made.
      *
-     * WARNING: this key is embedded in client-side code and is visible to end users. Use a
-     * restricted, minimal-permission key and rotate it regularly.
+     * The ElevenLabs credential itself is never held client-side — the voice proxy backend
+     * resolves it server-side from the tenant's `app_key` (see
+     * docs/shopping-assistant-voice-proxy.md). This flag only controls whether the widget shows
+     * voice UI and calls the proxy for this placement.
      *
      * @since 1.0.26
      */
-    elevenLabsApiKey?: string;
+    voiceEnabled?: boolean;
     /**
      * Dimensions of the image to be considered for the algorithm.
      *
@@ -1539,7 +1541,7 @@ export interface WidgetConfig {
       chatAgent: string;
       /**
        * (optional) ElevenLabs voice ID used for spoken replies. Defaults to the widget's
-       * built-in voice when unset. Only takes effect when `appSettings.elevenLabsApiKey` is set.
+       * built-in voice when unset. Only takes effect when `appSettings.voiceEnabled` is set.
        *
        * @since 1.0.26
        */

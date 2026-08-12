@@ -534,7 +534,7 @@ describe('shopping-assistant', () => {
     });
 
     describe('product streaming', () => {
-      it('should display product card when product event arrives after PID token', async () => {
+      it('should display product card as soon as the product event arrives after its PID token, without waiting for the response to finish', async () => {
         renderAssistant();
         openDialogAndWait();
 
@@ -561,11 +561,10 @@ describe('shopping-assistant', () => {
           },
         });
 
-        // Newline triggers product display
         stream.emitEvent('chat_token', { value: '\n' });
         await revealAll();
 
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
+        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
         stream.closeStream();
         await revealAll();
         expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
@@ -592,7 +591,7 @@ describe('shopping-assistant', () => {
         stream.emitEvent('chat_token', { value: '\n' });
         await revealAll();
 
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
+        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
 
         // Second product
         stream.emitEvent('chat_token', { value: '[[pid-2]] Product Two' });
@@ -604,7 +603,7 @@ describe('shopping-assistant', () => {
         stream.emitEvent('chat_token', { value: '\n' });
         await revealAll();
 
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
+        expect(queryAllModal('.wigmix-product-card')).toHaveLength(2);
 
         // Third product
         stream.emitEvent('chat_token', { value: '[[pid-3]] Product Three' });
@@ -616,7 +615,7 @@ describe('shopping-assistant', () => {
         stream.emitEvent('chat_token', { value: '\n' });
         await revealAll();
 
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
+        expect(queryAllModal('.wigmix-product-card')).toHaveLength(3);
 
         stream.closeStream();
         await revealAll();
@@ -676,7 +675,7 @@ describe('shopping-assistant', () => {
         expect(getTextInBody('[[pid-1]]')).toBeNull();
       });
 
-      it('should wait until the response text completes before displaying a product card', async () => {
+      it('should display the product card as soon as its data resolves, without waiting for the response text to complete', async () => {
         renderAssistant();
         openDialogAndWait();
 
@@ -694,7 +693,7 @@ describe('shopping-assistant', () => {
         stream.emitEvent('chat_token', { value: '[[pid-9]]' });
         await revealAll();
 
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
+        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
 
         stream.closeStream();
         await revealAll();
@@ -790,7 +789,7 @@ describe('shopping-assistant', () => {
           data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
         });
         await revealAll();
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
+        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
         stream.closeStream();
         await revealAll();
 
@@ -801,7 +800,7 @@ describe('shopping-assistant', () => {
         expect(sendEventSpy).toHaveBeenCalledWith(Actions.PRODUCT_CLICK, expect.objectContaining({ queryId: 'req-123' }));
       });
 
-      it('should fire PRODUCT_VIEW exactly once after a card appears in the completed response', async () => {
+      it('should fire PRODUCT_VIEW exactly once even though the card mounts live and again as a committed row', async () => {
         const originalIntersectionObserver = (window as any).IntersectionObserver;
         // Only track callbacks whose observer actually attaches to a node via `.observe()` —
         // ProductCard's ref-callback pattern constructs one throwaway observer per render
@@ -832,18 +831,25 @@ describe('shopping-assistant', () => {
           });
           await revealAll();
 
-          expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
-          expect(observerCallbacks).toHaveLength(0);
-
-          stream.closeStream();
-          await revealAll();
-
+          // Card streams in live, before the response finishes, and starts tracking view state.
           expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
           expect(observerCallbacks).toHaveLength(1);
           act(() => {
             observerCallbacks[0]([{ isIntersecting: true }]);
           });
+          expect(sendEventSpy.mock.calls.filter(([action]) => action === Actions.PRODUCT_VIEW)).toHaveLength(1);
 
+          stream.closeStream();
+          await revealAll();
+
+          // The card re-mounts as a committed row (a new DOM subtree, its own observer)...
+          expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
+          expect(observerCallbacks).toHaveLength(2);
+          act(() => {
+            observerCallbacks[1]([{ isIntersecting: true }]);
+          });
+
+          // ...but PRODUCT_VIEW is still only reported once, thanks to skipViewTracking.
           const viewCallsAfterClose = sendEventSpy.mock.calls.filter(([action]) => action === Actions.PRODUCT_VIEW).length;
           expect(viewCallsAfterClose).toBe(1);
         } finally {
@@ -878,7 +884,7 @@ describe('shopping-assistant', () => {
             data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
           });
           await revealAll();
-          expect(observerCallbacks).toHaveLength(0);
+          expect(observerCallbacks).toHaveLength(1);
           stream1.closeStream();
           await revealAll();
 
@@ -933,7 +939,7 @@ describe('shopping-assistant', () => {
         });
         await revealAll();
 
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
+        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
         stream.closeStream();
         await revealAll();
 
@@ -1428,7 +1434,7 @@ describe('shopping-assistant', () => {
 
           stream.emitEvent('chat_token', { value: 'Here are products:\n' });
 
-          // Product data resolves, but stays hidden while the response is incomplete.
+          // Product data resolves and its card streams in live, before the response is complete.
           stream.emitEvent('chat_token', { value: '[[pid-1]] Product One' });
           stream.emitEvent('product', {
             product_id: 'pid-1',
@@ -1438,16 +1444,16 @@ describe('shopping-assistant', () => {
           stream.emitEvent('chat_token', { value: '\n' });
           await revealAll();
 
-          expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
+          expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
 
-          // Error occurs after first product
+          // Error occurs after first product — the card that already streamed in stays put.
           stream.triggerError(new Error('Stream failed after product'));
 
           act(() => {
             jest.runAllTimers();
           });
 
-          expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
+          expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
           expect(getTextInBody('Shopping Assistant')).toBeTruthy();
 
           consoleSpy.mockRestore();
@@ -1845,7 +1851,7 @@ describe('shopping-assistant', () => {
     const makeResult = (transcript: string, isFinal: boolean): any => ({ isFinal, length: 1, 0: { transcript } });
 
     const buildVoiceWidgetConfig = (
-      appSettingsExtra: { elevenLabsApiKey?: string } = { elevenLabsApiKey: 'test-el-key' },
+      appSettingsExtra: { voiceEnabled?: boolean } = { voiceEnabled: true },
       voiceId?: string,
     ): ReturnType<typeof createWidgetConfig> => createWidgetConfig(DEFAULT_CUSTOMIZATIONS, {
       appSettings: {
@@ -1860,7 +1866,7 @@ describe('shopping-assistant', () => {
     });
 
     const renderVoiceAssistant = (
-      appSettingsExtra: { elevenLabsApiKey?: string } = { elevenLabsApiKey: 'test-el-key' },
+      appSettingsExtra: { voiceEnabled?: boolean } = { voiceEnabled: true },
       voiceId?: string,
     ): void => {
       const widgetConfig = buildVoiceWidgetConfig(appSettingsExtra, voiceId);
@@ -2018,9 +2024,9 @@ describe('shopping-assistant', () => {
         await flushMicrotasks();
       });
 
-      const ttsCall = (global.fetch as jest.Mock).mock.calls.find(([callUrl]: [string]) => callUrl.includes('text-to-speech'));
+      const ttsCall = (global.fetch as jest.Mock).mock.calls.find(([callUrl]: [string]) => callUrl.includes('voice/synthesize'));
       expect(ttsCall).toBeTruthy();
-      expect(ttsCall[0]).toContain('/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM');
+      expect(ttsCall[0]).toContain('/v1/voice/synthesize/21m00Tcm4TlvDq8ikWAM');
       const body = JSON.parse(ttsCall[1].body);
       expect(body.text).toBe('Great choice!');
       expect(mockAudioInstances[0].play).toHaveBeenCalled();
@@ -2046,7 +2052,7 @@ describe('shopping-assistant', () => {
       });
       await flushMicrotasks();
 
-      const ttsCalls = (): any[] => (global.fetch as jest.Mock).mock.calls.filter(([callUrl]: [string]) => callUrl.includes('text-to-speech'));
+      const ttsCalls = (): any[] => (global.fetch as jest.Mock).mock.calls.filter(([callUrl]: [string]) => callUrl.includes('voice/synthesize'));
       expect(ttsCalls()).toHaveLength(1);
       expect(JSON.parse(ttsCalls()[0][1].body).text).toBe('This is a great choice.');
       expect(mockAudioInstances).toHaveLength(1);
@@ -2116,7 +2122,7 @@ describe('shopping-assistant', () => {
       expect(getTextInBody('Great choice.')).toBeTruthy();
     });
 
-    it('keeps a product response live until narration ends and never repeats its opening text', async () => {
+    it('shows the product card as soon as it resolves, independent of narration progress, and never repeats its opening text', async () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       (window as any).Audio = MockAudio;
       global.fetch = jest.fn().mockResolvedValue({
@@ -2145,6 +2151,13 @@ describe('shopping-assistant', () => {
         await flushMicrotasks();
       });
 
+      // The card is already resolved and streams into the live grid well before its narration
+      // has even started playing, let alone finished — it doesn't wait on the response or speech.
+      act(() => {
+        jest.advanceTimersByTime(200);
+      });
+      expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
+
       act(() => {
         options.onclose();
         jest.advanceTimersByTime(30 * 5);
@@ -2152,7 +2165,7 @@ describe('shopping-assistant', () => {
 
       expect(getTextInBody('Here ')).toBeTruthy();
       expect(getTextInBody('Here is one great option.')).toBeFalsy();
-      expect(queryAllModal('.wigmix-product-card')).toHaveLength(0);
+      expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
 
       await act(async () => {
         mockAudioInstances[0].onended?.();
@@ -2181,7 +2194,7 @@ describe('shopping-assistant', () => {
       global.fetch = jest.fn()
         .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
 
-      renderVoiceAssistant({ elevenLabsApiKey: 'test-el-key' }, 'custom-voice-id');
+      renderVoiceAssistant({ voiceEnabled: true }, 'custom-voice-id');
       openDialogAndWait();
 
       await speakAndRelease('red dress');
@@ -2195,8 +2208,8 @@ describe('shopping-assistant', () => {
         await flushMicrotasks();
       });
 
-      const ttsCall = (global.fetch as jest.Mock).mock.calls.find(([callUrl]: [string]) => callUrl.includes('text-to-speech'));
-      expect(ttsCall[0]).toContain('/v1/text-to-speech/custom-voice-id');
+      const ttsCall = (global.fetch as jest.Mock).mock.calls.find(([callUrl]: [string]) => callUrl.includes('voice/synthesize'));
+      expect(ttsCall[0]).toContain('/v1/voice/synthesize/custom-voice-id');
     });
 
     it('speaks replies to typed messages when voice reading is enabled', async () => {

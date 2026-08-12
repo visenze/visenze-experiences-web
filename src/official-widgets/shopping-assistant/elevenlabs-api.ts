@@ -1,13 +1,27 @@
 export const DEFAULT_VOICE_ID = '21m00Tcm4TlvDq8ikWAM';
 
-const TTS_ENDPOINT = 'https://api.elevenlabs.io/v1/text-to-speech';
+const OUTPUT_FORMAT = 'mp3_44100_128';
 
-export const synthesizeSpeech = async (apiKey: string, text: string, voiceId: string): Promise<Blob> => {
-  const response = await fetch(`${TTS_ENDPOINT}/${voiceId}?output_format=mp3_44100_128`, {
+// Calls the Product Search voice proxy (see shopping-assistant-voice-proxy-api.md) instead of
+// ElevenLabs directly, so no ElevenLabs key is ever present in browser code.
+export const synthesizeSpeech = async (
+  baseUrl: string,
+  appKey: string,
+  placementId: string | number,
+  text: string,
+  voiceId: string,
+): Promise<Blob> => {
+  const params = new URLSearchParams({
+    app_key: appKey,
+    placement_id: String(placementId),
+    output_format: OUTPUT_FORMAT,
+  });
+
+  const response = await fetch(`${baseUrl}/v1/voice/synthesize/${encodeURIComponent(voiceId)}?${params.toString()}`, {
     method: 'POST',
     headers: {
-      'xi-api-key': apiKey,
       'Content-Type': 'application/json',
+      Accept: 'audio/mpeg',
     },
     body: JSON.stringify({
       text,
@@ -20,7 +34,14 @@ export const synthesizeSpeech = async (apiKey: string, text: string, voiceId: st
   });
 
   if (!response.ok) {
-    throw new Error(`ElevenLabs TTS failed: ${response.status}`);
+    let message = `Voice synthesis failed with HTTP ${response.status}`;
+    try {
+      const error = await response.json();
+      message = error.error?.message || message;
+    } catch {
+      // Response body wasn't JSON (e.g. a plain proxy/gateway error page) — keep the generic message.
+    }
+    throw new Error(message);
   }
 
   return response.blob();

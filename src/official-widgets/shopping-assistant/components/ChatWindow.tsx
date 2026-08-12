@@ -31,6 +31,7 @@ interface ChatWindowProps {
   sendMessage: (message: string) => void;
   streamingProducts?: ProcessedProduct[];
   streamingRequestId?: string;
+  focusedProductId?: string | null;
 }
 
 // Waited between each newly-revealed product card while a reply is still streaming in, so
@@ -78,7 +79,7 @@ const RevealedProducts: FC<RevealedProductsProps> = ({ products, requestId, rend
 
 const ChatWindow: FC<ChatWindowProps> = ({
   isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions,
-  streamingProducts = [], streamingRequestId = '',
+  streamingProducts = [], streamingRequestId = '', focusedProductId = null,
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations, initState } = widgetConfig;
@@ -93,6 +94,73 @@ const ChatWindow: FC<ChatWindowProps> = ({
   // doesn't count a second view. Keyed by request too, so the same product in a later response
   // still gets its own view.
   const viewedProductIdsRef = useRef<Set<string>>(new Set());
+  // The card whose sentence is currently being narrated gets this ref, so it can be scrolled
+  // into view; only one card carries it at a time (see `renderProductCard` below). Mirrors the
+  // "active item" pattern in embedded-search-results/components/SearchHistory.tsx.
+  const focusedCardRef = useRef<HTMLDivElement>(null);
+  // True while the user is actively scrolling (or within a short grace period after their last
+  // gesture) — every automatic/streaming-driven scroll checks this and backs off, so the user's
+  // own scroll always wins. Only real user gestures (wheel/touch) set it; the native `scroll`
+  // event alone can't be trusted to mean "the user did this" since our own programmatic scrolls
+  // fire it too (see `isProgrammaticScrollRef` below).
+  const isUserScrollingRef = useRef(false);
+  const userScrollIdleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // True for a short window around a scroll WE triggered, so the `onScroll` handler below can
+  // tell our own auto-scrolls apart from a genuine user gesture and not misreport them as one.
+  const isProgrammaticScrollRef = useRef(false);
+  const programmaticScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const USER_SCROLL_IDLE_MS = 1000;
+  const PROGRAMMATIC_SCROLL_SETTLE_MS = 500;
+
+  const markUserScrolling = (): void => {
+    isUserScrollingRef.current = true;
+    if (userScrollIdleTimeoutRef.current) {
+      clearTimeout(userScrollIdleTimeoutRef.current);
+    }
+    userScrollIdleTimeoutRef.current = setTimeout((): void => {
+      isUserScrollingRef.current = false;
+      userScrollIdleTimeoutRef.current = null;
+    }, USER_SCROLL_IDLE_MS);
+  };
+
+  const beginProgrammaticScroll = (): void => {
+    isProgrammaticScrollRef.current = true;
+    if (programmaticScrollTimeoutRef.current) {
+      clearTimeout(programmaticScrollTimeoutRef.current);
+    }
+    programmaticScrollTimeoutRef.current = setTimeout((): void => {
+      isProgrammaticScrollRef.current = false;
+      programmaticScrollTimeoutRef.current = null;
+    }, PROGRAMMATIC_SCROLL_SETTLE_MS);
+  };
+
+  useEffect(() => (): void => {
+    if (userScrollIdleTimeoutRef.current) {
+      clearTimeout(userScrollIdleTimeoutRef.current);
+    }
+    if (programmaticScrollTimeoutRef.current) {
+      clearTimeout(programmaticScrollTimeoutRef.current);
+    }
+  }, []);
+
+  const autoScrollToFocusedCard = (): void => {
+    if (isUserScrollingRef.current || !focusedCardRef.current) {
+      return;
+    }
+    beginProgrammaticScroll();
+    // `block: 'center'` rather than 'nearest' — the browser clamps automatically when the card
+    // is close enough to the end of the scrollable content that centering isn't reachable (it
+    // scrolls as far as the container allows instead), so this also degrades correctly near the
+    // bottom of the chat log.
+    focusedCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+  };
+
+  useEffect(() => {
+    if (focusedProductId) {
+      autoScrollToFocusedCard();
+    }
+  }, [focusedProductId]);
 
   const getFile = (image: SearchImageOrPid | undefined): string => {
     if (!image) {
@@ -110,27 +178,52 @@ const ChatWindow: FC<ChatWindowProps> = ({
   const handleScroll = (e: any): void => {
     const t = e.target;
     setShowBottomArrow(t.scrollHeight - t.scrollTop - t.clientHeight > 50);
+    if (isProgrammaticScrollRef.current) {
+      // This scroll event is the tail of one of our own auto-scrolls settling, not the user.
+      return;
+    }
+    markUserScrolling();
   };
 
+  // Unconditional — used both as the streaming-driven auto-scroll primitive (via
+  // `autoScrollToBottom` below) and directly by explicit user actions (the down-arrow button,
+  // "show more suggestions"), which should always jump to bottom regardless of any in-flight
+  // user-scrolling grace period.
   const scrollToBottom = (): void => {
     const scrollContainer = messageScrollRef.current;
     if (scrollContainer) {
+      beginProgrammaticScroll();
       scrollContainer.scrollTop = scrollContainer.scrollHeight;
       setShowBottomArrow(false);
     }
   };
 
+  // Follows new content automatically only while the user isn't actively scrolling themselves —
+  // any real scroll/touch gesture (see `markUserScrolling`) suppresses this until it settles.
+  const autoScrollToBottom = (): void => {
+    if (!isUserScrollingRef.current) {
+      scrollToBottom();
+    }
+  };
+
   useEffect(() => {
-    scrollToBottom();
+    autoScrollToBottom();
   }, [chats.length]);
 
+  // While a product is being narrated, `autoScrollToFocusedCard` (above) owns scrolling instead —
+  // otherwise this would snap to the bottom of the stream on every token/typewriter tick and
+  // scroll the currently-narrated product (which is rarely the last one) out of view.
   useEffect(() => {
-    scrollToBottom();
-  }, [latestMessage]);
+    if (!focusedProductId) {
+      autoScrollToBottom();
+    }
+  }, [latestMessage, focusedProductId]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [streamingProducts.length]);
+    if (!focusedProductId) {
+      autoScrollToBottom();
+    }
+  }, [streamingProducts.length, focusedProductId]);
 
   useEffect(() => {
     if (showAllSuggestions) {
@@ -194,36 +287,69 @@ const ChatWindow: FC<ChatWindowProps> = ({
     return statusParts.join(' ').trim();
   };
 
+  // The grid (see getProductGridCssClasses/getProductGridCssConfig above) only sets a column
+  // gap, no row gap — so the focused card's scale must stay small enough that it can't visually
+  // bleed into the row above/below even with zero vertical breathing room. The ring is folded
+  // into the same box-shadow as the lift shadow (rather than a Tailwind `ring-*` class) because
+  // an inline `boxShadow` would otherwise clobber it — box-shadow is a single CSS property.
+
+  const FOCUSED_SCALE = 0.9;
+
+  const getCardWrapperStyle = (isFocused: boolean): CSSProperties => ({
+    transformOrigin: 'center',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    zIndex: isFocused ? 2 : 1,
+    transform: isFocused ? `scale(${FOCUSED_SCALE})` : undefined,
+    boxShadow: isFocused
+      ? '0 8px 20px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08)'
+      : undefined,
+  });
+
   const renderProductCard = (product: ProcessedProduct, pidx: number, requestId: string): ReactElement => {
     const viewedKey = `${requestId}:${product.product_id}`;
+    const isFocused = !!focusedProductId && product.product_id === focusedProductId;
     return (
-      <ProductCard
-          result={product}
+      <div
           key={`${product.product_id}-${pidx}`}
-          metadata={{
-            queryId: requestId,
-          }}
-          isInWishlist={wishlistPids.includes(product.product_id)}
-          setIsInWishlist={(pid, isInWishlist) => {
-            setWishlistPids((prev) => {
-              const newPids = [...prev];
-              if (isInWishlist && !newPids.includes(pid)) {
-                newPids.push(pid);
-              }
-              if (!isInWishlist && newPids.includes(pid)) {
-                newPids.splice(newPids.indexOf(pid), 1);
-              }
-              return newPids;
-            });
-          }}
-          index={pidx}
-          pwPrefix='sa'
-          isRecommendation={false}
-          hasFindSimilar={false}
-          skipViewTracking={viewedProductIdsRef.current.has(viewedKey)}
-          onProductViewed={() => {
-            viewedProductIdsRef.current.add(viewedKey);
-          }} />
+          ref={isFocused ? focusedCardRef : undefined}
+          className='relative'
+          style={getCardWrapperStyle(isFocused)}
+      >
+        {isFocused && (
+          <span
+            className='absolute top-1 right-1 z-10 rounded-md bg-black/70 dark:bg-white/80
+              px-1.5 py-0.5 text-[10px] font-medium leading-none text-white dark:text-black'
+          >
+            {intl.formatMessage({ id: 'nowDescribing' })}
+          </span>
+        )}
+        <ProductCard
+            result={product}
+            metadata={{
+              queryId: requestId,
+            }}
+            isInWishlist={wishlistPids.includes(product.product_id)}
+            setIsInWishlist={(pid, isInWishlist) => {
+              setWishlistPids((prev) => {
+                const newPids = [...prev];
+                if (isInWishlist && !newPids.includes(pid)) {
+                  newPids.push(pid);
+                }
+                if (!isInWishlist && newPids.includes(pid)) {
+                  newPids.splice(newPids.indexOf(pid), 1);
+                }
+                return newPids;
+              });
+            }}
+            index={pidx}
+            pwPrefix='sa'
+            isRecommendation={false}
+            hasFindSimilar={false}
+            skipViewTracking={viewedProductIdsRef.current.has(viewedKey)}
+            onProductViewed={() => {
+              viewedProductIdsRef.current.add(viewedKey);
+            }} />
+      </div>
     );
   };
 
@@ -238,7 +364,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
              aria-live='polite'
              aria-relevant='additions'
              ref={messageScrollRef}
-             onScroll={handleScroll}>
+             onScroll={handleScroll}
+             onWheel={markUserScrolling}
+             onTouchStart={markUserScrolling}
+             onTouchMove={markUserScrolling}>
           {chats.map((chat, idx) => (
               <div className={cn(
                   'w-full',

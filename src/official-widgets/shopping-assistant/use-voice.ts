@@ -4,11 +4,14 @@ import { DEFAULT_VOICE_ID, sanitizeTextForSpeech, synthesizeSpeech } from './ele
 export type VoiceStatus = 'idle' | 'recording' | 'transcribing';
 
 interface UseVoiceOptions {
-  apiKey?: string;
+  enabled?: boolean;
+  appKey: string;
+  placementId: string | number;
+  baseUrl: string;
   voiceId?: string;
   onTranscript: (text: string) => void;
-  onSpeechStart?: (revealTarget: number, durationMs?: number) => void;
-  onSpeechEnd?: (revealTarget: number) => void;
+  onSpeechStart?: (revealTarget: number, productId: string | null, durationMs?: number) => void;
+  onSpeechEnd?: (revealTarget: number, productId: string | null) => void;
   onSpeechQueueEnd?: () => void;
 }
 
@@ -20,7 +23,7 @@ interface UseVoiceResult {
   hasError: boolean;
   startRecording: () => void;
   stopRecording: () => void;
-  speak: (text: string, revealTarget: number) => boolean;
+  speak: (text: string, revealTarget: number, productId: string | null) => boolean;
   hasPendingSpeech: () => boolean;
   stopAudio: () => void;
 }
@@ -63,6 +66,7 @@ interface QueuedSpeech {
   promise: Promise<Blob>;
   session: number;
   revealTarget: number;
+  productId: string | null;
 }
 
 // Waited before actually stopping recognition on release, so trailing words aren't clipped.
@@ -80,7 +84,10 @@ const getSpeechRecognitionCtor = (): (new () => SpeechRecognitionLike) | undefin
 const isVoiceSupported = (): boolean => !!getSpeechRecognitionCtor();
 
 const useVoice = ({
-  apiKey,
+  enabled,
+  appKey,
+  placementId,
+  baseUrl,
   voiceId,
   onTranscript,
   onSpeechStart,
@@ -114,8 +121,8 @@ const useVoice = ({
     onSpeechQueueEndRef.current = onSpeechQueueEnd;
   }, [onSpeechEnd, onSpeechQueueEnd, onSpeechStart, onTranscript]);
 
-  const voiceEnabled = !!apiKey && isVoiceSupported();
-  const speechOutputEnabled = !!apiKey;
+  const voiceEnabled = !!enabled && isVoiceSupported();
+  const speechOutputEnabled = !!enabled;
 
   const updateStatus = (next: VoiceStatus): void => {
     statusRef.current = next;
@@ -179,7 +186,7 @@ const useVoice = ({
   };
 
   const startRecording = (): void => {
-    if (!apiKey || statusRef.current !== 'idle') {
+    if (!enabled || statusRef.current !== 'idle') {
       return;
     }
     const Ctor = getSpeechRecognitionCtor();
@@ -270,7 +277,7 @@ const useVoice = ({
           if (item.session !== playSessionRef.current) {
             return;
           }
-          onSpeechEndRef.current?.(item.revealTarget);
+          onSpeechEndRef.current?.(item.revealTarget, item.productId);
           gapTimerRef.current = setTimeout((): void => {
             gapTimerRef.current = null;
             playNext();
@@ -286,7 +293,7 @@ const useVoice = ({
             const durationMs = Number.isFinite(audio.duration) && audio.duration > 0
               ? audio.duration * 1000
               : undefined;
-            onSpeechStartRef.current?.(item.revealTarget, durationMs);
+            onSpeechStartRef.current?.(item.revealTarget, item.productId, durationMs);
           })
           .catch((err) => {
             console.error(err);
@@ -297,14 +304,14 @@ const useVoice = ({
         console.error(err);
         isPlayingRef.current = false;
         if (item.session === playSessionRef.current) {
-          onSpeechEndRef.current?.(item.revealTarget);
+          onSpeechEndRef.current?.(item.revealTarget, item.productId);
           playNext();
         }
       });
   };
 
-  const speak = (text: string, revealTarget: number): boolean => {
-    if (!apiKey) {
+  const speak = (text: string, revealTarget: number, productId: string | null): boolean => {
+    if (!enabled) {
       return false;
     }
     const sanitized = sanitizeTextForSpeech(text);
@@ -312,9 +319,9 @@ const useVoice = ({
       return false;
     }
     const session = playSessionRef.current;
-    const promise = synthesizeSpeech(apiKey, sanitized, voiceId || DEFAULT_VOICE_ID);
+    const promise = synthesizeSpeech(baseUrl, appKey, placementId, sanitized, voiceId || DEFAULT_VOICE_ID);
     promise.catch(() => {});
-    speechQueueRef.current.push({ promise, session, revealTarget });
+    speechQueueRef.current.push({ promise, session, revealTarget, productId });
     playNext();
     return true;
   };
