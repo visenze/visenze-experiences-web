@@ -13,14 +13,13 @@ import type { ProcessedProduct } from '../../../common/types/product';
 interface CarouselProps {
   results: ProcessedProduct[];
   metadata: Record<string, any>;
-  latestMessage?: string;
 }
 
 // Fallback card scroll width (card + gap) used when the carousel is empty.
 const DEFAULT_CARD_SCROLL_WIDTH = 216;
 const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
 
-const Carousel: FC<CarouselProps> = ({ results, metadata, latestMessage = '' }) => {
+const Carousel: FC<CarouselProps> = ({ results, metadata }) => {
   const { widgetConfig } = useContext(WidgetDataContext);
   const { customizations, initState } = widgetConfig;
   const [wishlistPids, setWishlistPids] = useState<string[]>(initState?.wishlistProductIds || []);
@@ -34,6 +33,12 @@ const Carousel: FC<CarouselProps> = ({ results, metadata, latestMessage = '' }) 
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    // Keydown bubbles from every focusable descendant (each ProductCard's link/wishlist button) -
+    // only scroll when the carousel row itself is focused, so nested controls and native page
+    // keyboard behavior (e.g. Home/End scrolling the page) aren't hijacked.
+    if (event.target !== event.currentTarget) {
+      return;
+    }
     const container = scrollContainerRef.current;
     if (!container) {
       return;
@@ -85,12 +90,6 @@ const Carousel: FC<CarouselProps> = ({ results, metadata, latestMessage = '' }) 
 
   return (
     <div data-pw='rm-product-result-carousel'>
-      <div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
-        {[
-          latestMessage,
-          results.length ? intl.formatMessage({ id: 'a11yProductResultsShown' }, { count: results.length }) : '',
-        ].filter(Boolean).join(' ')}
-      </div>
       <div
         ref={scrollContainerRef}
         className={`flex space-x-4 overflow-x-auto pb-4 no-scrollbar p-2 items-end text-primary ${FOCUS_VISIBLE_CLASSES}`}
