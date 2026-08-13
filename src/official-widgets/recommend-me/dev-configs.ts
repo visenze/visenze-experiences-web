@@ -9,7 +9,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     appKey: '',
     placementId: '',
     endpoint: '',
-    //cloud: 'aws', // remove this if you are testing in staging environment
+    cloud: 'aws', // remove this if you are testing in staging environment
   },
   displaySettings: {
     cssSelector: '.recommend-me-widget',

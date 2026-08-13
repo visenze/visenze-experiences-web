@@ -46,7 +46,9 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
   const root = useContext(RootContext);
   const intl = useIntl();
 
-  const { productResults, recommendMeWithQuery, isStreaming, requestId, latestMessage } = useRecommendMe({
+  const {
+    productResults, recommendMeWithQuery, isStreaming, requestId, latestMessage, error: chatError,
+  } = useRecommendMe({
     productId,
   });
 
@@ -108,14 +110,24 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
     setQueryValue(value);
     setHasSearched(true);
     setIsChatQueryPending(true);
+    setHasError(false);
     recommendMeWithQuery(value);
   };
 
   useEffect(() => {
-    if (isStreaming) {
+    if (isStreaming || chatError) {
       setIsChatQueryPending(false);
     }
-  }, [isStreaming]);
+  }, [isStreaming, chatError]);
+
+  // Surface a chat-stream failure (e.g. the connection never opens) the same way a suggestion-tab
+  // failure is shown - without this, isChatQueryPending clearing above would just re-enable the
+  // input with no indication anything went wrong.
+  useEffect(() => {
+    if (chatError) {
+      handleError(chatError);
+    }
+  }, [chatError]);
 
   const suggestionSearch = (isComplementary: boolean): void => {
     if (isLoading) {

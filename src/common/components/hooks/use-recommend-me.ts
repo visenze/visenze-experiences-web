@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 import { getFlattenProduct } from '../../utils';
@@ -79,6 +79,10 @@ const useRecommendMe = ({
   const [isStreaming, setIsStreaming] = useState(false);
   const [requestId, setRequestId] = useState('');
   const [error, setError] = useState('');
+  // Tracks the in-flight request so a new query can cancel a previous one that's still open
+  // (or silently retrying after a failure) instead of leaving two streams writing into this
+  // same state concurrently.
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Retrieve user id and session id from ViSearch client
   let visenzeUserId = '';
@@ -92,9 +96,16 @@ const useRecommendMe = ({
       return;
     }
 
+    // Cancel any previous request still open (or silently retrying after a failure) before
+    // starting a new one.
+    abortControllerRef.current?.abort();
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     // Prepare for a new list of products
     setProductResults([]);
     setLatestMessage('');
+    setError('');
 
     // Setup query params needed for Recommend Me api
     const params = new URLSearchParams({
@@ -118,7 +129,10 @@ const useRecommendMe = ({
     const products: ProcessedProduct[] = [];
 
     // Listen to the event stream and retrieve relevant data based on the event type
-    fetchEventSource(`${base}${recommendMePath}?${params.toString()}`, {
+    // Wrapped in Promise.resolve() so a test double that doesn't return a real promise can't
+    // throw here - the real fetchEventSource always returns one.
+    Promise.resolve(fetchEventSource(`${base}${recommendMePath}?${params.toString()}`, {
+      signal: abortController.signal,
       async onopen() {
         setIsStreaming(true);
       },
@@ -150,9 +164,16 @@ const useRecommendMe = ({
       },
       onerror(err) {
         console.error(err);
-        setError(err);
+        setIsStreaming(false);
+        setError(err instanceof Error ? err.message : String(err));
+        // fetchEventSource retries automatically forever unless onerror throws - rethrow so a
+        // real failure (bad config, connection refused, etc.) surfaces immediately instead of
+        // silently hammering the endpoint while the UI looks stuck. The user can always retry
+        // by submitting a new query, which aborts and supersedes this one.
+        throw err;
       },
-    });
+      // The rejection from the rethrow above is already handled via setError; nothing more to do.
+    })).catch(() => {});
   };
 
   return {

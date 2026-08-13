@@ -116,7 +116,14 @@ describe('recommend-me', () => {
       },
       triggerError: (error: Error): void => {
         act(() => {
-          onerror(error);
+          // The real fetchEventSource wraps onerror in a try/catch and treats a thrown error as a
+          // signal to stop retrying (see @microsoft/fetch-event-source's fetch.js) - mirror that
+          // here so a deliberate throw from the hook's onerror doesn't propagate as a raw crash.
+          try {
+            onerror(error);
+          } catch {
+            // expected - onerror throwing means "stop retrying", not an actual test failure
+          }
         });
       },
     };
@@ -613,6 +620,33 @@ describe('recommend-me', () => {
         // Should not crash
         expect(testComponent.container.querySelector('.pt-4')).toBeTruthy();
         expect(consoleSpy).toHaveBeenCalled();
+
+        consoleSpy.mockRestore();
+      });
+
+      it('recovers with a visible error instead of getting stuck if the connection fails before it ever opens', () => {
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+        renderRecommendMe('pid-found');
+
+        // Deliberately never call stream.openStream() - the connection fails before onopen fires,
+        // which previously left isChatQueryPending stuck true forever with no visible error.
+        const stream = sendQueryAndGetStreamController('error query');
+        stream.triggerError(new Error('Connection refused'));
+
+        const searchButton = testComponent.container.querySelector('[data-pw="rm-recommend-me-button"]') as HTMLButtonElement;
+        const searchInput = testComponent.container.querySelector('[data-pw="rm-recommend-me-search-bar"]') as HTMLInputElement;
+        expect(searchInput.disabled).toBe(false);
+
+        const errorEl = testComponent.container.querySelector('.text-red-500');
+        expect(errorEl).toBeTruthy();
+
+        // The button itself stays disabled only because the input was cleared - typing again
+        // re-enables it, proving the widget is usable, not permanently stuck.
+        act(() => {
+          fireEvent.change(searchInput, { target: { value: 'try again' } });
+        });
+        expect(searchButton.disabled).toBe(false);
 
         consoleSpy.mockRestore();
       });
