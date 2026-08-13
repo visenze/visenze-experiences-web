@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- shopping-assistant: Optional voice input/output, gated on `appSettings.elevenLabsApiKey` (new; also new `customizations.chatbot.voiceId`). Press-and-hold the mic button to speak — live captions appear in the input via the browser's speech recognition, and releasing sends the message. Replies to voice messages are read aloud via ElevenLabs text-to-speech, sentence-by-sentence as the reply streams in. The on-screen reply text for voice turns holds briefly until narration is about to start, then reveals as a typewriter in step with the audio, so text and voice feel like one synchronized stream instead of racing each other.
 
 ### Fixed
 
@@ -30,6 +29,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Chore
+
+## [1.0.29](https://github.com/visenze/visenze-experiences-web/compare/1.0.28...1.0.29)
+
+<!-- BEGIN visenze-experiences-web 1.0.29 -->
+
+### Added
+
+- shopping-assistant: Optional voice input/output, gated on `appSettings.voiceEnabled` (new; also new `customizations.chatbot.voiceId`). Press-and-hold the mic button to speak — live captions appear in the input via the browser's speech recognition, and releasing sends the message. Replies to voice messages, including the assistant's opening/greeting messages, are read aloud via ElevenLabs text-to-speech, sentence-by-sentence as the reply streams in. The on-screen reply text for voice turns holds briefly until narration is about to start, then reveals as a typewriter in step with the audio, so text and voice feel like one synchronized stream instead of racing each other. The ElevenLabs credential is never held client-side — a backend voice proxy resolves it server-side from the tenant's `app_key`, so `voiceEnabled` only toggles the voice UI and proxy calls for a placement. If the proxy call fails (offline, quota, outage), narration falls back to the browser's own speech synthesis rather than going silent. While a reply is being narrated, the product card it's currently describing is marked "Now Describing" and auto-scrolled into view, backing off automatically whenever the user is scrolling manually.
+
+<!-- END visenze-experiences-web 1.0.29 -->
 
 ## [1.0.28](https://github.com/visenze/visenze-experiences-web/compare/1.0.27...1.0.28)
 
