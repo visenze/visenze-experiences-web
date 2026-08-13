@@ -231,6 +231,12 @@ const ChatWindow: FC<ChatWindowProps> = ({
     }
   }, [showAllSuggestions]);
 
+  useEffect(() => {
+    if (showAllSuggestions) {
+      firstExtraSuggestionRef.current?.focus();
+    }
+  }, [showAllSuggestions]);
+
   const processMessageForDisplay = (message: string): string => message
       // quick sanitization
       .replaceAll(/</g, '&lt;')

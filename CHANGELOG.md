@@ -31,6 +31,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.28](https://github.com/visenze/visenze-experiences-web/compare/1.0.27...1.0.28)
+
+<!-- BEGIN visenze-experiences-web 1.0.28 -->
+
+### Added
+
+- recommend-me: Ported `chat_token`/`[[product_id]]` token processing from shopping-assistant (`stripTokensForDisplay`, `resolveProducts`), including live display of the streamed recommendation message.
+- recommend-me: Added accessibility support ported from shopping-assistant — focus-visible outlines on interactive buttons, `aria-label`s on the search input and product carousel, `role='list'`/`'listitem'` and keyboard-scrollable carousel, `role='alert'` on error messages, and a live `role='status'` region announcing loading/result state to screen readers.
+
+<!-- END visenze-experiences-web 1.0.28 -->
+
 ## [1.0.27](https://github.com/visenze/visenze-experiences-web/compare/1.0.26...1.0.27)
 
 <!-- BEGIN visenze-experiences-web 1.0.27 -->

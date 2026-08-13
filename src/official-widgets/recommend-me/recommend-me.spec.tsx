@@ -116,7 +116,14 @@ describe('recommend-me', () => {
       },
       triggerError: (error: Error): void => {
         act(() => {
-          onerror(error);
+          // The real fetchEventSource wraps onerror in a try/catch and treats a thrown error as a
+          // signal to stop retrying (see @microsoft/fetch-event-source's fetch.js) - mirror that
+          // here so a deliberate throw from the hook's onerror doesn't propagate as a raw crash.
+          try {
+            onerror(error);
+          } catch {
+            // expected - onerror throwing means "stop retrying", not an actual test failure
+          }
         });
       },
     };
@@ -348,6 +355,20 @@ describe('recommend-me', () => {
         expect(testComponent.container.querySelector('[data-pw="rm-product-loader-row"]')).toBeTruthy();
       });
 
+      it('shows the loading state, not the "no products found" fallback, in the gap before the stream actually opens', () => {
+        renderRecommendMe('pid-found');
+
+        // sendQueryAndGetStreamController submits the query but does not call stream.openStream()
+        // yet - this mirrors the real async gap between clicking "Show Me" and fetchEventSource's
+        // onopen actually firing, during which isStreaming/isLoading are both still false.
+        sendQueryAndGetStreamController('red shoes');
+
+        const statusMessage = testComponent.container.querySelector('[data-pw="rm-status-message"]');
+        expect(statusMessage?.textContent).toBe('Loading recommendations');
+        expect(testComponent.container.querySelector('[data-pw="rm-product-loader-row"]')).toBeTruthy();
+        expect(testComponent.container.querySelector('[data-pw="rm-product-result-carousel"]')).toBeNull();
+      });
+
       it('should display products progressively as they stream in', () => {
         renderRecommendMe('pid-found');
 
@@ -358,8 +379,9 @@ describe('recommend-me', () => {
         // Initially: loader visible, no products
         expect(testComponent.container.querySelector('[data-pw="rm-product-loader-row"]')).toBeTruthy();
 
-        // First product arrives
+        // First product arrives, followed by its [[product_id]] token in the text
         stream.emitProduct(createMockProduct(1));
+        stream.emitEvent('chat_token', { value: '[[sse-pid-1]] ' });
 
         act(() => {
           jest.runAllTimers();
@@ -368,15 +390,17 @@ describe('recommend-me', () => {
         // Loader still visible during streaming, but product should be queued
         expect(testComponent.container.querySelector('[data-pw="rm-product-loader-row"]')).toBeTruthy();
 
-        // Second product arrives
+        // Second product arrives, followed by its token
         stream.emitProduct(createMockProduct(2));
+        stream.emitEvent('chat_token', { value: '[[sse-pid-2]] ' });
 
         act(() => {
           jest.runAllTimers();
         });
 
-        // Third product arrives
+        // Third product arrives, followed by its token
         stream.emitProduct(createMockProduct(3));
+        stream.emitEvent('chat_token', { value: '[[sse-pid-3]] ' });
 
         act(() => {
           jest.runAllTimers();
@@ -406,9 +430,10 @@ describe('recommend-me', () => {
         stream.openStream();
         stream.emitEvent('reqid', { value: 'req-456' });
 
-        // Emit 5 products one by one
+        // Emit 5 products one by one, each followed by its [[product_id]] token in the text
         [1, 2, 3, 4, 5].forEach((i) => {
           stream.emitProduct(createMockProduct(i));
+          stream.emitEvent('chat_token', { value: `[[sse-pid-${i}]] ` });
         });
 
         act(() => {
@@ -446,6 +471,71 @@ describe('recommend-me', () => {
         // After stream closes: loader gone, carousel visible
         expect(testComponent.container.querySelector('[data-pw="rm-product-loader-row"]')).toBeNull();
         expect(testComponent.container.querySelector('[data-pw="rm-product-result-carousel"]')).toBeTruthy();
+      });
+    });
+
+    describe('chat_token / heartbeat / stop_token handling', () => {
+      it('should order products by first-appearance of their [[product_id]] token, not arrival order', () => {
+        renderRecommendMe('pid-found');
+
+        const stream = sendQueryAndGetStreamController('red shoes');
+        stream.openStream();
+        stream.emitEvent('reqid', { value: 'req-token-order' });
+
+        // Product 2's payload arrives first...
+        stream.emitProduct(createMockProduct(2));
+        // ...but its token only appears in the text after product 1's token.
+        stream.emitEvent('chat_token', { value: 'Here are two options: ' });
+        stream.emitEvent('chat_token', { value: '[[sse-pid-1]] a nice pair. ' });
+        // Product 1's payload arrives after its token has already streamed.
+        stream.emitProduct(createMockProduct(1));
+        stream.emitEvent('chat_token', { value: '[[sse-pid-2]] another pair.' });
+
+        stream.emitEvent('stop_token', {});
+        stream.closeStream();
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        const brands = Array.from(testComponent.container.querySelectorAll('.wigmix-product-card-secondary-title'))
+          .map((el) => el.textContent);
+        expect(brands).toEqual(['SSE Brand 1', 'SSE Brand 2']);
+      });
+
+      it('should ignore heartbeat events without affecting streaming state or products', () => {
+        renderRecommendMe('pid-found');
+        const input = testComponent.container.querySelector('input') as HTMLInputElement;
+
+        const stream = sendQueryAndGetStreamController('red shoes');
+        stream.openStream();
+        stream.emitEvent('reqid', { value: 'req-heartbeat' });
+        stream.emitEvent('heartbeat', {});
+        stream.emitEvent('heartbeat', {});
+
+        // Heartbeat should not end the stream or throw
+        expect(input.disabled).toBe(true);
+
+        stream.closeStream();
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(input.disabled).toBe(false);
+      });
+
+      it('should stop the stream when a stop_token event is received', () => {
+        renderRecommendMe('pid-found');
+        const input = testComponent.container.querySelector('input') as HTMLInputElement;
+
+        const stream = sendQueryAndGetStreamController('red shoes');
+        stream.openStream();
+        expect(input.disabled).toBe(true);
+
+        stream.emitEvent('stop_token', {});
+
+        expect(input.disabled).toBe(false);
       });
     });
 
@@ -533,6 +623,33 @@ describe('recommend-me', () => {
 
         consoleSpy.mockRestore();
       });
+
+      it('recovers with a visible error instead of getting stuck if the connection fails before it ever opens', () => {
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+        renderRecommendMe('pid-found');
+
+        // Deliberately never call stream.openStream() - the connection fails before onopen fires,
+        // which previously left isChatQueryPending stuck true forever with no visible error.
+        const stream = sendQueryAndGetStreamController('error query');
+        stream.triggerError(new Error('Connection refused'));
+
+        const searchButton = testComponent.container.querySelector('[data-pw="rm-recommend-me-button"]') as HTMLButtonElement;
+        const searchInput = testComponent.container.querySelector('[data-pw="rm-recommend-me-search-bar"]') as HTMLInputElement;
+        expect(searchInput.disabled).toBe(false);
+
+        const errorEl = testComponent.container.querySelector('.text-red-500');
+        expect(errorEl).toBeTruthy();
+
+        // The button itself stays disabled only because the input was cleared - typing again
+        // re-enables it, proving the widget is usable, not permanently stuck.
+        act(() => {
+          fireEvent.change(searchInput, { target: { value: 'try again' } });
+        });
+        expect(searchButton.disabled).toBe(false);
+
+        consoleSpy.mockRestore();
+      });
     });
 
     describe('SSE request parameters', () => {
@@ -565,6 +682,349 @@ describe('recommend-me', () => {
         expect(url).toContain('brand');
         expect(url).toContain('price');
       });
+    });
+  });
+
+  describe('token processing', () => {
+    it('recognizes a [[product_id]] token that arrives split across multiple chat_token chunks', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-split-token' });
+      stream.emitProduct(createMockProduct(1));
+
+      // The real backend splits tokens mid-string across chunks (e.g. "Levi's" as "L", "ev", "i's").
+      stream.emitEvent('chat_token', { value: 'Here is a match: ' });
+      stream.emitEvent('chat_token', { value: '[[sse-' });
+      stream.emitEvent('chat_token', { value: 'pid-1' });
+      stream.emitEvent('chat_token', { value: ']]' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const carousel = testComponent.container.querySelector('[data-pw="rm-product-result-carousel"]');
+      const productCards = carousel?.querySelectorAll('.wigmix-product-card');
+      expect(productCards?.length).toBe(1);
+    });
+
+    it('does not crash or render a card for a [[product_id]] token whose product event never arrives', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-missing-payload' });
+      stream.emitEvent('chat_token', { value: 'Here is something: [[sse-pid-missing]]' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const carousel = testComponent.container.querySelector('[data-pw="rm-product-result-carousel"]');
+      expect(carousel).toBeTruthy();
+      const productCards = carousel?.querySelectorAll('.wigmix-product-card');
+      expect(productCards?.length).toBe(0);
+    });
+
+    it('does not duplicate a product when its [[product_id]] token appears twice in the streamed text', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-dup-token' });
+      stream.emitProduct(createMockProduct(1));
+      stream.emitEvent('chat_token', { value: 'Check this out: [[sse-pid-1]]. ' });
+      stream.emitEvent('chat_token', { value: 'Again, [[sse-pid-1]] is great.' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const carousel = testComponent.container.querySelector('[data-pw="rm-product-result-carousel"]');
+      const productCards = carousel?.querySelectorAll('.wigmix-product-card');
+      expect(productCards?.length).toBe(1);
+    });
+
+    it('never leaks raw [[...]] or ((...)) markers into the visible text', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-no-leak' });
+      stream.emitProduct(createMockProduct(1));
+      stream.emitEvent('chat_token', { value: 'Try this: [[sse-pid-1]] and maybe ((a red dress)) too.' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(testComponent.container.textContent).not.toContain('[[');
+      expect(testComponent.container.textContent).not.toContain('((');
+    });
+
+    it('orders three products by first token appearance even when their product events arrive in a different sequence', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-order-three' });
+
+      // Arrival order is 3, 1, 2 - token order in the text will be 2, 3, 1.
+      stream.emitProduct(createMockProduct(3));
+      stream.emitProduct(createMockProduct(1));
+      stream.emitEvent('chat_token', { value: 'Recommended: [[sse-pid-2]] then ' });
+      stream.emitProduct(createMockProduct(2));
+      stream.emitEvent('chat_token', { value: '[[sse-pid-3]] then [[sse-pid-1]].' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const brands = Array.from(testComponent.container.querySelectorAll('.wigmix-product-card-secondary-title'))
+        .map((el) => el.textContent);
+      expect(brands).toEqual(['SSE Brand 2', 'SSE Brand 3', 'SSE Brand 1']);
+    });
+
+    it('clears the previous query\'s products when a new query\'s response has none', () => {
+      renderRecommendMe('pid-found');
+
+      const firstStream = sendQueryAndGetStreamController('red shoes');
+      firstStream.openStream();
+      firstStream.emitEvent('reqid', { value: 'req-first' });
+      firstStream.emitProduct(createMockProduct(1));
+      firstStream.emitEvent('chat_token', { value: 'Here you go: [[sse-pid-1]].' });
+      firstStream.emitEvent('stop_token', {});
+      firstStream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(testComponent.container.querySelectorAll('.wigmix-product-card').length).toBe(1);
+
+      // A follow-up, prose-only query returns no product tokens at all.
+      const secondStream = sendQueryAndGetStreamController('tell me a joke');
+      secondStream.openStream();
+      secondStream.emitEvent('reqid', { value: 'req-second' });
+      secondStream.emitEvent('chat_token', { value: 'Sorry, I can only help with product recommendations.' });
+      secondStream.emitEvent('stop_token', {});
+      secondStream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const carousel = testComponent.container.querySelector('[data-pw="rm-product-result-carousel"]');
+      expect(carousel?.querySelectorAll('.wigmix-product-card').length).toBe(0);
+
+      const status = testComponent.getByRole('status');
+      expect(status.textContent).not.toContain('Product results shown');
+    });
+  });
+
+  describe('accessibility', () => {
+    it('announces the loading state via the live status region while streaming', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+
+      const status = testComponent.getByRole('status');
+      expect(status.textContent).toBe('Loading recommendations');
+    });
+
+    it('displays the streamed message live and visibly while streaming is still in progress', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-live-message' });
+      stream.emitProduct(createMockProduct(1));
+      stream.emitEvent('chat_token', { value: 'Here you go: [[sse-pid-1]].' });
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      // The message must show up while still streaming (not only once the stream ends),
+      // and it must be visible to sighted users, not just announced to screen readers.
+      const visibleMessage = testComponent.container.querySelector('[data-pw="rm-status-message"]');
+      expect(visibleMessage?.textContent).toContain('Here you go:');
+      expect(visibleMessage?.className).not.toContain('sr-only');
+
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+    });
+
+    it('does not feed the growing streamed text into the screen-reader live region token by token', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-no-live-spam' });
+      stream.emitProduct(createMockProduct(1));
+      stream.emitEvent('chat_token', { value: 'Here you go: [[sse-pid-1]].' });
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      // While still streaming, the screen-reader status must stay on the static loading
+      // message - repeatedly mutating a live region with partial text is a known anti-pattern
+      // that causes screen readers to cut themselves off mid-announcement.
+      const status = testComponent.getByRole('status');
+      expect(status.textContent).toBe('Loading recommendations');
+      expect(status.textContent).not.toContain('Here you go:');
+
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      // Once the request finishes, the screen-reader region updates exactly once with the
+      // final message.
+      expect(status.textContent).toContain('Here you go:');
+    });
+
+    it('announces the result count and streamed message in the live status region once streaming ends', () => {
+      renderRecommendMe('pid-found');
+
+      const stream = sendQueryAndGetStreamController('red shoes');
+      stream.openStream();
+      stream.emitEvent('reqid', { value: 'req-status-update' });
+      stream.emitProduct(createMockProduct(1));
+      stream.emitEvent('chat_token', { value: 'Here you go: [[sse-pid-1]].' });
+      stream.emitEvent('stop_token', {});
+      stream.closeStream();
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const status = testComponent.getByRole('status');
+      expect(status.textContent).toContain('Product results shown: 1');
+      expect(status.textContent).toContain('Here you go:');
+    });
+
+    it('marks the visible error message with role="alert"', () => {
+      const mockProductMultisearch = jest.fn().mockImplementation((_params, _success, errorHandler) => {
+        errorHandler('Invalid image or im_url.');
+      });
+      const { widgetConfig, widgetClient } = createTestClient({
+        productMultisearch: mockProductMultisearch,
+      });
+      testComponent = renderWidget(<RecommendMe productId='pid-found' />, {
+        widgetConfig,
+        widgetClient,
+        messages: texts['en'],
+      });
+
+      act(() => {
+        fireEvent.click(testComponent.getByText('Similar Products'));
+      });
+
+      const alertEl = testComponent.getByRole('alert');
+      expect(alertEl.textContent).toBe('The image or query was not found. Please try again later.');
+    });
+
+    it('exposes a real aria-label on the free-text search input', () => {
+      renderRecommendMe('pid-found');
+
+      const input = testComponent.container.querySelector('input') as HTMLInputElement;
+      const label = input.getAttribute('aria-label');
+      expect(label).toBeTruthy();
+      expect(label).toBe('Type your recommendation query');
+    });
+
+    it('exposes role="list" on the carousel and role="listitem" on each product wrapper', () => {
+      const mockProductMultisearch = jest.fn().mockImplementation((_params, successHandler) => {
+        successHandler(getStandardMultiSearchSuccessResponse());
+      });
+      const { widgetConfig, widgetClient } = createTestClient({
+        productMultisearch: mockProductMultisearch,
+      });
+      testComponent = renderWidget(<RecommendMe productId='pid-found' />, {
+        widgetConfig,
+        widgetClient,
+        messages: texts['en'],
+      });
+
+      act(() => {
+        fireEvent.click(testComponent.getByText('Similar Products'));
+      });
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const list = testComponent.container.querySelector('[data-pw="rm-product-result-row"]');
+      expect(list?.getAttribute('role')).toBe('list');
+      const listItems = list?.querySelectorAll('[role="listitem"]');
+      expect(listItems?.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('carousel keyboard navigation', () => {
+    const renderWithProducts = (): void => {
+      const mockProductMultisearch = jest.fn().mockImplementation((_params, successHandler) => {
+        successHandler(getStandardMultiSearchSuccessResponse());
+      });
+      const { widgetConfig, widgetClient } = createTestClient({
+        productMultisearch: mockProductMultisearch,
+      });
+      testComponent = renderWidget(<RecommendMe productId='pid-found' />, {
+        widgetConfig,
+        widgetClient,
+        messages: texts['en'],
+      });
+
+      act(() => {
+        fireEvent.click(testComponent.getByText('Similar Products'));
+      });
+
+      act(() => {
+        jest.runAllTimers();
+      });
+    };
+
+    it('scrolls the carousel when the row itself is focused and an arrow key is pressed', () => {
+      renderWithProducts();
+
+      const row = testComponent.container.querySelector('[data-pw="rm-product-result-row"]') as HTMLDivElement;
+      // jsdom doesn't implement Element.scrollBy, so stub it directly rather than spyOn.
+      const scrollBySpy = jest.fn();
+      row.scrollBy = scrollBySpy;
+
+      fireEvent.keyDown(row, { key: 'ArrowRight' });
+
+      expect(scrollBySpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not hijack a nested product link\'s keyboard behavior even though keydown bubbles to the row', () => {
+      renderWithProducts();
+
+      const row = testComponent.container.querySelector('[data-pw="rm-product-result-row"]') as HTMLDivElement;
+      const scrollBySpy = jest.fn();
+      row.scrollBy = scrollBySpy;
+      const productLink = testComponent.container.querySelector('[data-testid="wigmix-product-card-anchor"]') as HTMLAnchorElement;
+
+      // Simulate the real DOM behavior: keydown fires on the focused link and bubbles to the row.
+      fireEvent.keyDown(productLink, { key: 'ArrowRight', bubbles: true });
+
+      expect(scrollBySpy).not.toHaveBeenCalled();
     });
   });
 
@@ -658,6 +1118,51 @@ describe('recommend-me', () => {
     expect(carousel).toBeTruthy();
     const productCards = carousel?.querySelectorAll('.wigmix-product-card');
     expect(productCards?.length).toBe(0);
+
+    // And the fallback "no products found" message should now show, instead of nothing at all.
+    const statusMessage = testComponent.container.querySelector('[data-pw="rm-status-message"]');
+    expect(statusMessage?.textContent).toBe(
+      'Sorry, we weren\'t able to find any products similar to the one you searched for. Please try searching with a different product or keyword.',
+    );
+  });
+
+  it('does not show the "no products found" fallback before any search has been made', () => {
+    renderRecommendMe('pid-found');
+
+    const statusMessage = testComponent.container.querySelector('[data-pw="rm-status-message"]');
+    expect(statusMessage?.textContent).toBe('');
+  });
+
+  it('shows the "no products found" fallback instead of the backend message when a chat query returns no products', () => {
+    renderRecommendMe('pid-found');
+
+    const stream = sendQueryAndGetStreamController('a spaceship');
+    stream.openStream();
+    stream.emitEvent('reqid', { value: 'req-no-products' });
+    stream.emitEvent('chat_token', { value: 'It seems like you are looking for something unrelated to this product.' });
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    // Even while still streaming, the raw backend text must never appear for a response that
+    // hasn't resolved any products yet - otherwise it would flash before being replaced below.
+    const statusMessageWhileStreaming = testComponent.container.querySelector('[data-pw="rm-status-message"]');
+    expect(statusMessageWhileStreaming?.textContent).toBe('Loading recommendations');
+    expect(statusMessageWhileStreaming?.textContent).not.toContain('unrelated to this product');
+
+    stream.emitEvent('stop_token', {});
+    stream.closeStream();
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    const statusMessage = testComponent.container.querySelector('[data-pw="rm-status-message"]');
+    expect(statusMessage?.textContent).toBe(
+      'Sorry, we weren\'t able to find any products similar to the one you searched for. Please try searching with a different product or keyword.',
+    );
+    expect(statusMessage?.textContent).not.toContain('unrelated to this product');
   });
 
   // --- 2.5 Carousel sub-component ---

@@ -14,6 +14,7 @@ const CarouselLoader: FC = (): ReactElement => {
   return (
     <div
       className='flex space-x-4 overflow-x-auto pb-4 no-scrollbar p-2 items-end text-primary'
+      aria-hidden='true'
       data-pw='rm-product-loader-row'>
       {Array.from({ length: SKELETON_CARD_COUNT }).map((_, i) => (
         <div
