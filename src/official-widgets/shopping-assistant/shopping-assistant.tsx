@@ -176,7 +176,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     const manualEndpoint = getManualEndpoint(appSettings.placementId);
     const base = resolveBaseEndpoint(appSettings, manualEndpoint);
     const shoppingAssistantPath = usesCloudPaths(appSettings, manualEndpoint)
-      ? '/v1/search/chat/shopping-assistant'
+      ? '/v1/chat/shopping-assistant'
       : '/v1/product/multisearch/chat/shopping-assistant';
 
     fetchEventSource(`${base}${shoppingAssistantPath}?${params.toString()}`, {
