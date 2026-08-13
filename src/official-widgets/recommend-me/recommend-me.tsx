@@ -1,4 +1,5 @@
 import { Input } from '@heroui/input';
+import { cn } from '@heroui/theme';
 import { type FC, useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { ProductSearchResponse } from 'visearch-javascript-sdk';
@@ -11,6 +12,14 @@ import { WidgetDataContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import { getFlattenProducts } from '../../common/utils';
+
+const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
+// Same ring, but drawn inward: the search bar wraps its button/input in an `overflow-hidden`
+// container (for the rounded border), which clips an outward-offset outline before it can show.
+const FOCUS_VISIBLE_INSET_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 '
+  + 'focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
+const FOCUS_WITHIN_INSET_CLASSES = 'focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 '
+  + 'focus-within:outline-blue-600 dark:focus-within:outline-blue-300';
 
 interface RecommendMeProps {
   productId: string;
@@ -28,10 +37,18 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [isRecommendInputFocused, setIsRecommendInputFocused] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  // recommendMeWithQuery is async - isStreaming only flips true once the SSE connection's onopen
+  // fires, which lags behind the click. Without this, there's a gap where isStreaming/isLoading are
+  // both still false and mergedResults is already cleared, so the "no products found" fallback would
+  // flash before the request has even started.
+  const [isChatQueryPending, setIsChatQueryPending] = useState(false);
   const root = useContext(RootContext);
   const intl = useIntl();
 
-  const { productResults, recommendMeWithQuery, isStreaming, requestId } = useRecommendMe({
+  const {
+    productResults, recommendMeWithQuery, isStreaming, requestId, latestMessage, error: chatError,
+  } = useRecommendMe({
     productId,
   });
 
@@ -84,11 +101,40 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
     }
   }, [results]);
 
+  // recommendMeWithQuery resets its own productResults/latestMessage at request start, but
+  // mergedResults lives in this component and the effect above only applies non-empty results -
+  // without this, a prose-only or unmatched-token response would keep showing the previous query's
+  // stale products. Clear it explicitly whenever a new query is submitted.
+  const startRecommendMeSearch = (value: string): void => {
+    setMergedResults([]);
+    setQueryValue(value);
+    setHasSearched(true);
+    setIsChatQueryPending(true);
+    setHasError(false);
+    recommendMeWithQuery(value);
+  };
+
+  useEffect(() => {
+    if (isStreaming || chatError) {
+      setIsChatQueryPending(false);
+    }
+  }, [isStreaming, chatError]);
+
+  // Surface a chat-stream failure (e.g. the connection never opens) the same way a suggestion-tab
+  // failure is shown - without this, isChatQueryPending clearing above would just re-enable the
+  // input with no indication anything went wrong.
+  useEffect(() => {
+    if (chatError) {
+      handleError(chatError);
+    }
+  }, [chatError]);
+
   const suggestionSearch = (isComplementary: boolean): void => {
     if (isLoading) {
       return;
     }
     setIsLoading(true);
+    setHasSearched(true);
     const params: Record<string, any> = {
       ...searchSettings,
     };
@@ -118,6 +164,21 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
     return <></>;
   }
 
+  const getFinalStatusMessage = (): string => {
+    if (mergedResults.length) {
+      return [
+        latestMessage,
+        intl.formatMessage({ id: 'a11yProductResultsShown' }, { count: mergedResults.length }),
+      ].filter(Boolean).join(' ');
+    }
+    return hasSearched ? intl.formatMessage({ id: 'noProductsFound' }) : '';
+  };
+  const finalStatusMessage = getFinalStatusMessage();
+
+  const getInProgressMessage = (): string => (mergedResults.length
+    ? latestMessage
+    : intl.formatMessage({ id: 'a11yLoadingRecommendations' }));
+
   return (
     <div className='pt-4 px-4 border border-gray-200 dark:border-gray-700 rounded-md'>
       <div className='flex justify-between items-center'>
@@ -130,12 +191,18 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
 
       <div className='flex gap-2 pt-1'>
         <button
-            className='px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors'
+            className={cn(
+              'px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors',
+              FOCUS_VISIBLE_CLASSES,
+            )}
             onClick={() => suggestionSearch(false)}>
           {intl.formatMessage({ id: 'similarProducts' })}
         </button>
         <button
-            className='px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors'
+            className={cn(
+              'px-3 py-2 bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-md text-sm font-semibold transition-colors',
+              FOCUS_VISIBLE_CLASSES,
+            )}
             onClick={() => suggestionSearch(true)}>
           {intl.formatMessage({ id: 'complementaryProducts' })}
         </button>
@@ -148,18 +215,20 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
       {/* Search input bar with Recommend me button */}
       <div className='flex gap-0 border border-gray-300 rounded overflow-hidden w-full'>
         <button
-          className={`font-bold px-4 rounded-none h-10 text-sm transition-colors ${
-            isRecommendInputFocused
-              ? 'bg-gray-600 hover:bg-gray-700 text-white'
-              : 'bg-gray-300 hover:bg-gray-400 text-gray-800'
-          }`}
-          disabled={isStreaming || !searchBarValue.trim()}
+          className={cn(
+            `font-bold px-4 rounded-none h-10 text-sm transition-colors ${
+              isRecommendInputFocused
+                ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                : 'bg-gray-300 hover:bg-gray-400 text-gray-800'
+            }`,
+            FOCUS_VISIBLE_INSET_CLASSES,
+          )}
+          disabled={isStreaming || isChatQueryPending || !searchBarValue.trim()}
           onClick={() => {
             if (!searchBarValue) {
               return;
             }
-            setQueryValue(searchBarValue);
-            recommendMeWithQuery(searchBarValue);
+            startRecommendMeSearch(searchBarValue);
           }}
           data-pw='rm-recommend-me-button'>
           <span>{intl.formatMessage({ id: 'searchBarButton' })}</span>
@@ -167,10 +236,11 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
 
         <div className='relative flex-1'>
           <Input
+            aria-label={intl.formatMessage({ id: 'a11ySearchBarInput' })}
             classNames={{
-              inputWrapper: 'border-s-0 rounded-e bg-default-100 text-primary',
+              inputWrapper: cn('border-s-0 rounded-e bg-default-100 text-primary', FOCUS_WITHIN_INSET_CLASSES),
             }}
-            disabled={isStreaming}
+            disabled={isStreaming || isChatQueryPending}
             isClearable
             maxLength={QUERY_MAX_CHARACTER_LENGTH}
             autoComplete='off'
@@ -185,8 +255,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && searchBarValue) {
-                setQueryValue(searchBarValue);
-                recommendMeWithQuery(searchBarValue);
+                startRecommendMeSearch(searchBarValue);
               }
             }}
             data-pw='rm-recommend-me-search-bar'
@@ -194,12 +263,36 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
         </div>
       </div>
 
-      {hasError && <div className='w-full text-center text-red-500 py-8'>{error}</div>}
+      {hasError && <div className='w-full text-center text-red-500 py-8' role='alert'>{error}</div>}
 
       {/* Product card carousels */}
       {!hasError && (
         <div className='flex flex-col'>
-          {(isStreaming || isLoading) ? <CarouselLoader /> : <Carousel results={mergedResults} metadata={metadata} />}
+          {/*
+            Visible, live-updating text - purely visual, not wired to aria-live. Screen readers would
+            otherwise try to announce every token as the message streams in, cutting themselves off
+            mid-sentence repeatedly (a known anti-pattern for streaming text in a live region).
+            The live backend text only shows once a product has actually resolved - otherwise a
+            response that ends up with zero products would flash the backend's raw text before it
+            gets replaced by the "no products found" fallback.
+          */}
+          <div className='text-sm py-2 text-primary' data-pw='rm-status-message'>
+            {(isStreaming || isLoading || isChatQueryPending)
+              ? getInProgressMessage()
+              : finalStatusMessage}
+          </div>
+          {/*
+            Screen-reader announcement - stays constant while streaming (so it announces once, not
+            per token), then updates once to the final message + result count when the request ends.
+          */}
+          <div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
+            {(isStreaming || isLoading || isChatQueryPending)
+              ? intl.formatMessage({ id: 'a11yLoadingRecommendations' })
+              : finalStatusMessage}
+          </div>
+          {(isStreaming || isLoading || isChatQueryPending)
+            ? <CarouselLoader />
+            : <Carousel results={mergedResults} metadata={metadata} />}
         </div>
       )}
     </div>
