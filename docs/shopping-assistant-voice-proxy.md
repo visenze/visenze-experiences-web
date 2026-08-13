@@ -2,20 +2,20 @@
 
 ## Objective
 
-Provide text-to-speech for the shopping assistant without exposing an ElevenLabs API key in the browser. The browser sends the tenant app key using the same `app_key` query-parameter convention as the product search API; the proxy authenticates that app key and calls ElevenLabs using a secret held only by the proxy.
+Provide text-to-speech for the shopping assistant without exposing the voice provider's API key in the browser. The browser sends the tenant app key using the same `app_key` query-parameter convention as the product search API; the proxy authenticates that app key and calls the voice provider using a secret held only by the proxy.
 
-The proxy is a credential-hiding, tenant-authenticated ElevenLabs adapter. It must not replace or assume ownership of ElevenLabs voice settings supplied by the frontend.
+The proxy is a credential-hiding, tenant-authenticated voice-provider adapter. It must not replace or assume ownership of voice settings supplied by the frontend.
 
 ## Request flow
 
 ```text
 Browser
-  │ POST /v1/voice/synthesize/<voice_id>?app_key=<public tenant app key>&output_format=...
+  │ POST /v1/voice/synthesize/<voice_id>?app_key=<public tenant app key>&placement_id=<placement>&output_format=...
   ▼
 Voice Proxy
   ├─ validate origin, app key, payload, quota, and voice policy
   ├─ resolve tenant configuration
-  ├─ call ElevenLabs with server-side secret
+  ├─ call the voice provider with server-side secret
   └─ stream audio/mpeg back to browser
 ```
 
@@ -25,13 +25,14 @@ The app key is not a secret once it is used by a browser. It identifies the tena
 
 ### `POST /v1/voice/synthesize/{voice_id}`
 
-The route mirrors the current ElevenLabs request shape while adding the product-search-style app-key query parameter.
+The route mirrors the current voice-provider request shape while adding the product-search-style app-key query parameter.
 
 Query parameters:
 
 ```text
 app_key=<tenant app key>                 required; same convention as product search
-output_format=mp3_44100_128              forwarded unchanged to ElevenLabs
+placement_id=<placement>                 required; identifies which placement's voice entitlement/quota to charge
+output_format=mp3_44100_128              forwarded unchanged to the voice provider
 ```
 
 Headers:
@@ -47,7 +48,7 @@ Request body:
 ```json
 {
   "text": "Here is a great option for you.",
-  "model_id": "eleven_multilingual_v2",
+  "model_id": "multilingual_v2",
   "voice_settings": {
     "stability": 0.5,
     "similarity_boost": 0.75
@@ -55,15 +56,16 @@ Request body:
 }
 ```
 
-The proxy forwards the `{voice_id}` path segment, `output_format` query parameter, and JSON body fields to ElevenLabs. In particular, it must not inject, replace, default, clamp, or reinterpret `model_id` or `voice_settings`.
+The proxy forwards the `{voice_id}` path segment, `output_format` query parameter, and JSON body fields to the voice provider. In particular, it must not inject, replace, default, clamp, or reinterpret `model_id` or `voice_settings`.
 
 Request rules:
 
 | Field | Required | Rule |
 |---|---:|---|
-| `app_key` | yes | Authenticates the tenant using the same query-parameter mechanism as product search; never forward it to ElevenLabs |
-| `{voice_id}` | yes | Forward unchanged to the ElevenLabs voice path; do not select a server-side default |
-| `output_format` | yes | Forward unchanged to ElevenLabs; reject only malformed or disallowed provider syntax required for safe URL construction |
+| `app_key` | yes | Authenticates the tenant using the same query-parameter mechanism as product search; never forward it to the voice provider |
+| `placement_id` | yes | Identifies which placement is making the request, for the placement-level voice gate and quota accounting; reject if it doesn't belong to the authenticated tenant; never forward it to the voice provider |
+| `{voice_id}` | yes | Forward unchanged to the voice provider's voice path; do not select a server-side default |
+| `output_format` | yes | Forward unchanged to the voice provider; reject only malformed or disallowed provider syntax required for safe URL construction |
 | `text` | yes | UTF-8 string; reject empty text and enforce a hard safety limit; otherwise forward unchanged |
 | `model_id` | yes | Forward unchanged; the proxy does not select the model |
 | `voice_settings` | yes | Forward unchanged; the proxy does not own stability, similarity, style, or other provider settings |
@@ -78,7 +80,7 @@ Content-Type: audio/mpeg
 Content-Length: <when known>
 Cache-Control: no-store
 X-Request-Id: <proxy request id>
-X-Voice-Provider: elevenlabs
+X-Voice-Provider: <provider name>
 ```
 
 The response body is the audio bytes. Streaming the provider response is preferred; buffering is acceptable for the first implementation if an explicit maximum response size is enforced.
@@ -106,18 +108,18 @@ Recommended status and codes:
 | 403 | `VOICE_NOT_ALLOWED` | Tenant is not enabled for voice or requested voice is not allowed |
 | 413 | `TEXT_TOO_LARGE` | Payload exceeds the configured hard limit |
 | 429 | `VOICE_RATE_LIMITED` / `VOICE_QUOTA_EXCEEDED` | Per-tenant rate or usage limit exceeded; include `Retry-After` for rate limits |
-| 502 | `VOICE_PROVIDER_ERROR` | ElevenLabs returned an upstream failure |
+| 502 | `VOICE_PROVIDER_ERROR` | The voice provider returned an upstream failure |
 | 504 | `VOICE_PROVIDER_TIMEOUT` | Provider did not respond within the proxy timeout |
 | 503 | `VOICE_UNAVAILABLE` | Proxy or provider temporarily unavailable |
 
-Do not return ElevenLabs API keys, raw upstream error bodies, or internal configuration in client errors.
+Do not return voice-provider API keys, raw upstream error bodies, or internal configuration in client errors.
 
 ## Tenant authentication and authorization
 
-1. Extract the `app_key` query parameter using the same request handling and tenant lookup as the product search API; do not log its value.
-2. Look up the app key in the tenant registry using the same validation path as product search.
-3. Verify status, allowed origins/domains, voice entitlement, and quota.
-4. Resolve the ElevenLabs credential from server-side secret configuration. The browser never supplies it.
+1. Extract the `app_key` and `placement_id` query parameters using the same request handling and tenant lookup as the product search API; do not log their values.
+2. Look up the app key in the tenant registry using the same validation path as product search, and confirm `placement_id` belongs to that tenant.
+3. Verify status, allowed origins/domains, per-placement voice entitlement, and quota.
+4. Resolve the voice-provider credential from server-side secret configuration. The browser never supplies it.
 5. Apply rate and usage limits before making the provider call.
 
 Origin and `Referer` checks are useful abuse friction but are not authentication. The service must still enforce quotas and tenant authorization because browser headers can be forged outside a browser.
@@ -154,15 +156,15 @@ interface SpeechProvider {
 }
 ```
 
-The ElevenLabs adapter maps the interface to the provider request exactly:
+The voice-provider adapter maps the interface to the provider request exactly:
 
-- `POST ${ELEVENLABS_BASE_URL}/v1/text-to-speech/{voiceId}?output_format={outputFormat}`
-- `xi-api-key: <server-side secret>`
+- `POST ${VOICE_PROVIDER_BASE_URL}/v1/text-to-speech/{voiceId}?output_format={outputFormat}`
+- `<provider auth header>: <server-side secret>`
 - JSON body `{ text, model_id: modelId, voice_settings: voiceSettings }`
 
 The only provider credential/configuration owned by the proxy is:
 
-- ElevenLabs API key from a secret manager or runtime secret
+- voice-provider API key from a secret manager or runtime secret
 - provider base URL
 - timeout, maximum response bytes, and retry policy
 
@@ -171,7 +173,7 @@ Retry only transient failures and only before audio bytes are sent. Do not blind
 ## Security and abuse controls
 
 - TLS everywhere; reject plaintext production traffic.
-- Never put the ElevenLabs key in HTML, JavaScript, config responses, logs, traces, analytics, or error messages.
+- Never put the voice-provider key in HTML, JavaScript, config responses, logs, traces, analytics, or error messages.
 - Redact app keys, authorization material, and synthesized text from normal logs.
 - Enforce body size, character count, request timeout, concurrency, per-minute rate, and monthly quota limits.
 - Use a bounded request body parser; reject compressed request bombs if compression is enabled.
@@ -197,8 +199,8 @@ Alert on elevated provider failures, timeout rate, quota anomalies, and unexpect
 Required runtime configuration:
 
 ```text
-ELEVENLABS_API_KEY                 # secret manager reference, never client config
-ELEVENLABS_BASE_URL                # default https://api.elevenlabs.io
+VOICE_PROVIDER_API_KEY             # secret manager reference, never client config
+VOICE_PROVIDER_BASE_URL            # voice provider's API base URL
 VOICE_PROXY_MAX_TEXT_CHARS         # default 2000
 VOICE_PROXY_TIMEOUT_MS             # recommended 15000
 VOICE_PROXY_MAX_RESPONSE_BYTES     # bounded safety limit
@@ -210,14 +212,14 @@ Use separate provider credentials and tenant registries for development, staging
 ## Rollout plan
 
 1. Build the proxy with a mock provider adapter and contract tests.
-2. Add an ElevenLabs adapter behind the same interface and test provider failures, timeouts, and oversized responses.
+2. Add a voice-provider adapter behind the same interface and test provider failures, timeouts, and oversized responses.
 3. Deploy behind a versioned path, for example `/v1/voice/synthesize`, with one staging tenant and strict low quotas.
 4. Verify CORS, app-key revocation, quota accounting, secret scanning, and spend alerts.
-5. Only then update the frontend client to call the proxy with the app key and remove the ElevenLabs key from widget configuration.
+5. Only then update the frontend client to call the proxy with the app key and remove the voice-provider key from widget configuration.
 
 ## Acceptance criteria
 
-- No browser bundle, network response, or client-visible configuration contains the ElevenLabs API key.
+- No browser bundle, network response, or client-visible configuration contains the voice-provider API key.
 - Valid active app keys receive audio from the configured tenant voice.
 - Invalid, revoked, unauthorized, over-limit, and provider-failure cases return the documented error shape.
 - The same request ID can be traced across proxy logs and provider metrics without logging user text.

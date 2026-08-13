@@ -1,15 +1,26 @@
 export const DEFAULT_VOICE_ID = '21m00Tcm4TlvDq8ikWAM';
+export const DEFAULT_MODEL_ID = 'eleven_multilingual_v2';
+export const DEFAULT_VOICE_STABILITY = 0.5;
+export const DEFAULT_VOICE_SIMILARITY_BOOST = 0.75;
 
 const OUTPUT_FORMAT = 'mp3_44100_128';
 
-// Calls the Product Search voice proxy (see shopping-assistant-voice-proxy-api.md) instead of
-// ElevenLabs directly, so no ElevenLabs key is ever present in browser code.
+export interface VoiceSynthesisOptions {
+  modelId?: string;
+  stability?: number;
+  similarityBoost?: number;
+}
+
+// Calls the Product Search voice proxy (see shopping-assistant-voice-proxy.md) instead of the
+// voice provider directly, so no voice provider key is ever present in browser code.
 export const synthesizeSpeech = async (
   baseUrl: string,
   appKey: string,
   placementId: string | number,
   text: string,
   voiceId: string,
+  options?: VoiceSynthesisOptions,
+  signal?: AbortSignal,
 ): Promise<Blob> => {
   const params = new URLSearchParams({
     app_key: appKey,
@@ -25,12 +36,13 @@ export const synthesizeSpeech = async (
     },
     body: JSON.stringify({
       text,
-      model_id: 'eleven_multilingual_v2',
+      model_id: options?.modelId || DEFAULT_MODEL_ID,
       voice_settings: {
-        stability: 0.5,
-        similarity_boost: 0.75,
+        stability: options?.stability ?? DEFAULT_VOICE_STABILITY,
+        similarity_boost: options?.similarityBoost ?? DEFAULT_VOICE_SIMILARITY_BOOST,
       },
     }),
+    signal,
   });
 
   if (!response.ok) {

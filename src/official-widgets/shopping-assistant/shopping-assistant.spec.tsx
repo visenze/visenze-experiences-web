@@ -1849,7 +1849,7 @@ describe('shopping-assistant', () => {
       mockAudioInstances.push(this);
     });
 
-    // ElevenLabs-failure fallback path: a mock for the browser's native SpeechSynthesis API.
+    // Voice-synthesis-failure fallback path: a mock for the browser's native SpeechSynthesis API.
     const MockSpeechSynthesisUtterance = jest.fn().mockImplementation(function mockUtteranceImpl(this: any, text?: string): void {
       this.text = text;
       this.onstart = null;
@@ -1865,25 +1865,27 @@ describe('shopping-assistant', () => {
     const makeResult = (transcript: string, isFinal: boolean): any => ({ isFinal, length: 1, 0: { transcript } });
 
     const buildVoiceWidgetConfig = (
-      appSettingsExtra: { voiceEnabled?: boolean } = { voiceEnabled: true },
+      chatbotExtra: { voiceEnabled?: boolean } = { voiceEnabled: true },
       voiceId?: string,
     ): ReturnType<typeof createWidgetConfig> => createWidgetConfig(DEFAULT_CUSTOMIZATIONS, {
       appSettings: {
         appKey: 'test-app-key',
         placementId: '1234',
-        ...appSettingsExtra,
       },
       searchSettings: {
         attrs_to_get: ['product_url', 'title', 'brand', 'price', 'original_price'],
       },
-      ...(voiceId ? { customizations: { ...DEFAULT_CUSTOMIZATIONS, chatbot: { chatAgent: 'shopping_assistant_v2', voiceId } } } : {}),
+      customizations: {
+        ...DEFAULT_CUSTOMIZATIONS,
+        chatbot: { chatAgent: 'shopping_assistant_v2', ...chatbotExtra, ...(voiceId ? { voiceId } : {}) },
+      },
     });
 
     const renderVoiceAssistant = (
-      appSettingsExtra: { voiceEnabled?: boolean } = { voiceEnabled: true },
+      chatbotExtra: { voiceEnabled?: boolean } = { voiceEnabled: true },
       voiceId?: string,
     ): void => {
-      const widgetConfig = buildVoiceWidgetConfig(appSettingsExtra, voiceId);
+      const widgetConfig = buildVoiceWidgetConfig(chatbotExtra, voiceId);
       const { widgetClient } = createMockWidgetClient(widgetConfig, 'wigmix_shopping_assistant', {
         getUid: jest.fn((cb: (uid: string) => void) => cb('test-uid')),
         getSid: jest.fn((cb: (sid: string) => void) => cb('test-sid')),
@@ -1944,13 +1946,13 @@ describe('shopping-assistant', () => {
       global.fetch = originalFetch;
     });
 
-    it('does not render the mic button when no ElevenLabs API key is configured', () => {
+    it('does not render the mic button when voice is not enabled', () => {
       renderAssistant();
       openDialogAndWait();
       expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true })).toBeNull();
     });
 
-    it('renders the mic button when an ElevenLabs API key is configured', () => {
+    it('renders the mic button when voice is enabled', () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       renderVoiceAssistant();
       openDialogAndWait();
@@ -2387,7 +2389,7 @@ describe('shopping-assistant', () => {
         await flushMicrotasks();
       });
 
-      // The ElevenLabs proxy call rejected, so the reply is narrated with the browser's own
+      // The voice proxy call rejected, so the reply is narrated with the browser's own
       // voice instead — the reply still gets spoken and revealed, just without the cloned voice.
       expect(mockSpeechSynthesis.speak).toHaveBeenCalledTimes(1);
       expect(mockUtteranceInstances[0].text).toBe('Great choice!');

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { DEFAULT_VOICE_ID, sanitizeTextForSpeech, synthesizeSpeech } from './elevenlabs-api';
+import { DEFAULT_VOICE_ID, sanitizeTextForSpeech, synthesizeSpeech } from './voice-api';
 
 export type VoiceStatus = 'idle' | 'recording' | 'transcribing';
 
@@ -9,6 +9,9 @@ interface UseVoiceOptions {
   placementId: string | number;
   baseUrl: string;
   voiceId?: string;
+  modelId?: string;
+  voiceStability?: number;
+  voiceSimilarityBoost?: number;
   onTranscript: (text: string) => void;
   onSpeechStart?: (revealTarget: number, productId: string | null, durationMs?: number) => void;
   onSpeechEnd?: (revealTarget: number, productId: string | null) => void;
@@ -84,7 +87,7 @@ const getSpeechRecognitionCtor = (): (new () => SpeechRecognitionLike) | undefin
 
 const isVoiceSupported = (): boolean => !!getSpeechRecognitionCtor();
 
-// Used as a last resort when the ElevenLabs proxy call fails (offline, quota, outage, etc.)
+// Used as a last resort when the voice proxy call fails (offline, quota, outage, etc.)
 // so a reply is still narrated, just with the browser's own voice instead of the cloned one.
 const isBrowserSpeechSynthesisSupported = (): boolean => typeof window !== 'undefined'
   && !!window.speechSynthesis
@@ -96,6 +99,9 @@ const useVoice = ({
   placementId,
   baseUrl,
   voiceId,
+  modelId,
+  voiceStability,
+  voiceSimilarityBoost,
   onTranscript,
   onSpeechStart,
   onSpeechEnd,
@@ -114,6 +120,7 @@ const useVoice = ({
   const audioUrlRef = useRef<string | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const speechQueueRef = useRef<QueuedSpeech[]>([]);
+  const pendingSynthesisRef = useRef<Set<AbortController>>(new Set());
   const isPlayingRef = useRef(false);
   const playSessionRef = useRef(0);
   const gapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -141,6 +148,8 @@ const useVoice = ({
     playSessionRef.current += 1;
     speechQueueRef.current = [];
     isPlayingRef.current = false;
+    pendingSynthesisRef.current.forEach((controller) => controller.abort());
+    pendingSynthesisRef.current.clear();
     if (gapTimerRef.current) {
       clearTimeout(gapTimerRef.current);
       gapTimerRef.current = null;
@@ -237,9 +246,13 @@ const useVoice = ({
       setLiveTranscript('');
     };
     recognition.onend = (): void => {
+      // The recognizer is inactive the moment this fires — null it out without calling
+      // abort()/stop() on it, and finalize directly instead of routing through
+      // stopRecording(), which would try to stop() an instance that already stopped.
+      recognitionRef.current = null;
       if (statusRef.current === 'recording') {
-        // Recognition stopped on its own (e.g. a silence timeout) — treat it like a release.
-        stopRecording();
+        updateStatus('transcribing');
+        finalizeTimerRef.current = setTimeout(finishRecording, FINALIZE_GRACE_MS);
       }
     };
     recognitionRef.current = recognition;
@@ -269,8 +282,9 @@ const useVoice = ({
     isPlayingRef.current = true;
     item.promise
       .then((blob) => {
+        // A session bump (stopAudio) always sets isPlayingRef itself, and may already have
+        // let a newer session start playing — a stale continuation must never touch it.
         if (item.session !== playSessionRef.current) {
-          isPlayingRef.current = false;
           return;
         }
         const url = URL.createObjectURL(blob);
@@ -285,10 +299,10 @@ const useVoice = ({
           if (audioRef.current === audio) {
             audioRef.current = null;
           }
-          isPlayingRef.current = false;
           if (item.session !== playSessionRef.current) {
             return;
           }
+          isPlayingRef.current = false;
           onSpeechEndRef.current?.(item.revealTarget, item.productId);
           gapTimerRef.current = setTimeout((): void => {
             gapTimerRef.current = null;
@@ -313,11 +327,10 @@ const useVoice = ({
           });
       })
       .catch((err) => {
-        console.error(err);
         if (item.session !== playSessionRef.current) {
-          isPlayingRef.current = false;
           return;
         }
+        console.error(err);
         if (!isBrowserSpeechSynthesisSupported()) {
           isPlayingRef.current = false;
           onSpeechEndRef.current?.(item.revealTarget, item.productId);
@@ -333,10 +346,10 @@ const useVoice = ({
           if (utteranceRef.current === utterance) {
             utteranceRef.current = null;
           }
-          isPlayingRef.current = false;
           if (item.session !== playSessionRef.current) {
             return;
           }
+          isPlayingRef.current = false;
           onSpeechEndRef.current?.(item.revealTarget, item.productId);
           gapTimerRef.current = setTimeout((): void => {
             gapTimerRef.current = null;
@@ -363,8 +376,22 @@ const useVoice = ({
       return false;
     }
     const session = playSessionRef.current;
-    const promise = synthesizeSpeech(baseUrl, appKey, placementId, sanitized, voiceId || DEFAULT_VOICE_ID);
-    promise.catch(() => {});
+    const controller = new AbortController();
+    pendingSynthesisRef.current.add(controller);
+    const promise = synthesizeSpeech(
+      baseUrl,
+      appKey,
+      placementId,
+      sanitized,
+      voiceId || DEFAULT_VOICE_ID,
+      { modelId, stability: voiceStability, similarityBoost: voiceSimilarityBoost },
+      controller.signal,
+    );
+    promise
+      .catch(() => {})
+      .finally(() => {
+        pendingSynthesisRef.current.delete(controller);
+      });
     speechQueueRef.current.push({ promise, session, revealTarget, productId, text: sanitized });
     playNext();
     return true;
@@ -373,6 +400,20 @@ const useVoice = ({
   const hasPendingSpeech = (): boolean => isPlayingRef.current
     || speechQueueRef.current.length > 0
     || !!gapTimerRef.current;
+
+  useEffect((): void => {
+    // A live config update can turn voice off mid-session — tear down whatever's active
+    // (recognizer, queued/playing audio, in-flight synthesis) rather than just hiding the UI.
+    if (enabled) {
+      return;
+    }
+    clearTimers();
+    abortRecognition();
+    stopAudio();
+    setHasError(false);
+    setLiveTranscript('');
+    updateStatus('idle');
+  }, [enabled]);
 
   useEffect((): (() => void) => (): void => {
     clearTimers();

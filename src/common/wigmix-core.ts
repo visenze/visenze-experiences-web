@@ -697,20 +697,6 @@ export interface WidgetConfig {
      */
     msApiId?: string | number;
     /**
-     * (optional) Gates voice capability in the shopping-assistant widget: voice input is
-     * captured via the browser's built-in speech recognition, and assistant replies to voice
-     * messages are spoken aloud via ElevenLabs text-to-speech. When unset (or false), all voice
-     * UI is hidden and no voice requests are made.
-     *
-     * The ElevenLabs credential itself is never held client-side — the voice proxy backend
-     * resolves it server-side from the tenant's `app_key` (see
-     * docs/shopping-assistant-voice-proxy.md). This flag only controls whether the widget shows
-     * voice UI and calls the proxy for this placement.
-     *
-     * @since 1.0.26
-     */
-    voiceEnabled?: boolean;
-    /**
      * Dimensions of the image to be considered for the algorithm.
      *
      * The ViSearch SDK by default resize image uploaded to 512x512;
@@ -1540,12 +1526,45 @@ export interface WidgetConfig {
        */
       chatAgent: string;
       /**
-       * (optional) ElevenLabs voice ID used for spoken replies. Defaults to the widget's
-       * built-in voice when unset. Only takes effect when `appSettings.voiceEnabled` is set.
+       * (optional) Gates voice capability in the shopping-assistant widget: voice input is
+       * captured via the browser's built-in speech recognition, and assistant replies (both to
+       * typed and spoken messages) are read aloud via text-to-speech. When unset (or false), all
+       * voice UI is hidden and no voice requests are made.
        *
-       * @since 1.0.26
+       * The text-to-speech credential itself is never held client-side — the voice proxy backend
+       * resolves it server-side from the tenant's `app_key` (see
+       * docs/shopping-assistant-voice-proxy.md). This flag only controls whether the widget shows
+       * voice UI and calls the proxy for this placement.
+       *
+       * @since 1.0.29
+       */
+      voiceEnabled?: boolean;
+      /**
+       * (optional) Voice ID used for spoken replies. Defaults to the widget's built-in voice
+       * when unset. Only takes effect when `voiceEnabled` is set.
+       *
+       * @since 1.0.29
        */
       voiceId?: string;
+      /**
+       * (optional) Voice-provider model ID used for spoken replies. Defaults to the widget's
+       * built-in model when unset.
+       *
+       * @since 1.0.29
+       */
+      modelId?: string;
+      /**
+       * (optional) Voice settings forwarded to the synthesis proxy. Defaults to the widget's
+       * built-in settings when unset.
+       *
+       * @since 1.0.29
+       */
+      voiceSettings?: {
+        /** Voice stability, 0-1. */
+        stability?: number;
+        /** Voice similarity boost, 0-1. */
+        similarityBoost?: number;
+      };
     };
   };
   /**

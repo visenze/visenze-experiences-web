@@ -1,6 +1,6 @@
-import { DEFAULT_VOICE_ID, sanitizeTextForSpeech, synthesizeSpeech } from './elevenlabs-api';
+import { DEFAULT_VOICE_ID, sanitizeTextForSpeech, synthesizeSpeech } from './voice-api';
 
-describe('elevenlabs-api', () => {
+describe('voice-api', () => {
   const originalFetch = global.fetch;
 
   afterEach(() => {
@@ -28,6 +28,36 @@ describe('elevenlabs-api', () => {
             text: 'Hello there',
             model_id: 'eleven_multilingual_v2',
             voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+          }),
+        },
+      );
+    });
+
+    it('forwards a custom model ID and voice settings when provided', async () => {
+      const mockBlob = new Blob(['audio-bytes'], { type: 'audio/mpeg' });
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        blob: jest.fn().mockResolvedValue(mockBlob),
+      }) as unknown as typeof fetch;
+
+      await synthesizeSpeech(
+        'https://api.example.com',
+        'app-key',
+        'placement-1',
+        'Hello there',
+        'voice-123',
+        { modelId: 'eleven_turbo_v2.5', stability: 0.2, similarityBoost: 0.9 },
+      );
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://api.example.com/v1/voice/synthesize/voice-123?app_key=app-key&placement_id=placement-1&output_format=mp3_44100_128',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
+          body: JSON.stringify({
+            text: 'Hello there',
+            model_id: 'eleven_turbo_v2.5',
+            voice_settings: { stability: 0.2, similarity_boost: 0.9 },
           }),
         },
       );
