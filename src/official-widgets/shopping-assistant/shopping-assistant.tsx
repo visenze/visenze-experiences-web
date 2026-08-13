@@ -13,7 +13,7 @@ import SpeakerIcon from './icons/SpeakerIcon';
 import StopIcon from './icons/StopIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
 import { extractActionTokens, extractSpeakableSentences, extractSuggestions, resolveProducts, stripTokensForDisplay } from './token-parsing';
-import useVoice from './use-voice';
+import useVoiceReply from './use-voice-reply';
 import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../common/client/endpoint';
 import FileDropzone from '../../common/components/FileDropzone';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
@@ -59,16 +59,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const [isWaiting, setIsWaiting] = useState(true);
   const [showAllSuggestions, setShowAllSuggestions] = useState(false);
   const [allowUserInput, setAllowUserInput] = useState(false);
-  const [latestMessage, setLatestMessage] = useState('');
-  const [typewriterText, setTypewriterText] = useState('');
-  const [isVoiceReply, setIsVoiceReply] = useState(false);
-  const [isSpeechPlaying, setIsSpeechPlaying] = useState(false);
-  const [isVoiceReadingEnabled, setIsVoiceReadingEnabled] = useState(true);
   const [showResponseExtras, setShowResponseExtras] = useState(true);
-  const [voiceRevealTarget, setVoiceRevealTarget] = useState(0);
-  const [voiceRevealDelayMs, setVoiceRevealDelayMs] = useState(30);
   const [streamingProducts, setStreamingProducts] = useState<ProcessedProduct[]>([]);
-  const [focusedProductId, setFocusedProductId] = useState<string | null>(null);
   const [streamingRequestId, setStreamingRequestId] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showCameraDrawer, setShowCameraDrawer] = useState(false);
@@ -83,57 +75,47 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     intl.formatMessage({ id: 'openingMessage1' }),
     intl.formatMessage({ id: 'openingMessage2' }),
   ];
-  // Bridges sendMessage (declared below) to the speak() implementation from useVoice
-  // (instantiated after sendMessage, since its onTranscript callback calls sendMessage).
-  const speakRef = useRef<(text: string, revealTarget: number, productId: string | null) => boolean>(() => false);
-  const hasPendingSpeechRef = useRef<() => boolean>(() => false);
-  const latestMessageRef = useRef('');
-  const typewriterTextRef = useRef('');
-  const pendingResponseCommitRef = useRef<(() => void) | null>(null);
-  const voiceReadingEnabledRef = useRef(true);
+  // Bridges sendMessage (declared below) to onTranscript, since useVoiceReply is instantiated
+  // before sendMessage exists (sendMessage itself needs the reply helpers useVoiceReply returns).
+  const sendMessageRef = useRef<(text: string) => void>(() => {});
 
-  useEffect(() => {
-    latestMessageRef.current = latestMessage;
-  }, [latestMessage]);
-
-  useEffect(() => {
-    typewriterTextRef.current = typewriterText;
-  }, [typewriterText]);
-
-  // Typed replies reveal as soon as tokens arrive. Voice replies reveal only while their
-  // corresponding audio item is actually playing, and never beyond that item's text boundary.
-  // Keeping one monotonically-growing cursor avoids restarting from the beginning whenever a
-  // new SSE token extends latestMessage.
-  useEffect((): (() => void) | undefined => {
-    if (!isVoiceReply) {
-      if (typewriterTextRef.current !== latestMessage) {
-        typewriterTextRef.current = latestMessage;
-        setTypewriterText(latestMessage);
-      }
-      return undefined;
-    }
-    if (!isSpeechPlaying) {
-      return undefined;
-    }
-    const revealTarget = Math.min(voiceRevealTarget, latestMessage.length);
-    if (typewriterTextRef.current.length >= revealTarget) {
-      return undefined;
-    }
-    const interval = setInterval((): void => {
-      const currentLength = typewriterTextRef.current.length;
-      if (currentLength >= revealTarget) {
-        clearInterval(interval);
-        return;
-      }
-      const next = latestMessage.slice(0, currentLength + 1);
-      typewriterTextRef.current = next;
-      setTypewriterText(next);
-      if (next.length >= revealTarget) {
-        clearInterval(interval);
-      }
-    }, voiceRevealDelayMs);
-    return (): void => clearInterval(interval);
-  }, [isSpeechPlaying, isVoiceReply, latestMessage, voiceRevealDelayMs, voiceRevealTarget]);
+  const {
+    voiceEnabled,
+    speechOutputEnabled,
+    voiceStatus,
+    liveTranscript,
+    hasVoiceError,
+    isVoiceReadingEnabled,
+    typewriterText,
+    isSpeechPlaying,
+    focusedProductId,
+    startVoiceRecording,
+    stopRecording,
+    stopAudio,
+    toggleVoiceReading,
+    interruptSpeech,
+    shouldSpeakReply,
+    isVoiceReadingEnabledNow,
+    beginReply,
+    updateLatestMessage,
+    speak,
+    hasPendingSpeech,
+    deferCommit,
+    forceRevealTypewriter,
+    getTypewriterLength,
+    resetReplyState,
+  } = useVoiceReply({
+    enabled: customizations.chatbot?.voiceEnabled,
+    appKey: appSettings.appKey,
+    placementId: appSettings.placementId,
+    baseUrl: apiBase,
+    voiceId: customizations.chatbot?.voiceId,
+    modelId: customizations.chatbot?.modelId,
+    voiceStability: customizations.chatbot?.voiceSettings?.stability,
+    voiceSimilarityBoost: customizations.chatbot?.voiceSettings?.similarityBoost,
+    onTranscript: (text): void => sendMessageRef.current(text),
+    setIsWaiting,
+  });
 
   const commitResponse = ({ chatId: responseChatId, requestId, text, products }: CompletedResponse): void => {
     if (products.length) {
@@ -166,29 +148,12 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       }
       return newChats;
     });
-    latestMessageRef.current = '';
-    typewriterTextRef.current = '';
-    setLatestMessage('');
-    setTypewriterText('');
     setStreamingProducts([]);
     setStreamingRequestId('');
-    setIsSpeechPlaying(false);
-    setIsVoiceReply(false);
-    setVoiceRevealTarget(0);
-    setFocusedProductId(null);
+    resetReplyState();
     setAllowUserInput(true);
     setShowResponseExtras(true);
   };
-
-  useEffect(() => {
-    if (!isVoiceReply && latestMessage && typewriterText.length >= latestMessage.length) {
-      const pendingCommit = pendingResponseCommitRef.current;
-      if (pendingCommit) {
-        pendingResponseCommitRef.current = null;
-        pendingCommit();
-      }
-    }
-  }, [isVoiceReply, latestMessage, typewriterText]);
 
   const sendMessage = async (
     messageToSend?: string,
@@ -204,15 +169,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setSuggestions([]);
     setStreamingProducts([]);
     setStreamingRequestId('');
-    setFocusedProductId(null);
-    pendingResponseCommitRef.current = null;
-    latestMessageRef.current = '';
-    typewriterTextRef.current = '';
-    const shouldSpeakReply = !!customizations.chatbot?.voiceEnabled && voiceReadingEnabledRef.current;
-    setIsVoiceReply(shouldSpeakReply);
-    setIsSpeechPlaying(false);
-    setVoiceRevealTarget(0);
-    setTypewriterText('');
+    const willSpeakReply = beginReply();
     setShowResponseExtras(false);
     setChats((chats1) => [
       ...chats1,
@@ -274,7 +231,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           reqIdFromResp = JSON.parse(ev.data).value;
           setStreamingRequestId(reqIdFromResp);
         } else if (ev.event === 'chat_token') {
-          if (!shouldSpeakReply || !voiceReadingEnabledRef.current) {
+          if (!willSpeakReply || !isVoiceReadingEnabledNow()) {
             setIsWaiting(false);
           }
           tokens.push(JSON.parse(ev.data).value);
@@ -298,13 +255,12 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           });
           setSuggestions(extractSuggestions(currentText));
           const displayText = stripTokensForDisplay(currentText).trim();
-          latestMessageRef.current = displayText;
-          setLatestMessage(displayText);
+          updateLatestMessage(displayText);
           setStreamingProducts(resolveProducts(currentText, products));
-          if (shouldSpeakReply && voiceReadingEnabledRef.current) {
+          if (willSpeakReply && isVoiceReadingEnabledNow()) {
             const { sentences, spokenLength: newSpokenLength } = extractSpeakableSentences(currentText, spokenLength);
             sentences.forEach(({ chunk, revealTarget, productId }) => {
-              speakRef.current(chunk, revealTarget, productId);
+              speak(chunk, revealTarget, productId);
             });
             spokenLength = newSpokenLength;
           }
@@ -318,8 +274,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
         setSuggestions(extractSuggestions(currentText));
         const finalText = stripTokensForDisplay(currentText).trim();
         const finalProducts = resolveProducts(currentText, products);
-        latestMessageRef.current = finalText;
-        setLatestMessage(finalText);
+        updateLatestMessage(finalText);
         setStreamingProducts(finalProducts);
         const completedResponse = {
           chatId: chatIdFromResp,
@@ -327,21 +282,20 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           text: finalText,
           products: finalProducts,
         };
-        if (shouldSpeakReply && voiceReadingEnabledRef.current) {
+        if (willSpeakReply && isVoiceReadingEnabledNow()) {
           const { sentences } = extractSpeakableSentences(currentText, spokenLength, { includeTrailing: true });
           sentences.forEach(({ chunk, revealTarget, productId }) => {
-            speakRef.current(chunk, revealTarget, productId);
+            speak(chunk, revealTarget, productId);
           });
-          if (hasPendingSpeechRef.current()) {
-            pendingResponseCommitRef.current = (): void => commitResponse(completedResponse);
+          if (hasPendingSpeech()) {
+            deferCommit(() => commitResponse(completedResponse));
           } else {
             setIsWaiting(false);
-            typewriterTextRef.current = finalText;
-            setTypewriterText(finalText);
+            forceRevealTypewriter(finalText);
             commitResponse(completedResponse);
           }
-        } else if (finalText && typewriterTextRef.current.length < finalText.length) {
-          pendingResponseCommitRef.current = (): void => commitResponse(completedResponse);
+        } else if (finalText && getTypewriterLength() < finalText.length) {
+          deferCommit(() => commitResponse(completedResponse));
         } else {
           commitResponse(completedResponse);
         }
@@ -352,87 +306,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     });
   };
 
-  const {
-    voiceEnabled,
-    speechOutputEnabled,
-    status: voiceStatus,
-    liveTranscript,
-    hasError: hasVoiceError,
-    startRecording,
-    stopRecording,
-    speak,
-    hasPendingSpeech,
-    stopAudio,
-  } = useVoice({
-    enabled: customizations.chatbot?.voiceEnabled,
-    appKey: appSettings.appKey,
-    placementId: appSettings.placementId,
-    baseUrl: apiBase,
-    voiceId: customizations.chatbot?.voiceId,
-    modelId: customizations.chatbot?.modelId,
-    voiceStability: customizations.chatbot?.voiceSettings?.stability,
-    voiceSimilarityBoost: customizations.chatbot?.voiceSettings?.similarityBoost,
-    onTranscript: (text): void => {
-      sendMessage(text);
-    },
-    onSpeechStart: (revealTarget, productId, durationMs): void => {
-      const remainingCharacters = Math.max(1, revealTarget - typewriterTextRef.current.length);
-      const delay = durationMs
-        ? Math.max(15, Math.min(80, durationMs / remainingCharacters))
-        : 30;
-      setVoiceRevealDelayMs(delay);
-      setVoiceRevealTarget(revealTarget);
-      setIsWaiting(false);
-      setIsSpeechPlaying(true);
-      setFocusedProductId(productId);
-    },
-    onSpeechEnd: (revealTarget): void => {
-      const revealed = latestMessageRef.current.slice(0, revealTarget);
-      typewriterTextRef.current = revealed;
-      setTypewriterText(revealed);
-      setIsSpeechPlaying(false);
-    },
-    onSpeechQueueEnd: (): void => {
-      setIsSpeechPlaying(false);
-      setIsWaiting(false);
-      setFocusedProductId(null);
-      const pendingCommit = pendingResponseCommitRef.current;
-      if (pendingCommit) {
-        pendingResponseCommitRef.current = null;
-        pendingCommit();
-      }
-    },
-  });
-
   useEffect(() => {
-    speakRef.current = speak;
-    hasPendingSpeechRef.current = hasPendingSpeech;
+    sendMessageRef.current = (text: string): void => {
+      sendMessage(text);
+    };
   });
-
-  const startVoiceRecording = (): void => {
-    const pendingCommit = pendingResponseCommitRef.current;
-    pendingResponseCommitRef.current = null;
-    stopAudio();
-    setFocusedProductId(null);
-    pendingCommit?.();
-    startRecording();
-  };
-
-  const toggleVoiceReading = (): void => {
-    const nextEnabled = !voiceReadingEnabledRef.current;
-    voiceReadingEnabledRef.current = nextEnabled;
-    setIsVoiceReadingEnabled(nextEnabled);
-    if (!nextEnabled) {
-      const pendingCommit = pendingResponseCommitRef.current;
-      pendingResponseCommitRef.current = null;
-      stopAudio();
-      setIsSpeechPlaying(false);
-      setIsVoiceReply(false);
-      setIsWaiting(false);
-      setFocusedProductId(null);
-      pendingCommit?.();
-    }
-  };
 
   useEffect(() => {
     if (voiceStatus === 'recording' || voiceStatus === 'transcribing') {
@@ -476,7 +354,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     if (dialogVisible) {
       return;
     }
-    const shouldSpeakOpening = !!customizations.chatbot?.voiceEnabled && voiceReadingEnabledRef.current;
+    const shouldSpeakOpening = shouldSpeakReply();
     const renderChat = (idx: number, cId: string): void => {
       if (idx > openingMessages.length) {
         setIsWaiting(false);
@@ -504,25 +382,17 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   };
 
   const newChat = (): void => {
-    pendingResponseCommitRef.current = null;
     stopAudio();
+    resetReplyState();
     setIsWaiting(true);
     setShowAllSuggestions(false);
     setAllowUserInput(false);
     setChats([]);
-    setLatestMessage('');
-    setTypewriterText('');
-    latestMessageRef.current = '';
-    typewriterTextRef.current = '';
-    setIsVoiceReply(false);
-    setIsSpeechPlaying(false);
-    setVoiceRevealTarget(0);
-    setFocusedProductId(null);
     setSuggestions([]);
     setStreamingProducts([]);
     setStreamingRequestId('');
 
-    const shouldSpeakOpening = !!customizations.chatbot?.voiceEnabled && voiceReadingEnabledRef.current;
+    const shouldSpeakOpening = shouldSpeakReply();
     const renderChat = (idx: number, cId: string): void => {
       if (idx > openingMessages.length) {
         setIsWaiting(false);
@@ -748,11 +618,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
 
   useEffect(() => {
     if (!dialogVisible) {
-      const pendingCommit = pendingResponseCommitRef.current;
-      pendingResponseCommitRef.current = null;
-      stopAudio();
-      setFocusedProductId(null);
-      pendingCommit?.();
+      interruptSpeech();
     }
     // react-modal grabs focus onto its own content wrapper right after mount (based on
     // document.activeElement, which can't see into the widget's Shadow DOM so it always thinks
