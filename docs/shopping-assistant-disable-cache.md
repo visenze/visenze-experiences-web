@@ -14,7 +14,7 @@ The configuration must be defined before the widget-init script runs. The follow
     },
     customizations: {
       chatbot: {
-        chatAgent: 'shopping_assistant_v2',
+        chatAgent: 'shopping_closer_voice_v2',
       },
     },
   };
