@@ -9,7 +9,7 @@ interface UseVoiceOptions {
   placementId: string | number;
   baseUrl: string;
   voiceId?: string;
-  modelId?: string;
+  voiceModelId?: string;
   voiceStability?: number;
   voiceSimilarityBoost?: number;
   onTranscript: (text: string) => void;
@@ -99,7 +99,7 @@ const useVoice = ({
   placementId,
   baseUrl,
   voiceId,
-  modelId,
+  voiceModelId,
   voiceStability,
   voiceSimilarityBoost,
   onTranscript,
@@ -384,7 +384,7 @@ const useVoice = ({
       placementId,
       sanitized,
       voiceId || DEFAULT_VOICE_ID,
-      { modelId, stability: voiceStability, similarityBoost: voiceSimilarityBoost },
+      { voiceModelId, stability: voiceStability, similarityBoost: voiceSimilarityBoost },
       controller.signal,
     );
     promise

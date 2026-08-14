@@ -4,6 +4,8 @@
 
 Provide text-to-speech for the shopping assistant. The frontend authenticates with the existing Product Search `app_key` and `placement_id`, the same as the other Product Search APIs.
 
+This document covers voice **output** (text-to-speech) only. Voice **input** in the shopping assistant widget (`src/official-widgets/shopping-assistant/use-voice.ts`) does not call this proxy or any other backend — it records and transcribes entirely client-side via the browser's native `SpeechRecognition` / `webkitSpeechRecognition` Web Speech API, then sends the recognized text to the existing chat endpoint like typed input. No audio is uploaded for transcription.
+
 ## Request flow
 
 ```text
@@ -14,7 +16,7 @@ Voice Proxy
   ├─ validate origin, app key, payload, quota, and voice policy
   ├─ resolve tenant configuration
   ├─ call the voice provider
-  └─ stream audio/mpeg back to browser
+  └─ return audio/mpeg back to browser
 ```
 
 ## Endpoint

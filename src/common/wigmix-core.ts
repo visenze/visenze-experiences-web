@@ -1552,7 +1552,7 @@ export interface WidgetConfig {
        *
        * @since 1.0.29
        */
-      modelId?: string;
+      voiceModelId?: string;
       /**
        * (optional) Voice settings forwarded to the synthesis proxy. Defaults to the widget's
        * built-in settings when unset.

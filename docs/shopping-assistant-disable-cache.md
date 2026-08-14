@@ -14,7 +14,18 @@ The configuration must be defined before the widget-init script runs. The follow
     },
     customizations: {
       chatbot: {
+<<<<<<< HEAD
         chatAgent: 'shopping_closer_voice_v2',
+=======
+        chatAgent: 'shopping_assistant_v2',
+        voiceEnabled: true,
+        voiceId: '<voice-provider voice ID>',
+        voiceModelId: '<voice-provider model ID>',
+        voiceSettings: {
+          stability: 0.5,
+          similarityBoost: 0.75,
+        },
+>>>>>>> 8b85a78532d2ce832325c43230afc7d59c7cc547
       },
     },
   };
@@ -30,7 +41,19 @@ The configuration must be defined before the widget-init script runs. The follow
 
 Configuration is keyed by placement ID, so `window.visenzeConfigs[6643]` applies only to placement `6643`. Use the relevant placement ID in both the configuration and widget-init snippet when adapting this example.
 
-The optional `customizations.chatbot.chatAgent` setting controls the `chat_agent` parameter sent to the shopping-assistant API. Setting it to `shopping_assistant_v2` explicitly pins the widget to that agent.
+The optional `customizations.chatbot.chatAgent` setting controls the `chat_agent` parameter sent to the shopping-assistant API. Setting it to `shopping_assistant_v2` explicitly pins the widget to that agent. Unset, it defaults to `shopping_closer_voice_v2`.
+
+`customizations.chatbot` also gates and configures voice input/output for the widget:
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `voiceEnabled` | No | Enables voice input (browser speech recognition) and voice output (text-to-speech narration of replies). Defaults to disabled; when unset or `false`, no voice UI is shown and no voice-proxy requests are made. |
+| `voiceId` | No | Voice-provider voice ID used for spoken replies. Falls back to the widget's built-in voice when unset. |
+| `voiceModelId` | No | Voice-provider model ID used for spoken replies. Falls back to the widget's built-in model when unset. |
+| `voiceSettings.stability` | No | Voice stability (0-1) forwarded to the voice-synthesis proxy. Falls back to the widget's built-in setting when unset. |
+| `voiceSettings.similarityBoost` | No | Voice similarity boost (0-1) forwarded to the voice-synthesis proxy. Falls back to the widget's built-in setting when unset. |
+
+See `docs/shopping-assistant-voice-proxy.md` for how the voice-synthesis proxy call itself works.
 
 ## Verify the request
 

@@ -122,7 +122,7 @@ const useRecommendMe = ({
     const manualEndpoint = getManualEndpoint(placementId);
     const base = resolveBaseEndpoint(appSettings, manualEndpoint);
     const recommendMePath = usesCloudPaths(appSettings, manualEndpoint)
-      ? '/v1/search/chat/recommend-me'
+      ? '/v1/chat/recommend-me'
       : '/v1/product/multisearch/chat/recommend-me';
 
     const tokens: string[] = [];

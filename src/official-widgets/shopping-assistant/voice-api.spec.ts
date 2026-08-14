@@ -46,7 +46,7 @@ describe('voice-api', () => {
         'placement-1',
         'Hello there',
         'voice-123',
-        { modelId: 'eleven_turbo_v2.5', stability: 0.2, similarityBoost: 0.9 },
+        { voiceModelId: 'eleven_turbo_v2.5', stability: 0.2, similarityBoost: 0.9 },
       );
 
       expect(global.fetch).toHaveBeenCalledWith(

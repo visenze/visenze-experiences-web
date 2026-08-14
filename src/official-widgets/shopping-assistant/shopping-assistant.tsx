@@ -110,7 +110,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     placementId: appSettings.placementId,
     baseUrl: apiBase,
     voiceId: customizations.chatbot?.voiceId,
-    modelId: customizations.chatbot?.modelId,
+    voiceModelId: customizations.chatbot?.voiceModelId,
     voiceStability: customizations.chatbot?.voiceSettings?.stability,
     voiceSimilarityBoost: customizations.chatbot?.voiceSettings?.similarityBoost,
     onTranscript: (text): void => sendMessageRef.current(text),
@@ -217,7 +217,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     }
 
     const shoppingAssistantPath = usesCloudPaths(appSettings, manualEndpoint)
-      ? '/v1/search/chat/shopping-assistant'
+      ? '/v1/chat/shopping-assistant'
       : '/v1/product/multisearch/chat/shopping-assistant';
 
     fetchEventSource(`${apiBase}${shoppingAssistantPath}?${params.toString()}`, {
