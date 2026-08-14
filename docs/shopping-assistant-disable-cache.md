@@ -14,10 +14,7 @@ The configuration must be defined before the widget-init script runs. The follow
     },
     customizations: {
       chatbot: {
-<<<<<<< HEAD
         chatAgent: 'shopping_closer_voice_v2',
-=======
-        chatAgent: 'shopping_assistant_v2',
         voiceEnabled: true,
         voiceId: '<voice-provider voice ID>',
         voiceModelId: '<voice-provider model ID>',
@@ -25,7 +22,6 @@ The configuration must be defined before the widget-init script runs. The follow
           stability: 0.5,
           similarityBoost: 0.75,
         },
->>>>>>> 8b85a78532d2ce832325c43230afc7d59c7cc547
       },
     },
   };
