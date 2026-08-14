@@ -1530,17 +1530,15 @@ export interface WidgetConfig {
        * captured via the browser's built-in speech recognition, and assistant replies (both to
        * typed and spoken messages) are read aloud via text-to-speech. When unset (or false), all
        * voice UI is hidden and no voice requests are made.
-       *
-       * The text-to-speech credential itself is never held client-side — the voice proxy backend
-       * resolves it server-side from the tenant's `app_key` (see
-       * docs/shopping-assistant-voice-proxy.md). This flag only controls whether the widget shows
+       * 
+       * This flag only controls whether the widget shows
        * voice UI and calls the proxy for this placement.
        *
        * @since 1.0.29
        */
       voiceEnabled?: boolean;
       /**
-       * (optional) Voice ID used for spoken replies. Defaults to the widget's built-in voice
+       * (optional) Voice ID used for spoken replies. Default to the widget's built-in voice
        * when unset. Only takes effect when `voiceEnabled` is set.
        *
        * @since 1.0.29
