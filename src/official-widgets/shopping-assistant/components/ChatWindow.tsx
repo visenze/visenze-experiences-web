@@ -8,9 +8,8 @@ import UserIcon from '../../../common/icons/UserIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
+import { FOCUS_VISIBLE_CLASSES, FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS, USER_SCROLL_IDLE_MS } from '../constants';
 import DownArrowIcon from '../icons/DownArrowIcon';
-
-const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
 
 export interface Chat {
   chatId: string;
@@ -33,16 +32,6 @@ interface ChatWindowProps {
   streamingRequestId?: string;
   focusedProductId?: string | null;
 }
-
-// Waited between each newly-revealed product card while a reply is still streaming in, so
-// cards appear one at a time instead of all popping in together. One interval per `products`
-// array (not recreated per card) ticks forward and self-clears once every card is revealed —
-// it can't run forever. When more products arrive, `products.length` changing tears down the
-// old interval and starts a fresh one, picking up from wherever the reveal currently is. Only
-// applies to the live, in-progress grid; once a reply is committed to history all of its
-// products are shown at once (matches the committed message text, which also renders
-// instantly rather than replaying its typewriter effect).
-const PRODUCT_REVEAL_DELAY_MS = 200;
 
 interface RevealedProductsProps {
   products: ProcessedProduct[];
@@ -110,7 +99,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
   const isProgrammaticScrollRef = useRef(false);
   const programmaticScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const USER_SCROLL_IDLE_MS = 1000;
   const PROGRAMMATIC_SCROLL_SETTLE_MS = 500;
 
   const markUserScrolling = (): void => {
@@ -293,14 +281,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
     return statusParts.join(' ').trim();
   };
 
-  // The grid (see getProductGridCssClasses/getProductGridCssConfig above) only sets a column
-  // gap, no row gap — so the focused card's scale must stay small enough that it can't visually
-  // bleed into the row above/below even with zero vertical breathing room. The ring is folded
-  // into the same box-shadow as the lift shadow (rather than a Tailwind `ring-*` class) because
-  // an inline `boxShadow` would otherwise clobber it — box-shadow is a single CSS property.
-
-  const FOCUSED_SCALE = 0.9;
-
+  // The focused card's ring is folded into the same box-shadow as the lift shadow (rather than a
+  // Tailwind `ring-*` class) because an inline `boxShadow` would otherwise clobber it —
+  // box-shadow is a single CSS property. See FOCUSED_SCALE in ../constants for why the scale
+  // itself is kept small.
   const getCardWrapperStyle = (isFocused: boolean): CSSProperties => ({
     transformOrigin: 'center',
     transition: 'transform 0.2s ease, box-shadow 0.2s ease',

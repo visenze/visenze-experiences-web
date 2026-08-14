@@ -6,7 +6,7 @@ export const DEFAULT_VOICE_SIMILARITY_BOOST = 0.75;
 const OUTPUT_FORMAT = 'mp3_44100_128';
 
 export interface VoiceSynthesisOptions {
-  modelId?: string;
+  voiceModelId?: string;
   stability?: number;
   similarityBoost?: number;
 }
@@ -36,7 +36,7 @@ export const synthesizeSpeech = async (
     },
     body: JSON.stringify({
       text,
-      model_id: options?.modelId || DEFAULT_MODEL_ID,
+      model_id: options?.voiceModelId || DEFAULT_MODEL_ID,
       voice_settings: {
         stability: options?.stability ?? DEFAULT_VOICE_STABILITY,
         similarity_boost: options?.similarityBoost ?? DEFAULT_VOICE_SIMILARITY_BOOST,

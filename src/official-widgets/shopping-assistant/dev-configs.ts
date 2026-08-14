@@ -20,7 +20,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     chatbot: {
       voiceEnabled: false, // enable to test voice input/output locally (backend resolves the voice provider credential)
       // voiceId: '', // voice-provider voice ID; leave unset to use the widget's built-in voice
-      // modelId: '', // voice-provider model ID; leave unset to use the widget's built-in model
+      // voiceModelId: '', // voice-provider model ID; leave unset to use the widget's built-in model
       // voiceSettings: { stability: 0.5, similarityBoost: 0.75 }, // leave unset to use the widget's built-in settings
     },
   },

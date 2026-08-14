@@ -7,7 +7,7 @@ interface UseVoiceReplyOptions {
   placementId: string | number;
   baseUrl: string;
   voiceId?: string;
-  modelId?: string;
+  voiceModelId?: string;
   voiceStability?: number;
   voiceSimilarityBoost?: number;
   onTranscript: (text: string) => void;
@@ -50,7 +50,7 @@ const useVoiceReply = ({
   placementId,
   baseUrl,
   voiceId,
-  modelId,
+  voiceModelId,
   voiceStability,
   voiceSimilarityBoost,
   onTranscript,
@@ -143,7 +143,7 @@ const useVoiceReply = ({
     placementId,
     baseUrl,
     voiceId,
-    modelId,
+    voiceModelId,
     voiceStability,
     voiceSimilarityBoost,
     onTranscript,
