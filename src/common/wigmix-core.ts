@@ -1525,6 +1525,44 @@ export interface WidgetConfig {
        * @since 1.0.14
        */
       chatAgent: string;
+      /**
+       * (optional) Gates voice capability in the shopping-assistant widget: voice input is
+       * captured via the browser's built-in speech recognition, and assistant replies (both to
+       * typed and spoken messages) are read aloud via text-to-speech. When unset (or false), all
+       * voice UI is hidden and no voice requests are made.
+       * 
+       * This flag only controls whether the widget shows
+       * voice UI and calls the proxy for this placement.
+       *
+       * @since 1.0.29
+       */
+      voiceEnabled?: boolean;
+      /**
+       * (optional) Voice ID used for spoken replies. Default to the widget's built-in voice
+       * when unset. Only takes effect when `voiceEnabled` is set.
+       *
+       * @since 1.0.29
+       */
+      voiceId?: string;
+      /**
+       * (optional) Voice-provider model ID used for spoken replies. Defaults to the widget's
+       * built-in model when unset.
+       *
+       * @since 1.0.29
+       */
+      voiceModelId?: string;
+      /**
+       * (optional) Voice settings forwarded to the synthesis proxy. Defaults to the widget's
+       * built-in settings when unset.
+       *
+       * @since 1.0.29
+       */
+      voiceSettings?: {
+        /** Voice stability, 0-1. */
+        stability?: number;
+        /** Voice similarity boost, 0-1. */
+        similarityBoost?: number;
+      };
     };
   };
   /**

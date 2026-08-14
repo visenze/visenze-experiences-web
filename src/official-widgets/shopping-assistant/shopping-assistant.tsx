@@ -1,89 +1,54 @@
 import { Textarea } from '@heroui/input';
 import { cn } from '@heroui/theme';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { type FC, type KeyboardEvent, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { type FC, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import Webcam from 'react-webcam';
+import CameraCaptureDrawer from './components/CameraCaptureDrawer';
 import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
+import { FOCUS_VISIBLE_CLASSES } from './constants';
+import MicrophoneIcon from './icons/MicrophoneIcon';
 import NewChatIcon from './icons/NewChatIcon';
+import SpeakerIcon from './icons/SpeakerIcon';
+import StopIcon from './icons/StopIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
+import { extractActionTokens, extractSpeakableSentences, extractSuggestions, resolveProducts, stripTokensForDisplay } from './token-parsing';
+import useVoiceReply from './use-voice-reply';
 import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../common/client/endpoint';
 import FileDropzone from '../../common/components/FileDropzone';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import ArrowPathIcon from '../../common/icons/ArrowPathIcon';
 import CameraIcon from '../../common/icons/CameraIcon';
 import CloseIcon from '../../common/icons/CloseIcon';
 import CustomizableIcon from '../../common/icons/CustomizableIcon';
 import PlusCircleIcon from '../../common/icons/PlusCircleIcon';
 import UploadIcon from '../../common/icons/UploadIcon';
-import UturnLeftIcon from '../../common/icons/UturnLeftIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 import { isImageFile, type SearchImage, type SearchImageOrPid } from '../../common/types/image';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import { getFlattenProduct } from '../../common/utils';
 
-// A product reference is a token that can appear anywhere in the assistant's text:
-//   [[<product_id>]]
-// Old format put the token at the START of the line (e.g. "- [[pid]] **title** ...");
-// the new format puts it at the END (e.g. "- <description> ... [[pid]]").
-// LEADING_PRODUCT_REGEX detects the old, line-leading form so its whole line can be dropped.
-const LEADING_PRODUCT_REGEX = /^(?:\d+\.? |- )?\[\[[^\]]+]]/;
-const SUGGESTION_LINE_REGEX = /\(\(([^)]+)\)\)/g;
-const INCOMPLETE_PRODUCT_TOKEN_REGEX = /\[\[[^\]]*$/;
-const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
-
-// Clean the accumulated text for display:
-// - Old format (token leads the line): drop the whole line; the product card replaces it.
-// - New format (token inline/trailing): strip only the token, keep the surrounding description.
-// Also removes ((suggestion)) tokens and any trailing, not-yet-closed "[[..." fragment
-// that is still mid-stream, so partial tokens never flash in the bubble.
-const stripTokensForDisplay = (text: string): string => text
-  .split('\n')
-  .map((line): string | null => {
-    if (LEADING_PRODUCT_REGEX.test(line)) {
-      return null;
-    }
-    return line.replace(/\[\[[^\]]+]]/g, '');
-  })
-  .filter((line): line is string => line !== null)
-  .join('\n')
-  .replace(SUGGESTION_LINE_REGEX, '')
-  .replace(INCOMPLETE_PRODUCT_TOKEN_REGEX, '');
-
-// Resolve referenced products in first-appearance order. A product is included only when
-// its token is present in the text AND its payload has arrived via a `product` event.
-const resolveProducts = (text: string, products: ProcessedProduct[]): ProcessedProduct[] => {
-  const tokenRegex = /\[\[([^\]]+)]]/g;
-  const seen = new Set<string>();
-  const ordered: ProcessedProduct[] = [];
-  let match = tokenRegex.exec(text);
-  while (match) {
-    const pid = match[1];
-    if (!seen.has(pid)) {
-      const product = products.find((p) => p.product_id === pid);
-      if (product) {
-        seen.add(pid);
-        ordered.push(product);
-      }
-    }
-    match = tokenRegex.exec(text);
-  }
-  return ordered;
-};
+interface CompletedResponse {
+  chatId: string;
+  requestId: string;
+  text: string;
+  products: ProcessedProduct[];
+}
 
 interface ShoppingAssistantProps {
   renderModalWithoutPortal?: boolean;
 }
 
 const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPortal }) => {
-  const webcamRef = useRef<Webcam>(null);
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
+  // Resolve the API base, honouring manual endpoint > cloud > API endpoint > default; shared by
+  // the chat SSE call below and the voice proxy call in useVoice.
+  const manualEndpoint = getManualEndpoint(appSettings.placementId);
+  const apiBase = resolveBaseEndpoint(appSettings, manualEndpoint);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [image, setImage] = useState<SearchImageOrPid | undefined>();
@@ -94,18 +59,14 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const [isWaiting, setIsWaiting] = useState(true);
   const [showAllSuggestions, setShowAllSuggestions] = useState(false);
   const [allowUserInput, setAllowUserInput] = useState(false);
-  const [latestMessage, setLatestMessage] = useState('');
+  const [showResponseExtras, setShowResponseExtras] = useState(true);
   const [streamingProducts, setStreamingProducts] = useState<ProcessedProduct[]>([]);
   const [streamingRequestId, setStreamingRequestId] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showCameraDrawer, setShowCameraDrawer] = useState(false);
   const [widgetOpenTrigger, setWidgetOpenTrigger] = useState(0);
   const [sendChatTrigger, setSendChatTrigger] = useState<[string, SearchImageOrPid | undefined]>();
-  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const openCameraButtonRef = useRef<HTMLButtonElement>(null);
-  const closeCameraButtonRef = useRef<HTMLButtonElement>(null);
-  const takePhotoButtonRef = useRef<HTMLButtonElement>(null);
-  const switchCameraButtonRef = useRef<HTMLButtonElement>(null);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const intl = useIntl();
@@ -114,6 +75,85 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     intl.formatMessage({ id: 'openingMessage1' }),
     intl.formatMessage({ id: 'openingMessage2' }),
   ];
+  // Bridges sendMessage (declared below) to onTranscript, since useVoiceReply is instantiated
+  // before sendMessage exists (sendMessage itself needs the reply helpers useVoiceReply returns).
+  const sendMessageRef = useRef<(text: string) => void>(() => {});
+
+  const {
+    voiceEnabled,
+    speechOutputEnabled,
+    voiceStatus,
+    liveTranscript,
+    hasVoiceError,
+    isVoiceReadingEnabled,
+    typewriterText,
+    isSpeechPlaying,
+    focusedProductId,
+    startVoiceRecording,
+    stopRecording,
+    stopAudio,
+    toggleVoiceReading,
+    interruptSpeech,
+    shouldSpeakReply,
+    isVoiceReadingEnabledNow,
+    beginReply,
+    updateLatestMessage,
+    speak,
+    hasPendingSpeech,
+    deferCommit,
+    forceRevealTypewriter,
+    getTypewriterLength,
+    resetReplyState,
+  } = useVoiceReply({
+    enabled: customizations.chatbot?.voiceEnabled,
+    appKey: appSettings.appKey,
+    placementId: appSettings.placementId,
+    baseUrl: apiBase,
+    voiceId: customizations.chatbot?.voiceId,
+    voiceModelId: customizations.chatbot?.voiceModelId,
+    voiceStability: customizations.chatbot?.voiceSettings?.stability,
+    voiceSimilarityBoost: customizations.chatbot?.voiceSettings?.similarityBoost,
+    onTranscript: (text): void => sendMessageRef.current(text),
+    setIsWaiting,
+  });
+
+  const commitResponse = ({ chatId: responseChatId, requestId, text, products }: CompletedResponse): void => {
+    if (products.length) {
+      const requestMetadata = {
+        queryId: requestId,
+        cat: Category.RESULT,
+      };
+      widgetClient.sendEvent(Actions.RESULT_LOAD, requestMetadata);
+      widgetClient.setLastTrackingMeta(requestMetadata);
+    }
+    setChats((chats1) => {
+      const newChats = [...chats1];
+      if (text) {
+        newChats.push({
+          chatId: responseChatId,
+          requestId,
+          messages: [text],
+          author: 'bot',
+          products: [],
+        });
+      }
+      if (products.length) {
+        newChats.push({
+          chatId: responseChatId,
+          requestId,
+          messages: [],
+          author: 'products',
+          products,
+        });
+      }
+      return newChats;
+    });
+    setStreamingProducts([]);
+    setStreamingRequestId('');
+    resetReplyState();
+    setAllowUserInput(true);
+    setShowResponseExtras(true);
+  };
 
   const sendMessage = async (
     messageToSend?: string,
@@ -129,6 +169,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setSuggestions([]);
     setStreamingProducts([]);
     setStreamingRequestId('');
+    const willSpeakReply = beginReply();
+    setShowResponseExtras(false);
     setChats((chats1) => [
       ...chats1,
       {
@@ -142,7 +184,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
 
     let chatIdFromResp = '';
     let reqIdFromResp = '';
+    let spokenLength = 0;
     const tokens: string[] = [];
+    const handledActionTokens = new Set<string>();
     const chatIdToUse = chatIdParam || chatId;
     const products: ProcessedProduct[] = [];
     // Retrieve user id and session id from ViSearch client
@@ -172,14 +216,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       formData.append('image', imageToSend.files[0]);
     }
 
-    // Resolve the API base + path, honouring manual endpoint > cloud > API endpoint > default
-    const manualEndpoint = getManualEndpoint(appSettings.placementId);
-    const base = resolveBaseEndpoint(appSettings, manualEndpoint);
     const shoppingAssistantPath = usesCloudPaths(appSettings, manualEndpoint)
       ? '/v1/chat/shopping-assistant'
       : '/v1/product/multisearch/chat/shopping-assistant';
 
-    fetchEventSource(`${base}${shoppingAssistantPath}?${params.toString()}`, {
+    fetchEventSource(`${apiBase}${shoppingAssistantPath}?${params.toString()}`, {
       method: 'POST',
       body: formData,
       openWhenHidden: true,
@@ -190,13 +231,39 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           reqIdFromResp = JSON.parse(ev.data).value;
           setStreamingRequestId(reqIdFromResp);
         } else if (ev.event === 'chat_token') {
-          setIsWaiting(false);
+          if (!willSpeakReply || !isVoiceReadingEnabledNow()) {
+            setIsWaiting(false);
+          }
           tokens.push(JSON.parse(ev.data).value);
           const currentText = tokens.join('');
-          const allSuggestions = currentText.match(SUGGESTION_LINE_REGEX);
-          setSuggestions((allSuggestions || []).map((s) => s.replace('((', '').replace('))', '').trim()));
-          setLatestMessage(stripTokensForDisplay(currentText).trim());
+          extractActionTokens(currentText).forEach(({ action, productId, key }) => {
+            if (handledActionTokens.has(key)) {
+              return;
+            }
+            handledActionTokens.add(key);
+            const callback = action === 'ADD_TO_CART'
+              ? widgetConfig.callbacks.onAddToCartToggle
+              : widgetConfig.callbacks.onAddToWishlistToggle;
+            if (callback) {
+              try {
+                const callbackResult = callback(true, productId);
+                Promise.resolve(callbackResult).catch((err: unknown) => console.error(err));
+              } catch (err) {
+                console.error(err);
+              }
+            }
+          });
+          setSuggestions(extractSuggestions(currentText));
+          const displayText = stripTokensForDisplay(currentText).trim();
+          updateLatestMessage(displayText);
           setStreamingProducts(resolveProducts(currentText, products));
+          if (willSpeakReply && isVoiceReadingEnabledNow()) {
+            const { sentences, spokenLength: newSpokenLength } = extractSpeakableSentences(currentText, spokenLength);
+            sentences.forEach(({ chunk, revealTarget, productId }) => {
+              speak(chunk, revealTarget, productId);
+            });
+            spokenLength = newSpokenLength;
+          }
         } else if (ev.event === 'product') {
           products.push(getFlattenProduct(JSON.parse(ev.data)));
           setStreamingProducts(resolveProducts(tokens.join(''), products));
@@ -204,49 +271,69 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       },
       onclose: () => {
         const currentText = tokens.join('');
-        const allSuggestions = currentText.match(SUGGESTION_LINE_REGEX);
-        setSuggestions((allSuggestions || []).map((s) => s.replace('((', '').replace('))', '').trim()));
+        setSuggestions(extractSuggestions(currentText));
         const finalText = stripTokensForDisplay(currentText).trim();
         const finalProducts = resolveProducts(currentText, products);
-        if (finalProducts.length) {
-          const requestMetadata = {
-            queryId: reqIdFromResp,
-            cat: Category.RESULT,
-          };
-          widgetClient.sendEvent(Actions.RESULT_LOAD, requestMetadata);
-          widgetClient.setLastTrackingMeta(requestMetadata);
+        updateLatestMessage(finalText);
+        setStreamingProducts(finalProducts);
+        const completedResponse = {
+          chatId: chatIdFromResp,
+          requestId: reqIdFromResp,
+          text: finalText,
+          products: finalProducts,
+        };
+        if (willSpeakReply && isVoiceReadingEnabledNow()) {
+          const { sentences } = extractSpeakableSentences(currentText, spokenLength, { includeTrailing: true });
+          sentences.forEach(({ chunk, revealTarget, productId }) => {
+            speak(chunk, revealTarget, productId);
+          });
+          if (hasPendingSpeech()) {
+            deferCommit(() => commitResponse(completedResponse));
+          } else {
+            setIsWaiting(false);
+            forceRevealTypewriter(finalText);
+            commitResponse(completedResponse);
+          }
+        } else if (finalText && getTypewriterLength() < finalText.length) {
+          deferCommit(() => commitResponse(completedResponse));
+        } else {
+          commitResponse(completedResponse);
         }
-        setChats((chats1) => {
-          const newChats = [...chats1];
-          if (finalText) {
-            newChats.push({
-              chatId: chatIdFromResp,
-              requestId: reqIdFromResp,
-              messages: [finalText],
-              author: 'bot',
-              products: [],
-            });
-          }
-          if (finalProducts.length) {
-            newChats.push({
-              chatId: chatIdFromResp,
-              requestId: reqIdFromResp,
-              messages: [],
-              author: 'products',
-              products: finalProducts,
-            });
-          }
-          return newChats;
-        });
-        setLatestMessage('');
-        setStreamingProducts([]);
-        setStreamingRequestId('');
-        setAllowUserInput(true);
       },
       onerror: (err) => {
         console.error(err);
       },
     });
+  };
+
+  useEffect(() => {
+    sendMessageRef.current = (text: string): void => {
+      sendMessage(text);
+    };
+  });
+
+  useEffect(() => {
+    if (voiceStatus === 'recording' || voiceStatus === 'transcribing') {
+      setMessage(liveTranscript);
+    }
+  }, [liveTranscript, voiceStatus]);
+
+  const renderVoiceButtonIcon = (): ReactElement => {
+    if (voiceStatus === 'transcribing') {
+      return <MicrophoneIcon
+        className='size-5 cursor-pointer' color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')} />;
+    }
+    if (voiceStatus === 'recording') {
+      return <StopIcon className='size-5 cursor-pointer animate-pulse' color='#EF4444' />;
+    }
+    return (
+      <MicrophoneIcon
+        className='size-5 cursor-pointer'
+        color={darkMode
+          ? (customizations.generalLayout?.fontColorDark || '')
+          : (customizations.generalLayout?.fontColor || '')}
+      />
+    );
   };
 
   const onImageUpload = (data: SearchImage): void => {
@@ -263,65 +350,11 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     triggerButtonRef.current?.focus();
   }, []);
 
-  const handleCameraDrawerKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>): void => {
-    if (event.key === 'Escape') {
-      event.stopPropagation();
-      closeCameraDrawer();
-      return;
-    }
-    if (event.key !== 'Tab') {
-      return;
-    }
-    const focusableControls = [
-      closeCameraButtonRef.current,
-      takePhotoButtonRef.current,
-      switchCameraButtonRef.current,
-    ].filter((control): control is HTMLButtonElement => !!control && !control.disabled);
-    if (!focusableControls.length) {
-      return;
-    }
-    // document.activeElement doesn't pierce the Shadow DOM the widget renders in (it only
-    // reports the shadow host), so it never matches these controls in production. Reading
-    // activeElement off the event's own root (the Shadow DOM when present, else document)
-    // works in both contexts.
-    const activeRoot = event.currentTarget.getRootNode() as Document | ShadowRoot;
-    const activeIndex = focusableControls.indexOf(activeRoot.activeElement as HTMLButtonElement);
-    let nextIndex = activeIndex + 1;
-    if (event.shiftKey) {
-      nextIndex = activeIndex - 1;
-    }
-    if (nextIndex < 0) {
-      nextIndex = focusableControls.length - 1;
-    }
-    if (nextIndex >= focusableControls.length) {
-      nextIndex = 0;
-    }
-
-    event.preventDefault();
-    focusableControls[nextIndex].focus();
-  }, [closeCameraDrawer]);
-
-  const capture = useCallback(() => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      if (imageSrc) {
-        fetch(imageSrc)
-          .then((res) => res.blob())
-          .then((blob) => {
-            const file = new File([blob], `${Date.now()}`, { type: 'image/png' });
-            const imageFile = { files: [file], file: imageSrc };
-
-            onImageUpload(imageFile);
-            closeCameraDrawer();
-          });
-      }
-    }
-  }, [closeCameraDrawer, webcamRef]);
-
   const openDialog = (): void => {
     if (dialogVisible) {
       return;
     }
+    const shouldSpeakOpening = shouldSpeakReply();
     const renderChat = (idx: number, cId: string): void => {
       if (idx > openingMessages.length) {
         setIsWaiting(false);
@@ -335,6 +368,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           author: 'bot',
           messages: openingMessages.slice(0, idx),
         }]);
+        if (shouldSpeakOpening) {
+          speak(openingMessages[idx - 1], 0, null);
+        }
         renderChat(idx + 1, cId);
       }, 2000);
     };
@@ -346,15 +382,17 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   };
 
   const newChat = (): void => {
+    stopAudio();
+    resetReplyState();
     setIsWaiting(true);
     setShowAllSuggestions(false);
     setAllowUserInput(false);
     setChats([]);
-    setLatestMessage('');
     setSuggestions([]);
     setStreamingProducts([]);
     setStreamingRequestId('');
 
+    const shouldSpeakOpening = shouldSpeakReply();
     const renderChat = (idx: number, cId: string): void => {
       if (idx > openingMessages.length) {
         setIsWaiting(false);
@@ -368,6 +406,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           author: 'bot',
           messages: openingMessages.slice(0, idx),
         }]);
+        if (shouldSpeakOpening) {
+          speak(openingMessages[idx - 1], 0, null);
+        }
         renderChat(idx + 1, cId);
       });
     };
@@ -392,6 +433,28 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
           </h2>
 
           <div className='flex items-center gap-2 pe-4'>
+            {speechOutputEnabled && (
+              <button
+                type='button'
+                aria-label={intl.formatMessage({
+                  id: isVoiceReadingEnabled ? 'a11yDisableVoiceReading' : 'a11yEnableVoiceReading',
+                })}
+                aria-pressed={isVoiceReadingEnabled}
+                className={cn(
+                  'p-0 bg-transparent border-0',
+                  FOCUS_VISIBLE_CLASSES,
+                )}
+                onClick={toggleVoiceReading}
+              >
+                <SpeakerIcon
+                  muted={!isVoiceReadingEnabled}
+                  className='size-6 cursor-pointer'
+                  color={darkMode
+                    ? (customizations.generalLayout?.fontColorDark || '')
+                    : (customizations.generalLayout?.fontColor || '')}
+                />
+              </button>
+            )}
             <button
               type='button'
               aria-label={intl.formatMessage({ id: 'a11yStartNewChat' })}
@@ -418,84 +481,23 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
         </div>
         <ChatWindow isWaiting={isWaiting}
                     chats={chats}
-                    latestMessage={latestMessage}
-                    suggestions={suggestions}
+                    latestMessage={typewriterText}
+                    suggestions={showResponseExtras ? suggestions : []}
                     streamingProducts={streamingProducts}
                     streamingRequestId={streamingRequestId}
+                    focusedProductId={focusedProductId}
                     showAllSuggestions={showAllSuggestions}
                     setShowAllSuggestions={() => setShowAllSuggestions(true)}
                     sendMessage={sendMessage} />
         <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
           {showCameraDrawer && (
-            <div
-              role='dialog'
-              aria-modal='true'
-              aria-label={intl.formatMessage({ id: 'a11yCameraDrawer' })}
-              tabIndex={-1}
-              className='wigmix-camera-drawer absolute inset-x-0 bottom-0 z-50 bg-white dark:bg-neutral-800 shadow-lg flex flex-col items-center p-4 animate-slideup'
-              style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, minHeight: 340 }}
-              onKeyDown={handleCameraDrawerKeyDown}
-            >
-              <div className='w-full flex justify-center'>
-                <Webcam
-                  audio={false}
-                  ref={webcamRef}
-                  screenshotFormat='image/jpeg'
-                  className='rounded-lg max-w-full'
-                  videoConstraints={{ facingMode }}
-                  aria-label={intl.formatMessage({ id: 'a11yCameraPreview' })}
-                />
-              </div>
-              <div className='w-full flex gap-2 mt-2'>
-                <button ref={closeCameraButtonRef}
-                        className={cn(
-                            'w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1',
-                            'text-neutral-900 dark:text-neutral-100',
-                            FOCUS_VISIBLE_CLASSES,
-                        )}
-                        type='button'
-                        aria-label={intl.formatMessage({ id: 'a11yCloseCamera' })}
-                        title={intl.formatMessage({ id: 'a11yCloseCamera' })}
-                        onClick={closeCameraDrawer}>
-                  <UturnLeftIcon
-                      className='size-5 cursor-pointer'
-                      color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
-                  />
-                </button>
-                <button ref={takePhotoButtonRef}
-                        className={cn(
-                            'w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1',
-                            'text-neutral-900 dark:text-neutral-100',
-                            FOCUS_VISIBLE_CLASSES,
-                        )}
-                        type='button'
-                        aria-label={intl.formatMessage({ id: 'a11yTakePhoto' })}
-                        title={intl.formatMessage({ id: 'a11yTakePhoto' })}
-                        onClick={capture}>
-                  <CameraIcon
-                      className='size-5 cursor-pointer'
-                      color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
-                  />
-                </button>
-                <button ref={switchCameraButtonRef}
-                        className={cn(
-                            'w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1',
-                            'text-neutral-900 dark:text-neutral-100',
-                            FOCUS_VISIBLE_CLASSES,
-                        )}
-                        type='button'
-                        aria-label={intl.formatMessage({ id: 'a11ySwitchCamera' })}
-                        title={intl.formatMessage({ id: 'a11ySwitchCamera' })}
-                        onClick={() => {
-                  setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
-                }}>
-                  <ArrowPathIcon
-                      className='size-5 cursor-pointer'
-                      color={darkMode ? (customizations.generalLayout?.fontColorDark || '') : (customizations.generalLayout?.fontColor || '')}
-                  />
-                </button>
-              </div>
-            </div>
+            <CameraCaptureDrawer
+              darkMode={darkMode}
+              fontColor={customizations.generalLayout?.fontColor}
+              fontColorDark={customizations.generalLayout?.fontColorDark}
+              onClose={closeCameraDrawer}
+              onCapture={onImageUpload}
+            />
           )}
           <div className='flex justify-end gap-2'>
             <button
@@ -531,6 +533,43 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                 )}
               </div>
             </FileDropzone>
+            {voiceEnabled && (
+                <button
+                  type='button'
+                  aria-label={intl.formatMessage({
+                    id: voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yStartVoiceInput',
+                  })}
+                  aria-pressed={voiceStatus === 'recording'}
+                  title={hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
+                  disabled={(voiceStatus === 'idle' && !allowUserInput && !isSpeechPlaying) || voiceStatus === 'transcribing'}
+                  className={cn('p-2 border border-gray dark:border-neutral-500 rounded-md bg-transparent disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
+                  onMouseDown={startVoiceRecording}
+                  onMouseUp={stopRecording}
+                  onMouseLeave={stopRecording}
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    startVoiceRecording();
+                  }}
+                  onTouchEnd={(e) => {
+                    e.preventDefault();
+                    stopRecording();
+                  }}
+                  onKeyDown={(e) => {
+                    if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                      e.preventDefault();
+                      startVoiceRecording();
+                    }
+                  }}
+                  onKeyUp={(e) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      e.preventDefault();
+                      stopRecording();
+                    }
+                  }}
+                >
+                  {renderVoiceButtonIcon()}
+                </button>
+            )}
           </div>
           <Textarea ref={chatInputRef}
                     aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
@@ -578,14 +617,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   }, [image]);
 
   useEffect(() => {
-    if (showCameraDrawer) {
-      closeCameraButtonRef.current?.focus();
-    }
-  }, [showCameraDrawer]);
-
-  useEffect(() => {
     if (!dialogVisible) {
-      return undefined;
+      interruptSpeech();
     }
     // react-modal grabs focus onto its own content wrapper right after mount (based on
     // document.activeElement, which can't see into the widget's Shadow DOM so it always thinks
