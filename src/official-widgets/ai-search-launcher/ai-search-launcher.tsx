@@ -1,6 +1,7 @@
 import { cn } from '@heroui/theme';
 import { type FC, useContext, useState } from 'react';
 import { useIntl } from 'react-intl';
+import FullScreenContainer from './components/FullScreenContainer';
 import { FOCUS_VISIBLE_CLASSES } from './constants';
 import MicrophoneIcon from './icons/MicrophoneIcon';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -9,41 +10,15 @@ import { WidgetDataContext } from '../../common/types/contexts';
 
 type EntryPoint = 'image' | 'mic' | 'ai';
 
-const PLACEHOLDER_LABELS: Record<EntryPoint, string> = {
-  image: 'Image search (coming soon)',
-  mic: 'Voice search (coming soon)',
-  ai: 'Ask AI (coming soon)',
-};
-
-interface TemporaryFullScreenPlaceholderProps {
-  entryPoint: EntryPoint;
-  onClose: () => void;
-}
-
-// Placeholder — replaced wholesale by the real Portal-based full-screen container in a later task.
-const TemporaryFullScreenPlaceholder: FC<TemporaryFullScreenPlaceholderProps> = ({ entryPoint, onClose }) => (
-  <div
-    style={{ position: 'fixed', inset: 0 }}
-    className='z-50 flex flex-col items-center justify-center gap-4 bg-white dark:bg-neutral-900'
-  >
-    <p className='text-lg text-black dark:text-white'>{PLACEHOLDER_LABELS[entryPoint]}</p>
-    <button
-      type='button'
-      aria-label='Close'
-      className={cn('rounded-md border border-gray bg-transparent px-4 py-2 text-black dark:text-white', FOCUS_VISIBLE_CLASSES)}
-      onClick={onClose}
-    >
-      Close
-    </button>
-  </div>
-);
-
 const AiSearchLauncher: FC = () => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, appSettings } = widgetConfig;
   const root = useContext(RootContext);
   const intl = useIntl();
   const [activeEntryPoint, setActiveEntryPoint] = useState<EntryPoint | null>(null);
+  // Temporary — replaced when the chat/voice hook (use-launcher-chat) is wired in.
+  const [isMuted, setIsMuted] = useState(false);
+  const dialogTitleId = `wigmix-ai-search-launcher-title-${appSettings.placementId}`;
 
   if (!root) {
     return <></>;
@@ -82,9 +57,21 @@ const AiSearchLauncher: FC = () => {
           {customizations.launcher?.title || intl.formatMessage({ id: 'triggerAskAi' })}
         </button>
       </div>
-      {activeEntryPoint && (
-        <TemporaryFullScreenPlaceholder entryPoint={activeEntryPoint} onClose={() => setActiveEntryPoint(null)} />
-      )}
+      <FullScreenContainer
+        open={activeEntryPoint !== null}
+        onClose={() => setActiveEntryPoint(null)}
+        title={customizations.launcher?.title || intl.formatMessage({ id: 'widgetTitle' })}
+        isMuted={isMuted}
+        // Temporary — replaced when the chat/voice hook (use-launcher-chat) is wired in.
+        onToggleMute={() => setIsMuted((muted) => !muted)}
+        // Temporary no-op — replaced when the chat/voice hook (use-launcher-chat) is wired in.
+        onNewChat={() => {}}
+        darkMode={darkMode}
+        placementId={String(appSettings.placementId)}
+        ariaLabelledBy={dialogTitleId}
+      >
+        {`Entry point: ${activeEntryPoint} (chat UI coming soon)`}
+      </FullScreenContainer>
     </>
   );
 };

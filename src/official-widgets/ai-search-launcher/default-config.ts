@@ -8,6 +8,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yOpenVoiceSearch: 'Search by voice',
     a11yOpenAskAi: 'Ask AI',
     triggerAskAi: 'Ask AI',
+    a11yToggleMute: 'Mute voice output',
+    a11yEnableMute: 'Unmute voice output',
+    a11yStartNewChat: 'Start new chat',
+    a11yCloseFullScreen: 'Close full screen',
   },
 };
 
