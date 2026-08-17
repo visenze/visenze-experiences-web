@@ -1,6 +1,6 @@
 import { Textarea } from '@heroui/input';
 import { cn } from '@heroui/theme';
-import { type FC, useContext, useEffect } from 'react';
+import { type FC, useContext, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import FullScreenContainer from './components/FullScreenContainer';
 import ImageEntryScreen from './components/ImageEntryScreen';
@@ -29,10 +29,10 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const intl = useIntl();
   const chat = useLauncherChat();
   const dialogTitleId = `wigmix-ai-search-launcher-title-${appSettings.placementId}`;
-
-  if (!root) {
-    return <></>;
-  }
+  const imageButtonRef = useRef<HTMLButtonElement>(null);
+  const micButtonRef = useRef<HTMLButtonElement>(null);
+  const aiButtonRef = useRef<HTMLButtonElement>(null);
+  const chatInputRef = useRef<HTMLTextAreaElement>(null);
 
   const fontColor = darkMode
     ? (customizations.generalLayout?.fontColorDark || '')
@@ -78,10 +78,51 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const showImageWelcome = chat.activeEntryPoint === 'image' && !chat.hasStartedChat;
   const showMicWelcome = chat.activeEntryPoint === 'mic' && !chat.hasStartedChat;
 
+  useEffect(() => {
+    if (customizations.launcher?.startMuted) {
+      chat.toggleVoiceReading();
+    }
+    // Mount-only: this is a one-time initial-mute preference, not something to re-apply whenever
+    // chat.toggleVoiceReading is recreated (it isn't memoized upstream).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Deferred focus onto the chat input whenever the chat surface becomes visible (i.e. either
+  // welcome-screen flag flips to false) — mirrors shopping-assistant.tsx's own dialogVisible-keyed
+  // effect. The setTimeout(..., 0) deferral matters even though this widget doesn't use
+  // react-modal: focusing synchronously loses a race against the Shadow-DOM's own mount-time focus
+  // handling, the same underlying timing issue react-modal's comment describes.
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      chatInputRef.current?.focus();
+    }, 0);
+    return (): void => window.clearTimeout(timeoutId);
+  }, [showImageWelcome, showMicWelcome]);
+
+  // Focus restore on close (I6): read the entry point BEFORE closeEntryPoint clears it, so the
+  // correct entry-bar button (mirrors shopping-assistant.tsx's closeDialog/triggerButtonRef
+  // pattern) gets focus back once the full-screen surface unmounts.
+  const handleClose = (): void => {
+    const closingEntryPoint = chat.activeEntryPoint;
+    chat.closeEntryPoint();
+    if (closingEntryPoint === 'image') {
+      imageButtonRef.current?.focus();
+    } else if (closingEntryPoint === 'mic') {
+      micButtonRef.current?.focus();
+    } else if (closingEntryPoint === 'ai') {
+      aiButtonRef.current?.focus();
+    }
+  };
+
+  if (!root) {
+    return <></>;
+  }
+
   return (
     <>
       <div className='flex items-center gap-2 p-2'>
         <button
+          ref={imageButtonRef}
           type='button'
           aria-label={intl.formatMessage({ id: 'a11yOpenImageSearch' })}
           className={cn('rounded-md border border-gray bg-transparent p-2', FOCUS_VISIBLE_CLASSES)}
@@ -90,6 +131,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
           <CameraIcon className='size-5 cursor-pointer' color={fontColor} />
         </button>
         <button
+          ref={micButtonRef}
           type='button'
           aria-label={intl.formatMessage({ id: 'a11yOpenVoiceSearch' })}
           className={cn('rounded-md border border-gray bg-transparent p-2', FOCUS_VISIBLE_CLASSES)}
@@ -98,6 +140,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
           <MicrophoneIcon className='size-5 cursor-pointer' color={fontColor} />
         </button>
         <button
+          ref={aiButtonRef}
           type='button'
           aria-label={intl.formatMessage({ id: 'a11yOpenAskAi' })}
           style={{ color: fontColor }}
@@ -109,12 +152,15 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
       </div>
       <FullScreenContainer
         open={chat.activeEntryPoint !== null}
-        onClose={chat.closeEntryPoint}
+        onClose={handleClose}
         title={customizations.launcher?.title || intl.formatMessage({ id: 'widgetTitle' })}
         isMuted={!chat.isVoiceReadingEnabled}
         onToggleMute={chat.toggleVoiceReading}
         onNewChat={handleNewChat}
         darkMode={darkMode}
+        fontFamily={customizations.generalLayout?.fontFamily}
+        fontColor={customizations.generalLayout?.fontColor}
+        fontColorDark={customizations.generalLayout?.fontColorDark}
         placementId={String(appSettings.placementId)}
         ariaLabelledBy={dialogTitleId}
         renderWithoutPortal={renderWithoutPortal}
@@ -139,6 +185,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
             />
             <div className='flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
               <Textarea
+                ref={chatInputRef}
                 aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
                 value={chat.message}
                 placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}

@@ -1,8 +1,12 @@
-import { act, fireEvent, type RenderResult } from '@testing-library/react';
+import { act, fireEvent, render, type RenderResult } from '@testing-library/react';
+import { type FC, type ReactNode, useCallback, useState } from 'react';
+import { IntlProvider } from 'react-intl';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import AiSearchLauncher from './ai-search-launcher';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
+import { RootContext } from '../../common/components/shadow-wrapper';
 import { createMockWidgetClient, createWidgetConfig, renderWidget } from '../../common/test-utils';
+import { WidgetDataContext } from '../../common/types/contexts';
 import type { WidgetConfig } from '../../common/wigmix-core';
 
 // Mock @microsoft/fetch-event-source to control SSE streaming in tests
@@ -201,6 +205,46 @@ describe('ai-search-launcher', () => {
     it('should not render the full-screen surface before any entry point is opened', () => {
       renderLauncher();
       expect(testComponent.queryByRole('dialog')).toBeNull();
+    });
+
+    // Regression test for C1: RootContext (src/common/components/shadow-wrapper.tsx) always
+    // starts out null and is only filled in via a ref callback on the FIRST commit, so a
+    // component reading it with useContext(RootContext) always renders once with root === null,
+    // then re-renders with it set. `renderWidget`'s default wrapper always supplies a non-null
+    // root, so it structurally can't exercise this path — this test uses its own small wrapper
+    // that mimics ShadowWrapper's actual null-then-filled behavior instead. Before the fix, an
+    // early `if (!root) { return <></>; }` guard placed BEFORE a hook call further down the
+    // component meant the first render (root === null) skipped that hook while the second render
+    // (root set) called it, changing the number of hooks called between renders — a hard React
+    // violation that crashes the widget on mount.
+    it('should not throw when RootContext starts null and is filled in on the very first commit', () => {
+      const { widgetConfig, widgetClient } = createTestClient();
+
+      const NullThenFilledRootWrapper: FC<{ children: ReactNode }> = ({ children }) => {
+        const [rootNode, setRootNode] = useState<HTMLElement | null>(null);
+        const onRefChange = useCallback((ref: HTMLDivElement | null) => {
+          if (ref) {
+            setRootNode(ref);
+          }
+        }, []);
+        return (
+          <div ref={onRefChange}>
+            <RootContext.Provider value={rootNode}>{children}</RootContext.Provider>
+          </div>
+        );
+      };
+
+      expect(() => {
+        render(
+          <NullThenFilledRootWrapper>
+            <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+              <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+                <AiSearchLauncher renderWithoutPortal />
+              </IntlProvider>
+            </WidgetDataContext.Provider>
+          </NullThenFilledRootWrapper>,
+        );
+      }).not.toThrow();
     });
   });
 

@@ -52,6 +52,20 @@ const FullScreenContainer: FC<FullScreenContainerProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = useState<string>('');
 
+  // Initial focus when the full-screen container opens. Note this FC's own instance is mounted
+  // once and persists for the widget's whole lifetime (it's unconditionally present in the parent
+  // JSX — only the `if (!open)` guard below toggles what it renders), so a literal empty-deps
+  // mount effect would fire exactly once, while still closed, when `containerRef.current` is still
+  // null — it would never actually focus anything. Keying on `open` (mirroring the scroll-lock
+  // effect right below) re-fires each time the dialog opens, once its div has actually rendered.
+  // Without this, Escape-to-close (and Tab-trapping) don't work until the user manually tabs into
+  // the dialog, since the keydown handler below is scoped to this div.
+  useEffect(() => {
+    if (open) {
+      containerRef.current?.focus();
+    }
+  }, [open]);
+
   // Scroll lock — mirrors Modal's implementation in src/common/components/modal/visenze-modal.tsx.
   useEffect(() => {
     if (open) {

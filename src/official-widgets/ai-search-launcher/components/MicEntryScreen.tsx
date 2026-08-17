@@ -44,6 +44,13 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
 
   const hasAutoStartedRef = useRef(false);
 
+  // The configured greeting (played into `chat.chats` as a bot bubble by the parent's greeting
+  // effect, which fires from the same commit that renders this screen) is the single source of
+  // truth for this screen's welcome copy — shown as an extra caption above the mic controls. No
+  // fallback default text is needed here (unlike ImageEntryScreen's `imageEntryPrompt`): the
+  // status text below (`a11yVoicePending`/`a11yListening`/etc.) already covers the no-greeting case.
+  const greetingMessage = chat.chats.find((c) => c.author === 'bot')?.messages[0];
+
   useEffect(() => {
     if (!chat.voiceEnabled) {
       return undefined;
@@ -103,6 +110,11 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
     };
     return (
       <div className='flex flex-1 flex-col items-center justify-center gap-4 p-6'>
+        {greetingMessage && (
+          <p className='m-0 max-w-xs text-center text-base' style={{ color: iconColor }}>
+            {greetingMessage}
+          </p>
+        )}
         <p className='m-0 max-w-xs text-center text-base' style={{ color: iconColor }}>
           {intl.formatMessage({ id: 'voiceInputError' })}
         </p>
@@ -139,6 +151,11 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
 
   return (
     <div className='flex flex-1 flex-col items-center justify-center gap-4 p-6'>
+      {greetingMessage && (
+        <p className='m-0 max-w-sm text-center text-base' style={{ color: iconColor }}>
+          {greetingMessage}
+        </p>
+      )}
       <button
         type='button'
         aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yVoicePending' })}

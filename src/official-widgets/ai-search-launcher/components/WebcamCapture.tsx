@@ -48,6 +48,7 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
     if (event.key !== 'Tab') {
       return;
     }
+    event.stopPropagation();
     const focusableControls = [
       closeCameraButtonRef.current,
       takePhotoButtonRef.current,

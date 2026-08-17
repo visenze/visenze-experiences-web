@@ -102,6 +102,10 @@ const useLauncherChat = (): UseLauncherChatResult => {
   // before sendMessage exists (sendMessage itself needs the reply helpers useVoiceReply returns).
   const sendMessageRef = useRef<(text: string) => void>(() => {});
 
+  // Aborts the in-flight SSE call (see resetChatState) so a late onclose/onmessage from a
+  // previous session can't bleed a stale reply into the freshly-reset chat log.
+  const activeStreamControllerRef = useRef<AbortController | null>(null);
+
   const {
     voiceEnabled,
     speechOutputEnabled,
@@ -257,10 +261,14 @@ const useLauncherChat = (): UseLauncherChatResult => {
       ? '/v1/chat/shopping-assistant'
       : '/v1/product/multisearch/chat/shopping-assistant';
 
+    const controller = new AbortController();
+    activeStreamControllerRef.current = controller;
+
     await fetchEventSource(`${apiBase}${launcherChatPath}?${params.toString()}`, {
       method: 'POST',
       body: formData,
       openWhenHidden: true,
+      signal: controller.signal,
       onmessage: (ev) => {
         if (ev.event === 'chat_id') {
           chatIdFromResp = JSON.parse(ev.data).value;
@@ -344,12 +352,21 @@ const useLauncherChat = (): UseLauncherChatResult => {
   };
 
   useEffect(() => {
+    // Guards against a voice transcript that finalizes after the full-screen container has
+    // closed: without this, a late onTranscript callback would fire a request into a closed UI
+    // and speak a reply aloud with nothing visible. No dependency array — this re-runs every
+    // render and recaptures the latest `activeEntryPoint` value in its closure.
     sendMessageRef.current = (text: string): void => {
+      if (!activeEntryPoint) {
+        return;
+      }
       sendMessage(text);
     };
   });
 
   const resetChatState = (): void => {
+    activeStreamControllerRef.current?.abort();
+    activeStreamControllerRef.current = null;
     stopAudio();
     resetReplyState();
     setChats([]);
@@ -372,6 +389,14 @@ const useLauncherChat = (): UseLauncherChatResult => {
   };
 
   const closeEntryPoint = (): void => {
+    // Deliberately does NOT call resetChatState() — by design, closing the full-screen surface
+    // does not clear chat history/state (only opening an entry point or starting a new chat does,
+    // both via resetChatState()). But a stream still in flight must still be aborted here,
+    // otherwise a late onclose/onmessage would append the old conversation's reply after the
+    // user has already navigated away, and fire RESULT_LOAD/setLastTrackingMeta for a session the
+    // UI no longer shows.
+    activeStreamControllerRef.current?.abort();
+    activeStreamControllerRef.current = null;
     interruptSpeech();
     setActiveEntryPoint(null);
   };

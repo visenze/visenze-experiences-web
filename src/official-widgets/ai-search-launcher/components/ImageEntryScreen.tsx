@@ -41,6 +41,13 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
     openCameraButtonRef.current?.focus();
   }, []);
 
+  // The configured greeting (played into `chat.chats` as a bot bubble by the parent's greeting
+  // effect, which fires from the same commit that renders this screen) is the single source of
+  // truth for this screen's welcome copy; only fall back to the static default when no greeting
+  // is configured for the image entry point.
+  const greetingMessage = chat.chats.find((c) => c.author === 'bot')?.messages[0];
+  const promptText = greetingMessage || intl.formatMessage({ id: 'imageEntryPrompt' });
+
   if (showWebcam) {
     return (
       <WebcamCapture
@@ -56,7 +63,7 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
   return (
     <div className='flex flex-1 flex-col items-center justify-center gap-8 p-6 text-center'>
       <p className='m-0 max-w-xs text-base' style={{ color: fontColor }}>
-        {intl.formatMessage({ id: 'imageEntryPrompt' })}
+        {promptText}
       </p>
       <div className='flex gap-6'>
         <button
