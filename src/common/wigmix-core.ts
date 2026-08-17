@@ -29,6 +29,7 @@ export enum WidgetType {
   SLIDE_OUT_DRAWER = 'slide_out_drawer',
   BUY_THE_LOOK = 'buy_the_look',
   IN_PAGE_CAROUSEL_V3 = 'in_page_carousel_v3',
+  AI_SEARCH_LAUNCHER = 'ai_search_launcher',
 }
 
 export enum WidgetErrorState {
@@ -1556,6 +1557,83 @@ export interface WidgetConfig {
        * built-in settings when unset.
        *
        * @since 1.0.29
+       */
+      voiceSettings?: {
+        /** Voice stability, 0-1. */
+        stability?: number;
+        /** Voice similarity boost, 0-1. */
+        similarityBoost?: number;
+      };
+    };
+    /**
+     * Configuration for the AI Search Launcher widget's full-screen chat
+     * experience: header title, voice greeting behavior, and per-entry-point
+     * greeting text.
+     *
+     * @since 1.0.30
+     */
+    launcher?: {
+      /**
+       * Title shown in the full-screen chat header.
+       *
+       * @since 1.0.30
+       */
+      title?: string;
+      /**
+       * Master toggle for greeting audio across all three entry points (image,
+       * mic, Ask AI). When unset or false, greetings are shown as text only
+       * (if at all) and never spoken.
+       *
+       * @since 1.0.30
+       */
+      voiceGreetingEnabled?: boolean;
+      /**
+       * Whether a session starts muted (voice output suppressed) by default.
+       * Mute state itself is session-only and not persisted.
+       *
+       * @since 1.0.30
+       */
+      startMuted?: boolean;
+      /**
+       * Per-entry-point greeting text, spoken (if `voiceGreetingEnabled`) and/or
+       * shown when that entry point is opened.
+       *
+       * @since 1.0.30
+       */
+      greetings?: {
+        /** Greeting shown/spoken when the image-search entry point opens. @since 1.0.30 */
+        image?: string;
+        /** Greeting shown/spoken when the microphone entry point opens. @since 1.0.30 */
+        mic?: string;
+        /** Greeting shown/spoken when the "Ask AI" entry point opens. @since 1.0.30 */
+        ai?: string;
+      };
+      /**
+       * The chat agent to be used for this widget's chat calls. Defaults to the
+       * same built-in agent shopping-assistant uses when unset.
+       *
+       * @since 1.0.30
+       */
+      chatAgent?: string;
+      /**
+       * (optional) Voice ID used for spoken replies and greetings. Default to
+       * the widget's built-in voice when unset.
+       *
+       * @since 1.0.30
+       */
+      voiceId?: string;
+      /**
+       * (optional) Voice-provider model ID used for spoken replies and
+       * greetings. Defaults to the widget's built-in model when unset.
+       *
+       * @since 1.0.30
+       */
+      voiceModelId?: string;
+      /**
+       * (optional) Voice settings forwarded to the synthesis proxy. Defaults to
+       * the widget's built-in settings when unset.
+       *
+       * @since 1.0.30
        */
       voiceSettings?: {
         /** Voice stability, 0-1. */
