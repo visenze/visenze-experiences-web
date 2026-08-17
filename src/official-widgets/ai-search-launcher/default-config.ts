@@ -23,6 +23,18 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11ySuggestedReplies: 'Suggested replies',
     showMore: 'Show more...',
     nowDescribing: 'Now Describing',
+    imageEntryPrompt: 'Take a photo or upload an image and I\'ll find similar products.',
+    a11yTakePhoto: 'Take photo',
+    a11yUploadImage: 'Upload image',
+    a11yCameraDrawer: 'Camera',
+    a11yCameraPreview: 'Camera preview — point at the item to search',
+    a11yCloseCamera: 'Close camera',
+    a11ySwitchCamera: 'Switch camera',
+    a11yStopVoiceInput: 'Stop recording and send',
+    a11yVoicePending: 'Preparing to listen',
+    a11yTranscribingVoice: 'Transcribing voice message',
+    a11yListening: 'Listening',
+    voiceInputError: 'Voice input unavailable',
   },
 };
 

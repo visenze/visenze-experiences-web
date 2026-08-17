@@ -1,0 +1,166 @@
+import { Textarea } from '@heroui/input';
+import { cn } from '@heroui/theme';
+import { type FC, type ReactElement, useContext, useEffect, useRef } from 'react';
+import { useIntl } from 'react-intl';
+import { WidgetDataContext } from '../../../common/types/contexts';
+import { FOCUS_VISIBLE_CLASSES } from '../constants';
+import MicrophoneIcon from '../icons/MicrophoneIcon';
+import StopIcon from '../icons/StopIcon';
+import SubmitChatIcon from '../icons/SubmitChatIcon';
+import type { UseLauncherChatResult } from '../use-launcher-chat';
+
+interface MicEntryScreenProps {
+  chat: UseLauncherChatResult;
+}
+
+// How often the auto-start gate below polls for any greeting to have finished playing.
+const GREETING_GATE_POLL_MS = 120;
+
+// Full-screen welcome state for the microphone entry point (spec §5.2).
+//
+// Recording auto-starts once any greeting for this entry point (played by a sibling effect in
+// `ai-search-launcher.tsx`, see B6a) has fully finished — this is an ENGINEERING DEFAULT carried
+// forward from the plan, not a confirmed product decision (see this task's report): `useVoice`'s
+// `startRecording()` calls `stopAudio()` internally as its first step, so starting to record while
+// a greeting is still playing/queued would silently cut the greeting off mid-word. Until that gate
+// clears, this screen shows a neutral, static mic icon rather than the recording state.
+const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
+  const intl = useIntl();
+  const iconColor = darkMode
+    ? (customizations.generalLayout?.fontColorDark || '')
+    : (customizations.generalLayout?.fontColor || '');
+
+  // Mirrors the `sendMessageRef` pattern already used in use-launcher-chat.ts: keeps a live view
+  // of `chat` for the polling interval below, without needing to tear down/recreate that interval
+  // on every render (most of `chat`'s functions are recreated each render since they aren't
+  // memoized upstream, and re-running the effect on every render would restart the poll from
+  // scratch each time).
+  const chatRef = useRef(chat);
+  useEffect(() => {
+    chatRef.current = chat;
+  });
+
+  const hasAutoStartedRef = useRef(false);
+
+  useEffect(() => {
+    if (!chat.voiceEnabled) {
+      return undefined;
+    }
+    // Deliberately does NOT check isSpeechPlaying/hasPendingSpeech synchronously on mount: the
+    // greeting (if any) is triggered by a sibling effect in ai-search-launcher.tsx that may not
+    // have run yet within this same commit (effect order between sibling/parent effects isn't
+    // something to build a race on). Only checking on the interval's later ticks — each a fresh
+    // macrotask — guarantees that sibling effect has already had its chance to fire and enqueue
+    // the greeting's speech before the very first check here.
+    const interval = setInterval((): void => {
+      if (hasAutoStartedRef.current) {
+        clearInterval(interval);
+        return;
+      }
+      const { current } = chatRef;
+      if (current.isSpeechPlaying || current.hasPendingSpeech()) {
+        return;
+      }
+      hasAutoStartedRef.current = true;
+      clearInterval(interval);
+      current.startVoiceRecording();
+    }, GREETING_GATE_POLL_MS);
+    return (): void => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chat.voiceEnabled]);
+
+  const renderMicIcon = (): ReactElement => {
+    if (chat.voiceStatus === 'transcribing') {
+      return <MicrophoneIcon className='size-16 opacity-60' color={iconColor} />;
+    }
+    if (chat.voiceStatus === 'recording') {
+      return <StopIcon className='size-16 animate-pulse' color='#EF4444' />;
+    }
+    return <MicrophoneIcon className='size-16' color={iconColor} />;
+  };
+
+  const handleMicClick = (): void => {
+    if (chat.voiceStatus === 'recording') {
+      chat.stopRecording();
+      return;
+    }
+    // Manual retry affordance: if the auto-start attempt already ran (and, e.g., errored back to
+    // idle — mic permission denied, browser quirk, etc.), let the user tap to try again rather
+    // than being stuck with a dead mic icon.
+    if (chat.voiceStatus === 'idle' && hasAutoStartedRef.current) {
+      chat.startVoiceRecording();
+    }
+  };
+
+  if (!chat.voiceEnabled) {
+    const handleSend = (): void => {
+      if (!chat.allowUserInput) {
+        return;
+      }
+      chat.sendMessage(chat.message);
+    };
+    return (
+      <div className='flex flex-1 flex-col items-center justify-center gap-4 p-6'>
+        <p className='m-0 max-w-xs text-center text-base' style={{ color: iconColor }}>
+          {intl.formatMessage({ id: 'voiceInputError' })}
+        </p>
+        <div className='flex w-full max-w-sm flex-col gap-2'>
+          <Textarea
+            aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
+            value={chat.message}
+            placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
+            minRows={1}
+            onChange={(e) => chat.setMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.code === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            endContent={
+              <button
+                type='button'
+                aria-label={intl.formatMessage({ id: 'a11ySendMessage' })}
+                title={intl.formatMessage({ id: 'a11ySendMessage' })}
+                disabled={!chat.allowUserInput}
+                className={cn('p-0 bg-transparent border-0 disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
+                onClick={handleSend}
+              >
+                <SubmitChatIcon color={iconColor} />
+              </button>
+            }
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className='flex flex-1 flex-col items-center justify-center gap-4 p-6'>
+      <button
+        type='button'
+        aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yVoicePending' })}
+        aria-pressed={chat.voiceStatus === 'recording'}
+        disabled={chat.voiceStatus === 'transcribing'}
+        className={cn('rounded-full border-0 bg-transparent p-6 disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
+        onClick={handleMicClick}
+      >
+        {renderMicIcon()}
+      </button>
+      <p role='status' aria-live='polite' className='m-0 min-h-6 max-w-sm text-center text-sm' style={{ color: iconColor }}>
+        {chat.voiceStatus === 'transcribing' && intl.formatMessage({ id: 'a11yTranscribingVoice' })}
+        {chat.voiceStatus === 'recording' && (chat.liveTranscript || intl.formatMessage({ id: 'a11yListening' }))}
+        {chat.voiceStatus === 'idle' && intl.formatMessage({ id: 'a11yVoicePending' })}
+      </p>
+      {chat.hasVoiceError && (
+        <p role='alert' className='m-0 text-center text-sm text-red-600 dark:text-red-400'>
+          {intl.formatMessage({ id: 'voiceInputError' })}
+        </p>
+      )}
+    </div>
+  );
+};
+
+export default MicEntryScreen;
