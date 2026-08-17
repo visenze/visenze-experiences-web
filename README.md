@@ -29,6 +29,7 @@ Note: for staging testing, please remove the `cloud` under `appSettings` config.
 | merchandise-search-bar | `src/official-widgets/merchandise-search-bar` | Multisearch Autocomplete, Multisearch |
 | shoppable-gallery | `src/official-widgets/shoppable-gallery` | Legacy Recommendations, Gallery Browse |
 | shopping-assistant | `src/official-widgets/shopping-assistant` | Shopping Assistant |
+| ai-search-launcher | `src/official-widgets/ai-search-launcher` | Shopping Assistant |
 
 **API reference:**
 - **Product Search by ID** — `productSearchById` (SDK); legacy Recommendations endpoint
@@ -36,7 +37,7 @@ Note: for staging testing, please remove the `cloud` under `appSettings` config.
 - **Multisearch Autocomplete** — `productMultisearchAutocomplete` (SDK)
 - **Recommend Me** — `/v1/product/multisearch/chat/recommend-me` (direct fetch, SSE)
 - **Gallery Browse** — `/v1/product/linked/gallery/browse` (direct fetch, legacy API)
-- **Shopping Assistant** — `/v1/product/multisearch/chat/shopping-assistant` (direct fetch, SSE)
+- **Shopping Assistant** — `/v1/product/multisearch/chat/shopping-assistant` (direct fetch, SSE); used by both `shopping-assistant` and `ai-search-launcher` (each makes its own independent call to the same backend endpoint)
 
 ## Repository structure
 
