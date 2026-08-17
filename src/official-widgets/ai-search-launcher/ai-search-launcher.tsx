@@ -16,7 +16,13 @@ import { WidgetDataContext } from '../../common/types/contexts';
 
 type EntryPointKey = Exclude<UseLauncherChatResult['activeEntryPoint'], null>;
 
-const AiSearchLauncher: FC = () => {
+interface AiSearchLauncherProps {
+  // Test-only escape hatch, mirroring ShoppingAssistant's `renderModalWithoutPortal` — lets specs
+  // bypass FullScreenContainer's Portal + Shadow DOM (hard to query directly in RTL/jsdom).
+  renderWithoutPortal?: boolean;
+}
+
+const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations, appSettings } = widgetConfig;
   const root = useContext(RootContext);
@@ -111,6 +117,7 @@ const AiSearchLauncher: FC = () => {
         darkMode={darkMode}
         placementId={String(appSettings.placementId)}
         ariaLabelledBy={dialogTitleId}
+        renderWithoutPortal={renderWithoutPortal}
       >
         {showImageWelcome && <ImageEntryScreen chat={chat} />}
         {showMicWelcome && <MicEntryScreen chat={chat} />}
