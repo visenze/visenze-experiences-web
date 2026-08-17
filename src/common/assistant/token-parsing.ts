@@ -1,4 +1,4 @@
-import type { ProcessedProduct } from '../../common/types/product';
+import type { ProcessedProduct } from '../types/product';
 
 // A product reference is a token that can appear anywhere in the assistant's text:
 //   [[<product_id>]]
