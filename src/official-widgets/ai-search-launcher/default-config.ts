@@ -262,9 +262,9 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     voiceGreetingEnabled: false,
     startMuted: false,
     greetings: {
-      image: 'Show me a picture and I\'ll find similar products.',
-      mic: 'Tell me what you\'re looking for.',
-      ai: 'Hi! How can I help you find the perfect product today?',
+      image: 'Show me a photo and I\'ll find similar products for you.',
+      mic: 'Tell me what you\'re looking for and I\'ll find it for you.',
+      ai: 'Hi! How can I help you find what you\'re looking for today?',
     },
   },
 };

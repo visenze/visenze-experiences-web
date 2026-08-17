@@ -42,10 +42,11 @@ const AiSearchLauncher: FC = () => {
 
   // Shared greeting-playback mechanism (B6a), implemented once and called from both places the
   // spec requires it: whenever an entry point opens (effect below, keyed on activeEntryPoint) and
-  // whenever "new chat" is pressed (handleNewChat). `chat.playGreeting` already no-ops correctly
-  // when `voiceGreetingEnabled` is off or the session is muted, so this just resolves which
-  // greeting string applies and calls it — no duplicated gating logic here or in the entry
-  // screens.
+  // whenever "new chat" is pressed (handleNewChat). `chat.playGreeting` always shows the greeting
+  // as a text chat bubble (no-oping only when no greeting text is configured for the entry point)
+  // and additionally speaks it when `voiceGreetingEnabled` is on and the session isn't muted, so
+  // this just resolves which greeting string applies and calls it — no duplicated gating logic
+  // here or in the entry screens.
   const getGreetingText = (entryPoint: EntryPointKey): string => customizations.launcher?.greetings?.[entryPoint] || '';
 
   useEffect(() => {

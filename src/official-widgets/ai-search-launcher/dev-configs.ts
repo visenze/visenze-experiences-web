@@ -17,6 +17,10 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
   },
   customizations: {
     customCss,
+    launcher: {
+      voiceGreetingEnabled: true, // enable to exercise the voice-greeting path locally
+      startMuted: false,
+    },
   },
   callbacks: {
     trackingCallback: (action: string, params: Record<string, any>) => {
