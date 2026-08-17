@@ -12,6 +12,17 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yEnableMute: 'Unmute voice output',
     a11yStartNewChat: 'Start new chat',
     a11yCloseFullScreen: 'Close full screen',
+    chatBoxPlaceholder: 'Type your message',
+    a11ySendMessage: 'Send message',
+    a11yScrollToLatestMessage: 'Scroll to latest message',
+    a11yChatInput: 'Type your message to the AI search assistant',
+    a11yUploadedImage: 'Uploaded image',
+    a11yAssistantThinking: 'Assistant is thinking',
+    a11yProductResultsShown: 'Product results shown: {count}',
+    a11yChatMessages: 'AI search assistant messages',
+    a11ySuggestedReplies: 'Suggested replies',
+    showMore: 'Show more...',
+    nowDescribing: 'Now Describing',
   },
 };
 
