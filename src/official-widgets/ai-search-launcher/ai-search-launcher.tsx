@@ -1,6 +1,6 @@
 import { Textarea } from '@heroui/input';
 import { cn } from '@heroui/theme';
-import { type FC, useContext, useState } from 'react';
+import { type FC, useContext } from 'react';
 import { useIntl } from 'react-intl';
 import FullScreenContainer from './components/FullScreenContainer';
 import LauncherChatWindow from './components/LauncherChatWindow';
@@ -18,7 +18,6 @@ const AiSearchLauncher: FC = () => {
   const root = useContext(RootContext);
   const intl = useIntl();
   const chat = useLauncherChat();
-  const [message, setMessage] = useState('');
   const dialogTitleId = `wigmix-ai-search-launcher-title-${appSettings.placementId}`;
 
   if (!root) {
@@ -33,8 +32,7 @@ const AiSearchLauncher: FC = () => {
     if (!chat.allowUserInput) {
       return;
     }
-    const messageToSend = message;
-    setMessage('');
+    const messageToSend = chat.message;
     chat.sendMessage(messageToSend);
   };
 
@@ -95,10 +93,10 @@ const AiSearchLauncher: FC = () => {
         <div className='flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
           <Textarea
             aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
-            value={message}
+            value={chat.message}
             placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
             minRows={1}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => chat.setMessage(e.target.value)}
             onKeyDown={(e) => {
               if (e.code === 'Enter' && !e.shiftKey) {
                 e.preventDefault();

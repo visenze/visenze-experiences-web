@@ -38,6 +38,8 @@ export interface UseLauncherChatResult {
   chats: Chat[];
   isWaiting: boolean;
   allowUserInput: boolean;
+  message: string;
+  setMessage: (message: string) => void;
   showAllSuggestions: boolean;
   setShowAllSuggestions: () => void;
   suggestions: string[];
@@ -84,6 +86,7 @@ const useLauncherChat = (): UseLauncherChatResult => {
 
   const [chats, setChats] = useState<Chat[]>([]);
   const [chatId, setChatId] = useState('');
+  const [message, setMessage] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
   const [showAllSuggestions, setShowAllSuggestionsState] = useState(false);
   const [allowUserInput, setAllowUserInput] = useState(false);
@@ -113,6 +116,7 @@ const useLauncherChat = (): UseLauncherChatResult => {
     stopRecording,
     stopAudio,
     toggleVoiceReading,
+    interruptSpeech,
     shouldSpeakReply,
     isVoiceReadingEnabledNow,
     beginReply,
@@ -198,6 +202,7 @@ const useLauncherChat = (): UseLauncherChatResult => {
     }
     setIsWaiting(true);
     setShowAllSuggestionsState(false);
+    setMessage('');
     setSuggestions([]);
     setStreamingProducts([]);
     setStreamingRequestId('');
@@ -367,6 +372,7 @@ const useLauncherChat = (): UseLauncherChatResult => {
   };
 
   const closeEntryPoint = (): void => {
+    interruptSpeech();
     setActiveEntryPoint(null);
   };
 
@@ -389,6 +395,8 @@ const useLauncherChat = (): UseLauncherChatResult => {
     chats,
     isWaiting,
     allowUserInput,
+    message,
+    setMessage,
     showAllSuggestions,
     setShowAllSuggestions,
     suggestions: showResponseExtras ? suggestions : [],
