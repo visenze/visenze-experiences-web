@@ -384,11 +384,26 @@ const useLauncherChat = (): UseLauncherChatResult => {
   };
 
   const playGreeting = (text: string): void => {
-    if (!customizations.launcher?.voiceGreetingEnabled || !shouldSpeakReply()) {
+    if (!text) {
       return;
     }
-    resetReplyState();
-    speak(text, text.length, null);
+    // Always show the greeting as a visible chat bubble first (mirrors shopping-assistant's
+    // openDialog/newChat opening messages) — speech below is additional narration on top, never a
+    // replacement for the text.
+    setChats((prevChats) => [
+      ...prevChats,
+      {
+        chatId: '',
+        requestId: '',
+        author: 'bot',
+        messages: [text],
+        products: [],
+      },
+    ]);
+    if (customizations.launcher?.voiceGreetingEnabled && shouldSpeakReply()) {
+      resetReplyState();
+      speak(text, text.length, null);
+    }
   };
 
   return {
