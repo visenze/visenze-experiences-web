@@ -195,6 +195,17 @@ describe('ai-search-launcher', () => {
       expect(testComponent.asFragment()).toMatchSnapshot();
     });
 
+    it('should always label the AI entry-bar trigger with the fixed "AI Mode" copy, independent of the configured dialog title', () => {
+      renderLauncher({}, 'en', {}, { launcher: { title: 'Custom Dialog Title' } });
+
+      const aiTrigger = testComponent.getByRole('button', { name: texts['en']['a11yOpenAskAi'] });
+      expect(aiTrigger.textContent).toBe(texts['en']['triggerAskAi']);
+      expect(aiTrigger.textContent).not.toBe('Custom Dialog Title');
+
+      openEntryPointAndWait('a11yOpenAskAi');
+      expect(getTextInBody('Custom Dialog Title')).toBeTruthy();
+    });
+
     it('should render the three entry-bar buttons with correct a11y labels', () => {
       renderLauncher();
       expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenImageSearch'] })).toBeTruthy();
@@ -259,6 +270,8 @@ describe('ai-search-launcher', () => {
       // Greeting for the image entry point is shown as a visible chat bubble underneath (not
       // asserted here directly, but the welcome screen itself must be showing, not the chat surface).
       expect(testComponent.queryByTestId('chat-textarea')).toBeNull();
+      // No chat to reset yet on the welcome screen, so the "new chat" trigger stays hidden.
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartNewChat'] })).toBeNull();
     });
 
     it('should open the full-screen surface showing the mic entry welcome screen for the mic entry point', () => {
@@ -271,6 +284,8 @@ describe('ai-search-launcher', () => {
       // rather than the live mic icon/recording state.
       expect(getTextInBody(texts['en']['voiceInputError'])).toBeTruthy();
       expect(testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'] })).toBeTruthy();
+      // No chat to reset yet on the welcome screen, so the "new chat" trigger stays hidden.
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartNewChat'] })).toBeNull();
     });
 
     it('should open the full-screen surface showing the chat surface directly for the ask-ai entry point', () => {
@@ -279,6 +294,11 @@ describe('ai-search-launcher', () => {
 
       expect(testComponent.getByRole('dialog')).toBeTruthy();
       expect(testComponent.getByTestId('chat-textarea')).toBeTruthy();
+      // Ask AI has no dedicated welcome screen, so the "new chat" trigger is available right away.
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yStartNewChat'] })).toBeTruthy();
+      // Camera/upload controls above the chat input, mirroring shopping-assistant's chat footer.
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeTruthy();
+      expect(testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' })).toBeTruthy();
     });
 
     it('should show the mic icon and recording controls when the browser supports speech recognition', () => {
@@ -315,6 +335,100 @@ describe('ai-search-launcher', () => {
       expect(testComponent.queryByRole('dialog')).toBeNull();
       // Entry bar is still there underneath.
       expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenAskAi'] })).toBeTruthy();
+    });
+  });
+
+  describe('image entry point — camera-search-style upload UI', () => {
+    it('should show the drag-to-search prompt and a camera link styled like camera-search\'s upload screen', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenImageSearch');
+
+      expect(getTextInBody(texts['en']['dragImageToSearch'])).toBeTruthy();
+      expect(getTextInBody(texts['en']['useCamera'])).toBeTruthy();
+      // The camera trigger must keep its original accessible name (a11yTakePhoto) even though its
+      // visible label now reads like camera-search's "useCamera" copy.
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yTakePhoto'] })).toBeTruthy();
+    });
+
+    it('should render the default sample gallery images out-of-the-box, matching camera-search', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenImageSearch');
+
+      expect(testComponent.getByTestId('wigmix-gallery-image-1')).toBeTruthy();
+    });
+
+    it('should not render the preset image gallery when imageUpload images are configured empty', () => {
+      renderLauncher({}, 'en', {}, {
+        imageUpload: { enable: true, icon: { color: '#000000', colorDark: '#FFFFFF' }, images: [] },
+      });
+      openEntryPointAndWait('a11yOpenImageSearch');
+
+      expect(testComponent.queryByTestId('wigmix-gallery-image-1')).toBeNull();
+    });
+
+    it('should render configured gallery images and send the selected one as the initial chat message', async () => {
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        blob: jest.fn().mockResolvedValue(new Blob(['image-bytes'], { type: 'image/jpeg' })),
+      }) as unknown as typeof fetch;
+      mockFetchEventSource.mockImplementation(async () => {});
+
+      try {
+        renderLauncher({}, 'en', {}, {
+          imageUpload: {
+            enable: true,
+            icon: { color: '#000000', colorDark: '#FFFFFF' },
+            images: [{ url: 'https://example.com/shoe.jpg', label: 'Shoes' }],
+          },
+        });
+        openEntryPointAndWait('a11yOpenImageSearch');
+
+        const galleryImage = testComponent.getByAltText('Shoes');
+        await act(async () => {
+          fireEvent.click(galleryImage);
+        });
+
+        expect(global.fetch).toHaveBeenCalledWith('https://example.com/shoe.jpg');
+        expect(mockFetchEventSource).toHaveBeenCalled();
+        const uploadedImage = testComponent.getByAltText(texts['en']['a11yUploadedImage']) as HTMLImageElement;
+        expect(uploadedImage.src).toBe('https://example.com/shoe.jpg');
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+  });
+
+  describe('main chat surface — camera drawer', () => {
+    it('should open a camera drawer over the chat footer and send the captured photo into the chat', async () => {
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        blob: jest.fn().mockResolvedValue(new Blob(['image-bytes'], { type: 'image/png' })),
+      }) as unknown as typeof fetch;
+      mockFetchEventSource.mockImplementation(async () => {});
+
+      try {
+        renderLauncher();
+        openEntryPointAndWait('a11yOpenAskAi');
+
+        const cameraButton = testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'] });
+        act(() => {
+          fireEvent.click(cameraButton);
+        });
+
+        expect(testComponent.getByTestId('mock-webcam')).toBeTruthy();
+
+        const takePhotoButton = testComponent.getByRole('button', { name: texts['en']['a11yTakePhoto'] });
+        await act(async () => {
+          fireEvent.click(takePhotoButton);
+        });
+
+        expect(mockFetchEventSource).toHaveBeenCalled();
+        // The drawer closes itself right after capture (unlike the image entry point's fullscreen
+        // WebcamCapture, which relies on the caller unmounting it).
+        expect(testComponent.queryByTestId('mock-webcam')).toBeNull();
+      } finally {
+        global.fetch = originalFetch;
+      }
     });
   });
 

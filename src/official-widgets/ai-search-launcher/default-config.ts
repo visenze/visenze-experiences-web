@@ -6,8 +6,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     widgetTitle: 'AI Search Assistant',
     a11yOpenImageSearch: 'Search by image',
     a11yOpenVoiceSearch: 'Search by voice',
-    a11yOpenAskAi: 'Ask AI',
-    triggerAskAi: 'Ask AI',
+    a11yOpenAskAi: 'AI Mode',
+    triggerAskAi: 'AI Mode',
     a11yToggleMute: 'Mute voice output',
     a11yEnableMute: 'Unmute voice output',
     a11yStartNewChat: 'Start new chat',
@@ -26,6 +26,12 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageEntryPrompt: 'Take a photo or upload an image and I\'ll find similar products.',
     a11yTakePhoto: 'Take photo',
     a11yUploadImage: 'Upload image',
+    a11yOpenCamera: 'Open camera',
+    holdMicToRecord: 'Hold the mic to record',
+    dragImageToSearch: 'drag an image to search or click to browse',
+    tapToSearchImage: 'tap here to search an image',
+    useCamera: 'Or capture image with your camera',
+    tapProductGallery: 'or tap our trending product gallery below',
     a11yCameraDrawer: 'Camera',
     a11yCameraPreview: 'Camera preview — point at the item to search',
     a11yCloseCamera: 'Close camera',
@@ -208,6 +214,35 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       backgroundColorDark: '#FFFFFF',
     },
   },
+  imageUpload: {
+    enable: true,
+    icon: {
+      color: '#929292',
+      colorDark: '#929292',
+    },
+    images: [
+      {
+        url: 'https://cdn.visenze.com/sample/street_shot.jpg',
+        label: '',
+      },
+      {
+        url: 'https://cdn.visenze.com/sample/suit.jpg',
+        label: '',
+      },
+      {
+        url: 'https://cdn.visenze.com/sample/sunset.jpg',
+        label: '',
+      },
+      {
+        url: 'https://cdn.visenze.com/sample/sport.jpg',
+        label: '',
+      },
+      {
+        url: 'https://cdn.visenze.com/sample/dance.jpg',
+        label: '',
+      },
+    ],
+  },
   generalLayout: {
     headingFont: {
       mobile: {
@@ -243,7 +278,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     backgroundColor: '#FFFFFF',
     backgroundColorDark: '#000000',
     showWidgetTitle: true,
-    showViSenzeLogo: false,
+    showViSenzeLogo: true,
     darkModeDefault: false,
   },
   popup: {

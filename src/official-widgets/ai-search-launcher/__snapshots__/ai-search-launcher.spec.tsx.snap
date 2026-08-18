@@ -7,7 +7,7 @@ exports[`ai-search-launcher core rendering should match snapshot for closed stat
   >
     <button
       aria-label="Search by image"
-      class="rounded-md border border-gray bg-transparent p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
+      class="flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
       type="button"
     >
       <div
@@ -36,7 +36,7 @@ exports[`ai-search-launcher core rendering should match snapshot for closed stat
     </button>
     <button
       aria-label="Search by voice"
-      class="rounded-md border border-gray bg-transparent p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
+      class="flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
       type="button"
     >
       <div
@@ -59,12 +59,12 @@ exports[`ai-search-launcher core rendering should match snapshot for closed stat
       </div>
     </button>
     <button
-      aria-label="Ask AI"
-      class="rounded-md border border-gray bg-transparent px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
+      aria-label="AI Mode"
+      class="flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300"
       style="color: rgb(0, 0, 0);"
       type="button"
     >
-      AI Search Assistant
+      AI Mode
     </button>
   </div>
 </DocumentFragment>

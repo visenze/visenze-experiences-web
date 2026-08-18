@@ -17,6 +17,9 @@ interface FullScreenContainerProps {
   isMuted: boolean;
   onToggleMute: () => void;
   onNewChat: () => void;
+  // Hides the "new chat" trigger while an entry point's dedicated welcome screen (image upload,
+  // mic) is showing — there's no chat to reset yet at that point, only once a message is sent.
+  showNewChat: boolean;
   darkMode: boolean;
   fontFamily?: string;
   fontColor?: string;
@@ -38,6 +41,7 @@ const FullScreenContainer: FC<FullScreenContainerProps> = ({
   isMuted,
   onToggleMute,
   onNewChat,
+  showNewChat,
   darkMode,
   fontFamily,
   fontColor,
@@ -143,15 +147,17 @@ const FullScreenContainer: FC<FullScreenContainerProps> = ({
             >
               <SpeakerIcon muted={isMuted} className='size-6 cursor-pointer' color={iconColor} />
             </button>
-            <button
-              type='button'
-              aria-label={intl.formatMessage({ id: 'a11yStartNewChat' })}
-              title={intl.formatMessage({ id: 'a11yStartNewChat' })}
-              className={cn('border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
-              onClick={onNewChat}
-            >
-              <PlusCircleIcon className='size-6 cursor-pointer' color={iconColor} />
-            </button>
+            {showNewChat && (
+              <button
+                type='button'
+                aria-label={intl.formatMessage({ id: 'a11yStartNewChat' })}
+                title={intl.formatMessage({ id: 'a11yStartNewChat' })}
+                className={cn('border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
+                onClick={onNewChat}
+              >
+                <PlusCircleIcon className='size-6 cursor-pointer' color={iconColor} />
+              </button>
+            )}
             <button
               type='button'
               aria-label={intl.formatMessage({ id: 'a11yCloseFullScreen' })}

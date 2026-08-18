@@ -14,19 +14,21 @@ interface WebcamCaptureProps {
   fontColorDark?: string;
   onClose: () => void;
   onCapture: (image: SearchImage) => void;
+  // 'fullscreen' (default) fills the whole image-entry welcome surface — here it IS the screen,
+  // so `capture()` doesn't close itself; the caller unmounts it once `sendMessage` flips
+  // `hasStartedChat`. 'drawer' renders as a compact bottom sheet over the main chat surface's
+  // input footer (mirroring shopping-assistant's `CameraCaptureDrawer`), where nothing else
+  // unmounts it, so `capture()` closes it directly after feeding the image to the caller.
+  variant?: 'fullscreen' | 'drawer';
 }
 
-// Live camera-capture screen for the image-entry welcome state (spec §5.1, §6.1). This is a
-// standalone copy of shopping-assistant's `CameraCaptureDrawer` webcam-capture pattern (webcam
-// ref, facingMode toggle, capture-to-blob-to-File conversion, the Shadow-DOM-aware focus trap /
-// Escape-to-close) — duplicated on purpose rather than imported, per this phase's constraint
-// against importing from shopping-assistant. Laid out to fill the whole full-screen welcome
-// surface (rather than sliding up as a bottom drawer over a compact widget) since here it IS the
-// screen, not an overlay on top of something else. Unlike the original, `capture()` does not call
-// `onClose()` itself: the caller (`ImageEntryScreen`) feeds the captured image straight into
-// `sendMessage`, which flips `hasStartedChat` synchronously, and the parent (`ai-search-launcher.tsx`)
-// unmounts this screen for the chat surface as soon as that happens.
-const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorDark, onClose, onCapture }) => {
+// Live camera-capture screen, styled after shopping-assistant's `CameraCaptureDrawer` webcam-capture
+// pattern (webcam ref, facingMode toggle, capture-to-blob-to-File conversion, the Shadow-DOM-aware
+// focus trap / Escape-to-close) — duplicated on purpose rather than imported, per this phase's
+// constraint against importing from shopping-assistant. Used both as the image-entry welcome
+// screen's own content (`variant='fullscreen'`) and as a drawer over the chat footer's camera
+// button (`variant='drawer'`).
+const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorDark, onClose, onCapture, variant = 'fullscreen' }) => {
   const intl = useIntl();
   const webcamRef = useRef<Webcam>(null);
   const closeCameraButtonRef = useRef<HTMLButtonElement>(null);
@@ -91,8 +93,11 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
       .then((blob) => {
         const file = new File([blob], `${Date.now()}`, { type: 'image/png' });
         onCapture({ files: [file], file: imageSrc });
+        if (variant === 'drawer') {
+          onClose();
+        }
       });
-  }, [onCapture]);
+  }, [onCapture, onClose, variant]);
 
   return (
     <div
@@ -100,7 +105,9 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
       aria-modal='true'
       aria-label={intl.formatMessage({ id: 'a11yCameraDrawer' })}
       tabIndex={-1}
-      className='flex flex-1 flex-col items-center justify-center gap-4 p-4'
+      className={variant === 'drawer'
+        ? 'wigmix-camera-drawer absolute inset-x-0 bottom-0 z-50 flex animate-slideup flex-col items-center gap-4 rounded-t-2xl bg-white p-4 shadow-lg dark:bg-neutral-900'
+        : 'flex flex-1 flex-col items-center justify-center gap-4 p-4'}
       onKeyDown={handleKeyDown}
     >
       <Webcam

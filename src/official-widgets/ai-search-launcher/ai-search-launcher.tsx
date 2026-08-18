@@ -1,18 +1,24 @@
 import { Textarea } from '@heroui/input';
 import { cn } from '@heroui/theme';
-import { type FC, useContext, useEffect, useRef } from 'react';
+import { type FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import FullScreenContainer from './components/FullScreenContainer';
 import ImageEntryScreen from './components/ImageEntryScreen';
 import LauncherChatWindow from './components/LauncherChatWindow';
 import MicEntryScreen from './components/MicEntryScreen';
+import WebcamCapture from './components/WebcamCapture';
 import { FOCUS_VISIBLE_CLASSES } from './constants';
 import MicrophoneIcon from './icons/MicrophoneIcon';
+import StopIcon from './icons/StopIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
 import useLauncherChat, { type UseLauncherChatResult } from './use-launcher-chat';
+import FileDropzone from '../../common/components/FileDropzone';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import CameraIcon from '../../common/icons/CameraIcon';
+import CustomizableIcon from '../../common/icons/CustomizableIcon';
+import UploadIcon from '../../common/icons/UploadIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
+import type { SearchImage } from '../../common/types/image';
 
 type EntryPointKey = Exclude<UseLauncherChatResult['activeEntryPoint'], null>;
 
@@ -33,10 +39,25 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const micButtonRef = useRef<HTMLButtonElement>(null);
   const aiButtonRef = useRef<HTMLButtonElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
+  const openChatCameraButtonRef = useRef<HTMLButtonElement>(null);
+  // Camera/upload/mic controls on the main chat surface's input footer (mirroring
+  // shopping-assistant's single-screen chat footer), distinct from the dedicated image/mic entry
+  // points above: these feed an image or voice recording straight into the ongoing conversation
+  // without leaving it.
+  const [showChatCameraCapture, setShowChatCameraCapture] = useState(false);
 
   const fontColor = darkMode
     ? (customizations.generalLayout?.fontColorDark || '')
     : (customizations.generalLayout?.fontColor || '');
+
+  const handleChatImage = (image: SearchImage): void => {
+    chat.sendMessage(undefined, image);
+  };
+
+  const closeChatCameraCapture = useCallback((): void => {
+    setShowChatCameraCapture(false);
+    openChatCameraButtonRef.current?.focus();
+  }, []);
 
   const handleSend = (): void => {
     if (!chat.allowUserInput) {
@@ -125,7 +146,10 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
           ref={imageButtonRef}
           type='button'
           aria-label={intl.formatMessage({ id: 'a11yOpenImageSearch' })}
-          className={cn('rounded-md border border-gray bg-transparent p-2', FOCUS_VISIBLE_CLASSES)}
+          className={cn(
+            'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+            FOCUS_VISIBLE_CLASSES,
+          )}
           onClick={() => chat.openEntryPoint('image')}
         >
           <CameraIcon className='size-5 cursor-pointer' color={fontColor} />
@@ -134,7 +158,10 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
           ref={micButtonRef}
           type='button'
           aria-label={intl.formatMessage({ id: 'a11yOpenVoiceSearch' })}
-          className={cn('rounded-md border border-gray bg-transparent p-2', FOCUS_VISIBLE_CLASSES)}
+          className={cn(
+            'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+            FOCUS_VISIBLE_CLASSES,
+          )}
           onClick={() => chat.openEntryPoint('mic')}
         >
           <MicrophoneIcon className='size-5 cursor-pointer' color={fontColor} />
@@ -144,10 +171,13 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
           type='button'
           aria-label={intl.formatMessage({ id: 'a11yOpenAskAi' })}
           style={{ color: fontColor }}
-          className={cn('rounded-md border border-gray bg-transparent px-3 py-2', FOCUS_VISIBLE_CLASSES)}
+          className={cn(
+            'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+            FOCUS_VISIBLE_CLASSES,
+          )}
           onClick={() => chat.openEntryPoint('ai')}
         >
-          {customizations.launcher?.title || intl.formatMessage({ id: 'triggerAskAi' })}
+          {intl.formatMessage({ id: 'triggerAskAi' })}
         </button>
       </div>
       <FullScreenContainer
@@ -157,6 +187,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
         isMuted={!chat.isVoiceReadingEnabled}
         onToggleMute={chat.toggleVoiceReading}
         onNewChat={handleNewChat}
+        showNewChat={!showImageWelcome && !showMicWelcome}
         darkMode={darkMode}
         fontFamily={customizations.generalLayout?.fontFamily}
         fontColor={customizations.generalLayout?.fontColor}
@@ -183,7 +214,80 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
               wishlistPids={chat.wishlistPids}
               setIsInWishlist={chat.setIsInWishlist}
             />
-            <div className='flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
+            <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
+              {showChatCameraCapture && (
+                <WebcamCapture
+                  variant='drawer'
+                  darkMode={darkMode}
+                  fontColor={customizations.generalLayout?.fontColor}
+                  fontColorDark={customizations.generalLayout?.fontColorDark}
+                  onClose={closeChatCameraCapture}
+                  onCapture={handleChatImage}
+                />
+              )}
+              <div className='flex justify-end gap-2'>
+                <button
+                  ref={openChatCameraButtonRef}
+                  type='button'
+                  aria-label={intl.formatMessage({ id: 'a11yOpenCamera' })}
+                  title={intl.formatMessage({ id: 'a11yOpenCamera' })}
+                  className={cn('rounded-md border border-gray bg-transparent p-2 dark:border-neutral-500', FOCUS_VISIBLE_CLASSES)}
+                  onClick={() => setShowChatCameraCapture(true)}
+                >
+                  <CameraIcon className='size-5 cursor-pointer' color={fontColor} />
+                </button>
+                <FileDropzone onImageUpload={handleChatImage} name='asl-chat-upload' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
+                  <div className='rounded-md border border-gray p-2 dark:border-neutral-500'>
+                    {customizations.imageUpload?.icon?.url ? (
+                      <CustomizableIcon
+                        height={20}
+                        width={20}
+                        url={customizations.imageUpload.icon.url}
+                        color={fontColor}
+                      />
+                    ) : (
+                      <UploadIcon className='size-5' color={fontColor} />
+                    )}
+                  </div>
+                </FileDropzone>
+                {chat.voiceEnabled && (
+                  <button
+                    type='button'
+                    aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yVoicePending' })}
+                    aria-pressed={chat.voiceStatus === 'recording'}
+                    title={chat.hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
+                    disabled={(chat.voiceStatus === 'idle' && !chat.allowUserInput && !chat.isSpeechPlaying) || chat.voiceStatus === 'transcribing'}
+                    className={cn('rounded-md border border-gray bg-transparent p-2 disabled:opacity-50 dark:border-neutral-500', FOCUS_VISIBLE_CLASSES)}
+                    onMouseDown={chat.startVoiceRecording}
+                    onMouseUp={chat.stopRecording}
+                    onMouseLeave={chat.stopRecording}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      chat.startVoiceRecording();
+                    }}
+                    onTouchEnd={(e) => {
+                      e.preventDefault();
+                      chat.stopRecording();
+                    }}
+                    onKeyDown={(e) => {
+                      if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                        e.preventDefault();
+                        chat.startVoiceRecording();
+                      }
+                    }}
+                    onKeyUp={(e) => {
+                      if (e.key === ' ' || e.key === 'Enter') {
+                        e.preventDefault();
+                        chat.stopRecording();
+                      }
+                    }}
+                  >
+                    {chat.voiceStatus === 'recording'
+                      ? <StopIcon className='size-5 cursor-pointer animate-pulse' color='#EF4444' />
+                      : <MicrophoneIcon className='size-5 cursor-pointer' color={fontColor} />}
+                  </button>
+                )}
+              </div>
               <Textarea
                 ref={chatInputRef}
                 aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
