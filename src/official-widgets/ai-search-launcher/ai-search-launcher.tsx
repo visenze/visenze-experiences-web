@@ -142,43 +142,49 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   return (
     <>
       <div className='flex items-center gap-2 p-2'>
-        <button
-          ref={imageButtonRef}
-          type='button'
-          aria-label={intl.formatMessage({ id: 'a11yOpenImageSearch' })}
-          className={cn(
-            'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
-            FOCUS_VISIBLE_CLASSES,
-          )}
-          onClick={() => chat.openEntryPoint('image')}
-        >
-          <CameraIcon className='size-5 cursor-pointer' color={fontColor} />
-        </button>
-        <button
-          ref={micButtonRef}
-          type='button'
-          aria-label={intl.formatMessage({ id: 'a11yOpenVoiceSearch' })}
-          className={cn(
-            'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
-            FOCUS_VISIBLE_CLASSES,
-          )}
-          onClick={() => chat.openEntryPoint('mic')}
-        >
-          <MicrophoneIcon className='size-5 cursor-pointer' color={fontColor} />
-        </button>
-        <button
-          ref={aiButtonRef}
-          type='button'
-          aria-label={intl.formatMessage({ id: 'a11yOpenAskAi' })}
-          style={{ color: fontColor }}
-          className={cn(
-            'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
-            FOCUS_VISIBLE_CLASSES,
-          )}
-          onClick={() => chat.openEntryPoint('ai')}
-        >
-          {intl.formatMessage({ id: 'triggerAskAi' })}
-        </button>
+        {customizations.launcher?.cameraEntryEnabled !== false && (
+          <button
+            ref={imageButtonRef}
+            type='button'
+            aria-label={intl.formatMessage({ id: 'a11yOpenImageSearch' })}
+            className={cn(
+              'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+              FOCUS_VISIBLE_CLASSES,
+            )}
+            onClick={() => chat.openEntryPoint('image')}
+          >
+            <CameraIcon className='size-5 cursor-pointer' color={fontColor} />
+          </button>
+        )}
+        {customizations.launcher?.micEntryEnabled !== false && (
+          <button
+            ref={micButtonRef}
+            type='button'
+            aria-label={intl.formatMessage({ id: 'a11yOpenVoiceSearch' })}
+            className={cn(
+              'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+              FOCUS_VISIBLE_CLASSES,
+            )}
+            onClick={() => chat.openEntryPoint('mic')}
+          >
+            <MicrophoneIcon className='size-5 cursor-pointer' color={fontColor} />
+          </button>
+        )}
+        {customizations.launcher?.askAiEntryEnabled !== false && (
+          <button
+            ref={aiButtonRef}
+            type='button'
+            aria-label={intl.formatMessage({ id: 'a11yOpenAskAi' })}
+            style={{ color: fontColor }}
+            className={cn(
+              'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+              FOCUS_VISIBLE_CLASSES,
+            )}
+            onClick={() => chat.openEntryPoint('ai')}
+          >
+            {intl.formatMessage({ id: 'triggerAskAi' })}
+          </button>
+        )}
       </div>
       <FullScreenContainer
         open={chat.activeEntryPoint !== null}
@@ -186,6 +192,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
         title={customizations.launcher?.title || intl.formatMessage({ id: 'widgetTitle' })}
         isMuted={!chat.isVoiceReadingEnabled}
         onToggleMute={chat.toggleVoiceReading}
+        showVoiceToggle={chat.speechOutputEnabled}
         onNewChat={handleNewChat}
         showNewChat={!showImageWelcome && !showMicWelcome}
         darkMode={darkMode}
@@ -226,16 +233,18 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
                 />
               )}
               <div className='flex justify-end gap-2'>
-                <button
-                  ref={openChatCameraButtonRef}
-                  type='button'
-                  aria-label={intl.formatMessage({ id: 'a11yOpenCamera' })}
-                  title={intl.formatMessage({ id: 'a11yOpenCamera' })}
-                  className={cn('rounded-md border border-gray bg-transparent p-2 dark:border-neutral-500', FOCUS_VISIBLE_CLASSES)}
-                  onClick={() => setShowChatCameraCapture(true)}
-                >
-                  <CameraIcon className='size-5 cursor-pointer' color={fontColor} />
-                </button>
+                {customizations.launcher?.chatCameraEnabled !== false && (
+                  <button
+                    ref={openChatCameraButtonRef}
+                    type='button'
+                    aria-label={intl.formatMessage({ id: 'a11yOpenCamera' })}
+                    title={intl.formatMessage({ id: 'a11yOpenCamera' })}
+                    className={cn('rounded-md border border-gray bg-transparent p-2 dark:border-neutral-500', FOCUS_VISIBLE_CLASSES)}
+                    onClick={() => setShowChatCameraCapture(true)}
+                  >
+                    <CameraIcon className='size-5 cursor-pointer' color={fontColor} />
+                  </button>
+                )}
                 <FileDropzone onImageUpload={handleChatImage} name='asl-chat-upload' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
                   <div className='rounded-md border border-gray p-2 dark:border-neutral-500'>
                     {customizations.imageUpload?.icon?.url ? (

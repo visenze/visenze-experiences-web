@@ -338,6 +338,112 @@ describe('ai-search-launcher', () => {
     });
   });
 
+  describe('mic entry screen — recording controls', () => {
+    let mockRecognitionInstances: MockSpeechRecognition[] = [];
+
+    class MockSpeechRecognition {
+      continuous = false;
+
+      interimResults = false;
+
+      onresult: ((event: any) => void) | null = null;
+
+      onerror: ((event: any) => void) | null = null;
+
+      onend: (() => void) | null = null;
+
+      start = jest.fn();
+
+      stop = jest.fn();
+
+      abort = jest.fn();
+
+      constructor() {
+        mockRecognitionInstances.push(this);
+      }
+    }
+
+    const getMicButton = (): HTMLElement => testComponent.getByRole('button', { name: texts['en']['a11yVoicePending'], hidden: true });
+
+    beforeEach(() => {
+      mockRecognitionInstances = [];
+      (window as any).SpeechRecognition = MockSpeechRecognition;
+    });
+
+    afterEach(() => {
+      delete (window as any).SpeechRecognition;
+    });
+
+    it('gives the mic button a visible circular border', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenVoiceSearch');
+
+      const micButton = getMicButton();
+      expect(micButton.className).toMatch(/rounded-full/);
+      expect(micButton.className).toMatch(/\bborder\b/);
+      expect(micButton.className).not.toMatch(/border-0/);
+    });
+
+    it('starts recording immediately when clicked, without waiting for the auto-start gate', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenVoiceSearch');
+
+      const micButton = getMicButton();
+      act(() => {
+        fireEvent.click(micButton);
+      });
+
+      expect(mockRecognitionInstances).toHaveLength(1);
+      expect(mockRecognitionInstances[0].start).toHaveBeenCalled();
+    });
+
+    it('does not stop recording before the default 5-second duration elapses', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenVoiceSearch');
+
+      act(() => {
+        fireEvent.click(getMicButton());
+      });
+      act(() => {
+        jest.advanceTimersByTime(4900);
+      });
+
+      expect(mockRecognitionInstances[0].stop).not.toHaveBeenCalled();
+    });
+
+    it('automatically stops recording once the default 5-second duration elapses', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenVoiceSearch');
+
+      act(() => {
+        fireEvent.click(getMicButton());
+      });
+      act(() => {
+        jest.advanceTimersByTime(5310);
+      });
+
+      expect(mockRecognitionInstances[0].stop).toHaveBeenCalled();
+    });
+
+    it('honors a configured auto-stop duration instead of the default', () => {
+      renderLauncher({}, 'en', {}, { launcher: { voiceRecordingMaxDurationSeconds: 2 } });
+      openEntryPointAndWait('a11yOpenVoiceSearch');
+
+      act(() => {
+        fireEvent.click(getMicButton());
+      });
+      act(() => {
+        jest.advanceTimersByTime(1900);
+      });
+      expect(mockRecognitionInstances[0].stop).not.toHaveBeenCalled();
+
+      act(() => {
+        jest.advanceTimersByTime(2310 - 1900);
+      });
+      expect(mockRecognitionInstances[0].stop).toHaveBeenCalled();
+    });
+  });
+
   describe('image entry point — camera-search-style upload UI', () => {
     it('should show the drag-to-search prompt and a camera link styled like camera-search\'s upload screen', () => {
       renderLauncher();
@@ -524,6 +630,51 @@ describe('ai-search-launcher', () => {
       });
 
       expect(testComponent.getByRole('button', { name: texts['en']['a11yToggleMute'] }).getAttribute('aria-pressed')).toBe('false');
+    });
+  });
+
+  describe('configurable entry modes and voice controls', () => {
+    it('should not render the image entry-bar button when cameraEntryEnabled is disabled', () => {
+      renderLauncher({}, 'en', {}, { launcher: { cameraEntryEnabled: false } });
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenImageSearch'] })).toBeNull();
+    });
+
+    it('should not render the mic entry-bar button when micEntryEnabled is disabled', () => {
+      renderLauncher({}, 'en', {}, { launcher: { micEntryEnabled: false } });
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenVoiceSearch'] })).toBeNull();
+    });
+
+    it('should not render the Ask AI entry-bar button when askAiEntryEnabled is disabled', () => {
+      renderLauncher({}, 'en', {}, { launcher: { askAiEntryEnabled: false } });
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenAskAi'] })).toBeNull();
+    });
+
+    it('should hide the in-chat footer camera button (but keep upload) when chatCameraEnabled is disabled', () => {
+      renderLauncher({}, 'en', {}, { launcher: { chatCameraEnabled: false } });
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeNull();
+      expect(testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' })).toBeTruthy();
+    });
+
+    it('should hide the in-chat footer mic button and the mute toggle when voiceEnabled is disabled', () => {
+      const OriginalSpeechRecognition = (window as any).SpeechRecognition;
+      (window as any).SpeechRecognition = function SpeechRecognitionMock(): void {
+        return undefined;
+      };
+      (window as any).SpeechRecognition.prototype.start = jest.fn();
+      (window as any).SpeechRecognition.prototype.stop = jest.fn();
+      (window as any).SpeechRecognition.prototype.abort = jest.fn();
+
+      try {
+        renderLauncher({}, 'en', {}, { launcher: { voiceEnabled: false } });
+        openEntryPointAndWait('a11yOpenAskAi');
+
+        expect(testComponent.queryByRole('button', { name: texts['en']['a11yVoicePending'], hidden: true })).toBeNull();
+        expect(testComponent.queryByRole('button', { name: texts['en']['a11yToggleMute'] })).toBeNull();
+      } finally {
+        (window as any).SpeechRecognition = OriginalSpeechRecognition;
+      }
     });
   });
 });

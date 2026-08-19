@@ -16,6 +16,9 @@ interface MicEntryScreenProps {
 // How often the auto-start gate below polls for any greeting to have finished playing.
 const GREETING_GATE_POLL_MS = 120;
 
+// Fallback when `customizations.launcher.voiceRecordingMaxDurationSeconds` is unset.
+const DEFAULT_VOICE_RECORDING_MAX_DURATION_SECONDS = 5;
+
 // Full-screen welcome state for the microphone entry point (spec §5.2).
 //
 // Recording auto-starts once any greeting for this entry point (played by a sibling effect in
@@ -23,7 +26,8 @@ const GREETING_GATE_POLL_MS = 120;
 // forward from the plan, not a confirmed product decision (see this task's report): `useVoice`'s
 // `startRecording()` calls `stopAudio()` internally as its first step, so starting to record while
 // a greeting is still playing/queued would silently cut the greeting off mid-word. Until that gate
-// clears, this screen shows a neutral, static mic icon rather than the recording state.
+// clears, this screen shows a neutral, static mic icon rather than the recording state — unless
+// the user clicks the mic themselves, which starts recording immediately regardless of the gate.
 const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
@@ -78,6 +82,21 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chat.voiceEnabled]);
 
+  // Auto-stop (F1): the full-screen recording state isn't press-and-hold like the chat footer's
+  // mic button, so without a cap the user could leave it recording indefinitely. Configurable via
+  // `customizations.launcher.voiceRecordingMaxDurationSeconds` (default 5s).
+  useEffect(() => {
+    if (chat.voiceStatus !== 'recording') {
+      return undefined;
+    }
+    const maxDurationSeconds = customizations.launcher?.voiceRecordingMaxDurationSeconds
+      ?? DEFAULT_VOICE_RECORDING_MAX_DURATION_SECONDS;
+    const timeoutId = window.setTimeout(() => {
+      chatRef.current.stopRecording();
+    }, maxDurationSeconds * 1000);
+    return (): void => window.clearTimeout(timeoutId);
+  }, [chat.voiceStatus, customizations.launcher?.voiceRecordingMaxDurationSeconds]);
+
   const renderMicIcon = (): ReactElement => {
     if (chat.voiceStatus === 'transcribing') {
       return <MicrophoneIcon className='size-16 opacity-60' color={iconColor} />;
@@ -93,10 +112,12 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
       chat.stopRecording();
       return;
     }
-    // Manual retry affordance: if the auto-start attempt already ran (and, e.g., errored back to
-    // idle — mic permission denied, browser quirk, etc.), let the user tap to try again rather
-    // than being stuck with a dead mic icon.
-    if (chat.voiceStatus === 'idle' && hasAutoStartedRef.current) {
+    // A manual click always starts recording right away — including while a greeting is still
+    // playing (startVoiceRecording() cuts it off) or before the auto-start poll above has fired —
+    // and also covers the retry affordance after an error/idle state. Marking the gate as already
+    // fired stops the poll from starting a second, redundant recording later.
+    if (chat.voiceStatus === 'idle') {
+      hasAutoStartedRef.current = true;
       chat.startVoiceRecording();
     }
   };
@@ -161,7 +182,7 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
         aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yVoicePending' })}
         aria-pressed={chat.voiceStatus === 'recording'}
         disabled={chat.voiceStatus === 'transcribing'}
-        className={cn('rounded-full border-0 bg-transparent p-6 disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
+        className={cn('rounded-full border border-gray-200 bg-transparent p-6 disabled:opacity-50 dark:border-neutral-700', FOCUS_VISIBLE_CLASSES)}
         onClick={handleMicClick}
       >
         {renderMicIcon()}

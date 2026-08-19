@@ -16,6 +16,10 @@ interface FullScreenContainerProps {
   title: string;
   isMuted: boolean;
   onToggleMute: () => void;
+  // Hides the mute/unmute toggle entirely when voice is disabled widget-wide (customizations
+  // .launcher.voiceEnabled === false) — mirrors shopping-assistant gating its own SpeakerIcon on
+  // `speechOutputEnabled`.
+  showVoiceToggle: boolean;
   onNewChat: () => void;
   // Hides the "new chat" trigger while an entry point's dedicated welcome screen (image upload,
   // mic) is showing — there's no chat to reset yet at that point, only once a message is sent.
@@ -40,6 +44,7 @@ const FullScreenContainer: FC<FullScreenContainerProps> = ({
   title,
   isMuted,
   onToggleMute,
+  showVoiceToggle,
   onNewChat,
   showNewChat,
   darkMode,
@@ -138,15 +143,17 @@ const FullScreenContainer: FC<FullScreenContainerProps> = ({
             {title}
           </h2>
           <div className='flex items-center gap-2 pe-4'>
-            <button
-              type='button'
-              aria-label={intl.formatMessage({ id: isMuted ? 'a11yEnableMute' : 'a11yToggleMute' })}
-              aria-pressed={isMuted}
-              className={cn('border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
-              onClick={onToggleMute}
-            >
-              <SpeakerIcon muted={isMuted} className='size-6 cursor-pointer' color={iconColor} />
-            </button>
+            {showVoiceToggle && (
+              <button
+                type='button'
+                aria-label={intl.formatMessage({ id: isMuted ? 'a11yEnableMute' : 'a11yToggleMute' })}
+                aria-pressed={isMuted}
+                className={cn('border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
+                onClick={onToggleMute}
+              >
+                <SpeakerIcon muted={isMuted} className='size-6 cursor-pointer' color={iconColor} />
+              </button>
+            )}
             {showNewChat && (
               <button
                 type='button'

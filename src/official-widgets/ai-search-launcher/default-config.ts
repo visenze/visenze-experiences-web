@@ -296,6 +296,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     title: 'AI Search Assistant',
     voiceGreetingEnabled: false,
     startMuted: false,
+    voiceRecordingMaxDurationSeconds: 5,
     greetings: {
       image: 'Show me a photo and I\'ll find similar products for you.',
       mic: 'Tell me what you\'re looking for and I\'ll find it for you.',

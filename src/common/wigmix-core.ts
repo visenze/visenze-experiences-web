@@ -1595,6 +1595,14 @@ export interface WidgetConfig {
        */
       startMuted?: boolean;
       /**
+       * Maximum duration, in seconds, that the mic entry point's full-screen
+       * recording state stays open before it is automatically stopped (as if
+       * the user had clicked to stop). Defaults to 5.
+       *
+       * @since 1.0.30
+       */
+      voiceRecordingMaxDurationSeconds?: number;
+      /**
        * Per-entry-point greeting text, spoken (if `voiceGreetingEnabled`) and/or
        * shown when that entry point is opened.
        *
@@ -1641,6 +1649,50 @@ export interface WidgetConfig {
         /** Voice similarity boost, 0-1. */
         similarityBoost?: number;
       };
+      /**
+       * (optional) Master toggle for voice capability throughout this widget's
+       * chat surface: recording, spoken replies/greetings, the in-chat
+       * microphone button, and the mute/unmute toggle. Defaults to `true`
+       * (enabled) when unset — set to `false` to hide all voice UI and stop
+       * making voice requests entirely, mirroring `chatbot.voiceEnabled`'s
+       * effect in the shopping-assistant widget.
+       *
+       * @since 1.0.30
+       */
+      voiceEnabled?: boolean;
+      /**
+       * (optional) Whether the top entry-bar's image-search button is shown.
+       * Defaults to `true` (enabled) when unset — set to `false` to remove
+       * this entry point entirely.
+       *
+       * @since 1.0.30
+       */
+      cameraEntryEnabled?: boolean;
+      /**
+       * (optional) Whether the top entry-bar's mic-search button is shown.
+       * Defaults to `true` (enabled) when unset — set to `false` to remove
+       * this entry point entirely. Independent of `voiceEnabled`.
+       *
+       * @since 1.0.30
+       */
+      micEntryEnabled?: boolean;
+      /**
+       * (optional) Whether the top entry-bar's "Ask AI" button is shown.
+       * Defaults to `true` (enabled) when unset — set to `false` to remove
+       * this entry point entirely.
+       *
+       * @since 1.0.30
+       */
+      askAiEntryEnabled?: boolean;
+      /**
+       * (optional) Whether the in-chat footer's inline "open camera" button is
+       * shown once a conversation is active. Defaults to `true` (enabled) when
+       * unset. Image upload (drag/drop or file picker) is unaffected by this
+       * flag.
+       *
+       * @since 1.0.30
+       */
+      chatCameraEnabled?: boolean;
     };
   };
   /**

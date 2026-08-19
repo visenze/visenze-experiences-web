@@ -239,6 +239,11 @@ describe('use-launcher-chat', () => {
     expect(hook.result.current.wishlistPids).not.toContain('pid-1');
   });
 
+  it('should disable speechOutputEnabled when customizations.launcher.voiceEnabled is false', () => {
+    const { hook } = renderLauncherChat({}, { launcher: { voiceEnabled: false } });
+    expect(hook.result.current.speechOutputEnabled).toBe(false);
+  });
+
   it('toggleVoiceReading should flip isVoiceReadingEnabled', () => {
     const { hook } = renderLauncherChat();
     expect(hook.result.current.isVoiceReadingEnabled).toBe(true);

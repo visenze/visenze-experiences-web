@@ -132,10 +132,11 @@ const useLauncherChat = (): UseLauncherChatResult => {
     getTypewriterLength,
     resetReplyState,
   } = useVoiceReply({
-    // Unlike shopping-assistant, this widget has no separate on/off toggle for "is voice a thing
-    // at all" — every entry point can use it. Actual availability still gates on browser support
-    // via `voiceEnabled`/`speechOutputEnabled`, returned below.
-    enabled: true,
+    // Mirrors shopping-assistant's chatbot.voiceEnabled master switch, but defaults to enabled
+    // (unset or anything but explicit `false`) to preserve this widget's original always-on
+    // behavior. Actual availability additionally gates on browser support via
+    // `voiceEnabled`/`speechOutputEnabled`, returned below.
+    enabled: customizations.launcher?.voiceEnabled !== false,
     appKey: appSettings.appKey,
     placementId: appSettings.placementId,
     baseUrl: apiBase,
