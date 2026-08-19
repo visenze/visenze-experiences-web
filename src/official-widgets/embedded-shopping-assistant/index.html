@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Embedded Shopping Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .widget-shell {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .embedded-shopping-assistant-widget,
+    .embedded-shopping-assistant-widget > div {
+      height: 100%;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="widget-shell">
+    <div class="embedded-shopping-assistant-widget"></div>
+  </div>
+</body>
+</html>

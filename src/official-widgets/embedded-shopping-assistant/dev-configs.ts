@@ -9,10 +9,10 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     appKey: '7a8c2735fa6f4175a9a9723ec0ba6653',
     placementId: '10953',
     endpoint: '',
-    cloud: 'aws', // remove this if you are testing in staging environment
+    cloud: 'aws',
   },
   displaySettings: {
-    cssSelector: '.shopping-assistant-widget',
+    cssSelector: '.embedded-shopping-assistant-widget',
     productDetails: {},
   },
   customizations: {
@@ -20,15 +20,15 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
   },
   callbacks: {
     trackingCallback: (action: string, params: Record<string, any>) => {
-      console.log(`Successfully send event: ${action}`, params);
+      console.warn(`Successfully send event: ${action}`, params);
     },
   },
   disableAnalytics: true,
 };
 
-// Set to true to retrieve the fields mappings from the backend.
-// If this is set to true, the subsequent devFieldMappings variable needs not be set.
-export const shouldRetrieveFieldsMapping = true;
+// Set to true to retrieve field mappings from the backend (requires a valid appKey).
+// Leave false when testing with mock data — no credentials needed.
+export const shouldRetrieveFieldsMapping = false;
 
 // Update according to your catalog's field mappings
 export const devFieldMappings: Record<string, string> = {
