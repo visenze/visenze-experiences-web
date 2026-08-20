@@ -204,6 +204,32 @@ describe('use-chat', () => {
     expect(hook.result.current.allowUserInput).toBe(true);
   });
 
+  it('should attach that response\'s own suggestions to the committed products chat', async () => {
+    const { hook } = renderChat();
+    act(() => {
+      hook.result.current.open();
+    });
+
+    const stream = sendMessageAndGetStreamController(hook, 'Show me shoes');
+    stream.emitEvent('chat_id', { value: 'chat-123' });
+    stream.emitEvent('reqid', { value: 'req-123' });
+    stream.emitEvent('chat_token', { value: 'Here you go: [[pid-1]] ((Show more)) ((Try boots))' });
+    stream.emitEvent('product', {
+      product_id: 'pid-1',
+      main_image_url: 'https://example.com/shoe.jpg',
+      data: {
+        product_url: 'https://example.com/shoe',
+        price: { currency: 'USD', value: '99.99' },
+        title: 'Cool Shoes',
+      },
+    });
+    stream.closeStream();
+    await revealAll();
+
+    const productsChat = hook.result.current.chats.find((chat) => chat.author === 'products');
+    expect(productsChat?.suggestions).toEqual(['Show more', 'Try boots']);
+  });
+
   it('newChat should reset the visible chat state and generate a fresh chat id', async () => {
     const { hook, mockVisearchClient } = renderChat();
     act(() => {

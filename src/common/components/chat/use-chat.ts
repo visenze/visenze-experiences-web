@@ -23,6 +23,7 @@ export interface Chat {
   messages: string[];
   products?: ProcessedProduct[];
   image?: SearchImageOrPid;
+  suggestions?: string[];
 }
 
 interface CompletedResponse {
@@ -30,6 +31,7 @@ interface CompletedResponse {
   requestId: string;
   text: string;
   products: ProcessedProduct[];
+  suggestions: string[];
 }
 
 export interface UseChatResult {
@@ -163,7 +165,9 @@ const useChat = (): UseChatResult => {
     });
   };
 
-  const commitResponse = ({ chatId: responseChatId, requestId, text, products }: CompletedResponse): void => {
+  const commitResponse = ({
+    chatId: responseChatId, requestId, text, products, suggestions: responseSuggestions,
+  }: CompletedResponse): void => {
     if (products.length) {
       const requestMetadata = {
         queryId: requestId,
@@ -181,6 +185,7 @@ const useChat = (): UseChatResult => {
           messages: [text],
           author: 'bot',
           products: [],
+          suggestions: products.length ? undefined : responseSuggestions,
         });
       }
       if (products.length) {
@@ -190,6 +195,7 @@ const useChat = (): UseChatResult => {
           messages: [],
           author: 'products',
           products,
+          suggestions: responseSuggestions,
         });
       }
       return newChats;
@@ -317,7 +323,8 @@ const useChat = (): UseChatResult => {
       },
       onclose: () => {
         const currentText = tokens.join('');
-        setSuggestions(extractSuggestions(currentText));
+        const finalSuggestions = extractSuggestions(currentText);
+        setSuggestions(finalSuggestions);
         const finalText = stripTokensForDisplay(currentText).trim();
         const finalProducts = resolveProducts(currentText, products);
         updateLatestMessage(finalText);
@@ -327,6 +334,7 @@ const useChat = (): UseChatResult => {
           requestId: reqIdFromResp,
           text: finalText,
           products: finalProducts,
+          suggestions: finalSuggestions,
         };
         if (willSpeakReply && isVoiceReadingEnabledNow()) {
           const { sentences } = extractSpeakableSentences(currentText, spokenLength, { includeTrailing: true });
