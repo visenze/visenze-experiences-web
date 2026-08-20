@@ -4,11 +4,11 @@ import { useIntl } from 'react-intl';
 import WebcamCapture from './WebcamCapture';
 import FileDropzone from '../../../common/components/FileDropzone';
 import Footer from '../../../common/components/Footer';
+import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 import UploadIcon from '../../../common/icons/UploadIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
-import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 import type { UseLauncherChatResult } from '../use-launcher-chat';
 
 interface ImageEntryScreenProps {

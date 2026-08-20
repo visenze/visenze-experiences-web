@@ -4,11 +4,11 @@ import { useIntl } from 'react-intl';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import Portal from '../../../common/components/portal';
 import ShadowWrapper from '../../../common/components/shadow-wrapper';
+import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 import CloseIcon from '../../../common/icons/CloseIcon';
 import PlusCircleIcon from '../../../common/icons/PlusCircleIcon';
-import { WidgetBreakpoint } from '../../../common/types/constants';
-import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 import SpeakerIcon from '../../../common/icons/SpeakerIcon';
+import { WidgetBreakpoint } from '../../../common/types/constants';
 
 interface FullScreenContainerProps {
   open: boolean;
