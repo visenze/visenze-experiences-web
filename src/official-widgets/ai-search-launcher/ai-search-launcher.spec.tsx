@@ -1,6 +1,7 @@
 import { act, fireEvent, render, type RenderResult } from '@testing-library/react';
 import { type FC, type ReactNode, useCallback, useState } from 'react';
 import { IntlProvider } from 'react-intl';
+import { Context as ResponsiveContext } from 'react-responsive';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import AiSearchLauncher from './ai-search-launcher';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
@@ -710,6 +711,205 @@ describe('ai-search-launcher', () => {
       } finally {
         (window as any).SpeechRecognition = OriginalSpeechRecognition;
       }
+    });
+  });
+
+  // These render directly (rather than via renderLauncher/renderWidget) so the tree can be wrapped
+  // in react-responsive's Context, which is how every other widget's spec in this repo forces a
+  // breakpoint — see similar-search.spec.tsx. Default breakpoints put 600 in mobile, 1200 desktop.
+  describe('splitlayout engagement rule', () => {
+    const renderAtWidth = (width: number, customizationOverrides: Partial<WidgetConfig['customizations']> = {}): RenderResult => {
+      const { widgetConfig, widgetClient } = createTestClient({}, {}, { ...DEFAULT_CUSTOMIZATIONS, ...customizationOverrides });
+      return render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <ResponsiveContext.Provider value={{ width }}>
+                <AiSearchLauncher renderWithoutPortal />
+              </ResponsiveContext.Provider>
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+      );
+    };
+
+    const openAskAi = (result: RenderResult): void => {
+      act(() => {
+        fireEvent.click(result.getByRole('button', { name: texts['en']['a11yOpenAskAi'] }));
+      });
+    };
+
+    // Streams a turn that produces one product, stopping short of onclose so the assertion can
+    // observe the mid-stream (pre-commit) state.
+    const streamProductsWithoutClosing = (): void => {
+      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      let onmessage: (ev: { event: string; data: string }) => void = () => {};
+      mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
+        onmessage = options.onmessage;
+      });
+      act(() => {
+        fireEvent.change(textarea, { target: { value: 'Show me shoes' } });
+      });
+      act(() => {
+        fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
+      });
+      act(() => {
+        onmessage({ event: 'chat_id', data: JSON.stringify({ value: 'chat-1' }) });
+      });
+      act(() => {
+        onmessage({ event: 'reqid', data: JSON.stringify({ value: 'req-1' }) });
+      });
+      act(() => {
+        onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Here: [[pid-1]]' }) });
+      });
+      act(() => {
+        onmessage({
+          event: 'product',
+          data: JSON.stringify({
+            product_id: 'pid-1',
+            main_image_url: 'https://example.com/shoe.jpg',
+            data: { product_url: 'https://example.com/shoe', price: { currency: 'USD', value: '99.99' }, title: 'Shoe' },
+          }),
+        });
+      });
+    };
+
+    it('renders chat-only at desktop width with the default chatlayout config', () => {
+      const result = renderAtWidth(1200);
+      openAskAi(result);
+      expect(result.queryByTestId('asl-split-layout')).toBeNull();
+    });
+
+    it('renders chat-only at desktop width with splitlayout configured but no results yet', () => {
+      const result = renderAtWidth(1200, { chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' } });
+      openAskAi(result);
+      expect(result.queryByTestId('asl-split-layout')).toBeNull();
+    });
+
+    it('renders SplitLayout once results arrive at desktop width with splitlayout configured', () => {
+      const result = renderAtWidth(1200, { chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' } });
+      openAskAi(result);
+      expect(result.queryByTestId('asl-split-layout')).toBeNull();
+
+      streamProductsWithoutClosing();
+
+      // Mid-stream, before onclose/commit: streamingProducts is already non-empty, so the
+      // engagement rule (breadcrumbs.length > 0 || streamingProducts.length > 0) is already true.
+      expect(result.queryByTestId('asl-split-layout')).toBeTruthy();
+    });
+
+    it('renders chat-only at a mobile width even with splitlayout configured and results present', () => {
+      const result = renderAtWidth(600, { chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' } });
+      openAskAi(result);
+      streamProductsWithoutClosing();
+      expect(result.queryByTestId('asl-split-layout')).toBeNull();
+    });
+  });
+
+  describe('breadcrumb / hint-line sync (splitlayout, desktop)', () => {
+    const renderSplitAtDesktop = (): RenderResult => {
+      const { widgetConfig, widgetClient } = createTestClient({}, {}, {
+        ...DEFAULT_CUSTOMIZATIONS,
+        chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' },
+      });
+      return render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <ResponsiveContext.Provider value={{ width: 1200 }}>
+                <AiSearchLauncher renderWithoutPortal />
+              </ResponsiveContext.Provider>
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+      );
+    };
+
+    const emitProductsTurn = (message: string, requestId: string): void => {
+      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      let onmessage: (ev: { event: string; data: string }) => void = () => {};
+      let onclose: () => void = () => {};
+      mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
+        onmessage = options.onmessage;
+        onclose = options.onclose;
+      });
+      act(() => {
+        fireEvent.change(textarea, { target: { value: message } });
+      });
+      act(() => {
+        fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
+      });
+      act(() => {
+        onmessage({ event: 'chat_id', data: JSON.stringify({ value: 'chat-1' }) });
+      });
+      act(() => {
+        onmessage({ event: 'reqid', data: JSON.stringify({ value: requestId }) });
+      });
+      act(() => {
+        onmessage({ event: 'chat_token', data: JSON.stringify({ value: `Here: [[pid-${requestId}]]` }) });
+      });
+      act(() => {
+        onmessage({
+          event: 'product',
+          data: JSON.stringify({
+            product_id: `pid-${requestId}`,
+            main_image_url: 'https://example.com/shoe.jpg',
+            data: { product_url: 'https://example.com/shoe', price: { currency: 'USD', value: '99.99' }, title: `Shoe ${requestId}` },
+          }),
+        });
+      });
+      act(() => {
+        onclose();
+      });
+    };
+
+    it('clicking an earlier breadcrumb makes it the active crumb', async () => {
+      const result = renderSplitAtDesktop();
+      act(() => {
+        fireEvent.click(result.getByRole('button', { name: texts['en']['a11yOpenAskAi'] }));
+      });
+
+      emitProductsTurn('blue jeans', 'req-1');
+      await revealAll();
+      emitProductsTurn('blue jeans but cropped', 'req-2');
+      await revealAll();
+
+      // Refinement (shares "jeans"), so the trail has both crumbs and the newest is active.
+      const newerCrumb = result.getByRole('button', { name: /blue jeans but cropped/ });
+      expect(newerCrumb.getAttribute('aria-current')).toBe('true');
+
+      const olderCrumb = result.getByRole('button', { name: /Show results for: blue jeans$/ });
+      act(() => {
+        fireEvent.click(olderCrumb);
+      });
+
+      expect(olderCrumb.getAttribute('aria-current')).toBe('true');
+      expect(result.getByRole('button', { name: /blue jeans but cropped/ }).getAttribute('aria-current')).toBeNull();
+    });
+
+    it('clicking an in-chat hint line activates the matching crumb, keeping both entry points in sync', async () => {
+      const result = renderSplitAtDesktop();
+      act(() => {
+        fireEvent.click(result.getByRole('button', { name: texts['en']['a11yOpenAskAi'] }));
+      });
+
+      emitProductsTurn('blue jeans', 'req-1');
+      await revealAll();
+      emitProductsTurn('blue jeans but cropped', 'req-2');
+      await revealAll();
+
+      // Two turns => two hint lines in the chat pane (one per 'products' chat entry). Scoped to
+      // buttons so it can't also match the sr-only live-region status text.
+      const hintLines = result.getAllByRole('button', { name: /results shown/ });
+      expect(hintLines).toHaveLength(2);
+
+      act(() => {
+        fireEvent.click(hintLines[0]);
+      });
+
+      // Clicking the FIRST turn's hint line activates the FIRST crumb — same handler/state as a
+      // direct crumb click, so the two entry points can't drift apart.
+      expect(result.getByRole('button', { name: /Show results for: blue jeans$/ }).getAttribute('aria-current')).toBe('true');
     });
   });
 });
