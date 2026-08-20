@@ -160,7 +160,7 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
                 type='button'
                 aria-label={intl.formatMessage({ id: isMuted ? 'a11yEnableMute' : 'a11yToggleMute' })}
                 aria-pressed={isMuted}
-                className={cn('border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
+                className={cn('flex min-h-[38px] min-w-[38px] items-center justify-center border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
                 onClick={onToggleMute}
               >
                 <SpeakerIcon muted={isMuted} className='size-6 cursor-pointer' color={iconColor} />
@@ -171,7 +171,7 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
                 type='button'
                 aria-label={intl.formatMessage({ id: 'a11yStartNewChat' })}
                 title={intl.formatMessage({ id: 'a11yStartNewChat' })}
-                className={cn('border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
+                className={cn('flex min-h-[38px] min-w-[38px] items-center justify-center border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
                 onClick={onNewChat}
               >
                 <PlusCircleIcon className='size-6 cursor-pointer' color={iconColor} />
@@ -181,7 +181,7 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
               type='button'
               aria-label={intl.formatMessage({ id: 'a11yCloseFullScreen' })}
               title={intl.formatMessage({ id: 'a11yCloseFullScreen' })}
-              className={cn('border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
+              className={cn('flex min-h-[38px] min-w-[38px] items-center justify-center border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
               onClick={onClose}
             >
               <CloseIcon className='size-6 cursor-pointer' color={iconColor} />

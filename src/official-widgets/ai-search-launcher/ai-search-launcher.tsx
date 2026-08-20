@@ -161,7 +161,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
             type='button'
             aria-label={intl.formatMessage({ id: 'a11yOpenImageSearch' })}
             className={cn(
-              'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+              'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
               FOCUS_VISIBLE_CLASSES,
             )}
             onClick={() => openEntryPoint('image')}
@@ -175,7 +175,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
             type='button'
             aria-label={intl.formatMessage({ id: 'a11yOpenVoiceSearch' })}
             className={cn(
-              'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+              'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
               FOCUS_VISIBLE_CLASSES,
             )}
             onClick={() => openEntryPoint('mic')}
@@ -190,7 +190,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
             aria-label={intl.formatMessage({ id: 'a11yOpenAskAi' })}
             style={{ color: fontColor }}
             className={cn(
-              'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+              'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
               FOCUS_VISIBLE_CLASSES,
             )}
             onClick={() => openEntryPoint('ai')}

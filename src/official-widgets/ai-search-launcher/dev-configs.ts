@@ -6,8 +6,8 @@ const customCss = `
 
 export const devConfigs: RecursivePartial<WidgetConfig> = {
   appSettings: {
-    appKey: '',
-    placementId: '',
+    appKey: 'fd5f2fc733394af787d985a753590963',
+    placementId: '10766',
     endpoint: '',
     cloud: 'aws', // remove this if you are testing in staging environment
   },
@@ -20,7 +20,22 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     chat: {
       voiceGreetingEnabled: true, // enable to exercise the voice-greeting path locally
       startMuted: false,
+      // voiceEnabled: false, // set false to hide all voice UI (footer mic button, mute toggle) and stop voice requests
+      // cameraEntryEnabled: false, // set false to hide the top entry-bar image-search button
+      // micEntryEnabled: false, // set false to hide the top entry-bar mic-search button
+      // askAiEntryEnabled: false, // set false to hide the top entry-bar "Ask AI" button
+      // chatCameraEnabled: false, // set false to hide the in-chat footer's inline camera-capture button
     },
+    // Populate to exercise the preset image gallery on the image entry welcome screen locally.
+    // imageUpload: {
+    //   enable: true,
+    //   icon: { color: '#000000', colorDark: '#FFFFFF' },
+    //   images: [
+    //     { url: 'https://cdn.visenze.com/images/sample-product-1.jpg', label: 'Dress' },
+    //     { url: 'https://cdn.visenze.com/images/sample-product-2.jpg', label: 'Shoes' },
+    //     { url: 'https://cdn.visenze.com/images/sample-product-3.jpg', label: 'Bag' },
+    //   ],
+    // },
   },
   callbacks: {
     trackingCallback: (action: string, params: Record<string, any>) => {

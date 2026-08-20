@@ -59,14 +59,17 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
             type='button'
             aria-label={intl.formatMessage({ id: 'a11yOpenCamera' })}
             title={intl.formatMessage({ id: 'a11yOpenCamera' })}
-            className={cn('rounded-md border border-gray bg-transparent p-2 dark:border-neutral-500', FOCUS_VISIBLE_CLASSES)}
+            className={cn(
+                'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-md border border-gray bg-transparent p-2 dark:border-neutral-500',
+                FOCUS_VISIBLE_CLASSES,
+            )}
             onClick={() => setShowChatCameraCapture(true)}
           >
             <CameraIcon className='size-5 cursor-pointer' color={iconColor} />
           </button>
         )}
         <FileDropzone onImageUpload={handleChatImage} name='asl-chat-upload' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
-          <div className='rounded-md border border-gray p-2 dark:border-neutral-500'>
+          <div className='flex min-h-[38px] min-w-[38px] items-center justify-center rounded-md border border-gray p-2 dark:border-neutral-500'>
             {imageUploadIconUrl ? (
               <CustomizableIcon height={20} width={20} url={imageUploadIconUrl} color={iconColor} />
             ) : (
@@ -81,7 +84,11 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
             aria-pressed={chat.voiceStatus === 'recording'}
             title={chat.hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
             disabled={(chat.voiceStatus === 'idle' && !chat.allowUserInput && !chat.isSpeechPlaying) || chat.voiceStatus === 'transcribing'}
-            className={cn('rounded-md border border-gray bg-transparent p-2 disabled:opacity-50 dark:border-neutral-500', FOCUS_VISIBLE_CLASSES)}
+            className={cn(
+                'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-md border border-gray bg-transparent p-2',
+                'disabled:opacity-50 dark:border-neutral-500',
+                FOCUS_VISIBLE_CLASSES,
+            )}
             onMouseDown={chat.startVoiceRecording}
             onMouseUp={chat.stopRecording}
             onMouseLeave={chat.stopRecording}
@@ -134,7 +141,10 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
             aria-label={intl.formatMessage({ id: 'a11ySendMessage' })}
             title={intl.formatMessage({ id: 'a11ySendMessage' })}
             disabled={!chat.allowUserInput}
-            className={cn('p-0 bg-transparent border-0 disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
+            className={cn(
+                'flex min-h-[38px] min-w-[38px] items-center justify-center border-0 bg-transparent p-0 disabled:opacity-50',
+                FOCUS_VISIBLE_CLASSES,
+            )}
             onClick={handleSend}
           >
             <SubmitChatIcon color={iconColor} />
