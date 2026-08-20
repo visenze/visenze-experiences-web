@@ -133,7 +133,7 @@ describe('use-chat', () => {
   });
 
   it('playGreeting should push a visible bot chat bubble but not enable voice reveal when voiceGreetingEnabled is false (default)', () => {
-    const { hook } = renderChat();
+    const { hook } = renderChat({}, { chat: { voiceGreetingEnabled: false } });
     act(() => {
       hook.result.current.open();
     });

@@ -133,8 +133,8 @@ const useChat = (): UseChatResult => {
     resetReplyState,
   } = useVoiceReply({
     // Mirrors shopping-assistant's chatbot.voiceEnabled master switch, but defaults to enabled
-    // (unset or anything but explicit `false`) to preserve this widget's original always-on
-    // behavior. Actual availability additionally gates on browser support via
+    // (unset or anything but explicit `false`) to preserve the default always-on behavior.
+    // Actual availability additionally gates on browser support via
     // `voiceEnabled`/`speechOutputEnabled`, returned below.
     enabled: customizations.chat?.voiceEnabled !== false,
     appKey: appSettings.appKey,

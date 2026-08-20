@@ -10,6 +10,10 @@ import useBreakpoint from '../hooks/use-breakpoint';
 import Portal from '../portal';
 import ShadowWrapper from '../shadow-wrapper';
 
+// i18n contract: this component calls `intl.formatMessage` for the following ids, so any widget
+// consuming this shared component must provide all of them in its own DEFAULT_TEXTS/locale files
+// (via IntlProvider), or the UI will render raw translation ids instead of text:
+// a11yCloseFullScreen, a11yEnableMute, a11yStartNewChat, a11yToggleMute.
 interface FullScreenChatContainerProps {
   open: boolean;
   onClose: () => void;
@@ -21,8 +25,8 @@ interface FullScreenChatContainerProps {
   // `speechOutputEnabled`.
   showVoiceToggle: boolean;
   onNewChat: () => void;
-  // Hides the "new chat" trigger while an entry point's dedicated welcome screen (image upload,
-  // mic) is showing — there's no chat to reset yet at that point, only once a message is sent.
+  // Hides the "new chat" trigger while the consuming widget's own welcome/onboarding screen is
+  // showing — there's no chat to reset yet at that point, only once a message is sent.
   showNewChat: boolean;
   darkMode: boolean;
   fontFamily?: string;

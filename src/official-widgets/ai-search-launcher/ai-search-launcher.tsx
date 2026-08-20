@@ -35,11 +35,6 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const intl = useIntl();
   const chat = useChat();
   const [activeEntryPoint, setActiveEntryPoint] = useState<EntryPointKey | null>(null);
-
-  const openEntryPoint = (entryPoint: EntryPointKey): void => {
-    setActiveEntryPoint(entryPoint);
-    chat.open();
-  };
   const dialogTitleId = `wigmix-ai-search-launcher-title-${appSettings.placementId}`;
   const imageButtonRef = useRef<HTMLButtonElement>(null);
   const micButtonRef = useRef<HTMLButtonElement>(null);
@@ -55,6 +50,11 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const fontColor = darkMode
     ? (customizations.generalLayout?.fontColorDark || '')
     : (customizations.generalLayout?.fontColor || '');
+
+  const openEntryPoint = (entryPoint: EntryPointKey): void => {
+    setActiveEntryPoint(entryPoint);
+    chat.open();
+  };
 
   const handleChatImage = (image: SearchImage): void => {
     chat.sendMessage(undefined, image);

@@ -13,6 +13,11 @@ import type { ProcessedProduct } from '../../types/product';
 import useBreakpoint from '../hooks/use-breakpoint';
 import ProductCard from '../product-card/ProductCard';
 
+// i18n contract: this component calls `intl.formatMessage` for the following ids, so any widget
+// consuming this shared component must provide all of them in its own DEFAULT_TEXTS/locale files
+// (via IntlProvider), or the UI will render raw translation ids instead of text:
+// a11yAssistantThinking, a11yChatMessages, a11yProductResultsShown, a11yScrollToLatestMessage,
+// a11ySuggestedReplies, a11yUploadedImage, nowDescribing, showMore.
 interface ChatWindowProps {
   isWaiting: boolean;
   showAllSuggestions: boolean;

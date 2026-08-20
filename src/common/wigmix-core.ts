@@ -1568,7 +1568,8 @@ export interface WidgetConfig {
     /**
      * Generic configuration for a widget's full-screen chat surface (shared by
      * any widget using the common chat module): header title, voice identity,
-     * and the chat agent used for chat calls.
+     * the chat agent used for chat calls, and the voiceGreetingEnabled/
+     * startMuted/voiceEnabled toggles controlling voice behavior.
      *
      * @since 1.0.30
      */
