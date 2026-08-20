@@ -3,6 +3,7 @@ import type { Dispatch, FC, ReactNode, SetStateAction } from 'react';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 import SharedProductCard from '../../../common/components/product-card/ProductCard';
+import SparklesIcon from '../../../common/icons/SparklesIcon';
 import type { ConversationTurn } from '../embedded-shopping-assistant';
 
 const parseBold = (text: string): ReactNode => {
@@ -72,12 +73,13 @@ interface TurnSectionProps {
   showDivider: boolean;
   onShowProducts: () => void;
   primaryButtonBg?: string;
+  iconColor?: string;
   wishlistPids: string[];
   setWishlistPids: Dispatch<SetStateAction<string[]>>;
 }
 
 const TurnSection: FC<TurnSectionProps> = ({
-  turn, showDivider, onShowProducts, primaryButtonBg, wishlistPids, setWishlistPids,
+  turn, showDivider, onShowProducts, primaryButtonBg, iconColor, wishlistPids, setWishlistPids,
 }) => {
   // Dedupes PRODUCT_VIEW tracking (fired internally by the shared ProductCard) per request, so a
   // product re-rendered within the same turn's response doesn't get counted twice.
@@ -108,6 +110,18 @@ const TurnSection: FC<TurnSectionProps> = ({
       </div>
     )}
 
+    {/* "AI Overview" header — the persistent TopBar carries this same label once results are
+        expanded, but until then (loading + clamped text preview) there's no TopBar on screen at
+        all, so this inline header fills that gap for the initial turn. */}
+    {turn.isInitial && !turn.productsExpanded && (
+      <div className='flex items-center gap-2 mb-3'>
+        <SparklesIcon className='size-4' color={iconColor} />
+        <span className='text-sm font-semibold text-gray-800 dark:text-neutral-100'>
+          {intl.formatMessage({ id: 'aiOverviewLabel' })}
+        </span>
+      </div>
+    )}
+
     {/* Loading */}
     {turn.isLoading && (
       <div className='flex items-center gap-2 mb-4'>
@@ -126,7 +140,7 @@ const TurnSection: FC<TurnSectionProps> = ({
 
     {/* AI text — clamped to a steady preview height until expanded, so the reveal control never shifts while streaming */}
     {turn.isInitial && !turn.isLoading && turn.aiText && (
-      <div className={cn('relative mb-4', !turn.productsExpanded && 'h-56 overflow-hidden')}>
+      <div className={cn('relative mb-4', !turn.productsExpanded && 'max-h-72 overflow-hidden')}>
         <div className='text-sm text-gray-700 dark:text-neutral-300'>
           {parseAiBlocks(turn.aiText).map((block, i) => (
             block.type === 'paragraph' ? (
@@ -152,8 +166,8 @@ const TurnSection: FC<TurnSectionProps> = ({
           ))}
         </div>
         {!turn.productsExpanded && (
-          <div className='pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white
-            dark:from-neutral-900 via-white/90 dark:via-neutral-900/90 to-transparent' />
+          <div className='pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-white
+            dark:from-neutral-900 to-transparent' />
         )}
       </div>
     )}

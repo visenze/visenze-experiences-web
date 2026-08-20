@@ -57,7 +57,7 @@ const MOCK_PRODUCTS: ProcessedProduct[] = [
   {
     product_id: 'mock-001',
     im_url: 'https://picsum.photos/seed/shoe1/300/300',
-    product_url: '#',
+    product_url: 'https://example.com/product/mock-001',
     title: 'Cushioned trail runner',
     price: { value: 118, currency: 'USD' },
     rating: 5,
@@ -65,7 +65,7 @@ const MOCK_PRODUCTS: ProcessedProduct[] = [
   {
     product_id: 'mock-002',
     im_url: 'https://picsum.photos/seed/shoe2/300/300',
-    product_url: '#',
+    product_url: 'https://example.com/product/mock-002',
     title: 'Lightweight road runner',
     price: { value: 96, currency: 'USD' },
     rating: 4,
@@ -73,7 +73,7 @@ const MOCK_PRODUCTS: ProcessedProduct[] = [
   {
     product_id: 'mock-003',
     im_url: 'https://picsum.photos/seed/shoe3/300/300',
-    product_url: '#',
+    product_url: 'https://example.com/product/mock-003',
     title: 'Breathable knit trainer',
     price: { value: 104, currency: 'USD' },
     rating: 4,
@@ -434,6 +434,7 @@ const EmbeddedShoppingAssistant: FC<EmbeddedShoppingAssistantProps> = ({ query }
                 showDivider={idx > 0}
                 onShowProducts={() => handleShowProducts(turn.id)}
                 primaryButtonBg={primaryButtonBg}
+                iconColor={iconColor}
                 wishlistPids={wishlistPids}
                 setWishlistPids={setWishlistPids}
               />
