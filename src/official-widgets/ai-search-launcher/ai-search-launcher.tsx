@@ -4,12 +4,12 @@ import { type FC, useCallback, useContext, useEffect, useRef, useState } from 'r
 import { useIntl } from 'react-intl';
 import FullScreenContainer from './components/FullScreenContainer';
 import ImageEntryScreen from './components/ImageEntryScreen';
-import LauncherChatWindow from './components/LauncherChatWindow';
 import MicEntryScreen from './components/MicEntryScreen';
 import WebcamCapture from './components/WebcamCapture';
 import MicrophoneIcon from './icons/MicrophoneIcon';
 import StopIcon from './icons/StopIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
+import ChatWindow from '../../common/components/chat/ChatWindow';
 import useChat from '../../common/components/chat/use-chat';
 import FileDropzone from '../../common/components/FileDropzone';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -214,7 +214,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
         {showMicWelcome && <MicEntryScreen chat={chat} />}
         {!showImageWelcome && !showMicWelcome && (
           <>
-            <LauncherChatWindow
+            <ChatWindow
               isWaiting={chat.isWaiting}
               chats={chat.chats}
               latestMessage={chat.typewriterText}
@@ -227,6 +227,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
               focusedProductId={chat.focusedProductId}
               wishlistPids={chat.wishlistPids}
               setIsInWishlist={chat.setIsInWishlist}
+              pwPrefix='asl'
             />
             <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
               {showChatCameraCapture && (

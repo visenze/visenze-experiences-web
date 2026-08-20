@@ -1,19 +1,19 @@
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, Fragment, type ReactElement, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import type { Chat } from '../../../common/components/chat/use-chat';
-import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
-import ProductCard from '../../../common/components/product-card/ProductCard';
-import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
-import DownArrowIcon from '../../../common/icons/DownArrowIcon';
-import SparklesIcon from '../../../common/icons/SparklesIcon';
-import UserIcon from '../../../common/icons/UserIcon';
-import { WidgetDataContext } from '../../../common/types/contexts';
-import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../../common/types/image';
-import type { ProcessedProduct } from '../../../common/types/product';
-import { FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS, USER_SCROLL_IDLE_MS } from '../constants';
+import { FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS, USER_SCROLL_IDLE_MS } from './constants';
+import type { Chat } from './use-chat';
+import { FOCUS_VISIBLE_CLASSES } from '../../constants';
+import DownArrowIcon from '../../icons/DownArrowIcon';
+import SparklesIcon from '../../icons/SparklesIcon';
+import UserIcon from '../../icons/UserIcon';
+import { WidgetDataContext } from '../../types/contexts';
+import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../types/image';
+import type { ProcessedProduct } from '../../types/product';
+import useBreakpoint from '../hooks/use-breakpoint';
+import ProductCard from '../product-card/ProductCard';
 
-interface LauncherChatWindowProps {
+interface ChatWindowProps {
   isWaiting: boolean;
   showAllSuggestions: boolean;
   setShowAllSuggestions: () => void;
@@ -26,6 +26,9 @@ interface LauncherChatWindowProps {
   focusedProductId?: string | null;
   wishlistPids: string[];
   setIsInWishlist: (pid: string, isInWishlist: boolean) => void;
+  // Prefix forwarded to ProductCard's `pwPrefix`, so each consuming widget's product-view
+  // tracking stays distinguishable (e.g. 'asl' for ai-search-launcher).
+  pwPrefix: string;
 }
 
 interface RevealedProductsProps {
@@ -61,9 +64,9 @@ const RevealedProducts: FC<RevealedProductsProps> = ({ products, requestId, rend
   );
 };
 
-const LauncherChatWindow: FC<LauncherChatWindowProps> = ({
+const ChatWindow: FC<ChatWindowProps> = ({
   isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions,
-  streamingProducts = [], streamingRequestId = '', focusedProductId = null, wishlistPids, setIsInWishlist,
+  streamingProducts = [], streamingRequestId = '', focusedProductId = null, wishlistPids, setIsInWishlist, pwPrefix,
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
@@ -271,7 +274,7 @@ const LauncherChatWindow: FC<LauncherChatWindowProps> = ({
 
   // The focused card's ring is folded into the same box-shadow as the lift shadow (rather than a
   // Tailwind `ring-*` class) because an inline `boxShadow` would otherwise clobber it —
-  // box-shadow is a single CSS property. See FOCUSED_SCALE in ../constants for why the scale
+  // box-shadow is a single CSS property. See FOCUSED_SCALE in ./constants for why the scale
   // itself is kept small.
   const getCardWrapperStyle = (isFocused: boolean): CSSProperties => ({
     transformOrigin: 'center',
@@ -309,7 +312,7 @@ const LauncherChatWindow: FC<LauncherChatWindowProps> = ({
             isInWishlist={wishlistPids.includes(product.product_id)}
             setIsInWishlist={setIsInWishlist}
             index={pidx}
-            pwPrefix='asl'
+            pwPrefix={pwPrefix}
             isRecommendation={false}
             hasFindSimilar={false}
             skipViewTracking={viewedProductIdsRef.current.has(viewedKey)}
@@ -507,4 +510,4 @@ const LauncherChatWindow: FC<LauncherChatWindowProps> = ({
   );
 };
 
-export default LauncherChatWindow;
+export default ChatWindow;
