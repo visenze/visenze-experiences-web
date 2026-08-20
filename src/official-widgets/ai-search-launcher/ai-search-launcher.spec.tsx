@@ -196,7 +196,7 @@ describe('ai-search-launcher', () => {
     });
 
     it('should always label the AI entry-bar trigger with the fixed "AI Mode" copy, independent of the configured dialog title', () => {
-      renderLauncher({}, 'en', {}, { launcher: { title: 'Custom Dialog Title' } });
+      renderLauncher({}, 'en', {}, { chat: { title: 'Custom Dialog Title' } });
 
       const aiTrigger = testComponent.getByRole('button', { name: texts['en']['a11yOpenAskAi'] });
       expect(aiTrigger.textContent).toBe(texts['en']['triggerAskAi']);
@@ -667,7 +667,7 @@ describe('ai-search-launcher', () => {
       (window as any).SpeechRecognition.prototype.abort = jest.fn();
 
       try {
-        renderLauncher({}, 'en', {}, { launcher: { voiceEnabled: false } });
+        renderLauncher({}, 'en', {}, { chat: { voiceEnabled: false } });
         openEntryPointAndWait('a11yOpenAskAi');
 
         expect(testComponent.queryByRole('button', { name: texts['en']['a11yVoicePending'], hidden: true })).toBeNull();

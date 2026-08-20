@@ -1566,13 +1566,13 @@ export interface WidgetConfig {
       };
     };
     /**
-     * Configuration for the AI Search Launcher widget's full-screen chat
-     * experience: header title, voice greeting behavior, and per-entry-point
-     * greeting text.
+     * Generic configuration for a widget's full-screen chat surface (shared by
+     * any widget using the common chat module): header title, voice identity,
+     * and the chat agent used for chat calls.
      *
      * @since 1.0.30
      */
-    launcher?: {
+    chat?: {
       /**
        * Title shown in the full-screen chat header.
        *
@@ -1580,9 +1580,19 @@ export interface WidgetConfig {
        */
       title?: string;
       /**
-       * Master toggle for greeting audio across all three entry points (image,
-       * mic, Ask AI). When unset or false, greetings are shown as text only
-       * (if at all) and never spoken.
+       * (optional) Master toggle for voice capability throughout this widget's
+       * chat surface: recording, spoken replies/greetings, the in-chat
+       * microphone button, and the mute/unmute toggle. Defaults to `true`
+       * (enabled) when unset — set to `false` to hide all voice UI and stop
+       * making voice requests entirely, mirroring `chatbot.voiceEnabled`'s
+       * effect in the shopping-assistant widget.
+       *
+       * @since 1.0.30
+       */
+      voiceEnabled?: boolean;
+      /**
+       * Master toggle for greeting audio. When unset or false, greetings are
+       * shown as text only (if at all) and never spoken.
        *
        * @since 1.0.30
        */
@@ -1594,28 +1604,6 @@ export interface WidgetConfig {
        * @since 1.0.30
        */
       startMuted?: boolean;
-      /**
-       * Maximum duration, in seconds, that the mic entry point's full-screen
-       * recording state stays open before it is automatically stopped (as if
-       * the user had clicked to stop). Defaults to 5.
-       *
-       * @since 1.0.30
-       */
-      voiceRecordingMaxDurationSeconds?: number;
-      /**
-       * Per-entry-point greeting text, spoken (if `voiceGreetingEnabled`) and/or
-       * shown when that entry point is opened.
-       *
-       * @since 1.0.30
-       */
-      greetings?: {
-        /** Greeting shown/spoken when the image-search entry point opens. @since 1.0.30 */
-        image?: string;
-        /** Greeting shown/spoken when the microphone entry point opens. @since 1.0.30 */
-        mic?: string;
-        /** Greeting shown/spoken when the "Ask AI" entry point opens. @since 1.0.30 */
-        ai?: string;
-      };
       /**
        * The chat agent to be used for this widget's chat calls. Defaults to the
        * same built-in agent shopping-assistant uses when unset.
@@ -1649,17 +1637,37 @@ export interface WidgetConfig {
         /** Voice similarity boost, 0-1. */
         similarityBoost?: number;
       };
+    };
+    /**
+     * Configuration specific to the AI Search Launcher widget's entry points:
+     * which of the three (image, mic, Ask AI) are enabled, the mic entry
+     * point's recording duration, and per-entry-point greeting text.
+     *
+     * @since 1.0.30
+     */
+    launcher?: {
       /**
-       * (optional) Master toggle for voice capability throughout this widget's
-       * chat surface: recording, spoken replies/greetings, the in-chat
-       * microphone button, and the mute/unmute toggle. Defaults to `true`
-       * (enabled) when unset — set to `false` to hide all voice UI and stop
-       * making voice requests entirely, mirroring `chatbot.voiceEnabled`'s
-       * effect in the shopping-assistant widget.
+       * Maximum duration, in seconds, that the mic entry point's full-screen
+       * recording state stays open before it is automatically stopped (as if
+       * the user had clicked to stop). Defaults to 5.
        *
        * @since 1.0.30
        */
-      voiceEnabled?: boolean;
+      voiceRecordingMaxDurationSeconds?: number;
+      /**
+       * Per-entry-point greeting text, spoken (if `chat.voiceGreetingEnabled`)
+       * and/or shown when that entry point is opened.
+       *
+       * @since 1.0.30
+       */
+      greetings?: {
+        /** Greeting shown/spoken when the image-search entry point opens. @since 1.0.30 */
+        image?: string;
+        /** Greeting shown/spoken when the microphone entry point opens. @since 1.0.30 */
+        mic?: string;
+        /** Greeting shown/spoken when the "Ask AI" entry point opens. @since 1.0.30 */
+        ai?: string;
+      };
       /**
        * (optional) Whether the top entry-bar's image-search button is shown.
        * Defaults to `true` (enabled) when unset — set to `false` to remove
@@ -1671,7 +1679,7 @@ export interface WidgetConfig {
       /**
        * (optional) Whether the top entry-bar's mic-search button is shown.
        * Defaults to `true` (enabled) when unset — set to `false` to remove
-       * this entry point entirely. Independent of `voiceEnabled`.
+       * this entry point entirely. Independent of `chat.voiceEnabled`.
        *
        * @since 1.0.30
        */

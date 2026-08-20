@@ -100,7 +100,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const showMicWelcome = chat.activeEntryPoint === 'mic' && !chat.hasStartedChat;
 
   useEffect(() => {
-    if (customizations.launcher?.startMuted) {
+    if (customizations.chat?.startMuted) {
       chat.toggleVoiceReading();
     }
     // Mount-only: this is a one-time initial-mute preference, not something to re-apply whenever
@@ -189,7 +189,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
       <FullScreenContainer
         open={chat.activeEntryPoint !== null}
         onClose={handleClose}
-        title={customizations.launcher?.title || intl.formatMessage({ id: 'widgetTitle' })}
+        title={customizations.chat?.title || intl.formatMessage({ id: 'widgetTitle' })}
         isMuted={!chat.isVoiceReadingEnabled}
         onToggleMute={chat.toggleVoiceReading}
         showVoiceToggle={chat.speechOutputEnabled}

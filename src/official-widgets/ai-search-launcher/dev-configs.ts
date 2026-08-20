@@ -17,7 +17,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
   },
   customizations: {
     customCss,
-    launcher: {
+    chat: {
       voiceGreetingEnabled: true, // enable to exercise the voice-greeting path locally
       startMuted: false,
     },

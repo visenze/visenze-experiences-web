@@ -136,14 +136,14 @@ const useLauncherChat = (): UseLauncherChatResult => {
     // (unset or anything but explicit `false`) to preserve this widget's original always-on
     // behavior. Actual availability additionally gates on browser support via
     // `voiceEnabled`/`speechOutputEnabled`, returned below.
-    enabled: customizations.launcher?.voiceEnabled !== false,
+    enabled: customizations.chat?.voiceEnabled !== false,
     appKey: appSettings.appKey,
     placementId: appSettings.placementId,
     baseUrl: apiBase,
-    voiceId: customizations.launcher?.voiceId,
-    voiceModelId: customizations.launcher?.voiceModelId,
-    voiceStability: customizations.launcher?.voiceSettings?.stability,
-    voiceSimilarityBoost: customizations.launcher?.voiceSettings?.similarityBoost,
+    voiceId: customizations.chat?.voiceId,
+    voiceModelId: customizations.chat?.voiceModelId,
+    voiceStability: customizations.chat?.voiceSettings?.stability,
+    voiceSimilarityBoost: customizations.chat?.voiceSettings?.similarityBoost,
     onTranscript: (text): void => sendMessageRef.current(text),
     setIsWaiting,
   });
@@ -250,7 +250,7 @@ const useLauncherChat = (): UseLauncherChatResult => {
       va_uid: uid,
       va_sid: sid,
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
-      chat_agent: customizations.launcher?.chatAgent || 'shopping_closer_voice_v2',
+      chat_agent: customizations.chat?.chatAgent || 'shopping_closer_voice_v2',
     });
 
     const formData = new FormData();
@@ -426,7 +426,7 @@ const useLauncherChat = (): UseLauncherChatResult => {
         products: [],
       },
     ]);
-    if (customizations.launcher?.voiceGreetingEnabled && shouldSpeakReply()) {
+    if (customizations.chat?.voiceGreetingEnabled && shouldSpeakReply()) {
       resetReplyState();
       speak(text, text.length, null);
     }

@@ -292,10 +292,12 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       hide: false,
     },
   },
-  launcher: {
+  chat: {
     title: 'AI Search Assistant',
     voiceGreetingEnabled: false,
     startMuted: false,
+  },
+  launcher: {
     voiceRecordingMaxDurationSeconds: 5,
     greetings: {
       image: 'Show me a photo and I\'ll find similar products for you.',
