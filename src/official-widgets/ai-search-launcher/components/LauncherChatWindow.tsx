@@ -1,6 +1,7 @@
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, Fragment, type ReactElement, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import type { Chat } from '../../../common/components/chat/use-chat';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
 import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
@@ -11,7 +12,6 @@ import { WidgetDataContext } from '../../../common/types/contexts';
 import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
 import { FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS, USER_SCROLL_IDLE_MS } from '../constants';
-import type { Chat } from '../use-launcher-chat';
 
 interface LauncherChatWindowProps {
   isWaiting: boolean;

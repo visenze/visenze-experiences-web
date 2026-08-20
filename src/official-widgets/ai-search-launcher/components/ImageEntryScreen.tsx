@@ -2,6 +2,7 @@ import { cn } from '@heroui/theme';
 import { type FC, type ReactNode, useCallback, useContext, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import WebcamCapture from './WebcamCapture';
+import type { UseChatResult } from '../../../common/components/chat/use-chat';
 import FileDropzone from '../../../common/components/FileDropzone';
 import Footer from '../../../common/components/Footer';
 import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
@@ -9,10 +10,9 @@ import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 import UploadIcon from '../../../common/icons/UploadIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
-import type { UseLauncherChatResult } from '../use-launcher-chat';
 
 interface ImageEntryScreenProps {
-  chat: UseLauncherChatResult;
+  chat: UseChatResult;
 }
 
 // Full-screen welcome state for the image-search entry point (spec §5.1), styled after
@@ -47,7 +47,7 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
 
   // Preset gallery images (camera-search's UploadScreen pattern) are plain URLs, but this
   // screen's only way to feed an image into the chat is `chat.sendMessage`'s image param, which
-  // only attaches an actual File to the outgoing request (see use-launcher-chat's isImageFile
+  // only attaches an actual File to the outgoing request (see use-chat's isImageFile
   // check) — a bare `imgUrl` never reaches the backend as image bytes. Fetching the preset URL
   // into a File first (same fetch-to-blob-to-File conversion WebcamCapture already does for
   // webcam screenshots) keeps this working through the same File-based path.

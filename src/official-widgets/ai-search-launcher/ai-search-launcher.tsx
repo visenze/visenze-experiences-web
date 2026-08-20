@@ -10,7 +10,7 @@ import WebcamCapture from './components/WebcamCapture';
 import MicrophoneIcon from './icons/MicrophoneIcon';
 import StopIcon from './icons/StopIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
-import useLauncherChat, { type UseLauncherChatResult } from './use-launcher-chat';
+import useChat from '../../common/components/chat/use-chat';
 import FileDropzone from '../../common/components/FileDropzone';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { FOCUS_VISIBLE_CLASSES } from '../../common/constants';
@@ -20,7 +20,7 @@ import UploadIcon from '../../common/icons/UploadIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
 
-type EntryPointKey = Exclude<UseLauncherChatResult['activeEntryPoint'], null>;
+type EntryPointKey = 'image' | 'mic' | 'ai';
 
 interface AiSearchLauncherProps {
   // Test-only escape hatch, mirroring ShoppingAssistant's `renderModalWithoutPortal` — lets specs
@@ -33,7 +33,13 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const { customizations, appSettings } = widgetConfig;
   const root = useContext(RootContext);
   const intl = useIntl();
-  const chat = useLauncherChat();
+  const chat = useChat();
+  const [activeEntryPoint, setActiveEntryPoint] = useState<EntryPointKey | null>(null);
+
+  const openEntryPoint = (entryPoint: EntryPointKey): void => {
+    setActiveEntryPoint(entryPoint);
+    chat.open();
+  };
   const dialogTitleId = `wigmix-ai-search-launcher-title-${appSettings.placementId}`;
   const imageButtonRef = useRef<HTMLButtonElement>(null);
   const micButtonRef = useRef<HTMLButtonElement>(null);
@@ -77,27 +83,27 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const getGreetingText = (entryPoint: EntryPointKey): string => customizations.launcher?.greetings?.[entryPoint] || '';
 
   useEffect(() => {
-    if (chat.activeEntryPoint) {
-      chat.playGreeting(getGreetingText(chat.activeEntryPoint));
+    if (activeEntryPoint) {
+      chat.playGreeting(getGreetingText(activeEntryPoint));
     }
     // Deliberately keyed only on activeEntryPoint: chat.playGreeting/getGreetingText are
     // recreated every render (not memoized upstream), and this must fire exactly once per entry
     // point transition, not on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chat.activeEntryPoint]);
+  }, [activeEntryPoint]);
 
   const handleNewChat = (): void => {
     chat.newChat();
-    if (chat.activeEntryPoint) {
-      chat.playGreeting(getGreetingText(chat.activeEntryPoint));
+    if (activeEntryPoint) {
+      chat.playGreeting(getGreetingText(activeEntryPoint));
     }
   };
 
   // Image/mic show a dedicated welcome screen until the first message is sent; Ask AI (spec
   // §5.3) has no welcome screen of its own, so it never matches either flag below and always
   // falls through to the normal chat surface, regardless of `hasStartedChat`.
-  const showImageWelcome = chat.activeEntryPoint === 'image' && !chat.hasStartedChat;
-  const showMicWelcome = chat.activeEntryPoint === 'mic' && !chat.hasStartedChat;
+  const showImageWelcome = activeEntryPoint === 'image' && !chat.hasStartedChat;
+  const showMicWelcome = activeEntryPoint === 'mic' && !chat.hasStartedChat;
 
   useEffect(() => {
     if (customizations.chat?.startMuted) {
@@ -120,12 +126,13 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
     return (): void => window.clearTimeout(timeoutId);
   }, [showImageWelcome, showMicWelcome]);
 
-  // Focus restore on close (I6): read the entry point BEFORE closeEntryPoint clears it, so the
-  // correct entry-bar button (mirrors shopping-assistant.tsx's closeDialog/triggerButtonRef
+  // Focus restore on close (I6): read the entry point BEFORE setActiveEntryPoint(null) clears it,
+  // so the correct entry-bar button (mirrors shopping-assistant.tsx's closeDialog/triggerButtonRef
   // pattern) gets focus back once the full-screen surface unmounts.
   const handleClose = (): void => {
-    const closingEntryPoint = chat.activeEntryPoint;
-    chat.closeEntryPoint();
+    const closingEntryPoint = activeEntryPoint;
+    chat.close();
+    setActiveEntryPoint(null);
     if (closingEntryPoint === 'image') {
       imageButtonRef.current?.focus();
     } else if (closingEntryPoint === 'mic') {
@@ -151,7 +158,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
               'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
               FOCUS_VISIBLE_CLASSES,
             )}
-            onClick={() => chat.openEntryPoint('image')}
+            onClick={() => openEntryPoint('image')}
           >
             <CameraIcon className='size-5 cursor-pointer' color={fontColor} />
           </button>
@@ -165,7 +172,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
               'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
               FOCUS_VISIBLE_CLASSES,
             )}
-            onClick={() => chat.openEntryPoint('mic')}
+            onClick={() => openEntryPoint('mic')}
           >
             <MicrophoneIcon className='size-5 cursor-pointer' color={fontColor} />
           </button>
@@ -180,14 +187,14 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
               'flex items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
               FOCUS_VISIBLE_CLASSES,
             )}
-            onClick={() => chat.openEntryPoint('ai')}
+            onClick={() => openEntryPoint('ai')}
           >
             {intl.formatMessage({ id: 'triggerAskAi' })}
           </button>
         )}
       </div>
       <FullScreenContainer
-        open={chat.activeEntryPoint !== null}
+        open={chat.isOpen}
         onClose={handleClose}
         title={customizations.chat?.title || intl.formatMessage({ id: 'widgetTitle' })}
         isMuted={!chat.isVoiceReadingEnabled}

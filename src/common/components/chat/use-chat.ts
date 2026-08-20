@@ -8,13 +8,13 @@ import {
   stripTokensForDisplay,
   useVoiceReply,
   type VoiceStatus,
-} from '../../common/assistant';
-import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../common/client/endpoint';
-import { WidgetDataContext } from '../../common/types/contexts';
-import { isImageFile, type SearchImageOrPid } from '../../common/types/image';
-import type { ProcessedProduct } from '../../common/types/product';
-import { Actions, Category } from '../../common/types/tracking-constants';
-import { getFlattenProduct } from '../../common/utils';
+} from '../../assistant';
+import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../client/endpoint';
+import { WidgetDataContext } from '../../types/contexts';
+import { isImageFile, type SearchImageOrPid } from '../../types/image';
+import type { ProcessedProduct } from '../../types/product';
+import { Actions, Category } from '../../types/tracking-constants';
+import { getFlattenProduct } from '../../utils';
 
 export interface Chat {
   chatId: string;
@@ -25,8 +25,6 @@ export interface Chat {
   image?: SearchImageOrPid;
 }
 
-type EntryPoint = 'image' | 'mic' | 'ai';
-
 interface CompletedResponse {
   chatId: string;
   requestId: string;
@@ -34,7 +32,7 @@ interface CompletedResponse {
   products: ProcessedProduct[];
 }
 
-export interface UseLauncherChatResult {
+export interface UseChatResult {
   chats: Chat[];
   isWaiting: boolean;
   allowUserInput: boolean;
@@ -48,9 +46,9 @@ export interface UseLauncherChatResult {
   focusedProductId: string | null;
   typewriterText: string;
   hasStartedChat: boolean;
-  activeEntryPoint: EntryPoint | null;
-  openEntryPoint: (entryPoint: EntryPoint) => void;
-  closeEntryPoint: () => void;
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
   newChat: () => void;
   sendMessage: (message?: string, image?: SearchImageOrPid) => Promise<void>;
   wishlistPids: string[];
@@ -69,14 +67,16 @@ export interface UseLauncherChatResult {
   playGreeting: (text: string) => void;
 }
 
-// Orchestrates the AI Search Launcher's full-screen chat surface: the SSE call to the backend
-// chat endpoint, token-stream parsing (product/action-token/suggestion extraction), and the
-// voice-reply integration (typewriter reveal + spoken narration) from `useVoiceReply`. Modeled
-// closely on shopping-assistant.tsx's `sendMessage`/`commitResponse`/`openDialog` (see that file
-// for the original) but with its own trimmed-down state shape and without the scripted
-// two-part opening message — this widget's greeting is a single string played by callers via
-// `playGreeting`, decided by a later task.
-const useLauncherChat = (): UseLauncherChatResult => {
+// Orchestrates a widget's full-screen chat surface: the SSE call to the backend chat endpoint,
+// token-stream parsing (product/action-token/suggestion extraction), and the voice-reply
+// integration (typewriter reveal + spoken narration) from `useVoiceReply`. Shared by any widget
+// that mounts the chat surface (ChatWindow + FullScreenChatContainer) behind its own trigger —
+// `isOpen`/`open`/`close` are deliberately generic (no baked-in entry-point concept) so each
+// widget can layer its own trigger/entry-point state on top. Modeled closely on
+// shopping-assistant.tsx's `sendMessage`/`commitResponse`/`openDialog` (see that file for the
+// original) but with its own trimmed-down state shape and without the scripted two-part opening
+// message — greetings are a single string played by callers via `playGreeting`.
+const useChat = (): UseChatResult => {
   const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   // Resolve the API base, honouring manual endpoint > cloud > API endpoint > default; shared by
@@ -94,7 +94,7 @@ const useLauncherChat = (): UseLauncherChatResult => {
   const [streamingProducts, setStreamingProducts] = useState<ProcessedProduct[]>([]);
   const [streamingRequestId, setStreamingRequestId] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [activeEntryPoint, setActiveEntryPoint] = useState<EntryPoint | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const [hasStartedChat, setHasStartedChat] = useState(false);
   const [wishlistPids, setWishlistPids] = useState<string[]>(widgetConfig.initState?.wishlistProductIds || []);
 
@@ -258,14 +258,14 @@ const useLauncherChat = (): UseLauncherChatResult => {
       formData.append('image', imageToSend.files[0]);
     }
 
-    const launcherChatPath = usesCloudPaths(appSettings, manualEndpoint)
+    const chatPath = usesCloudPaths(appSettings, manualEndpoint)
       ? '/v1/chat/shopping-assistant'
       : '/v1/product/multisearch/chat/shopping-assistant';
 
     const controller = new AbortController();
     activeStreamControllerRef.current = controller;
 
-    await fetchEventSource(`${apiBase}${launcherChatPath}?${params.toString()}`, {
+    await fetchEventSource(`${apiBase}${chatPath}?${params.toString()}`, {
       method: 'POST',
       body: formData,
       openWhenHidden: true,
@@ -356,9 +356,9 @@ const useLauncherChat = (): UseLauncherChatResult => {
     // Guards against a voice transcript that finalizes after the full-screen container has
     // closed: without this, a late onTranscript callback would fire a request into a closed UI
     // and speak a reply aloud with nothing visible. No dependency array — this re-runs every
-    // render and recaptures the latest `activeEntryPoint` value in its closure.
+    // render and recaptures the latest `isOpen` value in its closure.
     sendMessageRef.current = (text: string): void => {
-      if (!activeEntryPoint) {
+      if (!isOpen) {
         return;
       }
       sendMessage(text);
@@ -381,25 +381,25 @@ const useLauncherChat = (): UseLauncherChatResult => {
     setHasStartedChat(false);
   };
 
-  const openEntryPoint = (entryPoint: EntryPoint): void => {
-    setActiveEntryPoint(entryPoint);
+  const open = (): void => {
+    setIsOpen(true);
     resetChatState();
     widgetClient.visearch.generateUuid((uuid) => {
       setChatId(uuid);
     });
   };
 
-  const closeEntryPoint = (): void => {
+  const close = (): void => {
     // Deliberately does NOT call resetChatState() — by design, closing the full-screen surface
-    // does not clear chat history/state (only opening an entry point or starting a new chat does,
-    // both via resetChatState()). But a stream still in flight must still be aborted here,
-    // otherwise a late onclose/onmessage would append the old conversation's reply after the
-    // user has already navigated away, and fire RESULT_LOAD/setLastTrackingMeta for a session the
-    // UI no longer shows.
+    // does not clear chat history/state (only opening or starting a new chat does, both via
+    // resetChatState()). But a stream still in flight must still be aborted here, otherwise a
+    // late onclose/onmessage would append the old conversation's reply after the user has
+    // already navigated away, and fire RESULT_LOAD/setLastTrackingMeta for a session the UI no
+    // longer shows.
     activeStreamControllerRef.current?.abort();
     activeStreamControllerRef.current = null;
     interruptSpeech();
-    setActiveEntryPoint(null);
+    setIsOpen(false);
   };
 
   const newChat = (): void => {
@@ -446,9 +446,9 @@ const useLauncherChat = (): UseLauncherChatResult => {
     focusedProductId,
     typewriterText,
     hasStartedChat,
-    activeEntryPoint,
-    openEntryPoint,
-    closeEntryPoint,
+    isOpen,
+    open,
+    close,
     newChat,
     sendMessage,
     wishlistPids,
@@ -468,4 +468,4 @@ const useLauncherChat = (): UseLauncherChatResult => {
   };
 };
 
-export default useLauncherChat;
+export default useChat;

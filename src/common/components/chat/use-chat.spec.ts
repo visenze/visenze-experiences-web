@@ -1,27 +1,30 @@
 import { act, renderHook, type RenderHookResult } from '@testing-library/react';
 import { createElement } from 'react';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
-import { DEFAULT_CUSTOMIZATIONS } from './default-config';
-import useLauncherChat, { type UseLauncherChatResult } from './use-launcher-chat';
-import { createMockWidgetClient, createWidgetConfig } from '../../common/test-utils';
-import { WidgetDataContext } from '../../common/types/contexts';
-import type { WidgetConfig } from '../../common/wigmix-core';
+import useChat, { type UseChatResult } from './use-chat';
+import { DEFAULT_CUSTOMIZATIONS } from '../../../official-widgets/ai-search-launcher/default-config';
+import { createMockWidgetClient, createWidgetConfig } from '../../test-utils';
+import { WidgetDataContext } from '../../types/contexts';
+import type { WidgetConfig } from '../../wigmix-core';
 
 // Mock @microsoft/fetch-event-source to control SSE streaming in tests, same technique as the
-// component spec (ai-search-launcher.spec.tsx) and shopping-assistant.spec.tsx.
+// ai-search-launcher component spec and shopping-assistant.spec.tsx.
 const mockFetchEventSource = jest.fn();
 jest.mock('@microsoft/fetch-event-source', () => ({
   fetchEventSource: (...args: any[]): any => mockFetchEventSource(...args),
 }));
 
-// use-launcher-chat.ts only reads `widgetConfig`/`widgetClient` off WidgetDataContext (no
-// RootContext/IntlProvider needed — those are consumed by the component, not this hook), so the
-// wrapper here is much smaller than renderWidget's full provider stack.
-const renderLauncherChat = (
+// use-chat.ts only reads `widgetConfig`/`widgetClient` off WidgetDataContext (no
+// RootContext/IntlProvider needed — those are consumed by components, not this hook), so the
+// wrapper here is much smaller than renderWidget's full provider stack. DEFAULT_CUSTOMIZATIONS is
+// borrowed from ai-search-launcher (this hook's first real-world consumer) purely as a
+// fully-populated customizations fixture — the hook itself has no ai-search-launcher-specific
+// dependency.
+const renderChat = (
   visearchOverrides: Partial<ViSearchClient> = {},
   customizationOverrides: Partial<WidgetConfig['customizations']> = {},
 ): {
-  hook: RenderHookResult<UseLauncherChatResult, unknown>;
+  hook: RenderHookResult<UseChatResult, unknown>;
   widgetClient: ReturnType<typeof createMockWidgetClient>['widgetClient'];
   mockVisearchClient: ViSearchClient;
 } => {
@@ -43,9 +46,8 @@ const renderLauncherChat = (
       ...visearchOverrides,
     },
   );
-  const hook = renderHook(() => useLauncherChat(), {
-    // Written with createElement (rather than JSX) so this file can stay a plain `.spec.ts`,
-    // matching the brief's filename — use-launcher-chat.ts itself has no JSX either.
+  const hook = renderHook(() => useChat(), {
+    // Written with createElement (rather than JSX) so this file can stay a plain `.spec.ts`.
     wrapper: ({ children }) => createElement(
       WidgetDataContext.Provider,
       { value: { widgetConfig, widgetClient, darkMode: false, locale: 'en' } },
@@ -62,7 +64,7 @@ const revealAll = async (): Promise<void> => {
 };
 
 const sendMessageAndGetStreamController = (
-  hook: RenderHookResult<UseLauncherChatResult, unknown>,
+  hook: RenderHookResult<UseChatResult, unknown>,
   messageText: string,
 ): {
   emitEvent: (event: string, data: any) => void;
@@ -94,7 +96,7 @@ const sendMessageAndGetStreamController = (
   };
 };
 
-describe('use-launcher-chat', () => {
+describe('use-chat', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     mockFetchEventSource.mockReset();
@@ -104,36 +106,36 @@ describe('use-launcher-chat', () => {
     jest.useRealTimers();
   });
 
-  it('should start with no active entry point and an empty chat', () => {
-    const { hook } = renderLauncherChat();
-    expect(hook.result.current.activeEntryPoint).toBeNull();
+  it('should start closed with an empty chat', () => {
+    const { hook } = renderChat();
+    expect(hook.result.current.isOpen).toBe(false);
     expect(hook.result.current.chats).toEqual([]);
   });
 
-  it('should set activeEntryPoint and generate a new chat id when an entry point is opened', () => {
-    const { hook, mockVisearchClient } = renderLauncherChat();
+  it('should mark the chat open and generate a new chat id when opened', () => {
+    const { hook, mockVisearchClient } = renderChat();
     act(() => {
-      hook.result.current.openEntryPoint('ai');
+      hook.result.current.open();
     });
-    expect(hook.result.current.activeEntryPoint).toBe('ai');
+    expect(hook.result.current.isOpen).toBe(true);
     expect(mockVisearchClient.generateUuid).toHaveBeenCalled();
   });
 
-  it('should clear activeEntryPoint when closed', () => {
-    const { hook } = renderLauncherChat();
+  it('should mark the chat closed when closed', () => {
+    const { hook } = renderChat();
     act(() => {
-      hook.result.current.openEntryPoint('mic');
+      hook.result.current.open();
     });
     act(() => {
-      hook.result.current.closeEntryPoint();
+      hook.result.current.close();
     });
-    expect(hook.result.current.activeEntryPoint).toBeNull();
+    expect(hook.result.current.isOpen).toBe(false);
   });
 
   it('playGreeting should push a visible bot chat bubble but not enable voice reveal when voiceGreetingEnabled is false (default)', () => {
-    const { hook } = renderLauncherChat();
+    const { hook } = renderChat();
     act(() => {
-      hook.result.current.openEntryPoint('ai');
+      hook.result.current.open();
     });
     act(() => {
       hook.result.current.playGreeting('Hello there!');
@@ -144,9 +146,9 @@ describe('use-launcher-chat', () => {
   });
 
   it('playGreeting should no-op when given empty text', () => {
-    const { hook } = renderLauncherChat();
+    const { hook } = renderChat();
     act(() => {
-      hook.result.current.openEntryPoint('ai');
+      hook.result.current.open();
     });
     act(() => {
       hook.result.current.playGreeting('');
@@ -155,9 +157,9 @@ describe('use-launcher-chat', () => {
   });
 
   it('sendMessage should push a user chat bubble immediately and clear the message field', () => {
-    const { hook } = renderLauncherChat();
+    const { hook } = renderChat();
     act(() => {
-      hook.result.current.openEntryPoint('ai');
+      hook.result.current.open();
     });
     act(() => {
       hook.result.current.setMessage('Find me a jacket');
@@ -172,9 +174,9 @@ describe('use-launcher-chat', () => {
   });
 
   it('should commit the bot reply and any products to chats once the SSE stream closes', async () => {
-    const { hook } = renderLauncherChat();
+    const { hook } = renderChat();
     act(() => {
-      hook.result.current.openEntryPoint('ai');
+      hook.result.current.open();
     });
 
     const stream = sendMessageAndGetStreamController(hook, 'Show me shoes');
@@ -203,9 +205,9 @@ describe('use-launcher-chat', () => {
   });
 
   it('newChat should reset the visible chat state and generate a fresh chat id', async () => {
-    const { hook, mockVisearchClient } = renderLauncherChat();
+    const { hook, mockVisearchClient } = renderChat();
     act(() => {
-      hook.result.current.openEntryPoint('ai');
+      hook.result.current.open();
     });
 
     const stream = sendMessageAndGetStreamController(hook, 'Hello');
@@ -227,7 +229,7 @@ describe('use-launcher-chat', () => {
   });
 
   it('setIsInWishlist should add and remove product ids from wishlistPids', () => {
-    const { hook } = renderLauncherChat();
+    const { hook } = renderChat();
     act(() => {
       hook.result.current.setIsInWishlist('pid-1', true);
     });
@@ -240,12 +242,12 @@ describe('use-launcher-chat', () => {
   });
 
   it('should disable speechOutputEnabled when customizations.chat.voiceEnabled is false', () => {
-    const { hook } = renderLauncherChat({}, { chat: { voiceEnabled: false } });
+    const { hook } = renderChat({}, { chat: { voiceEnabled: false } });
     expect(hook.result.current.speechOutputEnabled).toBe(false);
   });
 
   it('toggleVoiceReading should flip isVoiceReadingEnabled', () => {
-    const { hook } = renderLauncherChat();
+    const { hook } = renderChat();
     expect(hook.result.current.isVoiceReadingEnabled).toBe(true);
 
     act(() => {

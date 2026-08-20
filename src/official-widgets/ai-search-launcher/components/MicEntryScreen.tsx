@@ -2,15 +2,15 @@ import { Textarea } from '@heroui/input';
 import { cn } from '@heroui/theme';
 import { type FC, type ReactElement, useContext, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
+import type { UseChatResult } from '../../../common/components/chat/use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import MicrophoneIcon from '../icons/MicrophoneIcon';
 import StopIcon from '../icons/StopIcon';
 import SubmitChatIcon from '../icons/SubmitChatIcon';
-import type { UseLauncherChatResult } from '../use-launcher-chat';
 
 interface MicEntryScreenProps {
-  chat: UseLauncherChatResult;
+  chat: UseChatResult;
 }
 
 // How often the auto-start gate below polls for any greeting to have finished playing.
@@ -36,7 +36,7 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
     ? (customizations.generalLayout?.fontColorDark || '')
     : (customizations.generalLayout?.fontColor || '');
 
-  // Mirrors the `sendMessageRef` pattern already used in use-launcher-chat.ts: keeps a live view
+  // Mirrors the `sendMessageRef` pattern already used in use-chat.ts: keeps a live view
   // of `chat` for the polling interval below, without needing to tear down/recreate that interval
   // on every render (most of `chat`'s functions are recreated each render since they aren't
   // memoized upstream, and re-running the effect on every render would restart the poll from
