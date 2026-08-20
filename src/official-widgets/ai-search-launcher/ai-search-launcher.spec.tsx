@@ -607,6 +607,41 @@ describe('ai-search-launcher', () => {
       expect(getTextInBody('Check these out:')).toBeTruthy();
       expect(document.body.querySelectorAll('.wigmix-product-card')).toHaveLength(1);
     });
+
+    it('attaches suggestion chips to the specific turn that produced them, not just the newest one', async () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      const firstStream = sendMessageAndGetStreamController('Show me shoes');
+      firstStream.emitEvent('chat_id', { value: 'chat-1' });
+      firstStream.emitEvent('reqid', { value: 'req-1' });
+      firstStream.emitEvent('chat_token', { value: 'Here: [[pid-1]] ((See more shoes))' });
+      firstStream.emitEvent('product', {
+        product_id: 'pid-1',
+        main_image_url: 'https://example.com/shoe.jpg',
+        data: { product_url: 'https://example.com/shoe', price: { currency: 'USD', value: '99.99' }, title: 'Shoe' },
+      });
+      firstStream.closeStream();
+      await revealAll();
+
+      expect(getTextInBody('See more shoes')).toBeTruthy();
+
+      const secondStream = sendMessageAndGetStreamController('Now show me hats');
+      secondStream.emitEvent('chat_id', { value: 'chat-1' });
+      secondStream.emitEvent('reqid', { value: 'req-2' });
+      secondStream.emitEvent('chat_token', { value: 'Here: [[pid-2]] ((See more hats))' });
+      secondStream.emitEvent('product', {
+        product_id: 'pid-2',
+        main_image_url: 'https://example.com/hat.jpg',
+        data: { product_url: 'https://example.com/hat', price: { currency: 'USD', value: '19.99' }, title: 'Hat' },
+      });
+      secondStream.closeStream();
+      await revealAll();
+
+      // Both turns' chips remain visible in the scrollback, not just the latest turn's.
+      expect(getTextInBody('See more shoes')).toBeTruthy();
+      expect(getTextInBody('See more hats')).toBeTruthy();
+    });
   });
 
   describe('mute control', () => {
