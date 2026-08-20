@@ -51,9 +51,14 @@ describe('ProductGrid', () => {
     expect(document.body.querySelectorAll('.wigmix-product-card')).toHaveLength(2);
   });
 
-  it('marks the card matching focusedProductId with the "Now Describing" badge', () => {
-    renderGrid({ focusedProductId: 'p2' });
+  it('marks the card matching focusedProductId with the "Now Describing" badge when focusedRequestId matches this grid', () => {
+    renderGrid({ focusedProductId: 'p2', focusedRequestId: 'req-1' });
     expect(screen.getByText('Now Describing')).toBeTruthy();
+  });
+
+  it('does not show the badge when focusedRequestId belongs to a different turn (e.g. an earlier, still-mounted grid)', () => {
+    renderGrid({ focusedProductId: 'p2', focusedRequestId: 'req-2' });
+    expect(screen.queryByText('Now Describing')).toBeNull();
   });
 
   it('reveals streaming products one at a time rather than all at once', () => {

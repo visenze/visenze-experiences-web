@@ -8,6 +8,11 @@ interface ProductGridProps {
   products: ProcessedProduct[];
   requestId: string;
   focusedProductId?: string | null;
+  // The requestId of the turn currently being narrated. Narration only ever targets one turn at
+  // a time, but multiple ProductGrid instances (one per historical chat turn) can be mounted
+  // simultaneously — without this, a product_id that recurs across two turns' results would
+  // light up the badge in both, fighting over the "Now Describing" highlight and scroll target.
+  focusedRequestId?: string | null;
   wishlistPids: string[];
   setIsInWishlist: (pid: string, isInWishlist: boolean) => void;
   pwPrefix: string;
@@ -17,7 +22,7 @@ interface ProductGridProps {
 }
 
 const ProductGrid: FC<ProductGridProps> = ({
-  products, requestId, focusedProductId = null, wishlistPids, setIsInWishlist, pwPrefix, streaming = false, className, style,
+  products, requestId, focusedProductId = null, focusedRequestId = null, wishlistPids, setIsInWishlist, pwPrefix, streaming = false, className, style,
 }) => {
   const intl = useIntl();
   const [revealedCount, setRevealedCount] = useState(streaming ? 0 : products.length);
@@ -45,12 +50,14 @@ const ProductGrid: FC<ProductGridProps> = ({
     return (): void => clearInterval(interval);
   }, [streaming, products.length]);
 
+  const isFocusedTurn = !!focusedRequestId && requestId === focusedRequestId;
+
   useEffect(() => {
-    if (!focusedProductId || !focusedCardRef.current) {
+    if (!isFocusedTurn || !focusedProductId || !focusedCardRef.current) {
       return;
     }
     focusedCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
-  }, [focusedProductId]);
+  }, [isFocusedTurn, focusedProductId]);
 
   const getCardWrapperStyle = (isFocused: boolean): CSSProperties => ({
     transformOrigin: 'center',
@@ -64,7 +71,7 @@ const ProductGrid: FC<ProductGridProps> = ({
 
   const renderCard = (product: ProcessedProduct, pidx: number): JSX.Element => {
     const viewedKey = `${requestId}:${product.product_id}`;
-    const isFocused = !!focusedProductId && product.product_id === focusedProductId;
+    const isFocused = isFocusedTurn && !!focusedProductId && product.product_id === focusedProductId;
     return (
       <div
           key={`${product.product_id}-${pidx}`}

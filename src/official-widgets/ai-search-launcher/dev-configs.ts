@@ -18,6 +18,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
   customizations: {
     customCss,
     chat: {
+      layout: 'splitlayout',
       voiceGreetingEnabled: true, // enable to exercise the voice-greeting path locally
       startMuted: false,
       // voiceEnabled: false, // set false to hide all voice UI (footer mic button, mute toggle) and stop voice requests

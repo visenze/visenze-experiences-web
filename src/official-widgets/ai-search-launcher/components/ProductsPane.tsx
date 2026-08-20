@@ -55,6 +55,7 @@ const ProductsPane: FC<ProductsPaneProps> = ({
           products={products}
           requestId={requestId}
           focusedProductId={focusedProductId}
+          focusedRequestId={streamingRequestId}
           wishlistPids={wishlistPids}
           setIsInWishlist={setIsInWishlist}
           pwPrefix='asl'
