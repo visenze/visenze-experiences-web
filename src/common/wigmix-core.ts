@@ -1298,6 +1298,21 @@ export interface WidgetConfig {
        */
       secondaryTitle: HideableField;
       /**
+       * Configuration for an optional short attribute chip shown on each
+       * product card (e.g. "Cropped · high rise"), sourced from a single
+       * mapped product field. Disabled by default. Deliberately lighter-weight
+       * than `title`/`secondaryTitle` (no per-breakpoint font config) since
+       * it's a small optional add-on, not a primary text element.
+       *
+       * @since 1.0.30
+       */
+      attributeChip?: {
+        /** Whether the attribute chip is shown. Defaults to false. @since 1.0.30 */
+        show?: boolean;
+        /** Field source of the displayed text (from `displaySettings.productDetails`). @since 1.0.30 */
+        fieldSource?: string;
+      };
+      /**
        * Configuration for the "find similar" feature within a product card image.
        *
        * @since 1.0.0
@@ -1638,6 +1653,17 @@ export interface WidgetConfig {
         /** Voice similarity boost, 0-1. */
         similarityBoost?: number;
       };
+      /**
+       * Which layout the full-screen chat surface renders. `'chatlayout'`
+       * (default) is the existing single-column chat UI, unchanged, at every
+       * breakpoint. `'splitlayout'` renders a two-pane split (chat left,
+       * products right) on tablet/desktop once the conversation has actual
+       * results; below the mobile breakpoint, or before any results exist, it
+       * renders identically to `'chatlayout'`.
+       *
+       * @since 1.0.30
+       */
+      layout?: 'chatlayout' | 'splitlayout';
     };
     /**
      * Configuration specific to the AI Search Launcher widget's entry points:

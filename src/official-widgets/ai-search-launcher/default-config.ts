@@ -19,6 +19,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yUploadedImage: 'Uploaded image',
     a11yAssistantThinking: 'Assistant is thinking',
     a11yProductResultsShown: 'Product results shown: {count}',
+    resultsForEyebrow: 'Results for',
+    hintResultsShown: '↳ {count} results shown',
+    a11yBreadcrumbTrail: 'Search refinement steps',
+    a11ySelectResultSet: 'Show results for: {label}',
     a11yChatMessages: 'AI search assistant messages',
     a11ySuggestedReplies: 'Suggested replies',
     showMore: 'Show more...',
@@ -71,8 +75,11 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
   },
   productCard: {
-    imageAspectRatio: '2 / 3',
+    imageAspectRatio: '3 / 4',
     openLinksInNewTab: false,
+    attributeChip: {
+      show: false,
+    },
     price: {
       show: true,
       font: {
@@ -296,6 +303,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     title: 'AI Search Assistant',
     voiceGreetingEnabled: false,
     startMuted: false,
+    layout: 'chatlayout',
   },
   launcher: {
     voiceRecordingMaxDurationSeconds: 5,
