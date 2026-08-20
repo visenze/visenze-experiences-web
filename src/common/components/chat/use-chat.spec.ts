@@ -286,4 +286,105 @@ describe('use-chat', () => {
     });
     expect(hook.result.current.isVoiceReadingEnabled).toBe(true);
   });
+
+  describe('breadcrumbs', () => {
+    it('should start with no breadcrumbs and no active breadcrumb', () => {
+      const { hook } = renderChat();
+      expect(hook.result.current.breadcrumbs).toEqual([]);
+      expect(hook.result.current.activeBreadcrumbId).toBeNull();
+    });
+
+    const commitProductsTurn = (hook: RenderHookResult<UseChatResult, unknown>, message: string, requestId: string): void => {
+      const stream = sendMessageAndGetStreamController(hook, message);
+      stream.emitEvent('chat_id', { value: 'chat-123' });
+      stream.emitEvent('reqid', { value: requestId });
+      stream.emitEvent('chat_token', { value: `Here you go: [[pid-${requestId}]]` });
+      stream.emitEvent('product', {
+        product_id: `pid-${requestId}`,
+        main_image_url: 'https://example.com/shoe.jpg',
+        data: {
+          product_url: 'https://example.com/shoe',
+          price: { currency: 'USD', value: '99.99' },
+          title: 'Cool Shoes',
+        },
+      });
+      stream.closeStream();
+    };
+
+    it('creates one breadcrumb per turn that has products, and marks it active', async () => {
+      const { hook } = renderChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      commitProductsTurn(hook, 'Show me blue jeans', 'req-1');
+      await revealAll();
+
+      expect(hook.result.current.breadcrumbs).toHaveLength(1);
+      expect(hook.result.current.breadcrumbs[0]).toMatchObject({ requestId: 'req-1', label: 'Show me blue jeans' });
+      expect(hook.result.current.activeBreadcrumbId).toBe('req-1');
+    });
+
+    it('appends a breadcrumb when the next message shares keywords with the active turn (refinement)', async () => {
+      const { hook } = renderChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      commitProductsTurn(hook, 'Show me blue jeans', 'req-1');
+      await revealAll();
+
+      commitProductsTurn(hook, 'blue jeans but cropped', 'req-2');
+      await revealAll();
+
+      expect(hook.result.current.breadcrumbs).toHaveLength(2);
+      expect(hook.result.current.breadcrumbs.map((b) => b.requestId)).toEqual(['req-1', 'req-2']);
+      expect(hook.result.current.activeBreadcrumbId).toBe('req-2');
+    });
+
+    it('resets to a single breadcrumb when the next message shares no keywords with the active turn (new search)', async () => {
+      const { hook } = renderChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      commitProductsTurn(hook, 'Show me blue jeans', 'req-1');
+      await revealAll();
+
+      commitProductsTurn(hook, 'red sneakers please', 'req-2');
+      await revealAll();
+
+      expect(hook.result.current.breadcrumbs).toHaveLength(1);
+      expect(hook.result.current.breadcrumbs[0].requestId).toBe('req-2');
+      expect(hook.result.current.activeBreadcrumbId).toBe('req-2');
+    });
+
+    it('setActiveBreadcrumb updates the active id as a pure local-state change', async () => {
+      const { hook } = renderChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      commitProductsTurn(hook, 'Show me blue jeans', 'req-1');
+      await revealAll();
+      commitProductsTurn(hook, 'blue jeans but cropped', 'req-2');
+      await revealAll();
+
+      act(() => {
+        hook.result.current.setActiveBreadcrumb('req-1');
+      });
+      expect(hook.result.current.activeBreadcrumbId).toBe('req-1');
+    });
+
+    it('newChat resets breadcrumbs and the active breadcrumb', async () => {
+      const { hook } = renderChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      commitProductsTurn(hook, 'Show me blue jeans', 'req-1');
+      await revealAll();
+
+      act(() => {
+        hook.result.current.newChat();
+      });
+      expect(hook.result.current.breadcrumbs).toEqual([]);
+      expect(hook.result.current.activeBreadcrumbId).toBeNull();
+    });
+  });
 });

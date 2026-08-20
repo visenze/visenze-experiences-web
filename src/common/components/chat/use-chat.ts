@@ -32,7 +32,34 @@ interface CompletedResponse {
   text: string;
   products: ProcessedProduct[];
   suggestions: string[];
+  userMessage: string;
 }
+
+export interface BreadcrumbTurn {
+  requestId: string;
+  label: string;
+  products: ProcessedProduct[];
+  suggestions: string[];
+}
+
+// Deliberately simple, no-NLP-dependency v1 classifier for "is this message a refinement of the
+// active breadcrumb, or an unrelated new search": lowercase, strip short/stop words, and check for
+// any shared token against the active lineage's accumulated keywords. Flagged in the spec as a v1
+// heuristic, revisit if it proves too coarse in practice.
+const STOPWORDS = new Set([
+  'a', 'an', 'the', 'is', 'are', 'me', 'my', 'for', 'and', 'or', 'with', 'of', 'to', 'in', 'on',
+  'show', 'find', 'i', 'want', 'looking', 'please', 'some', 'that', 'this', 'but',
+]);
+
+const extractKeywords = (text: string): Set<string> => new Set(
+  text.toLowerCase().split(/\W+/).filter((word) => word.length > 2 && !STOPWORDS.has(word)),
+);
+
+const MAX_BREADCRUMB_LABEL_LENGTH = 40;
+
+const truncateLabel = (text: string): string => (
+  text.length > MAX_BREADCRUMB_LABEL_LENGTH ? `${text.slice(0, MAX_BREADCRUMB_LABEL_LENGTH - 1)}…` : text
+);
 
 export interface UseChatResult {
   chats: Chat[];
@@ -67,6 +94,9 @@ export interface UseChatResult {
   stopRecording: () => void;
   hasPendingSpeech: () => boolean;
   playGreeting: (text: string) => void;
+  breadcrumbs: BreadcrumbTurn[];
+  activeBreadcrumbId: string | null;
+  setActiveBreadcrumb: (requestId: string) => void;
 }
 
 // Orchestrates a widget's full-screen chat surface: the SSE call to the backend chat endpoint,
@@ -99,6 +129,8 @@ const useChat = (): UseChatResult => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasStartedChat, setHasStartedChat] = useState(false);
   const [wishlistPids, setWishlistPids] = useState<string[]>(widgetConfig.initState?.wishlistProductIds || []);
+  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbTurn[]>([]);
+  const [activeBreadcrumbId, setActiveBreadcrumb] = useState<string | null>(null);
 
   // Bridges sendMessage (declared below) to onTranscript, since useVoiceReply is instantiated
   // before sendMessage exists (sendMessage itself needs the reply helpers useVoiceReply returns).
@@ -166,7 +198,7 @@ const useChat = (): UseChatResult => {
   };
 
   const commitResponse = ({
-    chatId: responseChatId, requestId, text, products, suggestions: responseSuggestions,
+    chatId: responseChatId, requestId, text, products, suggestions: responseSuggestions, userMessage,
   }: CompletedResponse): void => {
     if (products.length) {
       const requestMetadata = {
@@ -200,6 +232,23 @@ const useChat = (): UseChatResult => {
       }
       return newChats;
     });
+    if (products.length) {
+      setBreadcrumbs((prevBreadcrumbs) => {
+        const activeIndex = prevBreadcrumbs.findIndex((crumb) => crumb.requestId === activeBreadcrumbId);
+        const lineage = activeIndex === -1 ? prevBreadcrumbs : prevBreadcrumbs.slice(0, activeIndex + 1);
+        const lineageKeywords = new Set(lineage.flatMap((crumb) => Array.from(extractKeywords(crumb.label))));
+        const newKeywords = extractKeywords(userMessage);
+        const isRefinement = lineage.length > 0 && Array.from(newKeywords).some((word) => lineageKeywords.has(word));
+        const newTurn: BreadcrumbTurn = {
+          requestId,
+          label: truncateLabel(userMessage),
+          products,
+          suggestions: responseSuggestions,
+        };
+        return isRefinement ? [...prevBreadcrumbs, newTurn] : [newTurn];
+      });
+      setActiveBreadcrumb(requestId);
+    }
     setStreamingProducts([]);
     setStreamingRequestId('');
     resetReplyState();
@@ -335,6 +384,7 @@ const useChat = (): UseChatResult => {
           text: finalText,
           products: finalProducts,
           suggestions: finalSuggestions,
+          userMessage: messageToSend || '',
         };
         if (willSpeakReply && isVoiceReadingEnabledNow()) {
           const { sentences } = extractSpeakableSentences(currentText, spokenLength, { includeTrailing: true });
@@ -379,6 +429,8 @@ const useChat = (): UseChatResult => {
     stopAudio();
     resetReplyState();
     setChats([]);
+    setBreadcrumbs([]);
+    setActiveBreadcrumb(null);
     setStreamingProducts([]);
     setStreamingRequestId('');
     setSuggestions([]);
@@ -473,6 +525,9 @@ const useChat = (): UseChatResult => {
     stopRecording,
     hasPendingSpeech,
     playGreeting,
+    breadcrumbs,
+    activeBreadcrumbId,
+    setActiveBreadcrumb,
   };
 };
 
