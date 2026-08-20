@@ -10,8 +10,8 @@ describe('BreadcrumbTrail', () => {
       <IntlProvider messages={messages} locale='en' defaultLocale='en'>
         <BreadcrumbTrail
           breadcrumbs={[
-            { requestId: 'req-1', label: 'blue jeans', products: [], suggestions: [] },
-            { requestId: 'req-2', label: 'cropped', products: [], suggestions: [] },
+            { requestId: 'req-1', label: 'blue jeans', products: [] },
+            { requestId: 'req-2', label: 'cropped', products: [] },
           ]}
           activeBreadcrumbId='req-2'
           onSelect={jest.fn()}
@@ -29,7 +29,7 @@ describe('BreadcrumbTrail', () => {
     const { getByRole } = render(
       <IntlProvider messages={messages} locale='en' defaultLocale='en'>
         <BreadcrumbTrail
-          breadcrumbs={[{ requestId: 'req-1', label: 'blue jeans', products: [], suggestions: [] }]}
+          breadcrumbs={[{ requestId: 'req-1', label: 'blue jeans', products: [] }]}
           activeBreadcrumbId='req-1'
           onSelect={onSelect}
         />

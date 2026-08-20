@@ -204,17 +204,17 @@ describe('use-chat', () => {
     expect(hook.result.current.allowUserInput).toBe(true);
   });
 
-  it('should attach that response\'s own suggestions to the committed products chat', async () => {
+  it('should expose only the latest response\'s suggestions, replacing any earlier turn\'s', async () => {
     const { hook } = renderChat();
     act(() => {
       hook.result.current.open();
     });
 
-    const stream = sendMessageAndGetStreamController(hook, 'Show me shoes');
-    stream.emitEvent('chat_id', { value: 'chat-123' });
-    stream.emitEvent('reqid', { value: 'req-123' });
-    stream.emitEvent('chat_token', { value: 'Here you go: [[pid-1]] ((Show more)) ((Try boots))' });
-    stream.emitEvent('product', {
+    const firstStream = sendMessageAndGetStreamController(hook, 'Show me shoes');
+    firstStream.emitEvent('chat_id', { value: 'chat-123' });
+    firstStream.emitEvent('reqid', { value: 'req-1' });
+    firstStream.emitEvent('chat_token', { value: 'Here you go: [[pid-1]] ((Show more)) ((Try boots))' });
+    firstStream.emitEvent('product', {
       product_id: 'pid-1',
       main_image_url: 'https://example.com/shoe.jpg',
       data: {
@@ -223,11 +223,29 @@ describe('use-chat', () => {
         title: 'Cool Shoes',
       },
     });
-    stream.closeStream();
+    firstStream.closeStream();
+    await revealAll();
+    expect(hook.result.current.suggestions).toEqual(['Show more', 'Try boots']);
+
+    const secondStream = sendMessageAndGetStreamController(hook, 'Show me hats');
+    secondStream.emitEvent('chat_id', { value: 'chat-123' });
+    secondStream.emitEvent('reqid', { value: 'req-2' });
+    secondStream.emitEvent('chat_token', { value: 'Here: [[pid-2]] ((See more hats))' });
+    secondStream.emitEvent('product', {
+      product_id: 'pid-2',
+      main_image_url: 'https://example.com/hat.jpg',
+      data: {
+        product_url: 'https://example.com/hat',
+        price: { currency: 'USD', value: '19.99' },
+        title: 'Hat',
+      },
+    });
+    secondStream.closeStream();
     await revealAll();
 
-    const productsChat = hook.result.current.chats.find((chat) => chat.author === 'products');
-    expect(productsChat?.suggestions).toEqual(['Show more', 'Try boots']);
+    // The first turn's suggestions are gone from the live `suggestions` state — only the latest
+    // turn's are exposed, matching the original (pre-per-turn) single-row behavior.
+    expect(hook.result.current.suggestions).toEqual(['See more hats']);
   });
 
   it('newChat should reset the visible chat state and generate a fresh chat id', async () => {
@@ -324,7 +342,7 @@ describe('use-chat', () => {
       expect(hook.result.current.activeBreadcrumbId).toBe('req-1');
     });
 
-    it('appends a breadcrumb when the next message shares keywords with the active turn (refinement)', async () => {
+    it('always appends a new breadcrumb, even when the next message is an unrelated search', async () => {
       const { hook } = renderChat();
       act(() => {
         hook.result.current.open();
@@ -335,25 +353,17 @@ describe('use-chat', () => {
       commitProductsTurn(hook, 'blue jeans but cropped', 'req-2');
       await revealAll();
 
-      expect(hook.result.current.breadcrumbs).toHaveLength(2);
-      expect(hook.result.current.breadcrumbs.map((b) => b.requestId)).toEqual(['req-1', 'req-2']);
-      expect(hook.result.current.activeBreadcrumbId).toBe('req-2');
-    });
-
-    it('resets to a single breadcrumb when the next message shares no keywords with the active turn (new search)', async () => {
-      const { hook } = renderChat();
-      act(() => {
-        hook.result.current.open();
-      });
-      commitProductsTurn(hook, 'Show me blue jeans', 'req-1');
+      // Genuinely unrelated to either prior turn — this used to reset the whole trail down to one
+      // crumb (an earlier keyword-overlap classifier that real usage showed misfired on ordinary
+      // category switches, wiping history a user had just navigated back into). The trail is now
+      // append-only: it never prunes a breadcrumb a still-visible hint line might point to, and
+      // only resets via the explicit "New Chat" action.
+      commitProductsTurn(hook, 'red sneakers please', 'req-3');
       await revealAll();
 
-      commitProductsTurn(hook, 'red sneakers please', 'req-2');
-      await revealAll();
-
-      expect(hook.result.current.breadcrumbs).toHaveLength(1);
-      expect(hook.result.current.breadcrumbs[0].requestId).toBe('req-2');
-      expect(hook.result.current.activeBreadcrumbId).toBe('req-2');
+      expect(hook.result.current.breadcrumbs).toHaveLength(3);
+      expect(hook.result.current.breadcrumbs.map((b) => b.requestId)).toEqual(['req-1', 'req-2', 'req-3']);
+      expect(hook.result.current.activeBreadcrumbId).toBe('req-3');
     });
 
     it('setActiveBreadcrumb updates the active id as a pure local-state change', async () => {

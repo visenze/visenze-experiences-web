@@ -23,7 +23,6 @@ export interface Chat {
   messages: string[];
   products?: ProcessedProduct[];
   image?: SearchImageOrPid;
-  suggestions?: string[];
 }
 
 interface CompletedResponse {
@@ -31,7 +30,6 @@ interface CompletedResponse {
   requestId: string;
   text: string;
   products: ProcessedProduct[];
-  suggestions: string[];
   userMessage: string;
 }
 
@@ -39,21 +37,7 @@ export interface BreadcrumbTurn {
   requestId: string;
   label: string;
   products: ProcessedProduct[];
-  suggestions: string[];
 }
-
-// Deliberately simple, no-NLP-dependency v1 classifier for "is this message a refinement of the
-// active breadcrumb, or an unrelated new search": lowercase, strip short/stop words, and check for
-// any shared token against the active lineage's accumulated keywords. Flagged in the spec as a v1
-// heuristic, revisit if it proves too coarse in practice.
-const STOPWORDS = new Set([
-  'a', 'an', 'the', 'is', 'are', 'me', 'my', 'for', 'and', 'or', 'with', 'of', 'to', 'in', 'on',
-  'show', 'find', 'i', 'want', 'looking', 'please', 'some', 'that', 'this', 'but',
-]);
-
-const extractKeywords = (text: string): Set<string> => new Set(
-  text.toLowerCase().split(/\W+/).filter((word) => word.length > 2 && !STOPWORDS.has(word)),
-);
 
 const MAX_BREADCRUMB_LABEL_LENGTH = 40;
 
@@ -198,7 +182,7 @@ const useChat = (): UseChatResult => {
   };
 
   const commitResponse = ({
-    chatId: responseChatId, requestId, text, products, suggestions: responseSuggestions, userMessage,
+    chatId: responseChatId, requestId, text, products, userMessage,
   }: CompletedResponse): void => {
     if (products.length) {
       const requestMetadata = {
@@ -217,7 +201,6 @@ const useChat = (): UseChatResult => {
           messages: [text],
           author: 'bot',
           products: [],
-          suggestions: products.length ? undefined : responseSuggestions,
         });
       }
       if (products.length) {
@@ -227,26 +210,22 @@ const useChat = (): UseChatResult => {
           messages: [],
           author: 'products',
           products,
-          suggestions: responseSuggestions,
         });
       }
       return newChats;
     });
     if (products.length) {
-      setBreadcrumbs((prevBreadcrumbs) => {
-        const activeIndex = prevBreadcrumbs.findIndex((crumb) => crumb.requestId === activeBreadcrumbId);
-        const lineage = activeIndex === -1 ? prevBreadcrumbs : prevBreadcrumbs.slice(0, activeIndex + 1);
-        const lineageKeywords = new Set(lineage.flatMap((crumb) => Array.from(extractKeywords(crumb.label))));
-        const newKeywords = extractKeywords(userMessage);
-        const isRefinement = lineage.length > 0 && Array.from(newKeywords).some((word) => lineageKeywords.has(word));
-        const newTurn: BreadcrumbTurn = {
-          requestId,
-          label: truncateLabel(userMessage),
-          products,
-          suggestions: responseSuggestions,
-        };
-        return isRefinement ? [...prevBreadcrumbs, newTurn] : [newTurn];
-      });
+      // Append-only: every turn with results becomes a new breadcrumb. There is no
+      // refinement-vs-new-search classification — an earlier keyword-overlap heuristic was tried
+      // and removed after real usage showed it misclassified ordinary category switches as
+      // "unrelated," silently wiping the trail (and any hint line still pointing at a pruned
+      // breadcrumb rendered a blank products pane). The trail now only ever resets via "New Chat".
+      const newTurn: BreadcrumbTurn = {
+        requestId,
+        label: truncateLabel(userMessage),
+        products,
+      };
+      setBreadcrumbs((prevBreadcrumbs) => [...prevBreadcrumbs, newTurn]);
       setActiveBreadcrumb(requestId);
     }
     setStreamingProducts([]);
@@ -372,8 +351,7 @@ const useChat = (): UseChatResult => {
       },
       onclose: () => {
         const currentText = tokens.join('');
-        const finalSuggestions = extractSuggestions(currentText);
-        setSuggestions(finalSuggestions);
+        setSuggestions(extractSuggestions(currentText));
         const finalText = stripTokensForDisplay(currentText).trim();
         const finalProducts = resolveProducts(currentText, products);
         updateLatestMessage(finalText);
@@ -383,7 +361,6 @@ const useChat = (): UseChatResult => {
           requestId: reqIdFromResp,
           text: finalText,
           products: finalProducts,
-          suggestions: finalSuggestions,
           userMessage: messageToSend || '',
         };
         if (willSpeakReply && isVoiceReadingEnabledNow()) {

@@ -609,7 +609,7 @@ describe('ai-search-launcher', () => {
       expect(document.body.querySelectorAll('.wigmix-product-card')).toHaveLength(1);
     });
 
-    it('attaches suggestion chips to the specific turn that produced them, not just the newest one', async () => {
+    it('shows only the latest turn\'s suggestion chips, not earlier turns\'', async () => {
       renderLauncher();
       openEntryPointAndWait('a11yOpenAskAi');
 
@@ -639,8 +639,10 @@ describe('ai-search-launcher', () => {
       secondStream.closeStream();
       await revealAll();
 
-      // Both turns' chips remain visible in the scrollback, not just the latest turn's.
-      expect(getTextInBody('See more shoes')).toBeTruthy();
+      // Only the newest turn's chips remain — the first turn's must not linger (they used to
+      // render twice: once as a per-turn row and once as the trailing "live" row, and once fixed,
+      // real usage showed users don't want stale chips from earlier searches sticking around).
+      expect(getTextInBody('See more shoes')).toBeNull();
       expect(getTextInBody('See more hats')).toBeTruthy();
     });
   });

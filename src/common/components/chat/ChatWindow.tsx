@@ -395,15 +395,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
                     )
                   )}
                 </div>
-                {chat.suggestions && chat.suggestions.length > 0 && (
-                  <SuggestionChips
-                    suggestions={chat.suggestions}
-                    showAll={showAllSuggestions}
-                    onShowAll={setShowAllSuggestions}
-                    onSelect={sendMessage}
-                    scrollToBottom={scrollToBottom}
-                  />
-                )}
               </Fragment>
           ))}
           {(isWaiting || latestMessage || streamingProducts.length > 0) && (
