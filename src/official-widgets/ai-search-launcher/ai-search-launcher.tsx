@@ -1,22 +1,16 @@
-import { Textarea } from '@heroui/input';
 import { cn } from '@heroui/theme';
 import { type FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import ChatInputFooter from './components/ChatInputFooter';
 import ImageEntryScreen from './components/ImageEntryScreen';
 import MicEntryScreen from './components/MicEntryScreen';
-import WebcamCapture from './components/WebcamCapture';
 import MicrophoneIcon from './icons/MicrophoneIcon';
-import StopIcon from './icons/StopIcon';
-import SubmitChatIcon from './icons/SubmitChatIcon';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
 import useChat from '../../common/components/chat/use-chat';
-import FileDropzone from '../../common/components/FileDropzone';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { FOCUS_VISIBLE_CLASSES } from '../../common/constants';
 import CameraIcon from '../../common/icons/CameraIcon';
-import CustomizableIcon from '../../common/icons/CustomizableIcon';
-import UploadIcon from '../../common/icons/UploadIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
 
@@ -230,116 +224,21 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
               setIsInWishlist={chat.setIsInWishlist}
               pwPrefix='asl'
             />
-            <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
-              {showChatCameraCapture && (
-                <WebcamCapture
-                  variant='drawer'
-                  darkMode={darkMode}
-                  fontColor={customizations.generalLayout?.fontColor}
-                  fontColorDark={customizations.generalLayout?.fontColorDark}
-                  onClose={closeChatCameraCapture}
-                  onCapture={handleChatImage}
-                />
-              )}
-              <div className='flex justify-end gap-2'>
-                {customizations.launcher?.chatCameraEnabled !== false && (
-                  <button
-                    ref={openChatCameraButtonRef}
-                    type='button'
-                    aria-label={intl.formatMessage({ id: 'a11yOpenCamera' })}
-                    title={intl.formatMessage({ id: 'a11yOpenCamera' })}
-                    className={cn('rounded-md border border-gray bg-transparent p-2 dark:border-neutral-500', FOCUS_VISIBLE_CLASSES)}
-                    onClick={() => setShowChatCameraCapture(true)}
-                  >
-                    <CameraIcon className='size-5 cursor-pointer' color={fontColor} />
-                  </button>
-                )}
-                <FileDropzone onImageUpload={handleChatImage} name='asl-chat-upload' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
-                  <div className='rounded-md border border-gray p-2 dark:border-neutral-500'>
-                    {customizations.imageUpload?.icon?.url ? (
-                      <CustomizableIcon
-                        height={20}
-                        width={20}
-                        url={customizations.imageUpload.icon.url}
-                        color={fontColor}
-                      />
-                    ) : (
-                      <UploadIcon className='size-5' color={fontColor} />
-                    )}
-                  </div>
-                </FileDropzone>
-                {chat.voiceEnabled && (
-                  <button
-                    type='button'
-                    aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yVoicePending' })}
-                    aria-pressed={chat.voiceStatus === 'recording'}
-                    title={chat.hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
-                    disabled={(chat.voiceStatus === 'idle' && !chat.allowUserInput && !chat.isSpeechPlaying) || chat.voiceStatus === 'transcribing'}
-                    className={cn('rounded-md border border-gray bg-transparent p-2 disabled:opacity-50 dark:border-neutral-500', FOCUS_VISIBLE_CLASSES)}
-                    onMouseDown={chat.startVoiceRecording}
-                    onMouseUp={chat.stopRecording}
-                    onMouseLeave={chat.stopRecording}
-                    onTouchStart={(e) => {
-                      e.preventDefault();
-                      chat.startVoiceRecording();
-                    }}
-                    onTouchEnd={(e) => {
-                      e.preventDefault();
-                      chat.stopRecording();
-                    }}
-                    onKeyDown={(e) => {
-                      if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
-                        e.preventDefault();
-                        chat.startVoiceRecording();
-                      }
-                    }}
-                    onKeyUp={(e) => {
-                      if (e.key === ' ' || e.key === 'Enter') {
-                        e.preventDefault();
-                        chat.stopRecording();
-                      }
-                    }}
-                  >
-                    {chat.voiceStatus === 'recording'
-                      ? <StopIcon className='size-5 cursor-pointer animate-pulse' color='#EF4444' />
-                      : <MicrophoneIcon className='size-5 cursor-pointer' color={fontColor} />}
-                  </button>
-                )}
-              </div>
-              <Textarea
-                ref={chatInputRef}
-                aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
-                value={chat.message}
-                placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
-                minRows={1}
-                onChange={(e) => chat.setMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.code === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    if (!chat.allowUserInput) {
-                      return;
-                    }
-                    handleSend();
-                  }
-                }}
-                endContent={
-                  <button
-                    type='button'
-                    aria-label={intl.formatMessage({ id: 'a11ySendMessage' })}
-                    title={intl.formatMessage({ id: 'a11ySendMessage' })}
-                    disabled={!chat.allowUserInput}
-                    className={cn('p-0 bg-transparent border-0 disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
-                    onClick={handleSend}
-                  >
-                    <SubmitChatIcon
-                      color={darkMode
-                        ? (customizations.generalLayout?.fontColorDark || '')
-                        : (customizations.generalLayout?.fontColor || '')}
-                    />
-                  </button>
-                }
-              />
-            </div>
+            <ChatInputFooter
+              chat={chat}
+              darkMode={darkMode}
+              fontColorLight={customizations.generalLayout?.fontColor}
+              fontColorDark={customizations.generalLayout?.fontColorDark}
+              chatCameraEnabled={customizations.launcher?.chatCameraEnabled !== false}
+              imageUploadIconUrl={customizations.imageUpload?.icon?.url}
+              chatInputRef={chatInputRef}
+              openChatCameraButtonRef={openChatCameraButtonRef}
+              showChatCameraCapture={showChatCameraCapture}
+              setShowChatCameraCapture={setShowChatCameraCapture}
+              closeChatCameraCapture={closeChatCameraCapture}
+              handleChatImage={handleChatImage}
+              handleSend={handleSend}
+            />
           </>
         )}
       </FullScreenChatContainer>
