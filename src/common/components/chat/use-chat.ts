@@ -124,6 +124,16 @@ const useChat = (): UseChatResult => {
   // previous session can't bleed a stale reply into the freshly-reset chat log.
   const activeStreamControllerRef = useRef<AbortController | null>(null);
 
+  // Identifies the optimistically-added breadcrumb for the in-flight query (see sendMessage)
+  // so commitResponse can reconcile it in place once the real requestId/products are known,
+  // rather than appending a second entry.
+  const pendingBreadcrumbIdRef = useRef<string | null>(null);
+  const pendingBreadcrumbCounterRef = useRef(0);
+  // Captured right before a pending breadcrumb is added, so it can be restored if that turn
+  // ends up producing no products (matching the pre-existing rule that text-only turns never
+  // get a breadcrumb).
+  const preBreadcrumbActiveIdRef = useRef<string | null>(null);
+
   const {
     voiceEnabled,
     speechOutputEnabled,
@@ -214,6 +224,8 @@ const useChat = (): UseChatResult => {
       }
       return newChats;
     });
+    const pendingId = pendingBreadcrumbIdRef.current;
+    pendingBreadcrumbIdRef.current = null;
     if (products.length) {
       // Append-only: every turn with results becomes a new breadcrumb. There is no
       // refinement-vs-new-search classification — an earlier keyword-overlap heuristic was tried
@@ -225,8 +237,24 @@ const useChat = (): UseChatResult => {
         label: truncateLabel(userMessage),
         products,
       };
-      setBreadcrumbs((prevBreadcrumbs) => [...prevBreadcrumbs, newTurn]);
+      setBreadcrumbs((prevBreadcrumbs) => {
+        // Reconcile the optimistic placeholder sendMessage added in place, rather than appending
+        // a second entry for the same turn. Falls back to appending if the placeholder is gone
+        // (e.g. the user truncated the trail past it while the response was still streaming).
+        const pendingIndex = pendingId ? prevBreadcrumbs.findIndex((crumb) => crumb.requestId === pendingId) : -1;
+        if (pendingIndex === -1) {
+          return [...prevBreadcrumbs, newTurn];
+        }
+        const reconciled = [...prevBreadcrumbs];
+        reconciled[pendingIndex] = newTurn;
+        return reconciled;
+      });
       setActiveBreadcrumb(requestId);
+    } else if (pendingId) {
+      // This turn produced no products, so it never earns a breadcrumb — drop the placeholder
+      // and restore whichever breadcrumb was active before the query was sent.
+      setBreadcrumbs((prevBreadcrumbs) => prevBreadcrumbs.filter((crumb) => crumb.requestId !== pendingId));
+      setActiveBreadcrumb(preBreadcrumbActiveIdRef.current);
     }
     setStreamingProducts([]);
     setStreamingRequestId('');
@@ -258,6 +286,20 @@ const useChat = (): UseChatResult => {
         image: imageToSend,
       },
     ]);
+
+    // Adds the query to the breadcrumb trail immediately, rather than waiting for the response to
+    // finish streaming. Uses a locally-generated placeholder id (the real requestId only arrives
+    // via the 'reqid' SSE event below) so commitResponse can find and reconcile this exact entry
+    // once the turn completes — see pendingBreadcrumbIdRef.
+    pendingBreadcrumbCounterRef.current += 1;
+    const pendingBreadcrumbId = `pending-${pendingBreadcrumbCounterRef.current}`;
+    pendingBreadcrumbIdRef.current = pendingBreadcrumbId;
+    preBreadcrumbActiveIdRef.current = activeBreadcrumbId;
+    setBreadcrumbs((prevBreadcrumbs) => [
+      ...prevBreadcrumbs,
+      { requestId: pendingBreadcrumbId, label: truncateLabel(messageToSend || ''), products: [] },
+    ]);
+    setActiveBreadcrumb(pendingBreadcrumbId);
 
     let chatIdFromResp = '';
     let reqIdFromResp = '';
@@ -405,6 +447,8 @@ const useChat = (): UseChatResult => {
     activeStreamControllerRef.current = null;
     stopAudio();
     resetReplyState();
+    pendingBreadcrumbIdRef.current = null;
+    preBreadcrumbActiveIdRef.current = null;
     setChats([]);
     setBreadcrumbs([]);
     setActiveBreadcrumb(null);

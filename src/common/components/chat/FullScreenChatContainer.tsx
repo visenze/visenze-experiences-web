@@ -150,7 +150,7 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
       onKeyDown={handleKeyDown}
     >
       <div className={cn('flex h-full w-full flex-col', breakpoint === WidgetBreakpoint.DESKTOP && !fullWidth && 'max-w-[820px]')}>
-        <div className='flex w-full items-center justify-between py-4'>
+        <div className='flex w-full items-center justify-between border-b border-neutral-300 py-2 dark:border-neutral-800'>
           <h2 id={ariaLabelledBy} className='m-0 flex items-center gap-2 px-4' style={{ color: iconColor }}>
             {title}
           </h2>

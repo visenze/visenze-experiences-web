@@ -1,4 +1,4 @@
-import { act, fireEvent, render, type RenderResult } from '@testing-library/react';
+import { act, fireEvent, render, type RenderResult, within } from '@testing-library/react';
 import { type FC, type ReactNode, useCallback, useState } from 'react';
 import { IntlProvider } from 'react-intl';
 import { Context as ResponsiveContext } from 'react-responsive';
@@ -886,20 +886,6 @@ describe('ai-search-launcher', () => {
       streamProductsWithoutClosing();
       expect(result.queryByTestId('asl-split-layout')).toBeNull();
     });
-
-    it('shows the in-flight query as the products pane header immediately, without waiting for the response to commit', () => {
-      const result = renderAtWidth(1200, { chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' } });
-      openAskAi(result);
-
-      streamProductsWithoutClosing();
-
-      // Scoped to the eyebrow's sibling specifically — "Show me shoes" also appears verbatim as
-      // the user's own chat bubble in the left pane, so a plain getTextInBody would pass even if
-      // the header itself never updated. The header must reflect the in-flight query as soon as
-      // the user message is pushed to `chats`, not only once commitResponse runs.
-      const eyebrow = result.getByText(texts['en']['resultsForEyebrow']);
-      expect(eyebrow.nextElementSibling?.textContent).toBe('Show me shoes');
-    });
   });
 
   describe('breadcrumb / hint-line sync (splitlayout, desktop)', () => {
@@ -959,7 +945,7 @@ describe('ai-search-launcher', () => {
       });
     };
 
-    it('clicking an earlier breadcrumb makes it the active crumb', async () => {
+    it('clicking an earlier breadcrumb makes it the active crumb without removing later ones', async () => {
       const result = renderSplitAtDesktop();
       act(() => {
         fireEvent.click(result.getByRole('button', { name: texts['en']['a11yOpenAskAi'] }));
@@ -970,17 +956,20 @@ describe('ai-search-launcher', () => {
       emitProductsTurn('blue jeans but cropped', 'req-2');
       await revealAll();
 
-      // Refinement (shares "jeans"), so the trail has both crumbs and the newest is active.
-      const newerCrumb = result.getByRole('button', { name: /blue jeans but cropped/ });
-      expect(newerCrumb.getAttribute('aria-current')).toBe('true');
+      const trail = within(result.getByRole('navigation', { name: texts['en']['a11yBreadcrumbTrail'] }));
+      // Refinement (shares "jeans"), so the trail has both crumbs and the newest is active
+      // (rendered as non-interactive text, not a button).
+      expect(trail.getByText('blue jeans but cropped').getAttribute('aria-current')).toBe('true');
 
-      const olderCrumb = result.getByRole('button', { name: /Show results for: blue jeans$/ });
+      const olderCrumb = trail.getByRole('button', { name: /Show results for: blue jeans$/ });
       act(() => {
         fireEvent.click(olderCrumb);
       });
 
-      expect(olderCrumb.getAttribute('aria-current')).toBe('true');
-      expect(result.getByRole('button', { name: /blue jeans but cropped/ }).getAttribute('aria-current')).toBeNull();
+      // Clicking the older crumb shows its results and makes it the active, non-interactive
+      // entry — the newer crumb stays in the trail, just no longer marked active.
+      expect(trail.getByText('blue jeans').getAttribute('aria-current')).toBe('true');
+      expect(trail.getByRole('button', { name: /blue jeans but cropped/ }).getAttribute('aria-current')).toBeNull();
     });
 
     it('clicking an in-chat hint line activates the matching crumb, keeping both entry points in sync', async () => {
@@ -1005,7 +994,84 @@ describe('ai-search-launcher', () => {
 
       // Clicking the FIRST turn's hint line activates the FIRST crumb — same handler/state as a
       // direct crumb click, so the two entry points can't drift apart.
-      expect(result.getByRole('button', { name: /Show results for: blue jeans$/ }).getAttribute('aria-current')).toBe('true');
+      const trail = within(result.getByRole('navigation', { name: texts['en']['a11yBreadcrumbTrail'] }));
+      expect(trail.getByText('blue jeans').getAttribute('aria-current')).toBe('true');
+      expect(trail.getByRole('button', { name: /blue jeans but cropped/ })).not.toBeNull();
+    });
+  });
+
+  describe('product results skeleton (splitlayout, desktop)', () => {
+    const renderSplitAtDesktop = (): RenderResult => {
+      const { widgetConfig, widgetClient } = createTestClient({}, {}, {
+        ...DEFAULT_CUSTOMIZATIONS,
+        chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' },
+      });
+      return render(
+        <RootContext.Provider value={document.body}>
+          <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
+            <IntlProvider messages={texts['en']} locale='en' defaultLocale='en'>
+              <ResponsiveContext.Provider value={{ width: 1200 }}>
+                <AiSearchLauncher renderWithoutPortal />
+              </ResponsiveContext.Provider>
+            </IntlProvider>
+          </WidgetDataContext.Provider>
+        </RootContext.Provider>,
+      );
+    };
+
+    it('shows skeleton placeholders while a query is in flight, and swaps them for real products once results stream in', async () => {
+      const result = renderSplitAtDesktop();
+      act(() => {
+        fireEvent.click(result.getByRole('button', { name: texts['en']['a11yOpenAskAi'] }));
+      });
+
+      let onmessage: (ev: { event: string; data: string }) => void = () => {};
+      mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
+        onmessage = options.onmessage;
+      });
+
+      const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
+      act(() => {
+        fireEvent.change(textarea, { target: { value: 'blue jeans' } });
+      });
+      act(() => {
+        fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
+      });
+
+      // Query sent, nothing has streamed back yet: skeleton placeholders fill the grid area
+      // instead of leaving it blank.
+      expect(result.queryByTestId('asl-product-grid-skeleton')).not.toBeNull();
+      expect(result.queryByTestId('wigmix-product-card-anchor')).toBeNull();
+
+      act(() => {
+        onmessage({ event: 'chat_id', data: JSON.stringify({ value: 'chat-1' }) });
+      });
+      act(() => {
+        onmessage({ event: 'reqid', data: JSON.stringify({ value: 'req-1' }) });
+      });
+
+      // 'reqid' has arrived but no product yet: still nothing to show, so the skeleton stays up.
+      expect(result.queryByTestId('asl-product-grid-skeleton')).not.toBeNull();
+
+      act(() => {
+        onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Here: [[pid-req-1]]' }) });
+      });
+      act(() => {
+        onmessage({
+          event: 'product',
+          data: JSON.stringify({
+            product_id: 'pid-req-1',
+            main_image_url: 'https://example.com/shoe.jpg',
+            data: { product_url: 'https://example.com/shoe', price: { currency: 'USD', value: '99.99' }, title: 'Shoe' },
+          }),
+        });
+      });
+
+      // First product has streamed in: the skeleton is replaced by the real (streaming) grid.
+      expect(result.queryByTestId('asl-product-grid-skeleton')).toBeNull();
+      // ProductGrid reveals streamed-in cards one at a time on an interval — advance past it.
+      await revealAll();
+      expect(result.queryAllByTestId('wigmix-product-card-anchor').length).toBeGreaterThan(0);
     });
   });
 });

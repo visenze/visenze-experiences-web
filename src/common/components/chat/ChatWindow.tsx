@@ -351,10 +351,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
                   )}
                   {chat.author === 'user' && chat.messages.map((message, cidx) => (
                     <div
-                      className='flex gap-1 max-w-9/10'
+                      className='flex min-w-0 gap-1 max-w-9/10'
                       key={`chat-user-message-${cidx}`}>
                       <div
-                        className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-800'
+                        className='mb-2 min-w-0 break-words bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800
+                          rounded-lg border border-neutral-100 dark:border-neutral-800'
                       >
                         {message}
                       </div>
@@ -366,14 +367,14 @@ const ChatWindow: FC<ChatWindowProps> = ({
                   ))}
                   {chat.author === 'bot' && chat.messages.map((message, cidx) => (
                     <div
-                      className='flex gap-1 max-w-9/10'
+                      className='flex min-w-0 gap-1 max-w-9/10'
                       key={`chat-bot-message-${cidx}`}>
                       <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
                         bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
                         <SparklesIcon className='size-5' />
                       </div>
                       <div
-                        className='mb-2 w-fit max-w-9/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm
+                        className='mb-2 min-w-0 break-words bg-gray-100 dark:bg-neutral-800 p-2 text-sm
                           text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800'
                         dangerouslySetInnerHTML={{
                           __html: processMessageForDisplay(message),
@@ -437,7 +438,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                   {latestMessage && (
                       <div
                         className={`
-                          mb-2 w-fit max-w-7/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100
+                          mb-2 min-w-0 max-w-7/10 break-words bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100
                           rounded-lg border border-neutral-100 dark:border-neutral-800`}
                         dangerouslySetInnerHTML={{
                           __html: processMessageForDisplay(latestMessage),

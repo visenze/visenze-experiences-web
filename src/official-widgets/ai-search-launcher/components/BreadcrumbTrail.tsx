@@ -1,8 +1,9 @@
 import { cn } from '@heroui/theme';
-import { type FC } from 'react';
+import { type FC, type ReactElement, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { BreadcrumbTurn } from '../../../common/components/chat/use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
+import MagnifyingGlassIcon from '../../../common/icons/MagnifyingGlassIcon';
 
 interface BreadcrumbTrailProps {
   breadcrumbs: BreadcrumbTurn[];
@@ -10,33 +11,206 @@ interface BreadcrumbTrailProps {
   onSelect: (requestId: string) => void;
 }
 
+// Above KEEP_FIRST + KEEP_LAST turns, the middle range collapses behind a "more" chip rather than
+// growing the trail unboundedly — keeps the first couple of searches (session context) and the
+// most recent ones (what the user is actually navigating) always in view.
+const KEEP_FIRST = 2;
+const KEEP_LAST = 2;
+
+// Pill tags rather than breadcrumb links: chevron-separated text reads as hierarchical navigation
+// ("Home > Category > Product"), which misrepresents this trail — every entry is an independent
+// past search, not a drill-down step. A pill per search plus a leading search icon signals "these
+// are queries you've run" at a glance, and the active one gets a solid fill instead of relying on
+// text color alone to show which result set is on screen.
+// `truncate` (overflow-hidden + text-ellipsis + whitespace-nowrap) is applied on an inner block
+// child, not on this flex container itself — text-overflow doesn't reliably clip text sitting
+// directly inside a flex box, and the child additionally needs its own `min-w-0` to be allowed to
+// shrink below the label's natural content width (flex items default to `min-width: auto`, which
+// otherwise blows the pill past `max-w-40` for a long label instead of clipping it).
+const CHIP_CLASSES = cn(
+  'inline-flex min-h-[32px] max-w-40 min-w-0 shrink-0 items-center justify-center rounded-full border px-3 text-sm cursor-pointer',
+  'border-neutral-300 bg-transparent text-neutral-600 hover:bg-neutral-100 hover:text-neutral-800',
+  'dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100',
+  FOCUS_VISIBLE_CLASSES,
+);
+
+const ACTIVE_CHIP_CLASSES = cn(
+  'inline-flex min-h-[32px] max-w-40 min-w-0 shrink-0 items-center justify-center rounded-full border px-3 text-sm font-semibold',
+  'border-teal-600 bg-teal-600 text-white dark:border-teal-500 dark:bg-teal-500',
+);
+
+const BreadcrumbChip: FC<{ crumb: BreadcrumbTurn; isActive: boolean; onSelect: (requestId: string) => void }> = ({
+  crumb, isActive, onSelect,
+}) => {
+  const intl = useIntl();
+  if (isActive) {
+    return (
+      <span aria-current='true' title={crumb.label} className={ACTIVE_CHIP_CLASSES}>
+        <span className='block min-w-0 truncate'>{crumb.label}</span>
+      </span>
+    );
+  }
+  return (
+    <button
+      type='button'
+      title={crumb.label}
+      aria-label={intl.formatMessage({ id: 'a11ySelectResultSet' }, { label: crumb.label })}
+      className={CHIP_CLASSES}
+      onClick={() => onSelect(crumb.requestId)}
+    >
+      <span className='block min-w-0 truncate'>{crumb.label}</span>
+    </button>
+  );
+};
+
+const OverflowChip: FC<{ hidden: BreadcrumbTurn[]; onSelect: (requestId: string) => void }> = ({ hidden, onSelect }) => {
+  const intl = useIntl();
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return undefined;
+    }
+    const handlePointerDown = (event: MouseEvent): void => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return (): void => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  return (
+    <div ref={containerRef} className='relative shrink-0'>
+      <button
+        type='button'
+        aria-haspopup='menu'
+        aria-expanded={isOpen}
+        aria-label={intl.formatMessage({ id: 'a11yShowMoreBreadcrumbs' }, { count: hidden.length })}
+        className={CHIP_CLASSES}
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        •••
+      </button>
+      {isOpen && (
+        <div
+          role='menu'
+          aria-label={intl.formatMessage({ id: 'a11yHiddenBreadcrumbs' })}
+          className={cn(
+            'absolute left-0 top-full z-10 mt-1 max-h-60 w-56 overflow-y-auto rounded-md border py-1 shadow-lg',
+            'border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900',
+          )}
+        >
+          {hidden.map((crumb) => (
+            <button
+              key={crumb.requestId}
+              type='button'
+              role='menuitem'
+              title={crumb.label}
+              className={cn(
+                'block w-full truncate border-0 bg-transparent px-3 py-2 text-left text-sm text-neutral-600 cursor-pointer',
+                'hover:bg-neutral-100 hover:text-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100',
+                FOCUS_VISIBLE_CLASSES,
+              )}
+              onClick={() => {
+                setIsOpen(false);
+                onSelect(crumb.requestId);
+              }}
+            >
+              {crumb.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const BreadcrumbTrail: FC<BreadcrumbTrailProps> = ({ breadcrumbs, activeBreadcrumbId, onSelect }) => {
   const intl = useIntl();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateFades = (): void => {
+    const el = scrollRef.current;
+    if (!el) {
+      return;
+    }
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth);
+  };
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) {
+      return undefined;
+    }
+    // Auto-scroll to the most recent search whenever the trail changes.
+    el.scrollLeft = el.scrollWidth;
+    updateFades();
+    window.addEventListener('resize', updateFades);
+    return (): void => window.removeEventListener('resize', updateFades);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [breadcrumbs]);
+
   if (!breadcrumbs.length) {
     return <></>;
   }
+
+  const showOverflow = breadcrumbs.length > KEEP_FIRST + KEEP_LAST;
+  const visibleFirst = showOverflow ? breadcrumbs.slice(0, KEEP_FIRST) : breadcrumbs;
+  const hiddenMiddle = showOverflow ? breadcrumbs.slice(KEEP_FIRST, breadcrumbs.length - KEEP_LAST) : [];
+  const visibleLast = showOverflow ? breadcrumbs.slice(breadcrumbs.length - KEEP_LAST) : [];
+
+  const items: { key: string; node: ReactElement }[] = [
+    ...visibleFirst.map((crumb) => ({
+      key: crumb.requestId,
+      node: <BreadcrumbChip crumb={crumb} isActive={crumb.requestId === activeBreadcrumbId} onSelect={onSelect} />,
+    })),
+    ...(hiddenMiddle.length ? [{ key: 'overflow', node: <OverflowChip hidden={hiddenMiddle} onSelect={onSelect} /> }] : []),
+    ...visibleLast.map((crumb) => ({
+      key: crumb.requestId,
+      node: <BreadcrumbChip crumb={crumb} isActive={crumb.requestId === activeBreadcrumbId} onSelect={onSelect} />,
+    })),
+  ];
+
   return (
-    <nav aria-label={intl.formatMessage({ id: 'a11yBreadcrumbTrail' })} className='flex flex-wrap items-center gap-1 px-4 py-2 text-sm'>
-      {breadcrumbs.map((crumb, idx) => (
-        <span key={crumb.requestId} className='flex items-center gap-1'>
-          {idx > 0 && <span className='text-neutral-400 dark:text-neutral-600' aria-hidden='true'>&gt;</span>}
-          <button
-            type='button'
-            aria-current={crumb.requestId === activeBreadcrumbId ? 'true' : undefined}
-            aria-label={intl.formatMessage({ id: 'a11ySelectResultSet' }, { label: crumb.label })}
-            className={cn(
-                'min-h-[38px] rounded-md px-2 cursor-pointer bg-transparent border-0',
-                crumb.requestId === activeBreadcrumbId
-                  ? 'font-semibold text-blue-900 dark:text-blue-50'
-                  : 'text-neutral-600 dark:text-neutral-400',
-                FOCUS_VISIBLE_CLASSES,
-            )}
-            onClick={() => onSelect(crumb.requestId)}
-          >
-            {crumb.label}
-          </button>
-        </span>
-      ))}
+    <nav aria-label={intl.formatMessage({ id: 'a11yBreadcrumbTrail' })} className='relative flex items-center gap-2 px-4 py-2'>
+      <span aria-hidden='true' className='shrink-0'>
+        <MagnifyingGlassIcon className='size-3.5 text-neutral-400 dark:text-neutral-500' />
+      </span>
+      <div className='relative min-w-0 flex-1'>
+        {canScrollLeft && (
+          <div
+            aria-hidden='true'
+            className='pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-white to-transparent dark:from-neutral-900'
+          />
+        )}
+        <div ref={scrollRef} onScroll={updateFades} className='flex items-center gap-2 overflow-x-auto scroll-smooth'>
+          {items.map((item) => (
+            <span key={item.key} className='flex shrink-0 items-center'>
+              {item.node}
+            </span>
+          ))}
+        </div>
+        {canScrollRight && (
+          <div
+            aria-hidden='true'
+            className='pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-white to-transparent dark:from-neutral-900'
+          />
+        )}
+      </div>
     </nav>
   );
 };

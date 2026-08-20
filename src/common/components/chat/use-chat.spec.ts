@@ -396,5 +396,52 @@ describe('use-chat', () => {
       expect(hook.result.current.breadcrumbs).toEqual([]);
       expect(hook.result.current.activeBreadcrumbId).toBeNull();
     });
+
+    it('adds a placeholder breadcrumb for the query as soon as it is sent, before any response arrives', () => {
+      const { hook } = renderChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      sendMessageAndGetStreamController(hook, 'Show me blue jeans');
+
+      expect(hook.result.current.breadcrumbs).toHaveLength(1);
+      expect(hook.result.current.breadcrumbs[0]).toMatchObject({ label: 'Show me blue jeans' });
+      expect(hook.result.current.activeBreadcrumbId).toBe(hook.result.current.breadcrumbs[0].requestId);
+    });
+
+    it('reconciles the placeholder breadcrumb with the real request id and products once the response completes', async () => {
+      const { hook } = renderChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      commitProductsTurn(hook, 'Show me blue jeans', 'req-1');
+      await revealAll();
+
+      expect(hook.result.current.breadcrumbs).toHaveLength(1);
+      expect(hook.result.current.breadcrumbs[0]).toMatchObject({ requestId: 'req-1', label: 'Show me blue jeans' });
+      expect(hook.result.current.breadcrumbs[0].products).toHaveLength(1);
+      expect(hook.result.current.activeBreadcrumbId).toBe('req-1');
+    });
+
+    it('drops the placeholder breadcrumb and restores the previous selection when the response has no products', async () => {
+      const { hook } = renderChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      commitProductsTurn(hook, 'Show me blue jeans', 'req-1');
+      await revealAll();
+
+      const stream = sendMessageAndGetStreamController(hook, 'thanks!');
+      expect(hook.result.current.breadcrumbs).toHaveLength(2);
+      stream.emitEvent('chat_id', { value: 'chat-456' });
+      stream.emitEvent('reqid', { value: 'req-2' });
+      stream.emitEvent('chat_token', { value: 'You are welcome!' });
+      stream.closeStream();
+      await revealAll();
+
+      expect(hook.result.current.breadcrumbs).toHaveLength(1);
+      expect(hook.result.current.breadcrumbs[0].requestId).toBe('req-1');
+      expect(hook.result.current.activeBreadcrumbId).toBe('req-1');
+    });
   });
 });

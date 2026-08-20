@@ -65,10 +65,9 @@ const SplitLayout: FC<SplitLayoutProps> = ({
     <ProductsPane
       breadcrumbs={chat.breadcrumbs}
       activeBreadcrumbId={chat.activeBreadcrumbId}
-      setActiveBreadcrumb={chat.setActiveBreadcrumb}
+      onTrailSelect={chat.setActiveBreadcrumb}
       streamingProducts={chat.streamingProducts}
       streamingRequestId={chat.streamingRequestId}
-      chats={chat.chats}
       focusedProductId={chat.focusedProductId}
       wishlistPids={chat.wishlistPids}
       setIsInWishlist={chat.setIsInWishlist}
