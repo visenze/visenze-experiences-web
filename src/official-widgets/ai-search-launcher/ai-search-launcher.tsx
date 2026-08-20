@@ -4,13 +4,16 @@ import { useIntl } from 'react-intl';
 import ChatInputFooter from './components/ChatInputFooter';
 import ImageEntryScreen from './components/ImageEntryScreen';
 import MicEntryScreen from './components/MicEntryScreen';
+import SplitLayout from './components/SplitLayout';
 import MicrophoneIcon from './icons/MicrophoneIcon';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
 import useChat from '../../common/components/chat/use-chat';
+import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { FOCUS_VISIBLE_CLASSES } from '../../common/constants';
 import CameraIcon from '../../common/icons/CameraIcon';
+import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImage } from '../../common/types/image';
 
@@ -28,6 +31,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const root = useContext(RootContext);
   const intl = useIntl();
   const chat = useChat();
+  const breakpoint = useBreakpoint();
   const [activeEntryPoint, setActiveEntryPoint] = useState<EntryPointKey | null>(null);
   const dialogTitleId = `wigmix-ai-search-launcher-title-${appSettings.placementId}`;
   const imageButtonRef = useRef<HTMLButtonElement>(null);
@@ -98,6 +102,14 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   // falls through to the normal chat surface, regardless of `hasStartedChat`.
   const showImageWelcome = activeEntryPoint === 'image' && !chat.hasStartedChat;
   const showMicWelcome = activeEntryPoint === 'mic' && !chat.hasStartedChat;
+
+  // The single place the layout switch lives (see the responsive-redesign design doc §3):
+  // `splitlayout` engages only above the mobile breakpoint AND once the conversation actually has
+  // results to show. Until then — and always on mobile, and always for `chatlayout` — the same
+  // single-column chat surface renders instead, so there's no empty products pane to design.
+  const showSplit = customizations.chat?.layout === 'splitlayout'
+    && breakpoint !== WidgetBreakpoint.MOBILE
+    && (chat.breadcrumbs.length > 0 || chat.streamingProducts.length > 0);
 
   useEffect(() => {
     if (customizations.chat?.startMuted) {
@@ -204,10 +216,28 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
         widgetName='ai-search-launcher'
         ariaLabelledBy={dialogTitleId}
         renderWithoutPortal={renderWithoutPortal}
+        fullWidth={showSplit}
       >
         {showImageWelcome && <ImageEntryScreen chat={chat} />}
         {showMicWelcome && <MicEntryScreen chat={chat} />}
-        {!showImageWelcome && !showMicWelcome && (
+        {!showImageWelcome && !showMicWelcome && showSplit && (
+          <SplitLayout
+            chat={chat}
+            darkMode={darkMode}
+            fontColorLight={customizations.generalLayout?.fontColor}
+            fontColorDark={customizations.generalLayout?.fontColorDark}
+            chatCameraEnabled={customizations.launcher?.chatCameraEnabled !== false}
+            imageUploadIconUrl={customizations.imageUpload?.icon?.url}
+            chatInputRef={chatInputRef}
+            openChatCameraButtonRef={openChatCameraButtonRef}
+            showChatCameraCapture={showChatCameraCapture}
+            setShowChatCameraCapture={setShowChatCameraCapture}
+            closeChatCameraCapture={closeChatCameraCapture}
+            handleChatImage={handleChatImage}
+            handleSend={handleSend}
+          />
+        )}
+        {!showImageWelcome && !showMicWelcome && !showSplit && (
           <>
             <ChatWindow
               isWaiting={chat.isWaiting}

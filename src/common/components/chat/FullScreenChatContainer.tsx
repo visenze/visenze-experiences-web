@@ -41,6 +41,9 @@ interface FullScreenChatContainerProps {
   // Test-only escape hatch, same reason ViSenzeModal has one: Portal + Shadow DOM is hard to
   // query directly in RTL/jsdom.
   renderWithoutPortal?: boolean;
+  // When true, the desktop max-w-[820px] constraint is dropped so children can fill the full
+  // viewport width — used by split-layout's two-pane view. Defaults to false (today's behavior).
+  fullWidth?: boolean;
 }
 
 const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -63,6 +66,7 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
   ariaLabelledBy,
   children,
   renderWithoutPortal,
+  fullWidth = false,
 }) => {
   const intl = useIntl();
   const breakpoint = useBreakpoint();
@@ -145,7 +149,7 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
       className='fixed inset-0 z-50 flex justify-center bg-white dark:bg-neutral-900'
       onKeyDown={handleKeyDown}
     >
-      <div className={cn('flex h-full w-full flex-col', breakpoint === WidgetBreakpoint.DESKTOP && 'max-w-[820px]')}>
+      <div className={cn('flex h-full w-full flex-col', breakpoint === WidgetBreakpoint.DESKTOP && !fullWidth && 'max-w-[820px]')}>
         <div className='flex w-full items-center justify-between py-4'>
           <h2 id={ariaLabelledBy} className='m-0 flex items-center gap-2 px-4' style={{ color: iconColor }}>
             {title}
