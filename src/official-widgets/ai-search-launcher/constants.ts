@@ -1,5 +1,3 @@
-export const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
-
 // Waited between each newly-revealed product card while a reply is still streaming in, so
 // cards appear one at a time instead of all popping in together. One interval per `products`
 // array (not recreated per card) ticks forward and self-clears once every card is revealed —

@@ -6,7 +6,7 @@ import ArrowPathIcon from '../../../common/icons/ArrowPathIcon';
 import CameraIcon from '../../../common/icons/CameraIcon';
 import UturnLeftIcon from '../../../common/icons/UturnLeftIcon';
 import type { SearchImage } from '../../../common/types/image';
-import { FOCUS_VISIBLE_CLASSES } from '../constants';
+import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 
 interface WebcamCaptureProps {
   darkMode?: boolean;

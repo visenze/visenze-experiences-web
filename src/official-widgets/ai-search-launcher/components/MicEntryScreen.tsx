@@ -3,7 +3,7 @@ import { cn } from '@heroui/theme';
 import { type FC, type ReactElement, useContext, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { WidgetDataContext } from '../../../common/types/contexts';
-import { FOCUS_VISIBLE_CLASSES } from '../constants';
+import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 import MicrophoneIcon from '../icons/MicrophoneIcon';
 import StopIcon from '../icons/StopIcon';
 import SubmitChatIcon from '../icons/SubmitChatIcon';

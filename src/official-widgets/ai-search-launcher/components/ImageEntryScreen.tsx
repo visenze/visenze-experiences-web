@@ -8,7 +8,7 @@ import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 import UploadIcon from '../../../common/icons/UploadIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import type { SearchImage } from '../../../common/types/image';
-import { FOCUS_VISIBLE_CLASSES } from '../constants';
+import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 import type { UseLauncherChatResult } from '../use-launcher-chat';
 
 interface ImageEntryScreenProps {

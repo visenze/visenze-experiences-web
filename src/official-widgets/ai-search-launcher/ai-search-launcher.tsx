@@ -7,7 +7,7 @@ import ImageEntryScreen from './components/ImageEntryScreen';
 import LauncherChatWindow from './components/LauncherChatWindow';
 import MicEntryScreen from './components/MicEntryScreen';
 import WebcamCapture from './components/WebcamCapture';
-import { FOCUS_VISIBLE_CLASSES } from './constants';
+import { FOCUS_VISIBLE_CLASSES } from '../../common/constants';
 import MicrophoneIcon from './icons/MicrophoneIcon';
 import StopIcon from './icons/StopIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';

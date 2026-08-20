@@ -8,8 +8,9 @@ import UserIcon from '../../../common/icons/UserIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
-import { FOCUS_VISIBLE_CLASSES, FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS, USER_SCROLL_IDLE_MS } from '../constants';
-import DownArrowIcon from '../icons/DownArrowIcon';
+import { FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS, USER_SCROLL_IDLE_MS } from '../constants';
+import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
+import DownArrowIcon from '../../../common/icons/DownArrowIcon';
 import type { Chat } from '../use-launcher-chat';
 
 interface LauncherChatWindowProps {
