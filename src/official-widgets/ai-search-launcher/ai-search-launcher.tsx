@@ -2,7 +2,6 @@ import { Textarea } from '@heroui/input';
 import { cn } from '@heroui/theme';
 import { type FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import FullScreenContainer from './components/FullScreenContainer';
 import ImageEntryScreen from './components/ImageEntryScreen';
 import MicEntryScreen from './components/MicEntryScreen';
 import WebcamCapture from './components/WebcamCapture';
@@ -10,6 +9,7 @@ import MicrophoneIcon from './icons/MicrophoneIcon';
 import StopIcon from './icons/StopIcon';
 import SubmitChatIcon from './icons/SubmitChatIcon';
 import ChatWindow from '../../common/components/chat/ChatWindow';
+import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
 import useChat from '../../common/components/chat/use-chat';
 import FileDropzone from '../../common/components/FileDropzone';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -24,7 +24,7 @@ type EntryPointKey = 'image' | 'mic' | 'ai';
 
 interface AiSearchLauncherProps {
   // Test-only escape hatch, mirroring ShoppingAssistant's `renderModalWithoutPortal` — lets specs
-  // bypass FullScreenContainer's Portal + Shadow DOM (hard to query directly in RTL/jsdom).
+  // bypass FullScreenChatContainer's Portal + Shadow DOM (hard to query directly in RTL/jsdom).
   renderWithoutPortal?: boolean;
 }
 
@@ -193,7 +193,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
           </button>
         )}
       </div>
-      <FullScreenContainer
+      <FullScreenChatContainer
         open={chat.isOpen}
         onClose={handleClose}
         title={customizations.chat?.title || intl.formatMessage({ id: 'widgetTitle' })}
@@ -207,6 +207,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
         fontColor={customizations.generalLayout?.fontColor}
         fontColorDark={customizations.generalLayout?.fontColorDark}
         placementId={String(appSettings.placementId)}
+        widgetName='ai-search-launcher'
         ariaLabelledBy={dialogTitleId}
         renderWithoutPortal={renderWithoutPortal}
       >
@@ -341,7 +342,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
             </div>
           </>
         )}
-      </FullScreenContainer>
+      </FullScreenChatContainer>
     </>
   );
 };

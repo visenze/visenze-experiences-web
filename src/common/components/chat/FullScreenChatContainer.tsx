@@ -1,23 +1,23 @@
 import { cn } from '@heroui/theme';
 import { type FC, type KeyboardEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
-import Portal from '../../../common/components/portal';
-import ShadowWrapper from '../../../common/components/shadow-wrapper';
-import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
-import CloseIcon from '../../../common/icons/CloseIcon';
-import PlusCircleIcon from '../../../common/icons/PlusCircleIcon';
-import SpeakerIcon from '../../../common/icons/SpeakerIcon';
-import { WidgetBreakpoint } from '../../../common/types/constants';
+import { FOCUS_VISIBLE_CLASSES } from '../../constants';
+import CloseIcon from '../../icons/CloseIcon';
+import PlusCircleIcon from '../../icons/PlusCircleIcon';
+import SpeakerIcon from '../../icons/SpeakerIcon';
+import { WidgetBreakpoint } from '../../types/constants';
+import useBreakpoint from '../hooks/use-breakpoint';
+import Portal from '../portal';
+import ShadowWrapper from '../shadow-wrapper';
 
-interface FullScreenContainerProps {
+interface FullScreenChatContainerProps {
   open: boolean;
   onClose: () => void;
   title: string;
   isMuted: boolean;
   onToggleMute: () => void;
   // Hides the mute/unmute toggle entirely when voice is disabled widget-wide (customizations
-  // .launcher.voiceEnabled === false) — mirrors shopping-assistant gating its own SpeakerIcon on
+  // .chat.voiceEnabled === false) — mirrors shopping-assistant gating its own SpeakerIcon on
   // `speechOutputEnabled`.
   showVoiceToggle: boolean;
   onNewChat: () => void;
@@ -29,6 +29,9 @@ interface FullScreenContainerProps {
   fontColor?: string;
   fontColorDark?: string;
   placementId: string;
+  // Identifies the consuming widget in the portal element's id (e.g. 'ai-search-launcher'), so
+  // multiple widgets embedding this same shared container on one page get distinct portal ids.
+  widgetName: string;
   ariaLabelledBy: string;
   children: ReactNode;
   // Test-only escape hatch, same reason ViSenzeModal has one: Portal + Shadow DOM is hard to
@@ -38,7 +41,7 @@ interface FullScreenContainerProps {
 
 const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-const FullScreenContainer: FC<FullScreenContainerProps> = ({
+const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
   open,
   onClose,
   title,
@@ -52,6 +55,7 @@ const FullScreenContainer: FC<FullScreenContainerProps> = ({
   fontColor,
   fontColorDark,
   placementId,
+  widgetName,
   ariaLabelledBy,
   children,
   renderWithoutPortal,
@@ -188,7 +192,7 @@ const FullScreenContainer: FC<FullScreenContainerProps> = ({
   }
 
   return (
-    <Portal idName={`visenze-widget-ai-search-launcher-fullscreen-${placementId}`}>
+    <Portal idName={`visenze-widget-${widgetName}-fullscreen-${placementId}`}>
       <ShadowWrapper darkMode={darkMode} fontFamily={fontFamily || ''}>
         {content}
       </ShadowWrapper>
@@ -196,4 +200,4 @@ const FullScreenContainer: FC<FullScreenContainerProps> = ({
   );
 };
 
-export default FullScreenContainer;
+export default FullScreenChatContainer;
