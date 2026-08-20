@@ -48,6 +48,15 @@ interface ChatWindowProps {
   onSelectTurn?: (requestId: string) => void;
 }
 
+// Matches ProductsPane's column breakpoints: a fixed 2-column grid looks fine on mobile widths,
+// but at desktop widths it leaves cards wide enough that a portrait `imageAspectRatio` (the
+// default is 3/4) renders taller than the chat surface, hiding the "Now Describing" badge during
+// narration.
+const PRODUCT_GRID_COLUMNS_CLASSES = 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+// Backstop for the same overflow, independent of column count or aspect-ratio customization: no
+// single product image may exceed a fraction of the viewport's height.
+const PRODUCT_IMAGE_MAX_HEIGHT_CLASS = 'max-h-[45vh]';
+
 interface SuggestionChipsProps {
   suggestions: string[];
   showAll: boolean;
@@ -222,20 +231,26 @@ const ChatWindow: FC<ChatWindowProps> = ({
     autoScrollToBottom();
   }, [chats.length]);
 
-  // While a product is being narrated, ProductGrid's own scroll-into-view effect owns scrolling
+  // While a product is being narrated AND this ChatWindow renders the product grid inline
+  // (productDisplayMode === 'grid'), ProductGrid's own scroll-into-view effect owns scrolling
   // instead — otherwise this would snap to the bottom of the stream on every token/typewriter tick
-  // and scroll the currently-narrated product (which is rarely the last one) out of view.
-  useEffect(() => {
-    if (!focusedProductId) {
-      autoScrollToBottom();
-    }
-  }, [latestMessage, focusedProductId]);
+  // and scroll the currently-narrated product (which is rarely the last one) out of view. In
+  // 'hint' mode (split-layout's chat pane) there's no ProductGrid in this container at all — the
+  // real grid lives in the separate ProductsPane — so nothing else would scroll this pane during
+  // narration, leaving stale text on screen until narration ends and focusedProductId clears.
+  const focusedProductOwnsScroll = productDisplayMode === 'grid' && !!focusedProductId;
 
   useEffect(() => {
-    if (!focusedProductId) {
+    if (!focusedProductOwnsScroll) {
       autoScrollToBottom();
     }
-  }, [streamingProducts.length, focusedProductId]);
+  }, [latestMessage, focusedProductOwnsScroll]);
+
+  useEffect(() => {
+    if (!focusedProductOwnsScroll) {
+      autoScrollToBottom();
+    }
+  }, [streamingProducts.length, focusedProductOwnsScroll]);
 
   const processMessageForDisplay = (message: string): string => message
       // quick sanitization
@@ -311,11 +326,9 @@ const ChatWindow: FC<ChatWindowProps> = ({
           {chats.map((chat, idx) => (
               <Fragment key={`chat-row-${idx}`}>
                 <div className={cn(
-                    'w-full',
-                    chat.author === 'products' && productDisplayMode === 'grid' ? `grid grid-cols-2 ${getProductGridCssClasses('gap-x-4')}` : 'flex flex-col',
+                    'w-full flex flex-col',
                     chat.author === 'user' ? 'items-end' : '',
-                )}
-                     style={getProductGridCssConfig(chat.author === 'products' && productDisplayMode === 'grid')}>
+                )}>
                   {chat.author === 'user' && chat.image && (
                     <div className='flex gap-1 max-w-9/10'>
                       <div
@@ -390,7 +403,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
                         wishlistPids={wishlistPids}
                         setIsInWishlist={setIsInWishlist}
                         pwPrefix={pwPrefix}
-                        className={cn('grid grid-cols-2', getProductGridCssClasses('gap-x-4'))}
+                        imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
+                        className={cn('grid pl-9', PRODUCT_GRID_COLUMNS_CLASSES, getProductGridCssClasses('gap-x-4'))}
                         style={getProductGridCssConfig(true)}
                       />
                     )
@@ -432,20 +446,19 @@ const ChatWindow: FC<ChatWindowProps> = ({
                   )}
                 </div>
                 {streamingRequestId && streamingProducts.length > 0 && productDisplayMode === 'grid' && (
-                    <div
-                      className={cn('w-full grid grid-cols-2', getProductGridCssClasses('gap-x-4'))}
-                      style={getProductGridCssConfig(true)}>
-                      <ProductGrid
-                        products={streamingProducts}
-                        requestId={streamingRequestId}
-                        focusedProductId={focusedProductId}
-                        focusedRequestId={streamingRequestId}
-                        wishlistPids={wishlistPids}
-                        setIsInWishlist={setIsInWishlist}
-                        pwPrefix={pwPrefix}
-                        streaming
-                      />
-                    </div>
+                    <ProductGrid
+                      products={streamingProducts}
+                      requestId={streamingRequestId}
+                      focusedProductId={focusedProductId}
+                      focusedRequestId={streamingRequestId}
+                      wishlistPids={wishlistPids}
+                      setIsInWishlist={setIsInWishlist}
+                      pwPrefix={pwPrefix}
+                      streaming
+                      imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
+                      className={cn('w-full grid pl-9', PRODUCT_GRID_COLUMNS_CLASSES, getProductGridCssClasses('gap-x-4'))}
+                      style={getProductGridCssConfig(true)}
+                    />
                 )}
               </>
           )}

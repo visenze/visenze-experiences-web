@@ -19,10 +19,15 @@ interface ProductGridProps {
   streaming?: boolean;
   className?: string;
   style?: CSSProperties;
+  // Forwarded to each ProductCard's own `imageClasses` — lets a consumer cap image height (e.g.
+  // narration surfaces where a tall portrait aspect ratio combined with few grid columns would
+  // otherwise push a card taller than the viewport, hiding the "Now Describing" badge).
+  imageClasses?: string;
 }
 
 const ProductGrid: FC<ProductGridProps> = ({
   products, requestId, focusedProductId = null, focusedRequestId = null, wishlistPids, setIsInWishlist, pwPrefix, streaming = false, className, style,
+  imageClasses,
 }) => {
   const intl = useIntl();
   const [revealedCount, setRevealedCount] = useState(streaming ? 0 : products.length);
@@ -94,6 +99,7 @@ const ProductGrid: FC<ProductGridProps> = ({
             setIsInWishlist={setIsInWishlist}
             index={pidx}
             pwPrefix={pwPrefix}
+            imageClasses={imageClasses}
             isRecommendation={false}
             hasFindSimilar={false}
             skipViewTracking={viewedProductIdsRef.current.has(viewedKey)}

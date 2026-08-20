@@ -30,12 +30,26 @@ jest.mock('react-webcam', () => {
   };
 });
 
-// Mock @heroui/input Textarea
+// Mock @heroui/input Textarea/Input
 jest.mock('@heroui/input', () => ({
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   Textarea: (props: any) => (
     <div data-testid='chat-textarea-wrapper'>
       <textarea
+        data-testid='chat-textarea'
+        aria-label={props['aria-label']}
+        value={props.value}
+        placeholder={props.placeholder}
+        onChange={props.onChange}
+        onKeyDown={props.onKeyDown}
+      />
+      {props.endContent && <div data-testid='chat-submit-button'>{props.endContent}</div>}
+    </div>
+  ),
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  Input: (props: any) => (
+    <div data-testid='chat-textarea-wrapper'>
+      <input
         data-testid='chat-textarea'
         aria-label={props['aria-label']}
         value={props.value}
@@ -138,7 +152,7 @@ describe('ai-search-launcher', () => {
     closeStream: () => void;
     triggerError: (error: Error) => void;
   } => {
-    const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+    const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
 
     let onmessage: (ev: { event: string; data: string }) => void;
     let onclose: () => void;
@@ -297,9 +311,11 @@ describe('ai-search-launcher', () => {
       expect(testComponent.getByTestId('chat-textarea')).toBeTruthy();
       // Ask AI has no dedicated welcome screen, so the "new chat" trigger is available right away.
       expect(testComponent.getByRole('button', { name: texts['en']['a11yStartNewChat'] })).toBeTruthy();
-      // Camera/upload controls above the chat input, mirroring shopping-assistant's chat footer.
-      expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeTruthy();
-      expect(testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' })).toBeTruthy();
+      // Camera/upload are combined behind a single "Add image" trigger inside the input pill,
+      // mirroring shopping-assistant's chat footer but collapsed to one icon (see the "chat footer
+      // — combined image icon" describe block for the popover's own behavior).
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'] })).toBeTruthy();
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeNull();
     });
 
     it('should show the mic icon and recording controls when the browser supports speech recognition', () => {
@@ -517,12 +533,19 @@ describe('ai-search-launcher', () => {
         renderLauncher();
         openEntryPointAndWait('a11yOpenAskAi');
 
+        const addImageButton = testComponent.getByRole('button', { name: texts['en']['a11yAddImage'] });
+        act(() => {
+          fireEvent.click(addImageButton);
+        });
+
         const cameraButton = testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'] });
         act(() => {
           fireEvent.click(cameraButton);
         });
 
         expect(testComponent.getByTestId('mock-webcam')).toBeTruthy();
+        // The popover closes itself once an option is chosen.
+        expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeNull();
 
         const takePhotoButton = testComponent.getByRole('button', { name: texts['en']['a11yTakePhoto'] });
         await act(async () => {
@@ -536,6 +559,63 @@ describe('ai-search-launcher', () => {
       } finally {
         global.fetch = originalFetch;
       }
+    });
+  });
+
+  describe('chat footer — combined image icon', () => {
+    it('shows a single "Add image" trigger instead of separate camera/upload buttons', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'] })).toBeTruthy();
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeNull();
+      expect(testComponent.queryByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' })).toBeNull();
+    });
+
+    it('reveals "Open camera" and "Upload image" options when the Add image trigger is clicked', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'] }));
+      });
+
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeTruthy();
+      expect(testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' })).toBeTruthy();
+    });
+
+    it('closes the menu without opening the camera or upload picker when clicking outside it', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'] }));
+      });
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeTruthy();
+
+      act(() => {
+        fireEvent.mouseDown(document.body);
+      });
+
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeNull();
+      expect(testComponent.queryByTestId('mock-webcam')).toBeNull();
+    });
+
+    it('closes the menu when Escape is pressed', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      const addImageButton = testComponent.getByRole('button', { name: texts['en']['a11yAddImage'] });
+      act(() => {
+        fireEvent.click(addImageButton);
+      });
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeTruthy();
+
+      act(() => {
+        fireEvent.keyDown(document.body, { key: 'Escape' });
+      });
+
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenCamera'] })).toBeNull();
     });
   });
 
@@ -744,7 +824,7 @@ describe('ai-search-launcher', () => {
     // Streams a turn that produces one product, stopping short of onclose so the assertion can
     // observe the mid-stream (pre-commit) state.
     const streamProductsWithoutClosing = (): void => {
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
       let onmessage: (ev: { event: string; data: string }) => void = () => {};
       mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
         onmessage = options.onmessage;
@@ -842,7 +922,7 @@ describe('ai-search-launcher', () => {
     };
 
     const emitProductsTurn = (message: string, requestId: string): void => {
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
       let onmessage: (ev: { event: string; data: string }) => void = () => {};
       let onclose: () => void = () => {};
       mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {

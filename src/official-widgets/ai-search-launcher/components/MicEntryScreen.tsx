@@ -161,7 +161,7 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
                 className={cn('p-0 bg-transparent border-0 disabled:opacity-50', FOCUS_VISIBLE_CLASSES)}
                 onClick={handleSend}
               >
-                <SubmitChatIcon color={iconColor} />
+                <SubmitChatIcon className='size-6' color={iconColor} />
               </button>
             }
           />

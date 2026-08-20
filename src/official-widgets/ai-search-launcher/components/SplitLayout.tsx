@@ -12,7 +12,7 @@ interface SplitLayoutProps {
   fontColorDark?: string;
   chatCameraEnabled: boolean;
   imageUploadIconUrl?: string;
-  chatInputRef: RefObject<HTMLTextAreaElement>;
+  chatInputRef: RefObject<HTMLInputElement>;
   openChatCameraButtonRef: RefObject<HTMLButtonElement>;
   showChatCameraCapture: boolean;
   setShowChatCameraCapture: (show: boolean) => void;

@@ -37,7 +37,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const imageButtonRef = useRef<HTMLButtonElement>(null);
   const micButtonRef = useRef<HTMLButtonElement>(null);
   const aiButtonRef = useRef<HTMLButtonElement>(null);
-  const chatInputRef = useRef<HTMLTextAreaElement>(null);
+  const chatInputRef = useRef<HTMLInputElement>(null);
   const openChatCameraButtonRef = useRef<HTMLButtonElement>(null);
   // Camera/upload/mic controls on the main chat surface's input footer (mirroring
   // shopping-assistant's single-screen chat footer), distinct from the dedicated image/mic entry
