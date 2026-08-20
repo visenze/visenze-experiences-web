@@ -804,6 +804,20 @@ describe('ai-search-launcher', () => {
       streamProductsWithoutClosing();
       expect(result.queryByTestId('asl-split-layout')).toBeNull();
     });
+
+    it('shows the in-flight query as the products pane header immediately, without waiting for the response to commit', () => {
+      const result = renderAtWidth(1200, { chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' } });
+      openAskAi(result);
+
+      streamProductsWithoutClosing();
+
+      // Scoped to the eyebrow's sibling specifically — "Show me shoes" also appears verbatim as
+      // the user's own chat bubble in the left pane, so a plain getTextInBody would pass even if
+      // the header itself never updated. The header must reflect the in-flight query as soon as
+      // the user message is pushed to `chats`, not only once commitResponse runs.
+      const eyebrow = result.getByText(texts['en']['resultsForEyebrow']);
+      expect(eyebrow.nextElementSibling?.textContent).toBe('Show me shoes');
+    });
   });
 
   describe('breadcrumb / hint-line sync (splitlayout, desktop)', () => {
