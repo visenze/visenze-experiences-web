@@ -45,19 +45,13 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
     openCameraButtonRef.current?.focus();
   }, []);
 
-  // Preset gallery images (camera-search's UploadScreen pattern) are plain URLs, but this
-  // screen's only way to feed an image into the chat is `chat.sendMessage`'s image param, which
-  // only attaches an actual File to the outgoing request (see use-chat's isImageFile
-  // check) — a bare `imgUrl` never reaches the backend as image bytes. Fetching the preset URL
-  // into a File first (same fetch-to-blob-to-File conversion WebcamCapture already does for
-  // webcam screenshots) keeps this working through the same File-based path.
+  // Preset gallery images (camera-search's UploadScreen pattern, see its onGallerySelect) are
+  // sent straight through as a URL — `chat.sendMessage` forwards an `imgUrl` to the backend as
+  // `im_url` (use-chat.ts), which fetches it server-side. Converting it to a File in the browser
+  // first would require the gallery host to send CORS headers just to serve an `<img>` tag, which
+  // it generally won't (that's the plain-`<img src>` display path just above, not this one).
   const handleGallerySelect = (url: string): void => {
-    fetch(url)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const file = new File([blob], `${Date.now()}`, { type: blob.type || 'image/jpeg' });
-        handleImage({ files: [file], file: url });
-      });
+    handleImage({ imgUrl: url });
   };
 
   // The configured greeting (played into `chat.chats` as a bot bubble by the parent's greeting

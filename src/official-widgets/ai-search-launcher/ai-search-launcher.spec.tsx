@@ -489,11 +489,9 @@ describe('ai-search-launcher', () => {
       expect(testComponent.queryByTestId('wigmix-gallery-image-1')).toBeNull();
     });
 
-    it('should render configured gallery images and send the selected one as the initial chat message', async () => {
+    it('should render configured gallery images and send the selected one as the initial chat message, as an im_url with no client-side fetch', async () => {
       const originalFetch = global.fetch;
-      global.fetch = jest.fn().mockResolvedValue({
-        blob: jest.fn().mockResolvedValue(new Blob(['image-bytes'], { type: 'image/jpeg' })),
-      }) as unknown as typeof fetch;
+      global.fetch = jest.fn();
       mockFetchEventSource.mockImplementation(async () => {});
 
       try {
@@ -511,8 +509,13 @@ describe('ai-search-launcher', () => {
           fireEvent.click(galleryImage);
         });
 
-        expect(global.fetch).toHaveBeenCalledWith('https://example.com/shoe.jpg');
-        expect(mockFetchEventSource).toHaveBeenCalled();
+        // The gallery URL must reach the backend as `im_url` for it to fetch server-side —
+        // the browser never fetches it directly, so a gallery host without CORS headers
+        // (typical for a client's product-catalog CDN, which only needs to serve <img> tags)
+        // still works.
+        expect(global.fetch).not.toHaveBeenCalled();
+        const [calledUrl] = mockFetchEventSource.mock.calls[0];
+        expect(decodeURIComponent(calledUrl as string)).toContain('im_url=https://example.com/shoe.jpg');
         const uploadedImage = testComponent.getByAltText(texts['en']['a11yUploadedImage']) as HTMLImageElement;
         expect(uploadedImage.src).toBe('https://example.com/shoe.jpg');
       } finally {

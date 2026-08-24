@@ -25,6 +25,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     addToCart: 'Add to Cart',
     hintResultsShown: '↳ {count} results shown',
     a11yBreadcrumbTrail: 'Search refinement steps',
+    imageSearchLabel: 'Image search',
     a11ySelectResultSet: 'Show results for: {label}',
     a11yShowMoreBreadcrumbs: 'Show {count} more searches',
     a11yHiddenBreadcrumbs: 'Hidden searches',

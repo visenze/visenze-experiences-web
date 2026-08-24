@@ -5,6 +5,7 @@ import type { BreadcrumbTurn } from '../../../common/components/chat/use-chat';
 
 const messages = {
   a11yBreadcrumbTrail: 'Search refinement steps',
+  imageSearchLabel: 'Image search',
   a11ySelectResultSet: 'Show results for: {label}',
   a11yShowMoreBreadcrumbs: 'Show {count} more searches',
   a11yHiddenBreadcrumbs: 'Hidden searches',
@@ -48,6 +49,15 @@ describe('BreadcrumbTrail', () => {
   it('renders nothing when there are no breadcrumbs', () => {
     const { queryByRole } = renderTrail([], null);
     expect(queryByRole('navigation')).toBeNull();
+  });
+
+  it('shows a placeholder label instead of an empty pill for an image-only turn (no typed text)', () => {
+    const { getByRole, getByText } = renderTrail(
+      [{ requestId: 'req-1', label: '', products: [] }, { requestId: 'req-2', label: 'cropped', products: [] }],
+      'req-2',
+    );
+    const imageCrumb = getByRole('button', { name: 'Show results for: Image search' });
+    expect(getByText('Image search')).toBe(imageCrumb.querySelector('span'));
   });
 
   it('sets a title attribute with the full label for tooltip-on-hover, for both active and inactive crumbs', () => {

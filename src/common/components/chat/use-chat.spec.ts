@@ -173,6 +173,23 @@ describe('use-chat', () => {
     expect(hook.result.current.isWaiting).toBe(true);
   });
 
+  it('sendMessage should forward an { imgUrl } image as an im_url query param, without fetching it', () => {
+    const { hook } = renderChat();
+    act(() => {
+      hook.result.current.open();
+    });
+
+    mockFetchEventSource.mockImplementation(async () => {});
+    act(() => {
+      hook.result.current.sendMessage(undefined, { imgUrl: 'https://example.com/shoe.jpg' });
+    });
+
+    const [calledUrl] = mockFetchEventSource.mock.calls[0];
+    expect(decodeURIComponent(calledUrl as string)).toContain('im_url=https://example.com/shoe.jpg');
+    const [, requestOptions] = mockFetchEventSource.mock.calls[0];
+    expect((requestOptions as { body: FormData }).body.has('image')).toBe(false);
+  });
+
   it('should commit the bot reply and any products to chats once the SSE stream closes', async () => {
     const { hook } = renderChat();
     act(() => {

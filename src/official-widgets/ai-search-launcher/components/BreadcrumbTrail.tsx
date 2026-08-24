@@ -168,10 +168,18 @@ const BreadcrumbTrail: FC<BreadcrumbTrailProps> = ({ breadcrumbs, activeBreadcru
     return <></>;
   }
 
-  const showOverflow = breadcrumbs.length > KEEP_FIRST + KEEP_LAST;
-  const visibleFirst = showOverflow ? breadcrumbs.slice(0, KEEP_FIRST) : breadcrumbs;
-  const hiddenMiddle = showOverflow ? breadcrumbs.slice(KEEP_FIRST, breadcrumbs.length - KEEP_LAST) : [];
-  const visibleLast = showOverflow ? breadcrumbs.slice(breadcrumbs.length - KEEP_LAST) : [];
+  // An image-only turn (no typed text) reaches here with an empty `label` — use-chat.ts derives
+  // it straight from the message text, and there isn't one. Substituting a placeholder here,
+  // once, keeps BreadcrumbChip/OverflowChip simple and covers both the visible-pill text and the
+  // a11ySelectResultSet/title strings that read off `crumb.label`.
+  const namedBreadcrumbs = breadcrumbs.map((crumb) => (
+    crumb.label ? crumb : { ...crumb, label: intl.formatMessage({ id: 'imageSearchLabel' }) }
+  ));
+
+  const showOverflow = namedBreadcrumbs.length > KEEP_FIRST + KEEP_LAST;
+  const visibleFirst = showOverflow ? namedBreadcrumbs.slice(0, KEEP_FIRST) : namedBreadcrumbs;
+  const hiddenMiddle = showOverflow ? namedBreadcrumbs.slice(KEEP_FIRST, namedBreadcrumbs.length - KEEP_LAST) : [];
+  const visibleLast = showOverflow ? namedBreadcrumbs.slice(namedBreadcrumbs.length - KEEP_LAST) : [];
 
   const items: { key: string; node: ReactElement }[] = [
     ...visibleFirst.map((crumb) => ({

@@ -11,7 +11,7 @@ import {
 } from '../../assistant';
 import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../client/endpoint';
 import { WidgetDataContext } from '../../types/contexts';
-import { isImageFile, type SearchImageOrPid } from '../../types/image';
+import { isImageFile, isImageUrl, type SearchImageOrPid } from '../../types/image';
 import type { ProcessedProduct } from '../../types/product';
 import { Actions, Category } from '../../types/tracking-constants';
 import { getFlattenProduct } from '../../utils';
@@ -328,6 +328,14 @@ const useChat = (): UseChatResult => {
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
       chat_agent: customizations.chat?.chatAgent || 'shopping_closer_voice_v2',
     });
+    // A gallery/preset image only ever reaches here as a URL (see ImageEntryScreen's gallery
+    // tiles), never as bytes the browser already has — sending it as `im_url` lets the backend
+    // fetch it itself, the same mechanism the multisearch endpoints use (see
+    // use-image-multisearch.ts), rather than requiring the browser to fetch cross-origin bytes
+    // that the image host may not have CORS-enabled for (it only needs to serve plain <img> tags).
+    if (imageToSend && isImageUrl(imageToSend)) {
+      params.append('im_url', imageToSend.imgUrl);
+    }
 
     const formData = new FormData();
     if (imageToSend && isImageFile(imageToSend)) {
