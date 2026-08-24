@@ -239,21 +239,23 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
         )}
         {!showImageWelcome && !showMicWelcome && !showSplit && (
           <>
-            <ChatWindow
-              isWaiting={chat.isWaiting}
-              chats={chat.chats}
-              latestMessage={chat.typewriterText}
-              suggestions={chat.suggestions}
-              showAllSuggestions={chat.showAllSuggestions}
-              setShowAllSuggestions={chat.setShowAllSuggestions}
-              sendMessage={chat.sendMessage}
-              streamingProducts={chat.streamingProducts}
-              streamingRequestId={chat.streamingRequestId}
-              focusedProductId={chat.focusedProductId}
-              wishlistPids={chat.wishlistPids}
-              setIsInWishlist={chat.setIsInWishlist}
-              pwPrefix='asl'
-            />
+            <div className='mx-auto flex min-h-0 w-full max-w-[820px] flex-1 flex-col'>
+              <ChatWindow
+                isWaiting={chat.isWaiting}
+                chats={chat.chats}
+                latestMessage={chat.typewriterText}
+                suggestions={chat.suggestions}
+                showAllSuggestions={chat.showAllSuggestions}
+                setShowAllSuggestions={chat.setShowAllSuggestions}
+                sendMessage={chat.sendMessage}
+                streamingProducts={chat.streamingProducts}
+                streamingRequestId={chat.streamingRequestId}
+                focusedProductId={chat.focusedProductId}
+                wishlistPids={chat.wishlistPids}
+                setIsInWishlist={chat.setIsInWishlist}
+                pwPrefix='asl'
+              />
+            </div>
             <ChatInputFooter
               chat={chat}
               darkMode={darkMode}

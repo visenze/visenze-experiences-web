@@ -149,43 +149,50 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
       className='fixed inset-0 z-50 flex justify-center bg-white dark:bg-neutral-900'
       onKeyDown={handleKeyDown}
     >
-      <div className={cn('flex h-full w-full flex-col', breakpoint === WidgetBreakpoint.DESKTOP && !fullWidth && 'max-w-[820px]')}>
+      <div className='flex size-full flex-col'>
         <div className='flex w-full items-center justify-between border-b border-neutral-300 py-2 dark:border-neutral-800'>
-          <h2 id={ariaLabelledBy} className='m-0 flex items-center gap-2 px-4' style={{ color: iconColor }}>
-            {title}
-          </h2>
-          <div className='flex items-center gap-2 pe-4'>
-            {showVoiceToggle && (
+          <div
+            className={cn(
+              'flex w-full items-center justify-between',
+              breakpoint === WidgetBreakpoint.DESKTOP && !fullWidth && 'mx-auto max-w-[820px]',
+            )}
+          >
+            <h2 id={ariaLabelledBy} className='m-0 flex items-center gap-2 px-4' style={{ color: iconColor }}>
+              {title}
+            </h2>
+            <div className='flex items-center gap-2 pe-4'>
+              {showVoiceToggle && (
+                <button
+                  type='button'
+                  aria-label={intl.formatMessage({ id: isMuted ? 'a11yEnableMute' : 'a11yToggleMute' })}
+                  aria-pressed={isMuted}
+                  className={cn('flex min-h-[38px] min-w-[38px] items-center justify-center border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
+                  onClick={onToggleMute}
+                >
+                  <SpeakerIcon muted={isMuted} className='size-6 cursor-pointer' color={iconColor} />
+                </button>
+              )}
+              {showNewChat && (
+                <button
+                  type='button'
+                  aria-label={intl.formatMessage({ id: 'a11yStartNewChat' })}
+                  title={intl.formatMessage({ id: 'a11yStartNewChat' })}
+                  className={cn('flex min-h-[38px] min-w-[38px] items-center justify-center border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
+                  onClick={onNewChat}
+                >
+                  <PlusCircleIcon className='size-6 cursor-pointer' color={iconColor} />
+                </button>
+              )}
               <button
                 type='button'
-                aria-label={intl.formatMessage({ id: isMuted ? 'a11yEnableMute' : 'a11yToggleMute' })}
-                aria-pressed={isMuted}
+                aria-label={intl.formatMessage({ id: 'a11yCloseFullScreen' })}
+                title={intl.formatMessage({ id: 'a11yCloseFullScreen' })}
                 className={cn('flex min-h-[38px] min-w-[38px] items-center justify-center border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
-                onClick={onToggleMute}
+                onClick={onClose}
               >
-                <SpeakerIcon muted={isMuted} className='size-6 cursor-pointer' color={iconColor} />
+                <CloseIcon className='size-6 cursor-pointer' color={iconColor} />
               </button>
-            )}
-            {showNewChat && (
-              <button
-                type='button'
-                aria-label={intl.formatMessage({ id: 'a11yStartNewChat' })}
-                title={intl.formatMessage({ id: 'a11yStartNewChat' })}
-                className={cn('flex min-h-[38px] min-w-[38px] items-center justify-center border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
-                onClick={onNewChat}
-              >
-                <PlusCircleIcon className='size-6 cursor-pointer' color={iconColor} />
-              </button>
-            )}
-            <button
-              type='button'
-              aria-label={intl.formatMessage({ id: 'a11yCloseFullScreen' })}
-              title={intl.formatMessage({ id: 'a11yCloseFullScreen' })}
-              className={cn('flex min-h-[38px] min-w-[38px] items-center justify-center border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
-              onClick={onClose}
-            >
-              <CloseIcon className='size-6 cursor-pointer' color={iconColor} />
-            </button>
+            </div>
           </div>
         </div>
         <div className='flex min-h-0 flex-1 flex-col overflow-y-auto'>

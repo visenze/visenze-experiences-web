@@ -79,152 +79,154 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
 
   return (
     <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
-      {showChatCameraCapture && (
-        <WebcamCapture
-          variant='drawer'
-          darkMode={darkMode}
-          fontColor={fontColorLight}
-          fontColorDark={fontColorDark}
-          onClose={closeChatCameraCapture}
-          onCapture={handleChatImage}
-        />
-      )}
-      <Input
-        ref={chatInputRef}
-        aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
-        value={chat.message}
-        placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
-        size='lg'
-        classNames={{ inputWrapper: 'rounded-full' }}
-        onChange={(e) => chat.setMessage(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.code === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            if (!chat.allowUserInput) {
-              return;
+      <div className='relative mx-auto flex w-full max-w-[820px] flex-col gap-2'>
+        {showChatCameraCapture && (
+          <WebcamCapture
+            variant='drawer'
+            darkMode={darkMode}
+            fontColor={fontColorLight}
+            fontColorDark={fontColorDark}
+            onClose={closeChatCameraCapture}
+            onCapture={handleChatImage}
+          />
+        )}
+        <Input
+          ref={chatInputRef}
+          aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
+          value={chat.message}
+          placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
+          size='lg'
+          classNames={{ inputWrapper: 'rounded-full' }}
+          onChange={(e) => chat.setMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.code === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              if (!chat.allowUserInput) {
+                return;
+              }
+              handleSend();
             }
-            handleSend();
-          }
-        }}
-        endContent={
-          <div className='flex items-center gap-1'>
-            {chatCameraEnabled ? (
-              <div className='relative'>
-                <button
-                  ref={openChatCameraButtonRef}
-                  type='button'
-                  aria-label={intl.formatMessage({ id: 'a11yAddImage' })}
-                  title={intl.formatMessage({ id: 'a11yAddImage' })}
-                  aria-haspopup='true'
-                  aria-expanded={isImageMenuOpen}
-                  className={cn(ICON_BUTTON_CLASSES, FOCUS_VISIBLE_CLASSES)}
-                  onClick={() => setIsImageMenuOpen((prev) => !prev)}
-                >
-                  <PhotoIcon className='size-5 cursor-pointer' color={iconColor} />
-                </button>
-                {isImageMenuOpen && (
-                  <div
-                    ref={imageMenuRef}
-                    className={cn(
-                      'absolute bottom-full right-0 z-10 mb-2 flex w-max flex-col gap-1 rounded-lg border border-gray',
-                      'bg-white p-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900',
-                    )}
+          }}
+          endContent={
+            <div className='flex items-center gap-1'>
+              {chatCameraEnabled ? (
+                <div className='relative'>
+                  <button
+                    ref={openChatCameraButtonRef}
+                    type='button'
+                    aria-label={intl.formatMessage({ id: 'a11yAddImage' })}
+                    title={intl.formatMessage({ id: 'a11yAddImage' })}
+                    aria-haspopup='true'
+                    aria-expanded={isImageMenuOpen}
+                    className={cn(ICON_BUTTON_CLASSES, FOCUS_VISIBLE_CLASSES)}
+                    onClick={() => setIsImageMenuOpen((prev) => !prev)}
                   >
-                    <button
-                      type='button'
+                    <PhotoIcon className='size-5 cursor-pointer' color={iconColor} />
+                  </button>
+                  {isImageMenuOpen && (
+                    <div
+                      ref={imageMenuRef}
                       className={cn(
-                        'flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800',
-                        FOCUS_VISIBLE_CLASSES,
+                        'absolute bottom-full right-0 z-10 mb-2 flex w-max flex-col gap-1 rounded-lg border border-gray',
+                        'bg-white p-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900',
                       )}
-                      onClick={openCameraFromMenu}
                     >
-                      <CameraIcon className='size-4' color={iconColor} />
-                      {intl.formatMessage({ id: 'a11yOpenCamera' })}
-                    </button>
-                    <FileDropzone
-                      onImageUpload={handleChatImage}
-                      name='asl-chat-upload'
-                      ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}
-                    >
-                      <div
-                        className='flex items-center gap-2 whitespace-nowrap rounded-md p-2 hover:bg-gray-100 dark:hover:bg-neutral-800'
-                        onClick={() => setIsImageMenuOpen(false)}
-                      >
-                        {imageUploadIconUrl ? (
-                          <CustomizableIcon height={16} width={16} url={imageUploadIconUrl} color={iconColor} />
-                        ) : (
-                          <UploadIcon className='size-4' color={iconColor} />
+                      <button
+                        type='button'
+                        className={cn(
+                          'flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800',
+                          FOCUS_VISIBLE_CLASSES,
                         )}
-                        {intl.formatMessage({ id: 'a11yUploadImage' })}
-                      </div>
-                    </FileDropzone>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <FileDropzone onImageUpload={handleChatImage} name='asl-chat-upload' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
-                <div className={ICON_BUTTON_CLASSES}>
-                  {imageUploadIconUrl ? (
-                    <CustomizableIcon height={20} width={20} url={imageUploadIconUrl} color={iconColor} />
-                  ) : (
-                    <UploadIcon className='size-5' color={iconColor} />
+                        onClick={openCameraFromMenu}
+                      >
+                        <CameraIcon className='size-4' color={iconColor} />
+                        {intl.formatMessage({ id: 'a11yOpenCamera' })}
+                      </button>
+                      <FileDropzone
+                        onImageUpload={handleChatImage}
+                        name='asl-chat-upload'
+                        ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}
+                      >
+                        <div
+                          className='flex items-center gap-2 whitespace-nowrap rounded-md p-2 hover:bg-gray-100 dark:hover:bg-neutral-800'
+                          onClick={() => setIsImageMenuOpen(false)}
+                        >
+                          {imageUploadIconUrl ? (
+                            <CustomizableIcon height={16} width={16} url={imageUploadIconUrl} color={iconColor} />
+                          ) : (
+                            <UploadIcon className='size-4' color={iconColor} />
+                          )}
+                          {intl.formatMessage({ id: 'a11yUploadImage' })}
+                        </div>
+                      </FileDropzone>
+                    </div>
                   )}
                 </div>
-              </FileDropzone>
-            )}
-            {chat.voiceEnabled && (
-              <button
-                type='button'
-                aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yVoicePending' })}
-                aria-pressed={chat.voiceStatus === 'recording'}
-                title={chat.hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
-                disabled={(chat.voiceStatus === 'idle' && !chat.allowUserInput && !chat.isSpeechPlaying) || chat.voiceStatus === 'transcribing'}
-                className={cn(ICON_BUTTON_CLASSES, FOCUS_VISIBLE_CLASSES)}
-                onMouseDown={chat.startVoiceRecording}
-                onMouseUp={chat.stopRecording}
-                onMouseLeave={chat.stopRecording}
-                onTouchStart={(e) => {
-                  e.preventDefault();
-                  chat.startVoiceRecording();
-                }}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
-                  chat.stopRecording();
-                }}
-                onKeyDown={(e) => {
-                  if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+              ) : (
+                <FileDropzone onImageUpload={handleChatImage} name='asl-chat-upload' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
+                  <div className={ICON_BUTTON_CLASSES}>
+                    {imageUploadIconUrl ? (
+                      <CustomizableIcon height={20} width={20} url={imageUploadIconUrl} color={iconColor} />
+                    ) : (
+                      <UploadIcon className='size-5' color={iconColor} />
+                    )}
+                  </div>
+                </FileDropzone>
+              )}
+              {chat.voiceEnabled && (
+                <button
+                  type='button'
+                  aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yVoicePending' })}
+                  aria-pressed={chat.voiceStatus === 'recording'}
+                  title={chat.hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
+                  disabled={(chat.voiceStatus === 'idle' && !chat.allowUserInput && !chat.isSpeechPlaying) || chat.voiceStatus === 'transcribing'}
+                  className={cn(ICON_BUTTON_CLASSES, FOCUS_VISIBLE_CLASSES)}
+                  onMouseDown={chat.startVoiceRecording}
+                  onMouseUp={chat.stopRecording}
+                  onMouseLeave={chat.stopRecording}
+                  onTouchStart={(e) => {
                     e.preventDefault();
                     chat.startVoiceRecording();
-                  }
-                }}
-                onKeyUp={(e) => {
-                  if (e.key === ' ' || e.key === 'Enter') {
+                  }}
+                  onTouchEnd={(e) => {
                     e.preventDefault();
                     chat.stopRecording();
-                  }
-                }}
-              >
-                {chat.voiceStatus === 'recording'
-                  ? <StopIcon className='size-5 cursor-pointer animate-pulse' color='#EF4444' />
-                  : <MicrophoneIcon className='size-5 cursor-pointer' color={iconColor} />}
-              </button>
-            )}
-            <button
-              type='button'
-              aria-label={intl.formatMessage({ id: 'a11ySendMessage' })}
-              title={intl.formatMessage({ id: 'a11ySendMessage' })}
-              disabled={!chat.allowUserInput}
-              className={cn(
-                'flex min-h-[32px] min-w-[32px] items-center justify-center rounded-full border-0 bg-blue-600 p-1.5 text-white disabled:opacity-50 place-items-center ',
-                FOCUS_VISIBLE_CLASSES,
+                  }}
+                  onKeyDown={(e) => {
+                    if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                      e.preventDefault();
+                      chat.startVoiceRecording();
+                    }
+                  }}
+                  onKeyUp={(e) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      e.preventDefault();
+                      chat.stopRecording();
+                    }
+                  }}
+                >
+                  {chat.voiceStatus === 'recording'
+                    ? <StopIcon className='size-5 cursor-pointer animate-pulse' color='#EF4444' />
+                    : <MicrophoneIcon className='size-5 cursor-pointer' color={iconColor} />}
+                </button>
               )}
-              onClick={handleSend}
-            >
-              <SubmitChatIcon className='size-4' color='currentColor' />
-            </button>
-          </div>
-        }
-      />
+              <button
+                type='button'
+                aria-label={intl.formatMessage({ id: 'a11ySendMessage' })}
+                title={intl.formatMessage({ id: 'a11ySendMessage' })}
+                disabled={!chat.allowUserInput}
+                className={cn(
+                  'flex min-h-[32px] min-w-[32px] items-center justify-center rounded-full border-0 bg-blue-600 p-1.5 text-white disabled:opacity-50 place-items-center ',
+                  FOCUS_VISIBLE_CLASSES,
+                )}
+                onClick={handleSend}
+              >
+                <SubmitChatIcon className='size-4' color='currentColor' />
+              </button>
+            </div>
+          }
+        />
+      </div>
     </div>
   );
 };
