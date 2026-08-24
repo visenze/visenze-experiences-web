@@ -30,6 +30,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.29](https://github.com/visenze/visenze-experiences-web/compare/1.0.28...1.0.29)
+
+<!-- BEGIN visenze-experiences-web 1.0.29 -->
+
+### Added
+
+- shopping-assistant: Optional voice input/output, gated on `customizations.chatbot.voiceEnabled` (new; also new `customizations.chatbot.voiceId`, `customizations.chatbot.voiceModelId`, and `customizations.chatbot.voiceSettings` with `stability`/`similarityBoost` — all fall back to the widget's built-in voice/model/settings when unset). Press-and-hold the mic button to speak — live captions appear in the input via the browser's speech recognition, and releasing sends the message. While voice reading is on, every assistant reply — to typed messages as well as voice messages, including the assistant's opening/greeting messages — is read aloud via text-to-speech, sentence-by-sentence as the reply streams in. The on-screen reply text for a narrated turn holds briefly until narration is about to start, then reveals as a typewriter in step with the audio, so text and voice feel like one synchronized stream instead of racing each other. If the voice API call fails (offline, quota, outage), narration falls back to the browser's own speech synthesis rather than going silent. While a reply is being narrated, the product card it's currently describing is marked "Now Describing" and auto-scrolled into view, backing off automatically whenever the user is scrolling manually.
+
+### Changed
+
+- shopping-assistant: Chat/image query endpoint on cloud domains changed from `/v1/search/chat/shopping-assistant` to `/v1/chat/shopping-assistant` (legacy-domain path is unchanged).
+
+
+<!-- END visenze-experiences-web 1.0.29 -->
+
 ## [1.0.28](https://github.com/visenze/visenze-experiences-web/compare/1.0.27...1.0.28)
 
 <!-- BEGIN visenze-experiences-web 1.0.28 -->
