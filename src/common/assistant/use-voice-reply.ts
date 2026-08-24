@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import useVoice, { type VoiceStatus } from './use-voice';
 
-interface UseVoiceReplyOptions {
+export interface UseVoiceReplyOptions {
   enabled?: boolean;
   appKey: string;
   placementId: string | number;
@@ -14,7 +14,7 @@ interface UseVoiceReplyOptions {
   setIsWaiting: (waiting: boolean) => void;
 }
 
-interface UseVoiceReplyResult {
+export interface UseVoiceReplyResult {
   voiceEnabled: boolean;
   speechOutputEnabled: boolean;
   voiceStatus: VoiceStatus;

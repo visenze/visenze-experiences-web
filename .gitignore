@@ -73,3 +73,6 @@ typings/
 # aws
 aws-profile.json
 superpowers/
+
+# git worktrees
+.worktrees/

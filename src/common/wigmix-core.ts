@@ -30,6 +30,7 @@ export enum WidgetType {
   BUY_THE_LOOK = 'buy_the_look',
   IN_PAGE_CAROUSEL_V3 = 'in_page_carousel_v3',
   EMBEDDED_SHOPPING_ASSISTANT = 'embedded_shopping_assistant',
+  AI_SEARCH_LAUNCHER = 'ai_search_launcher',
 }
 
 export enum WidgetErrorState {
@@ -1298,6 +1299,21 @@ export interface WidgetConfig {
        */
       secondaryTitle: HideableField;
       /**
+       * Configuration for an optional short attribute chip shown on each
+       * product card (e.g. "Cropped · high rise"), sourced from a single
+       * mapped product field. Disabled by default. Deliberately lighter-weight
+       * than `title`/`secondaryTitle` (no per-breakpoint font config) since
+       * it's a small optional add-on, not a primary text element.
+       *
+       * @since 1.0.30
+       */
+      attributeChip?: {
+        /** Whether the attribute chip is shown. Defaults to false. @since 1.0.30 */
+        show?: boolean;
+        /** Field source of the displayed text (from `displaySettings.productDetails`). @since 1.0.30 */
+        fieldSource?: string;
+      };
+      /**
        * Configuration for the "find similar" feature within a product card image.
        *
        * @since 1.0.0
@@ -1564,6 +1580,155 @@ export interface WidgetConfig {
         /** Voice similarity boost, 0-1. */
         similarityBoost?: number;
       };
+    };
+    /**
+     * Generic configuration for a widget's full-screen chat surface (shared by
+     * any widget using the common chat module): header title, voice identity,
+     * the chat agent used for chat calls, and the voiceGreetingEnabled/
+     * startMuted/voiceEnabled toggles controlling voice behavior.
+     *
+     * @since 1.0.30
+     */
+    chat?: {
+      /**
+       * Title shown in the full-screen chat header.
+       *
+       * @since 1.0.30
+       */
+      title?: string;
+      /**
+       * (optional) Master toggle for voice capability throughout this widget's
+       * chat surface: recording, spoken replies/greetings, the in-chat
+       * microphone button, and the mute/unmute toggle. Defaults to `true`
+       * (enabled) when unset — set to `false` to hide all voice UI and stop
+       * making voice requests entirely, mirroring `chatbot.voiceEnabled`'s
+       * effect in the shopping-assistant widget.
+       *
+       * @since 1.0.30
+       */
+      voiceEnabled?: boolean;
+      /**
+       * Master toggle for greeting audio. When unset or false, greetings are
+       * shown as text only (if at all) and never spoken.
+       *
+       * @since 1.0.30
+       */
+      voiceGreetingEnabled?: boolean;
+      /**
+       * Whether a session starts muted (voice output suppressed) by default.
+       * Mute state itself is session-only and not persisted.
+       *
+       * @since 1.0.30
+       */
+      startMuted?: boolean;
+      /**
+       * The chat agent to be used for this widget's chat calls. Defaults to the
+       * same built-in agent shopping-assistant uses when unset.
+       *
+       * @since 1.0.30
+       */
+      chatAgent?: string;
+      /**
+       * (optional) Voice ID used for spoken replies and greetings. Default to
+       * the widget's built-in voice when unset.
+       *
+       * @since 1.0.30
+       */
+      voiceId?: string;
+      /**
+       * (optional) Voice-provider model ID used for spoken replies and
+       * greetings. Defaults to the widget's built-in model when unset.
+       *
+       * @since 1.0.30
+       */
+      voiceModelId?: string;
+      /**
+       * (optional) Voice settings forwarded to the synthesis proxy. Defaults to
+       * the widget's built-in settings when unset.
+       *
+       * @since 1.0.30
+       */
+      voiceSettings?: {
+        /** Voice stability, 0-1. */
+        stability?: number;
+        /** Voice similarity boost, 0-1. */
+        similarityBoost?: number;
+      };
+      /**
+       * Which layout the full-screen chat surface renders. `'chatlayout'`
+       * (default) is the existing single-column chat UI, unchanged, at every
+       * breakpoint. `'splitlayout'` renders a two-pane split (chat left,
+       * products right) on tablet/desktop once the conversation has actual
+       * results; below the mobile breakpoint, or before any results exist, it
+       * renders identically to `'chatlayout'`.
+       *
+       * @since 1.0.30
+       */
+      layout?: 'chatlayout' | 'splitlayout';
+    };
+    /**
+     * Configuration specific to the AI Search Launcher widget's entry points:
+     * which of the three (image, mic, Ask AI) are enabled, the mic entry
+     * point's recording duration, and per-entry-point greeting text.
+     *
+     * @since 1.0.30
+     */
+    launcher?: {
+      /**
+       * Maximum duration, in seconds, that the mic entry point's full-screen
+       * recording state stays open before it is automatically stopped (as if
+       * the user had clicked to stop). Defaults to 5.
+       *
+       * @since 1.0.30
+       */
+      voiceRecordingMaxDurationSeconds?: number;
+      /**
+       * Per-entry-point greeting text, spoken (if `chat.voiceGreetingEnabled`)
+       * and/or shown when that entry point is opened.
+       *
+       * @since 1.0.30
+       */
+      greetings?: {
+        /** Greeting shown/spoken when the image-search entry point opens. @since 1.0.30 */
+        image?: string;
+        /** Greeting shown/spoken when the microphone entry point opens. @since 1.0.30 */
+        mic?: string;
+        /** Greeting shown/spoken when the "Ask AI" entry point opens. @since 1.0.30 */
+        ai?: string;
+      };
+      /**
+       * (optional) Whether the top entry-bar's image-search button is shown.
+       * Defaults to `true` (enabled) when unset — set to `false` to remove
+       * this entry point entirely.
+       *
+       * @since 1.0.30
+       */
+      cameraEntryEnabled?: boolean;
+      /**
+       * (optional) Whether the top entry-bar's mic-search button is shown.
+       * Defaults to `true` (enabled) when unset — set to `false` to remove
+       * this entry point entirely. Independent of `chat.voiceEnabled`.
+       *
+       * @since 1.0.30
+       */
+      micEntryEnabled?: boolean;
+      /**
+       * (optional) Whether the top entry-bar's "Ask AI" button is shown.
+       * Defaults to `true` (enabled) when unset — set to `false` to remove
+       * this entry point entirely.
+       *
+       * @since 1.0.30
+       */
+      askAiEntryEnabled?: boolean;
+      /**
+       * (optional) Whether the in-chat footer's inline "open camera" button is
+       * shown once a conversation is active. Defaults to `true` (enabled) when
+       * unset. Image upload (drag/drop or file picker) is unaffected by this
+       * flag.
+       *
+       * @since 1.0.30
+       */
+      chatCameraEnabled?: boolean;
     };
   };
   /**
