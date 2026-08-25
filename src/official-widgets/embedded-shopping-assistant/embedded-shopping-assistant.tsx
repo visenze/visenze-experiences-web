@@ -1,11 +1,12 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { type FC, Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import BottomBar from './components/BottomBar';
 import SearchBar from './components/SearchBar';
 import TopBar from './components/TopBar';
 import TurnSection from './components/TurnSection';
+import { useVoice } from '../../common/assistant';
 import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../common/client/endpoint';
+import ChatInputBar from '../../common/components/chat/ChatInputBar';
 import useImageMultisearch from '../../common/components/hooks/use-image-multisearch';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import SparklesIcon from '../../common/icons/SparklesIcon';
@@ -295,6 +296,36 @@ const EmbeddedShoppingAssistant: FC<EmbeddedShoppingAssistantProps> = ({ query }
     });
   };
 
+  const {
+    voiceEnabled,
+    status: voiceStatus,
+    liveTranscript,
+    hasError: hasVoiceError,
+    startRecording: startVoiceRecording,
+    stopRecording: stopVoiceRecording,
+  } = useVoice({
+    // Mirrors shopping-assistant's chatbot.voiceEnabled master switch for this widget's own
+    // `chatbot` customizations namespace (already used above for chatAgent).
+    enabled: customizations.chatbot?.voiceEnabled,
+    appKey: appSettings.appKey,
+    placementId: appSettings.placementId,
+    baseUrl: resolveBaseEndpoint(appSettings, getManualEndpoint(appSettings.placementId)),
+    onTranscript: (text) => {
+      const q = text.trim();
+      if (!q) return;
+      setBottomInput('');
+      addTurn(q, q);
+    },
+  });
+
+  // Mirrors shopping-assistant's live-transcript preview: while recording/transcribing, the
+  // bottom bar's text input reflects the in-progress transcript instead of staying blank.
+  useEffect(() => {
+    if (voiceStatus === 'recording' || voiceStatus === 'transcribing') {
+      setBottomInput(liveTranscript);
+    }
+  }, [liveTranscript, voiceStatus]);
+
   const handleInitialSearch = (): void => {
     const q = inputQuery.trim();
     if (!q) return;
@@ -465,11 +496,16 @@ const EmbeddedShoppingAssistant: FC<EmbeddedShoppingAssistantProps> = ({ query }
       </div>
 
       {resultsExpanded && (
-        <BottomBar
+        <ChatInputBar
           value={bottomInput}
           onChange={setBottomInput}
           onSubmit={handleBottomAsk}
           onImageSelect={handleImageSelect}
+          voiceEnabled={voiceEnabled}
+          voiceStatus={voiceStatus}
+          hasVoiceError={hasVoiceError}
+          onStartVoiceRecording={startVoiceRecording}
+          onStopVoiceRecording={stopVoiceRecording}
           iconColor={iconColor}
           primaryButtonBg={primaryButtonBg}
           primaryButtonText={primaryButtonText}

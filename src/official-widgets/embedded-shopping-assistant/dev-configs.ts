@@ -6,10 +6,10 @@ const customCss = `
 
 export const devConfigs: RecursivePartial<WidgetConfig> = {
   appSettings: {
-    appKey: '',
-    placementId: '',
+    appKey: 'fd5f2fc733394af787d985a753590963',
+    placementId: '10977',
     endpoint: '',
-    cloud: 'aws',
+    //cloud: 'aws',
   },
   displaySettings: {
     cssSelector: '.embedded-shopping-assistant-widget',
@@ -17,6 +17,10 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
   },
   customizations: {
     customCss,
+    chatbot: {
+      chatAgent: 'shopping_closer_voice_v2',
+      voiceEnabled: true,
+    },
   },
   callbacks: {
     trackingCallback: (action: string, params: Record<string, any>) => {
