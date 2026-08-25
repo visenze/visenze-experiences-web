@@ -1,31 +1,16 @@
 import { type FC, type RefObject } from 'react';
-import ChatInputFooter from './ChatInputFooter';
 import ProductsPane from './ProductsPane';
+import ChatComposer from '../../../common/components/chat/ChatComposer';
 import ChatWindow from '../../../common/components/chat/ChatWindow';
 import type { UseChatResult } from '../../../common/components/chat/use-chat';
-import type { SearchImage } from '../../../common/types/image';
 
 interface SplitLayoutProps {
   chat: UseChatResult;
-  darkMode: boolean;
-  fontColorLight?: string;
-  fontColorDark?: string;
   chatCameraEnabled: boolean;
-  imageUploadIconUrl?: string;
   chatInputRef: RefObject<HTMLInputElement>;
-  openChatCameraButtonRef: RefObject<HTMLButtonElement>;
-  showChatCameraCapture: boolean;
-  setShowChatCameraCapture: (show: boolean) => void;
-  closeChatCameraCapture: () => void;
-  handleChatImage: (image: SearchImage) => void;
-  handleSend: () => void;
 }
 
-const SplitLayout: FC<SplitLayoutProps> = ({
-  chat, darkMode, fontColorLight, fontColorDark, chatCameraEnabled, imageUploadIconUrl,
-  chatInputRef, openChatCameraButtonRef, showChatCameraCapture, setShowChatCameraCapture,
-  closeChatCameraCapture, handleChatImage, handleSend,
-}) => (
+const SplitLayout: FC<SplitLayoutProps> = ({ chat, chatCameraEnabled, chatInputRef }) => (
   <div className='flex size-full min-h-0' data-testid='asl-split-layout'>
     <div className='flex min-w-[340px] w-[400px] min-h-0 flex-col border-r border-neutral-300 dark:border-neutral-800'>
       <ChatWindow
@@ -46,21 +31,7 @@ const SplitLayout: FC<SplitLayoutProps> = ({
         activeRequestId={chat.activeBreadcrumbId}
         onSelectTurn={chat.setActiveBreadcrumb}
       />
-      <ChatInputFooter
-        chat={chat}
-        darkMode={darkMode}
-        fontColorLight={fontColorLight}
-        fontColorDark={fontColorDark}
-        chatCameraEnabled={chatCameraEnabled}
-        imageUploadIconUrl={imageUploadIconUrl}
-        chatInputRef={chatInputRef}
-        openChatCameraButtonRef={openChatCameraButtonRef}
-        showChatCameraCapture={showChatCameraCapture}
-        setShowChatCameraCapture={setShowChatCameraCapture}
-        closeChatCameraCapture={closeChatCameraCapture}
-        handleChatImage={handleChatImage}
-        handleSend={handleSend}
-      />
+      <ChatComposer chat={chat} chatInputRef={chatInputRef} chatCameraEnabled={chatCameraEnabled} />
     </div>
     <ProductsPane
       breadcrumbs={chat.breadcrumbs}

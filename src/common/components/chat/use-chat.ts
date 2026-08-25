@@ -1,5 +1,5 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   extractActionTokens,
   extractSpeakableSentences,
@@ -31,6 +31,7 @@ interface CompletedResponse {
   text: string;
   products: ProcessedProduct[];
   userMessage: string;
+  suggestions: string[];
 }
 
 export interface BreadcrumbTurn {
@@ -106,7 +107,6 @@ const useChat = (): UseChatResult => {
   const [isWaiting, setIsWaiting] = useState(false);
   const [showAllSuggestions, setShowAllSuggestionsState] = useState(false);
   const [allowUserInput, setAllowUserInput] = useState(false);
-  const [showResponseExtras, setShowResponseExtras] = useState(true);
   const [streamingProducts, setStreamingProducts] = useState<ProcessedProduct[]>([]);
   const [streamingRequestId, setStreamingRequestId] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -178,7 +178,18 @@ const useChat = (): UseChatResult => {
 
   const setShowAllSuggestions = (): void => setShowAllSuggestionsState(true);
 
-  const setIsInWishlist = (pid: string, isInWishlist: boolean): void => {
+  // Mirrors shopping-assistant's own (pre-extraction) live-transcript behavior: reflect the
+  // in-progress transcript into the chat input as the user speaks, so it's visible in the chatbox
+  // the same way a typed message would be, rather than only appearing once recording stops.
+  useEffect(() => {
+    if (voiceStatus === 'recording' || voiceStatus === 'transcribing') {
+      setMessage(liveTranscript);
+    }
+  }, [liveTranscript, voiceStatus]);
+
+  // Stable across renders (no dependencies — uses the functional setState form) so ProductGrid's
+  // memoization isn't defeated by a fresh function identity on every ChatWindow render.
+  const setIsInWishlist = useCallback((pid: string, isInWishlist: boolean): void => {
     setWishlistPids((prev) => {
       const newPids = [...prev];
       if (isInWishlist && !newPids.includes(pid)) {
@@ -189,10 +200,10 @@ const useChat = (): UseChatResult => {
       }
       return newPids;
     });
-  };
+  }, []);
 
   const commitResponse = ({
-    chatId: responseChatId, requestId, text, products, userMessage,
+    chatId: responseChatId, requestId, text, products, userMessage, suggestions: newSuggestions,
   }: CompletedResponse): void => {
     if (products.length) {
       const requestMetadata = {
@@ -260,13 +271,20 @@ const useChat = (): UseChatResult => {
     setStreamingRequestId('');
     resetReplyState();
     setAllowUserInput(true);
-    setShowResponseExtras(true);
+    // Suggestion chips are only ever set here, once the full response is committed — never
+    // mid-stream — so they can't flash on screen before the response they belong to is visible.
+    setSuggestions(newSuggestions);
   };
 
   const sendMessage = async (messageToSend?: string, imageToSend?: SearchImageOrPid): Promise<void> => {
     if (!messageToSend && !imageToSend) {
       return;
     }
+    // Abort any still-in-flight stream before starting a new one — otherwise the old controller
+    // is silently orphaned (never aborted) and its onclose can land a second, overlapping reply
+    // after this one, e.g. if a voice transcript finalizes while a typed message is already
+    // streaming.
+    activeStreamControllerRef.current?.abort();
     setIsWaiting(true);
     setShowAllSuggestionsState(false);
     setMessage('');
@@ -274,7 +292,6 @@ const useChat = (): UseChatResult => {
     setStreamingProducts([]);
     setStreamingRequestId('');
     const willSpeakReply = beginReply();
-    setShowResponseExtras(false);
     setHasStartedChat(true);
     setChats((prevChats) => [
       ...prevChats,
@@ -349,92 +366,115 @@ const useChat = (): UseChatResult => {
     const controller = new AbortController();
     activeStreamControllerRef.current = controller;
 
-    await fetchEventSource(`${apiBase}${chatPath}?${params.toString()}`, {
-      method: 'POST',
-      body: formData,
-      openWhenHidden: true,
-      signal: controller.signal,
-      onmessage: (ev) => {
-        if (ev.event === 'chat_id') {
-          chatIdFromResp = JSON.parse(ev.data).value;
-        } else if (ev.event === 'reqid') {
-          reqIdFromResp = JSON.parse(ev.data).value;
-          setStreamingRequestId(reqIdFromResp);
-        } else if (ev.event === 'chat_token') {
-          if (!willSpeakReply || !isVoiceReadingEnabledNow()) {
-            setIsWaiting(false);
-          }
-          tokens.push(JSON.parse(ev.data).value);
-          const currentText = tokens.join('');
-          extractActionTokens(currentText).forEach(({ action, productId, key }) => {
-            if (handledActionTokens.has(key)) {
-              return;
+    try {
+      await fetchEventSource(`${apiBase}${chatPath}?${params.toString()}`, {
+        method: 'POST',
+        body: formData,
+        openWhenHidden: true,
+        signal: controller.signal,
+        onmessage: (ev) => {
+          if (ev.event === 'chat_id') {
+            chatIdFromResp = JSON.parse(ev.data).value;
+          } else if (ev.event === 'reqid') {
+            reqIdFromResp = JSON.parse(ev.data).value;
+            setStreamingRequestId(reqIdFromResp);
+          } else if (ev.event === 'chat_token') {
+            if (!willSpeakReply || !isVoiceReadingEnabledNow()) {
+              setIsWaiting(false);
             }
-            handledActionTokens.add(key);
-            const callback = action === 'ADD_TO_CART'
-              ? widgetConfig.callbacks.onAddToCartToggle
-              : widgetConfig.callbacks.onAddToWishlistToggle;
-            if (callback) {
-              try {
-                const callbackResult = callback(true, productId);
-                Promise.resolve(callbackResult).catch((err: unknown) => console.error(err));
-              } catch (err) {
-                console.error(err);
+            tokens.push(JSON.parse(ev.data).value);
+            const currentText = tokens.join('');
+            extractActionTokens(currentText).forEach(({ action, productId, key }) => {
+              if (handledActionTokens.has(key)) {
+                return;
               }
+              handledActionTokens.add(key);
+              const callback = action === 'ADD_TO_CART'
+                ? widgetConfig.callbacks.onAddToCartToggle
+                : widgetConfig.callbacks.onAddToWishlistToggle;
+              if (callback) {
+                try {
+                  const callbackResult = callback(true, productId);
+                  Promise.resolve(callbackResult).catch((err: unknown) => console.error(err));
+                } catch (err) {
+                  console.error(err);
+                }
+              }
+            });
+            const displayText = stripTokensForDisplay(currentText).trim();
+            updateLatestMessage(displayText);
+            setStreamingProducts(resolveProducts(currentText, products));
+            if (willSpeakReply && isVoiceReadingEnabledNow()) {
+              const { sentences, spokenLength: newSpokenLength } = extractSpeakableSentences(currentText, spokenLength);
+              sentences.forEach(({ chunk, revealTarget, productId }) => {
+                speak(chunk, revealTarget, productId);
+              });
+              spokenLength = newSpokenLength;
             }
-          });
-          setSuggestions(extractSuggestions(currentText));
-          const displayText = stripTokensForDisplay(currentText).trim();
-          updateLatestMessage(displayText);
-          setStreamingProducts(resolveProducts(currentText, products));
+          } else if (ev.event === 'product') {
+            products.push(getFlattenProduct(JSON.parse(ev.data)));
+            setStreamingProducts(resolveProducts(tokens.join(''), products));
+          }
+        },
+        onclose: () => {
+          const currentText = tokens.join('');
+          const finalText = stripTokensForDisplay(currentText).trim();
+          const finalProducts = resolveProducts(currentText, products);
+          updateLatestMessage(finalText);
+          setStreamingProducts(finalProducts);
+          const completedResponse = {
+            chatId: chatIdFromResp,
+            requestId: reqIdFromResp,
+            text: finalText,
+            products: finalProducts,
+            userMessage: messageToSend || '',
+            suggestions: extractSuggestions(currentText),
+          };
           if (willSpeakReply && isVoiceReadingEnabledNow()) {
-            const { sentences, spokenLength: newSpokenLength } = extractSpeakableSentences(currentText, spokenLength);
+            const { sentences } = extractSpeakableSentences(currentText, spokenLength, { includeTrailing: true });
             sentences.forEach(({ chunk, revealTarget, productId }) => {
               speak(chunk, revealTarget, productId);
             });
-            spokenLength = newSpokenLength;
-          }
-        } else if (ev.event === 'product') {
-          products.push(getFlattenProduct(JSON.parse(ev.data)));
-          setStreamingProducts(resolveProducts(tokens.join(''), products));
-        }
-      },
-      onclose: () => {
-        const currentText = tokens.join('');
-        setSuggestions(extractSuggestions(currentText));
-        const finalText = stripTokensForDisplay(currentText).trim();
-        const finalProducts = resolveProducts(currentText, products);
-        updateLatestMessage(finalText);
-        setStreamingProducts(finalProducts);
-        const completedResponse = {
-          chatId: chatIdFromResp,
-          requestId: reqIdFromResp,
-          text: finalText,
-          products: finalProducts,
-          userMessage: messageToSend || '',
-        };
-        if (willSpeakReply && isVoiceReadingEnabledNow()) {
-          const { sentences } = extractSpeakableSentences(currentText, spokenLength, { includeTrailing: true });
-          sentences.forEach(({ chunk, revealTarget, productId }) => {
-            speak(chunk, revealTarget, productId);
-          });
-          if (hasPendingSpeech()) {
+            if (hasPendingSpeech()) {
+              deferCommit(() => commitResponse(completedResponse));
+            } else {
+              setIsWaiting(false);
+              forceRevealTypewriter(finalText);
+              commitResponse(completedResponse);
+            }
+          } else if (finalText && getTypewriterLength() < finalText.length) {
             deferCommit(() => commitResponse(completedResponse));
           } else {
-            setIsWaiting(false);
-            forceRevealTypewriter(finalText);
             commitResponse(completedResponse);
           }
-        } else if (finalText && getTypewriterLength() < finalText.length) {
-          deferCommit(() => commitResponse(completedResponse));
-        } else {
-          commitResponse(completedResponse);
-        }
-      },
-      onerror: (err) => {
+        },
+        onerror: (err) => {
+          console.error(err);
+          // fetchEventSource swallows a thrown-less onerror as "keep retrying forever, silently,
+          // with no onclose and no UI feedback" (see its retry loop). Since isWaiting has usually
+          // already been cleared by the first chat_token by this point, that left the chat looking
+          // permanently stuck after a transient network drop: no loading indicator, no reply, and
+          // input still blocked. Rethrowing turns it into a single failure the catch below recovers
+          // from immediately instead of an invisible infinite retry loop.
+          throw err;
+        },
+      });
+    } catch (err) {
+      if (!controller.signal.aborted) {
         console.error(err);
-      },
-    });
+        setIsWaiting(false);
+        setStreamingProducts([]);
+        setStreamingRequestId('');
+        resetReplyState();
+        setAllowUserInput(true);
+        const pendingId = pendingBreadcrumbIdRef.current;
+        if (pendingId) {
+          pendingBreadcrumbIdRef.current = null;
+          setBreadcrumbs((prevBreadcrumbs) => prevBreadcrumbs.filter((crumb) => crumb.requestId !== pendingId));
+          setActiveBreadcrumb(preBreadcrumbActiveIdRef.current);
+        }
+      }
+    }
   };
 
   useEffect(() => {
@@ -464,7 +504,6 @@ const useChat = (): UseChatResult => {
     setStreamingRequestId('');
     setSuggestions([]);
     setShowAllSuggestionsState(false);
-    setShowResponseExtras(true);
     setIsWaiting(false);
     setAllowUserInput(true);
     setHasStartedChat(false);
@@ -529,7 +568,7 @@ const useChat = (): UseChatResult => {
     setMessage,
     showAllSuggestions,
     setShowAllSuggestions,
-    suggestions: showResponseExtras ? suggestions : [],
+    suggestions,
     streamingProducts,
     streamingRequestId,
     focusedProductId,

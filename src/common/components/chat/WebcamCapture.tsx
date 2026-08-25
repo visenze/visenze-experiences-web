@@ -1,41 +1,45 @@
 import { cn } from '@heroui/theme';
-import { type FC, type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { type FC, type KeyboardEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Webcam from 'react-webcam';
-import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
-import ArrowPathIcon from '../../../common/icons/ArrowPathIcon';
-import CameraIcon from '../../../common/icons/CameraIcon';
-import UturnLeftIcon from '../../../common/icons/UturnLeftIcon';
-import type { SearchImage } from '../../../common/types/image';
+import { FOCUS_VISIBLE_CLASSES } from '../../constants';
+import ArrowPathIcon from '../../icons/ArrowPathIcon';
+import CameraIcon from '../../icons/CameraIcon';
+import UturnLeftIcon from '../../icons/UturnLeftIcon';
+import { WidgetDataContext } from '../../types/contexts';
+import type { SearchImage } from '../../types/image';
 
+// i18n contract: this component calls `intl.formatMessage` for the following ids, so any widget
+// consuming it must provide all of them in its own DEFAULT_TEXTS/locale files (via IntlProvider):
+// a11yCameraDrawer, a11yCameraPreview, a11yCloseCamera, a11yTakePhoto, a11ySwitchCamera,
+// a11yCameraError.
 interface WebcamCaptureProps {
-  darkMode?: boolean;
-  fontColor?: string;
-  fontColorDark?: string;
   onClose: () => void;
   onCapture: (image: SearchImage) => void;
-  // 'fullscreen' (default) fills the whole image-entry welcome surface — here it IS the screen,
-  // so `capture()` doesn't close itself; the caller unmounts it once `sendMessage` flips
-  // `hasStartedChat`. 'drawer' renders as a compact bottom sheet over the main chat surface's
-  // input footer (mirroring shopping-assistant's `CameraCaptureDrawer`), where nothing else
-  // unmounts it, so `capture()` closes it directly after feeding the image to the caller.
+  // 'fullscreen' (default) fills its container — the caller unmounts it once it's done with it, so
+  // `capture()` doesn't close itself. 'drawer' renders as a compact bottom sheet over a chat
+  // surface's input footer, where nothing else unmounts it, so `capture()` closes it directly
+  // after feeding the image to the caller.
   variant?: 'fullscreen' | 'drawer';
 }
 
-// Live camera-capture screen, styled after shopping-assistant's `CameraCaptureDrawer` webcam-capture
-// pattern (webcam ref, facingMode toggle, capture-to-blob-to-File conversion, the Shadow-DOM-aware
-// focus trap / Escape-to-close) — duplicated on purpose rather than imported, per this phase's
-// constraint against importing from shopping-assistant. Used both as the image-entry welcome
-// screen's own content (`variant='fullscreen'`) and as a drawer over the chat footer's camera
-// button (`variant='drawer'`).
-const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorDark, onClose, onCapture, variant = 'fullscreen' }) => {
+// Live camera-capture screen: webcam ref, facingMode toggle, capture-to-blob-to-File conversion,
+// a Shadow-DOM-aware focus trap, and Escape-to-close. Shared by any widget that offers a "take a
+// photo" flow, either as a standalone welcome screen (`variant='fullscreen'`) or as a drawer over
+// an in-progress chat's input footer (`variant='drawer'`, see ChatComposer).
+const WebcamCapture: FC<WebcamCaptureProps> = ({ onClose, onCapture, variant = 'fullscreen' }) => {
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const intl = useIntl();
   const webcamRef = useRef<Webcam>(null);
   const closeCameraButtonRef = useRef<HTMLButtonElement>(null);
   const takePhotoButtonRef = useRef<HTMLButtonElement>(null);
   const switchCameraButtonRef = useRef<HTMLButtonElement>(null);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
-  const iconColor = darkMode ? (fontColorDark || '') : (fontColor || '');
+  const [cameraError, setCameraError] = useState(false);
+  const iconColor = darkMode
+    ? (customizations.generalLayout?.fontColorDark || '')
+    : (customizations.generalLayout?.fontColor || '');
 
   useEffect(() => {
     closeCameraButtonRef.current?.focus();
@@ -110,14 +114,21 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
         : 'flex flex-1 flex-col items-center justify-center gap-4 p-4'}
       onKeyDown={handleKeyDown}
     >
-      <Webcam
-        audio={false}
-        ref={webcamRef}
-        screenshotFormat='image/jpeg'
-        className='rounded-lg max-w-full'
-        videoConstraints={{ facingMode }}
-        aria-label={intl.formatMessage({ id: 'a11yCameraPreview' })}
-      />
+      {cameraError ? (
+        <p role='alert' className='m-0 max-w-sm text-center text-sm text-red-600 dark:text-red-400'>
+          {intl.formatMessage({ id: 'a11yCameraError' })}
+        </p>
+      ) : (
+        <Webcam
+          audio={false}
+          ref={webcamRef}
+          screenshotFormat='image/jpeg'
+          className='rounded-lg max-w-full'
+          videoConstraints={{ facingMode }}
+          aria-label={intl.formatMessage({ id: 'a11yCameraPreview' })}
+          onUserMediaError={() => setCameraError(true)}
+        />
+      )}
       <div className='flex w-full max-w-sm gap-2'>
         <button ref={closeCameraButtonRef}
                 className={cn(
@@ -134,12 +145,13 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
         <button ref={takePhotoButtonRef}
                 className={cn(
                     'w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1',
-                    'text-neutral-900 dark:text-neutral-100',
+                    'text-neutral-900 dark:text-neutral-100 disabled:opacity-50',
                     FOCUS_VISIBLE_CLASSES,
                 )}
                 type='button'
                 aria-label={intl.formatMessage({ id: 'a11yTakePhoto' })}
                 title={intl.formatMessage({ id: 'a11yTakePhoto' })}
+                disabled={cameraError}
                 onClick={capture}>
           <CameraIcon className='size-5 cursor-pointer' color={iconColor} />
         </button>
@@ -152,7 +164,10 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
                 type='button'
                 aria-label={intl.formatMessage({ id: 'a11ySwitchCamera' })}
                 title={intl.formatMessage({ id: 'a11ySwitchCamera' })}
-                onClick={() => setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'))}>
+                onClick={() => {
+                  setCameraError(false);
+                  setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
+                }}>
           <ArrowPathIcon className='size-5 cursor-pointer' color={iconColor} />
         </button>
       </div>

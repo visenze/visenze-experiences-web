@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import { type CSSProperties, type FC, Fragment, useContext, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, type FC, Fragment, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { USER_SCROLL_IDLE_MS } from './constants';
 import ProductGrid from './ProductGrid';
@@ -86,7 +86,7 @@ const SuggestionChips: FC<SuggestionChipsProps> = ({ suggestions, showAll, onSho
   }, [showAll]);
 
   return (
-    <div className='mt-2 flex items-end'>
+    <div className='mt-2 flex items-end pl-9'>
       <div className='flex flex-wrap gap-2' role='group' aria-label={intl.formatMessage({ id: 'a11ySuggestedReplies' })}>
         {suggestions.map((suggestion, idx) => (
           <Fragment key={`suggestion-${idx}`}>
@@ -227,10 +227,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
     }
   };
 
-  useEffect(() => {
-    autoScrollToBottom();
-  }, [chats.length]);
-
   // While a product is being narrated AND this ChatWindow renders the product grid inline
   // (productDisplayMode === 'grid'), ProductGrid's own scroll-into-view effect owns scrolling
   // instead — otherwise this would snap to the bottom of the stream on every token/typewriter tick
@@ -240,17 +236,14 @@ const ChatWindow: FC<ChatWindowProps> = ({
   // narration, leaving stale text on screen until narration ends and focusedProductId clears.
   const focusedProductOwnsScroll = productDisplayMode === 'grid' && !!focusedProductId;
 
+  // Single effect covering every reason this pane's content can grow (a new chat turn, streamed
+  // reply text, or streamed products) — merged from three near-identical effects so the scroll
+  // guard above only has to be reasoned about in one place.
   useEffect(() => {
     if (!focusedProductOwnsScroll) {
       autoScrollToBottom();
     }
-  }, [latestMessage, focusedProductOwnsScroll]);
-
-  useEffect(() => {
-    if (!focusedProductOwnsScroll) {
-      autoScrollToBottom();
-    }
-  }, [streamingProducts.length, focusedProductOwnsScroll]);
+  }, [chats.length, latestMessage, streamingProducts.length, focusedProductOwnsScroll]);
 
   const processMessageForDisplay = (message: string): string => message
       // quick sanitization
@@ -272,11 +265,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
     return [defaultGapX].join(' ');
   };
 
-  const getProductGridCssConfig = (needed = false): CSSProperties => {
+  // Memoized so ProductGrid receives the same `style` object reference across renders that don't
+  // actually change these inputs — otherwise every ProductGrid instance would see a "changed"
+  // style prop on every ChatWindow render (e.g. a streamed token elsewhere), defeating its memo.
+  const productGridCssConfig = useMemo((): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (!needed) {
-      return cssConfig;
-    }
     const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
@@ -284,7 +277,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
       }
     }
     return cssConfig;
-  };
+  }, [customizations.productGrid, breakpoint]);
 
   const getAccessibleStatus = (): string => {
     if (isWaiting) {
@@ -316,8 +309,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
         <div role='log'
              className='overflow-y-auto h-full px-4 my-4 space-y-3'
              aria-label={intl.formatMessage({ id: 'a11yChatMessages' })}
-             aria-live='polite'
-             aria-relevant='additions'
              ref={messageScrollRef}
              onScroll={handleScroll}
              onWheel={markUserScrolling}
@@ -406,7 +397,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                         pwPrefix={pwPrefix}
                         imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
                         className={cn('grid pl-9', PRODUCT_GRID_COLUMNS_CLASSES, getProductGridCssClasses('gap-x-4'))}
-                        style={getProductGridCssConfig(true)}
+                        style={productGridCssConfig}
                       />
                     )
                   )}
@@ -415,25 +406,25 @@ const ChatWindow: FC<ChatWindowProps> = ({
           ))}
           {(isWaiting || latestMessage || streamingProducts.length > 0) && (
               <>
-                <div className='chat-row flex gap-2 items-end'>
+                <div className='chat-row flex gap-2 items-start'>
+                  {(isWaiting || latestMessage) && (
+                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                      <SparklesIcon className='size-5' />
+                    </div>
+                  )}
                   {isWaiting && (
-                    <div className='flex gap-1 max-w-9/10'>
-                      <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                        <SparklesIcon className='size-5' />
-                      </div>
-                      <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
-                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                        <span className='sr-only'>{intl.formatMessage({ id: 'a11yAssistantThinking' })}</span>
-                        {[0, 1, 2].map((i) => (
-                            <div
-                              key={`loading-dot-${i}`}
-                              className='loading-dot rounded-full'
-                              style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
-                            />
-                        ))}
-                      </div>
-                      </div>
+                    <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                      <span className='sr-only'>{intl.formatMessage({ id: 'a11yAssistantThinking' })}</span>
+                      {[0, 1, 2].map((i) => (
+                          <div
+                            key={`loading-dot-${i}`}
+                            className='loading-dot rounded-full'
+                            style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
+                          />
+                      ))}
+                    </div>
                   )}
                   {latestMessage && (
                       <div
@@ -458,7 +449,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       streaming
                       imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
                       className={cn('w-full grid pl-9', PRODUCT_GRID_COLUMNS_CLASSES, getProductGridCssClasses('gap-x-4'))}
-                      style={getProductGridCssConfig(true)}
+                      style={productGridCssConfig}
                     />
                 )}
               </>

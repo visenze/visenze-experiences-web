@@ -52,6 +52,9 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yTranscribingVoice: 'Transcribing voice message',
     a11yListening: 'Listening',
     voiceInputError: 'Voice input unavailable',
+    a11yCameraError: 'Camera unavailable — check permissions or try switching cameras',
+    a11yHoldMicInstructions: 'Press and hold, or press and hold Space or Enter, to record. Release to send.',
+    a11yLoadingResults: 'Loading results',
   },
 };
 
@@ -84,9 +87,6 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   productCard: {
     imageAspectRatio: '3 / 4',
     openLinksInNewTab: false,
-    attributeChip: {
-      show: false,
-    },
     price: {
       show: true,
       font: {

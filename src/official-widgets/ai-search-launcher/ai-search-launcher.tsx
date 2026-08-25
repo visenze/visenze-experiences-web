@@ -1,11 +1,10 @@
 import { cn } from '@heroui/theme';
-import { type FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { type FC, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import ChatInputFooter from './components/ChatInputFooter';
 import ImageEntryScreen from './components/ImageEntryScreen';
 import MicEntryScreen from './components/MicEntryScreen';
 import SplitLayout from './components/SplitLayout';
-import MicrophoneIcon from './icons/MicrophoneIcon';
+import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
 import useChat from '../../common/components/chat/use-chat';
@@ -13,9 +12,9 @@ import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { FOCUS_VISIBLE_CLASSES } from '../../common/constants';
 import CameraIcon from '../../common/icons/CameraIcon';
+import MicrophoneIcon from '../../common/icons/MicrophoneIcon';
 import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
-import type { SearchImage } from '../../common/types/image';
 
 type EntryPointKey = 'image' | 'mic' | 'ai';
 
@@ -38,12 +37,6 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const micButtonRef = useRef<HTMLButtonElement>(null);
   const aiButtonRef = useRef<HTMLButtonElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
-  const openChatCameraButtonRef = useRef<HTMLButtonElement>(null);
-  // Camera/upload/mic controls on the main chat surface's input footer (mirroring
-  // shopping-assistant's single-screen chat footer), distinct from the dedicated image/mic entry
-  // points above: these feed an image or voice recording straight into the ongoing conversation
-  // without leaving it.
-  const [showChatCameraCapture, setShowChatCameraCapture] = useState(false);
 
   const fontColor = darkMode
     ? (customizations.generalLayout?.fontColorDark || '')
@@ -52,23 +45,6 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   const openEntryPoint = (entryPoint: EntryPointKey): void => {
     setActiveEntryPoint(entryPoint);
     chat.open();
-  };
-
-  const handleChatImage = (image: SearchImage): void => {
-    chat.sendMessage(undefined, image);
-  };
-
-  const closeChatCameraCapture = useCallback((): void => {
-    setShowChatCameraCapture(false);
-    openChatCameraButtonRef.current?.focus();
-  }, []);
-
-  const handleSend = (): void => {
-    if (!chat.allowUserInput) {
-      return;
-    }
-    const messageToSend = chat.message;
-    chat.sendMessage(messageToSend);
   };
 
   // Shared greeting-playback mechanism (B6a), implemented once and called from both places the
@@ -223,18 +199,8 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
         {!showImageWelcome && !showMicWelcome && showSplit && (
           <SplitLayout
             chat={chat}
-            darkMode={darkMode}
-            fontColorLight={customizations.generalLayout?.fontColor}
-            fontColorDark={customizations.generalLayout?.fontColorDark}
             chatCameraEnabled={customizations.launcher?.chatCameraEnabled !== false}
-            imageUploadIconUrl={customizations.imageUpload?.icon?.url}
             chatInputRef={chatInputRef}
-            openChatCameraButtonRef={openChatCameraButtonRef}
-            showChatCameraCapture={showChatCameraCapture}
-            setShowChatCameraCapture={setShowChatCameraCapture}
-            closeChatCameraCapture={closeChatCameraCapture}
-            handleChatImage={handleChatImage}
-            handleSend={handleSend}
           />
         )}
         {!showImageWelcome && !showMicWelcome && !showSplit && (
@@ -256,20 +222,10 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
                 pwPrefix='asl'
               />
             </div>
-            <ChatInputFooter
+            <ChatComposer
               chat={chat}
-              darkMode={darkMode}
-              fontColorLight={customizations.generalLayout?.fontColor}
-              fontColorDark={customizations.generalLayout?.fontColorDark}
-              chatCameraEnabled={customizations.launcher?.chatCameraEnabled !== false}
-              imageUploadIconUrl={customizations.imageUpload?.icon?.url}
               chatInputRef={chatInputRef}
-              openChatCameraButtonRef={openChatCameraButtonRef}
-              showChatCameraCapture={showChatCameraCapture}
-              setShowChatCameraCapture={setShowChatCameraCapture}
-              closeChatCameraCapture={closeChatCameraCapture}
-              handleChatImage={handleChatImage}
-              handleSend={handleSend}
+              chatCameraEnabled={customizations.launcher?.chatCameraEnabled !== false}
             />
           </>
         )}

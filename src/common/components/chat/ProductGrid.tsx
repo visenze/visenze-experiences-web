@@ -1,4 +1,4 @@
-import { type CSSProperties, type FC, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, type FC, memo, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS } from './constants';
 import type { ProcessedProduct } from '../../types/product';
@@ -80,6 +80,7 @@ const ProductGrid: FC<ProductGridProps> = ({
     return (
       <div
           key={`${product.product_id}-${pidx}`}
+          role='listitem'
           ref={isFocused ? focusedCardRef : undefined}
           className='relative'
           style={getCardWrapperStyle(isFocused)}
@@ -111,10 +112,37 @@ const ProductGrid: FC<ProductGridProps> = ({
   };
 
   return (
-    <div className={className} style={style}>
+    <div role='list' className={className} style={style}>
       {products.slice(0, revealedCount).map((product, pidx) => renderCard(product, pidx))}
     </div>
   );
 };
 
-export default ProductGrid;
+// Toggling one product's wishlist state produces a new `wishlistPids` array reference — a plain
+// memo would see that as "changed" and re-render every ProductGrid instance (one per historical
+// chat turn) on every single toggle. Comparing membership only for THIS grid's own products lets
+// every other turn's grid (and its ProductCards) skip re-rendering entirely.
+const arePropsEqual = (prev: ProductGridProps, next: ProductGridProps): boolean => {
+  if (
+    prev.products !== next.products
+    || prev.requestId !== next.requestId
+    || prev.focusedProductId !== next.focusedProductId
+    || prev.focusedRequestId !== next.focusedRequestId
+    || prev.setIsInWishlist !== next.setIsInWishlist
+    || prev.pwPrefix !== next.pwPrefix
+    || prev.streaming !== next.streaming
+    || prev.className !== next.className
+    || prev.style !== next.style
+    || prev.imageClasses !== next.imageClasses
+  ) {
+    return false;
+  }
+  if (prev.wishlistPids === next.wishlistPids) {
+    return true;
+  }
+  return next.products.every(
+    (product) => prev.wishlistPids.includes(product.product_id) === next.wishlistPids.includes(product.product_id),
+  );
+};
+
+export default memo(ProductGrid, arePropsEqual);

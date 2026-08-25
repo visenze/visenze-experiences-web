@@ -1,8 +1,8 @@
 import { cn } from '@heroui/theme';
 import { type FC, type ReactNode, useCallback, useContext, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import WebcamCapture from './WebcamCapture';
 import type { UseChatResult } from '../../../common/components/chat/use-chat';
+import WebcamCapture from '../../../common/components/chat/WebcamCapture';
 import FileDropzone from '../../../common/components/FileDropzone';
 import Footer from '../../../common/components/Footer';
 import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
@@ -64,9 +64,6 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
   if (showWebcam) {
     return (
       <WebcamCapture
-        darkMode={darkMode}
-        fontColor={customizations.generalLayout?.fontColor}
-        fontColorDark={customizations.generalLayout?.fontColorDark}
         onClose={closeWebcam}
         onCapture={handleImage}
       />
@@ -99,7 +96,7 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
   );
 
   return (
-    <div className='flex flex-1 flex-col items-center gap-6 overflow-y-auto p-6 text-center'>
+    <div className='mx-auto flex w-full max-w-[820px] flex-1 flex-col items-center gap-6 overflow-y-auto p-6 text-center'>
       <p className='m-0 max-w-xs text-base' style={{ color: fontColor }}>
         {promptText}
       </p>

@@ -1,6 +1,11 @@
 import type { FC, ReactElement } from 'react';
 
-const MicrophoneIcon: FC<{ className?: string; color?: string }> = ({ className, color }): ReactElement => (
+interface MicrophoneIconProps {
+  className?: string;
+  color?: string;
+}
+
+const MicrophoneIcon: FC<MicrophoneIconProps> = ({ className, color }): ReactElement => (
   <div className={className} style={{ color }}>
     <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth='1.5' stroke='currentColor'>
       <path strokeLinecap='round' strokeLinejoin='round'
