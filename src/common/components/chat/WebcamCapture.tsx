@@ -1,34 +1,35 @@
 import { cn } from '@heroui/theme';
-import { type FC, type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { type FC, type KeyboardEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Webcam from 'react-webcam';
-import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
-import ArrowPathIcon from '../../../common/icons/ArrowPathIcon';
-import CameraIcon from '../../../common/icons/CameraIcon';
-import UturnLeftIcon from '../../../common/icons/UturnLeftIcon';
-import type { SearchImage } from '../../../common/types/image';
+import { FOCUS_VISIBLE_CLASSES } from '../../constants';
+import ArrowPathIcon from '../../icons/ArrowPathIcon';
+import CameraIcon from '../../icons/CameraIcon';
+import UturnLeftIcon from '../../icons/UturnLeftIcon';
+import { WidgetDataContext } from '../../types/contexts';
+import type { SearchImage } from '../../types/image';
 
+// i18n contract: this component calls `intl.formatMessage` for the following ids, so any widget
+// consuming it must provide all of them in its own DEFAULT_TEXTS/locale files (via IntlProvider):
+// a11yCameraDrawer, a11yCameraPreview, a11yCloseCamera, a11yTakePhoto, a11ySwitchCamera,
+// a11yCameraError.
 interface WebcamCaptureProps {
-  darkMode?: boolean;
-  fontColor?: string;
-  fontColorDark?: string;
   onClose: () => void;
   onCapture: (image: SearchImage) => void;
-  // 'fullscreen' (default) fills the whole image-entry welcome surface — here it IS the screen,
-  // so `capture()` doesn't close itself; the caller unmounts it once `sendMessage` flips
-  // `hasStartedChat`. 'drawer' renders as a compact bottom sheet over the main chat surface's
-  // input footer (mirroring shopping-assistant's `CameraCaptureDrawer`), where nothing else
-  // unmounts it, so `capture()` closes it directly after feeding the image to the caller.
+  // 'fullscreen' (default) fills its container — the caller unmounts it once it's done with it, so
+  // `capture()` doesn't close itself. 'drawer' renders as a compact bottom sheet over a chat
+  // surface's input footer, where nothing else unmounts it, so `capture()` closes it directly
+  // after feeding the image to the caller.
   variant?: 'fullscreen' | 'drawer';
 }
 
-// Live camera-capture screen, styled after shopping-assistant's `CameraCaptureDrawer` webcam-capture
-// pattern (webcam ref, facingMode toggle, capture-to-blob-to-File conversion, the Shadow-DOM-aware
-// focus trap / Escape-to-close) — duplicated on purpose rather than imported, per this phase's
-// constraint against importing from shopping-assistant. Used both as the image-entry welcome
-// screen's own content (`variant='fullscreen'`) and as a drawer over the chat footer's camera
-// button (`variant='drawer'`).
-const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorDark, onClose, onCapture, variant = 'fullscreen' }) => {
+// Live camera-capture screen: webcam ref, facingMode toggle, capture-to-blob-to-File conversion,
+// a Shadow-DOM-aware focus trap, and Escape-to-close. Shared by any widget that offers a "take a
+// photo" flow, either as a standalone welcome screen (`variant='fullscreen'`) or as a drawer over
+// an in-progress chat's input footer (`variant='drawer'`, see ChatComposer).
+const WebcamCapture: FC<WebcamCaptureProps> = ({ onClose, onCapture, variant = 'fullscreen' }) => {
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const intl = useIntl();
   const webcamRef = useRef<Webcam>(null);
   const closeCameraButtonRef = useRef<HTMLButtonElement>(null);
@@ -36,7 +37,9 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
   const switchCameraButtonRef = useRef<HTMLButtonElement>(null);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const [cameraError, setCameraError] = useState(false);
-  const iconColor = darkMode ? (fontColorDark || '') : (fontColor || '');
+  const iconColor = darkMode
+    ? (customizations.generalLayout?.fontColorDark || '')
+    : (customizations.generalLayout?.fontColor || '');
 
   useEffect(() => {
     closeCameraButtonRef.current?.focus();

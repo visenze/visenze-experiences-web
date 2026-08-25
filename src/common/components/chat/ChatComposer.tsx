@@ -1,52 +1,61 @@
 import { Input } from '@heroui/input';
 import { cn } from '@heroui/theme';
-import { type FC, type RefObject, useEffect, useRef, useState } from 'react';
+import { type FC, type RefObject, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import type { UseChatResult } from './use-chat';
 import WebcamCapture from './WebcamCapture';
-import type { UseChatResult } from '../../../common/components/chat/use-chat';
-import FileDropzone from '../../../common/components/FileDropzone';
-import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
-import CameraIcon from '../../../common/icons/CameraIcon';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
-import MicrophoneIcon from '../../../common/icons/MicrophoneIcon';
-import PhotoIcon from '../../../common/icons/PhotoIcon';
-import StopIcon from '../../../common/icons/StopIcon';
-import UploadIcon from '../../../common/icons/UploadIcon';
-import type { SearchImage } from '../../../common/types/image';
-import SubmitChatIcon from '../icons/SubmitChatIcon';
+import { FOCUS_VISIBLE_CLASSES } from '../../constants';
+import CameraIcon from '../../icons/CameraIcon';
+import CustomizableIcon from '../../icons/CustomizableIcon';
+import MicrophoneIcon from '../../icons/MicrophoneIcon';
+import PhotoIcon from '../../icons/PhotoIcon';
+import StopIcon from '../../icons/StopIcon';
+import SubmitChatIcon from '../../icons/SubmitChatIcon';
+import UploadIcon from '../../icons/UploadIcon';
+import { WidgetDataContext } from '../../types/contexts';
+import type { SearchImage } from '../../types/image';
+import FileDropzone from '../FileDropzone';
 
-interface ChatInputFooterProps {
+// i18n contract: this component calls `intl.formatMessage` for the following ids, so any widget
+// consuming it must provide all of them in its own DEFAULT_TEXTS/locale files (via IntlProvider):
+// a11yChatInput, chatBoxPlaceholder, a11yAddImage, a11yOpenCamera, a11yUploadImage,
+// a11yStopVoiceInput, a11yVoicePending, a11yHoldMicInstructions, holdMicToRecord, voiceInputError,
+// a11ySendMessage. Also pulls in WebcamCapture's own i18n contract when `chatCameraEnabled` is on.
+interface ChatComposerProps {
   chat: UseChatResult;
-  darkMode: boolean;
-  // Raw (unresolved) `customizations.generalLayout` colors. WebcamCapture takes both and resolves
-  // dark mode itself, while this component's own icons use the `iconColor` resolved below — hence
-  // passing the raw pair rather than a single pre-resolved color.
-  fontColorLight?: string;
-  fontColorDark?: string;
-  chatCameraEnabled: boolean;
-  imageUploadIconUrl?: string;
   chatInputRef: RefObject<HTMLInputElement>;
-  openChatCameraButtonRef: RefObject<HTMLButtonElement>;
-  showChatCameraCapture: boolean;
-  setShowChatCameraCapture: (show: boolean) => void;
-  closeChatCameraCapture: () => void;
-  handleChatImage: (image: SearchImage) => void;
-  handleSend: () => void;
+  // Sourced from a widget-specific config key today (e.g. ai-search-launcher's
+  // `customizations.launcher.chatCameraEnabled`) rather than read internally, since that
+  // namespace is specific to widgets with dedicated camera entry points, not a universal concept.
+  chatCameraEnabled: boolean;
+  // Defaults to `chat.sendMessage(chat.message)` (gated on `chat.allowUserInput`). Override only
+  // if a widget needs different send semantics (e.g. staging the message before sending).
+  onSend?: () => void;
+  // Defaults to `chat.sendMessage(undefined, image)` — fires the query immediately. Override if a
+  // widget needs to stage the image instead (e.g. show a preview attached to the input, letting
+  // the user send it explicitly rather than searching right away).
+  onImageSelected?: (image: SearchImage) => void;
 }
 
 const ICON_BUTTON_CLASSES = 'flex min-h-[32px] min-w-[32px] items-center justify-center rounded-full border-0 bg-transparent p-1 disabled:opacity-50';
 
-const ChatInputFooter: FC<ChatInputFooterProps> = ({
-  chat, darkMode, fontColorLight, fontColorDark, chatCameraEnabled, imageUploadIconUrl,
-  chatInputRef, openChatCameraButtonRef, showChatCameraCapture, setShowChatCameraCapture, closeChatCameraCapture,
-  handleChatImage, handleSend,
-}) => {
+// The text input + image (camera/upload) trigger + hold-to-record mic for an in-progress chat
+// conversation. Pairs with WebcamCapture (variant='drawer' here) and `useChat` to give any widget
+// a ready-to-use chat composer with camera and voice support — no widget-local copy needed.
+const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEnabled, onSend, onImageSelected }) => {
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
   const intl = useIntl();
-  const iconColor = darkMode ? (fontColorDark || '') : (fontColorLight || '');
-  // Camera and upload are collapsed behind a single "Add image" trigger (spec: one line matching
-  // send/mic, no separate icon row) that opens a small menu offering both options.
+  const iconColor = darkMode
+    ? (customizations.generalLayout?.fontColorDark || '')
+    : (customizations.generalLayout?.fontColor || '');
+  const imageUploadIconUrl = customizations.imageUpload?.icon?.url;
+  // Camera and upload are collapsed behind a single "Add image" trigger that opens a small menu
+  // offering both options.
   const [isImageMenuOpen, setIsImageMenuOpen] = useState(false);
+  const [showCameraCapture, setShowCameraCapture] = useState(false);
   const imageMenuRef = useRef<HTMLDivElement>(null);
+  const openCameraButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!isImageMenuOpen) {
@@ -61,7 +70,7 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
       // (the shadow root is open), so it still lists the real elements the click passed through.
       const path = event.composedPath();
       if ((imageMenuRef.current && path.includes(imageMenuRef.current))
-        || (openChatCameraButtonRef.current && path.includes(openChatCameraButtonRef.current))) {
+        || (openCameraButtonRef.current && path.includes(openCameraButtonRef.current))) {
         return;
       }
       setIsImageMenuOpen(false);
@@ -77,24 +86,45 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
       document.removeEventListener('mousedown', closeIfOutside);
       document.removeEventListener('keydown', closeOnEscape);
     };
-  }, [isImageMenuOpen, openChatCameraButtonRef]);
+  }, [isImageMenuOpen]);
+
+  const closeCameraCapture = (): void => {
+    setShowCameraCapture(false);
+    openCameraButtonRef.current?.focus();
+  };
 
   const openCameraFromMenu = (): void => {
     setIsImageMenuOpen(false);
-    setShowChatCameraCapture(true);
+    setShowCameraCapture(true);
+  };
+
+  const handleSend = (): void => {
+    if (onSend) {
+      onSend();
+      return;
+    }
+    if (!chat.allowUserInput) {
+      return;
+    }
+    chat.sendMessage(chat.message);
+  };
+
+  const handleImageSelected = (image: SearchImage): void => {
+    if (onImageSelected) {
+      onImageSelected(image);
+      return;
+    }
+    chat.sendMessage(undefined, image);
   };
 
   return (
     <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
       <div className='relative mx-auto flex w-full max-w-[820px] flex-col gap-2'>
-        {showChatCameraCapture && (
+        {showCameraCapture && (
           <WebcamCapture
             variant='drawer'
-            darkMode={darkMode}
-            fontColor={fontColorLight}
-            fontColorDark={fontColorDark}
-            onClose={closeChatCameraCapture}
-            onCapture={handleChatImage}
+            onClose={closeCameraCapture}
+            onCapture={handleImageSelected}
           />
         )}
         <Input
@@ -119,7 +149,7 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
               {chatCameraEnabled ? (
                 <div className='relative'>
                   <button
-                    ref={openChatCameraButtonRef}
+                    ref={openCameraButtonRef}
                     type='button'
                     aria-label={intl.formatMessage({ id: 'a11yAddImage' })}
                     title={intl.formatMessage({ id: 'a11yAddImage' })}
@@ -150,7 +180,7 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
                         {intl.formatMessage({ id: 'a11yOpenCamera' })}
                       </button>
                       <FileDropzone
-                        onImageUpload={handleChatImage}
+                        onImageUpload={handleImageSelected}
                         name='asl-chat-upload'
                         ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}
                       >
@@ -170,7 +200,7 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
                   )}
                 </div>
               ) : (
-                <FileDropzone onImageUpload={handleChatImage} name='asl-chat-upload' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
+                <FileDropzone onImageUpload={handleImageSelected} name='asl-chat-upload' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
                   <div className={ICON_BUTTON_CLASSES}>
                     {imageUploadIconUrl ? (
                       <CustomizableIcon height={20} width={20} url={imageUploadIconUrl} color={iconColor} />
@@ -249,4 +279,4 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
   );
 };
 
-export default ChatInputFooter;
+export default ChatComposer;
