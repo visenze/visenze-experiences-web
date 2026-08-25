@@ -14,6 +14,28 @@ jest.mock('@microsoft/fetch-event-source', () => ({
   fetchEventSource: (...args: any[]): any => mockFetchEventSource(...args),
 }));
 
+// Controllable stand-in for the low-level useVoice hook (real speech-recognition/mic APIs aren't
+// available in jsdom) so tests can drive `voiceStatus`/`liveTranscript` directly.
+const mockVoiceState: { status: 'idle' | 'recording' | 'transcribing'; liveTranscript: string } = {
+  status: 'idle',
+  liveTranscript: '',
+};
+jest.mock('../../assistant/use-voice', () => ({
+  __esModule: true,
+  default: (): unknown => ({
+    voiceEnabled: true,
+    speechOutputEnabled: false,
+    status: mockVoiceState.status,
+    liveTranscript: mockVoiceState.liveTranscript,
+    hasError: false,
+    startRecording: jest.fn(),
+    stopRecording: jest.fn(),
+    speak: jest.fn(() => false),
+    hasPendingSpeech: jest.fn(() => false),
+    stopAudio: jest.fn(),
+  }),
+}));
+
 // use-chat.ts only reads `widgetConfig`/`widgetClient` off WidgetDataContext (no
 // RootContext/IntlProvider needed — those are consumed by components, not this hook), so the
 // wrapper here is much smaller than renderWidget's full provider stack. DEFAULT_CUSTOMIZATIONS is
@@ -100,6 +122,8 @@ describe('use-chat', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     mockFetchEventSource.mockReset();
+    mockVoiceState.status = 'idle';
+    mockVoiceState.liveTranscript = '';
   });
 
   afterEach(() => {
@@ -188,6 +212,50 @@ describe('use-chat', () => {
     expect(decodeURIComponent(calledUrl as string)).toContain('im_url=https://example.com/shoe.jpg');
     const [, requestOptions] = mockFetchEventSource.mock.calls[0];
     expect((requestOptions as { body: FormData }).body.has('image')).toBe(false);
+  });
+
+  it('should reflect the live transcript into the message field while recording or transcribing', () => {
+    const { hook } = renderChat();
+    act(() => {
+      hook.result.current.open();
+    });
+
+    mockVoiceState.status = 'recording';
+    mockVoiceState.liveTranscript = 'red sh';
+    act(() => {
+      hook.rerender();
+    });
+    expect(hook.result.current.message).toBe('red sh');
+
+    mockVoiceState.status = 'transcribing';
+    mockVoiceState.liveTranscript = 'red shirt';
+    act(() => {
+      hook.rerender();
+    });
+    expect(hook.result.current.message).toBe('red shirt');
+  });
+
+  it('should stop waiting and unblock input instead of hanging silently when the stream errors mid-response', async () => {
+    const { hook } = renderChat();
+    act(() => {
+      hook.result.current.open();
+    });
+
+    // A network drop after the first token has already cleared `isWaiting` — without a fix, this
+    // used to be swallowed by fetchEventSource's silent-retry-forever default, leaving the chat
+    // stuck with no loading indicator and no reply.
+    mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
+      options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Here' }) });
+      options.onerror(new Error('network drop'));
+    });
+
+    await act(async () => {
+      await hook.result.current.sendMessage('Find me a jacket');
+    });
+
+    expect(hook.result.current.isWaiting).toBe(false);
+    expect(hook.result.current.allowUserInput).toBe(true);
+    expect(hook.result.current.breadcrumbs).toEqual([]);
   });
 
   it('should commit the bot reply and any products to chats once the SSE stream closes', async () => {

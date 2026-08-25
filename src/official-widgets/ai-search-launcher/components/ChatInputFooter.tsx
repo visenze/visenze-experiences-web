@@ -53,8 +53,15 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
       return undefined;
     }
     const closeIfOutside = (event: MouseEvent): void => {
-      const target = event.target as Node;
-      if (imageMenuRef.current?.contains(target) || openChatCameraButtonRef.current?.contains(target)) {
+      // This dialog is portaled into its own Shadow DOM (see FullScreenChatContainer), and this
+      // listener lives on `document`, outside it — so `event.target` gets retargeted to the
+      // shadow host for every click that happens inside, including clicks on the menu's own
+      // items. That made the menu treat every click as "outside" and immediately close itself
+      // before the click could open the file picker or camera. `composedPath()` isn't retargeted
+      // (the shadow root is open), so it still lists the real elements the click passed through.
+      const path = event.composedPath();
+      if ((imageMenuRef.current && path.includes(imageMenuRef.current))
+        || (openChatCameraButtonRef.current && path.includes(openChatCameraButtonRef.current))) {
         return;
       }
       setIsImageMenuOpen(false);

@@ -86,7 +86,7 @@ const SuggestionChips: FC<SuggestionChipsProps> = ({ suggestions, showAll, onSho
   }, [showAll]);
 
   return (
-    <div className='mt-2 flex items-end'>
+    <div className='mt-2 flex items-end pl-9'>
       <div className='flex flex-wrap gap-2' role='group' aria-label={intl.formatMessage({ id: 'a11ySuggestedReplies' })}>
         {suggestions.map((suggestion, idx) => (
           <Fragment key={`suggestion-${idx}`}>
@@ -406,25 +406,25 @@ const ChatWindow: FC<ChatWindowProps> = ({
           ))}
           {(isWaiting || latestMessage || streamingProducts.length > 0) && (
               <>
-                <div className='chat-row flex gap-2 items-end'>
+                <div className='chat-row flex gap-2 items-start'>
+                  {(isWaiting || latestMessage) && (
+                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                      <SparklesIcon className='size-5' />
+                    </div>
+                  )}
                   {isWaiting && (
-                    <div className='flex gap-1 max-w-9/10'>
-                      <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                        <SparklesIcon className='size-5' />
-                      </div>
-                      <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
-                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                        <span className='sr-only'>{intl.formatMessage({ id: 'a11yAssistantThinking' })}</span>
-                        {[0, 1, 2].map((i) => (
-                            <div
-                              key={`loading-dot-${i}`}
-                              className='loading-dot rounded-full'
-                              style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
-                            />
-                        ))}
-                      </div>
-                      </div>
+                    <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
+                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                      <span className='sr-only'>{intl.formatMessage({ id: 'a11yAssistantThinking' })}</span>
+                      {[0, 1, 2].map((i) => (
+                          <div
+                            key={`loading-dot-${i}`}
+                            className='loading-dot rounded-full'
+                            style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
+                          />
+                      ))}
+                    </div>
                   )}
                   {latestMessage && (
                       <div
