@@ -4,9 +4,9 @@ import { type FC, type ReactElement, useContext, useEffect, useRef } from 'react
 import { useIntl } from 'react-intl';
 import type { UseChatResult } from '../../../common/components/chat/use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
+import MicrophoneIcon from '../../../common/icons/MicrophoneIcon';
+import StopIcon from '../../../common/icons/StopIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
-import MicrophoneIcon from '../icons/MicrophoneIcon';
-import StopIcon from '../icons/StopIcon';
 import SubmitChatIcon from '../icons/SubmitChatIcon';
 
 interface MicEntryScreenProps {

@@ -8,11 +8,11 @@ import FileDropzone from '../../../common/components/FileDropzone';
 import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 import CameraIcon from '../../../common/icons/CameraIcon';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
+import MicrophoneIcon from '../../../common/icons/MicrophoneIcon';
 import PhotoIcon from '../../../common/icons/PhotoIcon';
+import StopIcon from '../../../common/icons/StopIcon';
 import UploadIcon from '../../../common/icons/UploadIcon';
 import type { SearchImage } from '../../../common/types/image';
-import MicrophoneIcon from '../icons/MicrophoneIcon';
-import StopIcon from '../icons/StopIcon';
 import SubmitChatIcon from '../icons/SubmitChatIcon';
 
 interface ChatInputFooterProps {
@@ -174,41 +174,52 @@ const ChatInputFooter: FC<ChatInputFooterProps> = ({
                 </FileDropzone>
               )}
               {chat.voiceEnabled && (
-                <button
-                  type='button'
-                  aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yVoicePending' })}
-                  aria-pressed={chat.voiceStatus === 'recording'}
-                  title={chat.hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
-                  disabled={(chat.voiceStatus === 'idle' && !chat.allowUserInput && !chat.isSpeechPlaying) || chat.voiceStatus === 'transcribing'}
-                  className={cn(ICON_BUTTON_CLASSES, FOCUS_VISIBLE_CLASSES)}
-                  onMouseDown={chat.startVoiceRecording}
-                  onMouseUp={chat.stopRecording}
-                  onMouseLeave={chat.stopRecording}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    chat.startVoiceRecording();
-                  }}
-                  onTouchEnd={(e) => {
-                    e.preventDefault();
-                    chat.stopRecording();
-                  }}
-                  onKeyDown={(e) => {
-                    if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                <>
+                  <button
+                    type='button'
+                    aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yVoicePending' })}
+                    aria-pressed={chat.voiceStatus === 'recording'}
+                    aria-describedby='asl-chat-hold-mic-instructions'
+                    title={chat.hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
+                    disabled={(chat.voiceStatus === 'idle' && !chat.allowUserInput && !chat.isSpeechPlaying) || chat.voiceStatus === 'transcribing'}
+                    className={cn(ICON_BUTTON_CLASSES, FOCUS_VISIBLE_CLASSES)}
+                    onMouseDown={chat.startVoiceRecording}
+                    onMouseUp={chat.stopRecording}
+                    onMouseLeave={chat.stopRecording}
+                    onTouchStart={(e) => {
                       e.preventDefault();
                       chat.startVoiceRecording();
-                    }
-                  }}
-                  onKeyUp={(e) => {
-                    if (e.key === ' ' || e.key === 'Enter') {
+                    }}
+                    onTouchEnd={(e) => {
                       e.preventDefault();
                       chat.stopRecording();
-                    }
-                  }}
-                >
-                  {chat.voiceStatus === 'recording'
-                    ? <StopIcon className='size-5 cursor-pointer animate-pulse' color='#EF4444' />
-                    : <MicrophoneIcon className='size-5 cursor-pointer' color={iconColor} />}
-                </button>
+                    }}
+                    onKeyDown={(e) => {
+                      if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                        e.preventDefault();
+                        chat.startVoiceRecording();
+                      }
+                    }}
+                    onKeyUp={(e) => {
+                      if (e.key === ' ' || e.key === 'Enter') {
+                        e.preventDefault();
+                        chat.stopRecording();
+                      }
+                    }}
+                  >
+                    {chat.voiceStatus === 'recording'
+                      ? <StopIcon className='size-5 cursor-pointer animate-pulse' color='#EF4444' />
+                      : <MicrophoneIcon className='size-5 cursor-pointer' color={iconColor} />}
+                  </button>
+                  <span id='asl-chat-hold-mic-instructions' className='sr-only'>
+                    {intl.formatMessage({ id: 'a11yHoldMicInstructions' })}
+                  </span>
+                  {chat.hasVoiceError && (
+                    <span role='alert' className='sr-only'>
+                      {intl.formatMessage({ id: 'voiceInputError' })}
+                    </span>
+                  )}
+                </>
               )}
               <button
                 type='button'

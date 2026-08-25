@@ -1,5 +1,5 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   extractActionTokens,
   extractSpeakableSentences,
@@ -31,6 +31,7 @@ interface CompletedResponse {
   text: string;
   products: ProcessedProduct[];
   userMessage: string;
+  suggestions: string[];
 }
 
 export interface BreadcrumbTurn {
@@ -106,7 +107,6 @@ const useChat = (): UseChatResult => {
   const [isWaiting, setIsWaiting] = useState(false);
   const [showAllSuggestions, setShowAllSuggestionsState] = useState(false);
   const [allowUserInput, setAllowUserInput] = useState(false);
-  const [showResponseExtras, setShowResponseExtras] = useState(true);
   const [streamingProducts, setStreamingProducts] = useState<ProcessedProduct[]>([]);
   const [streamingRequestId, setStreamingRequestId] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -178,7 +178,9 @@ const useChat = (): UseChatResult => {
 
   const setShowAllSuggestions = (): void => setShowAllSuggestionsState(true);
 
-  const setIsInWishlist = (pid: string, isInWishlist: boolean): void => {
+  // Stable across renders (no dependencies — uses the functional setState form) so ProductGrid's
+  // memoization isn't defeated by a fresh function identity on every ChatWindow render.
+  const setIsInWishlist = useCallback((pid: string, isInWishlist: boolean): void => {
     setWishlistPids((prev) => {
       const newPids = [...prev];
       if (isInWishlist && !newPids.includes(pid)) {
@@ -189,10 +191,10 @@ const useChat = (): UseChatResult => {
       }
       return newPids;
     });
-  };
+  }, []);
 
   const commitResponse = ({
-    chatId: responseChatId, requestId, text, products, userMessage,
+    chatId: responseChatId, requestId, text, products, userMessage, suggestions: newSuggestions,
   }: CompletedResponse): void => {
     if (products.length) {
       const requestMetadata = {
@@ -260,13 +262,20 @@ const useChat = (): UseChatResult => {
     setStreamingRequestId('');
     resetReplyState();
     setAllowUserInput(true);
-    setShowResponseExtras(true);
+    // Suggestion chips are only ever set here, once the full response is committed — never
+    // mid-stream — so they can't flash on screen before the response they belong to is visible.
+    setSuggestions(newSuggestions);
   };
 
   const sendMessage = async (messageToSend?: string, imageToSend?: SearchImageOrPid): Promise<void> => {
     if (!messageToSend && !imageToSend) {
       return;
     }
+    // Abort any still-in-flight stream before starting a new one — otherwise the old controller
+    // is silently orphaned (never aborted) and its onclose can land a second, overlapping reply
+    // after this one, e.g. if a voice transcript finalizes while a typed message is already
+    // streaming.
+    activeStreamControllerRef.current?.abort();
     setIsWaiting(true);
     setShowAllSuggestionsState(false);
     setMessage('');
@@ -274,7 +283,6 @@ const useChat = (): UseChatResult => {
     setStreamingProducts([]);
     setStreamingRequestId('');
     const willSpeakReply = beginReply();
-    setShowResponseExtras(false);
     setHasStartedChat(true);
     setChats((prevChats) => [
       ...prevChats,
@@ -383,7 +391,6 @@ const useChat = (): UseChatResult => {
               }
             }
           });
-          setSuggestions(extractSuggestions(currentText));
           const displayText = stripTokensForDisplay(currentText).trim();
           updateLatestMessage(displayText);
           setStreamingProducts(resolveProducts(currentText, products));
@@ -401,7 +408,6 @@ const useChat = (): UseChatResult => {
       },
       onclose: () => {
         const currentText = tokens.join('');
-        setSuggestions(extractSuggestions(currentText));
         const finalText = stripTokensForDisplay(currentText).trim();
         const finalProducts = resolveProducts(currentText, products);
         updateLatestMessage(finalText);
@@ -412,6 +418,7 @@ const useChat = (): UseChatResult => {
           text: finalText,
           products: finalProducts,
           userMessage: messageToSend || '',
+          suggestions: extractSuggestions(currentText),
         };
         if (willSpeakReply && isVoiceReadingEnabledNow()) {
           const { sentences } = extractSpeakableSentences(currentText, spokenLength, { includeTrailing: true });
@@ -464,7 +471,6 @@ const useChat = (): UseChatResult => {
     setStreamingRequestId('');
     setSuggestions([]);
     setShowAllSuggestionsState(false);
-    setShowResponseExtras(true);
     setIsWaiting(false);
     setAllowUserInput(true);
     setHasStartedChat(false);
@@ -529,7 +535,7 @@ const useChat = (): UseChatResult => {
     setMessage,
     showAllSuggestions,
     setShowAllSuggestions,
-    suggestions: showResponseExtras ? suggestions : [],
+    suggestions,
     streamingProducts,
     streamingRequestId,
     focusedProductId,

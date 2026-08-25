@@ -1,4 +1,5 @@
 import { type FC } from 'react';
+import { useIntl } from 'react-intl';
 import BreadcrumbTrail from './BreadcrumbTrail';
 import ProductGridSkeleton from './ProductGridSkeleton';
 import ProductGrid from '../../../common/components/chat/ProductGrid';
@@ -37,11 +38,19 @@ const ProductsPane: FC<ProductsPaneProps> = ({
   // products reliably means "this query is in flight and nothing has streamed back yet",
   // regardless of whether the 'reqid' SSE event (and therefore isStreaming) has fired yet.
   const isWaitingForFirstProduct = !!activeCrumb && activeCrumb.products.length === 0 && !isStreaming;
+  const intl = useIntl();
 
   return (
     <div className='flex min-h-0 flex-1 flex-col overflow-y-auto'>
       <BreadcrumbTrail breadcrumbs={breadcrumbs} activeBreadcrumbId={activeBreadcrumbId} onSelect={onTrailSelect} />
-      {isWaitingForFirstProduct && <ProductGridSkeleton className={PRODUCT_GRID_CLASS_NAME} />}
+      {isWaitingForFirstProduct && (
+        <>
+          <span role='status' className='sr-only'>
+            {intl.formatMessage({ id: 'a11yLoadingResults' })}
+          </span>
+          <ProductGridSkeleton className={PRODUCT_GRID_CLASS_NAME} />
+        </>
+      )}
       {products.length > 0 && (
         <ProductGrid
           products={products}

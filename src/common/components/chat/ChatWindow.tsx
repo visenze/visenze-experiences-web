@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import { type CSSProperties, type FC, Fragment, useContext, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, type FC, Fragment, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { USER_SCROLL_IDLE_MS } from './constants';
 import ProductGrid from './ProductGrid';
@@ -227,10 +227,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
     }
   };
 
-  useEffect(() => {
-    autoScrollToBottom();
-  }, [chats.length]);
-
   // While a product is being narrated AND this ChatWindow renders the product grid inline
   // (productDisplayMode === 'grid'), ProductGrid's own scroll-into-view effect owns scrolling
   // instead — otherwise this would snap to the bottom of the stream on every token/typewriter tick
@@ -240,17 +236,14 @@ const ChatWindow: FC<ChatWindowProps> = ({
   // narration, leaving stale text on screen until narration ends and focusedProductId clears.
   const focusedProductOwnsScroll = productDisplayMode === 'grid' && !!focusedProductId;
 
+  // Single effect covering every reason this pane's content can grow (a new chat turn, streamed
+  // reply text, or streamed products) — merged from three near-identical effects so the scroll
+  // guard above only has to be reasoned about in one place.
   useEffect(() => {
     if (!focusedProductOwnsScroll) {
       autoScrollToBottom();
     }
-  }, [latestMessage, focusedProductOwnsScroll]);
-
-  useEffect(() => {
-    if (!focusedProductOwnsScroll) {
-      autoScrollToBottom();
-    }
-  }, [streamingProducts.length, focusedProductOwnsScroll]);
+  }, [chats.length, latestMessage, streamingProducts.length, focusedProductOwnsScroll]);
 
   const processMessageForDisplay = (message: string): string => message
       // quick sanitization
@@ -272,11 +265,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
     return [defaultGapX].join(' ');
   };
 
-  const getProductGridCssConfig = (needed = false): CSSProperties => {
+  // Memoized so ProductGrid receives the same `style` object reference across renders that don't
+  // actually change these inputs — otherwise every ProductGrid instance would see a "changed"
+  // style prop on every ChatWindow render (e.g. a streamed token elsewhere), defeating its memo.
+  const productGridCssConfig = useMemo((): CSSProperties => {
     const cssConfig = {} as CSSProperties;
-    if (!needed) {
-      return cssConfig;
-    }
     const cssConfigSrc = customizations.productGrid?.[breakpoint];
     if (cssConfigSrc) {
       if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
@@ -284,7 +277,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
       }
     }
     return cssConfig;
-  };
+  }, [customizations.productGrid, breakpoint]);
 
   const getAccessibleStatus = (): string => {
     if (isWaiting) {
@@ -316,8 +309,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
         <div role='log'
              className='overflow-y-auto h-full px-4 my-4 space-y-3'
              aria-label={intl.formatMessage({ id: 'a11yChatMessages' })}
-             aria-live='polite'
-             aria-relevant='additions'
              ref={messageScrollRef}
              onScroll={handleScroll}
              onWheel={markUserScrolling}
@@ -406,7 +397,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                         pwPrefix={pwPrefix}
                         imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
                         className={cn('grid pl-9', PRODUCT_GRID_COLUMNS_CLASSES, getProductGridCssClasses('gap-x-4'))}
-                        style={getProductGridCssConfig(true)}
+                        style={productGridCssConfig}
                       />
                     )
                   )}
@@ -458,7 +449,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       streaming
                       imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
                       className={cn('w-full grid pl-9', PRODUCT_GRID_COLUMNS_CLASSES, getProductGridCssClasses('gap-x-4'))}
-                      style={getProductGridCssConfig(true)}
+                      style={productGridCssConfig}
                     />
                 )}
               </>

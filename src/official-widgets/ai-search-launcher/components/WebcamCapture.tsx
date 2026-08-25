@@ -35,6 +35,7 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
   const takePhotoButtonRef = useRef<HTMLButtonElement>(null);
   const switchCameraButtonRef = useRef<HTMLButtonElement>(null);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
+  const [cameraError, setCameraError] = useState(false);
   const iconColor = darkMode ? (fontColorDark || '') : (fontColor || '');
 
   useEffect(() => {
@@ -110,14 +111,21 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
         : 'flex flex-1 flex-col items-center justify-center gap-4 p-4'}
       onKeyDown={handleKeyDown}
     >
-      <Webcam
-        audio={false}
-        ref={webcamRef}
-        screenshotFormat='image/jpeg'
-        className='rounded-lg max-w-full'
-        videoConstraints={{ facingMode }}
-        aria-label={intl.formatMessage({ id: 'a11yCameraPreview' })}
-      />
+      {cameraError ? (
+        <p role='alert' className='m-0 max-w-sm text-center text-sm text-red-600 dark:text-red-400'>
+          {intl.formatMessage({ id: 'a11yCameraError' })}
+        </p>
+      ) : (
+        <Webcam
+          audio={false}
+          ref={webcamRef}
+          screenshotFormat='image/jpeg'
+          className='rounded-lg max-w-full'
+          videoConstraints={{ facingMode }}
+          aria-label={intl.formatMessage({ id: 'a11yCameraPreview' })}
+          onUserMediaError={() => setCameraError(true)}
+        />
+      )}
       <div className='flex w-full max-w-sm gap-2'>
         <button ref={closeCameraButtonRef}
                 className={cn(
@@ -134,12 +142,13 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
         <button ref={takePhotoButtonRef}
                 className={cn(
                     'w-full p-2 rounded flex justify-center bg-gray-100 dark:bg-neutral-800 dark:border-1',
-                    'text-neutral-900 dark:text-neutral-100',
+                    'text-neutral-900 dark:text-neutral-100 disabled:opacity-50',
                     FOCUS_VISIBLE_CLASSES,
                 )}
                 type='button'
                 aria-label={intl.formatMessage({ id: 'a11yTakePhoto' })}
                 title={intl.formatMessage({ id: 'a11yTakePhoto' })}
+                disabled={cameraError}
                 onClick={capture}>
           <CameraIcon className='size-5 cursor-pointer' color={iconColor} />
         </button>
@@ -152,7 +161,10 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ darkMode, fontColor, fontColorD
                 type='button'
                 aria-label={intl.formatMessage({ id: 'a11ySwitchCamera' })}
                 title={intl.formatMessage({ id: 'a11ySwitchCamera' })}
-                onClick={() => setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'))}>
+                onClick={() => {
+                  setCameraError(false);
+                  setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
+                }}>
           <ArrowPathIcon className='size-5 cursor-pointer' color={iconColor} />
         </button>
       </div>
