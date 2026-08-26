@@ -79,6 +79,10 @@ export const setCssVariables = (config: WidgetConfig, darkMode: boolean): void =
       primary: config.customizations.generalLayout,
       buttonPrimary: config.customizations.buttons?.primary,
       buttonSecondary: config.customizations.buttons?.secondary,
+      buttonIcon: config.customizations.buttons?.icon,
+      breadcrumbActive: config.customizations.breadcrumbTrail?.active,
+      breadcrumbInactive: config.customizations.breadcrumbTrail?.inactive,
+      inputBarMenuPanel: config.customizations.chat?.inputBar?.menuPanel,
     };
     const root = document.querySelector(':root') as HTMLElement;
 

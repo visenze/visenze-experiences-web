@@ -35,6 +35,7 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
     ? (customizations.generalLayout?.fontColorDark || '')
     : (customizations.generalLayout?.fontColor || '');
   const galleryImages = customizations.imageUpload?.images || [];
+  const galleryColumnsClass = customizations.imageUpload?.galleryColumns === 3 ? 'grid-cols-3' : 'grid-cols-2';
 
   const handleImage = (image: SearchImage): void => {
     chat.sendMessage(undefined, image);
@@ -71,8 +72,11 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
   }
 
   // Mirrors camera-search's UploadScreen: images[0] renders alone as a tall "hero" tile, the rest
-  // form a 2x2 subgrid beside it, rather than a uniform grid of equally-sized tiles.
+  // form a 2x2 subgrid beside it, rather than a uniform grid of equally-sized tiles. Capped at 4
+  // "rest" tiles (regardless of how many are configured) so the grid stays a fixed 2x2 shape and
+  // the welcome screen never grows tall enough to need a scrollbar.
   const [heroImage, ...restGalleryImages] = galleryImages;
+  const visibleRestGalleryImages = restGalleryImages.slice(0, 4);
 
   const renderGalleryTile = (imageWithLabel: { url: string; label?: string }, index: number): ReactNode => (
     <button
@@ -96,64 +100,85 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
   );
 
   return (
-    <div className='mx-auto flex w-full max-w-[820px] flex-1 flex-col items-center gap-6 overflow-y-auto p-6 text-center'>
-      <p className='m-0 max-w-xs text-base' style={{ color: fontColor }}>
+    <div className='mx-auto flex w-full max-w-[520px] flex-1 flex-col gap-4 overflow-hidden p-4 text-center'>
+      <p className='m-0 text-base font-semibold' style={{ color: fontColor }}>
         {promptText}
       </p>
-      <div className={cn('flex w-full flex-1 flex-col gap-6', galleryImages.length > 0 && 'md:flex-row md:items-start md:text-start')}>
-        <div className={cn('flex flex-col items-center gap-3', galleryImages.length > 0 && 'md:w-1/3')}>
-          <FileDropzone onImageUpload={handleImage} name='asl-image-entry' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
-            <div className='flex flex-col items-center gap-2 rounded-xl border border-gray bg-transparent p-6'>
-              {customizations.imageUpload?.icon?.url ? (
-                <CustomizableIcon
-                  height={64}
-                  width={64}
-                  url={customizations.imageUpload.icon.url}
-                  color={darkMode
-                    ? (customizations.imageUpload.icon.colorDark || '')
-                    : (customizations.imageUpload.icon.color || '')}
-                />
-              ) : (
-                <UploadIcon className='size-16' color={fontColor} />
-              )}
-              <p className='m-0 hidden text-sm md:block' style={{ color: fontColor }}>
-                {intl.formatMessage({ id: 'dragImageToSearch' })}
-              </p>
-              <p className='m-0 text-sm md:hidden' style={{ color: fontColor }}>
-                {intl.formatMessage({ id: 'tapToSearchImage' })}
-              </p>
-            </div>
-          </FileDropzone>
-          <button
-            ref={openCameraButtonRef}
-            type='button'
-            aria-label={intl.formatMessage({ id: 'a11yTakePhoto' })}
-            className={cn('w-full rounded-md border-0 bg-transparent p-1 text-sm underline', FOCUS_VISIBLE_CLASSES)}
-            style={{ color: fontColor }}
-            onClick={() => setShowWebcam(true)}
+      {/* Wrapped in a plain shrink-0 div rather than nesting FileDropzone directly in the root flex
+          column: FileDropzone's own root has a hardcoded h-full, and the root column here has a
+          definite height, so without this auto-height buffer FileDropzone would silently stretch
+          to fill the whole screen and shove everything after it off-screen. */}
+      <div className='shrink-0'>
+        <FileDropzone onImageUpload={handleImage} name='asl-image-entry' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
+          <div
+            data-testid='asl-image-dropzone'
+            className='flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 p-6 dark:border-neutral-700 dark:bg-neutral-900/40'
           >
-            {intl.formatMessage({ id: 'useCamera' })}
-          </button>
-        </div>
-
-        {galleryImages.length > 0 && (
-          <div className='flex flex-col gap-3 md:w-2/3'>
+            {customizations.imageUpload?.icon?.url ? (
+              <CustomizableIcon
+                height={40}
+                width={40}
+                url={customizations.imageUpload.icon.url}
+                color={darkMode
+                  ? (customizations.imageUpload.icon.colorDark || '')
+                  : (customizations.imageUpload.icon.color || '')}
+              />
+            ) : (
+              <UploadIcon className='size-10' color={fontColor} />
+            )}
             <p className='m-0 text-sm' style={{ color: fontColor }}>
-              {intl.formatMessage({ id: 'tapProductGallery' })}
+              {intl.formatMessage({ id: 'dragImageToSearch' })}
             </p>
-            <div className='grid grid-cols-2 gap-2 md:gap-4'>
-              {heroImage && renderGalleryTile(heroImage, 0)}
-              {restGalleryImages.length > 0 && (
-                <div className='grid grid-cols-2 gap-2 md:gap-4'>
-                  {restGalleryImages.map((imageWithLabel, index) => renderGalleryTile(imageWithLabel, index + 1))}
-                </div>
-              )}
+            <div className='flex w-full gap-3'>
+              {/* No onClick: a click anywhere inside FileDropzone's root (including this button) already
+                  opens the native file picker via react-dropzone's own bubbled root click handler. */}
+              <button
+                type='button'
+                className={cn('flex-1 rounded-lg border border-gray bg-buttonPrimary px-4 py-2.5 text-sm text-buttonPrimary', FOCUS_VISIBLE_CLASSES)}
+              >
+                {intl.formatMessage({ id: 'browsePhotos' })}
+              </button>
+              <button
+                ref={openCameraButtonRef}
+                type='button'
+                aria-label={intl.formatMessage({ id: 'a11yTakePhoto' })}
+                className={cn('flex-1 rounded-lg border border-gray bg-buttonSecondary px-4 py-2.5 text-sm', FOCUS_VISIBLE_CLASSES)}
+                style={{ color: fontColor }}
+                onClick={(event) => {
+                  // Stop the click from bubbling into FileDropzone's root handler, which would
+                  // otherwise also pop the native file picker open behind the webcam view.
+                  event.stopPropagation();
+                  setShowWebcam(true);
+                }}
+              >
+                {intl.formatMessage({ id: 'useCamera' })}
+              </button>
             </div>
           </div>
-        )}
+        </FileDropzone>
       </div>
+
+      {galleryImages.length > 0 && (
+        <div className='flex flex-col gap-2 overflow-hidden'>
+          <p className='m-0 text-left text-sm text-gray-500 dark:text-gray-400'>
+            {intl.formatMessage({ id: 'tapProductGallery' })}
+          </p>
+          {/* Fixed (not flex-grown) height: h-full tiles inside a CSS grid need a definite row
+              height to resolve against, and it also guarantees this section can never push the
+              screen tall enough to need a scrollbar, regardless of viewport size. */}
+          <div data-testid='asl-gallery-grid' className={cn('grid h-56 auto-rows-fr gap-2 md:h-80', galleryColumnsClass)}>
+            {heroImage && renderGalleryTile(heroImage, 0)}
+            {visibleRestGalleryImages.length > 0 && (
+              <div className={cn('grid h-full grid-rows-2 gap-2', galleryColumnsClass)}>
+                {visibleRestGalleryImages.map((imageWithLabel, index) => renderGalleryTile(imageWithLabel, index + 1))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {customizations.generalLayout?.showViSenzeLogo && (
-        <Footer darkMode={darkMode} className='mt-auto pt-2' dataPw='asl-visenze-footer' />
+        <Footer darkMode={darkMode} className='mt-auto shrink-0 pt-2' dataPw='asl-visenze-footer' />
       )}
     </div>
   );

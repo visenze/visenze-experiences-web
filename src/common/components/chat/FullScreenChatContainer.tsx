@@ -32,6 +32,15 @@ interface FullScreenChatContainerProps {
   fontFamily?: string;
   fontColor?: string;
   fontColorDark?: string;
+  // Dialog background, from customizations.generalLayout.backgroundColor/backgroundColorDark.
+  // Falls back to the default white/neutral-900 classes below when unset.
+  backgroundColor?: string;
+  backgroundColorDark?: string;
+  // Header separator border, from customizations.generalLayout.border. Falls back to the
+  // default neutral border classes below when unset.
+  borderWidth?: number;
+  borderColor?: string;
+  borderColorDark?: string;
   placementId: string;
   // Identifies the consuming widget in the portal element's id (e.g. 'ai-search-launcher'), so
   // multiple widgets embedding this same shared container on one page get distinct portal ids.
@@ -61,6 +70,11 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
   fontFamily,
   fontColor,
   fontColorDark,
+  backgroundColor,
+  backgroundColorDark,
+  borderWidth,
+  borderColor,
+  borderColorDark,
   placementId,
   widgetName,
   ariaLabelledBy,
@@ -138,6 +152,8 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
   }
 
   const iconColor = darkMode ? (fontColorDark || '') : (fontColor || '');
+  const resolvedBackgroundColor = darkMode ? (backgroundColorDark || '') : (backgroundColor || '');
+  const resolvedBorderColor = darkMode ? (borderColorDark || '') : (borderColor || '');
 
   const content = (
     <div
@@ -147,10 +163,15 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
       aria-labelledby={ariaLabelledBy}
       tabIndex={-1}
       className='fixed inset-0 z-50 flex justify-center bg-white dark:bg-neutral-900'
+      style={{ backgroundColor: resolvedBackgroundColor }}
       onKeyDown={handleKeyDown}
     >
       <div className='flex size-full flex-col'>
-        <div className='flex w-full items-center justify-between border-b border-neutral-300 py-2 dark:border-neutral-800'>
+        <div
+          data-testid='wigmix-fullscreen-header'
+          className='flex w-full items-center justify-between border-b border-neutral-300 py-2 dark:border-neutral-800'
+          style={{ borderBottomColor: resolvedBorderColor, borderBottomWidth: borderWidth ? `${borderWidth}px` : undefined }}
+        >
           <div
             className={cn(
               'flex w-full items-center justify-between',

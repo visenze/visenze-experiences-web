@@ -1,6 +1,6 @@
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { WidgetType, type WidgetConfig } from '../wigmix-core';
-import { initWidgetFactory } from './initialization';
+import { initWidgetFactory, setCssVariables } from './initialization';
 import ViSearch from 'visearch-javascript-sdk';
 
 const mockViSearchClient = {
@@ -153,5 +153,51 @@ describe('initialization', () => {
       undefined,
       undefined,
     );
+  });
+
+  describe('setCssVariables — breadcrumbTrail.inactive', () => {
+    afterEach(() => {
+      document.documentElement.removeAttribute('style');
+    });
+
+    it('sets the breadcrumbInactive text/background CSS variables from the light-mode colors', () => {
+      const config = {
+        customizations: {
+          breadcrumbTrail: {
+            inactive: {
+              fontColor: '#111111',
+              fontColorDark: '#222222',
+              backgroundColor: '#333333',
+              backgroundColorDark: '#444444',
+            },
+          },
+        },
+      } as unknown as WidgetConfig;
+
+      setCssVariables(config, false);
+
+      expect(document.documentElement.style.getPropertyValue('--wigmix-text-breadcrumbInactive')).toBe('#111111');
+      expect(document.documentElement.style.getPropertyValue('--wigmix-background-breadcrumbInactive')).toBe('#333333');
+    });
+
+    it('sets the breadcrumbInactive text/background CSS variables from the dark-mode colors', () => {
+      const config = {
+        customizations: {
+          breadcrumbTrail: {
+            inactive: {
+              fontColor: '#111111',
+              fontColorDark: '#222222',
+              backgroundColor: '#333333',
+              backgroundColorDark: '#444444',
+            },
+          },
+        },
+      } as unknown as WidgetConfig;
+
+      setCssVariables(config, true);
+
+      expect(document.documentElement.style.getPropertyValue('--wigmix-text-breadcrumbInactive')).toBe('#222222');
+      expect(document.documentElement.style.getPropertyValue('--wigmix-background-breadcrumbInactive')).toBe('#444444');
+    });
   });
 });

@@ -995,6 +995,21 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       darkModeDefault: boolean;
+      /**
+       * Border shown on outer widget chrome — e.g. the full-screen chat dialog's header
+       * separator, the mic entry screen's mic button ring, and the image entry screen's upload
+       * dropzone panel. Defaults to a plain neutral border when unset.
+       *
+       * @since 1.0.30
+       */
+      border?: {
+        /** Width (thickness) of the border, in px. @since 1.0.30 */
+        width: number;
+        /** Color of the border. @since 1.0.30 */
+        color: string;
+        /** Color of the border in dark mode. @since 1.0.30 */
+        colorDark: string;
+      };
     };
     /**
      * Settings to influence API results or how the responses are parsed.
@@ -1077,6 +1092,34 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       secondary: ColoredInterface;
+      /**
+       * Plain icon-only button configuration (the chat input bar's "add image" trigger, upload
+       * fallback, and idle mic button — buttons with no text label of their own).
+       *
+       * @since 1.0.30
+       */
+      icon?: ColoredInterface;
+    };
+    /**
+     * Breadcrumb trail configuration (the past-search pill trail shown above the results pane in
+     * splitlayout).
+     *
+     * @since 1.0.30
+     */
+    breadcrumbTrail?: {
+      /**
+       * Color of the currently-active breadcrumb pill.
+       *
+       * @since 1.0.30
+       */
+      active: ColoredInterface;
+      /**
+       * Color of the inactive (non-selected) breadcrumb pills. Defaults to a plain neutral color
+       * when unset.
+       *
+       * @since 1.0.30
+       */
+      inactive?: ColoredInterface;
     };
     /**
      * Breakpoints configuration.
@@ -1458,6 +1501,12 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       images: ImageWithLabel[];
+      /**
+       * Number of columns in the preset image gallery grid. Defaults to 2 when unset.
+       *
+       * @since 1.0.30
+       */
+      galleryColumns?: 2 | 3;
     };
     /**
      * Popular terms settings. This is only applicable for widgets with popular terms setting available.
@@ -1649,6 +1698,80 @@ export interface WidgetConfig {
        * @since 1.0.30
        */
       layout?: 'chatlayout' | 'splitlayout';
+      /**
+       * Configuration for the input bar (the text input plus its image/camera/mic/send controls,
+       * docked at the bottom of the chat surface).
+       *
+       * @since 1.0.30
+       */
+      inputBar?: {
+        /**
+         * Top border separating the input bar from the message list above it. Defaults to a plain
+         * neutral border when unset.
+         *
+         * @since 1.0.30
+         */
+        border?: {
+          /** Width (thickness) of the border, in px. @since 1.0.30 */
+          width: number;
+          /** Color of the border. @since 1.0.30 */
+          color: string;
+          /** Color of the border in dark mode. @since 1.0.30 */
+          colorDark: string;
+        };
+        /**
+         * Background/text color of the camera+upload popover opened by the "add image" trigger.
+         *
+         * @since 1.0.30
+         */
+        menuPanel?: ColoredInterface & {
+          /**
+           * Border around the popover panel.
+           *
+           * @since 1.0.30
+           */
+          border?: {
+            /** Width (thickness) of the border, in px. @since 1.0.30 */
+            width: number;
+            /** Color of the border. @since 1.0.30 */
+            color: string;
+            /** Color of the border in dark mode. @since 1.0.30 */
+            colorDark: string;
+          };
+        };
+        /**
+         * Color of the mic button's icon while actively recording (replaces the idle mic icon
+         * with a stop icon in this color). Defaults to red when unset.
+         *
+         * @since 1.0.30
+         */
+        voiceRecordingColor?: string;
+        /**
+         * Color of the recording-state icon in dark mode.
+         *
+         * @since 1.0.30
+         */
+        voiceRecordingColorDark?: string;
+      };
+      /**
+       * Configuration specific to the two-pane split layout (`layout: 'splitlayout'`): the
+       * fixed-width chat pane on the left and the divider separating it from the products pane.
+       *
+       * @since 1.0.30
+       */
+      splitLayout?: {
+        /** Width of the chat pane, in px. Defaults to 400 when unset. @since 1.0.30 */
+        paneWidth?: number;
+        /** Divider border between the chat pane and the products pane. @since 1.0.30 */
+        divider?: {
+          /** Width (thickness) of the border, in px. @since 1.0.30 */
+          width: number;
+          /** Color of the border. @since 1.0.30 */
+          color: string;
+          /** Color of the border in dark mode. @since 1.0.30 */
+          colorDark: string;
+        };
+      };
     };
     /**
      * Configuration specific to the AI Search Launcher widget's entry points:

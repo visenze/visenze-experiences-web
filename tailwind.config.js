@@ -39,7 +39,7 @@ const getFontObj = (configName) => {
 };
 
 const getColorObj = (configName) => {
-  const colorNames = ['primary', 'buttonPrimary', 'buttonSecondary'];
+  const colorNames = ['primary', 'buttonPrimary', 'buttonSecondary', 'buttonIcon', 'breadcrumbActive', 'breadcrumbInactive', 'inputBarMenuPanel'];
   const colorObj = {};
 
   colorNames.forEach(colorName => {
