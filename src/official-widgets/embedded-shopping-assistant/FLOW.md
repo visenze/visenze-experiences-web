@@ -140,7 +140,15 @@ POST {base}{path}?app_key=...&placement_id=...&chat_id=...&q=<query>&va_uid=...&
 - **`chat_id`** — a UUID generated once per conversation (`widgetClient.visearch.generateUuid`) and reused
   across follow-up turns, so the backend keeps chat context.
 - **`va_uid` / `va_sid`** — visitor/session IDs from the ViSearch SDK.
-- **`chat_agent`** — `customizations.chatbot.chatAgent`, defaults to `'shopping_closer_voice_v2'`.
+- **`chat_agent`** — as of the useChat/ChatComposer migration, the real outgoing request is built by
+  `common/components/chat/use-chat.ts`, which reads `customizations.chat?.chatAgent` (defaults to
+  `'shopping_closer_voice_v2'`). **Known latent issue, not yet reconciled**: ESA's own config
+  (`dev-configs.ts`, `default-config.ts`) still only populates `customizations.chatbot.chatAgent` — a
+  leftover namespace from before this migration that `use-chat.ts` never reads. Today both resolve to
+  the same default value, so there's no visible difference — but if either default ever changes without
+  updating the other, they'll silently diverge. Whoever next touches chat-agent defaults for ESA should
+  either move ESA's config onto `customizations.chat.chatAgent` or remove the stale `chatbot.chatAgent`
+  entirely.
 
 This is a **Server-Sent Events (SSE)** stream (`fetchEventSource`), not a single JSON response. It emits:
 

@@ -667,7 +667,18 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     fontColor: '#4285f4',
     fontColorDark: '#4285f4',
     backgroundColor: '#FFFFFF',
-    backgroundColorDark: '#000000',
+    // Matches Tailwind neutral-900, the previous hardcoded dark-mode background of ESA's own page
+    // containers — this field was unused (unwired) before, so this value keeps the default look
+    // unchanged now that it's actually applied. Mirrors the same fix ai-search-launcher made for
+    // FullScreenChatContainer's dialog background.
+    backgroundColorDark: '#171717',
+    // Matches Tailwind gray-200/neutral-700, TopBar's previous hardcoded border colors — same
+    // "unwired until now" situation as backgroundColorDark above.
+    border: {
+      width: 1,
+      color: '#E5E7EB',
+      colorDark: '#404040',
+    },
     showWidgetTitle: true,
     showViSenzeLogo: false,
     darkModeDefault: false,

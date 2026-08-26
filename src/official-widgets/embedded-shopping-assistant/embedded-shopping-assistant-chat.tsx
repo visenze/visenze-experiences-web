@@ -7,6 +7,7 @@ import { deriveTurns } from './derive-turns';
 import type { EmbeddedShoppingAssistantProps } from './embedded-shopping-assistant';
 import ChatComposer from '../../common/components/chat/ChatComposer';
 import useChat from '../../common/components/chat/use-chat';
+import Footer from '../../common/components/Footer';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import SparklesIcon from '../../common/icons/SparklesIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
@@ -29,6 +30,10 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // Still needed for TurnSection's own loading-dots color below — ChatComposer's send button no
   // longer reads this (see the ChatComposer wiring note further down).
   const primaryButtonBg = (darkMode ? customizations.buttons?.primary?.backgroundColorDark : customizations.buttons?.primary?.backgroundColor) || undefined;
+  // Replaces the previous hardcoded bg-white/dark:bg-neutral-900 on ESA's own page containers —
+  // default-config.ts's values were already set to match those exact colors, so this is a pure
+  // wiring change with no visible difference unless a host overrides them.
+  const backgroundColor = (darkMode ? customizations.generalLayout?.backgroundColorDark : customizations.generalLayout?.backgroundColor) || undefined;
 
   // Mounted here, inside the Step 2 isolation boundary — now ESA's real send path (Step 4) and
   // the source for ChatComposer (Step 5) below.
@@ -175,14 +180,24 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // ── Initial state: Google homepage ────────────────────────────────────────
   if (!hasSearched) {
     return (
-      <div className='size-full bg-white dark:bg-neutral-900 flex flex-col items-center justify-center px-4 gap-8'>
+      <div className='size-full flex flex-col items-center justify-center px-4 gap-8' style={{ backgroundColor }}>
 
         {/* Logo */}
         <div className='flex flex-col items-center gap-3'>
           <SparklesIcon className='size-12' color={iconColor} />
-          <h1 className='text-5xl font-normal text-gray-700 dark:text-neutral-100 tracking-tight'>
-            Embedded Shopping <span className='font-medium' style={{ color: iconColor }}>Assistant</span>
-          </h1>
+          {/* Was a hardcoded "Embedded Shopping Assistant" string with a two-tone accent split on
+              the last word — now the real widgetTitle text/config, gated by showWidgetTitle,
+              matching how ai-search-launcher's own header title is driven by config. The two-tone
+              split is dropped rather than reimplemented: it can't be done reliably against a
+              single translated string across all 11 locales (no guaranteed "last word" to split
+              on for e.g. zh/ja/th). Left as plain text color (no iconColor accent) to match
+              ai-search-launcher's own undecorated <h2>{'{title}'}</h2> treatment as closely as
+              possible, rather than introducing a new, more prominent all-accent-colored heading. */}
+          {customizations.generalLayout?.showWidgetTitle !== false && (
+            <h1 className='text-5xl font-normal text-gray-700 dark:text-neutral-100 tracking-tight'>
+              {intl.formatMessage({ id: 'widgetTitle' })}
+            </h1>
+          )}
         </div>
 
         {/* Search bar */}
@@ -200,6 +215,10 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
           {intl.formatMessage({ id: 'searchButton' })}
         </button>
 
+        {customizations.generalLayout?.showViSenzeLogo && (
+          <Footer darkMode={darkMode} className='mt-auto pt-2' dataPw='esa-visenze-footer' />
+        )}
+
       </div>
     );
   }
@@ -213,7 +232,7 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   const showSuggestions = suggestions.length > 0 && !!latestTurn?.productsExpanded;
 
   return (
-    <div className='size-full bg-white dark:bg-neutral-900 flex flex-col'>
+    <div className='size-full flex flex-col' style={{ backgroundColor }}>
 
       {/* Only shown once results are actually revealed (post "See Results"/auto-expanded follow-ups) —
           not during the initial loading/clamped-preview phase, so it doesn't appear ahead of content. */}
@@ -261,6 +280,10 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
                 </button>
               ))}
             </div>
+          )}
+
+          {customizations.generalLayout?.showViSenzeLogo && (
+            <Footer darkMode={darkMode} className='pt-4' dataPw='esa-visenze-footer' />
           )}
         </div>
       </div>
