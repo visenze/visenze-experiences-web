@@ -44,6 +44,10 @@ const TopBar: FC<TopBarProps> = ({ iconColor, isSpeaking, onToggleReadAloud, onC
           <span className='text-sm font-semibold text-gray-800 dark:text-neutral-100'>
             {intl.formatMessage({ id: 'aiOverviewLabel' })}
           </span>
+        </div>
+        {/* Read-aloud grouped with close on the right, matching ai-search-launcher's
+            FullScreenChatContainer header (mute/new-chat/close all grouped together). */}
+        <div className='flex items-center gap-2'>
           <button
             type='button'
             onClick={onToggleReadAloud}
@@ -55,16 +59,15 @@ const TopBar: FC<TopBarProps> = ({ iconColor, isSpeaking, onToggleReadAloud, onC
           >
             <SpeakerWaveIcon className='size-4' color={iconColor} />
           </button>
+          <button
+            type='button'
+            onClick={onClose}
+            aria-label={intl.formatMessage({ id: 'a11yCloseModal' })}
+            className='flex items-center justify-center size-7 rounded-full hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors'
+          >
+            <CloseIcon className='size-4' color={iconColor} />
+          </button>
         </div>
-        <button
-          type='button'
-          onClick={onClose}
-          aria-label={intl.formatMessage({ id: 'a11yCloseModal' })}
-          className='flex items-center justify-center size-7 rounded-full text-gray-500 dark:text-neutral-400
-            hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors'
-        >
-          <CloseIcon className='size-4' />
-        </button>
       </div>
     </div>
   );
