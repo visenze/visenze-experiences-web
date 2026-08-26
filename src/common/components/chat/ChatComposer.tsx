@@ -1,6 +1,6 @@
 import { Input } from '@heroui/input';
 import { cn } from '@heroui/theme';
-import { type FC, type RefObject, useContext, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, type FC, type RefObject, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { UseChatResult } from './use-chat';
 import WebcamCapture from './WebcamCapture';
@@ -37,7 +37,8 @@ interface ChatComposerProps {
   onImageSelected?: (image: SearchImage) => void;
 }
 
-const ICON_BUTTON_CLASSES = 'flex min-h-[32px] min-w-[32px] items-center justify-center rounded-full border-0 bg-transparent p-1 disabled:opacity-50';
+const ICON_BUTTON_CLASSES = 'flex min-h-[32px] min-w-[32px] items-center justify-center rounded-full border-0 bg-buttonIcon p-1 disabled:opacity-50';
+const DEFAULT_VOICE_RECORDING_COLOR = '#EF4444';
 
 // The text input + image (camera/upload) trigger + hold-to-record mic for an in-progress chat
 // conversation. Pairs with WebcamCapture (variant='drawer' here) and `useChat` to give any widget
@@ -50,6 +51,31 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
     ? (customizations.generalLayout?.fontColorDark || '')
     : (customizations.generalLayout?.fontColor || '');
   const imageUploadIconUrl = customizations.imageUpload?.icon?.url;
+  const inputBar = customizations.chat?.inputBar;
+  // Plain icon-only buttons (add-image trigger, upload fallback, idle mic) carry their own color
+  // scheme via buttons.icon rather than the general layout color — same precedent as the send
+  // button, which already uses buttons.primary instead of generalLayout.
+  const iconButtonColor = darkMode
+    ? (customizations.buttons?.icon?.fontColorDark || iconColor)
+    : (customizations.buttons?.icon?.fontColor || iconColor);
+  // The popover panel is its own themed surface (background/border/icon-and-label color), driven
+  // by chat.inputBar.menuPanel — falls back to the plain icon color when unconfigured.
+  const menuPanelColor = darkMode
+    ? (inputBar?.menuPanel?.fontColorDark || iconColor)
+    : (inputBar?.menuPanel?.fontColor || iconColor);
+  const inputBarBorderStyle: CSSProperties | undefined = inputBar?.border ? {
+    borderTopWidth: `${inputBar.border.width}px`,
+    borderTopStyle: 'solid',
+    borderTopColor: darkMode ? inputBar.border.colorDark : inputBar.border.color,
+  } : undefined;
+  const menuPanelBorderStyle: CSSProperties | undefined = inputBar?.menuPanel?.border ? {
+    borderWidth: `${inputBar.menuPanel.border.width}px`,
+    borderStyle: 'solid',
+    borderColor: darkMode ? inputBar.menuPanel.border.colorDark : inputBar.menuPanel.border.color,
+  } : undefined;
+  const voiceRecordingColor = (darkMode
+    ? inputBar?.voiceRecordingColorDark
+    : inputBar?.voiceRecordingColor) || DEFAULT_VOICE_RECORDING_COLOR;
   // Camera and upload are collapsed behind a single "Add image" trigger that opens a small menu
   // offering both options.
   const [isImageMenuOpen, setIsImageMenuOpen] = useState(false);
@@ -118,7 +144,10 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
   };
 
   return (
-    <div className='relative flex flex-col gap-2 p-4 border-t border-neutral-300 dark:border-neutral-800'>
+    <div
+      className={cn('relative flex flex-col gap-2 p-4', !inputBarBorderStyle && 'border-t border-neutral-300 dark:border-neutral-800')}
+      style={inputBarBorderStyle}
+    >
       <div className='relative mx-auto flex w-full max-w-[820px] flex-col gap-2'>
         {showCameraCapture && (
           <WebcamCapture
@@ -158,15 +187,17 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                     className={cn(ICON_BUTTON_CLASSES, FOCUS_VISIBLE_CLASSES)}
                     onClick={() => setIsImageMenuOpen((prev) => !prev)}
                   >
-                    <PhotoIcon className='size-5 cursor-pointer' color={iconColor} />
+                    <PhotoIcon className='size-5 cursor-pointer' color={iconButtonColor} />
                   </button>
                   {isImageMenuOpen && (
                     <div
                       ref={imageMenuRef}
                       className={cn(
-                        'absolute bottom-full right-0 z-10 mb-2 flex w-max flex-col gap-1 rounded-lg border border-gray',
-                        'bg-white p-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900',
+                        'absolute bottom-full right-0 z-10 mb-2 flex w-max flex-col gap-1 rounded-lg',
+                        'bg-inputBarMenuPanel p-1 text-inputBarMenuPanel shadow-lg',
+                        !menuPanelBorderStyle && 'border border-gray dark:border-neutral-700',
                       )}
+                      style={menuPanelBorderStyle}
                     >
                       <button
                         type='button'
@@ -176,7 +207,7 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                         )}
                         onClick={openCameraFromMenu}
                       >
-                        <CameraIcon className='size-4' color={iconColor} />
+                        <CameraIcon className='size-4' color={menuPanelColor} />
                         {intl.formatMessage({ id: 'a11yOpenCamera' })}
                       </button>
                       <FileDropzone
@@ -189,9 +220,9 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                           onClick={() => setIsImageMenuOpen(false)}
                         >
                           {imageUploadIconUrl ? (
-                            <CustomizableIcon height={16} width={16} url={imageUploadIconUrl} color={iconColor} />
+                            <CustomizableIcon height={16} width={16} url={imageUploadIconUrl} color={menuPanelColor} />
                           ) : (
-                            <UploadIcon className='size-4' color={iconColor} />
+                            <UploadIcon className='size-4' color={menuPanelColor} />
                           )}
                           {intl.formatMessage({ id: 'a11yUploadImage' })}
                         </div>
@@ -203,9 +234,9 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                 <FileDropzone onImageUpload={handleImageSelected} name='asl-chat-upload' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
                   <div className={ICON_BUTTON_CLASSES}>
                     {imageUploadIconUrl ? (
-                      <CustomizableIcon height={20} width={20} url={imageUploadIconUrl} color={iconColor} />
+                      <CustomizableIcon height={20} width={20} url={imageUploadIconUrl} color={iconButtonColor} />
                     ) : (
-                      <UploadIcon className='size-5' color={iconColor} />
+                      <UploadIcon className='size-5' color={iconButtonColor} />
                     )}
                   </div>
                 </FileDropzone>
@@ -245,8 +276,8 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                     }}
                   >
                     {chat.voiceStatus === 'recording'
-                      ? <StopIcon className='size-5 cursor-pointer animate-pulse' color='#EF4444' />
-                      : <MicrophoneIcon className='size-5 cursor-pointer' color={iconColor} />}
+                      ? <StopIcon className='size-5 cursor-pointer animate-pulse' color={voiceRecordingColor} />
+                      : <MicrophoneIcon className='size-5 cursor-pointer' color={iconButtonColor} />}
                   </button>
                   <span id='asl-chat-hold-mic-instructions' className='sr-only'>
                     {intl.formatMessage({ id: 'a11yHoldMicInstructions' })}
@@ -264,7 +295,8 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                 title={intl.formatMessage({ id: 'a11ySendMessage' })}
                 disabled={!chat.allowUserInput}
                 className={cn(
-                  'flex min-h-[32px] min-w-[32px] items-center justify-center rounded-full border-0 bg-blue-600 p-1.5 text-white disabled:opacity-50 place-items-center ',
+                  'flex min-h-[32px] min-w-[32px] items-center justify-center rounded-full border-0',
+                  'bg-buttonPrimary p-1.5 text-buttonPrimary disabled:opacity-50 place-items-center',
                   FOCUS_VISIBLE_CLASSES,
                 )}
                 onClick={handleSend}

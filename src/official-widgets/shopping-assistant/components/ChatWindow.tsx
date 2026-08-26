@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import { type CSSProperties, type FC, Fragment, type ReactElement, useContext, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, type FC, Fragment, type ReactElement, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
 import ProductCard from '../../../common/components/product-card/ProductCard';
@@ -9,6 +9,7 @@ import UserIcon from '../../../common/icons/UserIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
 import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../../common/types/image';
 import type { ProcessedProduct } from '../../../common/types/product';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 import { FOCUS_VISIBLE_CLASSES, FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS, USER_SCROLL_IDLE_MS } from '../constants';
 
 export interface Chat {
@@ -233,31 +234,17 @@ const ChatWindow: FC<ChatWindowProps> = ({
       .replaceAll(/\*\*(.*?)\*\*/g, '<b>$1</b>')
       .replaceAll(/\n/g, '<br>');
 
-  const getProductGridCssClasses = (defaultGapX: string): string => {
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      return classes.join(' ');
-    }
-    return [defaultGapX].join(' ');
-  };
+  // Memoized so the grid containers below (and ProductCard/RevealedProducts underneath) receive
+  // the same `className`/`style` reference across renders that don't actually change these inputs.
+  const productGridClasses = useMemo(
+    (): string => getProductGridCssClasses(customizations, breakpoint, 'grid-cols-2', 'gap-x-4', 'gap-y-4'),
+    [customizations.productGrid, breakpoint],
+  );
 
-  const getProductGridCssConfig = (needed = false): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    if (!needed) {
-      return cssConfig;
-    }
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
-  };
+  const productGridCssConfig = useMemo(
+    (): CSSProperties => getProductGridCssConfig(customizations, breakpoint),
+    [customizations.productGrid, breakpoint],
+  );
 
   const getAccessibleStatus = (): string => {
     if (isWaiting) {
@@ -361,10 +348,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
           {chats.map((chat, idx) => (
               <div className={cn(
                   'w-full',
-                  chat.author === 'products' ? `grid grid-cols-2 ${getProductGridCssClasses('gap-x-4')}` : 'flex flex-col',
+                  chat.author === 'products' ? `grid ${productGridClasses}` : 'flex flex-col',
                   chat.author === 'user' ? 'items-end' : '',
               )}
-                   style={getProductGridCssConfig(chat.author === 'products')}
+                   style={chat.author === 'products' ? productGridCssConfig : undefined}
                    key={`chat-row-${idx}`}>
                 {chat.author === 'user' && chat.image && (
                   <div className='flex gap-1 max-w-9/10'>
@@ -456,8 +443,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 </div>
                 {streamingRequestId && streamingProducts.length > 0 && (
                     <div
-                      className={cn('w-full grid grid-cols-2', getProductGridCssClasses('gap-x-4'))}
-                      style={getProductGridCssConfig(true)}>
+                      className={cn('w-full grid', productGridClasses)}
+                      style={productGridCssConfig}>
                       <RevealedProducts
                         key={streamingRequestId}
                         products={streamingProducts}

@@ -27,16 +27,23 @@ const KEEP_LAST = 2;
 // directly inside a flex box, and the child additionally needs its own `min-w-0` to be allowed to
 // shrink below the label's natural content width (flex items default to `min-width: auto`, which
 // otherwise blows the pill past `max-w-40` for a long label instead of clipping it).
+// Colors come from customizations.breadcrumbTrail.inactive (bg-/text-breadcrumbInactive, wired to
+// --wigmix-background-breadcrumbInactive/--wigmix-text-breadcrumbInactive in initialization.ts) —
+// the CSS variable's own value already swaps for dark mode, so no `dark:text-*`/`dark:bg-*`
+// variant is needed here. Border and hover affordance stay a plain hardcoded neutral.
 const CHIP_CLASSES = cn(
   'inline-flex min-h-[32px] max-w-40 min-w-0 shrink-0 items-center justify-center rounded-full border px-3 text-sm cursor-pointer',
-  'border-neutral-300 bg-transparent text-neutral-600 hover:bg-neutral-100 hover:text-neutral-800',
-  'dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100',
+  'border-neutral-300 bg-breadcrumbInactive text-breadcrumbInactive hover:bg-neutral-100 hover:text-neutral-800',
+  'dark:border-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-100',
   FOCUS_VISIBLE_CLASSES,
 );
 
+// Colors come from customizations.breadcrumbTrail.active (bg-/text-breadcrumbActive, wired to
+// --wigmix-background-breadcrumbActive/--wigmix-text-breadcrumbActive in initialization.ts) — the
+// CSS variable's own value already swaps for dark mode, so no `dark:` variant is needed here.
 const ACTIVE_CHIP_CLASSES = cn(
-  'inline-flex min-h-[32px] max-w-40 min-w-0 shrink-0 items-center justify-center rounded-full border px-3 text-sm font-semibold',
-  'border-teal-600 bg-teal-600 text-white dark:border-teal-500 dark:bg-teal-500',
+  'inline-flex min-h-[32px] max-w-40 min-w-0 shrink-0 items-center justify-center rounded-full border border-transparent px-3 text-sm font-semibold',
+  'bg-breadcrumbActive text-breadcrumbActive',
 );
 
 const BreadcrumbChip: FC<{ crumb: BreadcrumbTurn; isActive: boolean; onSelect: (requestId: string) => void }> = ({
@@ -45,8 +52,8 @@ const BreadcrumbChip: FC<{ crumb: BreadcrumbTurn; isActive: boolean; onSelect: (
   const intl = useIntl();
   if (isActive) {
     return (
-      <span aria-current='true' title={crumb.label} className={ACTIVE_CHIP_CLASSES}>
-        <span className='block min-w-0 truncate'>{crumb.label}</span>
+      <span title={crumb.label} className={ACTIVE_CHIP_CLASSES}>
+        <span aria-current='true' className='block min-w-0 truncate'>{crumb.label}</span>
       </span>
     );
   }

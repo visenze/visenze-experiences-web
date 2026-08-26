@@ -137,7 +137,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
             type='button'
             aria-label={intl.formatMessage({ id: 'a11yOpenImageSearch' })}
             className={cn(
-              'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+              'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-buttonSecondary px-3 py-2 shadow-sm',
               FOCUS_VISIBLE_CLASSES,
             )}
             onClick={() => openEntryPoint('image')}
@@ -151,7 +151,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
             type='button'
             aria-label={intl.formatMessage({ id: 'a11yOpenVoiceSearch' })}
             className={cn(
-              'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+              'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-buttonSecondary px-3 py-2 shadow-sm',
               FOCUS_VISIBLE_CLASSES,
             )}
             onClick={() => openEntryPoint('mic')}
@@ -166,7 +166,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
             aria-label={intl.formatMessage({ id: 'a11yOpenAskAi' })}
             style={{ color: fontColor }}
             className={cn(
-              'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-white px-3 py-2 shadow-sm dark:bg-neutral-900',
+              'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-buttonSecondary px-3 py-2 shadow-sm',
               FOCUS_VISIBLE_CLASSES,
             )}
             onClick={() => openEntryPoint('ai')}
@@ -188,6 +188,11 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
         fontFamily={customizations.generalLayout?.fontFamily}
         fontColor={customizations.generalLayout?.fontColor}
         fontColorDark={customizations.generalLayout?.fontColorDark}
+        backgroundColor={customizations.generalLayout?.backgroundColor}
+        backgroundColorDark={customizations.generalLayout?.backgroundColorDark}
+        borderWidth={customizations.generalLayout?.border?.width}
+        borderColor={customizations.generalLayout?.border?.color}
+        borderColorDark={customizations.generalLayout?.border?.colorDark}
         placementId={String(appSettings.placementId)}
         widgetName='ai-search-launcher'
         ariaLabelledBy={dialogTitleId}

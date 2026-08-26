@@ -1,12 +1,24 @@
-import { type FC } from 'react';
+import { cn } from '@heroui/theme';
+import { type CSSProperties, type FC, useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import BreadcrumbTrail from './BreadcrumbTrail';
 import ProductGridSkeleton from './ProductGridSkeleton';
 import ProductGrid from '../../../common/components/chat/ProductGrid';
 import type { BreadcrumbTurn } from '../../../common/components/chat/use-chat';
+import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
+import { WidgetDataContext } from '../../../common/types/contexts';
 import type { ProcessedProduct } from '../../../common/types/product';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
 
-const PRODUCT_GRID_CLASS_NAME = 'grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 pb-4';
+// Falls back to these whenever customizations.productGrid doesn't configure a given breakpoint —
+// same defaults ChatWindow.tsx uses for the regular (non-split) chat surface's product grid, so
+// split layout's products pane matches it out of the box.
+const PRODUCT_GRID_COLUMNS_CLASSES = 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+const PRODUCT_GRID_DEFAULT_GAP_Y = 'gap-y-4';
+// Stacked skeleton bars (image + three text lines) read as more cramped between rows than actual
+// product cards, so the skeleton's default row gap is taller than the real grid's — but only
+// when marginVertical isn't explicitly customized; an explicit value applies to both alike.
+const PRODUCT_GRID_SKELETON_DEFAULT_GAP_Y = 'gap-y-8';
 
 interface ProductsPaneProps {
   breadcrumbs: BreadcrumbTurn[];
@@ -39,6 +51,22 @@ const ProductsPane: FC<ProductsPaneProps> = ({
   // regardless of whether the 'reqid' SSE event (and therefore isStreaming) has fired yet.
   const isWaitingForFirstProduct = !!activeCrumb && activeCrumb.products.length === 0 && !isStreaming;
   const intl = useIntl();
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
+  const breakpoint = useBreakpoint();
+
+  const productGridClasses = useMemo(
+    (): string => getProductGridCssClasses(customizations, breakpoint, PRODUCT_GRID_COLUMNS_CLASSES, 'gap-x-4', PRODUCT_GRID_DEFAULT_GAP_Y),
+    [customizations.productGrid, breakpoint],
+  );
+  const skeletonGridClasses = useMemo(
+    (): string => getProductGridCssClasses(customizations, breakpoint, PRODUCT_GRID_COLUMNS_CLASSES, 'gap-x-4', PRODUCT_GRID_SKELETON_DEFAULT_GAP_Y),
+    [customizations.productGrid, breakpoint],
+  );
+  const productGridCssConfig = useMemo(
+    (): CSSProperties => getProductGridCssConfig(customizations, breakpoint),
+    [customizations.productGrid, breakpoint],
+  );
 
   return (
     <div className='flex min-h-0 flex-1 flex-col overflow-y-auto'>
@@ -48,7 +76,7 @@ const ProductsPane: FC<ProductsPaneProps> = ({
           <span role='status' className='sr-only'>
             {intl.formatMessage({ id: 'a11yLoadingResults' })}
           </span>
-          <ProductGridSkeleton className={PRODUCT_GRID_CLASS_NAME} />
+          <ProductGridSkeleton className={cn('grid px-4 pb-4', skeletonGridClasses)} style={productGridCssConfig} />
         </>
       )}
       {products.length > 0 && (
@@ -61,7 +89,8 @@ const ProductsPane: FC<ProductsPaneProps> = ({
           setIsInWishlist={setIsInWishlist}
           pwPrefix='asl'
           streaming={isStreaming}
-          className={PRODUCT_GRID_CLASS_NAME}
+          className={cn('grid px-4 pb-4', productGridClasses)}
+          style={productGridCssConfig}
         />
       )}
     </div>

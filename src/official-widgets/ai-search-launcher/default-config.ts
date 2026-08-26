@@ -39,10 +39,11 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yOpenCamera: 'Open camera',
     a11yAddImage: 'Add image',
     holdMicToRecord: 'Hold the mic to record',
-    dragImageToSearch: 'drag an image to search or click to browse',
+    dragImageToSearch: 'Drag an image or click to browse',
     tapToSearchImage: 'tap here to search an image',
-    useCamera: 'Or capture image with your camera',
-    tapProductGallery: 'or tap our trending product gallery below',
+    browsePhotos: 'Browse photos',
+    useCamera: 'Use camera',
+    tapProductGallery: 'Or tap a trending look',
     a11yCameraDrawer: 'Camera',
     a11yCameraPreview: 'Camera preview — point at the item to search',
     a11yCloseCamera: 'Close camera',
@@ -69,7 +70,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   },
   productGrid: {
     mobile: {
-      productsPerRow: 3,
+      productsPerRow: 2,
       marginVertical: 0,
       marginHorizontal: 8,
     },
@@ -79,7 +80,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       marginHorizontal: 8,
     },
     desktop: {
-      productsPerRow: 3,
+      productsPerRow: 4,
       marginVertical: 0,
       marginHorizontal: 8,
     },
@@ -218,14 +219,36 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     primary: {
       fontColor: '#000000',
       fontColorDark: '#616161',
-      backgroundColor: '#616161',
+      backgroundColor: '#FFFFFF',
       backgroundColorDark: '#FFFFFF',
     },
     secondary: {
       fontColor: '#FFFFFF',
       fontColorDark: '#000000',
-      backgroundColor: '#000000',
+      backgroundColor: '#FFFFFF',
       backgroundColorDark: '#FFFFFF',
+    },
+    icon: {
+      fontColor: '#000000',
+      fontColorDark: '#FFFFFF',
+      backgroundColor: 'transparent',
+      backgroundColorDark: 'transparent',
+    },
+  },
+  breadcrumbTrail: {
+    active: {
+      fontColor: '#FFFFFF',
+      fontColorDark: '#FFFFFF',
+      backgroundColor: '#0D9488',
+      backgroundColorDark: '#14B8A6',
+    },
+    // Matches Tailwind neutral-600/neutral-300 (text) and transparent (background), the previous
+    // hardcoded inactive-pill colors — keeps the default look unchanged now that they're wired.
+    inactive: {
+      fontColor: '#525252',
+      fontColorDark: '#D4D4D4',
+      backgroundColor: 'transparent',
+      backgroundColorDark: 'transparent',
     },
   },
   imageUpload: {
@@ -290,27 +313,39 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     fontColor: '#000000',
     fontColorDark: '#FFFFFF',
     backgroundColor: '#FFFFFF',
-    backgroundColorDark: '#000000',
+    // Matches Tailwind neutral-900, the previous hardcoded dark-mode background of
+    // FullScreenChatContainer's dialog — this field was unused (unwired) before, so this value
+    // keeps the default look unchanged now that it's actually applied.
+    backgroundColorDark: '#171717',
     showWidgetTitle: true,
     showViSenzeLogo: true,
     darkModeDefault: false,
-  },
-  popup: {
-    position: 'left',
-    triggerIcon: {
-      layout: 'ICON',
-      color: '#000000',
-      colorDark: '#FFFFFF',
-      backgroundColor: '#FFFFFF',
-      backgroundColorDark: '#000000',
-      hide: false,
-    },
   },
   chat: {
     title: 'AI Search Assistant',
     voiceGreetingEnabled: false,
     startMuted: false,
     layout: 'chatlayout',
+    inputBar: {
+      border: {
+        width: 1,
+        color: '#D4D4D4',
+        colorDark: '#262626',
+      },
+      menuPanel: {
+        fontColor: '#000000',
+        fontColorDark: '#FFFFFF',
+        backgroundColor: '#FFFFFF',
+        backgroundColorDark: '#171717',
+        border: {
+          width: 1,
+          color: '#D4D4D4',
+          colorDark: '#404040',
+        },
+      },
+      voiceRecordingColor: '#EF4444',
+      voiceRecordingColorDark: '#EF4444',
+    },
   },
   launcher: {
     voiceRecordingMaxDurationSeconds: 5,

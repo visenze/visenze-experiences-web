@@ -19,6 +19,10 @@ const GREETING_GATE_POLL_MS = 120;
 // Fallback when `customizations.launcher.voiceRecordingMaxDurationSeconds` is unset.
 const DEFAULT_VOICE_RECORDING_MAX_DURATION_SECONDS = 5;
 
+// Fallback when `customizations.chat.inputBar.voiceRecordingColor(Dark)` is unset — mirrors
+// ChatComposer.tsx's own default for the same recording-state icon color.
+const DEFAULT_VOICE_RECORDING_COLOR = '#EF4444';
+
 // Full-screen welcome state for the microphone entry point (spec §5.2).
 //
 // Recording auto-starts once any greeting for this entry point (played by a sibling effect in
@@ -35,6 +39,11 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
   const iconColor = darkMode
     ? (customizations.generalLayout?.fontColorDark || '')
     : (customizations.generalLayout?.fontColor || '');
+  const border = customizations.generalLayout?.border;
+  const borderColor = darkMode ? border?.colorDark : border?.color;
+  const voiceRecordingColor = (darkMode
+    ? customizations.chat?.inputBar?.voiceRecordingColorDark
+    : customizations.chat?.inputBar?.voiceRecordingColor) || DEFAULT_VOICE_RECORDING_COLOR;
 
   // Mirrors the `sendMessageRef` pattern already used in use-chat.ts: keeps a live view
   // of `chat` for the polling interval below, without needing to tear down/recreate that interval
@@ -102,7 +111,7 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
       return <MicrophoneIcon className='size-16 opacity-60' color={iconColor} />;
     }
     if (chat.voiceStatus === 'recording') {
-      return <StopIcon className='size-16 animate-pulse' color='#EF4444' />;
+      return <StopIcon className='size-16 animate-pulse' color={voiceRecordingColor} />;
     }
     return <MicrophoneIcon className='size-16' color={iconColor} />;
   };
@@ -183,6 +192,7 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
         aria-pressed={chat.voiceStatus === 'recording'}
         disabled={chat.voiceStatus === 'transcribing'}
         className={cn('rounded-full border border-gray-200 bg-transparent p-6 disabled:opacity-50 dark:border-neutral-700', FOCUS_VISIBLE_CLASSES)}
+        style={{ borderColor: borderColor || undefined, borderWidth: border?.width ? `${border.width}px` : undefined }}
         onClick={handleMicClick}
       >
         {renderMicIcon()}

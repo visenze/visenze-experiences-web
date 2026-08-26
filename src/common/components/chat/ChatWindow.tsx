@@ -11,6 +11,7 @@ import UserIcon from '../../icons/UserIcon';
 import { WidgetDataContext } from '../../types/contexts';
 import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../types/image';
 import type { ProcessedProduct } from '../../types/product';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../utils';
 import useBreakpoint from '../hooks/use-breakpoint';
 
 // i18n contract: this component calls `intl.formatMessage` for the following ids, so any widget
@@ -253,31 +254,19 @@ const ChatWindow: FC<ChatWindowProps> = ({
       .replaceAll(/\*\*(.*?)\*\*/g, '<b>$1</b>')
       .replaceAll(/\n/g, '<br>');
 
-  const getProductGridCssClasses = (defaultGapX: string): string => {
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    const classes = [];
-    if (cssConfigSrc) {
-      if (!cssConfigSrc.marginHorizontal && cssConfigSrc.marginHorizontal !== 0) {
-        classes.push(defaultGapX);
-      }
-      return classes.join(' ');
-    }
-    return [defaultGapX].join(' ');
-  };
+  // Memoized so ProductGrid receives the same `className`/`style` reference across renders that
+  // don't actually change these inputs — otherwise every ProductGrid instance would see a
+  // "changed" style prop on every ChatWindow render (e.g. a streamed token elsewhere), defeating
+  // its memo.
+  const productGridClasses = useMemo(
+    (): string => getProductGridCssClasses(customizations, breakpoint, PRODUCT_GRID_COLUMNS_CLASSES, 'gap-x-4', 'gap-y-4'),
+    [customizations.productGrid, breakpoint],
+  );
 
-  // Memoized so ProductGrid receives the same `style` object reference across renders that don't
-  // actually change these inputs — otherwise every ProductGrid instance would see a "changed"
-  // style prop on every ChatWindow render (e.g. a streamed token elsewhere), defeating its memo.
-  const productGridCssConfig = useMemo((): CSSProperties => {
-    const cssConfig = {} as CSSProperties;
-    const cssConfigSrc = customizations.productGrid?.[breakpoint];
-    if (cssConfigSrc) {
-      if (cssConfigSrc.marginHorizontal || cssConfigSrc.marginHorizontal === 0) {
-        cssConfig.columnGap = `${cssConfigSrc.marginHorizontal}px`;
-      }
-    }
-    return cssConfig;
-  }, [customizations.productGrid, breakpoint]);
+  const productGridCssConfig = useMemo(
+    (): CSSProperties => getProductGridCssConfig(customizations, breakpoint),
+    [customizations.productGrid, breakpoint],
+  );
 
   const getAccessibleStatus = (): string => {
     if (isWaiting) {
@@ -323,13 +312,12 @@ const ChatWindow: FC<ChatWindowProps> = ({
                   {chat.author === 'user' && chat.image && (
                     <div className='flex gap-1 max-w-9/10'>
                       <div
-                        className='mb-2 w-fit bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800
-                          rounded-lg border border-neutral-100 dark:border-neutral-800'
+                        className='mb-2 w-fit rounded-lg'
                         key={`chat-user-message-${idx}`}
                       >
                         <img
                           alt={intl.formatMessage({ id: 'a11yUploadedImage' })}
-                          className='max-w-full h-auto rounded-lg shadow-sm border'
+                          className='max-w-full h-auto rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700'
                           style={{ maxHeight: '200px' }}
                           src={getFile(chat.image)}
                         />
@@ -396,7 +384,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                         setIsInWishlist={setIsInWishlist}
                         pwPrefix={pwPrefix}
                         imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
-                        className={cn('grid pl-9', PRODUCT_GRID_COLUMNS_CLASSES, getProductGridCssClasses('gap-x-4'))}
+                        className={cn('grid pl-9', productGridClasses)}
                         style={productGridCssConfig}
                       />
                     )
@@ -448,7 +436,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       pwPrefix={pwPrefix}
                       streaming
                       imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
-                      className={cn('w-full grid pl-9', PRODUCT_GRID_COLUMNS_CLASSES, getProductGridCssClasses('gap-x-4'))}
+                      className={cn('w-full grid pl-9', productGridClasses)}
                       style={productGridCssConfig}
                     />
                 )}

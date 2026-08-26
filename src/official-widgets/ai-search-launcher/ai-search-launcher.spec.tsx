@@ -104,6 +104,7 @@ describe('ai-search-launcher', () => {
     locale = 'en',
     callbacks: Partial<WidgetConfig['callbacks']> = {},
     customizationOverrides: Partial<WidgetConfig['customizations']> = {},
+    darkMode = false,
   ): ReturnType<typeof createTestClient> => {
     const { widgetConfig, widgetClient, mockVisearchClient } = createTestClient(visearchOverrides, callbacks, customizationOverrides);
     testComponent = renderWidget(<AiSearchLauncher renderWithoutPortal />, {
@@ -111,6 +112,7 @@ describe('ai-search-launcher', () => {
       widgetClient,
       locale,
       messages: texts[locale],
+      darkMode,
     });
     return { widgetConfig, widgetClient, mockVisearchClient };
   };
@@ -355,6 +357,37 @@ describe('ai-search-launcher', () => {
     });
   });
 
+  describe('customizable dialog chrome', () => {
+    it('applies generalLayout.backgroundColor to the full-screen dialog background', () => {
+      renderLauncher({}, 'en', {}, {
+        generalLayout: { ...DEFAULT_CUSTOMIZATIONS.generalLayout, backgroundColor: '#ff00ff' },
+      });
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      expect(testComponent.getByRole('dialog').style.backgroundColor).toBe('rgb(255, 0, 255)');
+    });
+
+    it('applies generalLayout.backgroundColorDark to the full-screen dialog background in dark mode', () => {
+      renderLauncher({}, 'en', {}, {
+        generalLayout: { ...DEFAULT_CUSTOMIZATIONS.generalLayout, backgroundColorDark: '#00ff00' },
+      }, true);
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      expect(testComponent.getByRole('dialog').style.backgroundColor).toBe('rgb(0, 255, 0)');
+    });
+
+    it('applies generalLayout.border to the header separator', () => {
+      renderLauncher({}, 'en', {}, {
+        generalLayout: { ...DEFAULT_CUSTOMIZATIONS.generalLayout, border: { width: 3, color: '#123456', colorDark: '#654321' } },
+      });
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      const header = testComponent.getByTestId('wigmix-fullscreen-header');
+      expect(header.style.borderBottomColor).toBe('#123456');
+      expect(header.style.borderBottomWidth).toBe('3px');
+    });
+  });
+
   describe('mic entry screen — recording controls', () => {
     let mockRecognitionInstances: MockSpeechRecognition[] = [];
 
@@ -399,6 +432,32 @@ describe('ai-search-launcher', () => {
       expect(micButton.className).toMatch(/rounded-full/);
       expect(micButton.className).toMatch(/\bborder\b/);
       expect(micButton.className).not.toMatch(/border-0/);
+    });
+
+    it('applies generalLayout.border to the mic button', () => {
+      renderLauncher({}, 'en', {}, {
+        generalLayout: { ...DEFAULT_CUSTOMIZATIONS.generalLayout, border: { width: 2, color: '#123456', colorDark: '#654321' } },
+      });
+      openEntryPointAndWait('a11yOpenVoiceSearch');
+
+      const micButton = getMicButton();
+      expect(micButton.style.borderColor).toBe('#123456');
+      expect(micButton.style.borderWidth).toBe('2px');
+    });
+
+    it('uses chat.inputBar.voiceRecordingColor for the recording-state icon instead of a hardcoded red', () => {
+      renderLauncher({}, 'en', {}, {
+        chat: { ...DEFAULT_CUSTOMIZATIONS.chat, inputBar: { ...DEFAULT_CUSTOMIZATIONS.chat?.inputBar, voiceRecordingColor: '#123456' } },
+      });
+      openEntryPointAndWait('a11yOpenVoiceSearch');
+
+      const micButton = getMicButton();
+      act(() => {
+        fireEvent.click(micButton);
+      });
+
+      const recordingIcon = micButton.querySelector('.animate-pulse') as HTMLElement;
+      expect(recordingIcon.style.color).toBe('rgb(18, 52, 86)');
     });
 
     it('starts recording immediately when clicked, without waiting for the auto-start gate', () => {
@@ -478,6 +537,27 @@ describe('ai-search-launcher', () => {
       openEntryPointAndWait('a11yOpenImageSearch');
 
       expect(testComponent.getByTestId('wigmix-gallery-image-1')).toBeTruthy();
+    });
+
+    it('defaults the gallery grid to 2 columns', () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenImageSearch');
+
+      expect(testComponent.getByTestId('asl-gallery-grid').className).toMatch(/grid-cols-2/);
+    });
+
+    it('applies imageUpload.galleryColumns to the gallery grid column count', () => {
+      renderLauncher({}, 'en', {}, {
+        imageUpload: {
+          enable: true,
+          icon: { color: '#929292', colorDark: '#929292' },
+          images: DEFAULT_CUSTOMIZATIONS.imageUpload?.images || [],
+          galleryColumns: 3,
+        },
+      });
+      openEntryPointAndWait('a11yOpenImageSearch');
+
+      expect(testComponent.getByTestId('asl-gallery-grid').className).toMatch(/grid-cols-3/);
     });
 
     it('should not render the preset image gallery when imageUpload images are configured empty', () => {
@@ -888,6 +968,32 @@ describe('ai-search-launcher', () => {
       openAskAi(result);
       streamProductsWithoutClosing();
       expect(result.queryByTestId('asl-split-layout')).toBeNull();
+    });
+
+    it('applies chat.splitLayout.paneWidth to the chat pane width', () => {
+      const result = renderAtWidth(1200, {
+        chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout', splitLayout: { paneWidth: 500 } },
+      });
+      openAskAi(result);
+      streamProductsWithoutClosing();
+
+      expect(result.getByTestId('asl-split-chat-pane').style.width).toBe('500px');
+    });
+
+    it('applies chat.splitLayout.divider to the border between the chat and products panes', () => {
+      const result = renderAtWidth(1200, {
+        chat: {
+          ...DEFAULT_CUSTOMIZATIONS.chat,
+          layout: 'splitlayout',
+          splitLayout: { divider: { width: 4, color: '#123456', colorDark: '#654321' } },
+        },
+      });
+      openAskAi(result);
+      streamProductsWithoutClosing();
+
+      const pane = result.getByTestId('asl-split-chat-pane');
+      expect(pane.style.borderRightColor).toBe('#123456');
+      expect(pane.style.borderRightWidth).toBe('4px');
     });
   });
 

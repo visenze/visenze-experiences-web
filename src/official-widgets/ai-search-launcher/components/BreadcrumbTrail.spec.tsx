@@ -35,6 +35,19 @@ describe('BreadcrumbTrail', () => {
     expect(inactiveCrumb.getAttribute('aria-current')).toBeNull();
   });
 
+  it('drives the inactive chip color via the breadcrumbInactive CSS-variable token, not a hardcoded color', () => {
+    const { getByRole } = renderTrail(
+      [
+        { requestId: 'req-1', label: 'blue jeans', products: [] },
+        { requestId: 'req-2', label: 'cropped', products: [] },
+      ],
+      'req-2',
+    );
+    const inactiveCrumb = getByRole('button', { name: /blue jeans/ });
+    expect(inactiveCrumb.className).toMatch(/\bbg-breadcrumbInactive\b/);
+    expect(inactiveCrumb.className).toMatch(/\btext-breadcrumbInactive\b/);
+  });
+
   it('calls onSelect with the clicked crumb\'s requestId', () => {
     const onSelect = jest.fn();
     const { getByRole } = renderTrail(
