@@ -15,3 +15,8 @@ export const USER_SCROLL_IDLE_MS = 1000;
 // it can't visually bleed into the row above/below, since the product grid sets a column gap but
 // no row gap.
 export const FOCUSED_SCALE = 0.9;
+
+// Backstop against product-image overflow in the chat window, independent of column count or
+// aspect-ratio customization: no single product image may exceed a fraction of the viewport's
+// height.
+export const PRODUCT_IMAGE_MAX_HEIGHT_CLASS = 'max-h-[45vh]';

@@ -50,6 +50,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11ySwitchCamera: 'Switch camera',
     a11yStopVoiceInput: 'Stop recording and send',
     a11yVoicePending: 'Preparing to listen',
+    a11yTapToRecord: 'Tap to record',
     a11yTranscribingVoice: 'Transcribing voice message',
     a11yListening: 'Listening',
     voiceInputError: 'Voice input unavailable',

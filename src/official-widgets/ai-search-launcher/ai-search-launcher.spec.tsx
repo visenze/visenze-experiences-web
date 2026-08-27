@@ -335,7 +335,7 @@ describe('ai-search-launcher', () => {
 
         expect(testComponent.getByRole('dialog')).toBeTruthy();
         expect(getTextInBody(texts['en']['voiceInputError'])).toBeNull();
-        expect(testComponent.getByRole('button', { name: texts['en']['a11yVoicePending'], hidden: true })).toBeTruthy();
+        expect(testComponent.getByRole('button', { name: texts['en']['a11yTapToRecord'], hidden: true })).toBeTruthy();
       } finally {
         (window as any).SpeechRecognition = OriginalSpeechRecognition;
       }
@@ -413,7 +413,7 @@ describe('ai-search-launcher', () => {
       }
     }
 
-    const getMicButton = (): HTMLElement => testComponent.getByRole('button', { name: texts['en']['a11yVoicePending'], hidden: true });
+    const getMicButton = (): HTMLElement => testComponent.getByRole('button', { name: texts['en']['a11yTapToRecord'], hidden: true });
 
     beforeEach(() => {
       mockRecognitionInstances = [];
@@ -904,7 +904,7 @@ describe('ai-search-launcher', () => {
         renderLauncher({}, 'en', {}, { chatbot: { voiceEnabled: false } });
         openEntryPointAndWait('a11yOpenAskAi');
 
-        expect(testComponent.queryByRole('button', { name: texts['en']['a11yVoicePending'], hidden: true })).toBeNull();
+        expect(testComponent.queryByRole('button', { name: texts['en']['a11yTapToRecord'], hidden: true })).toBeNull();
         expect(testComponent.queryByRole('button', { name: texts['en']['a11yToggleMute'] })).toBeNull();
       } finally {
         (window as any).SpeechRecognition = OriginalSpeechRecognition;
