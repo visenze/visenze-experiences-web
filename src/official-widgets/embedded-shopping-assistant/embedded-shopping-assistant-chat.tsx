@@ -1,6 +1,5 @@
 import { type FC, Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import SearchBar from './components/SearchBar';
 import TopBar from './components/TopBar';
 import TurnSection from './components/TurnSection';
 import { deriveTurns } from './derive-turns';
@@ -9,7 +8,6 @@ import ChatComposer from '../../common/components/chat/ChatComposer';
 import useChat from '../../common/components/chat/use-chat';
 import Footer from '../../common/components/Footer';
 import { RootContext } from '../../common/components/shadow-wrapper';
-import SparklesIcon from '../../common/icons/SparklesIcon';
 import { WidgetDataContext } from '../../common/types/contexts';
 import { Actions } from '../../common/types/tracking-constants';
 
@@ -63,8 +61,6 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [inputQuery, setInputQuery] = useState(query || '');
-  const [hasSearched, setHasSearched] = useState(false);
   // ESA's own local UI state for the "See Results" gate — no UseChatResult equivalent. Keyed by
   // deriveTurns' own stable, position-based turn ids.
   const [expandedTurnIds, setExpandedTurnIds] = useState<Set<string>>(new Set());
@@ -99,14 +95,6 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
     }, 50);
   };
 
-  const handleInitialSearch = (): void => {
-    const q = inputQuery.trim();
-    if (!q) return;
-    setHasSearched(true);
-    widgetClient.sendEvent(Actions.LOAD, {});
-    chat.sendMessage(q);
-  };
-
   const handleShowProducts = (turnId: string): void => {
     setExpandedTurnIds((prev) => new Set(prev).add(turnId));
     scrollToBottom();
@@ -136,13 +124,12 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
     setIsSpeaking(true);
   };
 
-  // "Start over" — this widget is a full-page embedded view, not a dismissible popup, so closing
-  // means resetting back to the home search screen rather than hiding/unmounting anything.
+  // "Start over" — this widget is a full-page embedded view, not a dismissible popup and has no
+  // homepage to fall back to (ESA always receives its query from the host page), so closing means
+  // starting the SAME original query as a fresh conversation rather than landing on empty state.
   const handleReset = (): void => {
     window.speechSynthesis.cancel();
     setIsSpeaking(false);
-    setInputQuery('');
-    setHasSearched(false);
     // Clears turn-position-keyed expanded state too — without this, a stale id (e.g. '0') left
     // over from the previous conversation would make the new conversation's first turn render as
     // already-expanded, since deriveTurns numbers turns positionally starting from 0 again.
@@ -152,11 +139,19 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
     // chat.newChat() does not clear chat.message itself (matches ai-search-launcher's own
     // handleNewChat, which has the same characteristic) — not something introduced here.
     chat.newChat();
+    if (query) {
+      widgetClient.sendEvent(Actions.LOAD, {});
+      // Same chatId race as the mount effect below (newChat() populates chatId via the identical
+      // async generateUuid->setChatId path as open()) — deferred for the same reason: sendMessage
+      // must not close over the stale, pre-newChat chatId.
+      setTimeout(() => {
+        chat.sendMessage(query);
+      }, 0);
+    }
   };
 
   useEffect(() => {
     if (query) {
-      setHasSearched(true);
       widgetClient.sendEvent(Actions.LOAD, {});
       // Deferred to a separate macrotask, guaranteed to run only after the chat.open() mount
       // effect above has committed its setChatId update. generateUuid itself resolves
@@ -177,48 +172,16 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
 
   if (!root) return <></>;
 
-  // ── Initial state: Google homepage ────────────────────────────────────────
-  if (!hasSearched) {
+  // ESA always receives `query` from the host page in practice, but nothing enforces that at
+  // runtime (app.tsx falls back to '' when the placement element has no data-query attribute) —
+  // this is the explicit, visible fallback for that case rather than an empty/dead screen (no
+  // turns ever get created, so TopBar/ChatComposer below would otherwise never render either).
+  if (!query) {
     return (
-      <div className='size-full flex flex-col items-center justify-center px-4 gap-8' style={{ backgroundColor }}>
-
-        {/* Logo */}
-        <div className='flex flex-col items-center gap-3'>
-          <SparklesIcon className='size-12' color={iconColor} />
-          {/* Was a hardcoded "Embedded Shopping Assistant" string with a two-tone accent split on
-              the last word — now the real widgetTitle text/config, gated by showWidgetTitle,
-              matching how ai-search-launcher's own header title is driven by config. The two-tone
-              split is dropped rather than reimplemented: it can't be done reliably against a
-              single translated string across all 11 locales (no guaranteed "last word" to split
-              on for e.g. zh/ja/th). Left as plain text color (no iconColor accent) to match
-              ai-search-launcher's own undecorated <h2>{'{title}'}</h2> treatment as closely as
-              possible, rather than introducing a new, more prominent all-accent-colored heading. */}
-          {customizations.generalLayout?.showWidgetTitle !== false && (
-            <h1 className='text-5xl font-normal text-gray-700 dark:text-neutral-100 tracking-tight'>
-              {intl.formatMessage({ id: 'widgetTitle' })}
-            </h1>
-          )}
-        </div>
-
-        {/* Search bar */}
-        <div className='w-full max-w-xl'>
-          <SearchBar value={inputQuery} onChange={setInputQuery} onSubmit={handleInitialSearch} iconColor={iconColor} />
-        </div>
-
-        {/* Search button */}
-        <button
-          type='button'
-          onClick={handleInitialSearch}
-          className='px-6 py-2 text-sm text-gray-700 dark:text-neutral-100 bg-gray-100 dark:bg-neutral-800
-            hover:bg-gray-200 dark:hover:bg-neutral-700 border border-gray-200 dark:border-neutral-700 rounded-md transition-colors'
-        >
-          {intl.formatMessage({ id: 'searchButton' })}
-        </button>
-
-        {customizations.generalLayout?.showViSenzeLogo && (
-          <Footer darkMode={darkMode} className='mt-auto pt-2' dataPw='esa-visenze-footer' />
-        )}
-
+      <div className='size-full flex items-center justify-center px-4' style={{ backgroundColor }}>
+        <p className='text-sm text-gray-500 dark:text-neutral-400'>
+          {intl.formatMessage({ id: 'noQueryProvided' })}
+        </p>
       </div>
     );
   }
