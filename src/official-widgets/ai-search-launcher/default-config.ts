@@ -321,8 +321,9 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     showViSenzeLogo: true,
     darkModeDefault: false,
   },
-  chat: {
+  chatbot: {
     title: 'AI Search Assistant',
+    voiceEnabled: true,
     voiceGreetingEnabled: false,
     startMuted: false,
     layout: 'chatlayout',

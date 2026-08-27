@@ -565,11 +565,25 @@ export interface Border {
    */
   colorDark: string;
   /**
-   * Radius of the border.
+   * Radius of the border. Optional since 1.0.30, when this interface started being reused for
+   * border settings that have no corner-radius concept (e.g. a divider).
    *
    * @since 1.0.12
    */
-  radius: number;
+  radius?: number;
+}
+
+/**
+ * Voice synthesis tuning settings, forwarded as-is to the speech synthesis proxy. Shared by every
+ * per-widget voice config block (e.g. `chatbot.voiceSettings`, `chat.voiceSettings`).
+ *
+ * @since 1.0.29
+ */
+export interface VoiceSettings {
+  /** Voice stability, 0-1. */
+  stability?: number;
+  /** Voice similarity boost, 0-1. */
+  similarityBoost?: number;
 }
 
 /**
@@ -1002,14 +1016,7 @@ export interface WidgetConfig {
        *
        * @since 1.0.30
        */
-      border?: {
-        /** Width (thickness) of the border, in px. @since 1.0.30 */
-        width: number;
-        /** Color of the border. @since 1.0.30 */
-        color: string;
-        /** Color of the border in dark mode. @since 1.0.30 */
-        colorDark: string;
-      };
+      border?: Border;
     };
     /**
      * Settings to influence API results or how the responses are parsed.
@@ -1559,44 +1566,44 @@ export interface WidgetConfig {
       products: TrendingProduct[];
     };
     /**
-     * @internal
+     * Configuration for a widget's chat surface (shared by shopping-assistant and any widget
+     * using the common chat module): header title, layout, voice identity, the chat agent used
+     * for chat calls, and the voiceEnabled/voiceGreetingEnabled/startMuted toggles controlling
+     * voice behavior.
      *
      * @since 1.0.14
      */
     chatbot?: {
       /**
-       * The chat agent to be used.
+       * The chat agent to be used for this widget's chat calls.
        *
        * This should be set by internal ViSenze personnel as the value needs to correspond
-       * to an internally recognized chat agent.
+       * to an internally recognized chat agent. Defaults to the widget's built-in agent when
+       * unset.
        *
        * @internal
        *
        * @since 1.0.14
        */
-      chatAgent: string;
+      chatAgent?: string;
       /**
-       * (optional) Gates voice capability in the shopping-assistant widget: voice input is
-       * captured via the browser's built-in speech recognition, and assistant replies (both to
-       * typed and spoken messages) are read aloud via text-to-speech. When unset (or false), all
-       * voice UI is hidden and no voice requests are made.
-       * 
-       * This flag only controls whether the widget shows
-       * voice UI and calls the proxy for this placement.
+       * (optional) Master toggle for voice capability throughout this widget's chat surface:
+       * recording, spoken replies/greetings, the in-chat microphone button, and the mute/unmute
+       * toggle. When unset (or false), all voice UI is hidden and no voice requests are made.
        *
        * @since 1.0.29
        */
       voiceEnabled?: boolean;
       /**
-       * (optional) Voice ID used for spoken replies. Default to the widget's built-in voice
-       * when unset. Only takes effect when `voiceEnabled` is set.
+       * (optional) Voice ID used for spoken replies and greetings. Default to the widget's
+       * built-in voice when unset. Only takes effect when `voiceEnabled` is set.
        *
        * @since 1.0.29
        */
       voiceId?: string;
       /**
-       * (optional) Voice-provider model ID used for spoken replies. Defaults to the widget's
-       * built-in model when unset.
+       * (optional) Voice-provider model ID used for spoken replies and greetings. Defaults to
+       * the widget's built-in model when unset.
        *
        * @since 1.0.29
        */
@@ -1607,39 +1614,13 @@ export interface WidgetConfig {
        *
        * @since 1.0.29
        */
-      voiceSettings?: {
-        /** Voice stability, 0-1. */
-        stability?: number;
-        /** Voice similarity boost, 0-1. */
-        similarityBoost?: number;
-      };
-    };
-    /**
-     * Generic configuration for a widget's full-screen chat surface (shared by
-     * any widget using the common chat module): header title, voice identity,
-     * the chat agent used for chat calls, and the voiceGreetingEnabled/
-     * startMuted/voiceEnabled toggles controlling voice behavior.
-     *
-     * @since 1.0.30
-     */
-    chat?: {
+      voiceSettings?: VoiceSettings;
       /**
        * Title shown in the full-screen chat header.
        *
        * @since 1.0.30
        */
       title?: string;
-      /**
-       * (optional) Master toggle for voice capability throughout this widget's
-       * chat surface: recording, spoken replies/greetings, the in-chat
-       * microphone button, and the mute/unmute toggle. Defaults to `true`
-       * (enabled) when unset — set to `false` to hide all voice UI and stop
-       * making voice requests entirely, mirroring `chatbot.voiceEnabled`'s
-       * effect in the shopping-assistant widget.
-       *
-       * @since 1.0.30
-       */
-      voiceEnabled?: boolean;
       /**
        * Master toggle for greeting audio. When unset or false, greetings are
        * shown as text only (if at all) and never spoken.
@@ -1654,39 +1635,6 @@ export interface WidgetConfig {
        * @since 1.0.30
        */
       startMuted?: boolean;
-      /**
-       * The chat agent to be used for this widget's chat calls. Defaults to the
-       * same built-in agent shopping-assistant uses when unset.
-       *
-       * @since 1.0.30
-       */
-      chatAgent?: string;
-      /**
-       * (optional) Voice ID used for spoken replies and greetings. Default to
-       * the widget's built-in voice when unset.
-       *
-       * @since 1.0.30
-       */
-      voiceId?: string;
-      /**
-       * (optional) Voice-provider model ID used for spoken replies and
-       * greetings. Defaults to the widget's built-in model when unset.
-       *
-       * @since 1.0.30
-       */
-      voiceModelId?: string;
-      /**
-       * (optional) Voice settings forwarded to the synthesis proxy. Defaults to
-       * the widget's built-in settings when unset.
-       *
-       * @since 1.0.30
-       */
-      voiceSettings?: {
-        /** Voice stability, 0-1. */
-        stability?: number;
-        /** Voice similarity boost, 0-1. */
-        similarityBoost?: number;
-      };
       /**
        * Which layout the full-screen chat surface renders. `'chatlayout'`
        * (default) is the existing single-column chat UI, unchanged, at every
@@ -1711,14 +1659,7 @@ export interface WidgetConfig {
          *
          * @since 1.0.30
          */
-        border?: {
-          /** Width (thickness) of the border, in px. @since 1.0.30 */
-          width: number;
-          /** Color of the border. @since 1.0.30 */
-          color: string;
-          /** Color of the border in dark mode. @since 1.0.30 */
-          colorDark: string;
-        };
+        border?: Border;
         /**
          * Background/text color of the camera+upload popover opened by the "add image" trigger.
          *
@@ -1730,14 +1671,7 @@ export interface WidgetConfig {
            *
            * @since 1.0.30
            */
-          border?: {
-            /** Width (thickness) of the border, in px. @since 1.0.30 */
-            width: number;
-            /** Color of the border. @since 1.0.30 */
-            color: string;
-            /** Color of the border in dark mode. @since 1.0.30 */
-            colorDark: string;
-          };
+          border?: Border;
         };
         /**
          * Color of the mic button's icon while actively recording (replaces the idle mic icon
@@ -1763,14 +1697,7 @@ export interface WidgetConfig {
         /** Width of the chat pane, in px. Defaults to 400 when unset. @since 1.0.30 */
         paneWidth?: number;
         /** Divider border between the chat pane and the products pane. @since 1.0.30 */
-        divider?: {
-          /** Width (thickness) of the border, in px. @since 1.0.30 */
-          width: number;
-          /** Color of the border. @since 1.0.30 */
-          color: string;
-          /** Color of the border in dark mode. @since 1.0.30 */
-          colorDark: string;
-        };
+        divider?: Border;
       };
     };
     /**

@@ -157,7 +157,7 @@ describe('use-chat', () => {
   });
 
   it('playGreeting should push a visible bot chat bubble but not enable voice reveal when voiceGreetingEnabled is false (default)', () => {
-    const { hook } = renderChat({}, { chat: { voiceGreetingEnabled: false } });
+    const { hook } = renderChat({}, { chatbot: { voiceGreetingEnabled: false } });
     act(() => {
       hook.result.current.open();
     });
@@ -370,8 +370,8 @@ describe('use-chat', () => {
     expect(hook.result.current.wishlistPids).not.toContain('pid-1');
   });
 
-  it('should disable speechOutputEnabled when customizations.chat.voiceEnabled is false', () => {
-    const { hook } = renderChat({}, { chat: { voiceEnabled: false } });
+  it('should disable speechOutputEnabled when customizations.chatbot.voiceEnabled is false', () => {
+    const { hook } = renderChat({}, { chatbot: { voiceEnabled: false } });
     expect(hook.result.current.speechOutputEnabled).toBe(false);
   });
 

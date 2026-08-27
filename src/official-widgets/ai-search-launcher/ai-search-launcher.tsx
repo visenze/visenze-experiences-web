@@ -83,12 +83,12 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   // `splitlayout` engages only above the mobile breakpoint AND once the conversation actually has
   // results to show. Until then — and always on mobile, and always for `chatlayout` — the same
   // single-column chat surface renders instead, so there's no empty products pane to design.
-  const showSplit = customizations.chat?.layout === 'splitlayout'
+  const showSplit = customizations.chatbot?.layout === 'splitlayout'
     && breakpoint !== WidgetBreakpoint.MOBILE
     && (chat.breadcrumbs.length > 0 || chat.streamingProducts.length > 0);
 
   useEffect(() => {
-    if (customizations.chat?.startMuted) {
+    if (customizations.chatbot?.startMuted) {
       chat.toggleVoiceReading();
     }
     // Mount-only: this is a one-time initial-mute preference, not something to re-apply whenever
@@ -178,7 +178,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
       <FullScreenChatContainer
         open={chat.isOpen}
         onClose={handleClose}
-        title={customizations.chat?.title || intl.formatMessage({ id: 'widgetTitle' })}
+        title={customizations.chatbot?.title || intl.formatMessage({ id: 'widgetTitle' })}
         isMuted={!chat.isVoiceReadingEnabled}
         onToggleMute={chat.toggleVoiceReading}
         showVoiceToggle={chat.speechOutputEnabled}

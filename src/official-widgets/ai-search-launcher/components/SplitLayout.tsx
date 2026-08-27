@@ -11,13 +11,13 @@ interface SplitLayoutProps {
   chatInputRef: RefObject<HTMLInputElement>;
 }
 
-// Defaults when `customizations.chat.splitLayout` (paneWidth/divider) is unset — match this
+// Defaults when `customizations.chatbot.splitLayout` (paneWidth/divider) is unset — match this
 // component's previous hardcoded w-[400px]/border-neutral-300/dark:border-neutral-800 look.
 const DEFAULT_PANE_WIDTH = 400;
 
 const SplitLayout: FC<SplitLayoutProps> = ({ chat, chatCameraEnabled, chatInputRef }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const splitLayout = widgetConfig.customizations.chat?.splitLayout;
+  const splitLayout = widgetConfig.customizations.chatbot?.splitLayout;
   const paneWidth = splitLayout?.paneWidth ?? DEFAULT_PANE_WIDTH;
   const divider = splitLayout?.divider;
   const dividerColor = darkMode ? divider?.colorDark : divider?.color;

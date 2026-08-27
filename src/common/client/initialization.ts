@@ -82,7 +82,7 @@ export const setCssVariables = (config: WidgetConfig, darkMode: boolean): void =
       buttonIcon: config.customizations.buttons?.icon,
       breadcrumbActive: config.customizations.breadcrumbTrail?.active,
       breadcrumbInactive: config.customizations.breadcrumbTrail?.inactive,
-      inputBarMenuPanel: config.customizations.chat?.inputBar?.menuPanel,
+      inputBarMenuPanel: config.customizations.chatbot?.inputBar?.menuPanel,
     };
     const root = document.querySelector(':root') as HTMLElement;
 

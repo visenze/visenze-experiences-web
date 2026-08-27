@@ -19,7 +19,7 @@ const GREETING_GATE_POLL_MS = 120;
 // Fallback when `customizations.launcher.voiceRecordingMaxDurationSeconds` is unset.
 const DEFAULT_VOICE_RECORDING_MAX_DURATION_SECONDS = 5;
 
-// Fallback when `customizations.chat.inputBar.voiceRecordingColor(Dark)` is unset — mirrors
+// Fallback when `customizations.chatbot.inputBar.voiceRecordingColor(Dark)` is unset — mirrors
 // ChatComposer.tsx's own default for the same recording-state icon color.
 const DEFAULT_VOICE_RECORDING_COLOR = '#EF4444';
 
@@ -42,8 +42,8 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
   const border = customizations.generalLayout?.border;
   const borderColor = darkMode ? border?.colorDark : border?.color;
   const voiceRecordingColor = (darkMode
-    ? customizations.chat?.inputBar?.voiceRecordingColorDark
-    : customizations.chat?.inputBar?.voiceRecordingColor) || DEFAULT_VOICE_RECORDING_COLOR;
+    ? customizations.chatbot?.inputBar?.voiceRecordingColorDark
+    : customizations.chatbot?.inputBar?.voiceRecordingColor) || DEFAULT_VOICE_RECORDING_COLOR;
 
   // Mirrors the `sendMessageRef` pattern already used in use-chat.ts: keeps a live view
   // of `chat` for the polling interval below, without needing to tear down/recreate that interval

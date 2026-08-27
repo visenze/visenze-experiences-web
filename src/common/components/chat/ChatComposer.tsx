@@ -51,7 +51,7 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
     ? (customizations.generalLayout?.fontColorDark || '')
     : (customizations.generalLayout?.fontColor || '');
   const imageUploadIconUrl = customizations.imageUpload?.icon?.url;
-  const inputBar = customizations.chat?.inputBar;
+  const inputBar = customizations.chatbot?.inputBar;
   // Plain icon-only buttons (add-image trigger, upload fallback, idle mic) carry their own color
   // scheme via buttons.icon rather than the general layout color — same precedent as the send
   // button, which already uses buttons.primary instead of generalLayout.
