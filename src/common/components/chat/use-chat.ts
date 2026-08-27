@@ -459,6 +459,15 @@ const useChat = (): UseChatResult => {
         },
       });
     } catch (err) {
+      // Drop this call's own optimistic breadcrumb placeholder unconditionally — covers both a
+      // genuine error below and being superseded by a newer sendMessage (whose abort() call is
+      // what lands us here with controller.signal.aborted already true). Keyed off the
+      // locally-captured pendingBreadcrumbId rather than the ref, since a superseding call has
+      // already overwritten pendingBreadcrumbIdRef.current with its own id by the time this runs.
+      if (pendingBreadcrumbIdRef.current === pendingBreadcrumbId) {
+        pendingBreadcrumbIdRef.current = null;
+      }
+      setBreadcrumbs((prevBreadcrumbs) => prevBreadcrumbs.filter((crumb) => crumb.requestId !== pendingBreadcrumbId));
       if (!controller.signal.aborted) {
         console.error(err);
         setIsWaiting(false);
@@ -466,12 +475,7 @@ const useChat = (): UseChatResult => {
         setStreamingRequestId('');
         resetReplyState();
         setAllowUserInput(true);
-        const pendingId = pendingBreadcrumbIdRef.current;
-        if (pendingId) {
-          pendingBreadcrumbIdRef.current = null;
-          setBreadcrumbs((prevBreadcrumbs) => prevBreadcrumbs.filter((crumb) => crumb.requestId !== pendingId));
-          setActiveBreadcrumb(preBreadcrumbActiveIdRef.current);
-        }
+        setActiveBreadcrumb(preBreadcrumbActiveIdRef.current);
       }
     }
   };
