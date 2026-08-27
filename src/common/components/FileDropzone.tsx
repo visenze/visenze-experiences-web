@@ -13,9 +13,12 @@ interface FileDropzoneProps {
   children: ReactNode;
   name?: string;
   ariaLabel?: string;
+  // Blocks click/drag/drop and the underlying file input while true (e.g. a search is already in
+  // progress) — mirrors how the chat composer's send/mic buttons disable during the same window.
+  disabled?: boolean;
 }
 
-const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name, ariaLabel }) => {
+const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name, ariaLabel, disabled }) => {
   const { widgetClient } = useContext(WidgetDataContext);
   const MAX_IMAGE_FILE_SIZE = 10000000;
 
@@ -52,14 +55,16 @@ const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name, ar
       'image/gif': [],
     },
     onDrop,
+    disabled,
   });
 
   return (
     <div
-      className={`cursor-pointer h-full ${FOCUS_VISIBLE_CLASSES}`}
+      className={`${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} h-full ${FOCUS_VISIBLE_CLASSES}`}
       {...getRootProps({ tabIndex: -1 })}>
       <input
         {...getInputProps({ 'aria-label': ariaLabel, 'tabIndex': 0 })}
+        disabled={disabled}
         data-testid={`wigmix-${name}-dropzone`}
         data-pw={`${name}-dropzone`}
       />

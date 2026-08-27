@@ -136,6 +136,13 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
   };
 
   const handleImageSelected = (image: SearchImage): void => {
+    // Also closes the "Add image" popover — deliberately deferred to here rather than an onClick
+    // on the upload menu item itself. That item's click both fires this (via FileDropzone's
+    // underlying react-dropzone root) AND opens the native file picker, which resolves
+    // asynchronously; closing the popover synchronously on click would unmount FileDropzone's
+    // hidden <input> before the user finishes picking a file, so the native 'change' event that
+    // eventually fires has no mounted React tree left to reach and the image was silently dropped.
+    setIsImageMenuOpen(false);
     if (onImageSelected) {
       onImageSelected(image);
       return;
@@ -184,6 +191,7 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                     title={intl.formatMessage({ id: 'a11yAddImage' })}
                     aria-haspopup='true'
                     aria-expanded={isImageMenuOpen}
+                    disabled={!chat.allowUserInput}
                     className={cn(ICON_BUTTON_CLASSES, FOCUS_VISIBLE_CLASSES)}
                     onClick={() => setIsImageMenuOpen((prev) => !prev)}
                   >
@@ -201,8 +209,9 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                     >
                       <button
                         type='button'
+                        disabled={!chat.allowUserInput}
                         className={cn(
-                          'flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800',
+                          'flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800 disabled:opacity-50',
                           FOCUS_VISIBLE_CLASSES,
                         )}
                         onClick={openCameraFromMenu}
@@ -214,11 +223,14 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                         onImageUpload={handleImageSelected}
                         name='asl-chat-upload'
                         ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}
+                        disabled={!chat.allowUserInput}
                       >
-                        <div
-                          className='flex items-center gap-2 whitespace-nowrap rounded-md p-2 hover:bg-gray-100 dark:hover:bg-neutral-800'
-                          onClick={() => setIsImageMenuOpen(false)}
-                        >
+                        {/* No onClick here: it used to close the popover immediately, which
+                            unmounted this FileDropzone (and its hidden file input) before the
+                            native file dialog it just opened could resolve — silently dropping
+                            the picked image. The popover now closes once handleImageSelected
+                            actually fires, once a file is picked. */}
+                        <div className='flex items-center gap-2 whitespace-nowrap rounded-md p-2 hover:bg-gray-100 dark:hover:bg-neutral-800'>
                           {imageUploadIconUrl ? (
                             <CustomizableIcon height={16} width={16} url={imageUploadIconUrl} color={menuPanelColor} />
                           ) : (
@@ -231,7 +243,12 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                   )}
                 </div>
               ) : (
-                <FileDropzone onImageUpload={handleImageSelected} name='asl-chat-upload' ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}>
+                <FileDropzone
+                  onImageUpload={handleImageSelected}
+                  name='asl-chat-upload'
+                  ariaLabel={intl.formatMessage({ id: 'a11yUploadImage' })}
+                  disabled={!chat.allowUserInput}
+                >
                   <div className={ICON_BUTTON_CLASSES}>
                     {imageUploadIconUrl ? (
                       <CustomizableIcon height={20} width={20} url={imageUploadIconUrl} color={iconButtonColor} />
@@ -249,7 +266,7 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                     aria-pressed={chat.voiceStatus === 'recording'}
                     aria-describedby='asl-chat-hold-mic-instructions'
                     title={chat.hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
-                    disabled={(chat.voiceStatus === 'idle' && !chat.allowUserInput && !chat.isSpeechPlaying) || chat.voiceStatus === 'transcribing'}
+                    disabled={(chat.voiceStatus === 'idle' && !chat.allowUserInput) || chat.voiceStatus === 'transcribing'}
                     className={cn(ICON_BUTTON_CLASSES, FOCUS_VISIBLE_CLASSES)}
                     onMouseDown={chat.startVoiceRecording}
                     onMouseUp={chat.stopRecording}

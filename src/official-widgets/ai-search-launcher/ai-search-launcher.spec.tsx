@@ -645,6 +645,39 @@ describe('ai-search-launcher', () => {
     });
   });
 
+  // Full narration-interruption coverage (a new message flushing rather than silently dropping a
+  // previous reply still deferred behind pending speech) lives at the use-chat.ts hook level —
+  // see use-chat.spec.ts — since that scenario now requires the API call to still be in flight,
+  // which is exactly what the disabled state below (correctly) blocks from the UI.
+  describe('image upload while a search is already in progress', () => {
+    it('disables the "Add image" trigger while waiting on a reply, and re-enables it once one arrives', async () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      const addImageButton = testComponent.getByRole('button', { name: texts['en']['a11yAddImage'] }) as HTMLButtonElement;
+      expect(addImageButton.disabled).toBe(false);
+
+      const stream = sendMessageAndGetStreamController('Find me a jacket');
+
+      // The API call is now in flight — new-image upload must be blocked exactly like the text
+      // composer's send button already is, not just left to silently misbehave if clicked.
+      expect(addImageButton.disabled).toBe(true);
+      act(() => {
+        fireEvent.click(addImageButton);
+      });
+      expect(testComponent.queryByText(texts['en']['a11yUploadImage'])).toBeNull();
+      expect(testComponent.queryByText(texts['en']['a11yOpenCamera'])).toBeNull();
+
+      stream.emitEvent('chat_id', { value: 'chat-1' });
+      stream.emitEvent('reqid', { value: 'req-1' });
+      stream.emitEvent('chat_token', { value: 'Here is a great jacket' });
+      stream.closeStream();
+      await revealAll();
+
+      expect(addImageButton.disabled).toBe(false);
+    });
+  });
+
   describe('chat footer — combined image icon', () => {
     it('shows a single "Add image" trigger instead of separate camera/upload buttons', () => {
       renderLauncher();
