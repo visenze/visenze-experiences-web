@@ -74,11 +74,23 @@ const OverflowChip: FC<{ hidden: BreadcrumbTurn[]; onSelect: (requestId: string)
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
+  const closeMenu = (): void => {
+    setIsOpen(false);
+    triggerRef.current?.focus();
+  };
+
+  // Standard ARIA-menu keyboard model (matches the role='menu'/'menuitem' this popover already
+  // commits to): opening moves focus onto the first item, Up/Down/Home/End move between items,
+  // and closing (however it happens) always returns focus to the trigger rather than dropping it
+  // to <body> once the menuitem buttons unmount.
   useEffect(() => {
     if (!isOpen) {
       return undefined;
     }
+    itemRefs.current[0]?.focus();
     const handlePointerDown = (event: MouseEvent): void => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -86,7 +98,31 @@ const OverflowChip: FC<{ hidden: BreadcrumbTurn[]; onSelect: (requestId: string)
     };
     const handleKeyDown = (event: KeyboardEvent): void => {
       if (event.key === 'Escape') {
-        setIsOpen(false);
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+      const items = itemRefs.current.filter((item): item is HTMLButtonElement => !!item);
+      if (!items.length) {
+        return;
+      }
+      // document.activeElement doesn't pierce the Shadow DOM this widget renders in (it only
+      // reports the shadow host) — reading it off the container's own root node (mirrors
+      // FullScreenChatContainer.tsx/WebcamCapture.tsx) works in both contexts.
+      const activeRoot = containerRef.current?.getRootNode() as Document | ShadowRoot | undefined;
+      const currentIndex = items.indexOf(activeRoot?.activeElement as HTMLButtonElement);
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        items[currentIndex < items.length - 1 ? currentIndex + 1 : 0].focus();
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        items[currentIndex > 0 ? currentIndex - 1 : items.length - 1].focus();
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        items[0].focus();
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        items[items.length - 1].focus();
       }
     };
     document.addEventListener('mousedown', handlePointerDown);
@@ -95,11 +131,13 @@ const OverflowChip: FC<{ hidden: BreadcrumbTurn[]; onSelect: (requestId: string)
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   return (
     <div ref={containerRef} className='relative shrink-0'>
       <button
+        ref={triggerRef}
         type='button'
         aria-haspopup='menu'
         aria-expanded={isOpen}
@@ -118,9 +156,12 @@ const OverflowChip: FC<{ hidden: BreadcrumbTurn[]; onSelect: (requestId: string)
             'border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900',
           )}
         >
-          {hidden.map((crumb) => (
+          {hidden.map((crumb, index) => (
             <button
               key={crumb.requestId}
+              ref={(el) => {
+                itemRefs.current[index] = el;
+              }}
               type='button'
               role='menuitem'
               title={crumb.label}
@@ -130,7 +171,7 @@ const OverflowChip: FC<{ hidden: BreadcrumbTurn[]; onSelect: (requestId: string)
                 FOCUS_VISIBLE_CLASSES,
               )}
               onClick={() => {
-                setIsOpen(false);
+                closeMenu();
                 onSelect(crumb.requestId);
               }}
             >

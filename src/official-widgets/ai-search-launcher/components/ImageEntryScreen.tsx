@@ -1,11 +1,11 @@
 import { cn } from '@heroui/theme';
-import { type FC, type ReactNode, useCallback, useContext, useRef, useState } from 'react';
+import { type FC, type ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { UseChatResult } from '../../../common/components/chat/use-chat';
 import WebcamCapture from '../../../common/components/chat/WebcamCapture';
 import FileDropzone from '../../../common/components/FileDropzone';
 import Footer from '../../../common/components/Footer';
-import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
+import { AUTO_FOCUS_CLASSES, FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 import CustomizableIcon from '../../../common/icons/CustomizableIcon';
 import UploadIcon from '../../../common/icons/UploadIcon';
 import { WidgetDataContext } from '../../../common/types/contexts';
@@ -30,6 +30,15 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
   const intl = useIntl();
   const [showWebcam, setShowWebcam] = useState(false);
   const openCameraButtonRef = useRef<HTMLButtonElement>(null);
+  const browsePhotosButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Deferred so it wins the race against FullScreenChatContainer's own mount-focus effect.
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      browsePhotosButtonRef.current?.focus();
+    }, 0);
+    return (): void => window.clearTimeout(timeoutId);
+  }, []);
 
   const fontColor = darkMode
     ? (customizations.generalLayout?.fontColorDark || '')
@@ -101,7 +110,7 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
 
   return (
     <div className='mx-auto flex w-full max-w-[520px] flex-1 flex-col gap-4 overflow-hidden p-4 text-center'>
-      <p className='m-0 text-base font-semibold' style={{ color: fontColor }}>
+      <p role='status' aria-live='polite' className='m-0 text-base font-semibold' style={{ color: fontColor }}>
         {promptText}
       </p>
       {/* Wrapped in a plain shrink-0 div rather than nesting FileDropzone directly in the root flex
@@ -133,8 +142,9 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
               {/* No onClick: a click anywhere inside FileDropzone's root (including this button) already
                   opens the native file picker via react-dropzone's own bubbled root click handler. */}
               <button
+                ref={browsePhotosButtonRef}
                 type='button'
-                className={cn('flex-1 rounded-lg border border-gray bg-buttonPrimary px-4 py-2.5 text-sm text-buttonPrimary', FOCUS_VISIBLE_CLASSES)}
+                className={cn('flex-1 rounded-lg border border-gray bg-buttonPrimary px-4 py-2.5 text-sm text-buttonPrimary', AUTO_FOCUS_CLASSES)}
               >
                 {intl.formatMessage({ id: 'browsePhotos' })}
               </button>

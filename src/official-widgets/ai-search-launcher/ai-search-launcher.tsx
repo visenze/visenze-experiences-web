@@ -96,17 +96,17 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Deferred focus onto the chat input whenever the chat surface becomes visible (i.e. either
-  // welcome-screen flag flips to false) — mirrors shopping-assistant.tsx's own dialogVisible-keyed
-  // effect. The setTimeout(..., 0) deferral matters even though this widget doesn't use
-  // react-modal: focusing synchronously loses a race against the Shadow-DOM's own mount-time focus
-  // handling, the same underlying timing issue react-modal's comment describes.
+  // Focuses the chat input once the chat surface (not a welcome screen) is visible — covers both
+  // Ask AI opening straight into chat and a welcome screen flipping off after the first message.
   useEffect(() => {
+    if (showImageWelcome || showMicWelcome) {
+      return undefined;
+    }
     const timeoutId = window.setTimeout(() => {
       chatInputRef.current?.focus();
     }, 0);
     return (): void => window.clearTimeout(timeoutId);
-  }, [showImageWelcome, showMicWelcome]);
+  }, [activeEntryPoint, showImageWelcome, showMicWelcome]);
 
   // Focus restore on close (I6): read the entry point BEFORE setActiveEntryPoint(null) clears it,
   // so the correct entry-bar button (mirrors shopping-assistant.tsx's closeDialog/triggerButtonRef

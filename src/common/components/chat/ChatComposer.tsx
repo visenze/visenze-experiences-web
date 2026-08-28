@@ -19,8 +19,9 @@ import FileDropzone from '../FileDropzone';
 // i18n contract: this component calls `intl.formatMessage` for the following ids, so any widget
 // consuming it must provide all of them in its own DEFAULT_TEXTS/locale files (via IntlProvider):
 // a11yChatInput, chatBoxPlaceholder, a11yAddImage, a11yOpenCamera, a11yUploadImage,
-// a11yStopVoiceInput, a11yVoicePending, a11yHoldMicInstructions, holdMicToRecord, voiceInputError,
-// a11ySendMessage. Also pulls in WebcamCapture's own i18n contract when `chatCameraEnabled` is on.
+// a11yStopVoiceInput, a11yTranscribingVoice, a11yListening, a11yHoldMicInstructions,
+// holdMicToRecord, voiceInputError, a11ySendMessage. Also pulls in WebcamCapture's own i18n
+// contract when `chatCameraEnabled` is on.
 interface ChatComposerProps {
   chat: UseChatResult;
   chatInputRef: RefObject<HTMLInputElement>;
@@ -104,6 +105,7 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
     const closeOnEscape = (event: KeyboardEvent): void => {
       if (event.key === 'Escape') {
         setIsImageMenuOpen(false);
+        openCameraButtonRef.current?.focus();
       }
     };
     document.addEventListener('mousedown', closeIfOutside);
@@ -113,6 +115,21 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
       document.removeEventListener('keydown', closeOnEscape);
     };
   }, [isImageMenuOpen]);
+
+  // 'idle' and 'transcribing' used to share the same "Preparing to listen" label, which the
+  // screen reader user has no way to tell apart from an actionable idle button — and since
+  // aria-label changes aren't re-announced on an already-focused element, distinguishing them
+  // here alone isn't enough (see the aria-live status span below).
+  const getVoiceButtonLabelId = (): 'a11yStopVoiceInput' | 'a11yTranscribingVoice' | 'holdMicToRecord' => {
+    if (chat.voiceStatus === 'recording') {
+      return 'a11yStopVoiceInput';
+    }
+    if (chat.voiceStatus === 'transcribing') {
+      return 'a11yTranscribingVoice';
+    }
+    return 'holdMicToRecord';
+  };
+  const voiceButtonLabelId = getVoiceButtonLabelId();
 
   const closeCameraCapture = (): void => {
     setShowCameraCapture(false);
@@ -262,7 +279,7 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                 <>
                   <button
                     type='button'
-                    aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yVoicePending' })}
+                    aria-label={intl.formatMessage({ id: voiceButtonLabelId })}
                     aria-pressed={chat.voiceStatus === 'recording'}
                     aria-describedby='asl-chat-hold-mic-instructions'
                     title={chat.hasVoiceError ? intl.formatMessage({ id: 'voiceInputError' }) : intl.formatMessage({ id: 'holdMicToRecord' })}
@@ -298,6 +315,10 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                   </button>
                   <span id='asl-chat-hold-mic-instructions' className='sr-only'>
                     {intl.formatMessage({ id: 'a11yHoldMicInstructions' })}
+                  </span>
+                  <span role='status' aria-live='polite' className='sr-only'>
+                    {chat.voiceStatus === 'recording' && (chat.liveTranscript || intl.formatMessage({ id: 'a11yListening' }))}
+                    {chat.voiceStatus === 'transcribing' && intl.formatMessage({ id: 'a11yTranscribingVoice' })}
                   </span>
                   {chat.hasVoiceError && (
                     <span role='alert' className='sr-only'>

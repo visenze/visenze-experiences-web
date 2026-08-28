@@ -3,7 +3,7 @@ import { cn } from '@heroui/theme';
 import { type FC, type ReactElement, useContext, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import type { UseChatResult } from '../../../common/components/chat/use-chat';
-import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
+import { AUTO_FOCUS_CLASSES, FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
 import MicrophoneIcon from '../../../common/icons/MicrophoneIcon';
 import StopIcon from '../../../common/icons/StopIcon';
 import SubmitChatIcon from '../../../common/icons/SubmitChatIcon';
@@ -40,6 +40,17 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
   const voiceRecordingColor = (darkMode
     ? customizations.chatbot?.inputBar?.voiceRecordingColorDark
     : customizations.chatbot?.inputBar?.voiceRecordingColor) || DEFAULT_VOICE_RECORDING_COLOR;
+  const micButtonRef = useRef<HTMLButtonElement>(null);
+  const fallbackTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Deferred so it wins the race against FullScreenChatContainer's own mount-focus effect.
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      micButtonRef.current?.focus();
+      fallbackTextareaRef.current?.focus();
+    }, 0);
+    return (): void => window.clearTimeout(timeoutId);
+  }, []);
 
   // Mirrors the `sendMessageRef` pattern already used in use-chat.ts: keeps a live view of `chat`
   // for the auto-stop timeout below, without re-running that effect (and restarting the timer)
@@ -81,6 +92,20 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
     return <MicrophoneIcon className='size-16' color={iconColor} />;
   };
 
+  // 'idle' and 'transcribing' used to share the aria-label 'a11yTapToRecord', which is
+  // inaccurate for the disabled transcribing state (nothing is "tap"-able then) — mirrors the
+  // 3-way distinction ChatComposer.tsx's own mic button makes.
+  const getMicButtonLabelId = (): 'a11yStopVoiceInput' | 'a11yTranscribingVoice' | 'a11yTapToRecord' => {
+    if (chat.voiceStatus === 'recording') {
+      return 'a11yStopVoiceInput';
+    }
+    if (chat.voiceStatus === 'transcribing') {
+      return 'a11yTranscribingVoice';
+    }
+    return 'a11yTapToRecord';
+  };
+  const micButtonLabelId = getMicButtonLabelId();
+
   const handleMicClick = (): void => {
     if (chat.voiceStatus === 'recording') {
       chat.stopRecording();
@@ -104,7 +129,7 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
     return (
       <div className='flex flex-1 flex-col items-center justify-center gap-4 p-6'>
         {greetingMessage && (
-          <p className='m-0 max-w-xs text-center text-base' style={{ color: iconColor }}>
+          <p role='status' aria-live='polite' className='m-0 max-w-xs text-center text-base' style={{ color: iconColor }}>
             {greetingMessage}
           </p>
         )}
@@ -113,6 +138,7 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
         </p>
         <div className='flex w-full max-w-sm flex-col gap-2'>
           <Textarea
+            ref={fallbackTextareaRef}
             aria-label={intl.formatMessage({ id: 'a11yChatInput' })}
             value={chat.message}
             placeholder={intl.formatMessage({ id: 'chatBoxPlaceholder' })}
@@ -145,16 +171,17 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
   return (
     <div className='flex flex-1 flex-col items-center justify-center gap-4 p-6'>
       {greetingMessage && (
-        <p className='m-0 max-w-sm text-center text-base' style={{ color: iconColor }}>
+        <p role='status' aria-live='polite' className='m-0 max-w-sm text-center text-base' style={{ color: iconColor }}>
           {greetingMessage}
         </p>
       )}
       <button
+        ref={micButtonRef}
         type='button'
-        aria-label={intl.formatMessage({ id: chat.voiceStatus === 'recording' ? 'a11yStopVoiceInput' : 'a11yTapToRecord' })}
+        aria-label={intl.formatMessage({ id: micButtonLabelId })}
         aria-pressed={chat.voiceStatus === 'recording'}
         disabled={chat.voiceStatus === 'transcribing'}
-        className={cn('rounded-full border border-gray-200 bg-transparent p-6 disabled:opacity-50 dark:border-neutral-700', FOCUS_VISIBLE_CLASSES)}
+        className={cn('rounded-full border border-gray-200 bg-transparent p-6 disabled:opacity-50 dark:border-neutral-700', AUTO_FOCUS_CLASSES)}
         style={{ borderColor: borderColor || undefined, borderWidth: border?.width ? `${border.width}px` : undefined }}
         onClick={handleMicClick}
       >
