@@ -160,18 +160,17 @@ const useChat = (): UseChatResult => {
     getTypewriterLength,
     resetReplyState,
   } = useVoiceReply({
-    // Mirrors shopping-assistant's chatbot.voiceEnabled master switch, but defaults to enabled
-    // (unset or anything but explicit `false`) to preserve the default always-on behavior.
-    // Actual availability additionally gates on browser support via
+    // Mirrors shopping-assistant's chatbot.voiceEnabled master switch: unset (or false) means
+    // voice is off. Actual availability additionally gates on browser support via
     // `voiceEnabled`/`speechOutputEnabled`, returned below.
-    enabled: customizations.chat?.voiceEnabled !== false,
+    enabled: customizations.chatbot?.voiceEnabled,
     appKey: appSettings.appKey,
     placementId: appSettings.placementId,
     baseUrl: apiBase,
-    voiceId: customizations.chat?.voiceId,
-    voiceModelId: customizations.chat?.voiceModelId,
-    voiceStability: customizations.chat?.voiceSettings?.stability,
-    voiceSimilarityBoost: customizations.chat?.voiceSettings?.similarityBoost,
+    voiceId: customizations.chatbot?.voiceId,
+    voiceModelId: customizations.chatbot?.voiceModelId,
+    voiceStability: customizations.chatbot?.voiceSettings?.stability,
+    voiceSimilarityBoost: customizations.chatbot?.voiceSettings?.similarityBoost,
     onTranscript: (text): void => sendMessageRef.current(text),
     setIsWaiting,
   });
@@ -343,7 +342,7 @@ const useChat = (): UseChatResult => {
       va_uid: uid,
       va_sid: sid,
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
-      chat_agent: customizations.chat?.chatAgent || 'shopping_closer_voice_v2',
+      chat_agent: customizations.chatbot?.chatAgent || 'shopping_closer_voice_v2',
     });
     // A gallery/preset image only ever reaches here as a URL (see ImageEntryScreen's gallery
     // tiles), never as bytes the browser already has — sending it as `im_url` lets the backend
@@ -460,6 +459,15 @@ const useChat = (): UseChatResult => {
         },
       });
     } catch (err) {
+      // Drop this call's own optimistic breadcrumb placeholder unconditionally — covers both a
+      // genuine error below and being superseded by a newer sendMessage (whose abort() call is
+      // what lands us here with controller.signal.aborted already true). Keyed off the
+      // locally-captured pendingBreadcrumbId rather than the ref, since a superseding call has
+      // already overwritten pendingBreadcrumbIdRef.current with its own id by the time this runs.
+      if (pendingBreadcrumbIdRef.current === pendingBreadcrumbId) {
+        pendingBreadcrumbIdRef.current = null;
+      }
+      setBreadcrumbs((prevBreadcrumbs) => prevBreadcrumbs.filter((crumb) => crumb.requestId !== pendingBreadcrumbId));
       if (!controller.signal.aborted) {
         console.error(err);
         setIsWaiting(false);
@@ -467,12 +475,7 @@ const useChat = (): UseChatResult => {
         setStreamingRequestId('');
         resetReplyState();
         setAllowUserInput(true);
-        const pendingId = pendingBreadcrumbIdRef.current;
-        if (pendingId) {
-          pendingBreadcrumbIdRef.current = null;
-          setBreadcrumbs((prevBreadcrumbs) => prevBreadcrumbs.filter((crumb) => crumb.requestId !== pendingId));
-          setActiveBreadcrumb(preBreadcrumbActiveIdRef.current);
-        }
+        setActiveBreadcrumb(preBreadcrumbActiveIdRef.current);
       }
     }
   };
@@ -554,7 +557,7 @@ const useChat = (): UseChatResult => {
         products: [],
       },
     ]);
-    if (customizations.chat?.voiceGreetingEnabled && shouldSpeakReply()) {
+    if (customizations.chatbot?.voiceGreetingEnabled && shouldSpeakReply()) {
       resetReplyState();
       speak(text, text.length, null);
     }

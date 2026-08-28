@@ -213,7 +213,7 @@ describe('ai-search-launcher', () => {
     });
 
     it('should always label the AI entry-bar trigger with the fixed "AI Mode" copy, independent of the configured dialog title', () => {
-      renderLauncher({}, 'en', {}, { chat: { title: 'Custom Dialog Title' } });
+      renderLauncher({}, 'en', {}, { chatbot: { title: 'Custom Dialog Title' } });
 
       const aiTrigger = testComponent.getByRole('button', { name: texts['en']['a11yOpenAskAi'] });
       expect(aiTrigger.textContent).toBe(texts['en']['triggerAskAi']);
@@ -335,7 +335,7 @@ describe('ai-search-launcher', () => {
 
         expect(testComponent.getByRole('dialog')).toBeTruthy();
         expect(getTextInBody(texts['en']['voiceInputError'])).toBeNull();
-        expect(testComponent.getByRole('button', { name: texts['en']['a11yVoicePending'], hidden: true })).toBeTruthy();
+        expect(testComponent.getByRole('button', { name: texts['en']['a11yTapToRecord'], hidden: true })).toBeTruthy();
       } finally {
         (window as any).SpeechRecognition = OriginalSpeechRecognition;
       }
@@ -413,7 +413,7 @@ describe('ai-search-launcher', () => {
       }
     }
 
-    const getMicButton = (): HTMLElement => testComponent.getByRole('button', { name: texts['en']['a11yVoicePending'], hidden: true });
+    const getMicButton = (): HTMLElement => testComponent.getByRole('button', { name: texts['en']['a11yTapToRecord'], hidden: true });
 
     beforeEach(() => {
       mockRecognitionInstances = [];
@@ -447,7 +447,7 @@ describe('ai-search-launcher', () => {
 
     it('uses chat.inputBar.voiceRecordingColor for the recording-state icon instead of a hardcoded red', () => {
       renderLauncher({}, 'en', {}, {
-        chat: { ...DEFAULT_CUSTOMIZATIONS.chat, inputBar: { ...DEFAULT_CUSTOMIZATIONS.chat?.inputBar, voiceRecordingColor: '#123456' } },
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, inputBar: { ...DEFAULT_CUSTOMIZATIONS.chatbot?.inputBar, voiceRecordingColor: '#123456' } },
       });
       openEntryPointAndWait('a11yOpenVoiceSearch');
 
@@ -642,6 +642,39 @@ describe('ai-search-launcher', () => {
       } finally {
         global.fetch = originalFetch;
       }
+    });
+  });
+
+  // Full narration-interruption coverage (a new message flushing rather than silently dropping a
+  // previous reply still deferred behind pending speech) lives at the use-chat.ts hook level —
+  // see use-chat.spec.ts — since that scenario now requires the API call to still be in flight,
+  // which is exactly what the disabled state below (correctly) blocks from the UI.
+  describe('image upload while a search is already in progress', () => {
+    it('disables the "Add image" trigger while waiting on a reply, and re-enables it once one arrives', async () => {
+      renderLauncher();
+      openEntryPointAndWait('a11yOpenAskAi');
+
+      const addImageButton = testComponent.getByRole('button', { name: texts['en']['a11yAddImage'] }) as HTMLButtonElement;
+      expect(addImageButton.disabled).toBe(false);
+
+      const stream = sendMessageAndGetStreamController('Find me a jacket');
+
+      // The API call is now in flight — new-image upload must be blocked exactly like the text
+      // composer's send button already is, not just left to silently misbehave if clicked.
+      expect(addImageButton.disabled).toBe(true);
+      act(() => {
+        fireEvent.click(addImageButton);
+      });
+      expect(testComponent.queryByText(texts['en']['a11yUploadImage'])).toBeNull();
+      expect(testComponent.queryByText(texts['en']['a11yOpenCamera'])).toBeNull();
+
+      stream.emitEvent('chat_id', { value: 'chat-1' });
+      stream.emitEvent('reqid', { value: 'req-1' });
+      stream.emitEvent('chat_token', { value: 'Here is a great jacket' });
+      stream.closeStream();
+      await revealAll();
+
+      expect(addImageButton.disabled).toBe(false);
     });
   });
 
@@ -868,10 +901,10 @@ describe('ai-search-launcher', () => {
       (window as any).SpeechRecognition.prototype.abort = jest.fn();
 
       try {
-        renderLauncher({}, 'en', {}, { chat: { voiceEnabled: false } });
+        renderLauncher({}, 'en', {}, { chatbot: { voiceEnabled: false } });
         openEntryPointAndWait('a11yOpenAskAi');
 
-        expect(testComponent.queryByRole('button', { name: texts['en']['a11yVoicePending'], hidden: true })).toBeNull();
+        expect(testComponent.queryByRole('button', { name: texts['en']['a11yTapToRecord'], hidden: true })).toBeNull();
         expect(testComponent.queryByRole('button', { name: texts['en']['a11yToggleMute'] })).toBeNull();
       } finally {
         (window as any).SpeechRecognition = OriginalSpeechRecognition;
@@ -946,13 +979,13 @@ describe('ai-search-launcher', () => {
     });
 
     it('renders chat-only at desktop width with splitlayout configured but no results yet', () => {
-      const result = renderAtWidth(1200, { chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' } });
+      const result = renderAtWidth(1200, { chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, layout: 'splitlayout' } });
       openAskAi(result);
       expect(result.queryByTestId('asl-split-layout')).toBeNull();
     });
 
     it('renders SplitLayout once results arrive at desktop width with splitlayout configured', () => {
-      const result = renderAtWidth(1200, { chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' } });
+      const result = renderAtWidth(1200, { chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, layout: 'splitlayout' } });
       openAskAi(result);
       expect(result.queryByTestId('asl-split-layout')).toBeNull();
 
@@ -964,7 +997,7 @@ describe('ai-search-launcher', () => {
     });
 
     it('renders chat-only at a mobile width even with splitlayout configured and results present', () => {
-      const result = renderAtWidth(600, { chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' } });
+      const result = renderAtWidth(600, { chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, layout: 'splitlayout' } });
       openAskAi(result);
       streamProductsWithoutClosing();
       expect(result.queryByTestId('asl-split-layout')).toBeNull();
@@ -972,7 +1005,7 @@ describe('ai-search-launcher', () => {
 
     it('applies chat.splitLayout.paneWidth to the chat pane width', () => {
       const result = renderAtWidth(1200, {
-        chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout', splitLayout: { paneWidth: 500 } },
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, layout: 'splitlayout', splitLayout: { paneWidth: 500 } },
       });
       openAskAi(result);
       streamProductsWithoutClosing();
@@ -982,8 +1015,8 @@ describe('ai-search-launcher', () => {
 
     it('applies chat.splitLayout.divider to the border between the chat and products panes', () => {
       const result = renderAtWidth(1200, {
-        chat: {
-          ...DEFAULT_CUSTOMIZATIONS.chat,
+        chatbot: {
+          ...DEFAULT_CUSTOMIZATIONS.chatbot,
           layout: 'splitlayout',
           splitLayout: { divider: { width: 4, color: '#123456', colorDark: '#654321' } },
         },
@@ -1001,7 +1034,7 @@ describe('ai-search-launcher', () => {
     const renderSplitAtDesktop = (): RenderResult => {
       const { widgetConfig, widgetClient } = createTestClient({}, {}, {
         ...DEFAULT_CUSTOMIZATIONS,
-        chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' },
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, layout: 'splitlayout' },
       });
       return render(
         <RootContext.Provider value={document.body}>
@@ -1116,7 +1149,7 @@ describe('ai-search-launcher', () => {
     const renderSplitAtDesktop = (): RenderResult => {
       const { widgetConfig, widgetClient } = createTestClient({}, {}, {
         ...DEFAULT_CUSTOMIZATIONS,
-        chat: { ...DEFAULT_CUSTOMIZATIONS.chat, layout: 'splitlayout' },
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, layout: 'splitlayout' },
       });
       return render(
         <RootContext.Provider value={document.body}>

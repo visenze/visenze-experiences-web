@@ -50,6 +50,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11ySwitchCamera: 'Switch camera',
     a11yStopVoiceInput: 'Stop recording and send',
     a11yVoicePending: 'Preparing to listen',
+    a11yTapToRecord: 'Tap to record',
     a11yTranscribingVoice: 'Transcribing voice message',
     a11yListening: 'Listening',
     voiceInputError: 'Voice input unavailable',
@@ -321,8 +322,9 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     showViSenzeLogo: true,
     darkModeDefault: false,
   },
-  chat: {
+  chatbot: {
     title: 'AI Search Assistant',
+    voiceEnabled: true,
     voiceGreetingEnabled: false,
     startMuted: false,
     layout: 'chatlayout',

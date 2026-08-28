@@ -6,8 +6,8 @@ const customCss = `
 
 export const devConfigs: RecursivePartial<WidgetConfig> = {
   appSettings: {
-    appKey: '',
-    placementId: '',
+    appKey: 'fd5f2fc733394af787d985a753590963',
+    placementId: '10766',
     endpoint: '',
     cloud: 'aws', // remove this if you are testing in staging environment
   },
@@ -17,7 +17,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
   },
   customizations: {
     customCss,
-    chat: {
+    chatbot: {
       //layout: 'splitlayout',
       voiceGreetingEnabled: true, // enable to exercise the voice-greeting path locally
       startMuted: false,

@@ -1,15 +1,15 @@
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, Fragment, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { USER_SCROLL_IDLE_MS } from './constants';
+import ChatRow from './ChatRow';
+import { PRODUCT_IMAGE_MAX_HEIGHT_CLASS, USER_SCROLL_IDLE_MS } from './constants';
+import { processMessageForDisplay } from './message-formatting';
 import ProductGrid from './ProductGrid';
 import type { Chat } from './use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../constants';
 import DownArrowIcon from '../../icons/DownArrowIcon';
 import SparklesIcon from '../../icons/SparklesIcon';
-import UserIcon from '../../icons/UserIcon';
 import { WidgetDataContext } from '../../types/contexts';
-import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../types/image';
 import type { ProcessedProduct } from '../../types/product';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../utils';
 import useBreakpoint from '../hooks/use-breakpoint';
@@ -54,9 +54,6 @@ interface ChatWindowProps {
 // default is 3/4) renders taller than the chat surface, hiding the "Now Describing" badge during
 // narration.
 const PRODUCT_GRID_COLUMNS_CLASSES = 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
-// Backstop for the same overflow, independent of column count or aspect-ratio customization: no
-// single product image may exceed a fraction of the viewport's height.
-const PRODUCT_IMAGE_MAX_HEIGHT_CLASS = 'max-h-[45vh]';
 
 interface SuggestionChipsProps {
   suggestions: string[];
@@ -184,19 +181,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
     }
   }, []);
 
-  const getFile = (image: SearchImageOrPid | undefined): string => {
-    if (!image) {
-      return '';
-    }
-    if (isImageDataUrl(image)) {
-      return image.file;
-    }
-    if (isImageUrl(image)) {
-      return image.imgUrl;
-    }
-    return '';
-  };
-
   const handleScroll = (e: any): void => {
     const t = e.target;
     setShowBottomArrow(t.scrollHeight - t.scrollTop - t.clientHeight > 50);
@@ -245,14 +229,6 @@ const ChatWindow: FC<ChatWindowProps> = ({
       autoScrollToBottom();
     }
   }, [chats.length, latestMessage, streamingProducts.length, focusedProductOwnsScroll]);
-
-  const processMessageForDisplay = (message: string): string => message
-      // quick sanitization
-      .replaceAll(/</g, '&lt;')
-      .replaceAll(/>/g, '&gt;')
-      // bold texts wrapped **like this**
-      .replaceAll(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-      .replaceAll(/\n/g, '<br>');
 
   // Memoized so ProductGrid receives the same `className`/`style` reference across renders that
   // don't actually change these inputs — otherwise every ProductGrid instance would see a
@@ -304,93 +280,20 @@ const ChatWindow: FC<ChatWindowProps> = ({
              onTouchStart={markUserScrolling}
              onTouchMove={markUserScrolling}>
           {chats.map((chat, idx) => (
-              <Fragment key={`chat-row-${idx}`}>
-                <div className={cn(
-                    'w-full flex flex-col',
-                    chat.author === 'user' ? 'items-end' : '',
-                )}>
-                  {chat.author === 'user' && chat.image && (
-                    <div className='flex gap-1 max-w-9/10'>
-                      <div
-                        className='mb-2 w-fit rounded-lg'
-                        key={`chat-user-message-${idx}`}
-                      >
-                        <img
-                          alt={intl.formatMessage({ id: 'a11yUploadedImage' })}
-                          className='max-w-full h-auto rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700'
-                          style={{ maxHeight: '200px' }}
-                          src={getFile(chat.image)}
-                        />
-                      </div>
-                      <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                        <UserIcon className='size-6' />
-                      </div>
-                    </div>
-                  )}
-                  {chat.author === 'user' && chat.messages.map((message, cidx) => (
-                    <div
-                      className='flex min-w-0 gap-1 max-w-9/10'
-                      key={`chat-user-message-${cidx}`}>
-                      <div
-                        className='mb-2 min-w-0 break-words bg-sky-900 dark:bg-sky-100 p-2 text-sm text-white dark:text-neutral-800
-                          rounded-lg border border-neutral-100 dark:border-neutral-800'
-                      >
-                        {message}
-                      </div>
-                      <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                        <UserIcon className='size-6' />
-                      </div>
-                    </div>
-                  ))}
-                  {chat.author === 'bot' && chat.messages.map((message, cidx) => (
-                    <div
-                      className='flex min-w-0 gap-1 max-w-9/10'
-                      key={`chat-bot-message-${cidx}`}>
-                      <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                        <SparklesIcon className='size-5' />
-                      </div>
-                      <div
-                        className='mb-2 min-w-0 break-words bg-gray-100 dark:bg-neutral-800 p-2 text-sm
-                          text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800'
-                        dangerouslySetInnerHTML={{
-                          __html: processMessageForDisplay(message),
-                        }}
-                      />
-                    </div>
-                  ))}
-                  {chat.author === 'products' && (
-                    productDisplayMode === 'hint' ? (
-                      <button
-                        type='button'
-                        onClick={() => onSelectTurn?.(chat.requestId)}
-                        className={cn(
-                            'w-fit text-left text-sm underline decoration-dotted cursor-pointer bg-transparent border-0 p-0',
-                            chat.requestId === activeRequestId ? 'font-semibold text-blue-900 dark:text-blue-50' : 'text-neutral-600 dark:text-neutral-400',
-                            FOCUS_VISIBLE_CLASSES,
-                        )}
-                      >
-                        {intl.formatMessage({ id: 'hintResultsShown' }, { count: (chat.products || []).length })}
-                      </button>
-                    ) : (
-                      <ProductGrid
-                        products={chat.products || []}
-                        requestId={chat.requestId}
-                        focusedProductId={focusedProductId}
-                        focusedRequestId={streamingRequestId}
-                        wishlistPids={wishlistPids}
-                        setIsInWishlist={setIsInWishlist}
-                        pwPrefix={pwPrefix}
-                        imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
-                        className={cn('grid pl-9', productGridClasses)}
-                        style={productGridCssConfig}
-                      />
-                    )
-                  )}
-                </div>
-              </Fragment>
+              <ChatRow
+                key={`chat-row-${idx}`}
+                chat={chat}
+                focusedProductId={focusedProductId}
+                streamingRequestId={streamingRequestId}
+                wishlistPids={wishlistPids}
+                setIsInWishlist={setIsInWishlist}
+                pwPrefix={pwPrefix}
+                productDisplayMode={productDisplayMode}
+                activeRequestId={activeRequestId}
+                onSelectTurn={onSelectTurn}
+                productGridClasses={productGridClasses}
+                productGridCssConfig={productGridCssConfig}
+              />
           ))}
           {(isWaiting || latestMessage || streamingProducts.length > 0) && (
               <>

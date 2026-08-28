@@ -122,7 +122,8 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
     if (event.key !== 'Tab') {
       return;
     }
-    const focusableControls = Array.from(containerRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR) || []);
+    const focusableControls = Array.from(containerRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR) || [])
+      .filter((control) => !(control as HTMLButtonElement | HTMLInputElement).disabled);
     if (!focusableControls.length) {
       return;
     }
