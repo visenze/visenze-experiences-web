@@ -182,7 +182,7 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
         aria-pressed={chat.voiceStatus === 'recording'}
         disabled={chat.voiceStatus === 'transcribing'}
         className={cn('rounded-full border border-gray-200 bg-transparent p-6 disabled:opacity-50 dark:border-neutral-700', AUTO_FOCUS_CLASSES)}
-        style={{ borderColor: borderColor || undefined, borderWidth: border?.width ? `${border.width}px` : undefined }}
+        style={{ borderColor: borderColor || undefined, borderWidth: border?.width !== undefined ? `${border.width}px` : undefined }}
         onClick={handleMicClick}
       >
         {renderMicIcon()}

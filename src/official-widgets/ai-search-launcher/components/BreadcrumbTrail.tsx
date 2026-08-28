@@ -92,7 +92,13 @@ const OverflowChip: FC<{ hidden: BreadcrumbTurn[]; onSelect: (requestId: string)
     }
     itemRefs.current[0]?.focus();
     const handlePointerDown = (event: MouseEvent): void => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      // This popover can render inside a Shadow DOM (FullScreenChatContainer), and this listener
+      // lives on `document`, outside it — so `event.target` gets retargeted to the shadow host for
+      // every click inside, including clicks on the menu's own items, closing the menu before its
+      // onClick could fire. `composedPath()` isn't retargeted, so it still lists the real elements
+      // the click passed through (mirrors ChatComposer.tsx's own image-menu outside-click check).
+      const path = event.composedPath();
+      if (containerRef.current && !path.includes(containerRef.current)) {
         setIsOpen(false);
       }
     };

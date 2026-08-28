@@ -44,7 +44,10 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
     ? (customizations.generalLayout?.fontColorDark || '')
     : (customizations.generalLayout?.fontColor || '');
   const galleryImages = customizations.imageUpload?.images || [];
-  const galleryColumnsClass = customizations.imageUpload?.galleryColumns === 3 ? 'grid-cols-3' : 'grid-cols-2';
+  const isThreeColumnGallery = customizations.imageUpload?.galleryColumns === 3;
+  const galleryColumnsClass = isThreeColumnGallery ? 'grid-cols-3' : 'grid-cols-2';
+  const border = customizations.generalLayout?.border;
+  const borderColor = darkMode ? border?.colorDark : border?.color;
 
   const handleImage = (image: SearchImage): void => {
     chat.sendMessage(undefined, image);
@@ -80,10 +83,14 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
     );
   }
 
-  // Mirrors camera-search's UploadScreen: images[0] renders alone as a tall "hero" tile, the rest
-  // form a 2x2 subgrid beside it, rather than a uniform grid of equally-sized tiles. Capped at 4
-  // "rest" tiles (regardless of how many are configured) so the grid stays a fixed 2x2 shape and
-  // the welcome screen never grows tall enough to need a scrollbar.
+  // In 2-column mode (the default), mirrors camera-search's UploadScreen: images[0] renders alone
+  // as a tall "hero" tile, the rest form a 2x2 subgrid beside it, rather than a uniform grid of
+  // equally-sized tiles — that split only works out to a full grid at 2 columns (hero in column 1,
+  // the 2x2 subgrid filling column 2). 3-column mode instead renders every tile uniformly (see
+  // isThreeColumnGallery below): reusing the hero+subgrid split there would leave the third column
+  // permanently empty and squeeze the subgrid's own tiles into a single column. Capped at 4 "rest"
+  // tiles (regardless of how many are configured) so the grid stays a fixed shape and the welcome
+  // screen never grows tall enough to need a scrollbar.
   const [heroImage, ...restGalleryImages] = galleryImages;
   const visibleRestGalleryImages = restGalleryImages.slice(0, 4);
 
@@ -98,7 +105,7 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
       <img
         className='size-full object-cover'
         src={imageWithLabel.url}
-        alt={imageWithLabel.label || intl.formatMessage({ id: 'a11yUploadImage' })}
+        alt={imageWithLabel.label || intl.formatMessage({ id: 'a11yGalleryImageOption' }, { index: index + 1 })}
       />
       {imageWithLabel.label && (
         <div className='absolute bottom-0 z-10 w-full overflow-hidden bg-gray-800 bg-opacity-80 py-1 text-center text-xs text-white'>
@@ -122,6 +129,7 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
           <div
             data-testid='asl-image-dropzone'
             className='flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 p-6 dark:border-neutral-700 dark:bg-neutral-900/40'
+            style={{ borderColor: borderColor || undefined, borderWidth: border?.width !== undefined ? `${border.width}px` : undefined }}
           >
             {customizations.imageUpload?.icon?.url ? (
               <CustomizableIcon
@@ -177,11 +185,19 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
               height to resolve against, and it also guarantees this section can never push the
               screen tall enough to need a scrollbar, regardless of viewport size. */}
           <div data-testid='asl-gallery-grid' className={cn('grid h-56 auto-rows-fr gap-2 md:h-80', galleryColumnsClass)}>
-            {heroImage && renderGalleryTile(heroImage, 0)}
-            {visibleRestGalleryImages.length > 0 && (
-              <div className={cn('grid h-full grid-rows-2 gap-2', galleryColumnsClass)}>
-                {visibleRestGalleryImages.map((imageWithLabel, index) => renderGalleryTile(imageWithLabel, index + 1))}
-              </div>
+            {isThreeColumnGallery ? (
+              [heroImage, ...visibleRestGalleryImages].map(
+                (imageWithLabel, index) => imageWithLabel && renderGalleryTile(imageWithLabel, index),
+              )
+            ) : (
+              <>
+                {heroImage && renderGalleryTile(heroImage, 0)}
+                {visibleRestGalleryImages.length > 0 && (
+                  <div className={cn('grid h-full grid-rows-2 gap-2', galleryColumnsClass)}>
+                    {visibleRestGalleryImages.map((imageWithLabel, index) => renderGalleryTile(imageWithLabel, index + 1))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

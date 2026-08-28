@@ -458,6 +458,13 @@ const useChat = (): UseChatResult => {
           throw err;
         },
       });
+      // fetchEventSource resolves (rather than rejects) its promise when the signal it was given
+      // aborts — it never reaches the catch block below on its own. Without this, a call superseded
+      // by a newer sendMessage (see the abort() above) would resolve normally and skip the pending
+      // breadcrumb cleanup in the catch block, leaving that call's optimistic breadcrumb stranded.
+      if (controller.signal.aborted) {
+        throw new Error('Request aborted');
+      }
     } catch (err) {
       // Drop this call's own optimistic breadcrumb placeholder unconditionally — covers both a
       // genuine error below and being superseded by a newer sendMessage (whose abort() call is

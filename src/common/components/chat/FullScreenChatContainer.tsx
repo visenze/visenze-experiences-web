@@ -171,7 +171,7 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
         <div
           data-testid='wigmix-fullscreen-header'
           className='flex w-full items-center justify-between border-b border-neutral-300 py-2 dark:border-neutral-800'
-          style={{ borderBottomColor: resolvedBorderColor, borderBottomWidth: borderWidth ? `${borderWidth}px` : undefined }}
+          style={{ borderBottomColor: resolvedBorderColor, borderBottomWidth: borderWidth !== undefined ? `${borderWidth}px` : undefined }}
         >
           <div
             className={cn(
