@@ -44,6 +44,12 @@ const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name, ar
       });
       onImageUpload({ files: [acceptedFiles[0]], file: e.target.result });
     };
+    reader.onerror = (): void => {
+      widgetClient.sendEvent(Actions.ERROR, {
+        cat: Category.UPLOAD,
+        label: Labels.SEARCH_ERROR,
+      });
+    };
     reader.readAsDataURL(image);
   };
 

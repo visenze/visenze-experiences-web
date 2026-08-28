@@ -100,7 +100,8 @@ const WebcamCapture: FC<WebcamCaptureProps> = ({ onClose, onCapture, variant = '
         if (variant === 'drawer') {
           onClose();
         }
-      });
+      })
+      .catch(() => setCameraError(true));
   }, [onCapture, onClose, variant]);
 
   return (
