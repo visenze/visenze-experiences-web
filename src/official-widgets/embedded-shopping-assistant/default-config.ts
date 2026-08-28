@@ -38,7 +38,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: 'Voice input unavailable',
     a11yChatInput: 'Type your message to the shopping assistant',
     chatBoxPlaceholder: 'Type your message',
-    a11yVoicePending: 'Preparing to listen',
+    a11yTranscribingVoice: 'Transcribing voice message',
+    a11yListening: 'Listening',
     a11yHoldMicInstructions: 'Press and hold, or press and hold Space or Enter, to record. Release to send.',
     a11ySendMessage: 'Send message',
   },
@@ -78,7 +79,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: 'Entrada de voz no disponible',
     a11yChatInput: 'Escribe tu mensaje al asistente de compras',
     chatBoxPlaceholder: 'Escribe tu mensaje',
-    a11yVoicePending: 'Preparando para escuchar',
+    a11yTranscribingVoice: 'Transcribiendo mensaje de voz',
+    a11yListening: 'Escuchando',
     a11yHoldMicInstructions: 'Mantén presionado, o mantén presionada la barra espaciadora o Enter, para grabar. Suelta para enviar.',
     a11ySendMessage: 'Enviar mensaje',
   },
@@ -118,7 +120,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: 'Saisie vocale indisponible',
     a11yChatInput: 'Écrivez votre message à l\'assistant shopping',
     chatBoxPlaceholder: 'Écrivez votre message',
-    a11yVoicePending: 'Préparation à l\'écoute',
+    a11yTranscribingVoice: 'Transcription du message vocal',
+    a11yListening: 'Écoute en cours',
     a11yHoldMicInstructions: 'Appuyez et maintenez, ou appuyez et maintenez Espace ou Entrée, pour enregistrer. Relâchez pour envoyer.',
     a11ySendMessage: 'Envoyer le message',
   },
@@ -158,7 +161,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: 'Entrada de voz indisponível',
     a11yChatInput: 'Digite sua mensagem para o assistente de compras',
     chatBoxPlaceholder: 'Digite sua mensagem',
-    a11yVoicePending: 'Preparando para ouvir',
+    a11yTranscribingVoice: 'Transcrevendo mensagem de voz',
+    a11yListening: 'Ouvindo',
     a11yHoldMicInstructions: 'Pressione e segure, ou pressione e segure Espaço ou Enter, para gravar. Solte para enviar.',
     a11ySendMessage: 'Enviar mensagem',
   },
@@ -198,7 +202,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: 'Spracheingabe nicht verfügbar',
     a11yChatInput: 'Geben Sie Ihre Nachricht an den Einkaufsassistenten ein',
     chatBoxPlaceholder: 'Nachricht eingeben',
-    a11yVoicePending: 'Bereitet sich vor zuzuhören',
+    a11yTranscribingVoice: 'Sprachnachricht wird transkribiert',
+    a11yListening: 'Hört zu',
     a11yHoldMicInstructions: 'Halten Sie gedrückt, oder halten Sie Leertaste oder Eingabetaste gedrückt, um aufzunehmen. Loslassen zum Senden.',
     a11ySendMessage: 'Nachricht senden',
   },
@@ -238,7 +243,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: 'Input vocale non disponibile',
     a11yChatInput: 'Scrivi il tuo messaggio all\'assistente shopping',
     chatBoxPlaceholder: 'Scrivi il tuo messaggio',
-    a11yVoicePending: 'Preparazione all\'ascolto',
+    a11yTranscribingVoice: 'Trascrizione del messaggio vocale',
+    a11yListening: 'Ascolto in corso',
     a11yHoldMicInstructions: 'Tieni premuto, oppure tieni premuto Spazio o Invio, per registrare. Rilascia per inviare.',
     a11ySendMessage: 'Invia messaggio',
   },
@@ -278,7 +284,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: 'Wprowadzanie głosowe niedostępne',
     a11yChatInput: 'Wpisz wiadomość do asystenta zakupów',
     chatBoxPlaceholder: 'Wpisz wiadomość',
-    a11yVoicePending: 'Przygotowywanie do słuchania',
+    a11yTranscribingVoice: 'Transkrybowanie wiadomości głosowej',
+    a11yListening: 'Słucham',
     a11yHoldMicInstructions: 'Przytrzymaj lub przytrzymaj spację albo Enter, aby nagrywać. Zwolnij, aby wysłać.',
     a11ySendMessage: 'Wyślij wiadomość',
   },
@@ -318,7 +325,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: '음성 입력을 사용할 수 없습니다',
     a11yChatInput: '쇼핑 어시스턴트에게 메시지를 입력하세요',
     chatBoxPlaceholder: '메시지를 입력하세요',
-    a11yVoicePending: '들을 준비 중',
+    a11yTranscribingVoice: '음성 메시지를 텍스트로 변환 중',
+    a11yListening: '듣는 중',
     a11yHoldMicInstructions: '녹음하려면 길게 누르거나 스페이스바 또는 엔터 키를 길게 누르세요. 놓으면 전송됩니다.',
     a11ySendMessage: '메시지 보내기',
   },
@@ -358,7 +366,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: '音声入力は利用できません',
     a11yChatInput: 'ショッピングアシスタントにメッセージを入力',
     chatBoxPlaceholder: 'メッセージを入力',
-    a11yVoicePending: '聞く準備をしています',
+    a11yTranscribingVoice: '音声メッセージを文字起こし中',
+    a11yListening: '聞いています',
     a11yHoldMicInstructions: '録音するには長押しするか、スペースキーまたはEnterキーを長押ししてください。離すと送信されます。',
     a11ySendMessage: 'メッセージを送信',
   },
@@ -398,7 +407,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: 'ไม่สามารถใช้การป้อนด้วยเสียงได้',
     a11yChatInput: 'พิมพ์ข้อความถึงผู้ช่วยช้อปปิ้ง',
     chatBoxPlaceholder: 'พิมพ์ข้อความของคุณ',
-    a11yVoicePending: 'กำลังเตรียมพร้อมรับฟัง',
+    a11yTranscribingVoice: 'กำลังถอดเสียงข้อความเสียง',
+    a11yListening: 'กำลังฟัง',
     a11yHoldMicInstructions: 'กดค้างไว้ หรือกดค้างที่ Space หรือ Enter เพื่อบันทึกเสียง ปล่อยเพื่อส่ง',
     a11ySendMessage: 'ส่งข้อความ',
   },
@@ -438,7 +448,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     voiceInputError: '语音输入不可用',
     a11yChatInput: '向购物助手输入您的消息',
     chatBoxPlaceholder: '输入您的消息',
-    a11yVoicePending: '正在准备聆听',
+    a11yTranscribingVoice: '正在转录语音消息',
+    a11yListening: '正在聆听',
     a11yHoldMicInstructions: '按住，或按住空格键或回车键进行录音。松开即可发送。',
     a11ySendMessage: '发送消息',
   },
@@ -570,13 +581,20 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
   },
   buttons: {
-    // Drives the send button and other primary-CTA-style elements (loading dots, selected chip).
-    // Defaults to the widget's Google-blue accent; override to rebrand.
+    // Drives the send button (via bg-buttonPrimary/text-buttonPrimary, set as CSS custom
+    // properties in setCssVariables()) AND TurnSection's own pre-expansion loading dots (read
+    // directly as `primaryButtonBg` in embedded-shopping-assistant-chat.tsx). White background
+    // requires a dark fontColor for send-button contrast — using black (light mode) / mid-gray
+    // (dark mode), matching ai-search-launcher's own default for this exact field. KNOWN
+    // TRADEOFF: since backgroundColor also sets the loading-dot color, and ESA's own light-mode
+    // page background is also white (generalLayout.backgroundColor), the pre-expansion loading
+    // dots are genuinely invisible (white-on-white) in light mode as a direct consequence of this
+    // value — flagged, not silently accepted; revisit if that regression matters.
     primary: {
-      fontColor: '#FFFFFF',
-      fontColorDark: '#FFFFFF',
-      backgroundColor: '#4285f4',
-      backgroundColorDark: '#4285f4',
+      fontColor: '#000000',
+      fontColorDark: '#616161',
+      backgroundColor: '#FFFFFF',
+      backgroundColorDark: '#FFFFFF',
     },
     secondary: {
       fontColor: '#FFFFFF',
@@ -597,9 +615,12 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       desktop: { size: 16, weight: 400 },
     },
     fontFamily: '',
-    // fontColor doubles as the icon/accent color for the sparkle logo, mic, camera, and "+" buttons.
-    fontColor: '#4285f4',
-    fontColorDark: '#4285f4',
+    // fontColor doubles as the icon/accent color for the sparkle logo, mic, camera, and "+"
+    // buttons, AND (via FullScreenChatContainer's own iconColor derivation) the post-expansion
+    // header's title text color and its mute/new-chat/close icons. Black (light) / white (dark)
+    // matches ai-search-launcher's own default for this exact field.
+    fontColor: '#000000',
+    fontColorDark: '#FFFFFF',
     backgroundColor: '#FFFFFF',
     // Matches Tailwind neutral-900, the previous hardcoded dark-mode background of ESA's own page
     // containers — this field was unused (unwired) before, so this value keeps the default look
@@ -619,5 +640,16 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     showWidgetTitle: true,
     showViSenzeLogo: false,
     darkModeDefault: false,
+  },
+  chatbot: {
+    // Required for chat.speechOutputEnabled (use-voice.ts) to be true, which is what gates
+    // FullScreenChatContainer's mute/voice-narration toggle (showVoiceToggle) — without this,
+    // the toggle never appears regardless of the isMuted/onToggleMute wiring. voiceId/voiceModelId
+    // are left unset deliberately, same as ai-search-launcher's own default: falls back to the
+    // widget's built-in voice.
+    voiceEnabled: true,
+    // Narration starts muted — a user has to deliberately opt in via the mute button rather than
+    // being narrated to immediately on their first reply.
+    startMuted: true,
   },
 };

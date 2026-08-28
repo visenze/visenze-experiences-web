@@ -237,6 +237,25 @@ describe('embedded-shopping-assistant-chat', () => {
       expect(testComponent.getByRole('dialog')).toBeTruthy();
       expect(testComponent.queryByRole('button', { name: texts['seeResults'] })).toBeNull();
     });
+
+    it('closing the full-screen view (no new-chat involved) returns to a fresh "See Results" gate, not a stuck state', async () => {
+      renderEsa('running shoes');
+      await completeInitialTurnAndExpand();
+
+      expect(testComponent.getByRole('dialog')).toBeTruthy();
+
+      const closeButton = testComponent.getByRole('button', { name: texts['a11yCloseFullScreen'] });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+
+      // Before the fix, expandedTurnIds kept the turn's id forever, so TurnSection came back with
+      // productsExpanded still true — no header, no button, no products (that rendering branch was
+      // removed as dead code under the mistaken assumption this state was unreachable). Confirming
+      // the gate is genuinely back, not that dead-end state.
+      expect(testComponent.queryByRole('dialog')).toBeNull();
+      expect(testComponent.getByRole('button', { name: texts['seeResults'] })).toBeTruthy();
+    });
   });
 
   describe('the !query fallback', () => {

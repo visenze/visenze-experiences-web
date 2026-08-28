@@ -39,19 +39,6 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // the source for ChatComposer (Step 5) below.
   const chat = useChat();
 
-  // Permanently disables useChat's backend-narration path (paced typewriter reveal +
-  // per-sentence TTS synthesis) so simply mounting the hook doesn't introduce any new automatic
-  // reply narration ESA never had. Mirrors ai-search-launcher's own startMuted pattern
-  // (`chat.toggleVoiceReading()`), but unconditional rather than config-gated, since ESA's
-  // read-aloud stays entirely on its own separate window.speechSynthesis path (untouched).
-  // Verified: `isVoiceReadingEnabled`/`voiceReadingEnabledRef` (use-voice-reply.ts) are written
-  // to nowhere else but toggleVoiceReading() itself, so this one mount-time call keeps narration
-  // inert for the component's whole lifetime.
-  useEffect(() => {
-    chat.toggleVoiceReading();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Populates useChat's internal chatId once, at mount, before any send can possibly fire —
   // chat.sendMessage always reads this closed-over state; there's no override param and no way
   // to set it from outside the hook. Every interactive send path below (search button, chips,
@@ -60,6 +47,17 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // effect further down does — see its comment for why.
   useEffect(() => {
     chat.open();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Voice narration starts muted by default (customizations.chatbot?.startMuted, defaulting to
+  // true in ESA's own default-config.ts) — mirrors ai-search-launcher.tsx's own startMuted mount
+  // effect exactly. From here, the mute button (chat.toggleVoiceReading, already wired below) is
+  // a normal toggle — no special first-read behavior.
+  useEffect(() => {
+    if (customizations.chatbot?.startMuted) {
+      chat.toggleVoiceReading();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -95,9 +93,17 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // Full-screen header's close button — collapses back to the pre-expansion TurnSection view
   // without touching chat state at all (no chat.close()/chat.newChat()), so the conversation
   // stays live exactly as ai-search-launcher's own close() does for its dialog (use-chat.ts's
-  // close() deliberately skips resetChatState() for the same reason).
+  // close() deliberately skips resetChatState() for the same reason). Also resets expandedTurnIds
+  // back to empty: only the initial turn is ever gated (onShowProducts/handleShowProducts can
+  // only fire for it — follow-up turns always auto-expand per deriveTurns, and no follow-up turn
+  // can exist before "See Results" is clicked anyway, since ChatComposer only mounts post-
+  // expansion), so this always restores that turn's "See Results" gate rather than leaving it
+  // permanently revealed-but-unrenderable — TurnSection has no product-grid rendering left for the
+  // productsExpanded=true state (removed as dead code under the assumption this state was
+  // unreachable while TurnSection was mounted, which didn't account for this close path).
   const handleCollapse = (): void => {
     setIsExpanded(false);
+    setExpandedTurnIds(new Set());
   };
 
   // Full-screen header's "new chat" button — the only remaining reset entry point now that
@@ -191,17 +197,19 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
       {/* ── Post-"See Results": the same common/ chat surface ai-search-launcher uses, wired
           directly off ESA's own live `chat` instance — no adapter, chat.chats feeds ChatWindow
           as-is. Mirrors ai-search-launcher.tsx's own FullScreenChatContainer + ChatWindow +
-          ChatComposer wiring; adapted only where ESA genuinely differs (widgetName/pwPrefix/
-          ariaLabelledBy, no mute since ESA's read-aloud has no equivalent slot here and is
-          dropped post-expansion per the accepted tradeoff, own max-w-3xl column width matching
-          ESA's existing convention instead of ai-search-launcher's max-w-[820px]). */}
+          ChatComposer wiring, INCLUDING the mute/voice-narration toggle (isMuted/onToggleMute/
+          showVoiceToggle below) — useChat's real backend narration is now a genuine, intentional
+          capability for ESA, gated the same way ai-search-launcher gates it
+          (customizations.chatbot?.voiceEnabled, via chat.speechOutputEnabled). Adapted only where
+          ESA genuinely differs (widgetName/pwPrefix/ariaLabelledBy, own max-w-3xl column width
+          matching ESA's existing convention instead of ai-search-launcher's max-w-[820px]). */}
       <FullScreenChatContainer
         open={isExpanded}
         onClose={handleCollapse}
-        title={customizations.chat?.title || intl.formatMessage({ id: 'aiOverviewLabel' })}
-        isMuted={false}
-        onToggleMute={() => {}}
-        showVoiceToggle={false}
+        title={customizations.chatbot?.title || intl.formatMessage({ id: 'aiOverviewLabel' })}
+        isMuted={!chat.isVoiceReadingEnabled}
+        onToggleMute={chat.toggleVoiceReading}
+        showVoiceToggle={chat.speechOutputEnabled}
         onNewChat={handleNewChat}
         showNewChat
         darkMode={darkMode}
