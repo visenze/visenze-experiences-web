@@ -241,6 +241,7 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
             wishlistPids={chat.wishlistPids}
             setIsInWishlist={chat.setIsInWishlist}
             pwPrefix='esa'
+            hideInitialUserMessage
           />
         </div>
         {customizations.generalLayout?.showViSenzeLogo && (
