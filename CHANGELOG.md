@@ -30,6 +30,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.30](https://github.com/visenze/visenze-experiences-web/compare/1.0.29...1.0.30)
+
+<!-- BEGIN visenze-experiences-web 1.0.30 -->
+
+### Added
+
+- ai-search-launcher: New widget providing a compact entry bar with up to three triggers — image search, voice search, and "Ask AI" — each independently toggleable via `customizations.launcher.cameraEntryEnabled` / `.micEntryEnabled` / `.askAiEntryEnabled` (default `true`). All three open a standalone full-screen AI shopping assistant that calls the same backend endpoint as `shopping-assistant` (`/v1/chat/shopping-assistant` on cloud, `/v1/product/multisearch/chat/shopping-assistant` on legacy) via its own independent request. The image and mic entry points show a dedicated full-screen welcome screen with a configurable greeting (`customizations.launcher.greetings.image` / `.mic` / `.ai`, additionally spoken aloud when `customizations.chatbot.voiceGreetingEnabled` is on) that stays up until the first message is sent; "Ask AI" opens straight into chat. Voice recording auto-stops after `customizations.launcher.voiceRecordingMaxDurationSeconds` (default 5s). The chat surface can render as a two-pane split layout (`customizations.chatbot.layout: 'splitlayout'`) — chat on the left, a breadcrumb trail of past searches plus a dedicated product-results pane on the right — or fall back to the standard single-column layout (`'chatlayout'`, default); split layout only engages above the mobile breakpoint and once the conversation has produced breadcrumbs/products.
+- ai-search-launcher: Added `customizations.chatbot.*` (`title`, `voiceGreetingEnabled`, `startMuted`, `layout`, `inputBar` border/menu-panel/voice-recording colors, `splitLayout` pane width/divider), `customizations.launcher.*` (`voiceRecordingMaxDurationSeconds`, `greetings`, entry-point toggles, `chatCameraEnabled`), `customizations.generalLayout.border`, `customizations.buttons.icon`, `customizations.breadcrumbTrail.active` / `.inactive`, and `customizations.imageUpload.galleryColumns` configuration fields.
+- (internal) Extracted the chat UI (composer, message list, product grid, full-screen container) and assistant logic (token/stream parsing, voice recording + TTS playback) out of shopping-assistant into common modules (`src/common/components/chat/`, `src/common/assistant/`) so other widgets — currently ai-search-launcher — can reuse them without depending on shopping-assistant's own component tree.
+
+### Fixed
+
+- shopping-assistant: Product cards now respect the configured `customizations.productCard` border (width/color/radius), which was previously ignored in this widget's chat/product grid.
+
+<!-- END visenze-experiences-web 1.0.30 -->
+
 ## [1.0.29](https://github.com/visenze/visenze-experiences-web/compare/1.0.28...1.0.29)
 
 <!-- BEGIN visenze-experiences-web 1.0.29 -->

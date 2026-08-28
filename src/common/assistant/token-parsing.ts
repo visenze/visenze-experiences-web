@@ -1,4 +1,4 @@
-import type { ProcessedProduct } from '../../common/types/product';
+import type { ProcessedProduct } from '../types/product';
 
 // A product reference is a token that can appear anywhere in the assistant's text:
 //   [[<product_id>]]
@@ -16,24 +16,37 @@ const INCOMPLETE_PRODUCT_TOKEN_REGEX = /\[\[[^\]]*$/;
 // - New format (token inline/trailing): strip only the token, keep the surrounding description.
 // Also removes ((suggestion)) tokens and any trailing, not-yet-closed "[[..." fragment
 // that is still mid-stream, so partial tokens never flash in the bubble.
-export const stripTokensForDisplay = (text: string): string => text
-  .split('\n')
-  .map((line): string | null => {
-    if (LEADING_PRODUCT_REGEX.test(line)) {
-      return null;
-    }
-    return line.replace(/\[\[[^\]]+]]/g, '');
-  })
-  .filter((line): line is string => line !== null)
-  .join('\n')
-  .replace(SUGGESTION_LINE_REGEX, '')
-  .replace(RESERVED_ACTION_TOKEN_REGEX, '')
-  .replace(INCOMPLETE_RESERVED_ACTION_TOKEN_REGEX, '')
-  .replace(INCOMPLETE_PRODUCT_TOKEN_REGEX, '');
+//
+// Called on the full accumulated reply on every streamed token, so the fast path below (skip the
+// line-split/rejoin entirely when none of the marker delimiters are present yet) matters: most of
+// a reply's tokens stream in before its first [[/((/<< marker, and this is an identity transform
+// on plain text regardless.
+export const stripTokensForDisplay = (text: string): string => {
+  if (!text.includes('[[') && !text.includes('((') && !text.includes('<<')) {
+    return text;
+  }
+  return text
+    .split('\n')
+    .map((line): string | null => {
+      if (LEADING_PRODUCT_REGEX.test(line)) {
+        return null;
+      }
+      return line.replace(/\[\[[^\]]+]]/g, '');
+    })
+    .filter((line): line is string => line !== null)
+    .join('\n')
+    .replace(SUGGESTION_LINE_REGEX, '')
+    .replace(RESERVED_ACTION_TOKEN_REGEX, '')
+    .replace(INCOMPLETE_RESERVED_ACTION_TOKEN_REGEX, '')
+    .replace(INCOMPLETE_PRODUCT_TOKEN_REGEX, '');
+};
 
 // Resolve referenced products in first-appearance order. A product is included only when
 // its token is present in the text AND its payload has arrived via a `product` event.
 export const resolveProducts = (text: string, products: ProcessedProduct[]): ProcessedProduct[] => {
+  if (!text.includes('[[')) {
+    return [];
+  }
   const tokenRegex = /\[\[([^\]]+)]]/g;
   const seen = new Set<string>();
   const ordered: ProcessedProduct[] = [];
@@ -69,6 +82,9 @@ export interface ActionToken {
 // handled across repeated calls as more text streams in. A fresh RegExp is constructed per call
 // so callers never have to reason about shared exec()/lastIndex state across invocations.
 export const extractActionTokens = (text: string): ActionToken[] => {
+  if (!text.includes('<<')) {
+    return [];
+  }
   const regex = new RegExp(RESERVED_ACTION_TOKEN_REGEX);
   const tokens: ActionToken[] = [];
   let match = regex.exec(text);

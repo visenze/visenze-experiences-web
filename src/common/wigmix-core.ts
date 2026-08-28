@@ -29,6 +29,7 @@ export enum WidgetType {
   SLIDE_OUT_DRAWER = 'slide_out_drawer',
   BUY_THE_LOOK = 'buy_the_look',
   IN_PAGE_CAROUSEL_V3 = 'in_page_carousel_v3',
+  AI_SEARCH_LAUNCHER = 'ai_search_launcher',
 }
 
 export enum WidgetErrorState {
@@ -564,11 +565,25 @@ export interface Border {
    */
   colorDark: string;
   /**
-   * Radius of the border.
+   * Radius of the border. Optional since 1.0.30, when this interface started being reused for
+   * border settings that have no corner-radius concept (e.g. a divider).
    *
    * @since 1.0.12
    */
-  radius: number;
+  radius?: number;
+}
+
+/**
+ * Voice synthesis tuning settings, forwarded as-is to the speech synthesis proxy. Shared by every
+ * per-widget voice config block (e.g. `chatbot.voiceSettings`, `chat.voiceSettings`).
+ *
+ * @since 1.0.29
+ */
+export interface VoiceSettings {
+  /** Voice stability, 0-1. */
+  stability?: number;
+  /** Voice similarity boost, 0-1. */
+  similarityBoost?: number;
 }
 
 /**
@@ -994,6 +1009,14 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       darkModeDefault: boolean;
+      /**
+       * Border shown on outer widget chrome — e.g. the full-screen chat dialog's header
+       * separator, the mic entry screen's mic button ring, and the image entry screen's upload
+       * dropzone panel. Defaults to a plain neutral border when unset.
+       *
+       * @since 1.0.30
+       */
+      border?: Border;
     };
     /**
      * Settings to influence API results or how the responses are parsed.
@@ -1076,6 +1099,34 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       secondary: ColoredInterface;
+      /**
+       * Plain icon-only button configuration (the chat input bar's "add image" trigger, upload
+       * fallback, and idle mic button — buttons with no text label of their own).
+       *
+       * @since 1.0.30
+       */
+      icon?: ColoredInterface;
+    };
+    /**
+     * Breadcrumb trail configuration (the past-search pill trail shown above the results pane in
+     * splitlayout).
+     *
+     * @since 1.0.30
+     */
+    breadcrumbTrail?: {
+      /**
+       * Color of the currently-active breadcrumb pill.
+       *
+       * @since 1.0.30
+       */
+      active: ColoredInterface;
+      /**
+       * Color of the inactive (non-selected) breadcrumb pills. Defaults to a plain neutral color
+       * when unset.
+       *
+       * @since 1.0.30
+       */
+      inactive?: ColoredInterface;
     };
     /**
      * Breakpoints configuration.
@@ -1457,6 +1508,12 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       images: ImageWithLabel[];
+      /**
+       * Number of columns in the preset image gallery grid. Defaults to 2 when unset.
+       *
+       * @since 1.0.30
+       */
+      galleryColumns?: 2 | 3;
     };
     /**
      * Popular terms settings. This is only applicable for widgets with popular terms setting available.
@@ -1509,44 +1566,44 @@ export interface WidgetConfig {
       products: TrendingProduct[];
     };
     /**
-     * @internal
+     * Configuration for a widget's chat surface (shared by shopping-assistant and any widget
+     * using the common chat module): header title, layout, voice identity, the chat agent used
+     * for chat calls, and the voiceEnabled/voiceGreetingEnabled/startMuted toggles controlling
+     * voice behavior.
      *
      * @since 1.0.14
      */
     chatbot?: {
       /**
-       * The chat agent to be used.
+       * The chat agent to be used for this widget's chat calls.
        *
        * This should be set by internal ViSenze personnel as the value needs to correspond
-       * to an internally recognized chat agent.
+       * to an internally recognized chat agent. Defaults to the widget's built-in agent when
+       * unset.
        *
        * @internal
        *
        * @since 1.0.14
        */
-      chatAgent: string;
+      chatAgent?: string;
       /**
-       * (optional) Gates voice capability in the shopping-assistant widget: voice input is
-       * captured via the browser's built-in speech recognition, and assistant replies (both to
-       * typed and spoken messages) are read aloud via text-to-speech. When unset (or false), all
-       * voice UI is hidden and no voice requests are made.
-       * 
-       * This flag only controls whether the widget shows
-       * voice UI and calls the proxy for this placement.
+       * (optional) Master toggle for voice capability throughout this widget's chat surface:
+       * recording, spoken replies/greetings, the in-chat microphone button, and the mute/unmute
+       * toggle. When unset (or false), all voice UI is hidden and no voice requests are made.
        *
        * @since 1.0.29
        */
       voiceEnabled?: boolean;
       /**
-       * (optional) Voice ID used for spoken replies. Default to the widget's built-in voice
-       * when unset. Only takes effect when `voiceEnabled` is set.
+       * (optional) Voice ID used for spoken replies and greetings. Default to the widget's
+       * built-in voice when unset. Only takes effect when `voiceEnabled` is set.
        *
        * @since 1.0.29
        */
       voiceId?: string;
       /**
-       * (optional) Voice-provider model ID used for spoken replies. Defaults to the widget's
-       * built-in model when unset.
+       * (optional) Voice-provider model ID used for spoken replies and greetings. Defaults to
+       * the widget's built-in model when unset.
        *
        * @since 1.0.29
        */
@@ -1557,12 +1614,155 @@ export interface WidgetConfig {
        *
        * @since 1.0.29
        */
-      voiceSettings?: {
-        /** Voice stability, 0-1. */
-        stability?: number;
-        /** Voice similarity boost, 0-1. */
-        similarityBoost?: number;
+      voiceSettings?: VoiceSettings;
+      /**
+       * Title shown in the full-screen chat header.
+       *
+       * @since 1.0.30
+       */
+      title?: string;
+      /**
+       * Master toggle for greeting audio. When unset or false, greetings are
+       * shown as text only (if at all) and never spoken.
+       *
+       * @since 1.0.30
+       */
+      voiceGreetingEnabled?: boolean;
+      /**
+       * Whether a session starts muted (voice output suppressed) by default.
+       * Mute state itself is session-only and not persisted.
+       *
+       * @since 1.0.30
+       */
+      startMuted?: boolean;
+      /**
+       * Which layout the full-screen chat surface renders. `'chatlayout'`
+       * (default) is the existing single-column chat UI, unchanged, at every
+       * breakpoint. `'splitlayout'` renders a two-pane split (chat left,
+       * products right) on tablet/desktop once the conversation has actual
+       * results; below the mobile breakpoint, or before any results exist, it
+       * renders identically to `'chatlayout'`.
+       *
+       * @since 1.0.30
+       */
+      layout?: 'chatlayout' | 'splitlayout';
+      /**
+       * Configuration for the input bar (the text input plus its image/camera/mic/send controls,
+       * docked at the bottom of the chat surface).
+       *
+       * @since 1.0.30
+       */
+      inputBar?: {
+        /**
+         * Top border separating the input bar from the message list above it. Defaults to a plain
+         * neutral border when unset.
+         *
+         * @since 1.0.30
+         */
+        border?: Border;
+        /**
+         * Background/text color of the camera+upload popover opened by the "add image" trigger.
+         *
+         * @since 1.0.30
+         */
+        menuPanel?: ColoredInterface & {
+          /**
+           * Border around the popover panel.
+           *
+           * @since 1.0.30
+           */
+          border?: Border;
+        };
+        /**
+         * Color of the mic button's icon while actively recording (replaces the idle mic icon
+         * with a stop icon in this color). Defaults to red when unset.
+         *
+         * @since 1.0.30
+         */
+        voiceRecordingColor?: string;
+        /**
+         * Color of the recording-state icon in dark mode.
+         *
+         * @since 1.0.30
+         */
+        voiceRecordingColorDark?: string;
       };
+      /**
+       * Configuration specific to the two-pane split layout (`layout: 'splitlayout'`): the
+       * fixed-width chat pane on the left and the divider separating it from the products pane.
+       *
+       * @since 1.0.30
+       */
+      splitLayout?: {
+        /** Width of the chat pane, in px. Defaults to 400 when unset. @since 1.0.30 */
+        paneWidth?: number;
+        /** Divider border between the chat pane and the products pane. @since 1.0.30 */
+        divider?: Border;
+      };
+    };
+    /**
+     * Configuration specific to the AI Search Launcher widget's entry points:
+     * which of the three (image, mic, Ask AI) are enabled, the mic entry
+     * point's recording duration, and per-entry-point greeting text.
+     *
+     * @since 1.0.30
+     */
+    launcher?: {
+      /**
+       * Maximum duration, in seconds, that the mic entry point's full-screen
+       * recording state stays open before it is automatically stopped (as if
+       * the user had clicked to stop). Defaults to 5.
+       *
+       * @since 1.0.30
+       */
+      voiceRecordingMaxDurationSeconds?: number;
+      /**
+       * Per-entry-point greeting text, spoken (if `chat.voiceGreetingEnabled`)
+       * and/or shown when that entry point is opened.
+       *
+       * @since 1.0.30
+       */
+      greetings?: {
+        /** Greeting shown/spoken when the image-search entry point opens. @since 1.0.30 */
+        image?: string;
+        /** Greeting shown/spoken when the microphone entry point opens. @since 1.0.30 */
+        mic?: string;
+        /** Greeting shown/spoken when the "Ask AI" entry point opens. @since 1.0.30 */
+        ai?: string;
+      };
+      /**
+       * (optional) Whether the top entry-bar's image-search button is shown.
+       * Defaults to `true` (enabled) when unset — set to `false` to remove
+       * this entry point entirely.
+       *
+       * @since 1.0.30
+       */
+      cameraEntryEnabled?: boolean;
+      /**
+       * (optional) Whether the top entry-bar's mic-search button is shown.
+       * Defaults to `true` (enabled) when unset — set to `false` to remove
+       * this entry point entirely. Independent of `chat.voiceEnabled`.
+       *
+       * @since 1.0.30
+       */
+      micEntryEnabled?: boolean;
+      /**
+       * (optional) Whether the top entry-bar's "Ask AI" button is shown.
+       * Defaults to `true` (enabled) when unset — set to `false` to remove
+       * this entry point entirely.
+       *
+       * @since 1.0.30
+       */
+      askAiEntryEnabled?: boolean;
+      /**
+       * (optional) Whether the in-chat footer's inline "open camera" button is
+       * shown once a conversation is active. Defaults to `true` (enabled) when
+       * unset. Image upload (drag/drop or file picker) is unaffected by this
+       * flag.
+       *
+       * @since 1.0.30
+       */
+      chatCameraEnabled?: boolean;
     };
   };
   /**

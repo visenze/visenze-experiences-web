@@ -18,6 +18,9 @@
   .wigmix-widget-title {
     @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
   }
+  .wigmix-modal {
+    @apply text-mobile-body md:text-tablet-body lg:text-desktop-body font-mobile-body md:font-tablet-body lg:font-desktop-body;
+  }
   .wigmix-product-card {
     @apply border-width-productCard border-color-productCard rounded-radius-productCard;
   }
@@ -68,27 +71,4 @@
     transform: translateY(0);
     filter: brightness(100%);
   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .loading-dot {
-    animation: none;
-  }
-
-  .wigmix-camera-drawer {
-    animation: none !important;
-  }
-
-  .ReactModal__Content {
-    transition: none !important;
-    transform: none !important;
-  }
-}
-
-.wigmix-modal-overlay.wigmix-modal-position-right {
-  padding-left: 65% !important;
-}
-
-.wigmix-modal-overlay.wigmix-modal-position-left {
-  padding-right: 65% !important;
 }

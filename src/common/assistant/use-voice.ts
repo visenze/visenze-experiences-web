@@ -3,7 +3,7 @@ import { DEFAULT_VOICE_ID, sanitizeTextForSpeech, synthesizeSpeech } from './voi
 
 export type VoiceStatus = 'idle' | 'recording' | 'transcribing';
 
-interface UseVoiceOptions {
+export interface UseVoiceOptions {
   enabled?: boolean;
   appKey: string;
   placementId: string | number;
@@ -18,7 +18,7 @@ interface UseVoiceOptions {
   onSpeechQueueEnd?: () => void;
 }
 
-interface UseVoiceResult {
+export interface UseVoiceResult {
   voiceEnabled: boolean;
   speechOutputEnabled: boolean;
   status: VoiceStatus;
