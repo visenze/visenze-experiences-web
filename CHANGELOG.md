@@ -30,6 +30,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.31](https://github.com/visenze/visenze-experiences-web/compare/1.0.30...1.0.31)
+
+## [1.0.31](https://github.com/visenze/visenze-experiences-web/compare/1.0.30...1.0.31)
+
+<!-- BEGIN visenze-experiences-web 1.0.31 -->
+
+### Added
+
+- embedded-shopping-assistant: New widget providing an inline "AI Overview" experience under the search bar. On mount, it reads a query supplied by the host page (`data-query` on the placement element) and streams a compact AI-generated summary with a clamped preview; clicking "See Results" expands the widget into a full-screen AI shopping assistant built from the same shared chat components ai-search-launcher uses (`useChat`, `ChatComposer`, `ChatWindow`, `FullScreenChatContainer`, `ProductGrid`), rather than this widget's own previous chat implementation. The full-screen surface supports voice narration of replies, gated on `customizations.chatbot.voiceEnabled` and starting muted by default (`customizations.chatbot.startMuted`) until the user unmutes; a "new chat" action in the header that resets the conversation and re-runs the original query as a fresh turn; and a close action that collapses cleanly back to the pre-expansion summary view without losing the live conversation. If the host page provides no query, the widget shows a simple fallback message instead of an empty screen.
+- embedded-shopping-assistant: Title, icon, and send-button colors are now configurable via `customizations.generalLayout` (`fontColor`/`fontColorDark`, `backgroundColor`/`backgroundColorDark`, `border`) and `customizations.buttons.primary` (`fontColor`/`fontColorDark`, `backgroundColor`/`backgroundColorDark`), previously hardcoded.
+- (internal) Added an opt-in `hideInitialUserMessage` prop to `ChatWindow` (`src/common/components/chat/ChatWindow.tsx`) that suppresses only the first chat row when it is the user's own initial query. Used exclusively by embedded-shopping-assistant, which surfaces that same query as a separate UI element before the chat surface mounts; no other consumer of `ChatWindow` passes this prop, so its default (unset) behavior is unchanged everywhere else.
+
+### Fixed
+
+- embedded-shopping-assistant: Closing the full-screen chat view (without starting a new chat) no longer leaves the pre-expansion view permanently stuck in an unrenderable state.
+- embedded-shopping-assistant: The pre-expansion loading dots are no longer invisible in light mode — they now use `buttons.primary.fontColor` instead of `buttons.primary.backgroundColor`, matching how `ChatWindow`'s own loading dots are colored.
+
+<!-- END visenze-experiences-web 1.0.31 -->
+
 ## [1.0.30](https://github.com/visenze/visenze-experiences-web/compare/1.0.29...1.0.30)
 
 <!-- BEGIN visenze-experiences-web 1.0.30 -->

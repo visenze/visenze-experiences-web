@@ -582,14 +582,12 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   },
   buttons: {
     // Drives the send button (via bg-buttonPrimary/text-buttonPrimary, set as CSS custom
-    // properties in setCssVariables()) AND TurnSection's own pre-expansion loading dots (read
-    // directly as `primaryButtonBg` in embedded-shopping-assistant-chat.tsx). White background
-    // requires a dark fontColor for send-button contrast — using black (light mode) / mid-gray
-    // (dark mode), matching ai-search-launcher's own default for this exact field. KNOWN
-    // TRADEOFF: since backgroundColor also sets the loading-dot color, and ESA's own light-mode
-    // page background is also white (generalLayout.backgroundColor), the pre-expansion loading
-    // dots are genuinely invisible (white-on-white) in light mode as a direct consequence of this
-    // value — flagged, not silently accepted; revisit if that regression matters.
+    // properties in setCssVariables()). White background requires a dark fontColor for
+    // send-button contrast — using black (light mode) / mid-gray (dark mode), matching
+    // ai-search-launcher's own default for this exact field. TurnSection's pre-expansion loading
+    // dots (read as `loadingDotColor` in embedded-shopping-assistant-chat.tsx) use fontColor, not
+    // backgroundColor, specifically so they stay visible against ESA's own white light-mode page
+    // background (generalLayout.backgroundColor) instead of blending into it.
     primary: {
       fontColor: '#000000',
       fontColorDark: '#616161',

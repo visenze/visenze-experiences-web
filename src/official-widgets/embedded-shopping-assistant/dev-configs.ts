@@ -9,7 +9,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     appKey: '',
     placementId: '',
     endpoint: '',
-    //cloud: 'aws',
+    cloud: 'aws',
   },
   displaySettings: {
     cssSelector: '.embedded-shopping-assistant-widget',

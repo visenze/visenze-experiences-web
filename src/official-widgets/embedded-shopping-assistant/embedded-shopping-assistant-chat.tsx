@@ -27,9 +27,13 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // Same customization fields (and the same inline-style pattern) the shopping-assistant widget
   // uses for its icon/CTA colors, so hosts can rebrand this widget's accents the same way.
   const iconColor = (darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor) || undefined;
-  // Still needed for TurnSection's own loading-dots color below — ChatComposer's send button no
-  // longer reads this (see the ChatComposer wiring note further down).
-  const primaryButtonBg = (darkMode ? customizations.buttons?.primary?.backgroundColorDark : customizations.buttons?.primary?.backgroundColor) || undefined;
+  // TurnSection's pre-expansion loading dots. Reads buttons.primary.fontColor/fontColorDark (the
+  // send button's *text* color, not its background) — matching how ChatWindow's own post-
+  // expansion loading dots are colored (ChatWindow.tsx). Previously this read backgroundColor,
+  // which is white in ESA's default config and matched ESA's own white light-mode page background
+  // exactly, making the dots invisible; fontColor is chosen for contrast against the page
+  // background instead, same as ChatWindow's dots already do.
+  const loadingDotColor = (darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor) || undefined;
   // Replaces the previous hardcoded bg-white/dark:bg-neutral-900 on ESA's own page containers —
   // default-config.ts's values were already set to match those exact colors, so this is a pure
   // wiring change with no visible difference unless a host overrides them.
@@ -185,7 +189,7 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
                   turn={turn}
                   showDivider={idx > 0}
                   onShowProducts={() => handleShowProducts(turn.id)}
-                  primaryButtonBg={primaryButtonBg}
+                  loadingDotColor={loadingDotColor}
                   iconColor={iconColor}
                 />
               </Fragment>

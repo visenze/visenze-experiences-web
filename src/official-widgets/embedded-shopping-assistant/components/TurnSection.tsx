@@ -70,12 +70,12 @@ interface TurnSectionProps {
   turn: ConversationTurn;
   showDivider: boolean;
   onShowProducts: () => void;
-  primaryButtonBg?: string;
+  loadingDotColor?: string;
   iconColor?: string;
 }
 
 const TurnSection: FC<TurnSectionProps> = ({
-  turn, showDivider, onShowProducts, primaryButtonBg, iconColor,
+  turn, showDivider, onShowProducts, loadingDotColor, iconColor,
 }) => {
   const intl = useIntl();
 
@@ -103,7 +103,7 @@ const TurnSection: FC<TurnSectionProps> = ({
           <div
             key={`dot-${turn.id}-${i}`}
             className='loading-dot rounded-full'
-            style={{ animationDelay: `${i * 0.2}s`, backgroundColor: primaryButtonBg }}
+            style={{ animationDelay: `${i * 0.2}s`, backgroundColor: loadingDotColor }}
           />
         ))}
         <span className='text-sm text-gray-500 dark:text-neutral-400 ml-1'>
