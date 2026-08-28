@@ -1,8 +1,6 @@
 import { cn } from '@heroui/theme';
-import type { Dispatch, FC, ReactNode, SetStateAction } from 'react';
-import { useRef } from 'react';
+import type { FC, ReactNode } from 'react';
 import { useIntl } from 'react-intl';
-import SharedProductCard from '../../../common/components/product-card/ProductCard';
 import SparklesIcon from '../../../common/icons/SparklesIcon';
 import type { ConversationTurn } from '../embedded-shopping-assistant';
 
@@ -74,41 +72,16 @@ interface TurnSectionProps {
   onShowProducts: () => void;
   primaryButtonBg?: string;
   iconColor?: string;
-  wishlistPids: string[];
-  setWishlistPids: Dispatch<SetStateAction<string[]>>;
 }
 
 const TurnSection: FC<TurnSectionProps> = ({
-  turn, showDivider, onShowProducts, primaryButtonBg, iconColor, wishlistPids, setWishlistPids,
+  turn, showDivider, onShowProducts, primaryButtonBg, iconColor,
 }) => {
-  // Dedupes PRODUCT_VIEW tracking (fired internally by the shared ProductCard) per request, so a
-  // product re-rendered within the same turn's response doesn't get counted twice.
-  const viewedProductIdsRef = useRef<Set<string>>(new Set());
   const intl = useIntl();
 
   return (
   <div>
     {showDivider && <hr className='border-gray-200 dark:border-neutral-700 my-6' />}
-
-    {/* User's query, shown as a right-aligned chat bubble — skipped for the initial turn, since the
-        persistent TopBar's "AI Overview" label already frames it; showing the query again here would
-        just be a redundant step before the content loads. Follow-up turns (chips, typed questions,
-        image search) still show theirs, same as a normal chat log. */}
-    {!turn.isInitial && (
-      <div className='flex justify-end mb-4'>
-        {turn.queryImageUrl ? (
-          <img
-            src={turn.queryImageUrl}
-            alt='Uploaded search'
-            className='size-20 rounded-xl object-cover border border-gray-200 dark:border-neutral-700'
-          />
-        ) : (
-          <span className='inline-block max-w-[80%] truncate rounded-full bg-gray-100 dark:bg-neutral-800 px-4 py-2 text-sm text-gray-800 dark:text-neutral-100'>
-            {turn.title}
-          </span>
-        )}
-      </div>
-    )}
 
     {/* "AI Overview" header — the persistent TopBar carries this same label once results are
         expanded, but until then (loading + clamped text preview) there's no TopBar on screen at
@@ -122,9 +95,10 @@ const TurnSection: FC<TurnSectionProps> = ({
       </div>
     )}
 
-    {/* Loading */}
+    {/* Loading — role='status'/aria-live announce this row to screen readers the moment it
+        appears, same live-region pattern ChatWindow's own loading indicator already uses. */}
     {turn.isLoading && (
-      <div className='flex items-center gap-2 mb-4'>
+      <div className='flex items-center gap-2 mb-4' role='status' aria-live='polite' aria-atomic='true'>
         {[0, 1, 2].map((i) => (
           <div
             key={`dot-${turn.id}-${i}`}
@@ -187,54 +161,6 @@ const TurnSection: FC<TurnSectionProps> = ({
           </svg>
         </button>
       </div>
-    )}
-
-    {/* Product grid — fixed-width cards (202px, matching the shopping-assistant widget's card size)
-        that wrap to a new row, so every query renders at the same size regardless of container width.
-        Only shown after user clicks "See Results" (initial turn) or immediately (follow-up turns).
-        Uses the shared ProductCard (same one shopping-assistant uses) so price/secondaryTitle/
-        fieldSource/openLinksInNewTab/wishlist/addToCart/findSimilar all respect config the same way —
-        the border/rounding/shadow wrapper below is this widget's own visual treatment, layered on top. */}
-    {!turn.isLoading && turn.productsExpanded && turn.products.length > 0 && (
-      <div className='flex flex-wrap gap-4 mb-4'>
-        {turn.products.map((product, pidx) => {
-          const viewedKey = `${turn.reqId || turn.id}:${product.product_id}`;
-          return (
-            <div
-              key={product.product_id}
-              className='w-[202px] flex-none overflow-hidden rounded-xl border border-gray-200 dark:border-neutral-700
-                bg-white dark:bg-neutral-800 shadow-sm transition-shadow hover:shadow-md'
-            >
-              <SharedProductCard
-                result={product}
-                index={pidx}
-                metadata={{ queryId: turn.reqId || turn.id }}
-                isInWishlist={wishlistPids.includes(product.product_id)}
-                setIsInWishlist={(pid, isInWishlist) => {
-                  setWishlistPids((prev) => {
-                    if (isInWishlist) return prev.includes(pid) ? prev : [...prev, pid];
-                    return prev.filter((p) => p !== pid);
-                  });
-                }}
-                pwPrefix='esa'
-                isRecommendation={false}
-                hasFindSimilar={false}
-                skipViewTracking={viewedProductIdsRef.current.has(viewedKey)}
-                onProductViewed={() => viewedProductIdsRef.current.add(viewedKey)}
-              />
-            </div>
-          );
-        })}
-      </div>
-    )}
-
-    {/* No matches — e.g. an image search that didn't return any visually similar products.
-        Gated on productsSettled (not just !isLoading) — isLoading flips false on the first chat_token
-        so the AI text can stream in, often before any `product` SSE events have arrived, so `products`
-        can be transiently empty. Without this gate, that transient state would flash this message
-        before the real products stream in a moment later. */}
-    {!turn.isLoading && turn.productsExpanded && turn.products.length === 0 && turn.productsSettled && (
-      <p className='text-sm text-gray-500 dark:text-neutral-400 mb-4'>{intl.formatMessage({ id: 'noProductsFound' })}</p>
     )}
   </div>
   );

@@ -23,6 +23,10 @@ export interface ConversationTurn {
 
 export interface EmbeddedShoppingAssistantProps {
   query: string;
+  // Test-only escape hatch, same reason FullScreenChatContainer/ai-search-launcher have one:
+  // Portal + Shadow DOM is hard to query directly in RTL/jsdom. Threaded straight through to
+  // FullScreenChatContainer's own prop of the same name; never set in production.
+  renderWithoutPortal?: boolean;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -33,7 +37,7 @@ export interface EmbeddedShoppingAssistantProps {
 // placement id, regardless of whether ESA asked for that behavior — ESA never reads
 // widgetConfig.callbacks itself, so overriding it to `{}` in this nested Provider is safe for
 // everything else and guarantees those callbacks never fire for ESA, no matter what a host sets.
-const EmbeddedShoppingAssistant: FC<EmbeddedShoppingAssistantProps> = ({ query }) => {
+const EmbeddedShoppingAssistant: FC<EmbeddedShoppingAssistantProps> = ({ query, renderWithoutPortal }) => {
   const outerContext = useContext(WidgetDataContext);
   const neuteredContext = {
     ...outerContext,
@@ -42,7 +46,7 @@ const EmbeddedShoppingAssistant: FC<EmbeddedShoppingAssistantProps> = ({ query }
 
   return (
     <WidgetDataContext.Provider value={neuteredContext}>
-      <EmbeddedShoppingAssistantChat query={query} />
+      <EmbeddedShoppingAssistantChat query={query} renderWithoutPortal={renderWithoutPortal} />
     </WidgetDataContext.Provider>
   );
 };
