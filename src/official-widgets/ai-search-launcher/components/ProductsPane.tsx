@@ -81,6 +81,7 @@ const ProductsPane: FC<ProductsPaneProps> = ({
       )}
       {products.length > 0 && (
         <ProductGrid
+          key={requestId}
           products={products}
           requestId={requestId}
           focusedProductId={focusedProductId}

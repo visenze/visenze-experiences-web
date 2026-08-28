@@ -30,7 +30,7 @@ const SplitLayout: FC<SplitLayoutProps> = ({ chat, chatCameraEnabled, chatInputR
         style={{
           width: `${paneWidth}px`,
           borderRightColor: dividerColor || undefined,
-          borderRightWidth: divider?.width ? `${divider.width}px` : undefined,
+          borderRightWidth: divider?.width !== undefined ? `${divider.width}px` : undefined,
         }}
       >
         <ChatWindow

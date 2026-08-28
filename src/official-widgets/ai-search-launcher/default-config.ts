@@ -36,6 +36,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     imageEntryPrompt: 'Take a photo or upload an image and I\'ll find similar products.',
     a11yTakePhoto: 'Take photo',
     a11yUploadImage: 'Upload image',
+    a11yGalleryImageOption: 'Trending look {index}',
     a11yOpenCamera: 'Open camera',
     a11yAddImage: 'Add image',
     holdMicToRecord: 'Hold the mic to record',
