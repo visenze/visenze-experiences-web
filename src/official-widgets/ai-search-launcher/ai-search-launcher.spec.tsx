@@ -1100,8 +1100,10 @@ describe('ai-search-launcher', () => {
 
       const trail = within(result.getByRole('navigation', { name: texts['en']['a11yBreadcrumbTrail'] }));
       // Refinement (shares "jeans"), so the trail has both crumbs and the newest is active
-      // (rendered as non-interactive text, not a button).
-      expect(trail.getByText('blue jeans but cropped').getAttribute('aria-current')).toBe('true');
+      // (rendered as non-interactive text, not a button). `aria-current` lives on the pill
+      // wrapping the label, not on the label's own inner span that getByText resolves to — walk
+      // up to the nearest element that actually carries it.
+      expect(trail.getByText('blue jeans but cropped').closest('[aria-current]')?.getAttribute('aria-current')).toBe('true');
 
       const olderCrumb = trail.getByRole('button', { name: /Show results for: blue jeans$/ });
       act(() => {
@@ -1110,7 +1112,7 @@ describe('ai-search-launcher', () => {
 
       // Clicking the older crumb shows its results and makes it the active, non-interactive
       // entry — the newer crumb stays in the trail, just no longer marked active.
-      expect(trail.getByText('blue jeans').getAttribute('aria-current')).toBe('true');
+      expect(trail.getByText('blue jeans').closest('[aria-current]')?.getAttribute('aria-current')).toBe('true');
       expect(trail.getByRole('button', { name: /blue jeans but cropped/ }).getAttribute('aria-current')).toBeNull();
     });
 
@@ -1137,7 +1139,8 @@ describe('ai-search-launcher', () => {
       // Clicking the FIRST turn's hint line activates the FIRST crumb — same handler/state as a
       // direct crumb click, so the two entry points can't drift apart.
       const trail = within(result.getByRole('navigation', { name: texts['en']['a11yBreadcrumbTrail'] }));
-      expect(trail.getByText('blue jeans').getAttribute('aria-current')).toBe('true');
+      // See the previous test: aria-current lives on the pill, not on getByText's inner span.
+      expect(trail.getByText('blue jeans').closest('[aria-current]')?.getAttribute('aria-current')).toBe('true');
       expect(trail.getByRole('button', { name: /blue jeans but cropped/ })).not.toBeNull();
     });
   });

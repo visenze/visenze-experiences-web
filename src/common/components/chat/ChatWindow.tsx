@@ -47,6 +47,12 @@ interface ChatWindowProps {
   // is clicked. In split-layout usage this is literally `setActiveBreadcrumb` from use-chat.ts,
   // passed straight through with no wrapper.
   onSelectTurn?: (requestId: string) => void;
+  // Hides only the very first chat row when it's the user's own initial query (idx === 0 &&
+  // author === 'user') — e.g. ESA, which surfaces that same query as a separate UI element before
+  // the chat surface ever mounts, so repeating it as the first bubble here would be redundant.
+  // Deliberately narrower than a general "hide all user messages" toggle: every later row (any
+  // idx > 0, or a non-'user' row at idx 0) always renders, regardless of this flag.
+  hideInitialUserMessage?: boolean;
 }
 
 // Matches ProductsPane's column breakpoints: a fixed 2-column grid looks fine on mobile widths,
@@ -128,7 +134,7 @@ const SuggestionChips: FC<SuggestionChipsProps> = ({ suggestions, showAll, onSho
 const ChatWindow: FC<ChatWindowProps> = ({
   isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions,
   streamingProducts = [], streamingRequestId = '', focusedProductId = null, wishlistPids, setIsInWishlist, pwPrefix,
-  productDisplayMode = 'grid', activeRequestId = null, onSelectTurn,
+  productDisplayMode = 'grid', activeRequestId = null, onSelectTurn, hideInitialUserMessage = false,
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
@@ -279,7 +285,13 @@ const ChatWindow: FC<ChatWindowProps> = ({
              onWheel={markUserScrolling}
              onTouchStart={markUserScrolling}
              onTouchMove={markUserScrolling}>
-          {chats.map((chat, idx) => (
+          {chats.map((chat, idx) => {
+            // Scoped to exactly the initial query bubble, per hideInitialUserMessage's contract
+            // above — every other row always renders.
+            if (idx === 0 && chat.author === 'user' && hideInitialUserMessage) {
+              return null;
+            }
+            return (
               <ChatRow
                 key={`chat-row-${idx}`}
                 chat={chat}
@@ -294,7 +306,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 productGridClasses={productGridClasses}
                 productGridCssConfig={productGridCssConfig}
               />
-          ))}
+            );
+          })}
           {(isWaiting || latestMessage || streamingProducts.length > 0) && (
               <>
                 <div className='chat-row flex gap-2 items-start'>

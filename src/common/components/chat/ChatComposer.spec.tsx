@@ -39,6 +39,7 @@ const createMockChat = (overrides: Partial<UseChatResult> = {}): UseChatResult =
   isOpen: true,
   open: jest.fn(),
   close: jest.fn(),
+  reopen: jest.fn(),
   newChat: jest.fn(),
   sendMessage: jest.fn(),
   wishlistPids: [],

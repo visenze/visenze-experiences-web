@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Propagate height through shadow host → HeroUI wrapper → widget root */
+:host {
+  display: block !important;
+  height: 100% !important;
+}
+
+.wigmix-shadow-root,
+.wigmix-shadow-root > * {
+  height: 100%;
+}
+
+/* Reset default body-level dark backgrounds injected by HeroUI */
+:host,
+.wigmix-shadow-root {
+  background: transparent;
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* Slim, visible scrollbar (both axes) for scrollable panels/rows */
+  .thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
+  .thin-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 9999px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #9ca3af;
+  }
+}
+
+/* Dark-mode scrollbar colors — .dark is toggled on the shadow root by ShadowWrapper */
+.dark .thin-scrollbar {
+  scrollbar-color: #52525b transparent;
+}
+.dark .thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #52525b;
+}
+.dark .thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #71717a;
+}
+
+@layer components {
+  .wigmix-widget-title {
+    @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
+  }
+  .wigmix-product-card-title {
+    @apply text-mobile-productCardTitle md:text-tablet-productCardTitle lg:text-desktop-productCardTitle font-mobile-productCardTitle md:font-tablet-productCardTitle lg:font-desktop-productCardTitle;
+  }
+  .wigmix-product-card-secondary-title {
+    @apply text-mobile-productCardSecondaryTitle md:text-tablet-productCardSecondaryTitle lg:text-desktop-productCardSecondaryTitle font-mobile-productCardSecondaryTitle md:font-tablet-productCardSecondaryTitle lg:font-desktop-productCardSecondaryTitle;
+  }
+  .wigmix-product-card-price {
+    @apply text-mobile-productCardPrice md:text-tablet-productCardPrice lg:text-desktop-productCardPrice font-mobile-productCardPrice md:font-tablet-productCardPrice lg:font-desktop-productCardPrice;
+  }
+  .wigmix-product-card-original-price {
+    @apply text-mobile-productCardOriginalPrice md:text-tablet-productCardOriginalPrice lg:text-desktop-productCardOriginalPrice font-mobile-productCardOriginalPrice md:font-tablet-productCardOriginalPrice lg:font-desktop-productCardOriginalPrice;
+  }
+  .wigmix-product-card-discount {
+    @apply text-mobile-productCardDiscount md:text-tablet-productCardDiscount lg:text-desktop-productCardDiscount font-mobile-productCardDiscount md:font-tablet-productCardDiscount lg:font-desktop-productCardDiscount;
+  }
+}
+
+.loading-dot {
+  height: 7px;
+  width: 7px;
+  animation-name: jumpingDots;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+}
+
+@keyframes jumpingDots {
+  10% {
+    transform: translateY(0);
+    filter: brightness(100%);
+  }
+  15% {
+    transform: translateY(-8px);
+    filter: brightness(50%);
+  }
+  20% {
+    transform: translateY(0);
+    filter: brightness(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-dot {
+    animation: none;
+  }
+
+  .ReactModal__Content {
+    transition: none !important;
+    transform: none !important;
+  }
+}
