@@ -26,6 +26,30 @@ jest.mock('react-webcam', () => {
   };
 });
 
+// Controllable stand-in for the low-level useVoice hook (real speech-recognition/mic APIs aren't
+// available in jsdom), same technique as use-chat.spec.ts — captures the `onTranscript` callback
+// use-chat.ts wires up, so a test can simulate "a voice recording just finished transcribing"
+// without needing an actual mic/speech-recognition round trip.
+const mockVoiceState: { onTranscript: ((text: string) => void) | null } = { onTranscript: null };
+jest.mock('../../common/assistant/use-voice', () => ({
+  __esModule: true,
+  default: (options: { onTranscript: (text: string) => void }): unknown => {
+    mockVoiceState.onTranscript = options.onTranscript;
+    return {
+      voiceEnabled: true,
+      speechOutputEnabled: false,
+      status: 'idle',
+      liveTranscript: '',
+      hasError: false,
+      startRecording: jest.fn(),
+      stopRecording: jest.fn(),
+      speak: jest.fn(() => false),
+      hasPendingSpeech: jest.fn(() => false),
+      stopAudio: jest.fn(),
+    };
+  },
+}));
+
 describe('embedded-shopping-assistant-chat', () => {
   let testComponent: RenderResult;
   const texts = DEFAULT_TEXTS['en'];
@@ -270,6 +294,33 @@ describe('embedded-shopping-assistant-chat', () => {
       });
 
       expect(document.activeElement).toBe(testComponent.getByRole('button', { name: texts['seeResults'] }));
+    });
+
+    it('re-expanding after a collapse still sends a voice transcript that finalizes afterward, instead of silently dropping it', async () => {
+      // Reproduces the bug a reviewer flagged on handleShowProducts: chat.close() (on collapse)
+      // leaves useChat's isOpen false, which gates its onTranscript handler — re-expanding via
+      // "See Results" must restore isOpen (via chat.reopen(), not chat.open(), which would wrongly
+      // reset the conversation) or a voice recording finalizing post-re-expansion would be
+      // silently swallowed instead of sent.
+      renderEsa('running shoes');
+      await completeInitialTurnAndExpand();
+
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['a11yCloseFullScreen'] }));
+      });
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['seeResults'] }));
+      });
+
+      mockFetchEventSource.mockClear();
+      act(() => {
+        mockVoiceState.onTranscript?.('show me in red');
+      });
+
+      expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
+      const [url] = mockFetchEventSource.mock.calls[0];
+      const params = new URLSearchParams((url as string).split('?')[1]);
+      expect(params.get('q')).toBe('show me in red');
     });
 
     it('closing the full-screen view aborts a still-in-flight stream, matching ai-search-launcher\'s chat.close()', async () => {

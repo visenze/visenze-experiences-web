@@ -15,25 +15,36 @@ jest.mock('@microsoft/fetch-event-source', () => ({
 }));
 
 // Controllable stand-in for the low-level useVoice hook (real speech-recognition/mic APIs aren't
-// available in jsdom) so tests can drive `voiceStatus`/`liveTranscript` directly.
-const mockVoiceState: { status: 'idle' | 'recording' | 'transcribing'; liveTranscript: string } = {
+// available in jsdom) so tests can drive `voiceStatus`/`liveTranscript` directly. Also captures
+// the `onTranscript` callback use-chat.ts passes in, so a test can simulate "a voice recording
+// just finished transcribing" by invoking it directly — the real hook would call this once
+// speech-recognition resolves, which isn't available in jsdom either.
+const mockVoiceState: {
+  status: 'idle' | 'recording' | 'transcribing';
+  liveTranscript: string;
+  onTranscript: ((text: string) => void) | null;
+} = {
   status: 'idle',
   liveTranscript: '',
+  onTranscript: null,
 };
 jest.mock('../../assistant/use-voice', () => ({
   __esModule: true,
-  default: (): unknown => ({
-    voiceEnabled: true,
-    speechOutputEnabled: false,
-    status: mockVoiceState.status,
-    liveTranscript: mockVoiceState.liveTranscript,
-    hasError: false,
-    startRecording: jest.fn(),
-    stopRecording: jest.fn(),
-    speak: jest.fn(() => false),
-    hasPendingSpeech: jest.fn(() => false),
-    stopAudio: jest.fn(),
-  }),
+  default: (options: { onTranscript: (text: string) => void }): unknown => {
+    mockVoiceState.onTranscript = options.onTranscript;
+    return {
+      voiceEnabled: true,
+      speechOutputEnabled: false,
+      status: mockVoiceState.status,
+      liveTranscript: mockVoiceState.liveTranscript,
+      hasError: false,
+      startRecording: jest.fn(),
+      stopRecording: jest.fn(),
+      speak: jest.fn(() => false),
+      hasPendingSpeech: jest.fn(() => false),
+      stopAudio: jest.fn(),
+    };
+  },
 }));
 
 // use-chat.ts only reads `widgetConfig`/`widgetClient` off WidgetDataContext (no
@@ -157,6 +168,64 @@ describe('use-chat', () => {
       hook.result.current.close();
     });
     expect(hook.result.current.isOpen).toBe(false);
+  });
+
+  it('after close(), a finalized voice transcript is dropped rather than sent — the isOpen guard working as designed', () => {
+    // Baseline for the next test: confirms the guard this whole scenario depends on actually
+    // exists and behaves as the "reopen" test assumes, not just that reopen() flips a flag.
+    const { hook } = renderChat();
+    act(() => {
+      hook.result.current.open();
+    });
+    act(() => {
+      hook.result.current.close();
+    });
+
+    act(() => {
+      mockVoiceState.onTranscript?.('red shoes');
+    });
+
+    expect(hook.result.current.chats).toHaveLength(0);
+  });
+
+  it('reopen() marks the chat open again — without resetting existing history — so a voice transcript that finalizes after re-expanding still sends', async () => {
+    // Reproduces the bug a reviewer flagged: embedded-shopping-assistant's handleShowProducts
+    // (re-expanding after a collapse) had no way to restore isOpen without also calling open(),
+    // which resets the whole conversation (resetChatState() + a fresh chatId) — wrong here, since
+    // re-expanding is meant to resume the SAME live conversation, not start a new one.
+    const { hook } = renderChat();
+    act(() => {
+      hook.result.current.open();
+    });
+    const stream = sendMessageAndGetStreamController(hook, 'running shoes');
+    stream.emitEvent('chat_id', { value: 'chat-123' });
+    stream.emitEvent('reqid', { value: 'req-123' });
+    stream.emitEvent('chat_token', { value: 'Here you go' });
+    stream.closeStream();
+    await revealAll();
+    const chatCountBeforeReopen = hook.result.current.chats.length;
+    expect(chatCountBeforeReopen).toBeGreaterThan(0);
+
+    act(() => {
+      hook.result.current.close();
+    });
+    act(() => {
+      hook.result.current.reopen();
+    });
+
+    // Existing history survives reopen() — unlike open(), it must not call resetChatState().
+    expect(hook.result.current.chats).toHaveLength(chatCountBeforeReopen);
+    expect(hook.result.current.isOpen).toBe(true);
+
+    act(() => {
+      mockVoiceState.onTranscript?.('show me in red');
+    });
+
+    // isOpen is true again, so this voice-triggered send now goes through instead of being
+    // dropped (see the baseline test above for what happens when it's still closed).
+    const lastChat = hook.result.current.chats[hook.result.current.chats.length - 1];
+    expect(lastChat.author).toBe('user');
+    expect(lastChat.messages[0]).toBe('show me in red');
   });
 
   it('playGreeting should push a visible bot chat bubble but not enable voice reveal when voiceGreetingEnabled is false (default)', () => {

@@ -63,6 +63,7 @@ export interface UseChatResult {
   isOpen: boolean;
   open: () => void;
   close: () => void;
+  reopen: () => void;
   newChat: () => void;
   sendMessage: (message?: string, image?: SearchImageOrPid) => Promise<void>;
   wishlistPids: string[];
@@ -559,6 +560,16 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     setIsOpen(false);
   };
 
+  // For a caller that re-shows an already-live conversation after close() (e.g. re-expanding a
+  // collapsed summary view) — sets isOpen back to true without open()'s resetChatState()/fresh-
+  // chatId side effects, which would wrongly discard the conversation this call is meant to
+  // resume. Needed because isOpen isn't just a visibility flag: sendMessageRef's onTranscript
+  // handler (below) gates on it, so leaving it false after such a re-show would silently drop
+  // any voice transcript that finalizes from then on, for the rest of the session.
+  const reopen = (): void => {
+    setIsOpen(true);
+  };
+
   const newChat = (): void => {
     resetChatState();
     widgetClient.visearch.generateUuid((uuid) => {
@@ -606,6 +617,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     isOpen,
     open,
     close,
+    reopen,
     newChat,
     sendMessage,
     wishlistPids,

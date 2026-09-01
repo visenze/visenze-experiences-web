@@ -102,7 +102,13 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // actual collapse (true -> false), not on the initial mount (which also starts at false).
   const wasExpandedRef = useRef(false);
 
+  // chat.reopen() (not chat.open()) — handleCollapse's chat.close() leaves isOpen false, which
+  // silently drops any voice transcript that finalizes afterward (use-chat.ts gates the
+  // onTranscript handler on isOpen). open() would also fix that, but it calls resetChatState()
+  // and generates a fresh chatId — wrong here, since re-expanding resumes the same live
+  // conversation TurnSection was already showing, not a new one.
   const handleShowProducts = (turnId: string): void => {
+    chat.reopen();
     setExpandedTurnIds((prev) => new Set(prev).add(turnId));
     setIsExpanded(true);
   };
