@@ -1,7 +1,7 @@
 import { act, renderHook, type RenderHookResult } from '@testing-library/react';
 import { createElement } from 'react';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
-import useChat, { type UseChatResult } from './use-chat';
+import useChat, { type UseChatOptions, type UseChatResult } from './use-chat';
 import { DEFAULT_CUSTOMIZATIONS } from '../../../official-widgets/ai-search-launcher/default-config';
 import { createMockWidgetClient, createWidgetConfig } from '../../test-utils';
 import { WidgetDataContext } from '../../types/contexts';
@@ -45,6 +45,8 @@ jest.mock('../../assistant/use-voice', () => ({
 const renderChat = (
   visearchOverrides: Partial<ViSearchClient> = {},
   customizationOverrides: Partial<WidgetConfig['customizations']> = {},
+  callbacksOverride: Partial<WidgetConfig['callbacks']> = {},
+  hookOptions: UseChatOptions = {},
 ): {
   hook: RenderHookResult<UseChatResult, unknown>;
   widgetClient: ReturnType<typeof createMockWidgetClient>['widgetClient'];
@@ -56,6 +58,7 @@ const renderChat = (
       searchSettings: {
         attrs_to_get: ['product_url', 'title', 'brand', 'price', 'original_price'],
       },
+      callbacks: callbacksOverride,
     },
   );
   const { widgetClient, mockVisearchClient } = createMockWidgetClient(
@@ -68,7 +71,7 @@ const renderChat = (
       ...visearchOverrides,
     },
   );
-  const hook = renderHook(() => useChat(), {
+  const hook = renderHook(() => useChat(hookOptions), {
     // Written with createElement (rather than JSX) so this file can stay a plain `.spec.ts`.
     wrapper: ({ children }) => createElement(
       WidgetDataContext.Provider,
@@ -287,6 +290,49 @@ describe('use-chat', () => {
     expect(productsChat?.products?.[0].product_id).toBe('pid-1');
     expect(hook.result.current.isWaiting).toBe(false);
     expect(hook.result.current.allowUserInput).toBe(true);
+  });
+
+  it('fires onAddToCartToggle/onAddToWishlistToggle for AI-embedded action tokens by default', async () => {
+    const onAddToCartToggle = jest.fn();
+    const onAddToWishlistToggle = jest.fn();
+    const { hook } = renderChat({}, {}, { onAddToCartToggle, onAddToWishlistToggle });
+    act(() => {
+      hook.result.current.open();
+    });
+
+    const stream = sendMessageAndGetStreamController(hook, 'Show me shoes');
+    stream.emitEvent('chat_token', { value: 'Adding it now <<ADD_TO_CART:pid-1>>' });
+    stream.closeStream();
+    await revealAll();
+
+    expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'pid-1');
+    expect(onAddToWishlistToggle).not.toHaveBeenCalled();
+  });
+
+  it('suppresses onAddToCartToggle/onAddToWishlistToggle for action tokens when suppressActionTokenCallbacks is set, without affecting the reply itself', async () => {
+    // Isolation option for a caller (e.g. embedded-shopping-assistant, whose useChat() action-
+    // token handling shouldn't fire a host's product-card callbacks) that must NOT reach for the
+    // blunter approach of overriding widgetConfig.callbacks to {} in a nested context Provider —
+    // that would also strip callbacks from every other consumer read off the same context
+    // (ProductCard's onProductClick/onAddToWishlistToggle/onAddToCartToggle included), silently
+    // breaking real product-card interactions for the whole subtree, not just this hook's own
+    // token handling.
+    const onAddToCartToggle = jest.fn();
+    const { hook } = renderChat({}, {}, { onAddToCartToggle }, { suppressActionTokenCallbacks: true });
+    act(() => {
+      hook.result.current.open();
+    });
+
+    const stream = sendMessageAndGetStreamController(hook, 'Show me shoes');
+    stream.emitEvent('chat_token', { value: 'Adding it now <<ADD_TO_CART:pid-1>>' });
+    stream.closeStream();
+    await revealAll();
+
+    expect(onAddToCartToggle).not.toHaveBeenCalled();
+    // The token is still stripped from the displayed text regardless — suppression only affects
+    // whether the callback fires, not the token-parsing/display pipeline.
+    const botChat = hook.result.current.chats.find((chat) => chat.author === 'bot');
+    expect(botChat?.messages[0]).toBe('Adding it now');
   });
 
   it('should expose only the latest response\'s suggestions, replacing any earlier turn\'s', async () => {

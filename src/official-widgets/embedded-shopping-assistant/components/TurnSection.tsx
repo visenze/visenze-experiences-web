@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import type { FC, ReactNode } from 'react';
+import type { FC, ReactNode, RefObject } from 'react';
 import { useIntl } from 'react-intl';
 import SparklesIcon from '../../../common/icons/SparklesIcon';
 import type { ConversationTurn } from '../embedded-shopping-assistant';
@@ -72,10 +72,19 @@ interface TurnSectionProps {
   onShowProducts: () => void;
   loadingDotColor?: string;
   iconColor?: string;
+  // The same resolved (light/dark-aware) generalLayout.backgroundColor the surrounding surface
+  // uses. The clamped AI-text preview's bottom fade needs to match it exactly — a fixed
+  // white/neutral-900 fade would show a visibly mismatched strip against any non-default host
+  // background. Falls back to white, matching this field's own previous hardcoded default.
+  backgroundColor?: string;
+  // Attached to the "See Results" button so the parent can restore focus to it once the
+  // full-screen surface this button opens is closed — without this, focus drops to <body> when
+  // FullScreenChatContainer unmounts, since the element that opened it is gone by then too.
+  seeResultsButtonRef?: RefObject<HTMLButtonElement>;
 }
 
 const TurnSection: FC<TurnSectionProps> = ({
-  turn, showDivider, onShowProducts, loadingDotColor, iconColor,
+  turn, showDivider, onShowProducts, loadingDotColor, iconColor, backgroundColor = '#FFFFFF', seeResultsButtonRef,
 }) => {
   const intl = useIntl();
 
@@ -89,7 +98,7 @@ const TurnSection: FC<TurnSectionProps> = ({
     {turn.isInitial && !turn.productsExpanded && (
       <div className='flex items-center gap-2 mb-3'>
         <SparklesIcon className='size-4' color={iconColor} />
-        <span className='text-sm font-semibold text-gray-800 dark:text-neutral-100'>
+        <span className='text-sm font-semibold' style={{ color: iconColor }}>
           {intl.formatMessage({ id: 'aiOverviewLabel' })}
         </span>
       </div>
@@ -140,16 +149,27 @@ const TurnSection: FC<TurnSectionProps> = ({
           ))}
         </div>
         {!turn.productsExpanded && (
-          <div className='pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-white
-            dark:from-neutral-900 to-transparent' />
+          <div
+            className='pointer-events-none absolute inset-x-0 bottom-0 h-6'
+            // Test-only observability hook: jsdom's CSSOM can't parse linear-gradient() at all
+            // (confirmed — even a plain solid-color control value round-trips fine, but the
+            // gradient below silently fails to register any style attribute in jsdom, despite
+            // rendering correctly in real browsers), so tests can't assert on the style itself.
+            data-fade-color={backgroundColor}
+            style={{ background: `linear-gradient(to top, ${backgroundColor}, transparent)` }}
+          />
         )}
       </div>
     )}
 
-    {/* See Results button — only the initial turn gates behind this; follow-up turns auto-expand */}
-    {!turn.isLoading && turn.products.length > 0 && !turn.productsExpanded && (
+    {/* See Results button — only the initial turn gates behind this; follow-up turns auto-expand.
+        Not gated on turn.products.length: this button is the only way to reach the full-screen
+        chat surface, so a text-only reply (no matching products) must still show it — otherwise
+        the user has no way to continue the conversation at all (PR #145 review comment). */}
+    {!turn.isLoading && !turn.productsExpanded && (
       <div className='flex justify-center mb-4'>
         <button
+          ref={seeResultsButtonRef}
           type='button'
           onClick={onShowProducts}
           className='flex items-center gap-2 px-5 py-2 rounded-full border border-gray-300 dark:border-neutral-700

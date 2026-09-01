@@ -84,6 +84,18 @@ export interface UseChatResult {
   setActiveBreadcrumb: (requestId: string) => void;
 }
 
+export interface UseChatOptions {
+  // Skips firing widgetConfig.callbacks.onAddToCartToggle/onAddToWishlistToggle for AI-embedded
+  // <<ADD_TO_CART:pid>>/<<ADD_TO_WISHLIST:pid>> action tokens, without touching the callbacks a
+  // caller's own rendered UI (e.g. ProductCard's onProductClick/onAddToWishlistToggle/
+  // onAddToCartToggle, read off the same WidgetDataContext) sees. Exists specifically so a caller
+  // that wants this hook's own action-token handling isolated doesn't have to reach for
+  // overriding widgetConfig.callbacks to `{}` in a nested context Provider around its whole
+  // subtree — that blunter approach also strips callbacks from every other consumer reading the
+  // same context, breaking real product-card interactions it was never meant to touch.
+  suppressActionTokenCallbacks?: boolean;
+}
+
 // Orchestrates a widget's full-screen chat surface: the SSE call to the backend chat endpoint,
 // token-stream parsing (product/action-token/suggestion extraction), and the voice-reply
 // integration (typewriter reveal + spoken narration) from `useVoiceReply`. Shared by any widget
@@ -93,7 +105,7 @@ export interface UseChatResult {
 // shopping-assistant.tsx's `sendMessage`/`commitResponse`/`openDialog` (see that file for the
 // original) but with its own trimmed-down state shape and without the scripted two-part opening
 // message — greetings are a single string played by callers via `playGreeting`.
-const useChat = (): UseChatResult => {
+const useChat = (options: UseChatOptions = {}): UseChatResult => {
   const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   // Resolve the API base, honouring manual endpoint > cloud > API endpoint > default; shared by
@@ -102,7 +114,14 @@ const useChat = (): UseChatResult => {
   const apiBase = resolveBaseEndpoint(appSettings, manualEndpoint);
 
   const [chats, setChats] = useState<Chat[]>([]);
-  const [chatId, setChatId] = useState('');
+  // The session/conversation chatId sendMessage sends as `chat_id`. A ref, not state: it was
+  // state until a deferred caller (e.g. a setTimeout(0) queued right after open()/newChat())
+  // turned out to always close over the render's chatId *value* at the time that particular
+  // sendMessage/closure was created — open()/newChat()'s setChatId call only takes effect on a
+  // later render, which the already-created closure has no way to observe, so the deferred send
+  // fired with the stale pre-open/pre-newChat id forever, no matter how long it waited. Never
+  // exposed to consumers and never read anywhere else, so there's no reason for it to be state.
+  const chatIdRef = useRef('');
   const [message, setMessage] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
   const [showAllSuggestions, setShowAllSuggestionsState] = useState(false);
@@ -337,7 +356,7 @@ const useChat = (): UseChatResult => {
       ...widgetConfig.searchSettings,
       app_key: appSettings.appKey,
       placement_id: appSettings.placementId.toString(),
-      chat_id: chatId,
+      chat_id: chatIdRef.current,
       q: messageToSend || 'Find me products that look like the main product in this image and are the same color as the main product',
       va_uid: uid,
       va_sid: sid,
@@ -391,7 +410,7 @@ const useChat = (): UseChatResult => {
               const callback = action === 'ADD_TO_CART'
                 ? widgetConfig.callbacks.onAddToCartToggle
                 : widgetConfig.callbacks.onAddToWishlistToggle;
-              if (callback) {
+              if (callback && !options.suppressActionTokenCallbacks) {
                 try {
                   const callbackResult = callback(true, productId);
                   Promise.resolve(callbackResult).catch((err: unknown) => console.error(err));
@@ -523,7 +542,7 @@ const useChat = (): UseChatResult => {
     setIsOpen(true);
     resetChatState();
     widgetClient.visearch.generateUuid((uuid) => {
-      setChatId(uuid);
+      chatIdRef.current = uuid;
     });
   };
 
@@ -543,7 +562,7 @@ const useChat = (): UseChatResult => {
   const newChat = (): void => {
     resetChatState();
     widgetClient.visearch.generateUuid((uuid) => {
-      setChatId(uuid);
+      chatIdRef.current = uuid;
     });
   };
 

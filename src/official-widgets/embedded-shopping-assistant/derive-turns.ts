@@ -68,11 +68,18 @@ export const deriveTurns = (
 
     // The in-flight turn is the last group whose response hasn't committed yet (no 'bot'/
     // 'products' entry pushed for it) — commitResponse() only ever pushes those once the SSE
-    // stream actually closes. Also requires isWaiting/streamingProducts, so a fully-idle empty
+    // stream actually closes. Also requires evidence of an actual live stream (any of
+    // isWaiting/typewriterText/streamingProducts/streamingRequestId), so a fully-idle empty
     // trailing user-only group (shouldn't normally happen, but defensively) isn't misread as live.
+    // isWaiting alone isn't enough: useChat clears it on the very first chat_token (before
+    // commit), so a text-only reply with no product event at all would otherwise read as
+    // non-live the moment the first token lands, reverting aiText to the not-yet-pushed
+    // botEntry (i.e. blank) until the stream closes — the in-progress reply would visibly vanish
+    // for the whole rest of the stream instead of staying on screen.
     const isLastGroup = index === groups.length - 1;
     const isLive = isLastGroup && !botEntry && !productsEntry
-      && (live.isWaiting || live.streamingProducts.length > 0);
+      && (live.isWaiting || live.typewriterText.length > 0
+        || live.streamingProducts.length > 0 || live.streamingRequestId.length > 0);
 
     return {
       id,
@@ -93,11 +100,6 @@ export const deriveTurns = (
       isLoading: isLive && live.isWaiting,
       isInitial,
       productsExpanded: isInitial ? expandedTurnIds.has(id) : true,
-      // Once a turn is no longer the live in-flight one, its response has necessarily committed
-      // (that's what ends its `isLive` status) — so, exactly like ESA's original productsSettled,
-      // it's only ever unsettled while still live, regardless of whether text/products have
-      // started arriving.
-      productsSettled: !isLive,
     };
   });
 };

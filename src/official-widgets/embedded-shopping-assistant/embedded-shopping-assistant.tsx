@@ -1,6 +1,5 @@
-import { type FC, useContext } from 'react';
+import type { FC } from 'react';
 import EmbeddedShoppingAssistantChat from './embedded-shopping-assistant-chat';
-import { WidgetDataContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -14,11 +13,6 @@ export interface ConversationTurn {
   isLoading: boolean;
   isInitial: boolean;
   productsExpanded: boolean;
-  // `isLoading` flips to false as soon as the first chat_token arrives (to reveal streaming text),
-  // which is often before any `product` SSE events have arrived — so `products` can still be
-  // legitimately empty at that point. This tracks whether the product stream has actually finished,
-  // so "No matching products found" only shows once that's really true, not mid-stream.
-  productsSettled: boolean;
 }
 
 export interface EmbeddedShoppingAssistantProps {
@@ -30,25 +24,19 @@ export interface EmbeddedShoppingAssistantProps {
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-// Step 2 of adopting ChatComposer (see migration plan): this outer component's only job is to
-// isolate the useChat() instance mounted in EmbeddedShoppingAssistantChat from any
-// host-configured onAddToCartToggle/onAddToWishlistToggle callbacks. useChat's action-token
-// handling fires those callbacks unconditionally whenever a host has set them for this
-// placement id, regardless of whether ESA asked for that behavior — ESA never reads
-// widgetConfig.callbacks itself, so overriding it to `{}` in this nested Provider is safe for
-// everything else and guarantees those callbacks never fire for ESA, no matter what a host sets.
-const EmbeddedShoppingAssistant: FC<EmbeddedShoppingAssistantProps> = ({ query, renderWithoutPortal }) => {
-  const outerContext = useContext(WidgetDataContext);
-  const neuteredContext = {
-    ...outerContext,
-    widgetConfig: { ...outerContext.widgetConfig, callbacks: {} },
-  };
-
-  return (
-    <WidgetDataContext.Provider value={neuteredContext}>
-      <EmbeddedShoppingAssistantChat query={query} renderWithoutPortal={renderWithoutPortal} />
-    </WidgetDataContext.Provider>
-  );
-};
+// Thin passthrough — previously also neutered widgetConfig.callbacks to `{}` in a nested
+// Provider here, to stop useChat's action-token handling from firing a host's
+// onAddToCartToggle/onAddToWishlistToggle unconditionally for ESA. That neutering wasn't scoped
+// to just that handler though: it replaced the context for this component's entire subtree,
+// so ProductCard (rendered inside EmbeddedShoppingAssistantChat's post-expansion ChatWindow),
+// which reads onProductClick/onAddToWishlistToggle/onAddToCartToggle off this same context for
+// its own click/wishlist/cart-button interactions, silently lost those too — real product-card
+// callbacks a host configured were always dropped, and enabled wishlist/cart buttons were
+// no-ops. The isolation now lives in EmbeddedShoppingAssistantChat's own
+// useChat({ suppressActionTokenCallbacks: true }) call instead, scoped to exactly the one
+// handler that needed it — so this component no longer needs to touch the context at all.
+const EmbeddedShoppingAssistant: FC<EmbeddedShoppingAssistantProps> = ({ query, renderWithoutPortal }) => (
+  <EmbeddedShoppingAssistantChat query={query} renderWithoutPortal={renderWithoutPortal} />
+);
 
 export default EmbeddedShoppingAssistant;

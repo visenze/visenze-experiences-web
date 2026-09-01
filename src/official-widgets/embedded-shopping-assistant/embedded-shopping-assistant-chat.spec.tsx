@@ -55,8 +55,11 @@ describe('embedded-shopping-assistant-chat', () => {
     return { widgetConfig, widgetClient, mockVisearchClient };
   };
 
-  const renderEsa = (query: string): ReturnType<typeof createTestClient> => {
-    const clientBundle = createTestClient();
+  const renderEsa = (
+    query: string,
+    visearchOverrides: Record<string, any> = {},
+  ): ReturnType<typeof createTestClient> => {
+    const clientBundle = createTestClient(visearchOverrides);
     testComponent = renderWidget(<EmbeddedShoppingAssistant query={query} renderWithoutPortal />, {
       widgetConfig: clientBundle.widgetConfig,
       widgetClient: clientBundle.widgetClient,
@@ -256,6 +259,48 @@ describe('embedded-shopping-assistant-chat', () => {
       expect(testComponent.queryByRole('dialog')).toBeNull();
       expect(testComponent.getByRole('button', { name: texts['seeResults'] })).toBeTruthy();
     });
+
+    it('restores focus to the "See Results" button after closing the full-screen view, instead of dropping it to the document', async () => {
+      renderEsa('running shoes');
+      await completeInitialTurnAndExpand();
+
+      const closeButton = testComponent.getByRole('button', { name: texts['a11yCloseFullScreen'] });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+
+      expect(document.activeElement).toBe(testComponent.getByRole('button', { name: texts['seeResults'] }));
+    });
+
+    it('closing the full-screen view aborts a still-in-flight stream, matching ai-search-launcher\'s chat.close()', async () => {
+      renderEsa('running shoes');
+      await completeInitialTurnAndExpand();
+
+      // Send a follow-up message via ChatComposer so there's a second, still-in-flight stream to
+      // abort — completeInitialTurnAndExpand's own stream is already closed by this point.
+      let secondSignal: AbortSignal | undefined;
+      mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
+        secondSignal = options.signal;
+      });
+      const input = testComponent.getByRole('textbox', { name: texts['a11yChatInput'] });
+      act(() => {
+        fireEvent.change(input, { target: { value: 'cheaper options' } });
+      });
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['a11ySendMessage'] }));
+      });
+
+      expect(secondSignal?.aborted).toBe(false);
+
+      const closeButton = testComponent.getByRole('button', { name: texts['a11yCloseFullScreen'] });
+      // Aborting lands sendMessage's catch block, which updates breadcrumb state — that settles a
+      // microtask after the click itself, so this needs the async act() form to flush it cleanly.
+      await act(async () => {
+        fireEvent.click(closeButton);
+      });
+
+      expect(secondSignal?.aborted).toBe(true);
+    });
   });
 
   describe('the !query fallback', () => {
@@ -295,6 +340,24 @@ describe('embedded-shopping-assistant-chat', () => {
       expect(params.get('q')).toBe('running shoes');
     });
 
+    it('sends the mount-triggered message with the chatId open() just generated, not the stale pre-open empty one', () => {
+      // Reviewer concern: sendMessage closes over chatId at the render where the setTimeout(0)
+      // was scheduled. chat.open() (a separate, earlier mount effect) updates chatId via its own
+      // generateUuid callback, but that update only takes effect on the NEXT render — the
+      // send-effect's own closure, captured in the SAME initial commit, still has the pre-open
+      // chatId at the moment its setTimeout is scheduled. Without chatIdRef (see use-chat.ts),
+      // the deferred send would fire with chat_id === '' regardless of the setTimeout delay.
+      renderEsa('running shoes');
+
+      act(() => {
+        jest.advanceTimersByTime(0);
+      });
+
+      const [url] = mockFetchEventSource.mock.calls[0];
+      const params = new URLSearchParams((url as string).split('?')[1]);
+      expect(params.get('chat_id')).toBe('test-chat-id');
+    });
+
     it('renders the resulting turn via TurnSection once the SSE stream completes', async () => {
       renderEsa('running shoes');
 
@@ -315,6 +378,20 @@ describe('embedded-shopping-assistant-chat', () => {
       expect(getTextInBody('Great picks:')).toBeTruthy();
       expect(testComponent.getByRole('button', { name: texts['seeResults'] })).toBeTruthy();
     });
+
+    it('still renders the "See Results" button when the assistant returns text but no products, so the user can reach full-screen chat to continue the conversation', async () => {
+      renderEsa('running shoes');
+
+      const stream = flushDeferredSendAndGetStreamController();
+      stream.emitEvent('chat_id', { value: 'chat-1' });
+      stream.emitEvent('reqid', { value: 'req-1' });
+      stream.emitEvent('chat_token', { value: 'Sorry, I could not find a matching product.' });
+      stream.closeStream();
+      await revealAll();
+
+      expect(getTextInBody('Sorry, I could not find a matching product.')).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['seeResults'] })).toBeTruthy();
+    });
   });
 
   describe('handleNewChat', () => {
@@ -329,6 +406,30 @@ describe('embedded-shopping-assistant-chat', () => {
       const [secondUrl] = mockFetchEventSource.mock.calls[1];
       const params = new URLSearchParams((secondUrl as string).split('?')[1]);
       expect(params.get('q')).toBe('running shoes');
+
+      secondStream.closeStream();
+    });
+
+    it('resends with the freshly generated chatId from newChat(), not the stale pre-newChat one', async () => {
+      // generateUuid returns a new value each call (unlike the fixed 'test-chat-id' the other
+      // tests use) — needed to actually distinguish "used the stale closure's chatId" from "used
+      // the fresh one", which a fixed mock value can't do.
+      let uuidCallCount = 0;
+      renderEsa('running shoes', {
+        generateUuid: jest.fn((cb: (uuid: string) => void) => {
+          uuidCallCount += 1;
+          cb(`chat-id-${uuidCallCount}`);
+        }),
+      });
+      await completeInitialTurnAndExpand();
+      const [firstUrl] = mockFetchEventSource.mock.calls[0];
+      expect(new URLSearchParams((firstUrl as string).split('?')[1]).get('chat_id')).toBe('chat-id-1');
+
+      const secondStream = triggerNewChatAndGetStreamController();
+
+      const [secondUrl] = mockFetchEventSource.mock.calls[1];
+      const params = new URLSearchParams((secondUrl as string).split('?')[1]);
+      expect(params.get('chat_id')).toBe('chat-id-2');
 
       secondStream.closeStream();
     });

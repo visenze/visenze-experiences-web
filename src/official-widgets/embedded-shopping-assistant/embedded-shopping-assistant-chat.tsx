@@ -13,10 +13,9 @@ import { WidgetDataContext } from '../../common/types/contexts';
 import { Actions } from '../../common/types/tracking-constants';
 
 // ── Component ─────────────────────────────────────────────────────────────────
-// Rendered by EmbeddedShoppingAssistant inside a nested WidgetDataContext.Provider with
-// `callbacks` overridden to `{}` (see that file's Step 2 comment) — this component's own
-// useContext(WidgetDataContext) reads see that neutered value too, which is safe: nothing here
-// reads widgetConfig.callbacks directly, only useChat() does internally.
+// Rendered by EmbeddedShoppingAssistant, which is now a plain passthrough (see that file's own
+// comment) — this component reads the real, unmodified WidgetDataContext, same as every other
+// consumer nested inside it (ChatWindow's ProductCard included).
 const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ query, renderWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
@@ -39,9 +38,15 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // wiring change with no visible difference unless a host overrides them.
   const backgroundColor = (darkMode ? customizations.generalLayout?.backgroundColorDark : customizations.generalLayout?.backgroundColor) || undefined;
 
-  // Mounted here, inside the Step 2 isolation boundary — now ESA's real send path (Step 4) and
-  // the source for ChatComposer (Step 5) below.
-  const chat = useChat();
+  // Mounted here — now ESA's real send path (Step 4) and the source for ChatComposer (Step 5)
+  // below. suppressActionTokenCallbacks keeps AI-embedded <<ADD_TO_CART>>/<<ADD_TO_WISHLIST>>
+  // tokens from firing a host's product-card callbacks for ESA specifically (this hook's own
+  // internal behavior, unconditional for every useChat() caller otherwise) — isolated at the
+  // hook level rather than by neutering widgetConfig.callbacks in a nested context Provider
+  // (EmbeddedShoppingAssistant.tsx used to do exactly that, which also broke real ProductCard
+  // interactions — onProductClick/onAddToWishlistToggle/onAddToCartToggle — for every product
+  // card this component renders, since ProductCard reads those off the very same context).
+  const chat = useChat({ suppressActionTokenCallbacks: true });
 
   // Populates useChat's internal chatId once, at mount, before any send can possibly fire —
   // chat.sendMessage always reads this closed-over state; there's no override param and no way
@@ -88,24 +93,42 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   );
 
   const chatInputRef = useRef<HTMLInputElement>(null);
+  // The "See Results" button that opens the full-screen surface — TurnSection (which owns the
+  // actual <button>) unmounts while isExpanded is true, so unlike ai-search-launcher's own
+  // always-mounted entry-bar-button refs, this can't be focused synchronously inside
+  // handleCollapse itself; the effect below does it once TurnSection has remounted.
+  const seeResultsButtonRef = useRef<HTMLButtonElement>(null);
+  // Tracks the previous isExpanded value so the focus-restore effect below only fires on an
+  // actual collapse (true -> false), not on the initial mount (which also starts at false).
+  const wasExpandedRef = useRef(false);
 
   const handleShowProducts = (turnId: string): void => {
     setExpandedTurnIds((prev) => new Set(prev).add(turnId));
     setIsExpanded(true);
   };
 
-  // Full-screen header's close button — collapses back to the pre-expansion TurnSection view
-  // without touching chat state at all (no chat.close()/chat.newChat()), so the conversation
-  // stays live exactly as ai-search-launcher's own close() does for its dialog (use-chat.ts's
-  // close() deliberately skips resetChatState() for the same reason). Also resets expandedTurnIds
-  // back to empty: only the initial turn is ever gated (onShowProducts/handleShowProducts can
-  // only fire for it — follow-up turns always auto-expand per deriveTurns, and no follow-up turn
-  // can exist before "See Results" is clicked anyway, since ChatComposer only mounts post-
-  // expansion), so this always restores that turn's "See Results" gate rather than leaving it
-  // permanently revealed-but-unrenderable — TurnSection has no product-grid rendering left for the
-  // productsExpanded=true state (removed as dead code under the assumption this state was
-  // unreachable while TurnSection was mounted, which didn't account for this close path).
+  useEffect(() => {
+    if (wasExpandedRef.current && !isExpanded) {
+      seeResultsButtonRef.current?.focus();
+    }
+    wasExpandedRef.current = isExpanded;
+  }, [isExpanded]);
+
+  // Full-screen header's close button — collapses back to the pre-expansion TurnSection view.
+  // Calls chat.close() exactly like ai-search-launcher's own handleClose does for its dialog:
+  // aborts any still-in-flight stream and interrupts speech, so a late reply/narration can't
+  // keep going after the surface that showed it has already collapsed (chat.close() deliberately
+  // skips resetChatState() though, so the conversation itself stays live, same as ai-search-
+  // launcher). Also resets expandedTurnIds back to empty: only the initial turn is ever gated
+  // (onShowProducts/handleShowProducts can only fire for it — follow-up turns always auto-expand
+  // per deriveTurns, and no follow-up turn can exist before "See Results" is clicked anyway,
+  // since ChatComposer only mounts post-expansion), so this always restores that turn's "See
+  // Results" gate rather than leaving it permanently revealed-but-unrenderable — TurnSection has
+  // no product-grid rendering left for the productsExpanded=true state (removed as dead code
+  // under the assumption this state was unreachable while TurnSection was mounted, which didn't
+  // account for this close path).
   const handleCollapse = (): void => {
+    chat.close();
     setIsExpanded(false);
     setExpandedTurnIds(new Set());
   };
@@ -191,6 +214,8 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
                   onShowProducts={() => handleShowProducts(turn.id)}
                   loadingDotColor={loadingDotColor}
                   iconColor={iconColor}
+                  backgroundColor={backgroundColor}
+                  seeResultsButtonRef={seeResultsButtonRef}
                 />
               </Fragment>
             ))}

@@ -43,7 +43,6 @@ describe('deriveTurns', () => {
       isInitial: true,
       // Initial turn defaults to collapsed until explicitly expanded.
       productsExpanded: false,
-      productsSettled: true,
     });
   });
 
@@ -70,7 +69,6 @@ describe('deriveTurns', () => {
       isInitial: false,
       // Follow-up turns always auto-expand, regardless of expandedTurnIds.
       productsExpanded: true,
-      productsSettled: true,
     });
   });
 
@@ -86,7 +84,7 @@ describe('deriveTurns', () => {
     expect(turns[0].productsExpanded).toBe(true);
   });
 
-  it('in-flight turn with no response yet: isLoading true, aiText/products empty, unsettled', () => {
+  it('in-flight turn with no response yet: isLoading true, aiText/products empty', () => {
     const chats: Chat[] = [
       { chatId: '', requestId: '', author: 'user', messages: ['running shoes'] },
     ];
@@ -108,11 +106,10 @@ describe('deriveTurns', () => {
       reqId: undefined,
       isLoading: true,
       isInitial: true,
-      productsSettled: false,
     });
   });
 
-  it('a turn with products but no text yet: aiText empty, products populated, still loading/unsettled', () => {
+  it('a turn with products but no text yet: aiText empty, products populated, still loading', () => {
     // Reachable in practice: a `product` SSE event can arrive before any `chat_token` (or the
     // only token so far is a bare [[pid]] reference, which stripTokensForDisplay removes from
     // the displayed text entirely) — useChat's isWaiting only ever clears on the chat_token path,
@@ -135,11 +132,10 @@ describe('deriveTurns', () => {
       products: [product('p1')],
       reqId: 'req-live',
       isLoading: true,
-      productsSettled: false,
     });
   });
 
-  it('in-flight turn with text but not yet committed: aiText live, still unsettled until commit', () => {
+  it('in-flight turn with text but not yet committed: aiText/products reflect the live streaming state', () => {
     const chats: Chat[] = [
       { chatId: '', requestId: '', author: 'user', messages: ['running shoes'] },
     ];
@@ -155,14 +151,39 @@ describe('deriveTurns', () => {
     expect(turns[0]).toMatchObject({
       aiText: 'Here are some options so far',
       products: [product('p1')],
+      // Not yet committed to `chats` (no bot/products entry pushed for this group) — isLoading is
+      // already false regardless, since it flips false on the first token, before commit.
       isLoading: false,
-      // Not yet committed to `chats` (no bot/products entry pushed for this group), so still
-      // counted as live/unsettled even though isWaiting has already cleared.
-      productsSettled: false,
     });
   });
 
-  it('a historical turn with zero products stays settled with an empty products array', () => {
+  it('a text-only reply (no products expected at all) keeps showing the live typewriter text after the first token, not a blank gap until commit', () => {
+    // A response that never gets any 'product' SSE event (e.g. "no matching products, but here's
+    // advice") — streamingProducts stays [] for the whole stream, unlike the products-bearing
+    // case above. isWaiting still clears on the first token per useChat's own timing, so isLive
+    // must not collapse to false just because streamingProducts.length is 0 too, or the
+    // in-progress reply vanishes (falls back to the not-yet-pushed botEntry) until the stream
+    // closes and commits.
+    const chats: Chat[] = [
+      { chatId: '', requestId: '', author: 'user', messages: ['something obscure'] },
+    ];
+    const live: LiveChatState = {
+      isWaiting: false,
+      streamingProducts: [],
+      streamingRequestId: '',
+      typewriterText: 'Sorry, I could not find a matching product, but here',
+    };
+
+    const turns = deriveTurns(chats, live, NO_EXPANDED);
+
+    expect(turns[0]).toMatchObject({
+      aiText: 'Sorry, I could not find a matching product, but here',
+      products: [],
+      isLoading: false,
+    });
+  });
+
+  it('a committed turn with no products entry defaults products to an empty array', () => {
     const chats: Chat[] = [
       { chatId: 'c1', requestId: '', author: 'user', messages: ['something obscure'] },
       { chatId: 'c1', requestId: 'req-1', author: 'bot', messages: ['No matches this time.'] },
@@ -170,7 +191,7 @@ describe('deriveTurns', () => {
 
     const turns = deriveTurns(chats, IDLE_LIVE, NO_EXPANDED);
 
-    expect(turns[0]).toMatchObject({ products: [], productsSettled: true });
+    expect(turns[0]).toMatchObject({ products: [] });
   });
 
   it('a mid-conversation live turn (2nd+ turn in flight) only affects the last group', () => {
@@ -190,8 +211,10 @@ describe('deriveTurns', () => {
     const turns = deriveTurns(chats, live, NO_EXPANDED);
 
     expect(turns).toHaveLength(2);
-    expect(turns[0]).toMatchObject({ productsSettled: true, isLoading: false });
-    expect(turns[1]).toMatchObject({ title: 'show cheaper options', isLoading: true, productsSettled: false });
+    // The live in-flight state (isWaiting/streamingProducts) belongs to turns[1] only — turns[0]
+    // must keep showing its own already-committed aiText/products, not the second turn's live values.
+    expect(turns[0]).toMatchObject({ aiText: 'Overview.', products: [product('p1')], isLoading: false });
+    expect(turns[1]).toMatchObject({ title: 'show cheaper options', isLoading: true });
   });
 
   it('resolves queryImageUrl from an image-data-url user entry, matching ChatWindow.getFile', () => {
