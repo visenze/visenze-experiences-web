@@ -410,37 +410,37 @@ const ChatWindow: FC<ChatWindowProps> = ({
           ))}
           {(isWaiting || latestMessage || streamingProducts.length > 0) && (
               <>
-                <div className='chat-row flex gap-2 items-end'>
-                  {isWaiting && (
-                    <div className='flex gap-1 max-w-9/10'>
+                {(isWaiting || latestMessage) && (
+                    <div className='chat-row flex gap-1 max-w-9/10 items-start'>
                       <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
                         bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
                         <SparklesIcon className='size-5' />
                       </div>
-                      <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
-                        bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                        <span className='sr-only'>{intl.formatMessage({ id: 'a11yAssistantThinking' })}</span>
-                        {[0, 1, 2].map((i) => (
-                            <div
-                              key={`loading-dot-${i}`}
-                              className='loading-dot rounded-full'
-                              style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
-                            />
-                        ))}
-                      </div>
-                      </div>
-                  )}
-                  {latestMessage && (
-                      <div
-                        className={`
-                          mb-2 w-fit max-w-7/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100
-                          rounded-lg border border-neutral-100 dark:border-neutral-800`}
-                        dangerouslySetInnerHTML={{
-                          __html: processMessageForDisplay(latestMessage),
-                        }}
-                      />
-                  )}
-                </div>
+                      {isWaiting && (
+                        <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
+                          bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+                          <span className='sr-only'>{intl.formatMessage({ id: 'a11yAssistantThinking' })}</span>
+                          {[0, 1, 2].map((i) => (
+                              <div
+                                key={`loading-dot-${i}`}
+                                className='loading-dot rounded-full'
+                                style={{ backgroundColor: darkMode ? customizations.buttons?.primary?.fontColorDark : customizations.buttons?.primary?.fontColor }}
+                              />
+                          ))}
+                        </div>
+                      )}
+                      {latestMessage && (
+                          <div
+                            className={`
+                              mb-2 w-fit max-w-7/10 bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100
+                              rounded-lg border border-neutral-100 dark:border-neutral-800`}
+                            dangerouslySetInnerHTML={{
+                              __html: processMessageForDisplay(latestMessage),
+                            }}
+                          />
+                      )}
+                    </div>
+                )}
                 {streamingRequestId && streamingProducts.length > 0 && (
                     <div
                       className={cn('w-full grid', productGridClasses)}

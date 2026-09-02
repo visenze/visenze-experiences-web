@@ -26,12 +26,12 @@ jest.mock('react-webcam', () => {
   };
 });
 
-// Mock @heroui/input Textarea
+// Mock @heroui/input Input (ChatComposer renders HeroUI's single-line Input, not Textarea)
 jest.mock('@heroui/input', () => ({
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  Textarea: (props: any) => (
+  Input: (props: any) => (
     <div data-testid='chat-textarea-wrapper'>
-      <textarea
+      <input
         data-testid='chat-textarea'
         aria-label={props['aria-label']}
         value={props.value}
@@ -135,7 +135,7 @@ describe('shopping-assistant', () => {
     closeStream: () => void;
     triggerError: (error: Error) => void;
   } => {
-    const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+    const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
 
     let onmessage: (ev: { event: string; data: string }) => void;
     let onclose: () => void;
@@ -167,7 +167,17 @@ describe('shopping-assistant', () => {
       },
       triggerError: (error: Error): void => {
         act(() => {
-          onerror(error);
+          // useChat's onerror handler (src/common/components/chat/use-chat.ts) deliberately
+          // rethrows so the real fetchEventSource call's own promise rejects, letting its
+          // surrounding try/catch run recovery — real fetchEventSource invokes onerror from
+          // inside its own promise chain, so that throw lands there, not in whoever originally
+          // called it. This mock invokes onerror directly from the test's call stack instead, so
+          // the same rethrow has to be swallowed here rather than propagating into the test.
+          try {
+            onerror(error);
+          } catch {
+            // expected — see above.
+          }
         });
       },
     };
@@ -253,6 +263,10 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'], hidden: true }));
+      });
+
       expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeTruthy();
       expect(testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' })).toBeTruthy();
     });
@@ -283,6 +297,9 @@ describe('shopping-assistant', () => {
       openDialogAndWait();
 
       expect(testComponent.getByRole('button', { name: texts['es']['a11yStartNewChat'], hidden: true })).toBeTruthy();
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['es']['a11yAddImage'], hidden: true }));
+      });
       expect(testComponent.getByRole('button', { name: texts['es']['a11yOpenCamera'], hidden: true })).toBeTruthy();
       expect(testComponent.getByRole('button', { name: texts['es']['a11ySendMessage'], hidden: true })).toBeTruthy();
       expect(testComponent.getByRole('textbox', { name: texts['es']['a11yChatInput'], hidden: true })).toBeTruthy();
@@ -301,9 +318,13 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const openCameraButton = testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true });
+      // Camera and upload are collapsed behind a single "Add image" trigger — see ChatComposer.
+      const addImageButton = testComponent.getByRole('button', { name: texts['en']['a11yAddImage'], hidden: true });
       act(() => {
-        fireEvent.click(openCameraButton);
+        fireEvent.click(addImageButton);
+      });
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
       });
 
       const cameraDialog = testComponent.getByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true });
@@ -316,13 +337,18 @@ describe('shopping-assistant', () => {
       });
 
       expect(testComponent.queryByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true })).toBeNull();
-      expect(document.activeElement).toBe(openCameraButton);
+      // Focus returns to the "Add image" trigger — the popover item that opened the camera no
+      // longer exists once the popover closes on selection.
+      expect(document.activeElement).toBe(addImageButton);
     });
 
     it('should trap keyboard focus inside the camera drawer', () => {
       renderAssistant();
       openDialogAndWait();
 
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'], hidden: true }));
+      });
       act(() => {
         fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
       });
@@ -1038,7 +1064,7 @@ describe('shopping-assistant', () => {
         stream.emitEvent('chat_token', { value: 'Processing...' });
 
         // Try to send another message while streaming
-        const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+        const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
         act(() => {
           fireEvent.change(textarea, { target: { value: 'Second message' } });
         });
@@ -1066,7 +1092,7 @@ describe('shopping-assistant', () => {
         mockFetchEventSource.mockReset();
 
         // Now should be able to send another message
-        const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+        const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
         act(() => {
           fireEvent.change(textarea, { target: { value: 'Second message' } });
         });
@@ -1179,7 +1205,7 @@ describe('shopping-assistant', () => {
 
           // Should be able to send another message
           mockFetchEventSource.mockReset();
-          const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+          const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
 
           act(() => {
             fireEvent.change(textarea, { target: { value: 'Follow up' } });
@@ -1220,7 +1246,7 @@ describe('shopping-assistant', () => {
           renderAssistant();
           openDialogAndWait();
 
-          const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+          const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
 
           let onmessage: (ev: { event: string; data: string }) => void;
           let onclose: () => void;
@@ -1512,7 +1538,7 @@ describe('shopping-assistant', () => {
 
           // Second message
           mockFetchEventSource.mockReset();
-          const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+          const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
 
           act(() => {
             fireEvent.change(textarea, { target: { value: 'Second message' } });
@@ -1610,7 +1636,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
 
       act(() => {
         fireEvent.change(textarea, { target: { value: 'Hello' } });
@@ -1626,7 +1652,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
 
       act(() => {
         fireEvent.change(textarea, { target: { value: 'My message' } });
@@ -1642,7 +1668,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
 
       act(() => {
         fireEvent.change(textarea, { target: { value: 'Hello' } });
@@ -1658,7 +1684,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
 
       act(() => {
         fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
@@ -1671,7 +1697,7 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
       act(() => {
         fireEvent.change(textarea, { target: { value: 'Submit test' } });
       });
@@ -1745,9 +1771,18 @@ describe('shopping-assistant', () => {
   // ============================================================
 
   describe('camera and image upload', () => {
+    // Camera and upload are collapsed behind a single "Add image" trigger, opening a small menu
+    // that offers both options — see ChatComposer.
+    const openImageMenu = (): void => {
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'], hidden: true }));
+      });
+    };
+
     it('should show camera drawer when camera icon is clicked', () => {
       renderAssistant();
       openDialogAndWait();
+      openImageMenu();
 
       const cameraButton = testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true });
 
@@ -1761,6 +1796,7 @@ describe('shopping-assistant', () => {
     it('should close camera drawer when back button is clicked', () => {
       renderAssistant();
       openDialogAndWait();
+      openImageMenu();
 
       act(() => {
         fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
@@ -1778,6 +1814,7 @@ describe('shopping-assistant', () => {
     it('should have file upload dropzone', () => {
       renderAssistant();
       openDialogAndWait();
+      openImageMenu();
 
       const dropzone = testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' });
       expect(dropzone).toBeTruthy();
@@ -1911,7 +1948,7 @@ describe('shopping-assistant', () => {
     // Presses and holds the mic button, reporting `finalTranscript` as recognized speech,
     // then releases it — mirroring press-and-hold: hold, speak, let go, send.
     const speakAndRelease = async (finalTranscript: string): Promise<void> => {
-      const micButton = testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true });
+      const micButton = testComponent.getByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true });
       act(() => {
         fireEvent.mouseDown(micButton);
       });
@@ -1949,14 +1986,14 @@ describe('shopping-assistant', () => {
     it('does not render the mic button when voice is not enabled', () => {
       renderAssistant();
       openDialogAndWait();
-      expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true })).toBeNull();
+      expect(testComponent.queryByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true })).toBeNull();
     });
 
     it('renders the mic button when voice is enabled', () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
       renderVoiceAssistant();
       openDialogAndWait();
-      expect(testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true })).toBeTruthy();
     });
 
     it('renders the voice-reading toggle in the header next to the new-chat button', () => {
@@ -1976,7 +2013,7 @@ describe('shopping-assistant', () => {
     it('hides the mic button when the browser does not support speech recognition', () => {
       renderVoiceAssistant();
       openDialogAndWait();
-      expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true })).toBeNull();
+      expect(testComponent.queryByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true })).toBeNull();
     });
 
     it('starts recording and flips to the stop control when the mic button is pressed', () => {
@@ -1984,7 +2021,7 @@ describe('shopping-assistant', () => {
       renderVoiceAssistant();
       openDialogAndWait();
 
-      const micButton = testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true });
+      const micButton = testComponent.getByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true });
       act(() => {
         fireEvent.mouseDown(micButton);
       });
@@ -2000,7 +2037,7 @@ describe('shopping-assistant', () => {
       renderVoiceAssistant();
       openDialogAndWait();
 
-      const micButton = testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true });
+      const micButton = testComponent.getByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true });
       act(() => {
         fireEvent.mouseDown(micButton);
       });
@@ -2008,7 +2045,7 @@ describe('shopping-assistant', () => {
         mockRecognitionInstances[0].onresult?.({ results: [makeResult('red dr', false)] });
       });
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
       expect(textarea.value).toBe('red dr');
     });
 
@@ -2266,7 +2303,7 @@ describe('shopping-assistant', () => {
         blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })),
       }) as unknown as typeof fetch;
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      const textarea = document.body.querySelector('input[aria-label]') as HTMLInputElement;
       act(() => {
         fireEvent.change(textarea, { target: { value: 'Hello' } });
       });
@@ -2326,7 +2363,7 @@ describe('shopping-assistant', () => {
       renderVoiceAssistant();
       openDialogAndWait();
 
-      const micButton = testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true });
+      const micButton = testComponent.getByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true });
       act(() => {
         fireEvent.mouseDown(micButton);
       });
@@ -2335,11 +2372,17 @@ describe('shopping-assistant', () => {
       });
 
       expect(mockFetchEventSource).not.toHaveBeenCalled();
-      expect(testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true })).toBeTruthy();
       consoleErrorSpy.mockRestore();
     });
 
-    it('stops any playing reply when a new recording starts (barge-in)', async () => {
+    it('keeps the mic button disabled while a reply is still playing and the turn has not committed', async () => {
+      // The shared ChatComposer's mic button (common/components/chat/ChatComposer.tsx) disables
+      // purely on `chat.allowUserInput`, unlike this widget's old bespoke mic button, which also
+      // special-cased `isSpeechPlaying` to allow barging in on an in-progress narration. ChatComposer
+      // has no such carve-out (matches ai-search-launcher/embedded-shopping-assistant, neither of
+      // which support that either), so a still-playing, not-yet-committed reply keeps the mic
+      // disabled — pressing it doesn't start a new recording or interrupt playback.
       (window as any).SpeechRecognition = MockSpeechRecognition;
       (window as any).Audio = MockAudio;
 
@@ -2361,12 +2404,13 @@ describe('shopping-assistant', () => {
 
       expect(mockAudioInstances[0].play).toHaveBeenCalled();
 
-      const micButtonAgain = testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true });
+      const micButtonAgain = testComponent.getByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true }) as HTMLButtonElement;
+      expect(micButtonAgain.disabled).toBe(true);
       act(() => {
         fireEvent.mouseDown(micButtonAgain);
       });
 
-      expect(mockAudioInstances[0].pause).toHaveBeenCalled();
+      expect(mockAudioInstances[0].pause).not.toHaveBeenCalled();
     });
 
     it('falls back to the browser speech synthesis API when the voice proxy call fails', async () => {

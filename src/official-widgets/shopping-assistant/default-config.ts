@@ -39,6 +39,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: 'Show more...',
     nowDescribing: 'Now Describing',
     holdMicToRecord: 'Hold the mic to record',
+    a11yAddImage: 'Add image',
+    a11yListening: 'Listening',
+    a11yHoldMicInstructions: 'Press and hold, or press and hold Space or Enter, to record. Release to send.',
+    a11yCameraError: 'Camera unavailable — check permissions or try switching cameras',
   },
   es: {
     widgetTitle: 'Asistente de estilo',
@@ -77,6 +81,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: 'Mostrar más...',
     nowDescribing: 'Describiendo ahora',
     holdMicToRecord: 'Mantén presionado el micrófono para grabar',
+    a11yAddImage: 'Agregar imagen',
+    a11yListening: 'Escuchando',
+    a11yHoldMicInstructions: 'Mantén presionado, o mantén presionada la barra espaciadora o Enter, para grabar. Suelta para enviar.',
+    a11yCameraError: 'Cámara no disponible: verifique los permisos o intente cambiar de cámara',
   },
   fr: {
     widgetTitle: 'Assistant de style',
@@ -115,6 +123,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: 'Afficher plus...',
     nowDescribing: 'En cours de description',
     holdMicToRecord: 'Maintenez le micro enfoncé pour enregistrer',
+    a11yAddImage: 'Ajouter une image',
+    a11yListening: 'Écoute en cours',
+    a11yHoldMicInstructions: 'Appuyez et maintenez, ou appuyez et maintenez Espace ou Entrée, pour enregistrer. Relâchez pour envoyer.',
+    a11yCameraError: 'Caméra indisponible : vérifiez les autorisations ou essayez de changer de caméra',
   },
   pt: {
     widgetTitle: 'Assistente de estilo',
@@ -153,6 +165,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: 'Mostrar mais...',
     nowDescribing: 'Descrevendo agora',
     holdMicToRecord: 'Mantenha o microfone pressionado para gravar',
+    a11yAddImage: 'Adicionar imagem',
+    a11yListening: 'Ouvindo',
+    a11yHoldMicInstructions: 'Pressione e segure, ou pressione e segure Espaço ou Enter, para gravar. Solte para enviar.',
+    a11yCameraError: 'Câmera indisponível: verifique as permissões ou tente trocar de câmera',
   },
   de: {
     widgetTitle: 'Stil-Assistent',
@@ -191,6 +207,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: 'Mehr anzeigen...',
     nowDescribing: 'Wird jetzt beschrieben',
     holdMicToRecord: 'Mikrofon gedrückt halten, um aufzunehmen',
+    a11yAddImage: 'Bild hinzufügen',
+    a11yListening: 'Hört zu',
+    a11yHoldMicInstructions: 'Halten Sie gedrückt, oder halten Sie Leertaste oder Eingabetaste gedrückt, um aufzunehmen. Loslassen zum Senden.',
+    a11yCameraError: 'Kamera nicht verfügbar – überprüfen Sie die Berechtigungen oder wechseln Sie die Kamera',
   },
   it: {
     widgetTitle: 'Assistente di stile',
@@ -229,6 +249,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: 'Mostra altro...',
     nowDescribing: 'Descrizione in corso',
     holdMicToRecord: 'Tieni premuto il microfono per registrare',
+    a11yAddImage: 'Aggiungi immagine',
+    a11yListening: 'Ascolto in corso',
+    a11yHoldMicInstructions: 'Tieni premuto, oppure tieni premuto Spazio o Invio, per registrare. Rilascia per inviare.',
+    a11yCameraError: 'Fotocamera non disponibile: controlla le autorizzazioni o prova a cambiare fotocamera',
   },
   pl: {
     widgetTitle: 'Asystent Stylu',
@@ -267,6 +291,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: 'Pokaż więcej...',
     nowDescribing: 'Teraz opisywane',
     holdMicToRecord: 'Przytrzymaj mikrofon, aby nagrywać',
+    a11yAddImage: 'Dodaj obraz',
+    a11yListening: 'Słucham',
+    a11yHoldMicInstructions: 'Przytrzymaj lub przytrzymaj spację albo Enter, aby nagrywać. Zwolnij, aby wysłać.',
+    a11yCameraError: 'Aparat niedostępny – sprawdź uprawnienia lub spróbuj zmienić aparat',
   },
   ko: {
     widgetTitle: '쇼핑 어시스턴트',
@@ -305,6 +333,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: '더 보기...',
     nowDescribing: '지금 설명 중',
     holdMicToRecord: '마이크를 길게 눌러 녹음하세요',
+    a11yAddImage: '이미지 추가',
+    a11yListening: '듣는 중',
+    a11yHoldMicInstructions: '녹음하려면 길게 누르거나 스페이스바 또는 엔터 키를 길게 누르세요. 놓으면 전송됩니다.',
+    a11yCameraError: '카메라를 사용할 수 없습니다 — 권한을 확인하거나 카메라를 전환해 보세요',
   },
   ja: {
     widgetTitle: 'スタイルアシスタント',
@@ -343,6 +375,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: 'もっと見る...',
     nowDescribing: '説明中',
     holdMicToRecord: 'マイクを長押しして録音',
+    a11yAddImage: '画像を追加',
+    a11yListening: '聞いています',
+    a11yHoldMicInstructions: '録音するには長押しするか、スペースキーまたはEnterキーを長押ししてください。離すと送信されます。',
+    a11yCameraError: 'カメラを利用できません — 権限を確認するか、カメラの切り替えをお試しください',
   },
   th: {
     widgetTitle: 'ช่วยเหลือสินค้า',
@@ -381,6 +417,10 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: 'แสดงเพิ่มเติม...',
     nowDescribing: 'กำลังอธิบาย',
     holdMicToRecord: 'กดค้างที่ไมโครโฟนเพื่อบันทึกเสียง',
+    a11yAddImage: 'เพิ่มรูปภาพ',
+    a11yListening: 'กำลังฟัง',
+    a11yHoldMicInstructions: 'กดค้างไว้ หรือกดค้างที่ Space หรือ Enter เพื่อบันทึกเสียง ปล่อยเพื่อส่ง',
+    a11yCameraError: 'ไม่สามารถใช้กล้องได้ — ตรวจสอบสิทธิ์การเข้าถึงหรือลองสลับกล้อง',
   },
   zh: {
     widgetTitle: '购物助手',
@@ -419,10 +459,21 @@ export const DEFAULT_TEXTS: LanguagePack = {
     showMore: '显示更多...',
     nowDescribing: '正在描述',
     holdMicToRecord: '按住麦克风进行录音',
+    a11yAddImage: '添加图片',
+    a11yListening: '正在聆听',
+    a11yHoldMicInstructions: '按住，或按住空格键或回车键进行录音。松开即可发送。',
+    a11yCameraError: '相机不可用 — 请检查权限或尝试切换相机',
   },
 };
 
 export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
+  // useChat's playGreeting only speaks the opening greeting when this is true — without it, the
+  // opening message would silently stop being narrated for any host that already has
+  // customizations.chatbot.voiceEnabled on, since this widget previously spoke the opening
+  // whenever voice reading was enabled at all, with no separate greeting-specific gate.
+  chatbot: {
+    voiceGreetingEnabled: true,
+  },
   breakpoints: {
     mobile: {
       maxWidth: 767,
@@ -582,7 +633,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     primary: {
       fontColor: '#000000',
       fontColorDark: '#616161',
-      backgroundColor: '#616161',
+      backgroundColor: '#FFFFFF',
       backgroundColorDark: '#FFFFFF',
     },
     secondary: {
