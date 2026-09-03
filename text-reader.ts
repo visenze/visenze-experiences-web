@@ -19,6 +19,8 @@ import { DEFAULT_TEXTS as DEFAULT_TEXTS_21 } from './src/official-widgets/in-pag
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_22 } from './src/official-widgets/slide-out-drawer/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_23 } from './src/official-widgets/buy-the-look/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_24 } from './src/official-widgets/in-page-carousel-v3/default-config';
+import { DEFAULT_TEXTS as DEFAULT_TEXTS_25 } from './src/official-widgets/ai-search-launcher/default-config';
+import { DEFAULT_TEXTS as DEFAULT_TEXTS_26 } from './src/official-widgets/embedded-shopping-assistant/default-config';
 
 const configs: Record<string, LanguagePack> = {
   7: DEFAULT_TEXTS_7,
@@ -38,6 +40,8 @@ const configs: Record<string, LanguagePack> = {
   22: DEFAULT_TEXTS_22,
   23: DEFAULT_TEXTS_23,
   24: DEFAULT_TEXTS_24,
+  25: DEFAULT_TEXTS_25,
+  26: DEFAULT_TEXTS_26,
 };
 
 const args = process.argv.slice(2);
