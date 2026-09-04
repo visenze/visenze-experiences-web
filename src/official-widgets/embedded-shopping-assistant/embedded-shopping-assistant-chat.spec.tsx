@@ -136,39 +136,6 @@ describe('embedded-shopping-assistant-chat', () => {
     };
   };
 
-  // Same shape as above, for the "new chat" resend — captures the SECOND fetchEventSource call
-  // triggered by clicking FullScreenChatContainer's new-chat button.
-  const triggerNewChatAndGetStreamController = (): {
-    emitEvent: (event: string, data: any) => void;
-    closeStream: () => void;
-  } => {
-    let onmessage: (ev: { event: string; data: string }) => void;
-    let onclose: () => void;
-    mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
-      onmessage = options.onmessage;
-      onclose = options.onclose;
-    });
-    const newChatButton = testComponent.getByRole('button', { name: texts['a11yStartNewChat'] });
-    act(() => {
-      fireEvent.click(newChatButton);
-    });
-    act(() => {
-      jest.advanceTimersByTime(0);
-    });
-    return {
-      emitEvent: (event: string, data: any): void => {
-        act(() => {
-          onmessage({ event, data: JSON.stringify(data) });
-        });
-      },
-      closeStream: (): void => {
-        act(() => {
-          onclose();
-        });
-      },
-    };
-  };
-
   // Response text/products reveal progressively via a stable interval rather than all at once —
   // same helper and rationale as ai-search-launcher.spec.tsx's revealAll.
   const revealAll = async (): Promise<void> => {
@@ -281,6 +248,54 @@ describe('embedded-shopping-assistant-chat', () => {
       // removed as dead code under the mistaken assumption this state was unreachable). Confirming
       // the gate is genuinely back, not that dead-end state.
       expect(testComponent.queryByRole('dialog')).toBeNull();
+      expect(testComponent.getByRole('button', { name: texts['seeResults'] })).toBeTruthy();
+    });
+
+    it('does not leave a stray empty divider behind for a follow-up turn asked while expanded', async () => {
+      // TurnSection has no content path at all for a non-initial turn (its "AI Overview" header,
+      // clamped text, and "See Results" button are every one gated on turn.isInitial /
+      // !turn.productsExpanded, and a follow-up turn always gets productsExpanded: true from
+      // deriveTurns) — so if the pre-expansion view rendered every turn instead of just the first,
+      // a follow-up asked while expanded came back as nothing but its own bare `showDivider` <hr>
+      // once collapsed back to TurnSection.
+      renderEsa('running shoes');
+      await completeInitialTurnAndExpand();
+
+      const input = testComponent.getByRole('textbox', { name: texts['a11yChatInput'] });
+      act(() => {
+        fireEvent.change(input, { target: { value: 'cheaper options' } });
+      });
+      let onmessage: (ev: { event: string; data: string }) => void;
+      let onclose: () => void;
+      mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
+        onmessage = options.onmessage;
+        onclose = options.onclose;
+      });
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['a11ySendMessage'] }));
+      });
+      act(() => {
+        onmessage({ event: 'chat_id', data: JSON.stringify({ value: 'chat-1' }) });
+      });
+      act(() => {
+        onmessage({ event: 'reqid', data: JSON.stringify({ value: 'req-2' }) });
+      });
+      act(() => {
+        onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Cheaper picks: [[pid-2]]' }) });
+      });
+      act(() => {
+        onmessage({ event: 'product', data: JSON.stringify(mockProductEvent('pid-2')) });
+      });
+      act(() => {
+        onclose();
+      });
+      await revealAll();
+
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['a11yCloseFullScreen'] }));
+      });
+
+      expect(testComponent.queryAllByRole('separator')).toHaveLength(0);
       expect(testComponent.getByRole('button', { name: texts['seeResults'] })).toBeTruthy();
     });
 
@@ -445,68 +460,12 @@ describe('embedded-shopping-assistant-chat', () => {
     });
   });
 
-  describe('handleNewChat', () => {
-    it('calls chat.newChat() and resends the original query via the same race-safe deferral', async () => {
-      renderEsa('running shoes');
-      await completeInitialTurnAndExpand();
-      expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
-
-      const secondStream = triggerNewChatAndGetStreamController();
-
-      expect(mockFetchEventSource).toHaveBeenCalledTimes(2);
-      const [secondUrl] = mockFetchEventSource.mock.calls[1];
-      const params = new URLSearchParams((secondUrl as string).split('?')[1]);
-      expect(params.get('q')).toBe('running shoes');
-
-      secondStream.closeStream();
-    });
-
-    it('resends with the freshly generated chatId from newChat(), not the stale pre-newChat one', async () => {
-      // generateUuid returns a new value each call (unlike the fixed 'test-chat-id' the other
-      // tests use) — needed to actually distinguish "used the stale closure's chatId" from "used
-      // the fresh one", which a fixed mock value can't do.
-      let uuidCallCount = 0;
-      renderEsa('running shoes', {
-        generateUuid: jest.fn((cb: (uuid: string) => void) => {
-          uuidCallCount += 1;
-          cb(`chat-id-${uuidCallCount}`);
-        }),
-      });
-      await completeInitialTurnAndExpand();
-      const [firstUrl] = mockFetchEventSource.mock.calls[0];
-      expect(new URLSearchParams((firstUrl as string).split('?')[1]).get('chat_id')).toBe('chat-id-1');
-
-      const secondStream = triggerNewChatAndGetStreamController();
-
-      const [secondUrl] = mockFetchEventSource.mock.calls[1];
-      const params = new URLSearchParams((secondUrl as string).split('?')[1]);
-      expect(params.get('chat_id')).toBe('chat-id-2');
-
-      secondStream.closeStream();
-    });
-
-    it('clears expandedTurnIds, so the new conversation is not pre-expanded once collapsed back to TurnSection', async () => {
+  describe('the "new chat" button', () => {
+    it('is never shown — ESA has no entry point for starting a fresh conversation', async () => {
       renderEsa('running shoes');
       await completeInitialTurnAndExpand();
 
-      const secondStream = triggerNewChatAndGetStreamController();
-      secondStream.emitEvent('chat_id', { value: 'chat-2' });
-      secondStream.emitEvent('reqid', { value: 'req-2' });
-      secondStream.emitEvent('chat_token', { value: 'New picks: [[pid-2]]' });
-      secondStream.emitEvent('product', mockProductEvent('pid-2'));
-      secondStream.closeStream();
-      await revealAll();
-
-      const closeButton = testComponent.getByRole('button', { name: texts['a11yCloseFullScreen'] });
-      act(() => {
-        fireEvent.click(closeButton);
-      });
-
-      // If expandedTurnIds still held the previous conversation's stale '0' id, the new
-      // conversation's own turn 0 would render as already-expanded (no gate, no button) — its
-      // presence here proves the id was actually cleared by handleNewChat.
-      expect(testComponent.getByRole('button', { name: texts['seeResults'] })).toBeTruthy();
-      expect(getTextInBody('New picks:')).toBeTruthy();
+      expect(testComponent.queryByRole('button', { name: texts['a11yStartNewChat'] })).toBeNull();
     });
   });
 

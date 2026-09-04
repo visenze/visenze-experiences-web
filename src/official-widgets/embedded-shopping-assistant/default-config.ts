@@ -482,30 +482,28 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
   },
   productCard: {
-    imageAspectRatio: '2 / 3',
-    // Opens in a new tab by default, preserving this widget's existing behavior (the host page stays
-    // on the search results). Configurable like every other field here.
-    openLinksInNewTab: true,
-    // Price/secondary-title are OFF by default (this widget's cards intentionally show image + title
-    // only), but are now genuinely configurable — a host can flip `show: true` to bring them back.
+    // Matches ai-search-launcher's product card look exactly (aspect ratio, link behavior, and
+    // price/originalPrice visibility + colors).
+    imageAspectRatio: '3 / 4',
+    openLinksInNewTab: false,
     price: {
-      show: false,
+      show: true,
       font: {
         mobile: { size: 12, weight: 400 },
         tablet: { size: 12, weight: 400 },
         desktop: { size: 14, weight: 400 },
       },
-      fontColor: '#EF4444',
+      fontColor: '#B91C1C',
       fontColorDark: '#EF4444',
     },
     originalPrice: {
-      show: false,
+      show: true,
       font: {
         mobile: { size: 12, weight: 400 },
         tablet: { size: 12, weight: 400 },
         desktop: { size: 14, weight: 400 },
       },
-      fontColor: '#9CA3AF',
+      fontColor: '#6B7280',
       fontColorDark: '#9CA3AF',
       position: 'AFTER',
       strikethrough: true,
@@ -594,9 +592,17 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       backgroundColor: '#FFFFFF',
       backgroundColorDark: '#FFFFFF',
     },
+    // fontColor/fontColorDark drive the "See Results" button's text + border (border matches
+    // text color — see embedded-shopping-assistant-chat.tsx's seeResultsButtonColor). Previously
+    // unused anywhere in ESA, so these were #FFFFFF/#000000 — fine while unwired, but that would
+    // make the button invisible against ESA's own white (light) / dark (dark) page background now
+    // that it's actually applied. Matches the button's previous hardcoded
+    // text-gray-700/dark:text-neutral-100 exactly, so the default look is unchanged.
+    // backgroundColor/backgroundColorDark remain unused (reserved for the button's hover state,
+    // not wired yet) — left at their prior values.
     secondary: {
-      fontColor: '#FFFFFF',
-      fontColorDark: '#000000',
+      fontColor: '#374151',
+      fontColorDark: '#F5F5F5',
       backgroundColor: '#000000',
       backgroundColorDark: '#FFFFFF',
     },
