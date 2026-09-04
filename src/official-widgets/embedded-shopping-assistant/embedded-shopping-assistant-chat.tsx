@@ -1,4 +1,4 @@
-import { type FC, Fragment, useContext, useEffect, useRef, useState } from 'react';
+import { type FC, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import TurnSection from './components/TurnSection';
 import { deriveTurns } from './derive-turns';
@@ -37,6 +37,10 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // default-config.ts's values were already set to match those exact colors, so this is a pure
   // wiring change with no visible difference unless a host overrides them.
   const backgroundColor = (darkMode ? customizations.generalLayout?.backgroundColorDark : customizations.generalLayout?.backgroundColor) || undefined;
+  // "See Results" button's text + border (buttons.secondary was previously unused anywhere in
+  // ESA) — border matches text color, a standard outline-button convention, rather than adding a
+  // separate border-specific field.
+  const seeResultsButtonColor = (darkMode ? customizations.buttons?.secondary?.fontColorDark : customizations.buttons?.secondary?.fontColor) || undefined;
 
   // Mounted here — now ESA's real send path (Step 4) and the source for ChatComposer (Step 5)
   // below. suppressActionTokenCallbacks keeps AI-embedded <<ADD_TO_CART>>/<<ADD_TO_WISHLIST>>
@@ -139,32 +143,6 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
     setExpandedTurnIds(new Set());
   };
 
-  // Full-screen header's "new chat" button — the only remaining reset entry point now that
-  // TopBar.tsx (and its close/reset button) is gone. Mirrors ai-search-launcher's own
-  // handleNewChat (chat.newChat() + replay), except ESA replays the original query instead of a
-  // configured greeting, matching this widget's previous handleReset behavior exactly.
-  const handleNewChat = (): void => {
-    // Clears turn-position-keyed expanded state too — without this, a stale id (e.g. '0') left
-    // over from the previous conversation would make the new conversation's first turn render as
-    // already-expanded if the user later collapses back to TurnSection, since deriveTurns numbers
-    // turns positionally starting from 0 again.
-    setExpandedTurnIds(new Set());
-    // Resets chat.chats/breadcrumbs/etc AND regenerates a fresh internal chatId for the next
-    // conversation — the useChat-side equivalent of the old chatIdRef.current = '' reset. Note
-    // chat.newChat() does not clear chat.message itself (matches ai-search-launcher's own
-    // handleNewChat, which has the same characteristic) — not something introduced here.
-    chat.newChat();
-    if (query) {
-      widgetClient.sendEvent(Actions.LOAD, {});
-      // Same chatId race as the mount effect below (newChat() populates chatId via the identical
-      // async generateUuid->setChatId path as open()) — deferred for the same reason: sendMessage
-      // must not close over the stale, pre-newChat chatId.
-      setTimeout(() => {
-        chat.sendMessage(query);
-      }, 0);
-    }
-  };
-
   useEffect(() => {
     if (query) {
       widgetClient.sendEvent(Actions.LOAD, {});
@@ -208,23 +186,24 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
           !isExpanded so it actually unmounts once the full-screen surface opens — without this,
           it stayed mounted underneath FullScreenChatContainer's fixed overlay: visually covered,
           but still present in the DOM/accessibility tree (a real screen-reader/focus-order bug,
-          found while writing the mutual-exclusivity test this gate exists to satisfy). ────────── */}
-      {!isExpanded && (
+          found while writing the mutual-exclusivity test this gate exists to satisfy).
+          Only ever the FIRST turn — TurnSection has no rendering path at all for a non-initial
+          turn (its header/text/button are every one gated on turn.isInitial), and a follow-up
+          turn asked while expanded always gets productsExpanded: true from deriveTurns, so
+          mapping over every turn here used to leave nothing but that follow-up turn's own bare
+          divider line behind once collapsed back to this view. ─────────────────────────────── */}
+      {!isExpanded && turns[0] && (
         <div className='flex-1 overflow-y-auto thin-scrollbar'>
           <div className='max-w-3xl mx-auto p-6'>
-            {turns.map((turn, idx) => (
-              <Fragment key={turn.id}>
-                <TurnSection
-                  turn={turn}
-                  showDivider={idx > 0}
-                  onShowProducts={() => handleShowProducts(turn.id)}
-                  loadingDotColor={loadingDotColor}
-                  iconColor={iconColor}
-                  backgroundColor={backgroundColor}
-                  seeResultsButtonRef={seeResultsButtonRef}
-                />
-              </Fragment>
-            ))}
+            <TurnSection
+              turn={turns[0]}
+              onShowProducts={() => handleShowProducts(turns[0].id)}
+              loadingDotColor={loadingDotColor}
+              iconColor={iconColor}
+              backgroundColor={backgroundColor}
+              seeResultsButtonRef={seeResultsButtonRef}
+              seeResultsButtonColor={seeResultsButtonColor}
+            />
           </div>
         </div>
       )}
@@ -245,8 +224,12 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
         isMuted={!chat.isVoiceReadingEnabled}
         onToggleMute={chat.toggleVoiceReading}
         showVoiceToggle={chat.speechOutputEnabled}
-        onNewChat={handleNewChat}
-        showNewChat
+        // ESA has no "new chat" entry point — the widget is always tied to the one query it was
+        // embedded with, so starting a fresh conversation isn't a meaningful action here the way
+        // it is for ai-search-launcher. onNewChat is a required prop on the shared container but
+        // unreachable: the button it would trigger never renders while showNewChat is false.
+        onNewChat={() => {}}
+        showNewChat={false}
         darkMode={darkMode}
         fontFamily={customizations.generalLayout?.fontFamily}
         fontColor={customizations.generalLayout?.fontColor}

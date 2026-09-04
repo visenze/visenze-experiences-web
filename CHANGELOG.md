@@ -29,6 +29,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Chore
+## [1.0.32](https://github.com/visenze/visenze-experiences-web/compare/1.0.31...1.0.32)
+
+<!-- BEGIN visenze-experiences-web 1.0.32 -->
+
+### Removed
+
+- embedded-shopping-assistant: Removed the "new chat" action from the full-screen header — the widget has no entry point for starting a fresh conversation, since it is always tied to the single query it was embedded with.
+
+### Fixed
+
+- embedded-shopping-assistant: `productCard` defaults were incorrect — `price` and `originalPrice` were hidden, and the image aspect ratio/link-open behavior didn't match what was expected. Price is now shown by default, with the correct aspect ratio and link behavior.
+- embedded-shopping-assistant: The "See Results" button's text and border color were hardcoded and could not be customized; they are now configurable via `customizations.buttons.secondary` (`fontColor`/`fontColorDark`).
+- embedded-shopping-assistant: Fixed a stray empty divider line appearing in the summary view after closing the full-screen chat.
+
+<!-- END visenze-experiences-web 1.0.32 -->
+
 ## [1.0.31](https://github.com/visenze/visenze-experiences-web/compare/1.0.30...1.0.31)
 
 <!-- BEGIN visenze-experiences-web 1.0.31 -->
