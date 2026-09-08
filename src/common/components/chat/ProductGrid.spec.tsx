@@ -34,6 +34,7 @@ const renderGrid = (props: Partial<ComponentProps<typeof ProductGrid>> = {}): Re
           wishlistPids={[]}
           setIsInWishlist={jest.fn()}
           pwPrefix='asl'
+          viewedProductIdsRef={{ current: new Set() }}
           {...props}
         />
       </IntlProvider>

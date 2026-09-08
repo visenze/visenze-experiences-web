@@ -142,6 +142,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
   const breakpoint = useBreakpoint();
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const messageScrollRef = useRef<HTMLDivElement>(null);
+  // Shared across every ProductGrid this ChatWindow renders (see ProductGrid's own comment on
+  // this prop) — a per-instance ref wouldn't survive a card's remount from the live streaming
+  // grid into its committed ChatRow.
+  const viewedProductIdsRef = useRef<Set<string>>(new Set());
   // True while the user is actively scrolling (or within a short grace period after their last
   // gesture) — every automatic/streaming-driven scroll checks this and backs off, so the user's
   // own scroll always wins. Only real user gestures (wheel/touch) set it; the native `scroll`
@@ -305,6 +309,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 onSelectTurn={onSelectTurn}
                 productGridClasses={productGridClasses}
                 productGridCssConfig={productGridCssConfig}
+                viewedProductIdsRef={viewedProductIdsRef}
               />
             );
           })}
@@ -354,6 +359,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
                       className={cn('w-full grid pl-9', productGridClasses)}
                       style={productGridCssConfig}
+                      viewedProductIdsRef={viewedProductIdsRef}
                     />
                 )}
               </>

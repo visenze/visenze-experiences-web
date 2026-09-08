@@ -1,15 +1,15 @@
 import { cn } from '@heroui/theme';
 import { type FC, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import ChatWindow from './components/ChatWindow';
-import { FOCUS_VISIBLE_CLASSES } from './constants';
 import NewChatIcon from './icons/NewChatIcon';
 import ChatComposer from '../../common/components/chat/ChatComposer';
+import ChatWindow from '../../common/components/chat/ChatWindow';
 import useChat, { type UseChatResult } from '../../common/components/chat/use-chat';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
+import { FOCUS_VISIBLE_CLASSES } from '../../common/constants';
 import CloseIcon from '../../common/icons/CloseIcon';
 import PlusCircleIcon from '../../common/icons/PlusCircleIcon';
 import SpeakerIcon from '../../common/icons/SpeakerIcon';
@@ -150,7 +150,10 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                     focusedProductId={chat.focusedProductId}
                     showAllSuggestions={chat.showAllSuggestions}
                     setShowAllSuggestions={chat.setShowAllSuggestions}
-                    sendMessage={chat.sendMessage} />
+                    sendMessage={chat.sendMessage}
+                    wishlistPids={chat.wishlistPids}
+                    setIsInWishlist={chat.setIsInWishlist}
+                    pwPrefix='sa' />
         <ChatComposer
           chat={composerChat}
           chatInputRef={chatInputRef}

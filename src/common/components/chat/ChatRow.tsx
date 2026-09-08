@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import { type CSSProperties, type FC, memo } from 'react';
+import { type CSSProperties, type FC, memo, type MutableRefObject } from 'react';
 import { useIntl } from 'react-intl';
 import { PRODUCT_IMAGE_MAX_HEIGHT_CLASS } from './constants';
 import { processMessageForDisplay } from './message-formatting';
@@ -22,6 +22,7 @@ interface ChatRowProps {
   onSelectTurn?: (requestId: string) => void;
   productGridClasses: string;
   productGridCssConfig: CSSProperties;
+  viewedProductIdsRef: MutableRefObject<Set<string>>;
 }
 
 const getFile = (image: SearchImageOrPid | undefined): string => {
@@ -44,7 +45,7 @@ const getFile = (image: SearchImageOrPid | undefined): string => {
 // itself must re-render each token as `latestMessage` changes.
 const ChatRow: FC<ChatRowProps> = ({
   chat, focusedProductId, streamingRequestId, wishlistPids, setIsInWishlist, pwPrefix,
-  productDisplayMode, activeRequestId, onSelectTurn, productGridClasses, productGridCssConfig,
+  productDisplayMode, activeRequestId, onSelectTurn, productGridClasses, productGridCssConfig, viewedProductIdsRef,
 }) => {
   const intl = useIntl();
 
@@ -127,6 +128,7 @@ const ChatRow: FC<ChatRowProps> = ({
             imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
             className={cn('grid pl-9', productGridClasses)}
             style={productGridCssConfig}
+            viewedProductIdsRef={viewedProductIdsRef}
           />
         )
       )}

@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import { type CSSProperties, type FC, useContext, useMemo } from 'react';
+import { type CSSProperties, type FC, useContext, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import BreadcrumbTrail from './BreadcrumbTrail';
 import ProductGridSkeleton from './ProductGridSkeleton';
@@ -54,6 +54,11 @@ const ProductsPane: FC<ProductsPaneProps> = ({
   const { widgetConfig } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const breakpoint = useBreakpoint();
+  // Kept at this level (rather than inside ProductGrid) so it isn't reset by the `key={requestId}`
+  // remount below when the pane moves to a new turn — ProductGrid's dedup key already includes
+  // requestId, so sharing this set across every turn only prevents re-firing PRODUCT_VIEW for a
+  // product already seen under the same request, never across genuinely different ones.
+  const viewedProductIdsRef = useRef<Set<string>>(new Set());
 
   const productGridClasses = useMemo(
     (): string => getProductGridCssClasses(customizations, breakpoint, PRODUCT_GRID_COLUMNS_CLASSES, 'gap-x-4', PRODUCT_GRID_DEFAULT_GAP_Y),
@@ -92,6 +97,7 @@ const ProductsPane: FC<ProductsPaneProps> = ({
           streaming={isStreaming}
           className={cn('grid px-4 pb-4', productGridClasses)}
           style={productGridCssConfig}
+          viewedProductIdsRef={viewedProductIdsRef}
         />
       )}
     </div>

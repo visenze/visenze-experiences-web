@@ -484,17 +484,17 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   },
   productGrid: {
     mobile: {
-      productsPerRow: 3,
+      productsPerRow: 2,
       marginVertical: 0,
       marginHorizontal: 8,
     },
     tablet: {
-      productsPerRow: 3,
+      productsPerRow: 2,
       marginVertical: 0,
       marginHorizontal: 8,
     },
     desktop: {
-      productsPerRow: 3,
+      productsPerRow: 2,
       marginVertical: 0,
       marginHorizontal: 8,
     },

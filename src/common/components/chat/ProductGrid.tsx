@@ -1,4 +1,4 @@
-import { type CSSProperties, type FC, memo, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, type FC, memo, type MutableRefObject, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS } from './constants';
 import type { ProcessedProduct } from '../../types/product';
@@ -23,15 +23,20 @@ interface ProductGridProps {
   // narration surfaces where a tall portrait aspect ratio combined with few grid columns would
   // otherwise push a card taller than the viewport, hiding the "Now Describing" badge).
   imageClasses?: string;
+  // Owned by ChatWindow and shared across every ProductGrid instance it renders (the live
+  // streaming grid and each historical turn's committed grid alike) — a card that streams in
+  // live and is later re-mounted as a committed row (a different ProductGrid instance, a
+  // different DOM subtree) must not count as a second view. A ref local to this component
+  // wouldn't survive that remount, so the set has to live one level up instead.
+  viewedProductIdsRef: MutableRefObject<Set<string>>;
 }
 
 const ProductGrid: FC<ProductGridProps> = ({
   products, requestId, focusedProductId = null, focusedRequestId = null, wishlistPids, setIsInWishlist, pwPrefix, streaming = false, className, style,
-  imageClasses,
+  imageClasses, viewedProductIdsRef,
 }) => {
   const intl = useIntl();
   const [revealedCount, setRevealedCount] = useState(streaming ? 0 : products.length);
-  const viewedProductIdsRef = useRef<Set<string>>(new Set());
   const focusedCardRef = useRef<HTMLDivElement>(null);
 
   useEffect((): (() => void) | undefined => {
@@ -134,6 +139,7 @@ const arePropsEqual = (prev: ProductGridProps, next: ProductGridProps): boolean 
     || prev.className !== next.className
     || prev.style !== next.style
     || prev.imageClasses !== next.imageClasses
+    || prev.viewedProductIdsRef !== next.viewedProductIdsRef
   ) {
     return false;
   }
