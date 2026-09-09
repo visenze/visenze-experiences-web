@@ -343,7 +343,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
           })}
           {(isWaiting || latestMessage || streamingProducts.length > 0) && (
               <>
-                <div className='chat-row flex gap-2 items-start'>
+                <div className={cn('chat-row flex gap-2', latestMessage ? 'items-start' : 'items-center')}>
                   {(isWaiting || latestMessage) && !chatbotConfig?.hideAvatar && (
                     <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
                       bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
@@ -351,7 +351,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                     </div>
                   )}
                   {isWaiting && (
-                    <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800
+                    <div className='chat-typing-indicator flex items-center w-fit gap-1.5 px-3.5 py-2.5 rounded-full
                       bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
                       <span className='sr-only'>{intl.formatMessage({ id: 'a11yAssistantThinking' })}</span>
                       {[0, 1, 2].map((i) => (

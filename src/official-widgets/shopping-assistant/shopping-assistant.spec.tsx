@@ -1,8 +1,9 @@
 import { act, fireEvent, type RenderResult } from '@testing-library/react';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
-import ShoppingAssistant from './shopping-assistant';
-import { createMockWidgetClient, createWidgetConfig, renderWidget } from '../../common/test-utils';
+import ShoppingAssistant, { isCardDraggingEnabled } from './shopping-assistant';
+import { createMockWidgetClient, createWidgetConfig, firePointerEvent, renderWidget } from '../../common/test-utils';
+import { WidgetBreakpoint } from '../../common/types/constants';
 import { Actions } from '../../common/types/tracking-constants';
 import type { WidgetConfig } from '../../common/wigmix-core';
 
@@ -371,6 +372,89 @@ describe('shopping-assistant', () => {
       });
 
       expect(testComponent.getByRole('dialog', { name: texts['en']['widgetTitle'], hidden: true })).toBeTruthy();
+    });
+
+    describe('drag-to-corner', () => {
+      beforeEach(() => {
+        Object.defineProperty(window, 'innerWidth', { value: 1000, configurable: true });
+        Object.defineProperty(window, 'innerHeight', { value: 800, configurable: true });
+      });
+
+      it('dragging the launcher bubble to a corner also opens the card from that corner', () => {
+        renderFloatingAssistant();
+        const launcher = testComponent.getByTestId('wigmix-floating-launcher-button');
+
+        act(() => {
+          firePointerEvent(launcher, 'pointerdown', { clientX: 976, clientY: 720 });
+          firePointerEvent(launcher, 'pointermove', { clientX: 100, clientY: 100 });
+          firePointerEvent(launcher, 'pointerup', { clientX: 100, clientY: 100 });
+          // A real browser fires a click right after pointerup even when the gesture was a
+          // drag — this suppressed click stands in for that, matching FloatingLauncherButton's
+          // own drag-vs-click test.
+          fireEvent.click(launcher);
+        });
+
+        act(() => {
+          fireEvent.click(testComponent.getByTestId('wigmix-floating-launcher-button'));
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        // .wigmix-modal-variant-floating-card also matches the ReactModal overlay div (which
+        // carries the same class but no position style) — .ReactModal__Content is the actual
+        // positioned card box.
+        const card = queryModal('.ReactModal__Content.wigmix-modal-variant-floating-card') as HTMLElement;
+        expect(card).toBeTruthy();
+        expect(card.style.top).toBe('24px');
+        expect(card.style.left).toBe('24px');
+      });
+
+      it('dragging the open card moves where the launcher bubble reappears after closing', () => {
+        renderFloatingAssistant();
+        act(() => {
+          fireEvent.click(testComponent.getByTestId('wigmix-floating-launcher-button'));
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        const dragSurface = testComponent.getByTestId('wigmix-floating-card-drag-surface');
+        act(() => {
+          firePointerEvent(dragSurface, 'pointerdown', { clientX: 976, clientY: 720 });
+          firePointerEvent(dragSurface, 'pointermove', { clientX: 100, clientY: 100 });
+          firePointerEvent(dragSurface, 'pointerup', { clientX: 100, clientY: 100 });
+        });
+
+        act(() => {
+          fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yMinimizeShoppingAssistant'], hidden: true }));
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        const reappearedLauncher = testComponent.getByTestId('wigmix-floating-launcher-button');
+        expect(reappearedLauncher.style.top).toBe('24px');
+        expect(reappearedLauncher.style.left).toBe('24px');
+      });
+
+      // useBreakpoint() can't be driven to MOBILE anywhere in this suite (see the comment on
+      // isCardDraggingEnabled), so the "no drag on mobile" guarantee is verified directly against
+      // the exported predicate rather than through a full render.
+      describe('isCardDraggingEnabled', () => {
+        it('is enabled for the floating layout on desktop and tablet', () => {
+          expect(isCardDraggingEnabled(true, WidgetBreakpoint.DESKTOP)).toBe(true);
+          expect(isCardDraggingEnabled(true, WidgetBreakpoint.TABLET)).toBe(true);
+        });
+
+        it('is disabled for the floating layout on mobile', () => {
+          expect(isCardDraggingEnabled(true, WidgetBreakpoint.MOBILE)).toBe(false);
+        });
+
+        it('is disabled for the docked layout regardless of breakpoint', () => {
+          expect(isCardDraggingEnabled(false, WidgetBreakpoint.DESKTOP)).toBe(false);
+        });
+      });
     });
   });
 

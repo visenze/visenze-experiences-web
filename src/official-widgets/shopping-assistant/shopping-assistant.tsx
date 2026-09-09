@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import { type FC, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { type FC, type ReactElement, type PointerEvent as ReactPointerEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import FloatingHeader from './components/FloatingHeader';
 import FloatingLauncherButton from './components/FloatingLauncherButton';
@@ -9,6 +9,7 @@ import ChatWindow from '../../common/components/chat/ChatWindow';
 import useChat, { type UseChatResult } from '../../common/components/chat/use-chat';
 import Footer from '../../common/components/Footer';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import useDraggableCorner, { type FloatingCorner } from '../../common/components/hooks/use-draggable-corner';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -39,6 +40,14 @@ const widthToBreakpoint = (width: number, breakpoints: WidgetConfig['customizati
   }
   return WidgetBreakpoint.DESKTOP;
 };
+// The floating card renders near full-screen on mobile (see modal.scss), so dragging it there
+// wouldn't add much — only desktop/tablet get a draggable card. Exported as a pure predicate so
+// it's directly unit-testable: useBreakpoint() itself can't be driven to MOBILE in this test
+// suite (jest-setup.ts's window.matchMedia mock is captured once by react-responsive's underlying
+// matchmediaquery library and always reports no match, regardless of window.innerWidth).
+export const isCardDraggingEnabled = (isFloating: boolean, breakpoint: WidgetBreakpoint): boolean => (
+  isFloating && breakpoint !== WidgetBreakpoint.MOBILE
+);
 
 interface ShoppingAssistantProps {
   renderModalWithoutPortal?: boolean;
@@ -67,6 +76,36 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const productGridBreakpoint = isFloating
     ? narrowerBreakpoint(breakpoint, widthToBreakpoint(customizations.popup?.floating?.width || 380, customizations.breakpoints))
     : undefined;
+
+  // Shared between the launcher bubble and the open card (see useDraggableCorner) so dragging
+  // either one to a corner is where the other appears next — the card only drags on desktop/
+  // tablet since it renders near full-screen on mobile (see modal.scss), where dragging wouldn't
+  // add much.
+  const [floatingCorner, setFloatingCorner] = useState<FloatingCorner>('bottom-right');
+  const cardDragEnabled = isCardDraggingEnabled(isFloating, breakpoint);
+  const cardDrag = useDraggableCorner({
+    corner: floatingCorner,
+    onCornerChange: setFloatingCorner,
+    size: {
+      width: customizations.popup?.floating?.width || 380,
+      height: customizations.popup?.floating?.height || 580,
+    },
+    enabled: cardDragEnabled,
+  });
+  // The card's drag handle is its whole surface, but real interactive controls (header/composer
+  // buttons, the chat input, product links) must keep working — only pointerdowns starting
+  // outside of those begin a drag.
+  const handleCardPointerDown = useCallback((e: ReactPointerEvent<HTMLDivElement>): void => {
+    if (!cardDragEnabled) {
+      return;
+    }
+    const target = e.target as HTMLElement;
+    if (target.closest('button, a, input, textarea, select, [contenteditable="true"], [role="button"]')) {
+      return;
+    }
+    cardDrag.dragHandlers.onPointerDown(e);
+  }, [cardDragEnabled, cardDrag.dragHandlers]);
+
   const openingMessages = [
     intl.formatMessage({ id: 'openingMessage1' }),
     intl.formatMessage({ id: 'openingMessage2' }),
@@ -127,7 +166,13 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   }, []);
 
   const getScreen = (): ReactElement => (
-      <div aria-label={intl.formatMessage({ id: 'widgetTitle' })} className='flex h-full flex-col bg-white dark:bg-neutral-700 border-x border-neutral-300 dark:border-neutral-800'>
+      <div aria-label={intl.formatMessage({ id: 'widgetTitle' })}
+        className='flex h-full flex-col bg-white dark:bg-neutral-700 border-x border-neutral-300 dark:border-neutral-800'
+        data-testid={cardDragEnabled ? 'wigmix-floating-card-drag-surface' : undefined}
+        onPointerDown={cardDragEnabled ? handleCardPointerDown : undefined}
+        onPointerMove={cardDragEnabled ? cardDrag.dragHandlers.onPointerMove : undefined}
+        onPointerUp={cardDragEnabled ? cardDrag.dragHandlers.onPointerUp : undefined}
+        onPointerCancel={cardDragEnabled ? cardDrag.dragHandlers.onPointerCancel : undefined}>
         {isFloating ? (
           <FloatingHeader
             darkMode={darkMode}
@@ -279,6 +324,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                               text={intl.formatMessage({ id: 'triggerCTA' })}
                               darkMode={darkMode}
                               onClick={onChatButtonClick}
+                              corner={floatingCorner}
+                              onCornerChange={setFloatingCorner}
                               defaultIcon={
                                 <NewChatIcon
                                     color={darkMode
@@ -313,6 +360,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
               width: customizations.popup?.floating?.width || 380,
               height: customizations.popup?.floating?.height || 580,
             } : undefined}
+            floatingPosition={cardDragEnabled ? cardDrag.position : undefined}
+            isDraggingFloating={cardDragEnabled ? cardDrag.isDragging : undefined}
             darkMode={darkMode}
             fontFamily={customizations.generalLayout?.fontFamily}
             placementId={`${appSettings.placementId}`}

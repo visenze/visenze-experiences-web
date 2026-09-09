@@ -15,13 +15,19 @@ interface ModalProps {
   position: 'left' | 'center' | 'right' | 'bottom';
   variant?: 'panel' | 'floating-card';
   floatingSize?: { width: number; height: number };
+  // When set, overrides the floating-card variant's static bottom/right CSS anchor with an
+  // explicit pixel position — used to make the card draggable (see useDraggableCorner). Left
+  // undefined wherever dragging isn't enabled (e.g. on mobile) so the existing CSS anchor applies.
+  floatingPosition?: { top: number; left: number };
+  isDraggingFloating?: boolean;
   portalRef?: MutableRefObject<HTMLDivElement | null>;
   ariaLabel?: string;
   ariaLabelledBy?: string;
 }
 
 const Modal: FC<ModalProps> = ({
-  open, layout, children, onClose, className, position, variant = 'panel', floatingSize, portalRef, ariaLabel, ariaLabelledBy,
+  open, layout, children, onClose, className, position, variant = 'panel', floatingSize, floatingPosition, isDraggingFloating, portalRef,
+  ariaLabel, ariaLabelledBy,
 }) => {
   const root = useContext(RootContext);
   let timeout;
@@ -55,6 +61,13 @@ const Modal: FC<ModalProps> = ({
     ? {
       '--wigmix-floating-width': `${floatingSize.width}px`,
       '--wigmix-floating-height': `${floatingSize.height}px`,
+      ...(floatingPosition ? {
+        top: `${floatingPosition.top}px`,
+        left: `${floatingPosition.left}px`,
+        bottom: 'auto',
+        right: 'auto',
+        transition: isDraggingFloating ? 'none' : 'top 250ms ease-out, left 250ms ease-out',
+      } : {}),
     } as CSSProperties
     : undefined;
 
@@ -83,6 +96,8 @@ interface VisenzeModalProps {
   position: 'left' | 'center' | 'right' | 'bottom';
   variant?: 'panel' | 'floating-card';
   floatingSize?: { width: number; height: number };
+  floatingPosition?: { top: number; left: number };
+  isDraggingFloating?: boolean;
   children: ReactElement | ReactElement[];
   className?: string;
   placementId: string;
