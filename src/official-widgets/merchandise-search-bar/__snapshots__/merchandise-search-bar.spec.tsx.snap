@@ -422,7 +422,7 @@ exports[`merchandise-search-bar should render upload image modal in desktop view
               class="flex flex-col gap-2 pt-2"
             >
               <div
-                class="cursor-pointer h-full focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-600 dark:focus-within:outline-blue-300"
+                class="cursor-pointer h-full has-[input:focus]:outline has-[input:focus]:outline-2 has-[input:focus]:outline-offset-2 has-[input:focus]:outline-blue-600 dark:has-[input:focus]:outline-blue-300"
                 role="presentation"
                 tabindex="-1"
               >
@@ -700,7 +700,7 @@ exports[`merchandise-search-bar should render upload image modal in mobile view 
               class="flex flex-col gap-2 pt-2"
             >
               <div
-                class="cursor-pointer h-full focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-600 dark:focus-within:outline-blue-300"
+                class="cursor-pointer h-full has-[input:focus]:outline has-[input:focus]:outline-2 has-[input:focus]:outline-offset-2 has-[input:focus]:outline-blue-600 dark:has-[input:focus]:outline-blue-300"
                 role="presentation"
                 tabindex="-1"
               >

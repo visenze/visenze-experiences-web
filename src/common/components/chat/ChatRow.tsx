@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import { type CSSProperties, type FC, memo, type MutableRefObject } from 'react';
+import { type CSSProperties, type FC, memo, type MutableRefObject, useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { PRODUCT_IMAGE_MAX_HEIGHT_CLASS } from './constants';
 import { processMessageForDisplay } from './message-formatting';
@@ -8,6 +8,7 @@ import type { Chat } from './use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../constants';
 import SparklesIcon from '../../icons/SparklesIcon';
 import UserIcon from '../../icons/UserIcon';
+import { WidgetDataContext } from '../../types/contexts';
 import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../types/image';
 
 interface ChatRowProps {
@@ -48,6 +49,8 @@ const ChatRow: FC<ChatRowProps> = ({
   productDisplayMode, activeRequestId, onSelectTurn, productGridClasses, productGridCssConfig, viewedProductIdsRef,
 }) => {
   const intl = useIntl();
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const chatbotConfig = widgetConfig.customizations.chatbot;
 
   return (
     <div className={cn(
@@ -64,10 +67,12 @@ const ChatRow: FC<ChatRowProps> = ({
               src={getFile(chat.image)}
             />
           </div>
-          <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-            bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-            <UserIcon className='size-6' />
-          </div>
+          {!chatbotConfig?.hideAvatar && (
+            <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+              bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+              <UserIcon className='size-6' />
+            </div>
+          )}
         </div>
       )}
       {chat.author === 'user' && chat.messages.map((message, cidx) => (
@@ -80,20 +85,24 @@ const ChatRow: FC<ChatRowProps> = ({
           >
             {message}
           </div>
-          <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-            bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-            <UserIcon className='size-6' />
-          </div>
+          {!chatbotConfig?.hideAvatar && (
+            <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+              bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+              <UserIcon className='size-6' />
+            </div>
+          )}
         </div>
       ))}
       {chat.author === 'bot' && chat.messages.map((message, cidx) => (
         <div
           className='flex min-w-0 gap-1 max-w-9/10'
           key={`chat-bot-message-${cidx}`}>
-          <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-            bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-            <SparklesIcon className='size-5' />
-          </div>
+          {!chatbotConfig?.hideAvatar && (
+            <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
+              bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
+              <SparklesIcon className='size-5' />
+            </div>
+          )}
           <div
             className='mb-2 min-w-0 break-words bg-gray-100 dark:bg-neutral-800 p-2 text-sm
               text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800'
@@ -126,7 +135,7 @@ const ChatRow: FC<ChatRowProps> = ({
             setIsInWishlist={setIsInWishlist}
             pwPrefix={pwPrefix}
             imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
-            className={cn('grid pl-9', productGridClasses)}
+            className={cn('grid', productGridClasses)}
             style={productGridCssConfig}
             viewedProductIdsRef={viewedProductIdsRef}
           />

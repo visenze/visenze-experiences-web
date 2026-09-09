@@ -9,6 +9,7 @@ import type { Chat } from './use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../constants';
 import DownArrowIcon from '../../icons/DownArrowIcon';
 import SparklesIcon from '../../icons/SparklesIcon';
+import type { WidgetBreakpoint } from '../../types/constants';
 import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../utils';
@@ -53,6 +54,16 @@ interface ChatWindowProps {
   // Deliberately narrower than a general "hide all user messages" toggle: every later row (any
   // idx > 0, or a non-'user' row at idx 0) always renders, regardless of this flag.
   hideInitialUserMessage?: boolean;
+  // On the very first mount only, scroll to the top of the conversation instead of the bottom —
+  // used when this ChatWindow expands with turns already in it (e.g. ESA's "See Results"), so the
+  // shopper keeps reading from where they were instead of jumping to the latest message. Every
+  // later content change still auto-scrolls to bottom as usual. Default false (today's behavior).
+  initialScrollToTop?: boolean;
+  // Overrides the internal useBreakpoint() result for the product grid's column count only.
+  // Needed by widgets whose card renders at a fixed width regardless of the window (e.g.
+  // shopping-assistant's floating layout), where the window's own breakpoint would otherwise pick
+  // a column count too wide for the card.
+  productGridBreakpoint?: WidgetBreakpoint;
 }
 
 // Matches ProductsPane's column breakpoints: a fixed 2-column grid looks fine on mobile widths,
@@ -90,7 +101,7 @@ const SuggestionChips: FC<SuggestionChipsProps> = ({ suggestions, showAll, onSho
   }, [showAll]);
 
   return (
-    <div className='mt-2 flex items-end pl-9'>
+    <div className='mt-2 flex items-end'>
       <div className='flex flex-wrap gap-2' role='group' aria-label={intl.formatMessage({ id: 'a11ySuggestedReplies' })}>
         {suggestions.map((suggestion, idx) => (
           <Fragment key={`suggestion-${idx}`}>
@@ -135,11 +146,14 @@ const ChatWindow: FC<ChatWindowProps> = ({
   isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions,
   streamingProducts = [], streamingRequestId = '', focusedProductId = null, wishlistPids, setIsInWishlist, pwPrefix,
   productDisplayMode = 'grid', activeRequestId = null, onSelectTurn, hideInitialUserMessage = false,
+  initialScrollToTop = false, productGridBreakpoint,
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
+  const chatbotConfig = customizations.chatbot;
   const intl = useIntl();
-  const breakpoint = useBreakpoint();
+  const detectedBreakpoint = useBreakpoint();
+  const breakpoint = productGridBreakpoint ?? detectedBreakpoint;
   const [showBottomArrow, setShowBottomArrow] = useState(false);
   const messageScrollRef = useRef<HTMLDivElement>(null);
   // Shared across every ProductGrid this ChatWindow renders (see ProductGrid's own comment on
@@ -157,6 +171,10 @@ const ChatWindow: FC<ChatWindowProps> = ({
   // tell our own auto-scrolls apart from a genuine user gesture and not misreport them as one.
   const isProgrammaticScrollRef = useRef(false);
   const programmaticScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Tracks whether the one-time initialScrollToTop handling below has already run, so it only
+  // ever overrides the very first scroll and every later content change falls through to the
+  // normal auto-scroll-to-bottom behavior.
+  const hasAppliedInitialScrollRef = useRef(false);
 
   const PROGRAMMATIC_SCROLL_SETTLE_MS = 500;
 
@@ -235,6 +253,16 @@ const ChatWindow: FC<ChatWindowProps> = ({
   // reply text, or streamed products) — merged from three near-identical effects so the scroll
   // guard above only has to be reasoned about in one place.
   useEffect(() => {
+    if (!hasAppliedInitialScrollRef.current) {
+      hasAppliedInitialScrollRef.current = true;
+      if (initialScrollToTop) {
+        const scrollContainer = messageScrollRef.current;
+        if (scrollContainer) {
+          scrollContainer.scrollTop = 0;
+        }
+        return;
+      }
+    }
     if (!focusedProductOwnsScroll) {
       autoScrollToBottom();
     }
@@ -316,7 +344,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
           {(isWaiting || latestMessage || streamingProducts.length > 0) && (
               <>
                 <div className='chat-row flex gap-2 items-start'>
-                  {(isWaiting || latestMessage) && (
+                  {(isWaiting || latestMessage) && !chatbotConfig?.hideAvatar && (
                     <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
                       bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
                       <SparklesIcon className='size-5' />
@@ -357,7 +385,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       pwPrefix={pwPrefix}
                       streaming
                       imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
-                      className={cn('w-full grid pl-9', productGridClasses)}
+                      className={cn('w-full grid', productGridClasses)}
                       style={productGridCssConfig}
                       viewedProductIdsRef={viewedProductIdsRef}
                     />

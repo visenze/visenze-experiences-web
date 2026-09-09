@@ -43,6 +43,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Listening',
     a11yHoldMicInstructions: 'Press and hold, or press and hold Space or Enter, to record. Release to send.',
     a11yCameraError: 'Camera unavailable — check permissions or try switching cameras',
+    a11yMinimizeShoppingAssistant: 'Minimize shopping assistant',
   },
   es: {
     widgetTitle: 'Asistente de estilo',
@@ -85,6 +86,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Escuchando',
     a11yHoldMicInstructions: 'Mantén presionado, o mantén presionada la barra espaciadora o Enter, para grabar. Suelta para enviar.',
     a11yCameraError: 'Cámara no disponible: verifique los permisos o intente cambiar de cámara',
+    a11yMinimizeShoppingAssistant: 'Minimizar asistente de compras',
   },
   fr: {
     widgetTitle: 'Assistant de style',
@@ -127,6 +129,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Écoute en cours',
     a11yHoldMicInstructions: 'Appuyez et maintenez, ou appuyez et maintenez Espace ou Entrée, pour enregistrer. Relâchez pour envoyer.',
     a11yCameraError: 'Caméra indisponible : vérifiez les autorisations ou essayez de changer de caméra',
+    a11yMinimizeShoppingAssistant: 'Réduire l\'assistant shopping',
   },
   pt: {
     widgetTitle: 'Assistente de estilo',
@@ -169,6 +172,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Ouvindo',
     a11yHoldMicInstructions: 'Pressione e segure, ou pressione e segure Espaço ou Enter, para gravar. Solte para enviar.',
     a11yCameraError: 'Câmera indisponível: verifique as permissões ou tente trocar de câmera',
+    a11yMinimizeShoppingAssistant: 'Minimizar assistente de compras',
   },
   de: {
     widgetTitle: 'Stil-Assistent',
@@ -211,6 +215,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Hört zu',
     a11yHoldMicInstructions: 'Halten Sie gedrückt, oder halten Sie Leertaste oder Eingabetaste gedrückt, um aufzunehmen. Loslassen zum Senden.',
     a11yCameraError: 'Kamera nicht verfügbar – überprüfen Sie die Berechtigungen oder wechseln Sie die Kamera',
+    a11yMinimizeShoppingAssistant: 'Shopping-Assistenten minimieren',
   },
   it: {
     widgetTitle: 'Assistente di stile',
@@ -253,6 +258,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Ascolto in corso',
     a11yHoldMicInstructions: 'Tieni premuto, oppure tieni premuto Spazio o Invio, per registrare. Rilascia per inviare.',
     a11yCameraError: 'Fotocamera non disponibile: controlla le autorizzazioni o prova a cambiare fotocamera',
+    a11yMinimizeShoppingAssistant: 'Riduci assistente shopping',
   },
   pl: {
     widgetTitle: 'Asystent Stylu',
@@ -295,6 +301,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Słucham',
     a11yHoldMicInstructions: 'Przytrzymaj lub przytrzymaj spację albo Enter, aby nagrywać. Zwolnij, aby wysłać.',
     a11yCameraError: 'Aparat niedostępny – sprawdź uprawnienia lub spróbuj zmienić aparat',
+    a11yMinimizeShoppingAssistant: 'Zminimalizuj asystenta zakupów',
   },
   ko: {
     widgetTitle: '쇼핑 어시스턴트',
@@ -337,6 +344,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: '듣는 중',
     a11yHoldMicInstructions: '녹음하려면 길게 누르거나 스페이스바 또는 엔터 키를 길게 누르세요. 놓으면 전송됩니다.',
     a11yCameraError: '카메라를 사용할 수 없습니다 — 권한을 확인하거나 카메라를 전환해 보세요',
+    a11yMinimizeShoppingAssistant: '쇼핑 어시스턴트 최소화',
   },
   ja: {
     widgetTitle: 'スタイルアシスタント',
@@ -379,6 +387,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: '聞いています',
     a11yHoldMicInstructions: '録音するには長押しするか、スペースキーまたはEnterキーを長押ししてください。離すと送信されます。',
     a11yCameraError: 'カメラを利用できません — 権限を確認するか、カメラの切り替えをお試しください',
+    a11yMinimizeShoppingAssistant: 'ショッピングアシスタントを最小化',
   },
   th: {
     widgetTitle: 'ช่วยเหลือสินค้า',
@@ -421,6 +430,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'กำลังฟัง',
     a11yHoldMicInstructions: 'กดค้างไว้ หรือกดค้างที่ Space หรือ Enter เพื่อบันทึกเสียง ปล่อยเพื่อส่ง',
     a11yCameraError: 'ไม่สามารถใช้กล้องได้ — ตรวจสอบสิทธิ์การเข้าถึงหรือลองสลับกล้อง',
+    a11yMinimizeShoppingAssistant: 'ย่อผู้ช่วยช้อปปิ้ง',
   },
   zh: {
     widgetTitle: '购物助手',
@@ -463,6 +473,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: '正在聆听',
     a11yHoldMicInstructions: '按住，或按住空格键或回车键进行录音。松开即可发送。',
     a11yCameraError: '相机不可用 — 请检查权限或尝试切换相机',
+    a11yMinimizeShoppingAssistant: '最小化购物助手',
   },
 };
 
@@ -683,6 +694,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   },
   popup: {
     position: 'left',
+    layout: 'docked',
     triggerIcon: {
       layout: 'ICON',
       color: '#000000',
@@ -690,6 +702,16 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       backgroundColor: '#FFFFFF',
       backgroundColorDark: '#000000',
       hide: false,
+    },
+    floating: {
+      width: 380,
+      height: 580,
+      header: {
+        backgroundColor: '#4F46E5',
+        backgroundColorDark: '#4338CA',
+        gradientToColor: '#7C3AED',
+        gradientToColorDark: '#6D28D9',
+      },
     },
   },
 };

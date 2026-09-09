@@ -92,3 +92,10 @@
 .wigmix-modal-overlay.wigmix-modal-position-left {
   padding-right: 65% !important;
 }
+
+@media (max-width: 639px) {
+  .wigmix-modal-overlay.wigmix-modal-position-right,
+  .wigmix-modal-overlay.wigmix-modal-position-left {
+    padding: 0 !important;
+  }
+}

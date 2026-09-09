@@ -1,5 +1,5 @@
 import { cn } from '@heroui/theme';
-import type { FC, MutableRefObject, ReactElement } from 'react';
+import type { CSSProperties, FC, MutableRefObject, ReactElement } from 'react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import ReactModal from 'react-modal';
 import Portal from '../portal';
@@ -13,12 +13,16 @@ interface ModalProps {
   children: ReactElement | ReactElement[];
   className?: string;
   position: 'left' | 'center' | 'right' | 'bottom';
+  variant?: 'panel' | 'floating-card';
+  floatingSize?: { width: number; height: number };
   portalRef?: MutableRefObject<HTMLDivElement | null>;
   ariaLabel?: string;
   ariaLabelledBy?: string;
 }
 
-const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position, portalRef, ariaLabel, ariaLabelledBy }) => {
+const Modal: FC<ModalProps> = ({
+  open, layout, children, onClose, className, position, variant = 'panel', floatingSize, portalRef, ariaLabel, ariaLabelledBy,
+}) => {
   const root = useContext(RootContext);
   let timeout;
   switch (layout) {
@@ -47,13 +51,21 @@ const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, pos
     return <></>;
   }
 
+  const contentStyle: CSSProperties | undefined = variant === 'floating-card' && floatingSize
+    ? {
+      '--wigmix-floating-width': `${floatingSize.width}px`,
+      '--wigmix-floating-height': `${floatingSize.height}px`,
+    } as CSSProperties
+    : undefined;
+
   return (
     <ReactModal
       closeTimeoutMS={timeout}
       parentSelector={(): HTMLElement => root}
       isOpen={open}
-      className={cn(`wigmix-modal bg-primary text-primary wigmix-modal-${layout} wigmix-modal-position-${position}`, className)}
-      overlayClassName={`wigmix-modal-overlay wigmix-modal-position-${position}`}
+      className={cn(`wigmix-modal bg-primary text-primary wigmix-modal-${layout} wigmix-modal-position-${position} wigmix-modal-variant-${variant}`, className)}
+      overlayClassName={`wigmix-modal-overlay wigmix-modal-position-${position} wigmix-modal-variant-${variant}`}
+      style={{ content: contentStyle }}
       testId='wigmix-modal'
       onRequestClose={onClose}
       contentLabel={ariaLabel}
@@ -69,6 +81,8 @@ interface VisenzeModalProps {
   onClose: () => void;
   layout: 'desktop' | 'tablet' | 'mobile' | 'nested_mobile';
   position: 'left' | 'center' | 'right' | 'bottom';
+  variant?: 'panel' | 'floating-card';
+  floatingSize?: { width: number; height: number };
   children: ReactElement | ReactElement[];
   className?: string;
   placementId: string;

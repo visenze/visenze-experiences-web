@@ -6,7 +6,16 @@ import { WidgetDataContext } from '../types/contexts';
 import type { SearchImage } from '../types/image';
 import { Actions, Category, Labels } from '../types/tracking-constants';
 
-const FOCUS_VISIBLE_CLASSES = 'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-600 dark:focus-within:outline-blue-300';
+// has-[input:focus] (not focus-within) so this ring only lights up for the hidden file input
+// itself — descendant buttons that already draw their own focus ring shouldn't also light up
+// this wrapper.
+const FOCUS_VISIBLE_CLASSES = [
+  'has-[input:focus]:outline',
+  'has-[input:focus]:outline-2',
+  'has-[input:focus]:outline-offset-2',
+  'has-[input:focus]:outline-blue-600',
+  'dark:has-[input:focus]:outline-blue-300',
+].join(' ');
 
 interface FileDropzoneProps {
   onImageUpload: (image: SearchImage) => void;

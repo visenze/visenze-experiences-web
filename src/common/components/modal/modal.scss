@@ -155,3 +155,65 @@
     transform: translateY(100px);
   }
 }
+
+.wigmix-modal-desktop.wigmix-modal-variant-floating-card,
+.wigmix-modal-tablet.wigmix-modal-variant-floating-card {
+  position: fixed;
+  top: auto;
+  left: auto;
+  bottom: 24px;
+  right: 24px;
+  width: var(--wigmix-floating-width, 380px);
+  height: var(--wigmix-floating-height, 580px);
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.wigmix-modal-mobile.wigmix-modal-variant-floating-card {
+  position: fixed;
+  top: auto;
+  left: auto;
+  bottom: 12px;
+  right: 12px;
+  width: calc(100vw - 24px);
+  height: calc(100vh - 24px);
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.wigmix-modal-overlay.wigmix-modal-variant-floating-card {
+  background-color: transparent;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 0 !important;
+  pointer-events: none;
+
+  > .ReactModal__Content {
+    pointer-events: auto;
+  }
+}
+
+// translateY, not scale() — a scale() transform on an ancestor is a known cross-browser trigger
+// for a focused text input's caret failing to render (or rendering in the wrong place) if focus
+// happens while the transform is still animating, which it does here: the chat input is
+// auto-focused within a macrotask of the card opening, well before this 200ms transition
+// finishes. translateY doesn't have this failure mode (same technique the panel variant's slide
+// transition already uses safely above).
+.ReactModal__Content.wigmix-modal-variant-floating-card {
+  transform: translateY(16px);
+  transition: all 200ms ease-in-out;
+}
+
+.ReactModal__Content--after-open.wigmix-modal-variant-floating-card {
+  transform: translateY(0);
+}
+
+.ReactModal__Content--before-close.wigmix-modal-variant-floating-card {
+  transform: translateY(16px);
+}

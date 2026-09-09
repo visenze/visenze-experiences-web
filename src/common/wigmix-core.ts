@@ -1081,6 +1081,60 @@ export interface WidgetConfig {
          */
         layout: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
       };
+      /**
+       * How the popup presents itself.
+       *
+       * - docked: a full-height panel docked to a screen edge (today's only behavior).
+       * - floating: a small card floating in the bottom-right corner, collapsing to a circular
+       *   launcher bubble when closed.
+       *
+       * Only supported by shopping-assistant. Defaults to 'docked'.
+       *
+       * @since 1.0.31
+       */
+      layout?: 'docked' | 'floating';
+      /**
+       * Settings specific to `layout: 'floating'`. Ignored when layout is 'docked'.
+       *
+       * @since 1.0.31
+       */
+      floating?: {
+        /**
+         * Width of the floating card in pixels, on desktop/tablet. Defaults to 380.
+         *
+         * @since 1.0.31
+         */
+        width?: number;
+        /**
+         * Height of the floating card in pixels, on desktop/tablet. Defaults to 580.
+         *
+         * @since 1.0.31
+         */
+        height?: number;
+        /**
+         * The floating card's header bar.
+         *
+         * @since 1.0.31
+         */
+        header?: {
+          backgroundColor?: string;
+          backgroundColorDark?: string;
+          /**
+           * If set alongside backgroundColor, the header renders as a diagonal gradient from
+           * backgroundColor to gradientToColor instead of a solid fill.
+           *
+           * @since 1.0.31
+           */
+          gradientToColor?: string;
+          gradientToColorDark?: string;
+          /**
+           * URL of a small avatar image shown next to the assistant name in the header.
+           *
+           * @since 1.0.31
+           */
+          avatarUrl?: string;
+        };
+      };
     };
     /**
      * Buttons configuration.
@@ -1636,6 +1690,14 @@ export interface WidgetConfig {
        * @since 1.0.30
        */
       startMuted?: boolean;
+      /**
+       * Hides the small avatar bubble shown next to each chat message — both the bot icon
+       * (including the live streaming reply and the "thinking" indicator) and the user icon.
+       * Defaults to shown when unset.
+       *
+       * @since 1.0.31
+       */
+      hideAvatar?: boolean;
       /**
        * Which layout the full-screen chat surface renders. `'chatlayout'`
        * (default) is the existing single-column chat UI, unchanged, at every

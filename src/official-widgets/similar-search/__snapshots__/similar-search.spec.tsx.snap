@@ -45,11 +45,11 @@ exports[`similar-search should open the popup when icon is clicked and display e
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right wigmix-modal-variant-panel"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right wigmix-modal-variant-panel"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -126,11 +126,11 @@ exports[`similar-search should open the popup when icon is clicked and display e
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay ReactModal__Overlay--after-open ReactModal__Overlay--before-close wigmix-modal-overlay wigmix-modal-position-right"
+      class="ReactModal__Overlay ReactModal__Overlay--after-open ReactModal__Overlay--before-close wigmix-modal-overlay wigmix-modal-position-right wigmix-modal-variant-panel"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content ReactModal__Content--after-open ReactModal__Content--before-close wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right"
+        class="ReactModal__Content ReactModal__Content--after-open ReactModal__Content--before-close wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right wigmix-modal-variant-panel"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -214,11 +214,11 @@ exports[`similar-search should render a successful response with default config 
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right wigmix-modal-variant-panel"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-desktop wigmix-modal-position-right wigmix-modal-variant-panel"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"
@@ -1938,11 +1938,11 @@ exports[`similar-search should render a successful response with default config 
     class="ReactModalPortal"
   >
     <div
-      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right"
+      class="ReactModal__Overlay wigmix-modal-overlay wigmix-modal-position-right wigmix-modal-variant-panel"
     >
       <div
         aria-modal="true"
-        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-right"
+        class="ReactModal__Content wigmix-modal bg-primary text-primary wigmix-modal-mobile wigmix-modal-position-right wigmix-modal-variant-panel"
         data-testid="wigmix-modal"
         role="dialog"
         tabindex="-1"

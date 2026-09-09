@@ -93,6 +93,24 @@ describe('shopping-assistant', () => {
     return { widgetConfig, widgetClient, mockVisearchClient };
   };
 
+  const renderFloatingAssistant = (): ReturnType<typeof createTestClient> => {
+    const basePopup = DEFAULT_CUSTOMIZATIONS.popup as NonNullable<WidgetConfig['customizations']['popup']>;
+    const floatingCustomizations: WidgetConfig['customizations'] = {
+      ...DEFAULT_CUSTOMIZATIONS,
+      popup: { ...basePopup, layout: 'floating' },
+    };
+    const { widgetConfig, widgetClient, mockVisearchClient } = createTestClient();
+    widgetConfig.customizations = floatingCustomizations;
+    testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
+      widgetConfig,
+      widgetClient,
+      locale: 'en',
+      messages: texts['en'],
+      rootElement: modalRoot,
+    });
+    return { widgetConfig, widgetClient, mockVisearchClient };
+  };
+
   const queryModal = (selector: string): Element | null => document.body.querySelector(selector);
   const queryAllModal = (selector: string): NodeListOf<Element> => document.body.querySelectorAll(selector);
   const getTextInBody = (text: string): HTMLElement | null => {
@@ -234,6 +252,125 @@ describe('shopping-assistant', () => {
       });
 
       expect(queryModal('.wigmix-modal')).toBeNull();
+    });
+  });
+
+  describe('floating layout', () => {
+    it('renders the floating launcher bubble instead of the inline trigger button', () => {
+      renderFloatingAssistant();
+      expect(testComponent.queryByTestId('wigmix-popup-trigger-button')).toBeNull();
+      expect(testComponent.getByTestId('wigmix-floating-launcher-button')).toBeTruthy();
+    });
+
+    it('uses the mobile product grid columns for the floating card even on a desktop-width window', async () => {
+      // jest's mocked matchMedia always reports no match (see jest-setup.ts), so useBreakpoint()
+      // resolves to 'desktop' here — exactly the "desktop-width window" case this test targets.
+      // Distinct per-breakpoint productsPerRow values make it possible to tell which one actually
+      // rendered.
+      const basePopupConfig = DEFAULT_CUSTOMIZATIONS.popup as NonNullable<WidgetConfig['customizations']['popup']>;
+      const floatingCustomizations: WidgetConfig['customizations'] = {
+        ...DEFAULT_CUSTOMIZATIONS,
+        popup: { ...basePopupConfig, layout: 'floating' },
+        productGrid: {
+          mobile: { productsPerRow: 2, marginVertical: 0, marginHorizontal: 8 },
+          tablet: { productsPerRow: 3, marginVertical: 0, marginHorizontal: 8 },
+          desktop: { productsPerRow: 4, marginVertical: 0, marginHorizontal: 8 },
+        },
+      };
+      const { widgetConfig, widgetClient } = createTestClient();
+      widgetConfig.customizations = floatingCustomizations;
+      testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
+        widgetConfig, widgetClient, locale: 'en', messages: texts['en'], rootElement: modalRoot,
+      });
+
+      act(() => {
+        fireEvent.click(testComponent.getByTestId('wigmix-floating-launcher-button'));
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      const stream = sendMessageAndGetStreamController('Show me shoes');
+      stream.emitEvent('chat_id', { value: 'chat-123' });
+      stream.emitEvent('reqid', { value: 'req-123' });
+      stream.emitEvent('chat_token', { value: '[[pid-1]] Shoe' });
+      stream.emitEvent('product', {
+        product_id: 'pid-1',
+        main_image_url: 'https://img.jpg',
+        data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'Shoe' },
+      });
+      stream.closeStream();
+      await revealAll();
+
+      const card = queryModal('.wigmix-product-card');
+      expect(card).toBeTruthy();
+      const grid = card?.closest('[style*="grid-template-columns"]') as HTMLElement;
+      expect(grid).toBeTruthy();
+      expect(grid.style.gridTemplateColumns).toBe('repeat(2, minmax(0, 1fr))');
+    });
+
+    it('opens the floating card with the FloatingHeader on launcher click', () => {
+      renderFloatingAssistant();
+      const launcher = testComponent.getByTestId('wigmix-floating-launcher-button');
+      act(() => {
+        fireEvent.click(launcher);
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(testComponent.getByRole('dialog', { name: texts['en']['widgetTitle'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yMinimizeShoppingAssistant'], hidden: true })).toBeTruthy();
+    });
+
+    it('unmounts the launcher bubble while the card is open, so it cannot overlap the composer', () => {
+      // Regression test: the launcher bubble and the open card are both fixed to the same
+      // bottom-right corner. Leaving the bubble mounted underneath an open card let it intercept
+      // clicks meant for the composer's controls in that corner.
+      renderFloatingAssistant();
+      act(() => {
+        fireEvent.click(testComponent.getByTestId('wigmix-floating-launcher-button'));
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(testComponent.queryByTestId('wigmix-floating-launcher-button')).toBeNull();
+    });
+
+    it('minimize hides the card behind the launcher bubble, matching docked close semantics', () => {
+      renderFloatingAssistant();
+      act(() => {
+        fireEvent.click(testComponent.getByTestId('wigmix-floating-launcher-button'));
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yMinimizeShoppingAssistant'], hidden: true }));
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      // Minimize reuses the same closeDialog() as docked's close button — it hides the card
+      // without crashing, and the launcher bubble is available to reopen it, exactly like
+      // docked mode's trigger button after closing.
+      expect(queryModal('.wigmix-modal')).toBeNull();
+      const reappearedLauncher = testComponent.getByTestId('wigmix-floating-launcher-button');
+      expect(reappearedLauncher).toBeTruthy();
+      // Focus restoration is deferred a macrotask (see closeDialog) because the launcher only
+      // remounts once this state update's re-render commits.
+      expect(document.activeElement).toBe(reappearedLauncher);
+
+      act(() => {
+        fireEvent.click(testComponent.getByTestId('wigmix-floating-launcher-button'));
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(testComponent.getByRole('dialog', { name: texts['en']['widgetTitle'], hidden: true })).toBeTruthy();
     });
   });
 
