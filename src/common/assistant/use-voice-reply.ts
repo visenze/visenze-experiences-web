@@ -201,7 +201,14 @@ const useVoiceReply = ({
     interruptSpeech();
     setIsSpeechPlaying(false);
     setIsVoiceReply(false);
-    setIsWaiting(false);
+    // `setIsWaiting` also drives the chat's "assistant is thinking" indicator (see use-chat.ts),
+    // which must stay up while a request is in flight with nothing to show yet. Only clear it
+    // here if there's already streamed content to reveal in its place — switching `isVoiceReply`
+    // off above will surface it immediately. Otherwise leave it be: the request is still pending,
+    // and use-chat.ts's own per-token check clears it once the first token arrives.
+    if (latestMessageRef.current) {
+      setIsWaiting(false);
+    }
   };
 
   const toggleVoiceReading = (): void => {

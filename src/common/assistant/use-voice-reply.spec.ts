@@ -37,3 +37,49 @@ describe('useVoiceReply - speech output failure', () => {
     expect(result.current.shouldSpeakReply()).toBe(false);
   });
 });
+
+describe('useVoiceReply - toggling voice reading off mid-reply', () => {
+  const setIsWaiting = jest.fn();
+
+  const baseProps = {
+    enabled: true,
+    appKey: 'test-app-key',
+    placementId: '1234',
+    baseUrl: 'https://api.example.com',
+    onTranscript: jest.fn(),
+    setIsWaiting,
+  };
+
+  beforeEach(() => {
+    setIsWaiting.mockClear();
+  });
+
+  it('does not stop the "waiting" indicator when no reply content has streamed in yet', () => {
+    const { result } = renderHook(() => useVoiceReply(baseProps));
+
+    act(() => {
+      result.current.beginReply();
+    });
+    act(() => {
+      result.current.toggleVoiceReading();
+    });
+
+    expect(setIsWaiting).not.toHaveBeenCalledWith(false);
+  });
+
+  it('stops the "waiting" indicator once reply content has streamed in', () => {
+    const { result } = renderHook(() => useVoiceReply(baseProps));
+
+    act(() => {
+      result.current.beginReply();
+    });
+    act(() => {
+      result.current.updateLatestMessage('Great choice!');
+    });
+    act(() => {
+      result.current.toggleVoiceReading();
+    });
+
+    expect(setIsWaiting).toHaveBeenCalledWith(false);
+  });
+});
