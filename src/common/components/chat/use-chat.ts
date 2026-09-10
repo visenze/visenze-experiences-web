@@ -73,6 +73,7 @@ export interface UseChatResult {
   voiceStatus: VoiceStatus;
   liveTranscript: string;
   hasVoiceError: boolean;
+  hasSpeechOutputError: boolean;
   isVoiceReadingEnabled: boolean;
   toggleVoiceReading: () => void;
   isSpeechPlaying: boolean;
@@ -160,6 +161,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     voiceStatus,
     liveTranscript,
     hasVoiceError,
+    hasSpeechOutputError,
     isVoiceReadingEnabled,
     typewriterText,
     isSpeechPlaying,
@@ -627,6 +629,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     voiceStatus,
     liveTranscript,
     hasVoiceError,
+    hasSpeechOutputError,
     isVoiceReadingEnabled,
     toggleVoiceReading,
     isSpeechPlaying,

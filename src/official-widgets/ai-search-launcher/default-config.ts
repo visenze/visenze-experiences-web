@@ -55,6 +55,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yTranscribingVoice: 'Transcribing voice message',
     a11yListening: 'Listening',
     voiceInputError: 'Voice input unavailable',
+    voiceOutputError: 'Voice narration is temporarily unavailable',
     a11yCameraError: 'Camera unavailable — check permissions or try switching cameras',
     a11yHoldMicInstructions: 'Press and hold, or press and hold Space or Enter, to record. Release to send.',
     a11yLoadingResults: 'Loading results',
@@ -325,7 +326,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   },
   chatbot: {
     title: 'AI Search Assistant',
-    voiceEnabled: true,
+    voiceEnabled: false,
     voiceGreetingEnabled: false,
     startMuted: false,
     layout: 'chatlayout',

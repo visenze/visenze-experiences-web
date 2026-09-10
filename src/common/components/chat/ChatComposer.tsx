@@ -15,13 +15,14 @@ import UploadIcon from '../../icons/UploadIcon';
 import { WidgetDataContext } from '../../types/contexts';
 import type { SearchImage } from '../../types/image';
 import FileDropzone from '../FileDropzone';
+import Toast from '../toast/Toast';
 
 // i18n contract: this component calls `intl.formatMessage` for the following ids, so any widget
 // consuming it must provide all of them in its own DEFAULT_TEXTS/locale files (via IntlProvider):
 // a11yChatInput, chatBoxPlaceholder, a11yAddImage, a11yOpenCamera, a11yUploadImage,
 // a11yStopVoiceInput, a11yTranscribingVoice, a11yListening, a11yHoldMicInstructions,
-// holdMicToRecord, voiceInputError, a11ySendMessage. Also pulls in WebcamCapture's own i18n
-// contract when `chatCameraEnabled` is on.
+// holdMicToRecord, voiceInputError, voiceOutputError, a11ySendMessage. Also pulls in
+// WebcamCapture's own i18n contract when `chatCameraEnabled` is on.
 interface ChatComposerProps {
   chat: UseChatResult;
   chatInputRef: RefObject<HTMLInputElement>;
@@ -172,6 +173,7 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
       className={cn('relative flex flex-col gap-2 p-4', !inputBarBorderStyle && 'border-t border-neutral-300 dark:border-neutral-800')}
       style={inputBarBorderStyle}
     >
+      {chat.hasSpeechOutputError && <Toast message={intl.formatMessage({ id: 'voiceOutputError' })} />}
       <div className='relative mx-auto flex w-full max-w-[820px] flex-col gap-2'>
         {showCameraCapture && (
           <WebcamCapture

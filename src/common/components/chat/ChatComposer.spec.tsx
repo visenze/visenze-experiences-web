@@ -19,6 +19,7 @@ const messages = {
   a11yHoldMicInstructions: 'Hold to record',
   holdMicToRecord: 'Hold to record',
   voiceInputError: 'Voice input error',
+  voiceOutputError: 'Voice narration is temporarily unavailable',
   a11ySendMessage: 'Send message',
 };
 
@@ -49,6 +50,7 @@ const createMockChat = (overrides: Partial<UseChatResult> = {}): UseChatResult =
   voiceStatus: 'idle',
   liveTranscript: '',
   hasVoiceError: false,
+  hasSpeechOutputError: false,
   isVoiceReadingEnabled: true,
   toggleVoiceReading: jest.fn(),
   isSpeechPlaying: false,
