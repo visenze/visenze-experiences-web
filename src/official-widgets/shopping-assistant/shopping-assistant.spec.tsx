@@ -2071,7 +2071,6 @@ describe('shopping-assistant', () => {
   describe('voice input and output', () => {
     let mockRecognitionInstances: MockSpeechRecognition[] = [];
     let mockAudioInstances: any[] = [];
-    let mockUtteranceInstances: any[] = [];
     const originalFetch = global.fetch;
 
     class MockSpeechRecognition {
@@ -2106,19 +2105,6 @@ describe('shopping-assistant', () => {
       this.src = src;
       mockAudioInstances.push(this);
     });
-
-    // Voice-synthesis-failure fallback path: a mock for the browser's native SpeechSynthesis API.
-    const MockSpeechSynthesisUtterance = jest.fn().mockImplementation(function mockUtteranceImpl(this: any, text?: string): void {
-      this.text = text;
-      this.onstart = null;
-      this.onend = null;
-      this.onerror = null;
-      mockUtteranceInstances.push(this);
-    });
-    const mockSpeechSynthesis = {
-      speak: jest.fn((utterance: any) => { utterance.onstart?.(); }),
-      cancel: jest.fn(),
-    };
 
     const makeResult = (transcript: string, isFinal: boolean): any => ({ isFinal, length: 1, 0: { transcript } });
 
@@ -2188,9 +2174,6 @@ describe('shopping-assistant', () => {
     beforeEach(() => {
       mockRecognitionInstances = [];
       mockAudioInstances = [];
-      mockUtteranceInstances = [];
-      mockSpeechSynthesis.speak.mockClear();
-      mockSpeechSynthesis.cancel.mockClear();
       URL.createObjectURL = jest.fn(() => 'blob:mock');
       URL.revokeObjectURL = jest.fn();
     });
@@ -2199,8 +2182,6 @@ describe('shopping-assistant', () => {
       delete (window as any).SpeechRecognition;
       delete (window as any).webkitSpeechRecognition;
       delete (window as any).Audio;
-      delete (window as any).SpeechSynthesisUtterance;
-      delete (window as any).speechSynthesis;
       global.fetch = originalFetch;
     });
 
@@ -2634,10 +2615,8 @@ describe('shopping-assistant', () => {
       expect(mockAudioInstances[0].pause).not.toHaveBeenCalled();
     });
 
-    it('falls back to the browser speech synthesis API when the voice proxy call fails', async () => {
+    it('skips narration and still reveals the reply as typed text when the voice proxy call fails', async () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
-      (window as any).SpeechSynthesisUtterance = MockSpeechSynthesisUtterance;
-      (window as any).speechSynthesis = mockSpeechSynthesis;
 
       renderVoiceAssistant();
       openDialogAndWait();
@@ -2654,17 +2633,11 @@ describe('shopping-assistant', () => {
         await flushMicrotasks();
       });
 
-      // The voice proxy call rejected, so the reply is narrated with the browser's own
-      // voice instead — the reply still gets spoken and revealed, just without the cloned voice.
-      expect(mockSpeechSynthesis.speak).toHaveBeenCalledTimes(1);
-      expect(mockUtteranceInstances[0].text).toBe('Great choice!');
-
+      // The voice proxy call rejected — narration is skipped entirely (no browser-voice
+      // fallback, see use-voice.ts) rather than jarringly switching voices mid-conversation, but
+      // the reply still reaches the user as typed text.
       await revealAll();
       expect(getTextInBody('Great choice!')).toBeTruthy();
-
-      act(() => {
-        mockUtteranceInstances[0].onend?.();
-      });
     });
   });
 });

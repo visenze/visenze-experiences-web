@@ -28,7 +28,6 @@ const renderTurn = (props: Partial<TurnSectionProps> = {}): ReturnType<typeof re
   <IntlProvider messages={messages} locale='en' defaultLocale='en'>
     <TurnSection
       turn={createTurn()}
-      showDivider={false}
       onShowProducts={jest.fn()}
       {...props}
     />
@@ -57,5 +56,15 @@ describe('TurnSection', () => {
 
     const title = getByText('AI Overview');
     expect(title.style.color).toBe('rgb(101, 67, 33)');
+  });
+
+  it('colors the "See Results" button\'s text and border with the configured seeResultsButtonColor, not a hardcoded gray', () => {
+    const { getByRole } = renderTurn({ seeResultsButtonColor: '#123abc' });
+
+    const button = getByRole('button', { name: /See Results/ });
+    expect(button.style.color).toBe('rgb(18, 58, 188)');
+    // jsdom's CSSOM doesn't normalize a bare border-color (no border-style/width set alongside
+    // it) into rgb() the way it does for `color` — it round-trips the literal value instead.
+    expect(button.style.borderColor).toBe('#123abc');
   });
 });

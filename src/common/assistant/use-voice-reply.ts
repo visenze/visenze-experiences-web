@@ -20,6 +20,7 @@ export interface UseVoiceReplyResult {
   voiceStatus: VoiceStatus;
   liveTranscript: string;
   hasVoiceError: boolean;
+  hasSpeechOutputError: boolean;
   isVoiceReadingEnabled: boolean;
   typewriterText: string;
   isSpeechPlaying: boolean;
@@ -132,6 +133,7 @@ const useVoiceReply = ({
     status: voiceStatus,
     liveTranscript,
     hasError: hasVoiceError,
+    hasSpeechOutputError,
     startRecording,
     stopRecording,
     speak,
@@ -191,17 +193,41 @@ const useVoiceReply = ({
     startRecording();
   };
 
-  const toggleVoiceReading = (): void => {
-    const nextEnabled = !voiceReadingEnabledRef.current;
-    voiceReadingEnabledRef.current = nextEnabled;
-    setIsVoiceReadingEnabled(nextEnabled);
-    if (!nextEnabled) {
-      interruptSpeech();
-      setIsSpeechPlaying(false);
-      setIsVoiceReply(false);
+  // Same "off" path as the user manually toggling voice reading off — also used below to react
+  // to a voice-output failure, since a failing narration API shouldn't keep being retried.
+  const disableVoiceReading = (): void => {
+    voiceReadingEnabledRef.current = false;
+    setIsVoiceReadingEnabled(false);
+    interruptSpeech();
+    setIsSpeechPlaying(false);
+    setIsVoiceReply(false);
+    // `setIsWaiting` also drives the chat's "assistant is thinking" indicator (see use-chat.ts),
+    // which must stay up while a request is in flight with nothing to show yet. Only clear it
+    // here if there's already streamed content to reveal in its place — switching `isVoiceReply`
+    // off above will surface it immediately. Otherwise leave it be: the request is still pending,
+    // and use-chat.ts's own per-token check clears it once the first token arrives.
+    if (latestMessageRef.current) {
       setIsWaiting(false);
     }
   };
+
+  const toggleVoiceReading = (): void => {
+    if (voiceReadingEnabledRef.current) {
+      disableVoiceReading();
+      return;
+    }
+    voiceReadingEnabledRef.current = true;
+    setIsVoiceReadingEnabled(true);
+  };
+
+  // A voice-output failure means the narration API itself is unavailable — keep trying would
+  // just fail again on the next reply, so switch back to typed replies until the user manually
+  // re-enables voice reading.
+  useEffect(() => {
+    if (hasSpeechOutputError) {
+      disableVoiceReading();
+    }
+  }, [hasSpeechOutputError]);
 
   const shouldSpeakReply = (): boolean => speechOutputEnabled && voiceReadingEnabledRef.current;
   const isVoiceReadingEnabledNow = (): boolean => voiceReadingEnabledRef.current;
@@ -253,6 +279,7 @@ const useVoiceReply = ({
     voiceStatus,
     liveTranscript,
     hasVoiceError,
+    hasSpeechOutputError,
     isVoiceReadingEnabled,
     typewriterText,
     isSpeechPlaying,

@@ -36,6 +36,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: 'Stop recording and send',
     holdMicToRecord: 'Hold the mic to record',
     voiceInputError: 'Voice input unavailable',
+    voiceOutputError: 'Voice narration is temporarily unavailable',
     a11yChatInput: 'Type your message to the shopping assistant',
     chatBoxPlaceholder: 'Type your message',
     a11yTranscribingVoice: 'Transcribing voice message',
@@ -77,6 +78,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: 'Detener grabación y enviar',
     holdMicToRecord: 'Mantén presionado el micrófono para grabar',
     voiceInputError: 'Entrada de voz no disponible',
+    voiceOutputError: 'La narración por voz no está disponible temporalmente',
     a11yChatInput: 'Escribe tu mensaje al asistente de compras',
     chatBoxPlaceholder: 'Escribe tu mensaje',
     a11yTranscribingVoice: 'Transcribiendo mensaje de voz',
@@ -118,6 +120,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: 'Arrêter l\'enregistrement et envoyer',
     holdMicToRecord: 'Maintenez le micro enfoncé pour enregistrer',
     voiceInputError: 'Saisie vocale indisponible',
+    voiceOutputError: 'La narration vocale est temporairement indisponible',
     a11yChatInput: 'Écrivez votre message à l\'assistant shopping',
     chatBoxPlaceholder: 'Écrivez votre message',
     a11yTranscribingVoice: 'Transcription du message vocal',
@@ -159,6 +162,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: 'Parar gravação e enviar',
     holdMicToRecord: 'Mantenha o microfone pressionado para gravar',
     voiceInputError: 'Entrada de voz indisponível',
+    voiceOutputError: 'A narração por voz está temporariamente indisponível',
     a11yChatInput: 'Digite sua mensagem para o assistente de compras',
     chatBoxPlaceholder: 'Digite sua mensagem',
     a11yTranscribingVoice: 'Transcrevendo mensagem de voz',
@@ -200,6 +204,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: 'Aufnahme beenden und senden',
     holdMicToRecord: 'Mikrofon gedrückt halten, um aufzunehmen',
     voiceInputError: 'Spracheingabe nicht verfügbar',
+    voiceOutputError: 'Die Sprachausgabe ist vorübergehend nicht verfügbar',
     a11yChatInput: 'Geben Sie Ihre Nachricht an den Einkaufsassistenten ein',
     chatBoxPlaceholder: 'Nachricht eingeben',
     a11yTranscribingVoice: 'Sprachnachricht wird transkribiert',
@@ -241,6 +246,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: 'Interrompi registrazione e invia',
     holdMicToRecord: 'Tieni premuto il microfono per registrare',
     voiceInputError: 'Input vocale non disponibile',
+    voiceOutputError: 'La narrazione vocale non è temporaneamente disponibile',
     a11yChatInput: 'Scrivi il tuo messaggio all\'assistente shopping',
     chatBoxPlaceholder: 'Scrivi il tuo messaggio',
     a11yTranscribingVoice: 'Trascrizione del messaggio vocale',
@@ -282,6 +288,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: 'Zatrzymaj nagrywanie i wyślij',
     holdMicToRecord: 'Przytrzymaj mikrofon, aby nagrywać',
     voiceInputError: 'Wprowadzanie głosowe niedostępne',
+    voiceOutputError: 'Narracja głosowa jest tymczasowo niedostępna',
     a11yChatInput: 'Wpisz wiadomość do asystenta zakupów',
     chatBoxPlaceholder: 'Wpisz wiadomość',
     a11yTranscribingVoice: 'Transkrybowanie wiadomości głosowej',
@@ -323,6 +330,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: '녹음 중지 및 전송',
     holdMicToRecord: '마이크를 길게 눌러 녹음하세요',
     voiceInputError: '음성 입력을 사용할 수 없습니다',
+    voiceOutputError: '음성 안내를 일시적으로 사용할 수 없습니다',
     a11yChatInput: '쇼핑 어시스턴트에게 메시지를 입력하세요',
     chatBoxPlaceholder: '메시지를 입력하세요',
     a11yTranscribingVoice: '음성 메시지를 텍스트로 변환 중',
@@ -364,6 +372,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: '録音を停止して送信',
     holdMicToRecord: 'マイクを長押しして録音',
     voiceInputError: '音声入力は利用できません',
+    voiceOutputError: '音声読み上げは一時的にご利用いただけません',
     a11yChatInput: 'ショッピングアシスタントにメッセージを入力',
     chatBoxPlaceholder: 'メッセージを入力',
     a11yTranscribingVoice: '音声メッセージを文字起こし中',
@@ -405,6 +414,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: 'หยุดบันทึกและส่ง',
     holdMicToRecord: 'กดค้างที่ไมโครโฟนเพื่อบันทึกเสียง',
     voiceInputError: 'ไม่สามารถใช้การป้อนด้วยเสียงได้',
+    voiceOutputError: 'ระบบเสียงบรรยายไม่พร้อมใช้งานชั่วคราว',
     a11yChatInput: 'พิมพ์ข้อความถึงผู้ช่วยช้อปปิ้ง',
     chatBoxPlaceholder: 'พิมพ์ข้อความของคุณ',
     a11yTranscribingVoice: 'กำลังถอดเสียงข้อความเสียง',
@@ -446,6 +456,7 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yStopVoiceInput: '停止录音并发送',
     holdMicToRecord: '按住麦克风进行录音',
     voiceInputError: '语音输入不可用',
+    voiceOutputError: '语音播报暂时不可用',
     a11yChatInput: '向购物助手输入您的消息',
     chatBoxPlaceholder: '输入您的消息',
     a11yTranscribingVoice: '正在转录语音消息',
@@ -482,30 +493,28 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
   },
   productCard: {
-    imageAspectRatio: '2 / 3',
-    // Opens in a new tab by default, preserving this widget's existing behavior (the host page stays
-    // on the search results). Configurable like every other field here.
-    openLinksInNewTab: true,
-    // Price/secondary-title are OFF by default (this widget's cards intentionally show image + title
-    // only), but are now genuinely configurable — a host can flip `show: true` to bring them back.
+    // Matches ai-search-launcher's product card look exactly (aspect ratio, link behavior, and
+    // price/originalPrice visibility + colors).
+    imageAspectRatio: '3 / 4',
+    openLinksInNewTab: false,
     price: {
-      show: false,
+      show: true,
       font: {
         mobile: { size: 12, weight: 400 },
         tablet: { size: 12, weight: 400 },
         desktop: { size: 14, weight: 400 },
       },
-      fontColor: '#EF4444',
+      fontColor: '#B91C1C',
       fontColorDark: '#EF4444',
     },
     originalPrice: {
-      show: false,
+      show: true,
       font: {
         mobile: { size: 12, weight: 400 },
         tablet: { size: 12, weight: 400 },
         desktop: { size: 14, weight: 400 },
       },
-      fontColor: '#9CA3AF',
+      fontColor: '#6B7280',
       fontColorDark: '#9CA3AF',
       position: 'AFTER',
       strikethrough: true,
@@ -594,9 +603,17 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       backgroundColor: '#FFFFFF',
       backgroundColorDark: '#FFFFFF',
     },
+    // fontColor/fontColorDark drive the "See Results" button's text + border (border matches
+    // text color — see embedded-shopping-assistant-chat.tsx's seeResultsButtonColor). Previously
+    // unused anywhere in ESA, so these were #FFFFFF/#000000 — fine while unwired, but that would
+    // make the button invisible against ESA's own white (light) / dark (dark) page background now
+    // that it's actually applied. Matches the button's previous hardcoded
+    // text-gray-700/dark:text-neutral-100 exactly, so the default look is unchanged.
+    // backgroundColor/backgroundColorDark remain unused (reserved for the button's hover state,
+    // not wired yet) — left at their prior values.
     secondary: {
-      fontColor: '#FFFFFF',
-      fontColorDark: '#000000',
+      fontColor: '#374151',
+      fontColorDark: '#F5F5F5',
       backgroundColor: '#000000',
       backgroundColorDark: '#FFFFFF',
     },
@@ -640,12 +657,12 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     darkModeDefault: false,
   },
   chatbot: {
-    // Required for chat.speechOutputEnabled (use-voice.ts) to be true, which is what gates
-    // FullScreenChatContainer's mute/voice-narration toggle (showVoiceToggle) — without this,
-    // the toggle never appears regardless of the isMuted/onToggleMute wiring. voiceId/voiceModelId
-    // are left unset deliberately, same as ai-search-launcher's own default: falls back to the
-    // widget's built-in voice.
-    voiceEnabled: true,
+    // Off by default, same as ai-search-launcher's own default — voice is opt-in per deployment.
+    // Setting this true is what gates chat.speechOutputEnabled (use-voice.ts) and, in turn,
+    // FullScreenChatContainer's mute/voice-narration toggle (showVoiceToggle); without it, the
+    // toggle never appears regardless of the isMuted/onToggleMute wiring. voiceId/voiceModelId
+    // are left unset deliberately: falls back to the widget's built-in voice.
+    voiceEnabled: false,
     // Narration starts muted — a user has to deliberately opt in via the mute button rather than
     // being narrated to immediately on their first reply.
     startMuted: true,

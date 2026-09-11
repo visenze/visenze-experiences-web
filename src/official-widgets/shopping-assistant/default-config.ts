@@ -482,7 +482,10 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   // opening message would silently stop being narrated for any host that already has
   // customizations.chatbot.voiceEnabled on, since this widget previously spoke the opening
   // whenever voice reading was enabled at all, with no separate greeting-specific gate.
+  // voiceEnabled is off by default, same as ai-search-launcher's and embedded-shopping-assistant's
+  // own defaults — voice is opt-in per deployment.
   chatbot: {
+    voiceEnabled: false,
     voiceGreetingEnabled: true,
   },
   breakpoints: {

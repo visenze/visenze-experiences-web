@@ -68,7 +68,6 @@ const parseAiBlocks = (text: string): AiBlock[] => {
 
 interface TurnSectionProps {
   turn: ConversationTurn;
-  showDivider: boolean;
   onShowProducts: () => void;
   loadingDotColor?: string;
   iconColor?: string;
@@ -81,17 +80,19 @@ interface TurnSectionProps {
   // full-screen surface this button opens is closed — without this, focus drops to <body> when
   // FullScreenChatContainer unmounts, since the element that opened it is gone by then too.
   seeResultsButtonRef?: RefObject<HTMLButtonElement>;
+  // Resolved (light/dark-aware) customizations.buttons.secondary.fontColor — drives both the
+  // "See Results" button's text and its border (a standard outline-button convention: border
+  // matches text color), and its chevron icon for free via the SVG's own stroke='currentColor'.
+  seeResultsButtonColor?: string;
 }
 
 const TurnSection: FC<TurnSectionProps> = ({
-  turn, showDivider, onShowProducts, loadingDotColor, iconColor, backgroundColor = '#FFFFFF', seeResultsButtonRef,
+  turn, onShowProducts, loadingDotColor, iconColor, backgroundColor = '#FFFFFF', seeResultsButtonRef, seeResultsButtonColor,
 }) => {
   const intl = useIntl();
 
   return (
   <div>
-    {showDivider && <hr className='border-gray-200 dark:border-neutral-700 my-6' />}
-
     {/* "AI Overview" header — the persistent TopBar carries this same label once results are
         expanded, but until then (loading + clamped text preview) there's no TopBar on screen at
         all, so this inline header fills that gap for the initial turn. */}
@@ -174,6 +175,7 @@ const TurnSection: FC<TurnSectionProps> = ({
           onClick={onShowProducts}
           className='flex items-center gap-2 px-5 py-2 rounded-full border border-gray-300 dark:border-neutral-700
             text-gray-700 dark:text-neutral-100 hover:bg-gray-50 dark:hover:bg-neutral-800 text-sm font-medium transition-colors'
+          style={{ color: seeResultsButtonColor, borderColor: seeResultsButtonColor }}
         >
           {intl.formatMessage({ id: 'seeResults' })}
           <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth='2' stroke='currentColor' className='size-4'>
