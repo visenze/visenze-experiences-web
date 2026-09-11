@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- ai-search-launcher, embedded-shopping-assistant: When ElevenLabs narration of a reply fails (network, quota, outage), voice reading now automatically turns off (same as manually muting) instead of silently retrying and failing on every subsequent reply, and a "Voice narration is temporarily unavailable" toast is shown.
+- ai-search-launcher, embedded-shopping-assistant: When voice-provider narration of a reply fails (network, quota, outage), voice reading now automatically turns off (same as manually muting) instead of silently retrying and failing on every subsequent reply, and a "Voice narration is temporarily unavailable" toast is shown.
 - ai-search-launcher, embedded-shopping-assistant: The voice-narration error toast now appears pinned to the top-right corner of the chat panel on larger screens, and as a full-width banner at the top on mobile, instead of floating above the message composer.
 - ai-search-launcher, embedded-shopping-assistant: Turning voice reading off (manually, or automatically after a narration failure) while a reply was still being fetched no longer cancels the "assistant is thinking" indicator before any content has streamed in.
 - ai-search-launcher, embedded-shopping-assistant: The three-dot "assistant is thinking" loading animation is now vertically centered next to the assistant avatar instead of aligned to its top.
