@@ -1,7 +1,7 @@
 import { act, fireEvent, type RenderResult } from '@testing-library/react';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
-import ShoppingAssistant, { isCardDraggingEnabled } from './shopping-assistant';
+import ShoppingAssistant, { initialFloatingCorner, isCardDraggingEnabled } from './shopping-assistant';
 import { createMockWidgetClient, createWidgetConfig, firePointerEvent, renderWidget } from '../../common/test-utils';
 import { WidgetBreakpoint } from '../../common/types/constants';
 import { Actions } from '../../common/types/tracking-constants';
@@ -94,11 +94,13 @@ describe('shopping-assistant', () => {
     return { widgetConfig, widgetClient, mockVisearchClient };
   };
 
-  const renderFloatingAssistant = (): ReturnType<typeof createTestClient> => {
+  const renderFloatingAssistant = (
+    popupOverrides: Partial<NonNullable<WidgetConfig['customizations']['popup']>> = {},
+  ): ReturnType<typeof createTestClient> => {
     const basePopup = DEFAULT_CUSTOMIZATIONS.popup as NonNullable<WidgetConfig['customizations']['popup']>;
     const floatingCustomizations: WidgetConfig['customizations'] = {
       ...DEFAULT_CUSTOMIZATIONS,
-      popup: { ...basePopup, layout: 'floating' },
+      popup: { ...basePopup, layout: 'floating', ...popupOverrides },
     };
     const { widgetConfig, widgetClient, mockVisearchClient } = createTestClient();
     widgetConfig.customizations = floatingCustomizations;
@@ -372,6 +374,47 @@ describe('shopping-assistant', () => {
       });
 
       expect(testComponent.getByRole('dialog', { name: texts['en']['widgetTitle'], hidden: true })).toBeTruthy();
+    });
+
+    describe('initial corner from popup.position', () => {
+      beforeEach(() => {
+        Object.defineProperty(window, 'innerWidth', { value: 1024, configurable: true });
+        Object.defineProperty(window, 'innerHeight', { value: 768, configurable: true });
+      });
+
+      it('maps position to a starting corner', () => {
+        expect(initialFloatingCorner('left')).toBe('bottom-left');
+        expect(initialFloatingCorner('right')).toBe('bottom-right');
+        expect(initialFloatingCorner('center')).toBe('bottom-right');
+        expect(initialFloatingCorner(undefined)).toBe('bottom-right');
+      });
+
+      it('opens the card from the bottom-left corner when popup.position is left', () => {
+        renderFloatingAssistant({ position: 'left' });
+        act(() => {
+          fireEvent.click(testComponent.getByTestId('wigmix-floating-launcher-button'));
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        const card = queryModal('.ReactModal__Content.wigmix-modal-variant-floating-card') as HTMLElement;
+        expect(card.style.left).toBe('24px');
+      });
+
+      it('opens the card from the bottom-right corner when popup.position is right', () => {
+        renderFloatingAssistant({ position: 'right' });
+        act(() => {
+          fireEvent.click(testComponent.getByTestId('wigmix-floating-launcher-button'));
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        const card = queryModal('.ReactModal__Content.wigmix-modal-variant-floating-card') as HTMLElement;
+        // 1024 (window) - 380 (default floating width) - 24 (margin) = 620
+        expect(card.style.left).toBe('620px');
+      });
     });
 
     describe('drag-to-corner', () => {

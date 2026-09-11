@@ -49,6 +49,14 @@ export const isCardDraggingEnabled = (isFloating: boolean, breakpoint: WidgetBre
   isFloating && breakpoint !== WidgetBreakpoint.MOBILE
 );
 
+// Maps the docked-layout `popup.position` setting onto a starting corner for the floating card/
+// launcher bubble, so the setting still has an effect when layout is 'floating' instead of being
+// silently ignored. 'center' has no corner equivalent and falls back to the same bottom-right
+// default used previously.
+export const initialFloatingCorner = (position: 'left' | 'center' | 'right' | undefined): FloatingCorner => (
+  position === 'left' ? 'bottom-left' : 'bottom-right'
+);
+
 interface ShoppingAssistantProps {
   renderModalWithoutPortal?: boolean;
 }
@@ -81,7 +89,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   // either one to a corner is where the other appears next — the card only drags on desktop/
   // tablet since it renders near full-screen on mobile (see modal.scss), where dragging wouldn't
   // add much.
-  const [floatingCorner, setFloatingCorner] = useState<FloatingCorner>('bottom-right');
+  const [floatingCorner, setFloatingCorner] = useState<FloatingCorner>(
+    () => initialFloatingCorner(customizations.popup?.position),
+  );
   const cardDragEnabled = isCardDraggingEnabled(isFloating, breakpoint);
   const cardDrag = useDraggableCorner({
     corner: floatingCorner,

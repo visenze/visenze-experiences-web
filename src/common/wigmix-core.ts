@@ -1048,6 +1048,11 @@ export interface WidgetConfig {
       /**
        * Popup position on the screen.
        *
+       * For `layout: 'docked'`, this is the docked screen edge. For `layout: 'floating'`, this
+       * only chooses the starting corner of the floating card/launcher bubble ('left' starts at
+       * bottom-left, 'right' or 'center' start at bottom-right) — the user can still drag it to
+       * any corner afterwards.
+       *
        * @since 1.0.0
        */
       position: 'left' | 'center' | 'right';
@@ -1090,31 +1095,31 @@ export interface WidgetConfig {
        *
        * Only supported by shopping-assistant. Defaults to 'docked'.
        *
-       * @since 1.0.31
+       * @since 1.0.34
        */
       layout?: 'docked' | 'floating';
       /**
        * Settings specific to `layout: 'floating'`. Ignored when layout is 'docked'.
        *
-       * @since 1.0.31
+       * @since 1.0.34
        */
       floating?: {
         /**
          * Width of the floating card in pixels, on desktop/tablet. Defaults to 380.
          *
-         * @since 1.0.31
+         * @since 1.0.34
          */
         width?: number;
         /**
          * Height of the floating card in pixels, on desktop/tablet. Defaults to 580.
          *
-         * @since 1.0.31
+         * @since 1.0.34
          */
         height?: number;
         /**
          * The floating card's header bar.
          *
-         * @since 1.0.31
+         * @since 1.0.34
          */
         header?: {
           backgroundColor?: string;
@@ -1123,14 +1128,14 @@ export interface WidgetConfig {
            * If set alongside backgroundColor, the header renders as a diagonal gradient from
            * backgroundColor to gradientToColor instead of a solid fill.
            *
-           * @since 1.0.31
+           * @since 1.0.34
            */
           gradientToColor?: string;
           gradientToColorDark?: string;
           /**
            * URL of a small avatar image shown next to the assistant name in the header.
            *
-           * @since 1.0.31
+           * @since 1.0.34
            */
           avatarUrl?: string;
         };
@@ -1695,7 +1700,7 @@ export interface WidgetConfig {
        * (including the live streaming reply and the "thinking" indicator) and the user icon.
        * Defaults to shown when unset.
        *
-       * @since 1.0.31
+       * @since 1.0.34
        */
       hideAvatar?: boolean;
       /**

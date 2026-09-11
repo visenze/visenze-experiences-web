@@ -29,6 +29,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Chore
+## [1.0.34](https://github.com/visenze/visenze-experiences-web/compare/1.0.33...1.0.34)
+
+<!-- BEGIN visenze-experiences-web 1.0.34 -->
+
+### Added
+
+- shopping-assistant: New floating popup layout (`customizations.popup.layout: 'floating'`) — the widget opens as a small card docked to the bottom-right corner instead of a full-height side panel, and collapses to a circular launcher bubble when closed. The card can be dragged and snaps to the nearest corner of the viewport. Card size and header styling (solid or gradient background, per light/dark mode, optional avatar) are configurable via `customizations.popup.floating`. The existing full-height panel behavior is unchanged and remains the default (`layout: 'docked'`).
+- shopping-assistant, ai-search-launcher, embedded-shopping-assistant: The small avatar bubble shown next to chat messages (bot and user) can now be hidden via `customizations.chatbot.hideAvatar`.
+
+### Changed
+
+- shopping-assistant: Now built on the same shared chat components (`ChatWindow`, `ChatRow`, `ProductGrid`, `FileDropzone`, modal) used by ai-search-launcher and embedded-shopping-assistant, instead of its own widget-specific implementation. The widget's own `ChatWindow`, `CameraCaptureDrawer`, and `SubmitChatIcon` have been removed in favor of the shared versions.
+
+<!-- END visenze-experiences-web 1.0.34 -->
+
 ## [1.0.33](https://github.com/visenze/visenze-experiences-web/compare/1.0.32...1.0.33)
 
 <!-- BEGIN visenze-experiences-web 1.0.33 -->
