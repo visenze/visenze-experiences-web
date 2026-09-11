@@ -330,7 +330,7 @@ describe('ai-search-launcher', () => {
       (window as any).SpeechRecognition.prototype.abort = jest.fn();
 
       try {
-        renderLauncher();
+        renderLauncher({}, 'en', {}, { chatbot: { voiceEnabled: true } });
         openEntryPointAndWait('a11yOpenVoiceSearch');
 
         expect(testComponent.getByRole('dialog')).toBeTruthy();
@@ -425,7 +425,7 @@ describe('ai-search-launcher', () => {
     });
 
     it('gives the mic button a visible circular border', () => {
-      renderLauncher();
+      renderLauncher({}, 'en', {}, { chatbot: { voiceEnabled: true } });
       openEntryPointAndWait('a11yOpenVoiceSearch');
 
       const micButton = getMicButton();
@@ -437,6 +437,7 @@ describe('ai-search-launcher', () => {
     it('applies generalLayout.border to the mic button', () => {
       renderLauncher({}, 'en', {}, {
         generalLayout: { ...DEFAULT_CUSTOMIZATIONS.generalLayout, border: { width: 2, color: '#123456', colorDark: '#654321' } },
+        chatbot: { voiceEnabled: true },
       });
       openEntryPointAndWait('a11yOpenVoiceSearch');
 
@@ -447,7 +448,11 @@ describe('ai-search-launcher', () => {
 
     it('uses chat.inputBar.voiceRecordingColor for the recording-state icon instead of a hardcoded red', () => {
       renderLauncher({}, 'en', {}, {
-        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, inputBar: { ...DEFAULT_CUSTOMIZATIONS.chatbot?.inputBar, voiceRecordingColor: '#123456' } },
+        chatbot: {
+          ...DEFAULT_CUSTOMIZATIONS.chatbot,
+          voiceEnabled: true,
+          inputBar: { ...DEFAULT_CUSTOMIZATIONS.chatbot?.inputBar, voiceRecordingColor: '#123456' },
+        },
       });
       openEntryPointAndWait('a11yOpenVoiceSearch');
 
@@ -461,7 +466,7 @@ describe('ai-search-launcher', () => {
     });
 
     it('starts recording immediately when clicked, without waiting for the auto-start gate', () => {
-      renderLauncher();
+      renderLauncher({}, 'en', {}, { chatbot: { voiceEnabled: true } });
       openEntryPointAndWait('a11yOpenVoiceSearch');
 
       const micButton = getMicButton();
@@ -474,7 +479,7 @@ describe('ai-search-launcher', () => {
     });
 
     it('does not stop recording before the default 5-second duration elapses', () => {
-      renderLauncher();
+      renderLauncher({}, 'en', {}, { chatbot: { voiceEnabled: true } });
       openEntryPointAndWait('a11yOpenVoiceSearch');
 
       act(() => {
@@ -488,7 +493,7 @@ describe('ai-search-launcher', () => {
     });
 
     it('automatically stops recording once the default 5-second duration elapses', () => {
-      renderLauncher();
+      renderLauncher({}, 'en', {}, { chatbot: { voiceEnabled: true } });
       openEntryPointAndWait('a11yOpenVoiceSearch');
 
       act(() => {
@@ -502,7 +507,7 @@ describe('ai-search-launcher', () => {
     });
 
     it('honors a configured auto-stop duration instead of the default', () => {
-      renderLauncher({}, 'en', {}, { launcher: { voiceRecordingMaxDurationSeconds: 2 } });
+      renderLauncher({}, 'en', {}, { launcher: { voiceRecordingMaxDurationSeconds: 2 }, chatbot: { voiceEnabled: true } });
       openEntryPointAndWait('a11yOpenVoiceSearch');
 
       act(() => {
@@ -845,7 +850,7 @@ describe('ai-search-launcher', () => {
 
   describe('mute control', () => {
     it('should toggle its own aria-pressed/label state when clicked, independent of audio playback', () => {
-      renderLauncher();
+      renderLauncher({}, 'en', {}, { chatbot: { voiceEnabled: true } });
       openEntryPointAndWait('a11yOpenAskAi');
 
       const muteButton = testComponent.getByRole('button', { name: texts['en']['a11yToggleMute'] });

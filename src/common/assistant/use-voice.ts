@@ -24,6 +24,7 @@ export interface UseVoiceResult {
   status: VoiceStatus;
   liveTranscript: string;
   hasError: boolean;
+  hasSpeechOutputError: boolean;
   startRecording: () => void;
   stopRecording: () => void;
   speak: (text: string, revealTarget: number, productId: string | null) => boolean;
@@ -87,11 +88,8 @@ const getSpeechRecognitionCtor = (): (new () => SpeechRecognitionLike) | undefin
 
 const isVoiceSupported = (): boolean => !!getSpeechRecognitionCtor();
 
-// Used as a last resort when the voice proxy call fails (offline, quota, outage, etc.)
-// so a reply is still narrated, just with the browser's own voice instead of the cloned one.
-const isBrowserSpeechSynthesisSupported = (): boolean => typeof window !== 'undefined'
-  && !!window.speechSynthesis
-  && typeof SpeechSynthesisUtterance !== 'undefined';
+// How long the transient "narration unavailable" error stays visible before clearing itself.
+const SPEECH_OUTPUT_ERROR_DISPLAY_MS = 4000;
 
 const useVoice = ({
   enabled,
@@ -110,6 +108,7 @@ const useVoice = ({
   const [status, setStatus] = useState<VoiceStatus>('idle');
   const [liveTranscript, setLiveTranscript] = useState('');
   const [hasError, setHasError] = useState(false);
+  const [hasSpeechOutputError, setHasSpeechOutputError] = useState(false);
 
   const statusRef = useRef<VoiceStatus>('idle');
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
@@ -118,12 +117,12 @@ const useVoice = ({
   const finalizeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrlRef = useRef<string | null>(null);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const speechQueueRef = useRef<QueuedSpeech[]>([]);
   const pendingSynthesisRef = useRef<Set<AbortController>>(new Set());
   const isPlayingRef = useRef(false);
   const playSessionRef = useRef(0);
   const gapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const speechOutputErrorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onTranscriptRef = useRef(onTranscript);
   const onSpeechStartRef = useRef(onSpeechStart);
   const onSpeechEndRef = useRef(onSpeechEnd);
@@ -162,10 +161,17 @@ const useVoice = ({
       URL.revokeObjectURL(audioUrlRef.current);
       audioUrlRef.current = null;
     }
-    if (utteranceRef.current) {
-      window.speechSynthesis?.cancel();
-      utteranceRef.current = null;
+  };
+
+  const reportSpeechOutputError = (): void => {
+    if (speechOutputErrorTimerRef.current) {
+      clearTimeout(speechOutputErrorTimerRef.current);
     }
+    setHasSpeechOutputError(true);
+    speechOutputErrorTimerRef.current = setTimeout((): void => {
+      speechOutputErrorTimerRef.current = null;
+      setHasSpeechOutputError(false);
+    }, SPEECH_OUTPUT_ERROR_DISPLAY_MS);
   };
 
   const clearTimers = (): void => {
@@ -331,39 +337,14 @@ const useVoice = ({
           return;
         }
         console.error(err);
-        if (!isBrowserSpeechSynthesisSupported()) {
-          isPlayingRef.current = false;
-          onSpeechEndRef.current?.(item.revealTarget, item.productId);
-          playNext();
-          return;
-        }
-        // The voice API call itself failed (network, quota, outage) — fall back to the
-        // browser's own speech synthesis so the reply is still narrated, just without the
-        // cloned voice.
-        const utterance = new SpeechSynthesisUtterance(item.text);
-        utteranceRef.current = utterance;
-        const advance = (): void => {
-          if (utteranceRef.current === utterance) {
-            utteranceRef.current = null;
-          }
-          if (item.session !== playSessionRef.current) {
-            return;
-          }
-          isPlayingRef.current = false;
-          onSpeechEndRef.current?.(item.revealTarget, item.productId);
-          gapTimerRef.current = setTimeout((): void => {
-            gapTimerRef.current = null;
-            playNext();
-          }, SPEECH_GAP_MS);
-        };
-        utterance.onstart = (): void => {
-          if (item.session === playSessionRef.current) {
-            onSpeechStartRef.current?.(item.revealTarget, item.productId);
-          }
-        };
-        utterance.onend = advance;
-        utterance.onerror = advance;
-        window.speechSynthesis.speak(utterance);
+        // The voice API call itself failed (network, quota, outage) — the browser's own speech
+        // synthesis sounds different enough from the cloned voice that switching to it
+        // mid-conversation would be jarring, so this item is simply skipped (with a transient
+        // error surfaced to the user via `hasSpeechOutputError`) rather than narrated differently.
+        reportSpeechOutputError();
+        isPlayingRef.current = false;
+        onSpeechEndRef.current?.(item.revealTarget, item.productId);
+        playNext();
       });
   };
 
@@ -401,6 +382,13 @@ const useVoice = ({
     || speechQueueRef.current.length > 0
     || !!gapTimerRef.current;
 
+  const clearSpeechOutputErrorTimer = (): void => {
+    if (speechOutputErrorTimerRef.current) {
+      clearTimeout(speechOutputErrorTimerRef.current);
+      speechOutputErrorTimerRef.current = null;
+    }
+  };
+
   useEffect((): void => {
     // A live config update can turn voice off mid-session — tear down whatever's active
     // (recognizer, queued/playing audio, in-flight synthesis) rather than just hiding the UI.
@@ -413,12 +401,15 @@ const useVoice = ({
     setHasError(false);
     setLiveTranscript('');
     updateStatus('idle');
+    clearSpeechOutputErrorTimer();
+    setHasSpeechOutputError(false);
   }, [enabled]);
 
   useEffect((): (() => void) => (): void => {
     clearTimers();
     abortRecognition();
     stopAudio();
+    clearSpeechOutputErrorTimer();
   }, []);
 
   return {
@@ -427,6 +418,7 @@ const useVoice = ({
     status,
     liveTranscript,
     hasError,
+    hasSpeechOutputError,
     startRecording,
     stopRecording,
     speak,

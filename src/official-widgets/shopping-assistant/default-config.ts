@@ -641,4 +641,9 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       hide: false,
     },
   },
+  chatbot: {
+    // Off by default, same as ai-search-launcher's and embedded-shopping-assistant's own
+    // defaults — voice is opt-in per deployment.
+    voiceEnabled: false,
+  },
 };

@@ -310,7 +310,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
           })}
           {(isWaiting || latestMessage || streamingProducts.length > 0) && (
               <>
-                <div className='chat-row flex gap-2 items-start'>
+                <div className='chat-row flex gap-2'>
                   {(isWaiting || latestMessage) && (
                     <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
                       bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
