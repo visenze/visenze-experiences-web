@@ -211,6 +211,8 @@ describe('shopping-assistant', () => {
     modalRoot.setAttribute('id', 'modal-root');
     document.body.appendChild(modalRoot);
     Element.prototype.scrollIntoView = jest.fn();
+    // Otherwise a test can read a resumable chat id left in localStorage by a previous test.
+    localStorage.clear();
   });
 
   afterEach(() => {
@@ -255,6 +257,79 @@ describe('shopping-assistant', () => {
       });
 
       expect(queryModal('.wigmix-modal')).toBeNull();
+    });
+  });
+
+  describe('session persistence', () => {
+    it('resumes the existing conversation via reopen() instead of open() when closed and reopened, without regenerating the chat id or replaying the opening greeting', () => {
+      const { mockVisearchClient } = renderAssistant();
+      openDialogAndWait();
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      openDialogAndWait();
+      // Reopening must not mint a second chat id or replay the opening greeting.
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+    });
+
+    it('shows the normal opening greeting instead of a blank surface when a stored session from a previous visit has no real history to resume', async () => {
+      // A stale localStorage entry with no backend history used to leave chatId truthy forever,
+      // so openDialog kept reopen()-ing a blank surface instead of falling through to open().
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: (): Promise<unknown> => Promise.resolve({ result: { messages: [] } }),
+      } as unknown as Response);
+      localStorage.setItem(
+        'visenze_shopping_assistant_chat_id_1234',
+        JSON.stringify({ chatId: 'stale-chat-id', timestamp: Date.now() }),
+      );
+
+      const { mockVisearchClient } = renderAssistant({
+        generateUuid: jest.fn((cb: (uuid: string) => void) => cb('fresh-chat-id')),
+      });
+      // Let the mount-time restore fetch resolve before the user clicks.
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      openDialogAndWait();
+
+      expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      global.fetch = originalFetch;
+    });
+
+    it('never writes to localStorage when customizations.chatbot.persistChatEnabled is false', () => {
+      const { widgetConfig, widgetClient } = createTestClient();
+      widgetConfig.customizations = {
+        ...DEFAULT_CUSTOMIZATIONS,
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, persistChatEnabled: false },
+      };
+      testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
+        widgetConfig, widgetClient, locale: 'en', messages: texts['en'], rootElement: modalRoot,
+      });
+
+      openDialogAndWait();
+      expect(localStorage.length).toBe(0);
+
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(localStorage.length).toBe(0);
     });
   });
 
@@ -479,6 +554,39 @@ describe('shopping-assistant', () => {
         const reappearedLauncher = testComponent.getByTestId('wigmix-floating-launcher-button');
         expect(reappearedLauncher.style.top).toBe('24px');
         expect(reappearedLauncher.style.left).toBe('24px');
+      });
+
+      it('clicking "Upload Image" in the composer\'s image menu does not get swallowed as a card-drag, even with a few pixels of pointer jitter', () => {
+        // FileDropzone's <input type="file"> is a sibling of its visible label, not an ancestor,
+        // so without role="button" a jittery click on it used to be misread as a card-drag start.
+        renderFloatingAssistant();
+        act(() => {
+          fireEvent.click(testComponent.getByTestId('wigmix-floating-launcher-button'));
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        act(() => {
+          fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'], hidden: true }));
+        });
+        const uploadInput = testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' });
+        const uploadButton = uploadInput.closest('[role="button"]') as HTMLElement;
+        expect(uploadButton).toBeTruthy();
+
+        const card = queryModal('.ReactModal__Content.wigmix-modal-variant-floating-card') as HTMLElement;
+        const topBefore = card.style.top;
+        const leftBefore = card.style.left;
+
+        act(() => {
+          firePointerEvent(uploadButton, 'pointerdown', { clientX: 500, clientY: 500 });
+          firePointerEvent(uploadButton, 'pointermove', { clientX: 504, clientY: 502 });
+          firePointerEvent(uploadButton, 'pointerup', { clientX: 504, clientY: 502 });
+        });
+
+        // The whole point: this pointer sequence must never move the card.
+        expect(card.style.top).toBe(topBefore);
+        expect(card.style.left).toBe(leftBefore);
       });
 
       // useBreakpoint() can't be driven to MOBILE anywhere in this suite (see the comment on

@@ -65,6 +65,11 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
   const menuPanelColor = darkMode
     ? (inputBar?.menuPanel?.fontColorDark || iconColor)
     : (inputBar?.menuPanel?.fontColor || iconColor);
+  // Applied as an inline style (below) rather than the bg-inputBarMenuPanel Tailwind class, so
+  // the popover isn't transparent when menuPanel.backgroundColor is left unconfigured.
+  const menuPanelBackgroundColor = darkMode
+    ? (inputBar?.menuPanel?.backgroundColorDark || '#171717')
+    : (inputBar?.menuPanel?.backgroundColor || '#FFFFFF');
   const inputBarBorderStyle: CSSProperties | undefined = inputBar?.border ? {
     borderTopWidth: `${inputBar.border.width}px`,
     borderTopStyle: 'solid',
@@ -220,11 +225,10 @@ const ChatComposer: FC<ChatComposerProps> = ({ chat, chatInputRef, chatCameraEna
                     <div
                       ref={imageMenuRef}
                       className={cn(
-                        'absolute bottom-full right-0 z-10 mb-2 flex w-max flex-col gap-1 rounded-lg',
-                        'bg-inputBarMenuPanel p-1 text-inputBarMenuPanel shadow-lg',
+                        'absolute bottom-full right-0 z-10 mb-2 flex w-max flex-col gap-1 rounded-lg p-1 shadow-lg',
                         !menuPanelBorderStyle && 'border border-gray dark:border-neutral-700',
                       )}
-                      style={menuPanelBorderStyle}
+                      style={{ backgroundColor: menuPanelBackgroundColor, color: menuPanelColor, ...menuPanelBorderStyle }}
                     >
                       <button
                         type='button'

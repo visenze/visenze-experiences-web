@@ -498,6 +498,22 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   chatbot: {
     voiceEnabled: false,
     voiceGreetingEnabled: true,
+    persistChatEnabled: true,
+    persistChatTtlMinutes: 30,
+    // Without this, the camera/upload popover menu has no background and looks transparent.
+    inputBar: {
+      menuPanel: {
+        fontColor: '#000000',
+        fontColorDark: '#FFFFFF',
+        backgroundColor: '#FFFFFF',
+        backgroundColorDark: '#171717',
+        border: {
+          width: 1,
+          color: '#D4D4D4',
+          colorDark: '#404040',
+        },
+      },
+    },
   },
   breakpoints: {
     mobile: {

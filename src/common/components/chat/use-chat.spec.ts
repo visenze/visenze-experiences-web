@@ -138,6 +138,8 @@ describe('use-chat', () => {
     mockFetchEventSource.mockReset();
     mockVoiceState.status = 'idle';
     mockVoiceState.liveTranscript = '';
+    // Otherwise a test can read a resumable chat id left in localStorage by a previous test.
+    localStorage.clear();
   });
 
   afterEach(() => {
@@ -642,6 +644,303 @@ describe('use-chat', () => {
       expect(hook.result.current.breadcrumbs).toHaveLength(1);
       expect(hook.result.current.breadcrumbs[0].requestId).toBe('req-1');
       expect(hook.result.current.activeBreadcrumbId).toBe('req-1');
+    });
+  });
+
+  describe('session persistence', () => {
+    const originalFetch = global.fetch;
+
+    // persistChatEnabled defaults to disabled — opt in here rather than at every call site.
+    const renderPersistentChat = (
+      visearchOverrides: Partial<ViSearchClient> = {},
+      chatbotOverrides: Partial<NonNullable<WidgetConfig['customizations']['chatbot']>> = {},
+    ): ReturnType<typeof renderChat> => renderChat(visearchOverrides, {
+      chatbot: { persistChatEnabled: true, ...chatbotOverrides },
+    });
+
+    beforeEach(() => {
+      // Safe default so a test that never expects the endpoint to be hit still has a mock.
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: (): Promise<unknown> => Promise.resolve({ result: { messages: [] } }),
+      } as unknown as Response);
+    });
+
+    afterEach(() => {
+      global.fetch = originalFetch;
+    });
+
+    const mockHistoryResponse = (messages: unknown[]): void => {
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: (): Promise<unknown> => Promise.resolve({ result: { messages } }),
+      } as unknown as Response);
+    };
+
+    it('resumes a conversation left open within the TTL window as soon as the widget mounts, refetching its history instead of generating a new chat id', async () => {
+      const { hook } = renderPersistentChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      const chatIdBeforeRefresh = hook.result.current.chatId;
+      expect(chatIdBeforeRefresh).toBeTruthy();
+      act(() => {
+        hook.result.current.close();
+      });
+      hook.unmount();
+
+      mockHistoryResponse([
+        { reqid: 'req-1', type: 'human', message: 'find me a dress' },
+        { reqid: 'req-1', type: 'ai', message: 'Sure, here you go!' },
+      ]);
+
+      // A brand-new hook instance for the same placementId, as if the page had just reloaded.
+      const remount = renderPersistentChat();
+      expect(remount.hook.result.current.chatId).toBe(chatIdBeforeRefresh);
+      // A resumed session must not generate a new chat id.
+      expect(remount.mockVisearchClient.generateUuid).not.toHaveBeenCalled();
+      // The dialog itself stays closed until the user opens it.
+      expect(remount.hook.result.current.isOpen).toBe(false);
+
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(remount.hook.result.current.chats).toEqual([
+        expect.objectContaining({ author: 'user', messages: ['find me a dress'] }),
+        expect.objectContaining({ author: 'bot', messages: ['Sure, here you go!'] }),
+      ]);
+      expect(remount.hook.result.current.allowUserInput).toBe(true);
+      expect(remount.hook.result.current.isWaiting).toBe(false);
+    });
+
+    it('restores products from history even though the chat-history endpoint appends " - Product Title" inside the [[pid]] token, unlike the live SSE stream\'s bare pid', async () => {
+      const { hook } = renderPersistentChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      hook.unmount();
+
+      // The stored message embeds "pid - Title" inside the token, unlike the live stream's bare pid.
+      mockHistoryResponse([
+        { reqid: 'req-1', type: 'human', message: 'find me running shoes' },
+        {
+          reqid: 'req-1',
+          type: 'ai',
+          message: 'Here is a great option.\n\n[[NE_234222-0054 - RUNFALCON 2.0]]\n\nHope that helps!',
+          products: [
+            {
+              product_id: 'NE_234222-0054',
+              main_image_url: 'https://example.com/shoe.jpg',
+              data: { title: 'RUNFALCON 2.0', price: { currency: 'BHD', value: 37 } },
+            },
+          ],
+        },
+      ]);
+      const remount = renderPersistentChat();
+
+      await act(async () => {
+        await Promise.resolve();
+      });
+      const productsChat = remount.hook.result.current.chats.find((c) => c.author === 'products');
+      expect(productsChat?.products).toEqual([
+        expect.objectContaining({ product_id: 'NE_234222-0054', im_url: 'https://example.com/shoe.jpg' }),
+      ]);
+      expect(remount.hook.result.current.breadcrumbs).toHaveLength(1);
+      expect(remount.hook.result.current.activeBreadcrumbId).toBe('req-1');
+    });
+
+    it('restores the last message\'s quick-reply suggestion chips, same as a live completed turn would', async () => {
+      const { hook } = renderPersistentChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      hook.unmount();
+
+      mockHistoryResponse([
+        { reqid: 'req-1', type: 'human', message: 'find me running shoes' },
+        {
+          reqid: 'req-1',
+          type: 'ai',
+          message: 'Here are some options.\n\n((Show me in black))\n((Show me in white))',
+        },
+      ]);
+      const remount = renderPersistentChat();
+
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(remount.hook.result.current.suggestions).toEqual(['Show me in black', 'Show me in white']);
+    });
+
+    it('does not restore suggestions when the conversation\'s last turn was a user message never replied to', async () => {
+      const { hook } = renderPersistentChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      hook.unmount();
+
+      mockHistoryResponse([
+        { reqid: 'req-1', type: 'human', message: 'find me running shoes' },
+        { reqid: 'req-1', type: 'ai', message: 'Here are some options.\n\n((Show me in black))' },
+        { reqid: 'req-2', type: 'human', message: 'anything cheaper?' },
+      ]);
+      const remount = renderPersistentChat();
+
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(remount.hook.result.current.suggestions).toEqual([]);
+    });
+
+    it('does not resume a conversation once its TTL has expired, leaving open() to generate a fresh chat id', () => {
+      const { hook } = renderPersistentChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      hook.unmount();
+
+      jest.setSystemTime(Date.now() + 31 * 60 * 1000);
+      const remount = renderPersistentChat({
+        generateUuid: jest.fn((cb: (uuid: string) => void) => cb('fresh-chat-id')),
+      });
+      // Nothing worth restoring, so fetch/chatId were never touched.
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(remount.hook.result.current.chatId).toBe('');
+
+      act(() => {
+        remount.hook.result.current.open();
+      });
+      expect(remount.hook.result.current.chatId).toBe('fresh-chat-id');
+    });
+
+    it('newChat mints a fresh chat id and overwrites the stored one, so a later mount never resumes the old conversation', async () => {
+      let counter = 0;
+      const { hook } = renderPersistentChat({
+        generateUuid: jest.fn((cb: (uuid: string) => void) => {
+          counter += 1;
+          cb(`chat-id-${counter}`);
+        }),
+      });
+      act(() => {
+        hook.result.current.open();
+      });
+      expect(hook.result.current.chatId).toBe('chat-id-1');
+
+      act(() => {
+        hook.result.current.newChat();
+      });
+      expect(hook.result.current.chatId).toBe('chat-id-2');
+      hook.unmount();
+
+      // Real history under the new id, so the restore succeeds rather than clearing it.
+      mockHistoryResponse([
+        { reqid: 'req-1', type: 'human', message: 'hello again' },
+        { reqid: 'req-1', type: 'ai', message: 'Hi there!' },
+      ]);
+      const remount = renderPersistentChat({
+        generateUuid: jest.fn((cb: (uuid: string) => void) => cb('should-not-be-used')),
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(remount.hook.result.current.chatId).toBe('chat-id-2');
+      expect(remount.mockVisearchClient.generateUuid).not.toHaveBeenCalled();
+    });
+
+    it('falls back to a fresh session when the history fetch fails, instead of leaving the surface stuck loading', async () => {
+      const { hook } = renderPersistentChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      hook.unmount();
+
+      global.fetch = jest.fn().mockRejectedValue(new Error('network error'));
+      const remount = renderPersistentChat();
+      expect(remount.hook.result.current.isWaiting).toBe(true);
+
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(remount.hook.result.current.isWaiting).toBe(false);
+      expect(remount.hook.result.current.allowUserInput).toBe(true);
+      expect(remount.hook.result.current.chats).toEqual([]);
+      // Without clearing the dead id, reopen() would keep resuming this blank surface.
+      expect(remount.hook.result.current.chatId).toBe('');
+      expect(localStorage.length).toBe(0);
+    });
+
+    it('clears the resumable chat id when the restore finds no real history to resume (e.g. a session that was opened but never messaged), so a later open() mints a fresh one instead of resuming a blank surface', async () => {
+      const { hook } = renderPersistentChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      hook.unmount();
+
+      // The backend has no messages under this id — e.g. opened but never messaged.
+      mockHistoryResponse([]);
+      const remount = renderPersistentChat({
+        generateUuid: jest.fn((cb: (uuid: string) => void) => cb('fresh-chat-id')),
+      });
+
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(remount.hook.result.current.chatId).toBe('');
+      expect(localStorage.length).toBe(0);
+
+      act(() => {
+        remount.hook.result.current.open();
+      });
+      expect(remount.hook.result.current.chatId).toBe('fresh-chat-id');
+    });
+
+    it('never touches localStorage or the history endpoint when persistChatEnabled is false', () => {
+      const { hook } = renderChat({}, { chatbot: { persistChatEnabled: false } });
+      act(() => {
+        hook.result.current.open();
+      });
+      expect(localStorage.length).toBe(0);
+      act(() => {
+        hook.result.current.close();
+      });
+      expect(localStorage.length).toBe(0);
+      hook.unmount();
+
+      const remount = renderChat({}, { chatbot: { persistChatEnabled: false } });
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(remount.hook.result.current.chatId).toBe('');
+      expect(remount.hook.result.current.chats).toEqual([]);
+    });
+
+    it('defaults to disabled at the shared-hook level, so a widget that never sets persistChatEnabled gets none of this behavior', () => {
+      // Plain renderChat(), not renderPersistentChat() — the "widget never opted in" case.
+      const { hook } = renderChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      expect(localStorage.length).toBe(0);
+      hook.unmount();
+
+      const remount = renderChat();
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(remount.hook.result.current.chatId).toBe('');
+    });
+
+    it('honors a configured persistChatTtlMinutes instead of the 30-minute default', () => {
+      const { hook } = renderPersistentChat({}, { persistChatTtlMinutes: 5 });
+      act(() => {
+        hook.result.current.open();
+      });
+      hook.unmount();
+
+      // 6 minutes on a 5-minute TTL: already expired, unlike the 30-minute default.
+      jest.setSystemTime(Date.now() + 6 * 60 * 1000);
+      const remount = renderPersistentChat(
+        { generateUuid: jest.fn((cb: (uuid: string) => void) => cb('fresh-chat-id')) },
+        { persistChatTtlMinutes: 5 },
+      );
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(remount.hook.result.current.chatId).toBe('');
     });
   });
 });

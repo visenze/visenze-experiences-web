@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - shopping-assistant: New floating popup layout (`customizations.popup.layout: 'floating'`) — the widget opens as a small card docked to the bottom-right corner instead of a full-height side panel, and collapses to a circular launcher bubble when closed. The card can be dragged and snaps to the nearest corner of the viewport. Card size and header styling (solid or gradient background, per light/dark mode, optional avatar) are configurable via `customizations.popup.floating`. The existing full-height panel behavior is unchanged and remains the default (`layout: 'docked'`).
 - shopping-assistant, ai-search-launcher, embedded-shopping-assistant: The small avatar bubble shown next to chat messages (bot and user) can now be hidden via `customizations.chatbot.hideAvatar`.
+- shopping-assistant: A returning visitor's conversation can now be resumed instead of always starting fresh. Only the conversation id is kept client-side (in `localStorage`, scoped per placement) with a sliding TTL; the actual messages are always re-fetched from the backend's chat-history endpoint as soon as the widget mounts. Controlled via `customizations.chatbot.persistChatEnabled` (default disabled; shopping-assistant enables it by default) and `customizations.chatbot.persistChatTtlMinutes` (default `30`).
 
 ### Changed
 

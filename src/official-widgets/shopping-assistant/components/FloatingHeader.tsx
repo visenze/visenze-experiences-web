@@ -3,6 +3,7 @@ import type { FC } from 'react';
 import { useIntl } from 'react-intl';
 import type { UseChatResult } from '../../../common/components/chat/use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
+import ChevronDownIcon from '../../../common/icons/ChevronDownIcon';
 import CloseIcon from '../../../common/icons/CloseIcon';
 import PlusCircleIcon from '../../../common/icons/PlusCircleIcon';
 import SpeakerIcon from '../../../common/icons/SpeakerIcon';
@@ -19,6 +20,9 @@ interface FloatingHeaderProps {
 
 const FloatingHeader: FC<FloatingHeaderProps> = ({ darkMode, customizations, chat, onNewChat, onMinimize, titleId }) => {
   const intl = useIntl();
+  // With persistence on, minimizing never discards the conversation — a chevron communicates
+  // "collapse" better than the close (X) icon does here.
+  const isPersistentChat = customizations.chatbot?.persistChatEnabled === true;
   const floatingHeader = customizations.popup?.floating?.header;
   const background = (darkMode ? floatingHeader?.backgroundColorDark : floatingHeader?.backgroundColor) || '#4F46E5';
   const gradientTo = darkMode ? floatingHeader?.gradientToColorDark : floatingHeader?.gradientToColor;
@@ -64,7 +68,11 @@ const FloatingHeader: FC<FloatingHeaderProps> = ({ darkMode, customizations, cha
           title={intl.formatMessage({ id: 'a11yMinimizeShoppingAssistant' })}
           className={cn('border-0 bg-transparent p-0', FOCUS_VISIBLE_CLASSES)}
           onClick={onMinimize}>
-          <CloseIcon className='size-6 cursor-pointer' color='currentColor' />
+          {isPersistentChat ? (
+            <ChevronDownIcon className='size-6 cursor-pointer' color='currentColor' strokeWidth={2.5} />
+          ) : (
+            <CloseIcon className='size-6 cursor-pointer' color='currentColor' />
+          )}
         </button>
       </div>
     </div>

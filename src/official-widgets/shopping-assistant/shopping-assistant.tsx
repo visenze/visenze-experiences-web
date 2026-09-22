@@ -162,6 +162,13 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       return;
     }
     setDialogVisible(true);
+    // A truthy chatId means there's a session to resume (from earlier this instance, or restored
+    // from localStorage on mount) — reopen() it instead of open(), which would reset everything
+    // and mint a fresh id.
+    if (chat.chatId) {
+      chat.reopen();
+      return;
+    }
     chat.open();
     playOpeningSequence();
   };

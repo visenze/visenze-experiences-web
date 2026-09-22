@@ -76,7 +76,10 @@ const FileDropzone: FC<FileDropzoneProps> = ({ onImageUpload, children, name, ar
   return (
     <div
       className={`${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} h-full ${FOCUS_VISIBLE_CLASSES}`}
-      {...getRootProps({ tabIndex: -1 })}>
+      // role="button": the <input type="file"> below is a sibling of `children`, not an
+      // ancestor, so callers walking up via target.closest('button, ..., [role="button"]')
+      // (e.g. shopping-assistant.tsx's drag handler) can only recognize this by role.
+      {...getRootProps({ tabIndex: -1, role: 'button' })}>
       <input
         {...getInputProps({ 'aria-label': ariaLabel, 'tabIndex': 0 })}
         disabled={disabled}

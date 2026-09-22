@@ -44,4 +44,32 @@ describe('FloatingHeader', () => {
     fireEvent.click(getByLabelText(DEFAULT_TEXTS['en']['a11yEnableVoiceReading']));
     expect(toggleVoiceReading).toHaveBeenCalledTimes(1);
   });
+
+  describe('minimize icon', () => {
+    // No data-testid on either icon, so tell them apart by their SVG path data.
+    const getMinimizeIconPath = (container: HTMLElement): string | null => {
+      const selector = `[aria-label="${DEFAULT_TEXTS['en']['a11yMinimizeShoppingAssistant']}"] svg path`;
+      return container.querySelector(selector)?.getAttribute('d') ?? null;
+    };
+
+    it('shows the chevron-down icon when customizations.chatbot.persistChatEnabled is true', () => {
+      const customizations = { ...DEFAULT_CUSTOMIZATIONS, chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, persistChatEnabled: true } };
+      const { container } = render(
+        <IntlProvider locale='en' messages={DEFAULT_TEXTS['en']}>
+          <FloatingHeader darkMode={false} customizations={customizations} chat={baseChat} onNewChat={jest.fn()} onMinimize={jest.fn()} titleId='title-id' />
+        </IntlProvider>,
+      );
+      expect(getMinimizeIconPath(container)).toBe('m19.5 8.25-7.5 7.5-7.5-7.5');
+    });
+
+    it('shows the close (X) icon when customizations.chatbot.persistChatEnabled is not true', () => {
+      const customizations = { ...DEFAULT_CUSTOMIZATIONS, chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, persistChatEnabled: false } };
+      const { container } = render(
+        <IntlProvider locale='en' messages={DEFAULT_TEXTS['en']}>
+          <FloatingHeader darkMode={false} customizations={customizations} chat={baseChat} onNewChat={jest.fn()} onMinimize={jest.fn()} titleId='title-id' />
+        </IntlProvider>,
+      );
+      expect(getMinimizeIconPath(container)).toBe('M6 18 18 6M6 6l12 12');
+    });
+  });
 });

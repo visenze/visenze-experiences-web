@@ -38,6 +38,7 @@ const createMockChat = (overrides: Partial<UseChatResult> = {}): UseChatResult =
   typewriterText: '',
   hasStartedChat: true,
   isOpen: true,
+  chatId: 'test-chat-id',
   open: jest.fn(),
   close: jest.fn(),
   reopen: jest.fn(),
