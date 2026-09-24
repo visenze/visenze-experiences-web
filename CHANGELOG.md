@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- shopping-assistant: A returning visitor's conversation can now be resumed instead of always starting fresh. Only the conversation id is kept client-side (in `localStorage`, scoped per placement) with a sliding TTL; the actual messages are always re-fetched from the backend's chat-history endpoint as soon as the widget mounts. Controlled via `customizations.chatbot.persistChatEnabled` (default disabled; shopping-assistant enables it by default) and `customizations.chatbot.persistChatTtlMinutes` (default `30`).
+
 
 ### Fixed
 

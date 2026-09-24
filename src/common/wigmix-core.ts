@@ -1700,6 +1700,22 @@ export interface WidgetConfig {
         /** Divider border between the chat pane and the products pane. @since 1.0.30 */
         divider?: Border;
       };
+      /**
+       * Resumes a returning visitor's conversation instead of always starting fresh. Only the
+       * chat id (plus a sliding TTL, see `persistChatTtlMinutes`) is kept in `localStorage`;
+       * messages are always re-fetched from the backend's chat-history endpoint on mount.
+       * Defaults to disabled (shopping-assistant enables it by default).
+       *
+       * @since 1.0.34
+       */
+      persistChatEnabled?: boolean;
+      /**
+       * Minutes a conversation stays resumable after the last activity (open/send/close) before
+       * `persistChatEnabled` starts a fresh one instead. Defaults to 30.
+       *
+       * @since 1.0.34
+       */
+      persistChatTtlMinutes?: number;
     };
     /**
      * Configuration specific to the AI Search Launcher widget's entry points:

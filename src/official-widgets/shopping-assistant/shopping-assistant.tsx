@@ -3,6 +3,7 @@ import { cn } from '@heroui/theme';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { type FC, type ReactElement, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import type { Product } from 'visearch-javascript-sdk';
 import CameraCaptureDrawer from './components/CameraCaptureDrawer';
 import type { Chat } from './components/ChatWindow';
 import ChatWindow from './components/ChatWindow';
@@ -37,6 +38,57 @@ interface CompletedResponse {
   products: ProcessedProduct[];
 }
 
+// History-endpoint product tokens are `[[pid - Title]]`, unlike the live stream's bare `[[pid]]`
+// — strip the title suffix so stripTokensForDisplay/resolveProducts can still match them.
+const normalizeHistoryProductTokens = (text: string): string => (
+  text.replace(/\[\[([^\]]+)]]/g, (_match, tokenContent: string) => `[[${tokenContent.trim().split(/\s/)[0]}]]`)
+);
+
+const CHAT_ID_STORAGE_PREFIX = 'visenze_shopping_assistant_chat_id_';
+// Default for customizations.chatbot.persistChatTtlMinutes when unset.
+const DEFAULT_CHAT_ID_TTL_MINUTES = 30;
+
+interface StoredChatId {
+  chatId: string;
+  timestamp: number;
+}
+
+// Only the chat id (plus a sliding TTL) is stored client-side; messages are always re-fetched
+// from the backend on restore (see fetchChatHistory) so the UI can't drift from the server.
+const loadStoredChatId = (key: string, ttlMs: number): string | undefined => {
+  const raw = localStorage.getItem(key);
+  if (!raw) {
+    return undefined;
+  }
+  try {
+    const stored = JSON.parse(raw) as StoredChatId;
+    if (stored.chatId && stored.timestamp && Date.now() - stored.timestamp <= ttlMs) {
+      return stored.chatId;
+    }
+  } catch {
+    // Ignore a malformed value and fall back to a fresh session.
+  }
+  return undefined;
+};
+
+// Called on open/send/close to slide the TTL forward instead of expiring mid-conversation.
+const persistChatId = (key: string, chatId: string): void => {
+  const snapshot: StoredChatId = { chatId, timestamp: Date.now() };
+  localStorage.setItem(key, JSON.stringify(snapshot));
+};
+
+interface ChatHistoryMessage {
+  reqid: string;
+  type: string;
+  message: string;
+  products?: Product[];
+}
+
+interface RestoredChatSession {
+  chats: Chat[];
+  suggestions: string[];
+}
+
 interface ShoppingAssistantProps {
   renderModalWithoutPortal?: boolean;
 }
@@ -48,6 +100,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   // the chat SSE call below and the voice proxy call in useVoice.
   const manualEndpoint = getManualEndpoint(appSettings.placementId);
   const apiBase = resolveBaseEndpoint(appSettings, manualEndpoint);
+  const persistChatEnabled = customizations.chatbot?.persistChatEnabled === true;
+  const persistChatTtlMs = (customizations.chatbot?.persistChatTtlMinutes ?? DEFAULT_CHAT_ID_TTL_MINUTES) * 60 * 1000;
+  const chatIdStorageKey = `${CHAT_ID_STORAGE_PREFIX}${appSettings.placementId}`;
   const [dialogVisible, setDialogVisible] = useState(false);
   const [message, setMessage] = useState('');
   const [image, setImage] = useState<SearchImageOrPid | undefined>();
@@ -77,6 +132,10 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   // Bridges sendMessage (declared below) to onTranscript, since useVoiceReply is instantiated
   // before sendMessage exists (sendMessage itself needs the reply helpers useVoiceReply returns).
   const sendMessageRef = useRef<(text: string) => void>(() => {});
+  // Bridges closeDialog to the one-time registerWidgetCloser registration below: closeDialog is a
+  // useCallback keyed on chatId, so a directly-captured reference would freeze at whatever chatId
+  // was current on mount and never see later sessions when persisting the close-time TTL slide.
+  const closeDialogRef = useRef<() => void>(() => {});
 
   const {
     voiceEnabled,
@@ -161,6 +220,10 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   ): Promise<void> => {
     if (!messageToSend && !imageToSend) {
       return;
+    }
+    // Slides the resumable-session TTL forward, same as openDialog()/closeDialog().
+    if (persistChatEnabled && chatId) {
+      persistChatId(chatIdStorageKey, chatId);
     }
     setIsWaiting(true);
     setShowAllSuggestions(false);
@@ -311,6 +374,128 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     };
   });
 
+  // Re-fetches a previous conversation from the backend, given a chat id recovered from
+  // localStorage. Rebuilds `chats` with the same helpers the live stream uses, so the two paths
+  // can't drift apart on how a response is displayed.
+  const fetchChatHistory = async (chatIdToRestore: string): Promise<RestoredChatSession | null> => {
+    let uid = '';
+    let sid = '';
+    widgetClient.visearch.getUid((uidResp) => { uid = uidResp; });
+    widgetClient.visearch.getSid((sidResp) => { sid = sidResp; });
+    const params = new URLSearchParams({
+      app_key: appSettings.appKey,
+      placement_id: appSettings.placementId.toString(),
+      chat_id: chatIdToRestore,
+      va_uid: uid,
+      va_sid: sid,
+      attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
+    });
+    const historyPath = usesCloudPaths(appSettings, manualEndpoint)
+      ? '/v1/chat/history'
+      : '/v1/multisearch/chat/history';
+    const res = await fetch(`${apiBase}${historyPath}?${params.toString()}`);
+    if (!res.ok) {
+      return null;
+    }
+    const json = await res.json();
+    const messages = (json?.result?.messages || []) as ChatHistoryMessage[];
+    if (messages.length === 0) {
+      return null;
+    }
+
+    const restoredChats: Chat[] = [];
+    // Mirrors the live path: the LAST message wins — a trailing human turn leaves none, a
+    // trailing ai reply's own ((suggestion)) chips apply.
+    let restoredSuggestions: string[] = [];
+
+    messages.forEach((historyMessage) => {
+      if (historyMessage.type === 'human') {
+        restoredSuggestions = [];
+        restoredChats.push({
+          chatId: chatIdToRestore,
+          requestId: historyMessage.reqid,
+          author: 'user',
+          messages: [historyMessage.message],
+        });
+        return;
+      }
+
+      const normalizedText = normalizeHistoryProductTokens(historyMessage.message);
+      const historyProducts = (historyMessage.products || []).map((p) => getFlattenProduct(p));
+      const resolvedProducts = resolveProducts(normalizedText, historyProducts);
+      const text = stripTokensForDisplay(normalizedText).trim();
+      if (text) {
+        restoredChats.push({
+          chatId: chatIdToRestore,
+          requestId: historyMessage.reqid,
+          author: 'bot',
+          messages: [text],
+          products: [],
+        });
+      }
+      if (resolvedProducts.length) {
+        restoredChats.push({
+          chatId: chatIdToRestore,
+          requestId: historyMessage.reqid,
+          author: 'products',
+          messages: [],
+          products: resolvedProducts,
+        });
+      }
+      restoredSuggestions = extractSuggestions(normalizedText);
+    });
+
+    return {
+      chats: restoredChats,
+      suggestions: restoredSuggestions,
+    };
+  };
+
+  // Clears isWaiting/allowUserInput regardless of outcome, so a failed or empty fetch doesn't get
+  // stuck looking like a reply is still streaming in.
+  const restoreChatHistory = (chatIdToRestore: string): void => {
+    fetchChatHistory(chatIdToRestore)
+      .then((restored) => {
+        if (restored) {
+          setChats(restored.chats);
+          setSuggestions(restored.suggestions);
+          return;
+        }
+        // Nothing to resume (e.g. opened but never messaged, so no backend history) — clear the
+        // id so openDialog's "chatId truthy -> resume" check doesn't keep resuming a blank
+        // surface.
+        setChatId('');
+        localStorage.removeItem(chatIdStorageKey);
+      })
+      .catch((err: unknown) => {
+        console.error(err);
+        setChatId('');
+        localStorage.removeItem(chatIdStorageKey);
+      })
+      .finally(() => {
+        setIsWaiting(false);
+        setAllowUserInput(true);
+      });
+  };
+
+  // Runs once on mount so a returning visitor's chatId (and chats, once fetched) is already in
+  // place by the time they open the dialog. No valid stored id just leaves this untouched.
+  useEffect(() => {
+    if (!persistChatEnabled) {
+      return;
+    }
+    const storedChatId = loadStoredChatId(chatIdStorageKey, persistChatTtlMs);
+    if (!storedChatId) {
+      return;
+    }
+    setChatId(storedChatId);
+    persistChatId(chatIdStorageKey, storedChatId);
+    setIsWaiting(true);
+    setAllowUserInput(false);
+    restoreChatHistory(storedChatId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (voiceStatus === 'recording' || voiceStatus === 'transcribing') {
       setMessage(liveTranscript);
@@ -347,10 +532,25 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const closeDialog = useCallback((): void => {
     setDialogVisible(false);
     triggerButtonRef.current?.focus();
-  }, []);
+    // Slides the resumable-session TTL forward so a reopened session is still within the window.
+    if (persistChatEnabled && chatId) {
+      persistChatId(chatIdStorageKey, chatId);
+    }
+  }, [persistChatEnabled, chatId, chatIdStorageKey]);
+
+  useEffect(() => {
+    closeDialogRef.current = closeDialog;
+  }, [closeDialog]);
 
   const openDialog = (): void => {
     if (dialogVisible) {
+      return;
+    }
+    // A truthy chatId means there's a session to resume (from earlier this instance, or restored
+    // from localStorage on mount) — reuse it instead of minting a fresh one and replaying the
+    // opening greeting.
+    if (chatId) {
+      setDialogVisible(true);
       return;
     }
     const shouldSpeakOpening = shouldSpeakReply();
@@ -376,6 +576,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setDialogVisible(true);
     widgetClient.visearch.generateUuid((uuid) => {
       setChatId(uuid);
+      if (persistChatEnabled) {
+        persistChatId(chatIdStorageKey, uuid);
+      }
       renderChat(1, uuid);
     });
   };
@@ -413,6 +616,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     };
     widgetClient.visearch.generateUuid((uuid) => {
       setChatId(uuid);
+      if (persistChatEnabled) {
+        persistChatId(chatIdStorageKey, uuid);
+      }
       renderChat(1, uuid);
     });
   };
@@ -647,7 +853,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       setWidgetOpenTrigger(Math.random());
     });
     widgetClient.registerWidgetCloser(() => {
-      closeDialog();
+      closeDialogRef.current();
     });
     widgetClient.sendChatMessage = ((msg, img): void => {
       setSendChatTrigger([msg, img]);
