@@ -141,6 +141,7 @@ describe('similar-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           im_url: 'test-imurl',
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -184,6 +185,7 @@ describe('similar-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           im_url: 'test-imurl',
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -217,6 +219,7 @@ describe('similar-search', () => {
     const productMultisearchOutfitRecommendations = jest.fn().mockImplementation((params, handler) => {
       expect(params).toEqual({
         im_url: 'test-imurl',
+        sys_attrs_to_get: '',
         return_fields_mapping: true,
         return_query_sys_meta: true,
       });
@@ -254,6 +257,7 @@ describe('similar-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           im_url: 'test-imurl',
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -314,6 +318,7 @@ describe('similar-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           im_url: 'test-imurl',
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -492,6 +497,7 @@ describe('similar-search', () => {
             page: 1,
             limit: 20,
             get_all_fl: true,
+            sys_attrs_to_get: '',
             return_fields_mapping: true,
             return_query_sys_meta: true,
           });

@@ -11,7 +11,7 @@ import { QUERY_MAX_CHARACTER_LENGTH } from '../../common/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
-import { getFlattenProducts } from '../../common/utils';
+import { getBestImageSysAttrsToGet, getFlattenProducts } from '../../common/utils';
 
 const FOCUS_VISIBLE_CLASSES = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-300';
 // Same ring, but drawn inward: the search bar wraps its button/input in an `overflow-hidden`
@@ -139,6 +139,7 @@ const RecommendMe: FC<RecommendMeProps> = ({ productId }) => {
       ...searchSettings,
     };
     params['pid'] = productId;
+    params['sys_attrs_to_get'] = getBestImageSysAttrsToGet(customizations);
 
     if (isComplementary) {
       widgetClient.multisearchComplementary(params, handleSuccess, handleError);

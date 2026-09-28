@@ -146,6 +146,7 @@ describe('slide-out-drawer', () => {
         expect(params).toEqual({
           pid: 'pid-1',
           qinfo: true,
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -190,6 +191,7 @@ describe('slide-out-drawer', () => {
         expect(params).toEqual({
           pid: 'pid-1',
           qinfo: true,
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -224,6 +226,7 @@ describe('slide-out-drawer', () => {
         expect(params).toEqual({
           pid: 'pid-1',
           qinfo: true,
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -286,6 +289,7 @@ describe('slide-out-drawer', () => {
         expect(params).toEqual({
           pid: 'pid-1',
           qinfo: true,
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });

@@ -1,4 +1,7 @@
 export const QUERY_MAX_CHARACTER_LENGTH = 500;
+// MS APIs surface best images via these sys attributes (legacy API uses show_best_product_images instead).
+export const BEST_PRODUCT_IMAGE_SYS_ATTR = 'best_prod_img_url';
+export const BEST_OUTFIT_IMAGE_SYS_ATTR = 'best_outfit_img_url';
 export const LEGACY_ENDPOINT = 'https://multimodal.search.rezolve.com';
 
 export const FOCUS_VISIBLE_CLASSES =

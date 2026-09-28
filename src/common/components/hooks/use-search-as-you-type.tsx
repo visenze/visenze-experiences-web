@@ -5,7 +5,7 @@ import type { SearchImage } from '../../types/image';
 import { isImageFile, isImageUrl } from '../../types/image';
 import type { ProcessedProduct } from '../../types/product';
 import { Actions, Category } from '../../types/tracking-constants';
-import { getFlattenProducts } from '../../utils';
+import { getBestImageSysAttrsToGet, getFlattenProducts } from '../../utils';
 
 interface SearchAsYouTypeProps {
   image: SearchImage | undefined;
@@ -24,7 +24,7 @@ const useSearchAsYouType = ({
   image,
 }: SearchAsYouTypeProps): SearchAsYouType => {
   const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
-  const { searchSettings } = widgetConfig;
+  const { searchSettings, customizations } = widgetConfig;
   const [productCount, setProductCount] = useState(0);
   const [searchAsYouTypeResults, setSearchAsYouTypeResults] = useState<ProcessedProduct[]>([]);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
@@ -67,6 +67,7 @@ const useSearchAsYouType = ({
     params['q'] = query;
     params['sayt'] = true;
     params['limit'] = 8;
+    params['sys_attrs_to_get'] = getBestImageSysAttrsToGet(customizations);
 
     if (image) {
       if (isImageUrl(image)) {
