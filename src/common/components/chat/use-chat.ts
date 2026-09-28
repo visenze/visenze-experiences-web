@@ -15,7 +15,7 @@ import { WidgetDataContext } from '../../types/contexts';
 import { isImageFile, isImageUrl, type SearchImageOrPid } from '../../types/image';
 import type { ProcessedProduct } from '../../types/product';
 import { Actions, Category } from '../../types/tracking-constants';
-import { getFlattenProduct } from '../../utils';
+import { getBestImageSysAttrsToGet, getFlattenProduct } from '../../utils';
 
 export interface Chat {
   chatId: string;
@@ -463,6 +463,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
       va_uid: uid,
       va_sid: sid,
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
+      sys_attrs_to_get: getBestImageSysAttrsToGet(customizations),
       chat_agent: customizations.chatbot?.chatAgent || 'shopping_closer_voice_v2',
     });
     // A gallery/preset image only ever reaches here as a URL (see ImageEntryScreen's gallery
@@ -636,6 +637,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
       va_uid: uid,
       va_sid: sid,
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
+      sys_attrs_to_get: getBestImageSysAttrsToGet(customizations),
     });
     const historyPath = usesCloudPaths(appSettings, manualEndpoint)
       ? '/v1/chat/history'

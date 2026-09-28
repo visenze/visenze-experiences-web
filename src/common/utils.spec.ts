@@ -21,6 +21,8 @@ import { WidgetBreakpoint } from './types/constants';
 import type { FacetType } from './types/constants';
 import type { WidgetConfig } from './wigmix-core';
 import {
+  getBestImageSysAttrsToGet,
+  getBestImageUrl,
   getFlattenProduct,
   getFlattenProducts,
   flattenBox,
@@ -91,6 +93,34 @@ describe('Utils - Common Utility Functions', () => {
         it('converts empty best_images array to undefined for consistency', () => {
           const product = createMockProduct({ best_images: [] });
           expect(getFlattenProduct(product).best_images).toBeUndefined();
+        });
+      });
+
+      describe('when product has MS API sys attrs instead of a best_images array', () => {
+        it('builds best_images from sys.best_prod_img_url', () => {
+          const product = createMockProduct({ sys: { best_prod_img_url: 'https://example.com/best-product.jpg' } });
+          const result = getFlattenProduct(product);
+          expect(result.best_images).toEqual([{ type: 'product', url: 'https://example.com/best-product.jpg', index: '' }]);
+        });
+
+        it('builds best_images from sys.best_outfit_img_url', () => {
+          const product = createMockProduct({ sys: { best_outfit_img_url: 'https://example.com/best-outfit.jpg' } });
+          const result = getFlattenProduct(product);
+          expect(result.best_images).toEqual([{ type: 'outfit', url: 'https://example.com/best-outfit.jpg', index: '' }]);
+        });
+
+        it('leaves best_images undefined when sys has neither best image attribute', () => {
+          const product = createMockProduct({ sys: {} });
+          expect(getFlattenProduct(product).best_images).toBeUndefined();
+        });
+
+        it('prefers the legacy best_images array over sys attrs when both are present', () => {
+          const bestImages = [{ type: 'product', url: 'https://example.com/legacy.jpg', index: '0' }];
+          const product = createMockProduct({
+            best_images: bestImages as any,
+            sys: { best_prod_img_url: 'https://example.com/sys-best.jpg' },
+          });
+          expect(getFlattenProduct(product).best_images).toEqual(bestImages);
         });
       });
     });
@@ -164,6 +194,89 @@ describe('Utils - Common Utility Functions', () => {
           const result = getFlattenProducts(products, true);
           expect(result).toHaveLength(1);
         });
+      });
+    });
+  });
+
+  /**
+   * Best Image Utilities
+   *
+   * Legacy product-search-by-id returns "best" images as a `best_images` array
+   * (via `show_best_product_images`); MS APIs (multisearch/complementary/outfit
+   * recommendations) return the same data as `sys.best_prod_img_url` /
+   * `sys.best_outfit_img_url` instead, requested via `sys_attrs_to_get`.
+   */
+  describe('Best Image Utilities', () => {
+    describe('getBestImageUrl', () => {
+      it('returns undefined for an undefined result', () => {
+        expect(getBestImageUrl(undefined, 'product')).toBeUndefined();
+      });
+
+      it('reads the MS sys attribute for the product type', () => {
+        const product = { product_id: 'p1', main_image_url: '', data: {}, sys: { best_prod_img_url: 'https://example.com/best-product.jpg' } };
+        expect(getBestImageUrl(product, 'product')).toBe('https://example.com/best-product.jpg');
+      });
+
+      it('reads the MS sys attribute for the outfit type', () => {
+        const product = { product_id: 'p1', main_image_url: '', data: {}, sys: { best_outfit_img_url: 'https://example.com/best-outfit.jpg' } };
+        expect(getBestImageUrl(product, 'outfit')).toBe('https://example.com/best-outfit.jpg');
+      });
+
+      it('returns undefined when the sys attribute is missing', () => {
+        const product = { product_id: 'p1', main_image_url: '', data: {}, sys: {} };
+        expect(getBestImageUrl(product, 'product')).toBeUndefined();
+      });
+
+      it('returns undefined when the sys attribute is not a string', () => {
+        const product = { product_id: 'p1', main_image_url: '', data: {}, sys: { best_prod_img_url: 123 } };
+        expect(getBestImageUrl(product, 'product')).toBeUndefined();
+      });
+
+      it('prefers the legacy best_images array over sys when both are present', () => {
+        const product = {
+          product_id: 'p1',
+          main_image_url: '',
+          data: {},
+          best_images: [{ type: 'product', url: 'https://example.com/legacy-best.jpg', index: '0' }],
+          sys: { best_prod_img_url: 'https://example.com/sys-best.jpg' },
+        };
+        expect(getBestImageUrl(product, 'product')).toBe('https://example.com/legacy-best.jpg');
+      });
+    });
+
+    describe('getBestImageSysAttrsToGet', () => {
+      const baseCustomizations = {} as WidgetConfig['customizations'];
+
+      it('requests nothing when no image config is set', () => {
+        expect(getBestImageSysAttrsToGet(baseCustomizations)).toBe('');
+      });
+
+      it('adds best_prod_img_url when mainImage/hoverImage are set to best_product', () => {
+        const customizations = {
+          productCard: { images: { mainImage: 'best_product', hoverImage: 'best_product' } },
+        } as WidgetConfig['customizations'];
+        expect(getBestImageSysAttrsToGet(customizations)).toBe('best_prod_img_url');
+      });
+
+      it('adds best_outfit_img_url when mainImage is set to best_outfit', () => {
+        const customizations = {
+          productCard: { images: { mainImage: 'best_outfit' } },
+        } as WidgetConfig['customizations'];
+        expect(getBestImageSysAttrsToGet(customizations)).toBe('best_outfit_img_url');
+      });
+
+      it('adds best_outfit_img_url when hoverImage is set to best_outfit', () => {
+        const customizations = {
+          productCard: { images: { mainImage: 'main', hoverImage: 'best_outfit' } },
+        } as WidgetConfig['customizations'];
+        expect(getBestImageSysAttrsToGet(customizations)).toBe('best_outfit_img_url');
+      });
+
+      it('adds both when mainImage is best_product and hoverImage is best_outfit', () => {
+        const customizations = {
+          productCard: { images: { mainImage: 'best_product', hoverImage: 'best_outfit' } },
+        } as WidgetConfig['customizations'];
+        expect(getBestImageSysAttrsToGet(customizations)).toBe('best_prod_img_url,best_outfit_img_url');
       });
     });
   });

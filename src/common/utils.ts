@@ -1,15 +1,70 @@
 import type { CSSProperties } from 'react';
 import type { Product, ProductSearchResponseSuccess, ProductType } from 'visearch-javascript-sdk';
+import type { BestImage } from 'visearch-javascript-sdk/types/shared';
+import { BEST_OUTFIT_IMAGE_SYS_ATTR, BEST_PRODUCT_IMAGE_SYS_ATTR } from './constants';
 import type { CroppedBox } from './types/box';
 import type { ProcessedProduct } from './types/product';
 import { FacetType, type WidgetBreakpoint } from './types/constants';
 import type { WidgetConfig } from './wigmix-core';
 
+const SYS_ATTR_BY_TYPE = {
+  product: BEST_PRODUCT_IMAGE_SYS_ATTR,
+  outfit: BEST_OUTFIT_IMAGE_SYS_ATTR,
+} as const;
+
+// The old product-search-by-id API returns best images as a `best_images` array (via
+// `show_best_product_images`), while MS APIs (multisearch/complementary/outfit recommendations)
+// return them as `sys.best_prod_img_url` / `sys.best_outfit_img_url` (via `sys_attrs_to_get`,
+// requested by getBestImageSysAttrsToGet below). Reading a sys key the request never asked for
+// simply finds nothing, so this needs no gating on what was actually requested.
+export const getBestImageUrl = (result: Product | undefined, type: 'product' | 'outfit'): string | undefined => {
+  if (!result) {
+    return undefined;
+  }
+  const fromBestImages = result.best_images?.find((bestImage) => bestImage.type === type)?.url;
+  if (fromBestImages) {
+    return fromBestImages;
+  }
+  const sysValue = result.sys?.[SYS_ATTR_BY_TYPE[type]];
+  return typeof sysValue === 'string' ? sysValue : undefined;
+};
+
+const getBestImages = (result: Product): BestImage[] | undefined => {
+  if (result.best_images?.length) {
+    return result.best_images;
+  }
+  const bestImages: BestImage[] = [];
+  const bestProductImageUrl = getBestImageUrl(result, 'product');
+  if (bestProductImageUrl) {
+    bestImages.push({ type: 'product', url: bestProductImageUrl, index: '' });
+  }
+  const bestOutfitImageUrl = getBestImageUrl(result, 'outfit');
+  if (bestOutfitImageUrl) {
+    bestImages.push({ type: 'outfit', url: bestOutfitImageUrl, index: '' });
+  }
+  return bestImages.length > 0 ? bestImages : undefined;
+};
+
+// MS request param: best_prod_img_url and best_outfit_img_url are each only requested when the
+// widget is actually configured to display that image source, since no MS-based widget needs
+// either otherwise.
+export const getBestImageSysAttrsToGet = (customizations: WidgetConfig['customizations']): string => {
+  const images = customizations.productCard?.images;
+  const attrs: string[] = [];
+  if (images?.mainImage === 'best_product' || images?.hoverImage === 'best_product') {
+    attrs.push(BEST_PRODUCT_IMAGE_SYS_ATTR);
+  }
+  if (images?.mainImage === 'best_outfit' || images?.hoverImage === 'best_outfit') {
+    attrs.push(BEST_OUTFIT_IMAGE_SYS_ATTR);
+  }
+  return attrs.join(',');
+};
+
 export const getFlattenProduct = (result: Product): ProcessedProduct => {
   return {
     im_url: result.main_image_url,
     product_id: result.product_id,
-    best_images: result.best_images?.length ? result.best_images : undefined,
+    best_images: getBestImages(result),
     ...result.data,
   };
 };

@@ -435,6 +435,7 @@ describe('search-bar', () => {
             q: 'jeans',
             sayt: true,
             limit: 8,
+            sys_attrs_to_get: '',
             return_fields_mapping: true,
             return_query_sys_meta: true,
           });

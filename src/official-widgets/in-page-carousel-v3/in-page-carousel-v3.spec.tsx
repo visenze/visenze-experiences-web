@@ -76,6 +76,7 @@ describe('in-page-carousel-v3', () => {
           sort_by: '',
           facets: ['price', 'brand'],
           facets_show_count: true,
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -104,6 +105,7 @@ describe('in-page-carousel-v3', () => {
         sort_by: '',
         facets: ['price', 'brand'],
         facets_show_count: true,
+        sys_attrs_to_get: '',
         return_fields_mapping: true,
         return_query_sys_meta: true,
       });
@@ -138,6 +140,7 @@ describe('in-page-carousel-v3', () => {
           sort_by: '',
           facets: ['price', 'brand'],
           facets_show_count: true,
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });

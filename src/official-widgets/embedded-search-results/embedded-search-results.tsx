@@ -21,6 +21,7 @@ import { isImageUrl, isPid } from '../../common/types/image';
 import type { BoxData, ProcessedProduct } from '../../common/types/product';
 import { Actions, Category } from '../../common/types/tracking-constants';
 import {
+  getBestImageSysAttrsToGet,
   getFacets,
   getFilterQueries,
   getFlattenProducts,
@@ -174,6 +175,7 @@ const EmbeddedSearchResults: FC<EmbeddedSearchResultProps> = ({ textQuery, imUrl
       params['box'] = parseBox(boxData.box);
     }
     params['limit'] = customizations.results?.limit || 24;
+    params['sys_attrs_to_get'] = getBestImageSysAttrsToGet(customizations);
 
     widgetClient.multisearchRouter(params, (res) => {
       handleSuccess(res, shouldResetFacets);

@@ -10,7 +10,10 @@ import { WidgetDataContext } from '../../types/contexts';
 import { type FacetType, SortType } from '../../types/constants';
 import { Actions, Category } from '../../types/tracking-constants';
 import type { ProcessedProduct } from '../../types/product';
-import { getFacets, getFilterQueries, getFlattenProduct, getFlattenProducts, parseToProductTypes } from '../../utils';
+import {
+  getBestImageSysAttrsToGet, getBestImageUrl, getFacets, getFilterQueries, getFlattenProduct, getFlattenProducts,
+  parseToProductTypes,
+} from '../../utils';
 
 interface RecommendationMultiSearchProps {
   productId: string;
@@ -84,6 +87,7 @@ const useRecommendationMultiSearch = ({
     params['facets_show_count'] = true;
     params['limit'] = customizations.results?.limit || 20;
     params['pid'] = productId;
+    params['sys_attrs_to_get'] = getBestImageSysAttrsToGet(customizations);
 
     if (sortType === SortType.PRICE_HTL) {
       params['sort_by'] = `${productDetails['price']}:desc`;
@@ -122,9 +126,9 @@ const useRecommendationMultiSearch = ({
 
   const setModelOutfitAsReference = (): void => {
     if (response) {
-      const modelImage = response.product_info?.best_images?.find((bestImage) => bestImage.type === 'outfit');
-      if (modelImage) {
-        setReferenceImageUrl(modelImage.url);
+      const modelImageUrl = getBestImageUrl(response.product_info, 'outfit');
+      if (modelImageUrl) {
+        setReferenceImageUrl(modelImageUrl);
       }
     }
   };

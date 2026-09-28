@@ -147,6 +147,7 @@ describe('camera-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           im_url: 'test-imurl',
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -254,6 +255,7 @@ describe('camera-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           im_url: 'https://cdn.visenze.com/sample/sunset.jpg',
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -305,6 +307,7 @@ describe('camera-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           im_url: 'https://cdn.visenze.com/sample/sunset.jpg',
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -363,6 +366,7 @@ describe('camera-search', () => {
       productMultisearch: jest.fn().mockImplementation((params, handler) => {
         expect(params).toEqual({
           im_url: 'https://cdn.visenze.com/sample/sunset.jpg',
+          sys_attrs_to_get: '',
           return_fields_mapping: true,
           return_query_sys_meta: true,
         });
@@ -645,6 +649,7 @@ describe('camera-search', () => {
             page: 1,
             limit: 20,
             get_all_fl: true,
+            sys_attrs_to_get: '',
             return_fields_mapping: true,
             return_query_sys_meta: true,
           });

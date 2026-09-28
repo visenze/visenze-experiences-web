@@ -2,7 +2,7 @@ import type { Root } from 'react-dom/client';
 import ViSearch, { type ProductSearchResponse, type ViSearchClient } from 'visearch-javascript-sdk';
 import type { Primitive, WidgetClient, WidgetConfig, WidgetRenderStatus } from '../wigmix-core';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
-import { LEGACY_ENDPOINT } from '../constants';
+import { BEST_PRODUCT_IMAGE_SYS_ATTR, LEGACY_ENDPOINT } from '../constants';
 import { getManualEndpoint } from './endpoint';
 import { getManualMsApiId, MsApiType, resolveMsApiType } from './ms-api';
 
@@ -110,6 +110,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     visearch.productMultisearch(
       {
         ...params,
+        sys_attrs_to_get: params['sys_attrs_to_get'] ?? BEST_PRODUCT_IMAGE_SYS_ATTR,
         return_fields_mapping: true,
         return_query_sys_meta: true,
       },
@@ -127,6 +128,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     visearch.productMultisearchComplementary(
       {
         ...params,
+        sys_attrs_to_get: params['sys_attrs_to_get'] ?? BEST_PRODUCT_IMAGE_SYS_ATTR,
         return_fields_mapping: true,
         return_query_sys_meta: true,
       },
@@ -144,6 +146,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     visearch.productMultisearchOutfitRecommendations(
       {
         ...params,
+        sys_attrs_to_get: params['sys_attrs_to_get'] ?? BEST_PRODUCT_IMAGE_SYS_ATTR,
         return_fields_mapping: true,
         return_query_sys_meta: true,
       },

@@ -10,7 +10,7 @@ import { Actions, Category } from '../../types/tracking-constants';
 import type { SearchImageOrPid } from '../../types/image';
 import { isImageFile, isImageUrl, isPid } from '../../types/image';
 import type { BoxData, ProcessedProduct } from '../../types/product';
-import { getFlattenProducts, parseBox, parseToProductTypes } from '../../utils';
+import { getBestImageSysAttrsToGet, getFlattenProducts, parseBox, parseToProductTypes } from '../../utils';
 
 const getMetadata = (
   response: ProductSearchResponseSuccess,
@@ -91,7 +91,7 @@ const useImageMultisearch = ({
   routeByMsApiId,
 }: ImageMultisearchProps): ImageMultisearch => {
   const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
-  const { searchSettings } = widgetConfig;
+  const { searchSettings, customizations } = widgetConfig;
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
   const [imageId, setImageId] = useState<string>('');
   const [metadata, setMetadata] = useState<Record<string, any>>({});
@@ -150,6 +150,7 @@ const useImageMultisearch = ({
     if (image) {
       const product = getProductType(boxData);
       const params = getSearchParams(image, imageId, searchSettings, boxData, product);
+      params['sys_attrs_to_get'] = getBestImageSysAttrsToGet(customizations);
       if (routeByMsApiId) {
         widgetClient.multisearchRouter(params, handleImageSuccess, handleError);
       } else if (isComplementary) {
@@ -163,7 +164,7 @@ const useImageMultisearch = ({
   };
 
   const multisearchWithParams = (params: Record<string, any>): void => {
-    params = { ...params, ...searchSettings };
+    params = { ...params, ...searchSettings, sys_attrs_to_get: getBestImageSysAttrsToGet(customizations) };
     if (routeByMsApiId) {
       widgetClient.multisearchRouter(params, handleImageSuccess, handleError);
     } else if (isComplementary) {
