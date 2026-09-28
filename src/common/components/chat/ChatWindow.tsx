@@ -53,6 +53,13 @@ interface ChatWindowProps {
   // Deliberately narrower than a general "hide all user messages" toggle: every later row (any
   // idx > 0, or a non-'user' row at idx 0) always renders, regardless of this flag.
   hideInitialUserMessage?: boolean;
+  // Default 'bottom' (today's behavior, unchanged): auto-scrolls to follow new content (a new
+  // turn, streamed reply text, streamed products) as it arrives, like a live conversation. 'top'
+  // — used by embedded-shopping-assistant, whose single response is read top-down like an article
+  // — skips that auto-scroll entirely, so the container simply stays wherever it started (its
+  // initial scroll position) as content streams in below the fold; the manual "scroll to latest"
+  // button still works either way.
+  scrollAnchor?: 'top' | 'bottom';
 }
 
 // Matches ProductsPane's column breakpoints: a fixed 2-column grid looks fine on mobile widths,
@@ -135,6 +142,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
   isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions,
   streamingProducts = [], streamingRequestId = '', focusedProductId = null, wishlistPids, setIsInWishlist, pwPrefix,
   productDisplayMode = 'grid', activeRequestId = null, onSelectTurn, hideInitialUserMessage = false,
+  scrollAnchor = 'bottom',
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
@@ -229,12 +237,13 @@ const ChatWindow: FC<ChatWindowProps> = ({
 
   // Single effect covering every reason this pane's content can grow (a new chat turn, streamed
   // reply text, or streamed products) — merged from three near-identical effects so the scroll
-  // guard above only has to be reasoned about in one place.
+  // guard above only has to be reasoned about in one place. scrollAnchor === 'top' opts out
+  // entirely — see its own doc comment.
   useEffect(() => {
-    if (!focusedProductOwnsScroll) {
+    if (scrollAnchor === 'bottom' && !focusedProductOwnsScroll) {
       autoScrollToBottom();
     }
-  }, [chats.length, latestMessage, streamingProducts.length, focusedProductOwnsScroll]);
+  }, [chats.length, latestMessage, streamingProducts.length, focusedProductOwnsScroll, scrollAnchor]);
 
   // Memoized so ProductGrid receives the same `className`/`style` reference across renders that
   // don't actually change these inputs — otherwise every ProductGrid instance would see a

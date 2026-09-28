@@ -302,7 +302,16 @@ describe('shopping-assistant', () => {
     });
 
     it('slides the resumable-session TTL forward when closed via widgetClient.closeWidget(), not just the in-widget close button', () => {
-      const { widgetClient } = renderAssistant();
+      // persistChatEnabled defaults to disabled — opt in explicitly, same as the "never writes to
+      // localStorage" test above.
+      const { widgetConfig, widgetClient } = createTestClient();
+      widgetConfig.customizations = {
+        ...DEFAULT_CUSTOMIZATIONS,
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, persistChatEnabled: true },
+      };
+      testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
+        widgetConfig, widgetClient, locale: 'en', messages: texts['en'], rootElement: modalRoot,
+      });
 
       act(() => {
         widgetClient.openWidget('');

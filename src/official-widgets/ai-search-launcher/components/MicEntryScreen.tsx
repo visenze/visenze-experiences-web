@@ -11,6 +11,13 @@ import { WidgetDataContext } from '../../../common/types/contexts';
 
 interface MicEntryScreenProps {
   chat: UseChatResult;
+  // The mic entry point's configured greeting (customizations.launcher.greetings.mic), resolved by
+  // the caller — shown here regardless of whether this is a brand-new conversation or a resumed
+  // one. Passed explicitly rather than read back out of chat.chats: for a resumed conversation the
+  // first bot message in chat.chats is whatever the assistant actually said much earlier, not a
+  // greeting, and chat.playGreeting is deliberately not called again in that case (see
+  // ai-search-launcher.tsx) so it never lands in chat.chats at all.
+  greetingText: string;
 }
 
 // Fallback when `customizations.launcher.voiceRecordingMaxDurationSeconds` is unset.
@@ -28,7 +35,7 @@ const DEFAULT_VOICE_RECORDING_COLOR = '#EF4444';
 // Siri/Google Assistant rather than auto-starting on the user's behalf. `useVoice`'s
 // `startRecording()` calls `stopAudio()` internally as its first step, so a click while a greeting
 // is still playing/queued cuts it off immediately, which is expected here.
-const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
+const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat, greetingText }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const intl = useIntl();
@@ -60,12 +67,11 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat }) => {
     chatRef.current = chat;
   });
 
-  // The configured greeting (played into `chat.chats` as a bot bubble by the parent's greeting
-  // effect, which fires from the same commit that renders this screen) is the single source of
-  // truth for this screen's welcome copy — shown as an extra caption above the mic controls. No
-  // fallback default text is needed here (unlike ImageEntryScreen's `imageEntryPrompt`): the
-  // status text below (`a11yTapToRecord`/`a11yListening`/etc.) already covers the no-greeting case.
-  const greetingMessage = chat.chats.find((c) => c.author === 'bot')?.messages[0];
+  // Shown as an extra caption above the mic controls (see greetingText's own doc comment on why
+  // this isn't read out of chat.chats). No fallback default text is needed here (unlike
+  // ImageEntryScreen's `imageEntryPrompt`): the status text below (`a11yTapToRecord`/
+  // `a11yListening`/etc.) already covers the no-greeting case.
+  const greetingMessage = greetingText || undefined;
 
   // Auto-stop (F1): the full-screen recording state isn't press-and-hold like the chat footer's
   // mic button, so without a cap the user could leave it recording indefinitely. Configurable via

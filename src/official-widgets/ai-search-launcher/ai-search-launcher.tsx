@@ -7,7 +7,7 @@ import SplitLayout from './components/SplitLayout';
 import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
-import useChat from '../../common/components/chat/use-chat';
+import useChat, { type Chat } from '../../common/components/chat/use-chat';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { FOCUS_VISIBLE_CLASSES } from '../../common/constants';
@@ -42,42 +42,103 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
     ? (customizations.generalLayout?.fontColorDark || '')
     : (customizations.generalLayout?.fontColor || '');
 
+  // Set synchronously by openEntryPoint — a resumed session already has its real history restored,
+  // so replaying the canned entry greeting into that history as another bot bubble would look like
+  // a duplicate/non-sequitur message. The welcome screens still show their own greeting text
+  // regardless (see greetingText below) — only the "add it to chat.chats" part is skipped here.
+  const [isResumedActivation, setIsResumedActivation] = useState(false);
+
+  const countUserMessages = (chats: Chat[]): number => chats.filter((c) => c.author === 'user').length;
+
+  // Baseline count of real, user-authored turns captured at the moment this entry point opened —
+  // see showImageWelcome/showMicWelcome below. Counting only 'user' turns (not chats.length
+  // generally) because the greeting bubble that lands shortly after opening is 'bot'-authored and
+  // must not itself count as "the user already did something".
+  const activationUserMessageBaselineRef = useRef(0);
+
   const openEntryPoint = (entryPoint: EntryPointKey): void => {
+    // A truthy chatId means there's a session to resume (from earlier this instance, or restored
+    // from localStorage on mount) — reuse it instead of minting a fresh one. Deliberately not
+    // scoped per entry point: the three entry points share one underlying conversation, so
+    // resuming after closing one and opening another continues that same conversation by design.
+    const resuming = Boolean(chat.chatId);
+    setIsResumedActivation(resuming);
+    activationUserMessageBaselineRef.current = countUserMessages(chat.chats);
     setActiveEntryPoint(entryPoint);
+
+    // Camera/mic never mint (or persist) a chat id just for opening — only Ask AI's greeting is
+    // real chat history; camera/mic's own prompt is narration-only (see the greeting effect below)
+    // and a session for them shouldn't exist at all until the user actually submits a photo or
+    // voice query (use-chat.ts's sendMessage mints the id lazily at that point instead). reopen()
+    // is safe to call unconditionally here, resumed or not: it only ever flips isOpen, never
+    // chatId/chats.
+    if (entryPoint !== 'ai') {
+      chat.reopen();
+      return;
+    }
+    if (resuming) {
+      chat.reopen();
+      return;
+    }
     chat.open();
   };
 
-  // Shared greeting-playback mechanism (B6a), implemented once and called from both places the
-  // spec requires it: whenever an entry point opens (effect below, keyed on activeEntryPoint) and
-  // whenever "new chat" is pressed (handleNewChat). `chat.playGreeting` always shows the greeting
-  // as a text chat bubble (no-oping only when no greeting text is configured for the entry point)
-  // and additionally speaks it when `voiceGreetingEnabled` is on and the session isn't muted, so
-  // this just resolves which greeting string applies and calls it — no duplicated gating logic
-  // here or in the entry screens.
+  // Shared greeting resolver — the same customizations.launcher.greetings[entryPoint] string is
+  // both narrated (see the effect below) and shown by the entry screens themselves (ImageEntryScreen/
+  // MicEntryScreen's own greetingText prop) — this is the single source of truth for which text
+  // applies, so there's no risk of the shown and narrated copy ever disagreeing.
   const getGreetingText = (entryPoint: EntryPointKey): string => customizations.launcher?.greetings?.[entryPoint] || '';
 
   useEffect(() => {
-    if (activeEntryPoint) {
-      chat.playGreeting(getGreetingText(activeEntryPoint));
+    if (!activeEntryPoint) {
+      return;
     }
-    // Deliberately keyed only on activeEntryPoint: chat.playGreeting/getGreetingText are
-    // recreated every render (not memoized upstream), and this must fire exactly once per entry
+    if (activeEntryPoint === 'ai') {
+      // Ask AI's greeting genuinely opens the conversation — chat.playGreeting shows it as a real
+      // bot bubble (and speaks it) exactly once, skipped on resume so a real, already-restored
+      // conversation doesn't get a duplicate/non-sequitur greeting appended to it.
+      if (!isResumedActivation) {
+        chat.playGreeting(getGreetingText('ai'));
+      }
+      return;
+    }
+    // Camera/mic's prompt must never become part of chat.chats/persisted history — an abandoned
+    // camera or mic screen (opened, nothing submitted, closed) must leave no trace of ever having
+    // happened. speakText narrates it without touching chats, and unconditionally (new session or
+    // resumed) since this is narration tied to the entry point opening, not to the conversation.
+    chat.speakText(getGreetingText(activeEntryPoint));
+    // Deliberately keyed only on activeEntryPoint: chat.playGreeting/chat.speakText/getGreetingText
+    // are recreated every render (not memoized upstream), and this must fire exactly once per entry
     // point transition, not on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeEntryPoint]);
 
   const handleNewChat = (): void => {
     chat.newChat();
-    if (activeEntryPoint) {
-      chat.playGreeting(getGreetingText(activeEntryPoint));
+    activationUserMessageBaselineRef.current = 0;
+    setIsResumedActivation(false);
+    if (!activeEntryPoint) {
+      return;
     }
+    if (activeEntryPoint === 'ai') {
+      chat.playGreeting(getGreetingText('ai'));
+      return;
+    }
+    chat.speakText(getGreetingText(activeEntryPoint));
   };
 
-  // Image/mic show a dedicated welcome screen until the first message is sent; Ask AI (spec
-  // §5.3) has no welcome screen of its own, so it never matches either flag below and always
-  // falls through to the normal chat surface, regardless of `hasStartedChat`.
-  const showImageWelcome = activeEntryPoint === 'image' && !chat.hasStartedChat;
-  const showMicWelcome = activeEntryPoint === 'mic' && !chat.hasStartedChat;
+  // Image/mic show a dedicated welcome screen — camera capture or voice recording — until a real
+  // message has actually been sent *during this activation*. Comparing against the baseline
+  // captured in openEntryPoint (not the conversation's all-time `chat.hasStartedChat`) is what lets
+  // this screen show again for a resumed session: hasStartedChat is already permanently true once
+  // any conversation has ever produced a message, but the point of showing it here is to let the
+  // user immediately snap a photo or say something that sends into the resumed conversation,
+  // exactly as the fresh-session flow already does, rather than dropping them straight into the
+  // full chat surface with no direct capture affordance. Ask AI (spec §5.3) has no dedicated
+  // welcome screen and always falls through to the normal chat surface regardless.
+  const hasSentInThisActivation = countUserMessages(chat.chats) > activationUserMessageBaselineRef.current;
+  const showImageWelcome = activeEntryPoint === 'image' && !hasSentInThisActivation;
+  const showMicWelcome = activeEntryPoint === 'mic' && !hasSentInThisActivation;
 
   // The single place the layout switch lives (see the responsive-redesign design doc §3):
   // `splitlayout` engages only above the mobile breakpoint AND once the conversation actually has
@@ -199,8 +260,8 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
         renderWithoutPortal={renderWithoutPortal}
         fullWidth={showSplit}
       >
-        {showImageWelcome && <ImageEntryScreen chat={chat} />}
-        {showMicWelcome && <MicEntryScreen chat={chat} />}
+        {showImageWelcome && <ImageEntryScreen chat={chat} greetingText={getGreetingText('image')} />}
+        {showMicWelcome && <MicEntryScreen chat={chat} greetingText={getGreetingText('mic')} />}
         {!showImageWelcome && !showMicWelcome && showSplit && (
           <SplitLayout
             chat={chat}

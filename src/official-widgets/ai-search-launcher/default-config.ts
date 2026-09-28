@@ -353,6 +353,10 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
   },
   launcher: {
     voiceRecordingMaxDurationSeconds: 5,
+    // image/mic are shown+narrated as this entry point's own label/prompt only — they never
+    // become part of chat.chats/persisted history (see ai-search-launcher.tsx's chat.speakText
+    // usage). ai's greeting is different: it's the conversation's actual opening message, added to
+    // real chat history via chat.playGreeting once a session genuinely starts.
     greetings: {
       image: 'Show me a photo and I\'ll find similar products for you.',
       mic: 'Tell me what you\'re looking for and I\'ll find it for you.',
