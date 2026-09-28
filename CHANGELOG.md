@@ -9,10 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- shopping-assistant, ai-search-launcher, embedded-shopping-assistant: A returning visitor's conversation can now be resumed instead of always starting fresh. Only the conversation id is kept client-side (in `localStorage`, scoped per placement) with a sliding TTL; the actual messages are always re-fetched from the backend's chat-history endpoint as soon as the widget mounts. Controlled via `customizations.chatbot.persistChatEnabled` (default disabled — opt in per deployment) and `customizations.chatbot.persistChatTtlMinutes` (default `30`). ai-search-launcher resumes the same conversation regardless of which entry point (image/mic/Ask AI) reopens it; embedded-shopping-assistant additionally scopes the stored session to its `query` prop, so a conversation persists while the visitor stays on the same product but starts fresh for a different one.
-- ai-search-launcher: The image and mic entry points now show and narrate their own configurable prompt (`customizations.launcher.greetings.image`/`.mic`) every time they're opened, including when resuming an existing conversation — but that prompt is label/narration only and never becomes part of the conversation's chat history, so opening camera or mic and never submitting anything leaves no trace of a conversation ever having started. "Ask AI" is unchanged: its own greeting (`customizations.launcher.greetings.ai`) still becomes the conversation's real opening message.
-- embedded-shopping-assistant: The chat surface now stays anchored to the top of its content as a reply streams in, instead of auto-scrolling to follow the newest text/products the way ai-search-launcher's and shopping-assistant's chat surfaces do.
-
 
 ### Fixed
 
@@ -33,6 +29,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Chore
+
+## [1.0.34](https://github.com/visenze/visenze-experiences-web/compare/1.0.33...1.0.34)
+
+<!-- BEGIN visenze-experiences-web 1.0.34 -->
+
+### Added
+
+- shopping-assistant, ai-search-launcher, embedded-shopping-assistant: A returning visitor's conversation can now be resumed instead of always starting fresh. Only the conversation id is kept client-side (in `localStorage`, scoped per placement) with a sliding TTL; the actual messages are always re-fetched from the backend's chat-history endpoint as soon as the widget mounts. Controlled via `customizations.chatbot.persistChatEnabled` (default disabled — opt in per deployment) and `customizations.chatbot.persistChatTtlMinutes` (default `30`). ai-search-launcher resumes the same conversation regardless of which entry point (image/mic/Ask AI) reopens it; embedded-shopping-assistant additionally scopes the stored session to its `query` prop, so a conversation persists while the visitor stays on the same product but starts fresh for a different one.
+- ai-search-launcher: The image and mic entry points now show and narrate their own configurable prompt (`customizations.launcher.greetings.image`/`.mic`) every time they're opened, including when resuming an existing conversation — but that prompt is label/narration only and never becomes part of the conversation's chat history, so opening camera or mic and never submitting anything leaves no trace of a conversation ever having started. "Ask AI" is unchanged: its own greeting (`customizations.launcher.greetings.ai`) still becomes the conversation's real opening message.
+- embedded-shopping-assistant: The chat surface now stays anchored to the top of its content as a reply streams in, instead of auto-scrolling to follow the newest text/products the way ai-search-launcher's and shopping-assistant's chat surfaces do.
+- camera-search, embedded-search-results, in-page-carousel-v3, merchandise-search-bar, recommend-me, search-bar, similar-search, slide-out-drawer, ai-search-launcher, embedded-shopping-assistant, shopping-assistant: `customizations.productCard.images.mainImage`/`.hoverImage` set to `best_product`/`best_outfit` now also works against the multisearch/recommendation/chat APIs, not just the legacy product-search-by-id API. These widgets now request the best-product/best-outfit image explicitly (`sys_attrs_to_get`) only when the product card is actually configured to show it.
+
+<!-- END visenze-experiences-web 1.0.34 -->
+
 ## [1.0.33](https://github.com/visenze/visenze-experiences-web/compare/1.0.32...1.0.33)
 
 <!-- BEGIN visenze-experiences-web 1.0.33 -->
