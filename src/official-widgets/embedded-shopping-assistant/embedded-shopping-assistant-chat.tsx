@@ -50,7 +50,16 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // (EmbeddedShoppingAssistant.tsx used to do exactly that, which also broke real ProductCard
   // interactions — onProductClick/onAddToWishlistToggle/onAddToCartToggle — for every product
   // card this component renders, since ProductCard reads those off the very same context).
-  const chat = useChat({ suppressActionTokenCallbacks: true });
+  // sessionScopeKey: query — scopes persistChatEnabled's stored session to this exact product
+  // query, so a returning visitor on the SAME product resumes their conversation, while a
+  // different product's query (never stored under this scope) starts fresh instead. See
+  // sessionScopeKey's own doc comment on UseChatOptions.
+  const chat = useChat({ suppressActionTokenCallbacks: true, sessionScopeKey: query });
+
+  // Tracks whether this mount resumed a persisted session, so the query-auto-send effect below
+  // knows to skip re-sending `query` — a resumed conversation's restored history already covers
+  // it, and re-sending would duplicate the very first turn.
+  const resumedSessionRef = useRef(false);
 
   // Populates useChat's internal chatId once, at mount, before any send can possibly fire —
   // chat.sendMessage always reads this closed-over state; there's no override param and no way
@@ -58,8 +67,20 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   // bottom bar, voice) is triggered by a later, separate user event, well after this mount
   // commit has settled, so none of them need special handling. Only the query-prop auto-search
   // effect further down does — see its comment for why.
+  //
+  // chat.getChatId() (a live read of the hook's internal ref), not chat.chatId (a snapshotted
+  // value from this render) — the hook's own mount-time restore effect runs before this one (it's
+  // registered first, inside useChat() above) and, if a stored session exists, mutates that ref
+  // synchronously. But it only *schedules* a re-render to reflect that in `chat.chatId`; this
+  // effect still runs with the pre-restore snapshot from the render that queued it. getChatId()
+  // reads the ref directly, so it sees the mutation immediately regardless of render timing.
   useEffect(() => {
-    chat.open();
+    resumedSessionRef.current = Boolean(chat.getChatId());
+    if (resumedSessionRef.current) {
+      chat.reopen();
+    } else {
+      chat.open();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -146,19 +167,23 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   useEffect(() => {
     if (query) {
       widgetClient.sendEvent(Actions.LOAD, {});
-      // Deferred to a separate macrotask, guaranteed to run only after the chat.open() mount
-      // effect above has committed its setChatId update. generateUuid itself resolves
-      // synchronously (verified by reading the SDK: visenze-tracking-javascript's
-      // session-manager.ts generateUUID() is a plain Date+Math.random() computation, no network
-      // call, no promise) — but that doesn't help here: React doesn't re-render mid-effect-flush,
-      // so if this ran in the SAME commit as open()'s effect, chat.sendMessage would still close
-      // over the stale, pre-open chatId (and that empty value would then persist silently for the
-      // rest of the conversation, since useChat never re-derives chatId from the backend's own
-      // response). The interactive send paths above don't need this — they're all triggered by
-      // later, separate user events, well after the mount commit has settled.
-      setTimeout(() => {
-        chat.sendMessage(query);
-      }, 0);
+      // A resumed session's restored history already covers this query — re-sending it here would
+      // duplicate the conversation's first turn on top of what was just restored.
+      if (!resumedSessionRef.current) {
+        // Deferred to a separate macrotask, guaranteed to run only after the chat.open() mount
+        // effect above has committed its setChatId update. generateUuid itself resolves
+        // synchronously (verified by reading the SDK: visenze-tracking-javascript's
+        // session-manager.ts generateUUID() is a plain Date+Math.random() computation, no network
+        // call, no promise) — but that doesn't help here: React doesn't re-render mid-effect-flush,
+        // so if this ran in the SAME commit as open()'s effect, chat.sendMessage would still close
+        // over the stale, pre-open chatId (and that empty value would then persist silently for the
+        // rest of the conversation, since useChat never re-derives chatId from the backend's own
+        // response). The interactive send paths above don't need this — they're all triggered by
+        // later, separate user events, well after the mount commit has settled.
+        setTimeout(() => {
+          chat.sendMessage(query);
+        }, 0);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -260,6 +285,7 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
             setIsInWishlist={chat.setIsInWishlist}
             pwPrefix='esa'
             hideInitialUserMessage
+            scrollAnchor='top'
           />
         </div>
         {customizations.generalLayout?.showViSenzeLogo && (

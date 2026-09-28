@@ -180,6 +180,8 @@ describe('shopping-assistant', () => {
     modalRoot.setAttribute('id', 'modal-root');
     document.body.appendChild(modalRoot);
     Element.prototype.scrollIntoView = jest.fn();
+    // Otherwise a test can read a resumable chat id left in localStorage by a previous test.
+    localStorage.clear();
   });
 
   afterEach(() => {
@@ -224,6 +226,112 @@ describe('shopping-assistant', () => {
       });
 
       expect(queryModal('.wigmix-modal')).toBeNull();
+    });
+  });
+
+  describe('session persistence', () => {
+    it('resumes the existing conversation instead of regenerating the chat id or replaying the opening greeting when closed and reopened', () => {
+      const { mockVisearchClient } = renderAssistant();
+      openDialogAndWait();
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      openDialogAndWait();
+      // Reopening must not mint a second chat id or replay the opening greeting.
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+    });
+
+    it('shows the normal opening greeting instead of a blank surface when a stored session from a previous visit has no real history to resume', async () => {
+      // A stale localStorage entry with no backend history must not leave the widget stuck
+      // trying to resume a blank surface forever.
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: (): Promise<unknown> => Promise.resolve({ result: { messages: [] } }),
+      } as unknown as Response);
+      localStorage.setItem(
+        'visenze_shopping_assistant_chat_id_1234',
+        JSON.stringify({ chatId: 'stale-chat-id', timestamp: Date.now() }),
+      );
+
+      const { mockVisearchClient } = renderAssistant({
+        generateUuid: jest.fn((cb: (uuid: string) => void) => cb('fresh-chat-id')),
+      });
+      // Let the mount-time restore fetch resolve before the user clicks.
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      openDialogAndWait();
+
+      expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      global.fetch = originalFetch;
+    });
+
+    it('never writes to localStorage when customizations.chatbot.persistChatEnabled is false', () => {
+      const { widgetConfig, widgetClient } = createTestClient();
+      widgetConfig.customizations = {
+        ...DEFAULT_CUSTOMIZATIONS,
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, persistChatEnabled: false },
+      };
+      testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
+        widgetConfig, widgetClient, locale: 'en', messages: texts['en'], rootElement: modalRoot,
+      });
+
+      openDialogAndWait();
+      expect(localStorage.length).toBe(0);
+
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(localStorage.length).toBe(0);
+    });
+
+    it('slides the resumable-session TTL forward when closed via widgetClient.closeWidget(), not just the in-widget close button', () => {
+      // persistChatEnabled defaults to disabled — opt in explicitly, same as the "never writes to
+      // localStorage" test above.
+      const { widgetConfig, widgetClient } = createTestClient();
+      widgetConfig.customizations = {
+        ...DEFAULT_CUSTOMIZATIONS,
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, persistChatEnabled: true },
+      };
+      testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
+        widgetConfig, widgetClient, locale: 'en', messages: texts['en'], rootElement: modalRoot,
+      });
+
+      act(() => {
+        widgetClient.openWidget('');
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(localStorage.getItem('visenze_shopping_assistant_chat_id_1234')).toBeTruthy();
+      // Isolate the assertion to the close path: if closeDialog's externally-registered
+      // callback never re-persists, this stays empty.
+      localStorage.removeItem('visenze_shopping_assistant_chat_id_1234');
+
+      act(() => {
+        widgetClient.closeWidget();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(localStorage.getItem('visenze_shopping_assistant_chat_id_1234')).toBeTruthy();
     });
   });
 

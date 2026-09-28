@@ -129,6 +129,29 @@ describe('ai-search-launcher', () => {
     return null;
   };
 
+  // Counts occurrences of `text` as actual chat bubbles in the message log — scoped to
+  // [role="log"] specifically because the surrounding sr-only aria-live status region always
+  // duplicates whatever the latest message is, which would otherwise make a single, correctly-
+  // shown greeting look identical to a real double-send. Needed to tell "shown once, by AI mode's
+  // own greeting" apart from "shown twice, because camera/mic's abandoned prompt also leaked into
+  // chat history" now that all three entry points share the same configured greeting text.
+  const countTextInLog = (text: string): number => {
+    const log = document.body.querySelector('[role="log"]');
+    if (!log) {
+      return 0;
+    }
+    const walker = document.createTreeWalker(log, NodeFilter.SHOW_TEXT);
+    let count = 0;
+    let node = walker.nextNode();
+    while (node) {
+      if (node.textContent?.includes(text)) {
+        count += 1;
+      }
+      node = walker.nextNode();
+    }
+    return count;
+  };
+
   // Response text/products reveal progressively (typewriter text, one-at-a-time product cards)
   // via a stable interval rather than appearing all at once, and by default (unmuted) a reply
   // commit is additionally deferred behind a voice-synthesis attempt that fails fast in jsdom
@@ -196,6 +219,8 @@ describe('ai-search-launcher', () => {
     jest.useFakeTimers();
     mockFetchEventSource.mockReset();
     Element.prototype.scrollIntoView = jest.fn();
+    // Otherwise a test can read a resumable chat id left in localStorage by a previous test.
+    localStorage.clear();
   });
 
   afterEach(() => {
@@ -354,6 +379,203 @@ describe('ai-search-launcher', () => {
       expect(testComponent.queryByRole('dialog')).toBeNull();
       // Entry bar is still there underneath.
       expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenAskAi'] })).toBeTruthy();
+    });
+  });
+
+  describe('session persistence', () => {
+    it('resumes the same conversation instead of regenerating the chat id or replaying the greeting when the same entry point is closed and reopened', () => {
+      const { mockVisearchClient } = renderLauncher();
+      openEntryPointAndWait('a11yOpenAskAi');
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      expect(getTextInBody(aiGreeting)).toBeTruthy();
+
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseFullScreen'] });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+
+      openEntryPointAndWait('a11yOpenAskAi');
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+    });
+
+    it('shows the image entry point\'s own capture UI, not the full chat surface, when opened during a resumed session', async () => {
+      const imageGreeting = DEFAULT_CUSTOMIZATIONS.launcher?.greetings?.image || '';
+      const { mockVisearchClient } = renderLauncher();
+      openEntryPointAndWait('a11yOpenAskAi');
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+
+      const stream = sendMessageAndGetStreamController('Hello');
+      stream.emitEvent('chat_id', { value: 'chat-123' });
+      stream.emitEvent('reqid', { value: 'req-123' });
+      stream.emitEvent('chat_token', { value: 'Hi there!' });
+      stream.closeStream();
+      await revealAll();
+      expect(getTextInBody('Hi there!')).toBeTruthy();
+
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseFullScreen'] });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+
+      openEntryPointAndWait('a11yOpenImageSearch');
+      // Still the same conversation (no new chat id), but the image entry point's own capture UI
+      // shows instead of jumping straight to the chat surface — that's the whole point: a direct
+      // way to add a photo to the existing conversation. The prior message isn't visible here (this
+      // screen doesn't render chat history), but the entry point's own configured greeting still
+      // shows as this screen's prompt caption, exactly as it would for a brand-new session — it's
+      // just never re-added to chat.chats itself, since that already has real history.
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yTakePhoto'] })).toBeTruthy();
+      expect(getTextInBody('Hi there!')).toBeNull();
+      expect(getTextInBody(imageGreeting)).toBeTruthy();
+    });
+
+    it('sends a photo captured during a resumed session into the existing conversation, not a new one', async () => {
+      const { mockVisearchClient } = renderLauncher({}, 'en', {}, {
+        imageUpload: {
+          enable: true,
+          icon: { color: '#000000', colorDark: '#FFFFFF' },
+          images: [{ url: 'https://example.com/shoe.jpg', label: 'Shoes' }],
+        },
+      });
+      openEntryPointAndWait('a11yOpenAskAi');
+      const existingChatId = 'test-chat-id';
+
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseFullScreen'] });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+      openEntryPointAndWait('a11yOpenImageSearch');
+
+      const galleryImage = testComponent.getByAltText('Shoes');
+      await act(async () => {
+        fireEvent.click(galleryImage);
+      });
+
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      const [calledUrl] = mockFetchEventSource.mock.calls[0];
+      const params = new URLSearchParams((calledUrl as string).split('?')[1]);
+      expect(params.get('chat_id')).toBe(existingChatId);
+    });
+
+    it('sends a voice transcript captured during a resumed session into the existing conversation, not a new one', () => {
+      // Local, single-instance stand-in for the browser SpeechRecognition API — same technique as
+      // the "should hide the in-chat footer mic button..." test above, just scoped to this one
+      // test rather than shared across a whole describe block, and capturing onresult so this test
+      // can simulate a finalized transcript.
+      let capturedOnresult: ((event: any) => void) | null = null;
+      const originalSpeechRecognition = (window as any).SpeechRecognition;
+      (window as any).SpeechRecognition = function SpeechRecognitionMock(this: any): void {
+        Object.defineProperty(this, 'onresult', {
+          set: (handler: (event: any) => void) => { capturedOnresult = handler; },
+          get: () => capturedOnresult,
+        });
+      };
+      (window as any).SpeechRecognition.prototype.start = jest.fn();
+      (window as any).SpeechRecognition.prototype.stop = jest.fn();
+      (window as any).SpeechRecognition.prototype.abort = jest.fn();
+
+      try {
+        const { mockVisearchClient } = renderLauncher({}, 'en', {}, { chatbot: { voiceEnabled: true } });
+        openEntryPointAndWait('a11yOpenAskAi');
+        const existingChatId = 'test-chat-id';
+
+        const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseFullScreen'] });
+        act(() => {
+          fireEvent.click(closeButton);
+        });
+        openEntryPointAndWait('a11yOpenVoiceSearch');
+
+        // The mic entry point's own capture UI is showing (not the full chat surface), with its
+        // configured greeting caption still visible even though this is a resumed session.
+        const micGreeting = DEFAULT_CUSTOMIZATIONS.launcher?.greetings?.mic || '';
+        expect(getTextInBody(micGreeting)).toBeTruthy();
+        const micButton = testComponent.getByRole('button', { name: texts['en']['a11yTapToRecord'], hidden: true });
+        act(() => {
+          fireEvent.click(micButton);
+        });
+        expect(capturedOnresult).toBeTruthy();
+
+        act(() => {
+          capturedOnresult?.({ results: [{ isFinal: true, length: 1, 0: { transcript: 'red sneakers' } }] });
+        });
+
+        mockFetchEventSource.mockImplementation(async () => {});
+        const stopButton = testComponent.getByRole('button', { name: texts['en']['a11yStopVoiceInput'], hidden: true });
+        act(() => {
+          fireEvent.click(stopButton);
+        });
+        act(() => {
+          jest.advanceTimersByTime(700);
+        });
+
+        expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+        const [calledUrl] = mockFetchEventSource.mock.calls[0];
+        const params = new URLSearchParams((calledUrl as string).split('?')[1]);
+        expect(params.get('chat_id')).toBe(existingChatId);
+        expect(params.get('q')).toBe('red sneakers');
+      } finally {
+        (window as any).SpeechRecognition = originalSpeechRecognition;
+      }
+    });
+
+    it('does not mint or persist a chat id just from opening the camera entry point', () => {
+      const { mockVisearchClient } = renderLauncher();
+      openEntryPointAndWait('a11yOpenImageSearch');
+
+      expect(mockVisearchClient.generateUuid).not.toHaveBeenCalled();
+      expect(localStorage.length).toBe(0);
+    });
+
+    it('does not mint or persist a chat id just from opening the mic entry point', () => {
+      const { mockVisearchClient } = renderLauncher({}, 'en', {}, { chatbot: { voiceEnabled: true } });
+      openEntryPointAndWait('a11yOpenVoiceSearch');
+
+      expect(mockVisearchClient.generateUuid).not.toHaveBeenCalled();
+      expect(localStorage.length).toBe(0);
+    });
+
+    it('leaves no trace in chat history when the camera entry point is opened and abandoned, so opening AI mode afterward starts a genuinely fresh conversation', () => {
+      const imageGreeting = DEFAULT_CUSTOMIZATIONS.launcher?.greetings?.image || '';
+      const { mockVisearchClient } = renderLauncher();
+      openEntryPointAndWait('a11yOpenImageSearch');
+      expect(getTextInBody(imageGreeting)).toBeTruthy();
+
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseFullScreen'] });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+
+      openEntryPointAndWait('a11yOpenAskAi');
+      // A real session starts here for the first time — camera's own abandoned prompt never
+      // touched chat.chats, so it can't have minted an id, and AI mode's own greeting is the only
+      // bot message that exists.
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      expect(countTextInLog(aiGreeting)).toBe(1);
+      expect(getTextInBody(imageGreeting)).toBeNull();
+    });
+
+    it('sends the first message from an abandoned-then-resumed camera session with a freshly minted chat id, generated lazily on submit', async () => {
+      const { mockVisearchClient } = renderLauncher({}, 'en', {}, {
+        imageUpload: {
+          enable: true,
+          icon: { color: '#000000', colorDark: '#FFFFFF' },
+          images: [{ url: 'https://example.com/shoe.jpg', label: 'Shoes' }],
+        },
+      });
+      openEntryPointAndWait('a11yOpenImageSearch');
+      expect(mockVisearchClient.generateUuid).not.toHaveBeenCalled();
+
+      const galleryImage = testComponent.getByAltText('Shoes');
+      await act(async () => {
+        fireEvent.click(galleryImage);
+      });
+
+      // The id is minted lazily, right as the first real message goes out — not upfront on open.
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      const [calledUrl] = mockFetchEventSource.mock.calls[0];
+      const params = new URLSearchParams((calledUrl as string).split('?')[1]);
+      expect(params.get('chat_id')).toBe('test-chat-id');
     });
   });
 

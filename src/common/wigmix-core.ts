@@ -1700,6 +1700,25 @@ export interface WidgetConfig {
         /** Divider border between the chat pane and the products pane. @since 1.0.30 */
         divider?: Border;
       };
+      /**
+       * Resumes a returning visitor's conversation instead of always starting fresh. Only the
+       * chat id (plus a sliding TTL, see `persistChatTtlMinutes`) is kept in `localStorage`;
+       * messages are always re-fetched from the backend's chat-history endpoint on mount.
+       * Defaults to disabled — opt in per deployment. Supported by shopping-assistant,
+       * ai-search-launcher, and embedded-shopping-assistant; embedded-shopping-assistant
+       * additionally scopes the stored session to its `query` prop, so a conversation only
+       * resumes while the visitor stays on the same product.
+       *
+       * @since 1.0.34
+       */
+      persistChatEnabled?: boolean;
+      /**
+       * Minutes a conversation stays resumable after the last activity (open/send/close) before
+       * `persistChatEnabled` starts a fresh one instead. Defaults to 30.
+       *
+       * @since 1.0.34
+       */
+      persistChatTtlMinutes?: number;
     };
     /**
      * Configuration specific to the AI Search Launcher widget's entry points:
@@ -1719,16 +1738,32 @@ export interface WidgetConfig {
       voiceRecordingMaxDurationSeconds?: number;
       /**
        * Per-entry-point greeting text, spoken (if `chat.voiceGreetingEnabled`)
-       * and/or shown when that entry point is opened.
+       * and/or shown when that entry point is opened. `image`/`mic` and `ai`
+       * behave differently: see each field's own doc comment.
        *
        * @since 1.0.30
        */
       greetings?: {
-        /** Greeting shown/spoken when the image-search entry point opens. @since 1.0.30 */
+        /**
+         * Shown as the image entry point's own prompt caption and spoken via voice narration (if
+         * `chat.voiceGreetingEnabled`) every time it opens — including every time an existing
+         * conversation is resumed into it, not just the first. Unlike `ai`'s greeting, this is
+         * label/narration copy only: it never becomes part of the conversation's chat history, so
+         * opening this entry point and never submitting a photo leaves no trace of a conversation
+         * ever having started.
+         *
+         * @since 1.0.30
+         */
         image?: string;
-        /** Greeting shown/spoken when the microphone entry point opens. @since 1.0.30 */
+        /** Same behavior as `image`, but for the microphone entry point. @since 1.0.30 */
         mic?: string;
-        /** Greeting shown/spoken when the "Ask AI" entry point opens. @since 1.0.30 */
+        /**
+         * Shown and spoken as the conversation's actual opening message the first time a new "Ask
+         * AI" conversation starts — added to real, persisted chat history (via `chat.playGreeting`),
+         * unlike `image`/`mic`'s greetings. Not replayed when resuming an existing conversation.
+         *
+         * @since 1.0.30
+         */
         ai?: string;
       };
       /**

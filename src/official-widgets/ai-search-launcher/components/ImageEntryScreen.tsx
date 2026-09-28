@@ -13,6 +13,13 @@ import type { SearchImage } from '../../../common/types/image';
 
 interface ImageEntryScreenProps {
   chat: UseChatResult;
+  // The image entry point's configured greeting (customizations.launcher.greetings.image),
+  // resolved by the caller — shown here regardless of whether this is a brand-new conversation or
+  // a resumed one. Passed explicitly rather than read back out of chat.chats: for a resumed
+  // conversation the first bot message in chat.chats is whatever the assistant actually said much
+  // earlier, not a greeting, and chat.playGreeting is deliberately not called again in that case
+  // (see ai-search-launcher.tsx) so it never lands in chat.chats at all.
+  greetingText: string;
 }
 
 // Full-screen welcome state for the image-search entry point (spec §5.1), styled after
@@ -24,7 +31,7 @@ interface ImageEntryScreenProps {
 // decision, spec §5.1; results stay in the chat surface, unlike camera-search's own ResultScreen).
 // Once `chat.sendMessage` flips `hasStartedChat`, the caller (`ai-search-launcher.tsx`) swaps this
 // screen out for the normal chat surface on its own; this component doesn't need to know that.
-const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
+const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat, greetingText }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const intl = useIntl();
@@ -67,12 +74,9 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat }) => {
     handleImage({ imgUrl: url });
   };
 
-  // The configured greeting (played into `chat.chats` as a bot bubble by the parent's greeting
-  // effect, which fires from the same commit that renders this screen) is the single source of
-  // truth for this screen's welcome copy; only fall back to the static default when no greeting
-  // is configured for the image entry point.
-  const greetingMessage = chat.chats.find((c) => c.author === 'bot')?.messages[0];
-  const promptText = greetingMessage || intl.formatMessage({ id: 'imageEntryPrompt' });
+  // Falls back to the static default only when no greeting is configured for the image entry
+  // point (see greetingText's own doc comment on why this isn't read out of chat.chats).
+  const promptText = greetingText || intl.formatMessage({ id: 'imageEntryPrompt' });
 
   if (showWebcam) {
     return (

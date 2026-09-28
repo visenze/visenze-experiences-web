@@ -2,6 +2,7 @@ import { act, fireEvent, type RenderResult } from '@testing-library/react';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
 import EmbeddedShoppingAssistant from './embedded-shopping-assistant';
 import { createMockWidgetClient, createWidgetConfig, renderWidget } from '../../common/test-utils';
+import type { WidgetConfig } from '../../common/wigmix-core';
 
 // Mock @microsoft/fetch-event-source to control SSE streaming in tests — same convention as
 // ai-search-launcher.spec.tsx.
@@ -56,12 +57,13 @@ describe('embedded-shopping-assistant-chat', () => {
 
   const createTestClient = (
     visearchOverrides: Record<string, any> = {},
+    customizationOverrides: Partial<WidgetConfig['customizations']> = {},
   ): {
     widgetConfig: ReturnType<typeof createWidgetConfig>;
     widgetClient: ReturnType<typeof createMockWidgetClient>['widgetClient'];
     mockVisearchClient: ReturnType<typeof createMockWidgetClient>['mockVisearchClient'];
   } => {
-    const widgetConfig = createWidgetConfig(DEFAULT_CUSTOMIZATIONS, {
+    const widgetConfig = createWidgetConfig({ ...DEFAULT_CUSTOMIZATIONS, ...customizationOverrides }, {
       searchSettings: {
         attrs_to_get: ['product_url', 'title', 'brand', 'price', 'original_price'],
       },
@@ -82,8 +84,9 @@ describe('embedded-shopping-assistant-chat', () => {
   const renderEsa = (
     query: string,
     visearchOverrides: Record<string, any> = {},
+    customizationOverrides: Partial<WidgetConfig['customizations']> = {},
   ): ReturnType<typeof createTestClient> => {
-    const clientBundle = createTestClient(visearchOverrides);
+    const clientBundle = createTestClient(visearchOverrides, customizationOverrides);
     testComponent = renderWidget(<EmbeddedShoppingAssistant query={query} renderWithoutPortal />, {
       widgetConfig: clientBundle.widgetConfig,
       widgetClient: clientBundle.widgetClient,
@@ -176,6 +179,8 @@ describe('embedded-shopping-assistant-chat', () => {
     jest.useFakeTimers();
     mockFetchEventSource.mockReset();
     Element.prototype.scrollIntoView = jest.fn();
+    // Otherwise a test can read a resumable chat id left in localStorage by a previous test.
+    localStorage.clear();
   });
 
   afterEach(() => {
@@ -457,6 +462,86 @@ describe('embedded-shopping-assistant-chat', () => {
 
       expect(getTextInBody('Sorry, I could not find a matching product.')).toBeTruthy();
       expect(testComponent.getByRole('button', { name: texts['seeResults'] })).toBeTruthy();
+    });
+  });
+
+  describe('session persistence (scoped per query)', () => {
+    const originalFetch = global.fetch;
+
+    afterEach(() => {
+      global.fetch = originalFetch;
+    });
+
+    const mockHistoryResponse = (messages: unknown[]): void => {
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: (): Promise<unknown> => Promise.resolve({ result: { messages } }),
+      } as unknown as Response);
+    };
+
+    it('resumes the conversation for the same product query on remount, without regenerating the chat id or re-sending the query', async () => {
+      // persistChatEnabled defaults to disabled — opt in explicitly for this test.
+      const persistChatEnabled = { chatbot: { persistChatEnabled: true } };
+      const { mockVisearchClient } = renderEsa('red sneakers', {}, persistChatEnabled);
+      const stream = flushDeferredSendAndGetStreamController();
+      stream.emitEvent('chat_id', { value: 'chat-1' });
+      stream.emitEvent('reqid', { value: 'req-1' });
+      stream.emitEvent('chat_token', { value: 'Great picks!' });
+      stream.closeStream();
+      await revealAll();
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      testComponent.unmount();
+
+      mockHistoryResponse([
+        { reqid: 'req-1', type: 'human', message: 'red sneakers' },
+        { reqid: 'req-1', type: 'ai', message: 'Great picks!' },
+      ]);
+      mockFetchEventSource.mockReset();
+      const remount = renderEsa('red sneakers', {
+        generateUuid: jest.fn((cb: (uuid: string) => void) => cb('should-not-be-used')),
+      }, persistChatEnabled);
+      act(() => {
+        jest.advanceTimersByTime(0);
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      // Resumed: no new chat id, and the query is never re-sent as a live SSE call.
+      expect(remount.mockVisearchClient.generateUuid).not.toHaveBeenCalled();
+      expect(mockFetchEventSource).not.toHaveBeenCalled();
+      expect(getTextInBody('Great picks!')).toBeTruthy();
+    });
+
+    it('starts a fresh conversation (auto-sending the new query) when a different product query has no stored session of its own', async () => {
+      // persistChatEnabled defaults to disabled — opt in explicitly so this test actually
+      // exercises the per-query scoping, not just "nothing is ever stored anyway".
+      const persistChatEnabled = { chatbot: { persistChatEnabled: true } };
+      const { mockVisearchClient } = renderEsa('red sneakers', {}, persistChatEnabled);
+      const stream = flushDeferredSendAndGetStreamController();
+      stream.emitEvent('chat_id', { value: 'chat-1' });
+      stream.emitEvent('reqid', { value: 'req-1' });
+      stream.emitEvent('chat_token', { value: 'Great picks!' });
+      stream.closeStream();
+      await revealAll();
+      expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      testComponent.unmount();
+
+      mockFetchEventSource.mockReset();
+      const remount = renderEsa('blue boots', {
+        generateUuid: jest.fn((cb: (uuid: string) => void) => cb('fresh-for-blue-boots')),
+      }, persistChatEnabled);
+      act(() => {
+        jest.advanceTimersByTime(0);
+      });
+
+      // A different product's query never resumes another product's conversation.
+      expect(remount.mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
+      const [url] = mockFetchEventSource.mock.calls[0];
+      const params = new URLSearchParams((url as string).split('?')[1]);
+      expect(params.get('q')).toBe('blue boots');
+      expect(params.get('chat_id')).toBe('fresh-for-blue-boots');
     });
   });
 

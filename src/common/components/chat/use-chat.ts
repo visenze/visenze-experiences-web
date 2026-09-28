@@ -1,5 +1,6 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import type { Product } from 'visearch-javascript-sdk';
 import {
   extractActionTokens,
   extractSpeakableSentences,
@@ -46,6 +47,59 @@ const truncateLabel = (text: string): string => (
   text.length > MAX_BREADCRUMB_LABEL_LENGTH ? `${text.slice(0, MAX_BREADCRUMB_LABEL_LENGTH - 1)}…` : text
 );
 
+// History-endpoint product tokens are `[[pid - Title]]`, unlike the live stream's bare `[[pid]]`
+// — strip the title suffix so stripTokensForDisplay/resolveProducts can still match them.
+const normalizeHistoryProductTokens = (text: string): string => (
+  text.replace(/\[\[([^\]]+)]]/g, (_match, tokenContent: string) => `[[${tokenContent.trim().split(/\s/)[0]}]]`)
+);
+
+const CHAT_ID_STORAGE_PREFIX = 'visenze_shopping_assistant_chat_id_';
+// Default for customizations.chatbot.persistChatTtlMinutes when unset.
+const DEFAULT_CHAT_ID_TTL_MINUTES = 30;
+
+interface StoredChatId {
+  chatId: string;
+  timestamp: number;
+}
+
+// Only the chat id (plus a sliding TTL) is stored client-side; messages are always re-fetched
+// from the backend on restore (see fetchChatHistory) so the UI can't drift from the server.
+const loadStoredChatId = (key: string, ttlMs: number): string | undefined => {
+  const raw = localStorage.getItem(key);
+  if (!raw) {
+    return undefined;
+  }
+  try {
+    const stored = JSON.parse(raw) as StoredChatId;
+    if (stored.chatId && stored.timestamp && Date.now() - stored.timestamp <= ttlMs) {
+      return stored.chatId;
+    }
+  } catch {
+    // Ignore a malformed value and fall back to a fresh session.
+  }
+  return undefined;
+};
+
+// Called on open/send/close to slide the TTL forward instead of expiring mid-conversation.
+const persistChatId = (key: string, chatId: string): void => {
+  const snapshot: StoredChatId = { chatId, timestamp: Date.now() };
+  localStorage.setItem(key, JSON.stringify(snapshot));
+};
+
+interface ChatHistoryMessage {
+  reqid: string;
+  type: string;
+  message: string;
+  products?: Product[];
+}
+
+interface RestoredChatSession {
+  chats: Chat[];
+  breadcrumbs: BreadcrumbTurn[];
+  activeBreadcrumbId: string | null;
+  suggestions: string[];
+}
+
 export interface UseChatResult {
   chats: Chat[];
   isWaiting: boolean;
@@ -61,6 +115,11 @@ export interface UseChatResult {
   typewriterText: string;
   hasStartedChat: boolean;
   isOpen: boolean;
+  // Truthy once a session has started — via open()/newChat(), or restored on mount. Callers use
+  // this to tell "resume via reopen()" apart from "first-ever open, go through open()".
+  chatId: string;
+  // Same value as `chatId`, but read live rather than snapshotted — see its own doc comment.
+  getChatId: () => string;
   open: () => void;
   close: () => void;
   reopen: () => void;
@@ -81,6 +140,7 @@ export interface UseChatResult {
   stopRecording: () => void;
   hasPendingSpeech: () => boolean;
   playGreeting: (text: string) => void;
+  speakText: (text: string) => void;
   breadcrumbs: BreadcrumbTurn[];
   activeBreadcrumbId: string | null;
   setActiveBreadcrumb: (requestId: string) => void;
@@ -96,6 +156,13 @@ export interface UseChatOptions {
   // subtree — that blunter approach also strips callbacks from every other consumer reading the
   // same context, breaking real product-card interactions it was never meant to touch.
   suppressActionTokenCallbacks?: boolean;
+  // Scopes persistChatEnabled's stored session to more than just the placement id — e.g.
+  // embedded-shopping-assistant passes its `query` prop so a conversation only resumes while the
+  // visitor stays on the same product; a different query lands on its own, separate storage slot
+  // (no stored id yet) and starts fresh rather than resuming a different product's conversation.
+  // Ignored when unset (the placement id alone is the scope, as for shopping-assistant/
+  // ai-search-launcher, where there's exactly one conversation per placement).
+  sessionScopeKey?: string;
 }
 
 // Orchestrates a widget's full-screen chat surface: the SSE call to the backend chat endpoint,
@@ -114,6 +181,12 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
   // the chat SSE call below and the voice proxy call in useVoice.
   const manualEndpoint = getManualEndpoint(appSettings.placementId);
   const apiBase = resolveBaseEndpoint(appSettings, manualEndpoint);
+  // Defaults to disabled — only a widget's own default-config.ts turning this on opts in.
+  const persistChatEnabled = customizations.chatbot?.persistChatEnabled === true;
+  const persistChatTtlMs = (customizations.chatbot?.persistChatTtlMinutes ?? DEFAULT_CHAT_ID_TTL_MINUTES) * 60 * 1000;
+  // See sessionScopeKey's own doc comment: appended so a caller can scope the stored session to
+  // more than just the placement id.
+  const chatIdStorageKey = `${CHAT_ID_STORAGE_PREFIX}${appSettings.placementId}${options.sessionScopeKey ? `__${options.sessionScopeKey}` : ''}`;
 
   const [chats, setChats] = useState<Chat[]>([]);
   // The session/conversation chatId sendMessage sends as `chat_id`. A ref, not state: it was
@@ -121,9 +194,18 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
   // turned out to always close over the render's chatId *value* at the time that particular
   // sendMessage/closure was created — open()/newChat()'s setChatId call only takes effect on a
   // later render, which the already-created closure has no way to observe, so the deferred send
-  // fired with the stale pre-open/pre-newChat id forever, no matter how long it waited. Never
-  // exposed to consumers and never read anywhere else, so there's no reason for it to be state.
+  // fired with the stale pre-open/pre-newChat id forever, no matter how long it waited.
   const chatIdRef = useRef('');
+  // Bumped whenever chatIdRef changes, purely to force a re-render so the exposed `chatId`
+  // (which reads off chatIdRef.current) reflects it — never read back out itself.
+  const [, setChatIdVersion] = useState(0);
+  // Reads chatIdRef.current live, unlike the exposed `chatId` field (a plain string snapshotted
+  // at render time). Needed by a caller that must know synchronously, in its own mount effect,
+  // whether the hook's *own* mount-time restore effect (below) already found a resumable session
+  // — since both effects fire in the same initial flush, a caller reading the snapshotted `chatId`
+  // there would still see this render's pre-restore value, even though the restore effect (which
+  // runs first) already mutated the ref by the time the caller's own effect runs.
+  const getChatId = useCallback((): string => chatIdRef.current, []);
   const [message, setMessage] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
   const [showAllSuggestions, setShowAllSuggestionsState] = useState(false);
@@ -306,6 +388,23 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     // after this one, e.g. if a voice transcript finalizes while a typed message is already
     // streaming.
     activeStreamControllerRef.current?.abort();
+    // Lazily mints the session's chat id on its first real message. A caller can leave chatIdRef
+    // unset going into this call — ai-search-launcher's camera/mic entry points deliberately do
+    // (see openEntryPoint) so that merely opening one, without the user ever submitting anything,
+    // never mints or persists an id at all. Without this, that first send would go out with an
+    // empty chat_id and every later message in the same conversation would too, since chatIdRef is
+    // never re-derived from the backend's own response (see chatIdRef's own comment) — the server
+    // would treat each one as an unrelated new conversation.
+    if (!chatIdRef.current) {
+      widgetClient.visearch.generateUuid((uuid) => {
+        chatIdRef.current = uuid;
+        setChatIdVersion((v) => v + 1);
+      });
+    }
+    // Slides the resumable-session TTL forward, same as open()/close().
+    if (persistChatEnabled && chatIdRef.current) {
+      persistChatId(chatIdStorageKey, chatIdRef.current);
+    }
     setIsWaiting(true);
     setShowAllSuggestionsState(false);
     setMessage('');
@@ -522,6 +621,145 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     };
   });
 
+  // Re-fetches a previous conversation from the backend, given a chat id recovered from
+  // localStorage. Rebuilds chats/breadcrumbs with the same helpers the live stream uses, so the
+  // two paths can't drift apart on how a response is displayed.
+  const fetchChatHistory = async (chatIdToRestore: string): Promise<RestoredChatSession | null> => {
+    let uid = '';
+    let sid = '';
+    widgetClient.visearch.getUid((uidResp) => { uid = uidResp; });
+    widgetClient.visearch.getSid((sidResp) => { sid = sidResp; });
+    const params = new URLSearchParams({
+      app_key: appSettings.appKey,
+      placement_id: appSettings.placementId.toString(),
+      chat_id: chatIdToRestore,
+      va_uid: uid,
+      va_sid: sid,
+      attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
+    });
+    const historyPath = usesCloudPaths(appSettings, manualEndpoint)
+      ? '/v1/chat/history'
+      : '/v1/multisearch/chat/history';
+    const res = await fetch(`${apiBase}${historyPath}?${params.toString()}`);
+    if (!res.ok) {
+      return null;
+    }
+    const json = await res.json();
+    const messages = (json?.result?.messages || []) as ChatHistoryMessage[];
+    if (messages.length === 0) {
+      return null;
+    }
+
+    const restoredChats: Chat[] = [];
+    const restoredBreadcrumbs: BreadcrumbTurn[] = [];
+    let restoredActiveBreadcrumbId: string | null = null;
+    let lastUserMessage = '';
+    // Mirrors the live path: the LAST message wins — a trailing human turn leaves none, a
+    // trailing ai reply's own ((suggestion)) chips apply.
+    let restoredSuggestions: string[] = [];
+
+    messages.forEach((historyMessage) => {
+      if (historyMessage.type === 'human') {
+        lastUserMessage = historyMessage.message;
+        restoredSuggestions = [];
+        restoredChats.push({
+          chatId: chatIdToRestore,
+          requestId: historyMessage.reqid,
+          author: 'user',
+          messages: [historyMessage.message],
+        });
+        return;
+      }
+
+      const normalizedText = normalizeHistoryProductTokens(historyMessage.message);
+      const historyProducts = (historyMessage.products || []).map((p) => getFlattenProduct(p));
+      const resolvedProducts = resolveProducts(normalizedText, historyProducts);
+      const text = stripTokensForDisplay(normalizedText).trim();
+      if (text) {
+        restoredChats.push({
+          chatId: chatIdToRestore,
+          requestId: historyMessage.reqid,
+          author: 'bot',
+          messages: [text],
+          products: [],
+        });
+      }
+      if (resolvedProducts.length) {
+        restoredChats.push({
+          chatId: chatIdToRestore,
+          requestId: historyMessage.reqid,
+          author: 'products',
+          messages: [],
+          products: resolvedProducts,
+        });
+        restoredBreadcrumbs.push({
+          requestId: historyMessage.reqid,
+          label: truncateLabel(lastUserMessage),
+          products: resolvedProducts,
+        });
+        restoredActiveBreadcrumbId = historyMessage.reqid;
+      }
+      restoredSuggestions = extractSuggestions(normalizedText);
+    });
+
+    return {
+      chats: restoredChats,
+      breadcrumbs: restoredBreadcrumbs,
+      activeBreadcrumbId: restoredActiveBreadcrumbId,
+      suggestions: restoredSuggestions,
+    };
+  };
+
+  // Clears isWaiting/allowUserInput regardless of outcome, so a failed or empty fetch doesn't
+  // get stuck looking like a reply is still streaming in.
+  const restoreChatHistory = (chatIdToRestore: string): void => {
+    fetchChatHistory(chatIdToRestore)
+      .then((restored) => {
+        if (restored) {
+          setChats(restored.chats);
+          setBreadcrumbs(restored.breadcrumbs);
+          setActiveBreadcrumb(restored.activeBreadcrumbId);
+          setSuggestions(restored.suggestions);
+          setHasStartedChat(true);
+          return;
+        }
+        // Nothing to resume (e.g. opened but never messaged, so no backend history) — clear the
+        // id so callers' `chatId truthy → reopen()` doesn't keep resuming a blank surface.
+        chatIdRef.current = '';
+        setChatIdVersion((v) => v + 1);
+        localStorage.removeItem(chatIdStorageKey);
+      })
+      .catch((err: unknown) => {
+        console.error(err);
+        chatIdRef.current = '';
+        setChatIdVersion((v) => v + 1);
+        localStorage.removeItem(chatIdStorageKey);
+      })
+      .finally(() => {
+        setIsWaiting(false);
+        setAllowUserInput(true);
+      });
+  };
+
+  // Runs once on mount so a returning visitor's chatId (and chats, once fetched) is already in
+  // place by the time they open the dialog. No valid stored id just leaves this untouched.
+  useEffect(() => {
+    if (!persistChatEnabled) {
+      return;
+    }
+    const storedChatId = loadStoredChatId(chatIdStorageKey, persistChatTtlMs);
+    if (!storedChatId) {
+      return;
+    }
+    chatIdRef.current = storedChatId;
+    setChatIdVersion((v) => v + 1);
+    persistChatId(chatIdStorageKey, storedChatId);
+    setIsWaiting(true);
+    setAllowUserInput(false);
+    restoreChatHistory(storedChatId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const resetChatState = (): void => {
     activeStreamControllerRef.current?.abort();
     activeStreamControllerRef.current = null;
@@ -546,6 +784,10 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     resetChatState();
     widgetClient.visearch.generateUuid((uuid) => {
       chatIdRef.current = uuid;
+      setChatIdVersion((v) => v + 1);
+      if (persistChatEnabled) {
+        persistChatId(chatIdStorageKey, uuid);
+      }
     });
   };
 
@@ -560,6 +802,10 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     activeStreamControllerRef.current = null;
     interruptSpeech();
     setIsOpen(false);
+    // Slides the resumable-session TTL forward so a reopened session is still within the window.
+    if (persistChatEnabled && chatIdRef.current) {
+      persistChatId(chatIdStorageKey, chatIdRef.current);
+    }
   };
 
   // For a caller that re-shows an already-live conversation after close() (e.g. re-expanding a
@@ -576,6 +822,10 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     resetChatState();
     widgetClient.visearch.generateUuid((uuid) => {
       chatIdRef.current = uuid;
+      setChatIdVersion((v) => v + 1);
+      if (persistChatEnabled) {
+        persistChatId(chatIdStorageKey, uuid);
+      }
     });
   };
 
@@ -602,6 +852,21 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     }
   };
 
+  // Narrates `text` under the same conditions as playGreeting (voiceGreetingEnabled, not muted,
+  // no reply already in flight), but — deliberately — never touches `chats`. For a caller whose
+  // prompt (e.g. ai-search-launcher's camera/mic entry copy) must never become part of the
+  // conversation's real, persisted history: an abandoned camera/mic screen must leave no trace,
+  // and re-opening the same entry point must narrate its prompt again every time, not just once.
+  const speakText = (text: string): void => {
+    if (!text) {
+      return;
+    }
+    if (customizations.chatbot?.voiceGreetingEnabled && shouldSpeakReply()) {
+      resetReplyState();
+      speak(text, text.length, null);
+    }
+  };
+
   return {
     chats,
     isWaiting,
@@ -617,6 +882,8 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     typewriterText,
     hasStartedChat,
     isOpen,
+    chatId: chatIdRef.current,
+    getChatId,
     open,
     close,
     reopen,
@@ -637,6 +904,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     stopRecording,
     hasPendingSpeech,
     playGreeting,
+    speakText,
     breadcrumbs,
     activeBreadcrumbId,
     setActiveBreadcrumb,
