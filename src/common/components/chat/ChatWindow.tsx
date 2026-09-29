@@ -60,6 +60,13 @@ interface ChatWindowProps {
   // initial scroll position) as content streams in below the fold; the manual "scroll to latest"
   // button still works either way.
   scrollAnchor?: 'top' | 'bottom';
+  // Default true (today's behavior, unchanged): caps each product image at
+  // PRODUCT_IMAGE_MAX_HEIGHT_CLASS (45vh) - needed by ai-search-launcher (a portrait
+  // imageAspectRatio can otherwise render tall enough to hide the "Now Describing" narration
+  // badge, see that constant's own doc comment) and by ESA's full-screen surface. shopping-
+  // assistant has no such narration overlay and wants each product image filling its card at
+  // full size, as it did before adopting this shared ChatWindow, so it passes false to opt out.
+  capProductImageHeight?: boolean;
 }
 
 // Matches ProductsPane's column breakpoints: a fixed 2-column grid looks fine on mobile widths,
@@ -142,7 +149,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
   isWaiting, chats, latestMessage, suggestions, sendMessage, showAllSuggestions, setShowAllSuggestions,
   streamingProducts = [], streamingRequestId = '', focusedProductId = null, wishlistPids, setIsInWishlist, pwPrefix,
   productDisplayMode = 'grid', activeRequestId = null, onSelectTurn, hideInitialUserMessage = false,
-  scrollAnchor = 'bottom',
+  scrollAnchor = 'bottom', capProductImageHeight = true,
 }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
@@ -259,6 +266,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
     [customizations.productGrid, breakpoint],
   );
 
+  const productImageClasses = capProductImageHeight ? PRODUCT_IMAGE_MAX_HEIGHT_CLASS : undefined;
+
   const getAccessibleStatus = (): string => {
     if (isWaiting) {
       return intl.formatMessage({ id: 'a11yAssistantThinking' });
@@ -314,6 +323,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 onSelectTurn={onSelectTurn}
                 productGridClasses={productGridClasses}
                 productGridCssConfig={productGridCssConfig}
+                imageClasses={productImageClasses}
               />
             );
           })}
@@ -360,7 +370,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       setIsInWishlist={setIsInWishlist}
                       pwPrefix={pwPrefix}
                       streaming
-                      imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
+                      imageClasses={productImageClasses}
                       className={cn('w-full grid pl-9', productGridClasses)}
                       style={productGridCssConfig}
                     />

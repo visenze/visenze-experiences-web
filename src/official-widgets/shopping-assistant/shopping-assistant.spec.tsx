@@ -3,7 +3,6 @@ import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
 import ShoppingAssistant from './shopping-assistant';
 import { createMockWidgetClient, createWidgetConfig, renderWidget } from '../../common/test-utils';
-import { Actions } from '../../common/types/tracking-constants';
 import type { WidgetConfig } from '../../common/wigmix-core';
 
 // Mock @microsoft/fetch-event-source to control SSE streaming in tests
@@ -12,7 +11,9 @@ jest.mock('@microsoft/fetch-event-source', () => ({
   fetchEventSource: (...args: any[]): any => mockFetchEventSource(...args),
 }));
 
-// Mock react-webcam
+// Mock react-webcam — ChatComposer's WebcamCapture (variant='drawer') renders a live <Webcam> once
+// the "Add image" > "Open camera" drawer is open. Same mock as ai-search-launcher.spec.tsx and
+// embedded-shopping-assistant-chat.spec.tsx, which consume the exact same shared component.
 jest.mock('react-webcam', () => {
   const { forwardRef, useImperativeHandle } = jest.requireActual('react');
   return {
@@ -26,24 +27,6 @@ jest.mock('react-webcam', () => {
   };
 });
 
-// Mock @heroui/input Textarea
-jest.mock('@heroui/input', () => ({
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  Textarea: (props: any) => (
-    <div data-testid='chat-textarea-wrapper'>
-      <textarea
-        data-testid='chat-textarea'
-        aria-label={props['aria-label']}
-        value={props.value}
-        placeholder={props.placeholder}
-        onChange={props.onChange}
-        onKeyDown={props.onKeyDown}
-      />
-      {props.endContent && <div data-testid='chat-submit-button'>{props.endContent}</div>}
-    </div>
-  ),
-}));
-
 describe('shopping-assistant', () => {
   let testComponent: RenderResult;
   const texts = DEFAULT_TEXTS;
@@ -52,17 +35,21 @@ describe('shopping-assistant', () => {
   const createTestClient = (
     visearchOverrides: Partial<ViSearchClient> = {},
     callbacks: Partial<WidgetConfig['callbacks']> = {},
+    customizationOverrides: Partial<WidgetConfig['customizations']> = {},
   ): {
     widgetConfig: ReturnType<typeof createWidgetConfig>;
     widgetClient: ReturnType<typeof createMockWidgetClient>['widgetClient'];
     mockVisearchClient: ViSearchClient;
   } => {
-    const widgetConfig = createWidgetConfig(DEFAULT_CUSTOMIZATIONS, {
-      searchSettings: {
-        attrs_to_get: ['product_url', 'title', 'brand', 'price', 'original_price'],
+    const widgetConfig = createWidgetConfig(
+      { ...DEFAULT_CUSTOMIZATIONS, ...customizationOverrides },
+      {
+        searchSettings: {
+          attrs_to_get: ['product_url', 'title', 'brand', 'price', 'original_price'],
+        },
+        callbacks,
       },
-      callbacks,
-    });
+    );
     const { widgetClient, mockVisearchClient } = createMockWidgetClient(
       widgetConfig,
       'wigmix_shopping_assistant',
@@ -81,8 +68,9 @@ describe('shopping-assistant', () => {
     visearchOverrides: Partial<ViSearchClient> = {},
     locale = 'en',
     callbacks: Partial<WidgetConfig['callbacks']> = {},
+    customizationOverrides: Partial<WidgetConfig['customizations']> = {},
   ): ReturnType<typeof createTestClient> => {
-    const { widgetConfig, widgetClient, mockVisearchClient } = createTestClient(visearchOverrides, callbacks);
+    const { widgetConfig, widgetClient, mockVisearchClient } = createTestClient(visearchOverrides, callbacks, customizationOverrides);
     testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
       widgetConfig,
       widgetClient,
@@ -94,7 +82,6 @@ describe('shopping-assistant', () => {
   };
 
   const queryModal = (selector: string): Element | null => document.body.querySelector(selector);
-  const queryAllModal = (selector: string): NodeListOf<Element> => document.body.querySelectorAll(selector);
   const getTextInBody = (text: string): HTMLElement | null => {
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     let node = walker.nextNode();
@@ -107,10 +94,11 @@ describe('shopping-assistant', () => {
     return null;
   };
 
-  // Assistant text/products now reveal progressively (typewriter text, one-at-a-time product
-  // cards) via a stable interval rather than appearing all at once. Call this after emitting
-  // SSE events to fast-forward past that reveal animation so assertions can check the fully-
-  // revealed state.
+  // Assistant text/products reveal progressively (typewriter text, one-at-a-time product cards) via
+  // a stable interval rather than appearing all at once, and by default (unmuted) a reply commit is
+  // additionally deferred behind a voice-synthesis attempt that fails fast in jsdom (no fetch/
+  // SpeechSynthesis support) and falls back synchronously-ish. Advancing timers is enough to
+  // fast-forward past all of it.
   const revealAll = async (): Promise<void> => {
     await act(async () => {
       jest.advanceTimersByTime(10000);
@@ -123,8 +111,20 @@ describe('shopping-assistant', () => {
     act(() => {
       fireEvent.click(triggerButton);
     });
+    // Flushes the scripted two-part opening greeting (openingMessage1 at ~2s, openingMessage2 at
+    // ~4s) and the post-mount input-focus deferral.
     act(() => {
       jest.runAllTimers();
+    });
+  };
+
+  // Opens the composer's combined "Add image" popover (camera + upload) — ChatComposer is the same
+  // shared component ai-search-launcher/embedded-shopping-assistant consume, so this mirrors
+  // ai-search-launcher.spec.tsx's own "chat footer — combined image icon" helper.
+  const openImageMenu = (): void => {
+    const addImageButton = testComponent.getByRole('button', { name: texts['en']['a11yAddImage'], hidden: true });
+    act(() => {
+      fireEvent.click(addImageButton);
     });
   };
 
@@ -133,25 +133,22 @@ describe('shopping-assistant', () => {
   ): {
     emitEvent: (event: string, data: any) => void;
     closeStream: () => void;
-    triggerError: (error: Error) => void;
   } => {
-    const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+    const chatInput = testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true });
 
     let onmessage: (ev: { event: string; data: string }) => void;
     let onclose: () => void;
-    let onerror: (err: Error) => void;
 
     mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
       onmessage = options.onmessage;
       onclose = options.onclose;
-      onerror = options.onerror;
     });
 
     act(() => {
-      fireEvent.change(textarea, { target: { value: messageText } });
+      fireEvent.change(chatInput, { target: { value: messageText } });
     });
     act(() => {
-      fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
+      fireEvent.keyDown(chatInput, { code: 'Enter', shiftKey: false });
     });
 
     return {
@@ -163,11 +160,6 @@ describe('shopping-assistant', () => {
       closeStream: (): void => {
         act(() => {
           onclose();
-        });
-      },
-      triggerError: (error: Error): void => {
-        act(() => {
-          onerror(error);
         });
       },
     };
@@ -192,7 +184,7 @@ describe('shopping-assistant', () => {
   });
 
   // ============================================================
-  // Core Rendering Tests
+  // Core rendering
   // ============================================================
 
   describe('core rendering', () => {
@@ -206,18 +198,21 @@ describe('shopping-assistant', () => {
       expect(testComponent.asFragment()).toMatchSnapshot();
     });
 
-    it('should open chat dialog when trigger button is clicked', () => {
+    it('should open the dialog and play the scripted two-part opening greeting when the trigger button is clicked', () => {
       renderAssistant();
       openDialogAndWait();
-      expect(getTextInBody('Shopping Assistant')).toBeTruthy();
+
+      expect(testComponent.getByRole('dialog', { name: texts['en']['widgetTitle'], hidden: true })).toBeTruthy();
+      expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+      expect(getTextInBody(texts['en']['openingMessage2'])).toBeTruthy();
     });
 
-    it('should close dialog when close button is clicked', () => {
+    it('should close the dialog and restore focus to the trigger button when the close button is clicked', () => {
       renderAssistant();
+      const triggerButton = testComponent.container.querySelector('.wigmix-popup-trigger-button') as HTMLButtonElement;
       openDialogAndWait();
 
       const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true });
-
       act(() => {
         fireEvent.click(closeButton);
       });
@@ -226,8 +221,13 @@ describe('shopping-assistant', () => {
       });
 
       expect(queryModal('.wigmix-modal')).toBeNull();
+      expect(document.activeElement).toBe(triggerButton);
     });
   });
+
+  // ============================================================
+  // Session persistence
+  // ============================================================
 
   describe('session persistence', () => {
     it('resumes the existing conversation instead of regenerating the chat id or replaying the opening greeting when closed and reopened', () => {
@@ -251,8 +251,8 @@ describe('shopping-assistant', () => {
     });
 
     it('shows the normal opening greeting instead of a blank surface when a stored session from a previous visit has no real history to resume', async () => {
-      // A stale localStorage entry with no backend history must not leave the widget stuck
-      // trying to resume a blank surface forever.
+      // A stale localStorage entry with no backend history must not leave the widget stuck trying
+      // to resume a blank surface forever.
       const originalFetch = global.fetch;
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
@@ -320,8 +320,8 @@ describe('shopping-assistant', () => {
         jest.runAllTimers();
       });
       expect(localStorage.getItem('visenze_shopping_assistant_chat_id_1234')).toBeTruthy();
-      // Isolate the assertion to the close path: if closeDialog's externally-registered
-      // callback never re-persists, this stays empty.
+      // Isolate the assertion to the close path: if closeDialog's externally-registered callback
+      // never re-persists, this stays empty.
       localStorage.removeItem('visenze_shopping_assistant_chat_id_1234');
 
       act(() => {
@@ -334,6 +334,10 @@ describe('shopping-assistant', () => {
       expect(localStorage.getItem('visenze_shopping_assistant_chat_id_1234')).toBeTruthy();
     });
   });
+
+  // ============================================================
+  // Accessibility
+  // ============================================================
 
   describe('accessibility', () => {
     it('should expose an accessible name for the popup trigger', () => {
@@ -357,9 +361,10 @@ describe('shopping-assistant', () => {
       expect(testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true })).toBeTruthy();
     });
 
-    it('should expose image action controls as named buttons', () => {
+    it('should expose image action controls as named buttons once the "Add image" menu is open', () => {
       renderAssistant();
       openDialogAndWait();
+      openImageMenu();
 
       expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeTruthy();
       expect(testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' })).toBeTruthy();
@@ -391,7 +396,7 @@ describe('shopping-assistant', () => {
       openDialogAndWait();
 
       expect(testComponent.getByRole('button', { name: texts['es']['a11yStartNewChat'], hidden: true })).toBeTruthy();
-      expect(testComponent.getByRole('button', { name: texts['es']['a11yOpenCamera'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['es']['a11yAddImage'], hidden: true })).toBeTruthy();
       expect(testComponent.getByRole('button', { name: texts['es']['a11ySendMessage'], hidden: true })).toBeTruthy();
       expect(testComponent.getByRole('textbox', { name: texts['es']['a11yChatInput'], hidden: true })).toBeTruthy();
       expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true })).toBeNull();
@@ -405,9 +410,10 @@ describe('shopping-assistant', () => {
       expect(getTextInBody('Tell us about what your styling needs')?.closest('[tabindex="0"]')).toBeNull();
     });
 
-    it('should expose the camera drawer as a labelled dialog and restore focus when closed', () => {
+    it('should expose the camera drawer as a labelled dialog and restore focus to the "Add image" trigger when closed', () => {
       renderAssistant();
       openDialogAndWait();
+      openImageMenu();
 
       const openCameraButton = testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true });
       act(() => {
@@ -424,12 +430,16 @@ describe('shopping-assistant', () => {
       });
 
       expect(testComponent.queryByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true })).toBeNull();
-      expect(document.activeElement).toBe(openCameraButton);
+      // Focus returns to ChatComposer's own "Add image" trigger (the camera drawer's opener), not
+      // the popover's "Open camera" menu item — that item no longer exists once the drawer is open,
+      // since opening it also closes the popover.
+      expect(document.activeElement).toBe(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'], hidden: true }));
     });
 
     it('should trap keyboard focus inside the camera drawer', () => {
       renderAssistant();
       openDialogAndWait();
+      openImageMenu();
 
       act(() => {
         fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
@@ -502,1215 +512,61 @@ describe('shopping-assistant', () => {
   });
 
   // ============================================================
-  // SSE Streaming Tests - Core Focus
+  // Chat wiring (SSE via the shared useChat hook)
   // ============================================================
 
-  describe('SSE streaming', () => {
-    describe('progressive token streaming', () => {
-      it('should show loading dots immediately after sending message', () => {
-        renderAssistant();
-        openDialogAndWait();
+  // Token-by-token SSE parsing, product/action-token extraction, and suggestion-chip logic are
+  // useChat's own responsibility now (see src/common/components/chat/use-chat.ts), fully covered by
+  // use-chat.spec.ts. These two tests only confirm shopping-assistant wires useChat/ChatWindow/
+  // ChatComposer together correctly — not every SSE edge case.
+  describe('chat wiring', () => {
+    it('renders the user message immediately, then the streamed bot reply and product card once the stream completes', async () => {
+      renderAssistant();
+      openDialogAndWait();
 
-        sendMessageAndGetStreamController('Hello');
+      const stream = sendMessageAndGetStreamController('Find me a jacket');
+      expect(getTextInBody('Find me a jacket')).toBeTruthy();
 
-        const loadingDots = queryAllModal('.loading-dot');
-        expect(loadingDots.length).toBe(3);
+      stream.emitEvent('chat_id', { value: 'chat-123' });
+      stream.emitEvent('reqid', { value: 'req-123' });
+      stream.emitEvent('chat_token', { value: 'Here is a jacket: [[pid-1]]' });
+      stream.emitEvent('product', {
+        product_id: 'pid-1',
+        main_image_url: 'https://example.com/jacket.jpg',
+        data: {
+          product_url: 'https://example.com/jacket',
+          price: { currency: 'USD', value: '59.99' },
+          title: 'Cool Jacket',
+          brand: 'Nike',
+        },
       });
+      stream.closeStream();
+      await revealAll();
 
-      it('should hide loading dots after first token arrives', () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Hello');
-
-        // Loading dots should be visible before any tokens
-        expect(queryAllModal('.loading-dot').length).toBe(3);
-
-        // Emit first token
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('chat_token', { value: 'Hi' });
-
-        // Loading dots should disappear after first token
-        expect(queryAllModal('.loading-dot').length).toBe(0);
-      });
-
-      it('should progressively display text as tokens stream in', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Tell me something');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        // First token
-        stream.emitEvent('chat_token', { value: 'Hello' });
-        await revealAll();
-        expect(getTextInBody('Hello')).toBeTruthy();
-        expect(getTextInBody('Hello world')).toBeNull();
-
-        // Second token appends
-        stream.emitEvent('chat_token', { value: ' world' });
-        await revealAll();
-        expect(getTextInBody('Hello world')).toBeTruthy();
-        expect(getTextInBody('Hello world!')).toBeNull();
-
-        // Third token appends
-        stream.emitEvent('chat_token', { value: '!' });
-        await revealAll();
-        expect(getTextInBody('Hello world!')).toBeTruthy();
-      });
-
-      it('should accumulate multi-line responses correctly', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Give me a list');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        stream.emitEvent('chat_token', { value: 'Here are items:\n' });
-        stream.emitEvent('chat_token', { value: '1. First\n' });
-        stream.emitEvent('chat_token', { value: '2. Second\n' });
-        stream.emitEvent('chat_token', { value: '3. Third' });
-        await revealAll();
-
-        expect(getTextInBody('Here are items:')).toBeTruthy();
-        expect(getTextInBody('1. First')).toBeTruthy();
-        expect(getTextInBody('2. Second')).toBeTruthy();
-        expect(getTextInBody('3. Third')).toBeTruthy();
-      });
-
-      it('should trigger reserved cart and wishlist actions without rendering their tokens', async () => {
-        const onAddToCartToggle = jest.fn(() => true);
-        const onAddToWishlistToggle = jest.fn(() => true);
-        renderAssistant({}, 'en', { onAddToCartToggle, onAddToWishlistToggle });
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Add these items');
-        stream.emitEvent('chat_token', { value: 'Added <<ADD_TO_CART:cart-item-1>> and ' });
-        stream.emitEvent('chat_token', { value: 'saved <<ADD_TO_LIKE:wishlist-item-2>> and <<ADD_TO_WISHLIST:wishlist-item-3>>.' });
-        stream.closeStream();
-        await revealAll();
-
-        expect(onAddToCartToggle).toHaveBeenCalledTimes(1);
-        expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'cart-item-1');
-        expect(onAddToWishlistToggle).toHaveBeenCalledTimes(2);
-        expect(onAddToWishlistToggle).toHaveBeenCalledWith(true, 'wishlist-item-2');
-        expect(onAddToWishlistToggle).toHaveBeenCalledWith(true, 'wishlist-item-3');
-        expect(getTextInBody('ADD_TO_CART')).toBeNull();
-        expect(getTextInBody('ADD_TO_LIKE')).toBeNull();
-        expect(getTextInBody('ADD_TO_WISHLIST')).toBeNull();
-        expect(getTextInBody('Added')).toBeTruthy();
-      });
-
-      it('should wait for a split reserved token before triggering its callback', () => {
-        const onAddToCartToggle = jest.fn(() => true);
-        renderAssistant({}, 'en', { onAddToCartToggle });
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Add this item');
-        stream.emitEvent('chat_token', { value: '<<ADD_TO_' });
-        expect(onAddToCartToggle).not.toHaveBeenCalled();
-        expect(getTextInBody('<<ADD_TO_')).toBeNull();
-        stream.emitEvent('chat_token', { value: 'CART:cart-item-2>>' });
-
-        expect(onAddToCartToggle).toHaveBeenCalledTimes(1);
-        expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'cart-item-2');
-        stream.closeStream();
-      });
-
-      it('should finalize message in chat history when stream closes', () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Hello');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-        stream.emitEvent('chat_token', { value: 'Complete response text' });
-        stream.closeStream();
-
-        act(() => {
-          jest.runAllTimers();
-        });
-
-        // Message should be in final chat history
-        expect(getTextInBody('Complete response text')).toBeTruthy();
-      });
+      expect(getTextInBody('Here is a jacket:')).toBeTruthy();
+      expect(document.body.querySelectorAll('.wigmix-product-card')).toHaveLength(1);
     });
 
-    describe('product streaming', () => {
-      it('should display product card as soon as the product event arrives after its PID token, without waiting for the response to finish', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Show me shoes');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        // Intro text
-        stream.emitEvent('chat_token', { value: 'Check out this product:\n' });
-
-        // Product line with PID
-        stream.emitEvent('chat_token', { value: '[[pid-1]] **Cool Shoes** - Great for running' });
-
-        // Product data arrives
-        stream.emitEvent('product', {
-          product_id: 'pid-1',
-          main_image_url: 'https://example.com/shoe.jpg',
-          data: {
-            product_url: 'https://example.com/shoe',
-            price: { currency: 'USD', value: '99.99' },
-            title: 'Cool Shoes',
-            brand: 'Nike',
-          },
-        });
-
-        stream.emitEvent('chat_token', { value: '\n' });
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-        stream.closeStream();
-        await revealAll();
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-      });
-
-      it('should accumulate multiple products in sequence', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Show me products');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        stream.emitEvent('chat_token', { value: 'Products for you:\n' });
-
-        // First product
-        stream.emitEvent('chat_token', { value: '[[pid-1]] Product One' });
-        stream.emitEvent('product', {
-          product_id: 'pid-1',
-          main_image_url: 'https://img1.jpg',
-          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
-        });
-        stream.emitEvent('chat_token', { value: '\n' });
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-
-        // Second product
-        stream.emitEvent('chat_token', { value: '[[pid-2]] Product Two' });
-        stream.emitEvent('product', {
-          product_id: 'pid-2',
-          main_image_url: 'https://img2.jpg',
-          data: { product_url: 'https://p2', price: { currency: 'USD', value: '20' }, title: 'P2' },
-        });
-        stream.emitEvent('chat_token', { value: '\n' });
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(2);
-
-        // Third product
-        stream.emitEvent('chat_token', { value: '[[pid-3]] Product Three' });
-        stream.emitEvent('product', {
-          product_id: 'pid-3',
-          main_image_url: 'https://img3.jpg',
-          data: { product_url: 'https://p3', price: { currency: 'USD', value: '30' }, title: 'P3' },
-        });
-        stream.emitEvent('chat_token', { value: '\n' });
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(3);
-
-        stream.closeStream();
-        await revealAll();
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(3);
-      });
-
-      it('should handle text after products in stream', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Products please');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        stream.emitEvent('chat_token', { value: 'Here is a product:\n' });
-        stream.emitEvent('chat_token', { value: '[[pid-1]] Product' });
-        stream.emitEvent('product', {
-          product_id: 'pid-1',
-          main_image_url: 'https://img.jpg',
-          data: { product_url: 'https://p', price: { currency: 'USD', value: '10' }, title: 'P' },
-        });
-        stream.emitEvent('chat_token', { value: '\n' });
-        stream.emitEvent('chat_token', { value: 'Let me know if you need more!' });
-
-        stream.closeStream();
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card').length).toBe(1);
-        expect(getTextInBody('Let me know if you need more!')).toBeTruthy();
-      });
-
-      it('should render card and keep the description for the new trailing-token format', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Show me dresses');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        stream.emitEvent('chat_token', { value: 'Here are dresses:\n' });
-        stream.emitEvent('chat_token', { value: '- Floral dress: a vibrant look. ' });
-        stream.emitEvent('product', {
-          product_id: 'pid-1',
-          main_image_url: 'https://img.jpg',
-          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'Floral' },
-        });
-        stream.emitEvent('chat_token', { value: '[[pid-1]]' });
-        stream.emitEvent('chat_token', { value: '\n' });
-        stream.closeStream();
-
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card').length).toBe(1);
-        expect(getTextInBody('Floral dress: a vibrant look.')).toBeTruthy();
-        expect(getTextInBody('[[pid-1]]')).toBeNull();
-      });
-
-      it('should display the product card as soon as its data resolves, without waiting for the response text to complete', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Live card');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        stream.emitEvent('chat_token', { value: 'Nice pick: a bold red. ' });
-        stream.emitEvent('product', {
-          product_id: 'pid-9',
-          main_image_url: 'https://img.jpg',
-          data: { product_url: 'https://p9', price: { currency: 'USD', value: '20' }, title: 'Red' },
-        });
-        stream.emitEvent('chat_token', { value: '[[pid-9]]' });
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-
-        stream.closeStream();
-        await revealAll();
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-      });
-
-      it('should parse a product token split across SSE chunks', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Split token');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        stream.emitEvent('chat_token', { value: 'Item desc ' });
-        stream.emitEvent('chat_token', { value: '[[pi' });
-        // Partial, unclosed token must not leak into the bubble.
-        expect(getTextInBody('[[pi')).toBeNull();
-        stream.emitEvent('chat_token', { value: 'd-1]]' });
-        stream.emitEvent('product', {
-          product_id: 'pid-1',
-          main_image_url: 'https://img.jpg',
-          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
-        });
-        stream.closeStream();
-
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card').length).toBe(1);
-        expect(getTextInBody('[[pid-1]]')).toBeNull();
-      });
-
-      it('should strip the token but render no card when the product payload never arrives', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Missing payload');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        stream.emitEvent('chat_token', { value: 'Missing item: desc here [[pid-x]]\n' });
-        stream.closeStream();
-
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card').length).toBe(0);
-        expect(getTextInBody('[[pid-x]]')).toBeNull();
-        expect(getTextInBody('Missing item: desc here')).toBeTruthy();
-      });
-
-      it('should drop the whole line for the old leading-token format', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Old format');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        stream.emitEvent('chat_token', { value: 'Intro line:\n' });
-        stream.emitEvent('chat_token', { value: '- [[pid-1]] leadingdroptext' });
-        stream.emitEvent('product', {
-          product_id: 'pid-1',
-          main_image_url: 'https://img.jpg',
-          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'CardTitle' },
-        });
-        stream.emitEvent('chat_token', { value: '\n' });
-        stream.closeStream();
-
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card').length).toBe(1);
-        expect(getTextInBody('leadingdroptext')).toBeNull();
-        expect(getTextInBody('Intro line:')).toBeTruthy();
-      });
-
-      it('should carry the current request id into the completed product card', async () => {
-        const { widgetClient } = renderAssistant();
-        const sendEventSpy = jest.spyOn(widgetClient, 'sendEvent');
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Show me shoes live');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-
-        stream.emitEvent('chat_token', { value: 'Nice pick: [[pid-1]]' });
-        stream.emitEvent('product', {
-          product_id: 'pid-1',
-          main_image_url: 'https://img.jpg',
-          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
-        });
-        await revealAll();
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-        stream.closeStream();
-        await revealAll();
-
-        const anchor = document.body.querySelector('.wigmix-product-card a') as HTMLAnchorElement;
-        expect(anchor).toBeTruthy();
-        anchor.click();
-
-        expect(sendEventSpy).toHaveBeenCalledWith(Actions.PRODUCT_CLICK, expect.objectContaining({ queryId: 'req-123' }));
-      });
-
-      it('should fire PRODUCT_VIEW exactly once even though the card mounts live and again as a committed row', async () => {
-        const originalIntersectionObserver = (window as any).IntersectionObserver;
-        // Only track callbacks whose observer actually attaches to a node via `.observe()` —
-        // ProductCard's ref-callback pattern constructs one throwaway observer per render
-        // before `targetRef` is set, which never calls `.observe()` and never intersects for real.
-        const observerCallbacks: Array<(entries: Array<{ isIntersecting: boolean }>) => void> = [];
-        (window as any).IntersectionObserver = jest.fn((callback: (entries: Array<{ isIntersecting: boolean }>) => void) => ({
-          observe: jest.fn(() => {
-            observerCallbacks.push(callback);
-          }),
-          unobserve: jest.fn(),
-          disconnect: jest.fn(),
-        }));
-
-        try {
-          const { widgetClient } = renderAssistant();
-          const sendEventSpy = jest.spyOn(widgetClient, 'sendEvent');
-          openDialogAndWait();
-
-          const stream = sendMessageAndGetStreamController('Show me a dedup test');
-
-          stream.emitEvent('chat_id', { value: 'chat-123' });
-          stream.emitEvent('reqid', { value: 'req-123' });
-          stream.emitEvent('chat_token', { value: 'Nice pick: [[pid-1]]' });
-          stream.emitEvent('product', {
-            product_id: 'pid-1',
-            main_image_url: 'https://img.jpg',
-            data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
-          });
-          await revealAll();
-
-          // Card streams in live, before the response finishes, and starts tracking view state.
-          expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-          expect(observerCallbacks).toHaveLength(1);
-          act(() => {
-            observerCallbacks[0]([{ isIntersecting: true }]);
-          });
-          expect(sendEventSpy.mock.calls.filter(([action]) => action === Actions.PRODUCT_VIEW)).toHaveLength(1);
-
-          stream.closeStream();
-          await revealAll();
-
-          // The card re-mounts as a committed row (a new DOM subtree, its own observer)...
-          expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-          expect(observerCallbacks).toHaveLength(2);
-          act(() => {
-            observerCallbacks[1]([{ isIntersecting: true }]);
-          });
-
-          // ...but PRODUCT_VIEW is still only reported once, thanks to skipViewTracking.
-          const viewCallsAfterClose = sendEventSpy.mock.calls.filter(([action]) => action === Actions.PRODUCT_VIEW).length;
-          expect(viewCallsAfterClose).toBe(1);
-        } finally {
-          (window as any).IntersectionObserver = originalIntersectionObserver;
-        }
-      });
-
-      it('should not suppress PRODUCT_VIEW for the same product across different requests', async () => {
-        const originalIntersectionObserver = (window as any).IntersectionObserver;
-        const observerCallbacks: Array<(entries: Array<{ isIntersecting: boolean }>) => void> = [];
-        (window as any).IntersectionObserver = jest.fn((callback: (entries: Array<{ isIntersecting: boolean }>) => void) => ({
-          observe: jest.fn(() => {
-            observerCallbacks.push(callback);
-          }),
-          unobserve: jest.fn(),
-          disconnect: jest.fn(),
-        }));
-
-        try {
-          const { widgetClient } = renderAssistant();
-          const sendEventSpy = jest.spyOn(widgetClient, 'sendEvent');
-          openDialogAndWait();
-
-          // First response references pid-1 under req-1
-          const stream1 = sendMessageAndGetStreamController('First request');
-          stream1.emitEvent('chat_id', { value: 'chat-123' });
-          stream1.emitEvent('reqid', { value: 'req-1' });
-          stream1.emitEvent('chat_token', { value: 'Nice pick: [[pid-1]]' });
-          stream1.emitEvent('product', {
-            product_id: 'pid-1',
-            main_image_url: 'https://img.jpg',
-            data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
-          });
-          await revealAll();
-          expect(observerCallbacks).toHaveLength(1);
-          stream1.closeStream();
-          await revealAll();
-
-          act(() => {
-            observerCallbacks[observerCallbacks.length - 1]([{ isIntersecting: true }]);
-          });
-
-          // Second, unrelated response references the same pid-1 under a different req id
-          const stream2 = sendMessageAndGetStreamController('Second request');
-          stream2.emitEvent('chat_id', { value: 'chat-456' });
-          stream2.emitEvent('reqid', { value: 'req-2' });
-          stream2.emitEvent('chat_token', { value: 'Also this: [[pid-1]]' });
-          stream2.emitEvent('product', {
-            product_id: 'pid-1',
-            main_image_url: 'https://img.jpg',
-            data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
-          });
-          await revealAll();
-          stream2.closeStream();
-          await revealAll();
-
-          act(() => {
-            observerCallbacks[observerCallbacks.length - 1]([{ isIntersecting: true }]);
-          });
-
-          const viewCalls = sendEventSpy.mock.calls.filter(([action]) => action === Actions.PRODUCT_VIEW).length;
-          expect(viewCalls).toBe(2);
-        } finally {
-          (window as any).IntersectionObserver = originalIntersectionObserver;
-        }
-      });
-
-      it('should scroll the chat container vertically when completed products appear', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Show me a live scroll test');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-        stream.emitEvent('chat_token', { value: 'Nice pick: [[pid-1]]\n' });
-
-        const chatContainer = document.body.querySelector(`[aria-label="${texts['en']['a11yChatMessages']}"]`) as HTMLDivElement;
-        Object.defineProperty(chatContainer, 'scrollHeight', { configurable: true, value: 500 });
-        const scrollSpy = Element.prototype.scrollIntoView as jest.Mock;
-        scrollSpy.mockClear();
-
-        stream.emitEvent('product', {
-          product_id: 'pid-1',
-          main_image_url: 'https://img.jpg',
-          data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
-        });
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-        stream.closeStream();
-        await revealAll();
-
-        expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-        expect(chatContainer.scrollTop).toBe(500);
-        expect(scrollSpy).not.toHaveBeenCalled();
-      });
-    });
-
-    describe('suggestion chips streaming', () => {
-      it('should extract suggestions but display them only after response text completes', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('What options?');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-        // Only 2 suggestions shown by default (showAllSuggestions is false)
-        stream.emitEvent('chat_token', { value: 'Try these: ((red dress)) ((blue jacket))' });
-        await revealAll();
-        expect(getTextInBody('red dress')).toBeNull();
-        expect(getTextInBody('blue jacket')).toBeNull();
-        stream.closeStream();
-
-        await revealAll();
-
-        expect(getTextInBody('red dress')).toBeTruthy();
-        expect(getTextInBody('blue jacket')).toBeTruthy();
-      });
-
-      it('should show "Show more..." when there are more than 2 suggestions', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('What options?');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-        stream.emitEvent('chat_token', { value: 'Options: ((opt1)) ((opt2)) ((opt3)) ((opt4))' });
-        stream.closeStream();
-
-        await revealAll();
-
-        // First 2 suggestions visible
-        expect(getTextInBody('opt1')).toBeTruthy();
-        expect(getTextInBody('opt2')).toBeTruthy();
-        // "Show more..." should appear
-        expect(getTextInBody(texts['en']['showMore'])).toBeTruthy();
-
-        // Click "Show more..."
-        const showMore = getTextInBody(texts['en']['showMore']);
-        act(() => {
-          fireEvent.click(showMore as HTMLElement);
-        });
-
-        // All suggestions should now be visible
-        expect(getTextInBody('opt3')).toBeTruthy();
-        expect(getTextInBody('opt4')).toBeTruthy();
-      });
-
-      it('should send suggestion as message when chip is clicked', async () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Suggestions');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-        stream.emitEvent('chat_token', { value: 'Options: ((red dress)) ((blue jacket))' });
-        stream.closeStream();
-
-        await revealAll();
-
-        mockFetchEventSource.mockReset();
-
-        const chip = getTextInBody('red dress');
-        act(() => {
-          fireEvent.click(chip as HTMLElement);
-        });
-
-        expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
-        const url = mockFetchEventSource.mock.calls[0][0] as string;
-        expect(url).toContain('q=red+dress');
-      });
-    });
-
-    describe('stream state management', () => {
-      it('should block user input while stream is active', () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('First message');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('chat_token', { value: 'Processing...' });
-
-        // Try to send another message while streaming
-        const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-        act(() => {
-          fireEvent.change(textarea, { target: { value: 'Second message' } });
-        });
-        act(() => {
-          fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
-        });
-
-        // Should only have one call (the first message)
-        expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
-      });
-
-      it('should re-enable user input after stream closes', () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('First message');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-        stream.emitEvent('chat_token', { value: 'Done' });
-        stream.closeStream();
-
-        act(() => { jest.runAllTimers(); });
-
-        mockFetchEventSource.mockReset();
-
-        // Now should be able to send another message
-        const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-        act(() => {
-          fireEvent.change(textarea, { target: { value: 'Second message' } });
-        });
-        act(() => {
-          fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
-        });
-
-        expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
-      });
-
-      it('should handle empty stream response gracefully', () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Empty test');
-
-        stream.emitEvent('chat_id', { value: 'chat-123' });
-        stream.emitEvent('reqid', { value: 'req-123' });
-        // No chat_token events, just close
-        stream.closeStream();
-
-        act(() => { jest.runAllTimers(); });
-
-        // Should not crash, dialog should still be visible
-        expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-      });
-
-      it('should handle stream error without crashing', () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-        renderAssistant();
-        openDialogAndWait();
-
-        const stream = sendMessageAndGetStreamController('Error test');
-
-        stream.triggerError(new Error('Stream failed'));
-
-        expect(consoleSpy).toHaveBeenCalled();
-        consoleSpy.mockRestore();
-      });
-    });
-
-    // ============================================================
-    // Error Handling & Recovery Tests
-    // ============================================================
-
-    describe('error handling and recovery', () => {
-      describe('SSE connection failures', () => {
-        it('should not crash when connection drops mid-stream', () => {
-          const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-          renderAssistant();
-          openDialogAndWait();
-
-          // Start first message
-          const stream = sendMessageAndGetStreamController('Hello');
-
-          stream.emitEvent('chat_id', { value: 'chat-123' });
-          stream.emitEvent('chat_token', { value: 'Starting response...' });
-
-          // Simulate connection drop mid-stream
-          stream.triggerError(new Error('Connection lost'));
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Dialog should still be visible (not crashed)
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-
-          consoleSpy.mockRestore();
-        });
-
-        it('should not crash on network timeout error', () => {
-          const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-          renderAssistant();
-          openDialogAndWait();
-
-          const stream = sendMessageAndGetStreamController('Timeout test');
-
-          // Simulate network timeout error
-          stream.triggerError(new Error('Network request failed: timeout'));
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Widget should remain functional
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-
-          consoleSpy.mockRestore();
-        });
-
-        it('should handle abrupt stream closure without tokens', () => {
-          renderAssistant();
-          openDialogAndWait();
-
-          const stream = sendMessageAndGetStreamController('Abrupt close');
-
-          // Stream closes immediately without any events
-          stream.closeStream();
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Should not crash, UI should be functional
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-
-          // Should be able to send another message
-          mockFetchEventSource.mockReset();
-          const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-
-          act(() => {
-            fireEvent.change(textarea, { target: { value: 'Follow up' } });
-          });
-          act(() => {
-            fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
-          });
-
-          expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
-        });
-
-        it('should handle error with specific error types', () => {
-          const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-          renderAssistant();
-          openDialogAndWait();
-
-          const stream = sendMessageAndGetStreamController('Error types test');
-
-          // Test various error types
-          stream.triggerError(new TypeError('Failed to fetch'));
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Widget should still be functional after error
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-
-          consoleSpy.mockRestore();
-        });
-      });
-
-      describe('malformed data handling', () => {
-        it('should handle malformed JSON in chat_token event', () => {
-          const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-          renderAssistant();
-          openDialogAndWait();
-
-          const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-
-          let onmessage: (ev: { event: string; data: string }) => void;
-          let onclose: () => void;
-
-          mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
-            onmessage = options.onmessage;
-            onclose = options.onclose;
-          });
-
-          act(() => {
-            fireEvent.change(textarea, { target: { value: 'Malformed test' } });
-          });
-          act(() => {
-            fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
-          });
-
-          // Send valid chat_id first
-          act(() => {
-            onmessage({ event: 'chat_id', data: JSON.stringify({ value: 'chat-123' }) });
-          });
-
-          // Send malformed JSON data
-          act(() => {
-            try {
-              onmessage({ event: 'chat_token', data: '{invalid json' });
-            } catch {
-              // Expected to potentially throw
-            }
-          });
-
-          // Send valid token after malformed one
-          act(() => {
-            onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Valid token' }) });
-          });
-
-          act(() => {
-            onclose();
-          });
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Widget should still be functional
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-
-          consoleSpy.mockRestore();
-        });
-
-        it('should handle product event with missing required fields', () => {
-          renderAssistant();
-          openDialogAndWait();
-
-          const stream = sendMessageAndGetStreamController('Products with missing data');
-
-          stream.emitEvent('chat_id', { value: 'chat-123' });
-          stream.emitEvent('reqid', { value: 'req-123' });
-
-          stream.emitEvent('chat_token', { value: 'Here is a product:\n' });
-          stream.emitEvent('chat_token', { value: '[[pid-1]] Product' });
-
-          // Product event with missing fields
-          stream.emitEvent('product', {
-            product_id: 'pid-1',
-            // Missing main_image_url
-            data: {
-              // Missing product_url
-              title: 'Incomplete Product',
-            },
-          });
-
-          stream.emitEvent('chat_token', { value: '\n' });
-          stream.closeStream();
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Should not crash
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-        });
-
-        it('should handle product event with null/undefined values', () => {
-          renderAssistant();
-          openDialogAndWait();
-
-          const stream = sendMessageAndGetStreamController('Null product data');
-
-          stream.emitEvent('chat_id', { value: 'chat-123' });
-          stream.emitEvent('reqid', { value: 'req-123' });
-
-          stream.emitEvent('chat_token', { value: 'Product:\n[[pid-1]] Test\n' });
-
-          // Product with null values
-          stream.emitEvent('product', {
-            product_id: 'pid-1',
-            main_image_url: null,
-            data: {
-              product_url: undefined,
-              price: null,
-              title: null,
-            },
-          });
-
-          stream.closeStream();
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Should handle gracefully without crashing
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-        });
-
-        it('should handle empty product_id in product event', () => {
-          renderAssistant();
-          openDialogAndWait();
-
-          const stream = sendMessageAndGetStreamController('Empty pid');
-
-          stream.emitEvent('chat_id', { value: 'chat-123' });
-          stream.emitEvent('reqid', { value: 'req-123' });
-
-          stream.emitEvent('chat_token', { value: 'Product:\n[[]] Empty PID\n' });
-
-          stream.emitEvent('product', {
-            product_id: '',
-            main_image_url: 'https://img.jpg',
-            data: { title: 'No PID Product' },
-          });
-
-          stream.closeStream();
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-        });
-
-        it('should handle unexpected event types gracefully', () => {
-          renderAssistant();
-          openDialogAndWait();
-
-          const stream = sendMessageAndGetStreamController('Unknown events');
-
-          stream.emitEvent('chat_id', { value: 'chat-123' });
-          stream.emitEvent('reqid', { value: 'req-123' });
-
-          // Send some valid tokens
-          stream.emitEvent('chat_token', { value: 'Hello ' });
-
-          // Send unknown/unexpected event types
-          stream.emitEvent('unknown_event', { value: 'should be ignored' });
-          stream.emitEvent('random_type', { data: 'also ignored' });
-          stream.emitEvent('', { value: 'empty event type' });
-
-          // Continue with valid tokens
-          stream.emitEvent('chat_token', { value: 'world!' });
-
-          stream.closeStream();
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Valid tokens should still be displayed
-          expect(getTextInBody('Hello world!')).toBeTruthy();
-        });
-      });
-
-      describe('partial stream recovery', () => {
-        it('should preserve partial response when stream errors after some tokens', () => {
-          const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-          renderAssistant();
-          openDialogAndWait();
-
-          const stream = sendMessageAndGetStreamController('Partial response');
-
-          stream.emitEvent('chat_id', { value: 'chat-123' });
-          stream.emitEvent('reqid', { value: 'req-123' });
-
-          // Send some tokens before error
-          stream.emitEvent('chat_token', { value: 'This is a partial ' });
-          stream.emitEvent('chat_token', { value: 'response that ' });
-
-          // Error occurs mid-stream
-          stream.triggerError(new Error('Connection interrupted'));
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Partial content should still be visible (or gracefully handled)
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-
-          consoleSpy.mockRestore();
-        });
-
-        it('should handle error after products have been displayed', async () => {
-          const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-          renderAssistant();
-          openDialogAndWait();
-
-          const stream = sendMessageAndGetStreamController('Products then error');
-
-          stream.emitEvent('chat_id', { value: 'chat-123' });
-          stream.emitEvent('reqid', { value: 'req-123' });
-
-          stream.emitEvent('chat_token', { value: 'Here are products:\n' });
-
-          // Product data resolves and its card streams in live, before the response is complete.
-          stream.emitEvent('chat_token', { value: '[[pid-1]] Product One' });
-          stream.emitEvent('product', {
-            product_id: 'pid-1',
-            main_image_url: 'https://img1.jpg',
-            data: { product_url: 'https://p1', price: { currency: 'USD', value: '10' }, title: 'P1' },
-          });
-          stream.emitEvent('chat_token', { value: '\n' });
-          await revealAll();
-
-          expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-
-          // Error occurs after first product — the card that already streamed in stays put.
-          stream.triggerError(new Error('Stream failed after product'));
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-
-          consoleSpy.mockRestore();
-        });
-      });
-
-      describe('state consistency after errors', () => {
-        it('should show loading state when message is sent', () => {
-          renderAssistant();
-          openDialogAndWait();
-
-          sendMessageAndGetStreamController('Loading state test');
-
-          // Loading dots should be visible while waiting
-          expect(queryAllModal('.loading-dot').length).toBe(3);
-        });
-
-        it('should maintain dialog visibility after error', () => {
-          const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-          renderAssistant();
-          openDialogAndWait();
-
-          // First message errors
-          const stream = sendMessageAndGetStreamController('Will fail');
-          stream.triggerError(new Error('Failed'));
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Dialog should remain open and functional
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-          expect(queryModal('.wigmix-modal')).toBeTruthy();
-
-          consoleSpy.mockRestore();
-        });
-
-        it('should maintain chat history when stream completes successfully then new message sent', () => {
-          renderAssistant();
-          openDialogAndWait();
-
-          // First successful message
-          const stream = sendMessageAndGetStreamController('First message');
-          stream.emitEvent('chat_id', { value: 'chat-123' });
-          stream.emitEvent('reqid', { value: 'req-123' });
-          stream.emitEvent('chat_token', { value: 'First response' });
-          stream.closeStream();
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          expect(getTextInBody('First message')).toBeTruthy();
-          expect(getTextInBody('First response')).toBeTruthy();
-
-          // Second message
-          mockFetchEventSource.mockReset();
-          const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-
-          act(() => {
-            fireEvent.change(textarea, { target: { value: 'Second message' } });
-          });
-          act(() => {
-            fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
-          });
-
-          // First message and response should still be in history
-          expect(getTextInBody('First message')).toBeTruthy();
-          expect(getTextInBody('First response')).toBeTruthy();
-          expect(getTextInBody('Second message')).toBeTruthy();
-        });
-
-        it('should handle rapid successive messages gracefully', () => {
-          renderAssistant();
-          openDialogAndWait();
-
-          // Send first message
-          const stream = sendMessageAndGetStreamController('Message 1');
-
-          // Complete the stream
-          stream.emitEvent('chat_id', { value: 'chat-123' });
-          stream.emitEvent('reqid', { value: 'req-123' });
-          stream.emitEvent('chat_token', { value: 'Response 1' });
-          stream.closeStream();
-
-          act(() => {
-            jest.runAllTimers();
-          });
-
-          // Widget should remain stable
-          expect(getTextInBody('Shopping Assistant')).toBeTruthy();
-          expect(getTextInBody('Message 1')).toBeTruthy();
-          expect(getTextInBody('Response 1')).toBeTruthy();
-        });
-      });
-    });
-
-    describe('SSE request parameters', () => {
-      it('should include correct params in SSE request URL', () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        sendMessageAndGetStreamController('test query');
-
-        expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
-        const url = mockFetchEventSource.mock.calls[0][0] as string;
-
-        expect(url).toContain('app_key=test-app-key');
-        expect(url).toContain('placement_id=1234');
-        expect(url).toContain('chat_id=test-chat-id');
-        expect(url).toContain('va_uid=test-uid');
-        expect(url).toContain('va_sid=test-sid');
-        expect(url).toContain('q=test+query');
-        expect(url).toContain('chat_agent=shopping_closer_voice_v2');
-      });
-
-      it('should use POST method for SSE request', () => {
-        renderAssistant();
-        openDialogAndWait();
-
-        sendMessageAndGetStreamController('query');
-
-        const options = mockFetchEventSource.mock.calls[0][1];
-        expect(options.method).toBe('POST');
-      });
-
-      it('should include image in FormData when image is provided', async () => {
-        const { widgetClient } = renderAssistant();
-
-        const imagePayload = { files: [new File(['img'], 'test.png', { type: 'image/png' })] };
-        await act(async () => {
-          widgetClient.sendChatMessage('Find similar', imagePayload);
-        });
-
-        await act(async () => {
-          jest.runAllTimers();
-        });
-
-        expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
-        const options = mockFetchEventSource.mock.calls[0][1];
-        const body = options.body as FormData;
-        expect(body.get('image')).toBeTruthy();
-      });
+    it('blocks the composer while a reply is streaming and re-enables it once the reply commits', async () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      const stream = sendMessageAndGetStreamController('First message');
+      const sendButton = testComponent.getByRole('button', { name: texts['en']['a11ySendMessage'], hidden: true }) as HTMLButtonElement;
+      expect(sendButton.disabled).toBe(true);
+
+      stream.emitEvent('chat_id', { value: 'chat-123' });
+      stream.emitEvent('reqid', { value: 'req-123' });
+      stream.emitEvent('chat_token', { value: 'Done' });
+      stream.closeStream();
+      await revealAll();
+
+      expect(sendButton.disabled).toBe(false);
     });
   });
 
   // ============================================================
-  // User Input Tests
+  // User input
   // ============================================================
 
   describe('user input', () => {
@@ -1718,13 +574,12 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-
+      const chatInput = testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true });
       act(() => {
-        fireEvent.change(textarea, { target: { value: 'Hello' } });
+        fireEvent.change(chatInput, { target: { value: 'Hello' } });
       });
       act(() => {
-        fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
+        fireEvent.keyDown(chatInput, { code: 'Enter', shiftKey: false });
       });
 
       expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
@@ -1734,42 +589,39 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-
+      const chatInput = testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true });
       act(() => {
-        fireEvent.change(textarea, { target: { value: 'My message' } });
+        fireEvent.change(chatInput, { target: { value: 'My message' } });
       });
       act(() => {
-        fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
+        fireEvent.keyDown(chatInput, { code: 'Enter', shiftKey: false });
       });
 
       expect(getTextInBody('My message')).toBeTruthy();
     });
 
-    it('should clear textarea after sending message', () => {
+    it('should clear the input after sending a message', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-
+      const chatInput = testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true }) as HTMLInputElement;
       act(() => {
-        fireEvent.change(textarea, { target: { value: 'Hello' } });
+        fireEvent.change(chatInput, { target: { value: 'Hello' } });
       });
       act(() => {
-        fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
+        fireEvent.keyDown(chatInput, { code: 'Enter', shiftKey: false });
       });
 
-      expect(textarea.value).toBe('');
+      expect(chatInput.value).toBe('');
     });
 
-    it('should not send empty message', () => {
+    it('should not send an empty message', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-
+      const chatInput = testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true });
       act(() => {
-        fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
+        fireEvent.keyDown(chatInput, { code: 'Enter', shiftKey: false });
       });
 
       expect(mockFetchEventSource).not.toHaveBeenCalled();
@@ -1779,13 +631,12 @@ describe('shopping-assistant', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
+      const chatInput = testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true });
       act(() => {
-        fireEvent.change(textarea, { target: { value: 'Submit test' } });
+        fireEvent.change(chatInput, { target: { value: 'Submit test' } });
       });
 
       const submitButton = testComponent.getByRole('button', { name: texts['en']['a11ySendMessage'], hidden: true });
-
       act(() => {
         fireEvent.click(submitButton);
       });
@@ -1795,7 +646,7 @@ describe('shopping-assistant', () => {
   });
 
   // ============================================================
-  // Programmatic API Tests
+  // Programmatic API
   // ============================================================
 
   describe('programmatic API', () => {
@@ -1846,36 +697,114 @@ describe('shopping-assistant', () => {
       const url = mockFetchEventSource.mock.calls[0][0] as string;
       expect(url).toContain('q=API+message');
     });
+
+    it('should include the image in the request FormData when widgetClient.sendChatMessage() is called with an image', async () => {
+      const { widgetClient } = renderAssistant();
+
+      const imagePayload = { files: [new File(['img'], 'test.png', { type: 'image/png' })] };
+      await act(async () => {
+        widgetClient.sendChatMessage('Find similar', imagePayload);
+      });
+      await act(async () => {
+        jest.runAllTimers();
+      });
+
+      expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
+      const options = mockFetchEventSource.mock.calls[0][1];
+      const body = options.body as FormData;
+      expect(body.get('image')).toBeTruthy();
+    });
   });
 
   // ============================================================
-  // Camera & Image Upload Tests
+  // Camera & image upload
   // ============================================================
 
   describe('camera and image upload', () => {
-    it('should show camera drawer when camera icon is clicked', () => {
+    it('shows a single "Add image" trigger instead of separate camera/upload buttons', () => {
       renderAssistant();
       openDialogAndWait();
 
-      const cameraButton = testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true });
-
-      act(() => {
-        fireEvent.click(cameraButton);
-      });
-
-      expect(testComponent.getByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'], hidden: true })).toBeTruthy();
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeNull();
     });
 
-    it('should close camera drawer when back button is clicked', () => {
+    it('reveals "Open camera" and "Upload image" options when the "Add image" trigger is clicked', () => {
       renderAssistant();
       openDialogAndWait();
+      openImageMenu();
+
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeTruthy();
+      expect(testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' })).toBeTruthy();
+    });
+
+    it('closes the menu without opening the camera or upload picker when clicking outside it', () => {
+      renderAssistant();
+      openDialogAndWait();
+      openImageMenu();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeTruthy();
+
+      act(() => {
+        fireEvent.mouseDown(document.body);
+      });
+
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeNull();
+      expect(testComponent.queryByTestId('mock-webcam')).toBeNull();
+    });
+
+    it('closes the menu when Escape is pressed', () => {
+      renderAssistant();
+      openDialogAndWait();
+      openImageMenu();
+      expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeTruthy();
+
+      act(() => {
+        fireEvent.keyDown(document.body, { key: 'Escape' });
+      });
+
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true })).toBeNull();
+    });
+
+    it('disables the "Add image" trigger while waiting on a reply, and re-enables it once one arrives', async () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      const addImageButton = testComponent.getByRole('button', { name: texts['en']['a11yAddImage'], hidden: true }) as HTMLButtonElement;
+      expect(addImageButton.disabled).toBe(false);
+
+      const stream = sendMessageAndGetStreamController('Find me a jacket');
+      expect(addImageButton.disabled).toBe(true);
+
+      stream.emitEvent('chat_id', { value: 'chat-1' });
+      stream.emitEvent('reqid', { value: 'req-1' });
+      stream.emitEvent('chat_token', { value: 'Here is a jacket' });
+      stream.closeStream();
+      await revealAll();
+
+      expect(addImageButton.disabled).toBe(false);
+    });
+
+    it('should show the camera drawer when the "Open camera" option is clicked', () => {
+      renderAssistant();
+      openDialogAndWait();
+      openImageMenu();
 
       act(() => {
         fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
       });
 
-      const backButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseCamera'], hidden: true });
+      expect(testComponent.getByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true })).toBeTruthy();
+    });
 
+    it('should close the camera drawer when the back button is clicked', () => {
+      renderAssistant();
+      openDialogAndWait();
+      openImageMenu();
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
+      });
+
+      const backButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseCamera'], hidden: true });
       act(() => {
         fireEvent.click(backButton);
       });
@@ -1883,26 +812,63 @@ describe('shopping-assistant', () => {
       expect(testComponent.queryByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true })).toBeNull();
     });
 
-    it('should have file upload dropzone', () => {
+    it('should have a file upload dropzone inside the "Add image" menu', () => {
       renderAssistant();
       openDialogAndWait();
+      openImageMenu();
 
-      const dropzone = testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' });
-      expect(dropzone).toBeTruthy();
+      expect(testComponent.getByLabelText(texts['en']['a11yUploadImage'], { selector: 'input' })).toBeTruthy();
+    });
+
+    it('captures a photo and sends it into the chat, closing the drawer afterward', async () => {
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockResolvedValue({
+        blob: jest.fn().mockResolvedValue(new Blob(['image-bytes'], { type: 'image/png' })),
+      }) as unknown as typeof fetch;
+      mockFetchEventSource.mockImplementation(async () => {});
+
+      try {
+        renderAssistant();
+        openDialogAndWait();
+        openImageMenu();
+        act(() => {
+          fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
+        });
+
+        expect(testComponent.getByTestId('mock-webcam')).toBeTruthy();
+
+        const takePhotoButton = testComponent.getByRole('button', { name: texts['en']['a11yTakePhoto'], hidden: true });
+        await act(async () => {
+          fireEvent.click(takePhotoButton);
+        });
+
+        expect(mockFetchEventSource).toHaveBeenCalled();
+        // The drawer closes itself right after capture (variant='drawer').
+        expect(testComponent.queryByTestId('mock-webcam')).toBeNull();
+      } finally {
+        global.fetch = originalFetch;
+      }
     });
   });
 
   // ============================================================
-  // New Chat Tests
+  // New chat
   // ============================================================
 
   describe('new chat', () => {
-    it('should reset chat state when new chat button is clicked', () => {
+    it('should reset the visible chat state and replay the opening greeting when the new-chat button is clicked', async () => {
       renderAssistant();
       openDialogAndWait();
 
-      const newChatButton = testComponent.getByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true });
+      const stream = sendMessageAndGetStreamController('Hello');
+      stream.emitEvent('chat_id', { value: 'chat-123' });
+      stream.emitEvent('reqid', { value: 'req-123' });
+      stream.emitEvent('chat_token', { value: 'Hi there!' });
+      stream.closeStream();
+      await revealAll();
+      expect(getTextInBody('Hi there!')).toBeTruthy();
 
+      const newChatButton = testComponent.getByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true });
       act(() => {
         fireEvent.click(newChatButton);
       });
@@ -1910,18 +876,22 @@ describe('shopping-assistant', () => {
         jest.runAllTimers();
       });
 
-      expect(getTextInBody("Let's get started")).toBeTruthy();
+      expect(getTextInBody('Hi there!')).toBeNull();
+      expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
     });
   });
 
   // ============================================================
-  // Voice Input/Output Tests
+  // Voice input and output
   // ============================================================
 
+  // Full voice-recording/narration mechanics (barge-in, sentence-by-sentence narration, typewriter
+  // reveal, transcript-to-send, recording auto-stop) are ChatComposer's/useVoiceReply's job now —
+  // already covered by ChatComposer.spec.tsx and use-voice-reply.spec.ts. These tests only confirm
+  // shopping-assistant's own header voice-reading toggle and the composer's mic button are wired to
+  // the right customization flag and the right chat callbacks.
   describe('voice input and output', () => {
     let mockRecognitionInstances: MockSpeechRecognition[] = [];
-    let mockAudioInstances: any[] = [];
-    const originalFetch = global.fetch;
 
     class MockSpeechRecognition {
       continuous = false;
@@ -1945,542 +915,68 @@ describe('shopping-assistant', () => {
       }
     }
 
-    // Modeled as a jest-mock constructor (not a `class`) to stay within this file's
-    // one-class-per-file lint limit; MockSpeechRecognition above is the file's one class.
-    const MockAudio = jest.fn().mockImplementation(function mockAudioImpl(this: any, src?: string): void {
-      this.play = jest.fn().mockResolvedValue(undefined);
-      this.pause = jest.fn();
-      this.onended = null;
-      this.onerror = null;
-      this.src = src;
-      mockAudioInstances.push(this);
-    });
-
-    const makeResult = (transcript: string, isFinal: boolean): any => ({ isFinal, length: 1, 0: { transcript } });
-
-    const buildVoiceWidgetConfig = (
-      chatbotExtra: { voiceEnabled?: boolean } = { voiceEnabled: true },
-      voiceId?: string,
-    ): ReturnType<typeof createWidgetConfig> => createWidgetConfig(DEFAULT_CUSTOMIZATIONS, {
-      appSettings: {
-        appKey: 'test-app-key',
-        placementId: '1234',
-      },
-      searchSettings: {
-        attrs_to_get: ['product_url', 'title', 'brand', 'price', 'original_price'],
-      },
-      customizations: {
-        ...DEFAULT_CUSTOMIZATIONS,
-        chatbot: { chatAgent: 'shopping_assistant_v2', ...chatbotExtra, ...(voiceId ? { voiceId } : {}) },
-      },
-    });
-
-    const renderVoiceAssistant = (
-      chatbotExtra: { voiceEnabled?: boolean } = { voiceEnabled: true },
-      voiceId?: string,
-    ): void => {
-      const widgetConfig = buildVoiceWidgetConfig(chatbotExtra, voiceId);
-      const { widgetClient } = createMockWidgetClient(widgetConfig, 'wigmix_shopping_assistant', {
-        getUid: jest.fn((cb: (uid: string) => void) => cb('test-uid')),
-        getSid: jest.fn((cb: (sid: string) => void) => cb('test-sid')),
-        generateUuid: jest.fn((cb: (uuid: string) => void) => cb('test-chat-id')),
-        productMultisearch: jest.fn(),
-      });
-      testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
-        widgetConfig,
-        widgetClient,
-        locale: 'en',
-        messages: texts['en'],
-        rootElement: modalRoot,
-      });
-    };
-
-    const flushMicrotasks = async (): Promise<void> => {
-      await Promise.resolve();
-      await Promise.resolve();
-      await Promise.resolve();
-      await Promise.resolve();
-    };
-
-    // Presses and holds the mic button, reporting `finalTranscript` as recognized speech,
-    // then releases it — mirroring press-and-hold: hold, speak, let go, send.
-    const speakAndRelease = async (finalTranscript: string): Promise<void> => {
-      const micButton = testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true });
-      act(() => {
-        fireEvent.mouseDown(micButton);
-      });
-      const recognition = mockRecognitionInstances[mockRecognitionInstances.length - 1];
-      act(() => {
-        recognition.onresult?.({ results: [makeResult(finalTranscript, true)] });
-      });
-      const stopButton = testComponent.getByRole('button', { name: texts['en']['a11yStopVoiceInput'], hidden: true });
-      await act(async () => {
-        fireEvent.mouseUp(stopButton);
-        jest.runAllTimers();
-        await flushMicrotasks();
-      });
+    const renderWithVoice = (chatbotExtra: { voiceEnabled?: boolean } = { voiceEnabled: true }): void => {
+      renderAssistant({}, 'en', {}, { chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, ...chatbotExtra } });
     };
 
     beforeEach(() => {
       mockRecognitionInstances = [];
-      mockAudioInstances = [];
-      URL.createObjectURL = jest.fn(() => 'blob:mock');
-      URL.revokeObjectURL = jest.fn();
     });
 
     afterEach(() => {
       delete (window as any).SpeechRecognition;
-      delete (window as any).webkitSpeechRecognition;
-      delete (window as any).Audio;
-      global.fetch = originalFetch;
     });
 
-    it('does not render the mic button when voice is not enabled', () => {
+    it('does not render the mic button or the header voice-reading toggle when chatbot.voiceEnabled is off (the default)', () => {
       renderAssistant();
       openDialogAndWait();
-      expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true })).toBeNull();
+
+      expect(testComponent.queryByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true })).toBeNull();
+      expect(testComponent.queryByRole('button', { name: texts['en']['a11yDisableVoiceReading'], hidden: true })).toBeNull();
     });
 
-    it('renders the mic button when voice is enabled', () => {
+    it('does not render the mic button when chatbot.voiceEnabled is on but the browser has no speech-recognition support', () => {
+      renderWithVoice();
+      openDialogAndWait();
+
+      expect(testComponent.queryByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true })).toBeNull();
+    });
+
+    it('renders the mic button once chatbot.voiceEnabled is on and the browser supports speech recognition, wiring press/release to chat.startVoiceRecording/stopRecording', () => {
       (window as any).SpeechRecognition = MockSpeechRecognition;
-      renderVoiceAssistant();
-      openDialogAndWait();
-      expect(testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true })).toBeTruthy();
-    });
-
-    it('renders the voice-reading toggle in the header next to the new-chat button', () => {
-      renderVoiceAssistant();
+      renderWithVoice();
       openDialogAndWait();
 
-      const toggle = testComponent.getByRole('button', {
-        name: texts['en']['a11yDisableVoiceReading'],
-        hidden: true,
-      });
-      const newChat = testComponent.getByRole('button', { name: texts['en']['a11yStartNewChat'], hidden: true });
-
-      expect(toggle.parentElement).toBe(newChat.parentElement);
-      expect(toggle.getAttribute('aria-pressed')).toBe('true');
-    });
-
-    it('hides the mic button when the browser does not support speech recognition', () => {
-      renderVoiceAssistant();
-      openDialogAndWait();
-      expect(testComponent.queryByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true })).toBeNull();
-    });
-
-    it('starts recording and flips to the stop control when the mic button is pressed', () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      const micButton = testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true });
+      const micButton = testComponent.getByRole('button', { name: texts['en']['holdMicToRecord'], hidden: true });
       act(() => {
         fireEvent.mouseDown(micButton);
       });
 
       expect(mockRecognitionInstances).toHaveLength(1);
       expect(mockRecognitionInstances[0].start).toHaveBeenCalled();
-      const stopButton = testComponent.getByRole('button', { name: texts['en']['a11yStopVoiceInput'], hidden: true });
-      expect(stopButton.getAttribute('aria-pressed')).toBe('true');
+
+      act(() => {
+        fireEvent.mouseUp(micButton);
+        // stopRecording defers the actual recognition.stop() call by a short grace period.
+        jest.advanceTimersByTime(400);
+      });
+      expect(mockRecognitionInstances[0].stop).toHaveBeenCalled();
     });
 
-    it('shows the live transcript in the message input as the user speaks', () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      renderVoiceAssistant();
+    it('renders the header voice-reading toggle when chatbot.voiceEnabled is on, and flips its label/aria-pressed when clicked', () => {
+      renderWithVoice();
       openDialogAndWait();
 
-      const micButton = testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true });
-      act(() => {
-        fireEvent.mouseDown(micButton);
-      });
-      act(() => {
-        mockRecognitionInstances[0].onresult?.({ results: [makeResult('red dr', false)] });
-      });
-
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-      expect(textarea.value).toBe('red dr');
-    });
-
-    it('sends the final transcript as a chat message when released', async () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      await speakAndRelease('red dress');
-
-      expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
-      const url = mockFetchEventSource.mock.calls[0][0] as string;
-      expect(url).toContain('q=red+dress');
-      expect(getTextInBody('red dress')).toBeTruthy();
-    });
-
-    it('speaks the assistant reply only when the triggering message was sent by voice', async () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      (window as any).Audio = MockAudio;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      global.fetch = jest.fn()
-        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
-
-      await speakAndRelease('red dress');
-
-      const [, options] = mockFetchEventSource.mock.calls[0];
-      act(() => {
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Great **choice**!' }) });
-      });
-      await act(async () => {
-        options.onclose();
-        await flushMicrotasks();
-      });
-
-      const ttsCall = (global.fetch as jest.Mock).mock.calls.find(([callUrl]: [string]) => callUrl.includes('voice/synthesize'));
-      expect(ttsCall).toBeTruthy();
-      expect(ttsCall[0]).toContain('/v1/voice/synthesize/21m00Tcm4TlvDq8ikWAM');
-      const body = JSON.parse(ttsCall[1].body);
-      expect(body.text).toBe('Great choice!');
-      expect(mockAudioInstances[0].play).toHaveBeenCalled();
-    });
-
-    it('speaks each completed sentence as it streams in, before the reply finishes, and plays them in order', async () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      (window as any).Audio = MockAudio;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      global.fetch = jest.fn()
-        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio-1'], { type: 'audio/mpeg' })) })
-        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio-2'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
-
-      await speakAndRelease('tell me more');
-      const [, options] = mockFetchEventSource.mock.calls[0];
-
-      // First sentence completes mid-stream with nothing after it yet — a trailing [[pid]] token
-      // might still be in flight, so it's held back rather than spoken right away.
-      act(() => {
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'This is a great choice. ' }) });
-      });
-      await flushMicrotasks();
-
-      const ttsCalls = (): any[] => (global.fetch as jest.Mock).mock.calls.filter(([callUrl]: [string]) => callUrl.includes('voice/synthesize'));
-      expect(ttsCalls()).toHaveLength(0);
-      expect(mockAudioInstances).toHaveLength(0);
-
-      // Second sentence streams in — now that real text (not a product token) follows the first
-      // sentence, there's nothing left to wait for, so it speaks immediately...
-      act(() => {
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'It pairs well with boots.' }) });
-      });
-      await flushMicrotasks();
-
-      expect(ttsCalls()).toHaveLength(1);
-      expect(JSON.parse(ttsCalls()[0][1].body).text).toBe('This is a great choice.');
-      expect(mockAudioInstances).toHaveLength(1);
-      expect(mockAudioInstances[0].play).toHaveBeenCalled();
-
-      // ...while the second sentence, still being the last thing seen, waits for the stream to
-      // close before it's confirmed nothing else is coming.
-      await act(async () => {
-        options.onclose();
-        await flushMicrotasks();
-      });
-
-      expect(ttsCalls()).toHaveLength(2);
-      expect(JSON.parse(ttsCalls()[1][1].body).text).toBe('It pairs well with boots.');
-      // ...but playback stays sequential: no second Audio instance until the first ends.
-      expect(mockAudioInstances).toHaveLength(1);
-
-      // Finishing the first clip's playback should advance the queue to the second.
-      await act(async () => {
-        mockAudioInstances[0].onended?.();
-        jest.advanceTimersByTime(200);
-        await flushMicrotasks();
-      });
-
-      expect(mockAudioInstances).toHaveLength(2);
-      expect(mockAudioInstances[1].play).toHaveBeenCalled();
-    });
-
-    it('holds the streaming reply text until playback starts, then reveals it as a typewriter', async () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      (window as any).Audio = MockAudio;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      global.fetch = jest.fn().mockResolvedValue({
-        ok: true,
-        blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })),
-      }) as unknown as typeof fetch;
-
-      await speakAndRelease('tell me more');
-      const [, options] = mockFetchEventSource.mock.calls[0];
+      const muteButton = testComponent.getByRole('button', { name: texts['en']['a11yDisableVoiceReading'], hidden: true });
+      expect(muteButton.getAttribute('aria-pressed')).toBe('true');
 
       act(() => {
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Great choice. ' }) });
-      });
-      // Nothing else follows, so the sentence is held back until the stream closes confirms no
-      // trailing [[pid]] token is coming.
-      await act(async () => {
-        options.onclose();
-        await flushMicrotasks();
+        fireEvent.click(muteButton);
       });
 
-      // The sentence is sent to speech once the stream confirms nothing else is coming...
-      expect(global.fetch).toHaveBeenCalled();
-      // ...but the on-screen text stays hidden until audio playback actually starts.
-      expect(getTextInBody('Great')).toBeFalsy();
-
-      // Once play() resolves, text reveals character-by-character rather than appearing all
-      // at once. There is no fixed "audio ready" timeout.
-      act(() => {
-        jest.advanceTimersByTime(30 * 5);
-      });
-      expect(getTextInBody('Great')).toBeTruthy();
-      expect(getTextInBody('Great choice.')).toBeFalsy();
-
-      await revealAll();
-      expect(getTextInBody('Great choice.')).toBeTruthy();
-    });
-
-    it('shows the product card as soon as it resolves, independent of narration progress, and never repeats its opening text', async () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      (window as any).Audio = MockAudio;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      global.fetch = jest.fn().mockResolvedValue({
-        ok: true,
-        blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })),
-      }) as unknown as typeof fetch;
-
-      await speakAndRelease('show me a jacket');
-      const [, options] = mockFetchEventSource.mock.calls[0];
-      act(() => {
-        options.onmessage({ event: 'reqid', data: JSON.stringify({ value: 'voice-products-request' }) });
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Here is one great option. [[jacket-1]]' }) });
-        options.onmessage({
-          event: 'product',
-          data: JSON.stringify({
-            product_id: 'jacket-1',
-            main_image_url: 'https://img.jpg',
-            data: { product_url: 'https://product', price: { currency: 'USD', value: '50' }, title: 'Jacket' },
-          }),
-        });
-      });
-      await act(async () => {
-        await flushMicrotasks();
-      });
-
-      // The card is already resolved and streams into the live grid well before its narration
-      // has even started playing, let alone finished — it doesn't wait on the response or speech.
-      // The sentence's [[pid]] token already arrived in the same chunk, but nothing follows it
-      // yet either, so it still waits for the stream to close before being spoken.
-      act(() => {
-        jest.advanceTimersByTime(200);
-      });
-      expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-
-      await act(async () => {
-        options.onclose();
-        await flushMicrotasks();
-      });
-
-      act(() => {
-        jest.advanceTimersByTime(30 * 5);
-      });
-
-      expect(getTextInBody('Here ')).toBeTruthy();
-      expect(getTextInBody('Here is one great option.')).toBeFalsy();
-      expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-
-      await act(async () => {
-        mockAudioInstances[0].onended?.();
-        jest.advanceTimersByTime(200);
-        await flushMicrotasks();
-      });
-
-      expect(getTextInBody('Here is one great option.')).toBeTruthy();
-      expect(queryAllModal('.wigmix-product-card')).toHaveLength(1);
-      expect(queryModal('.chat-row')).toBeNull();
-    });
-
-    it('reveals typed replies via typewriter immediately, with no audio-ready delay', async () => {
-      renderAssistant();
-      openDialogAndWait();
-
-      sendMessageAndGetStreamController('Hello').emitEvent('chat_token', { value: 'Hi there!' });
-      await revealAll();
-
-      expect(getTextInBody('Hi there!')).toBeTruthy();
-    });
-
-    it('uses the configured voiceId for spoken replies', async () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      (window as any).Audio = MockAudio;
-
-      renderVoiceAssistant({ voiceEnabled: true }, 'custom-voice-id');
-      openDialogAndWait();
-
-      global.fetch = jest.fn()
-        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
-
-      await speakAndRelease('red dress');
-
-      const [, options] = mockFetchEventSource.mock.calls[0];
-      act(() => {
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Nice pick!' }) });
-      });
-      await act(async () => {
-        options.onclose();
-        await flushMicrotasks();
-      });
-
-      const ttsCall = (global.fetch as jest.Mock).mock.calls.find(([callUrl]: [string]) => callUrl.includes('voice/synthesize'));
-      expect(ttsCall[0]).toContain('/v1/voice/synthesize/custom-voice-id');
-    });
-
-    it('speaks replies to typed messages when voice reading is enabled', async () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      (window as any).Audio = MockAudio;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      global.fetch = jest.fn().mockResolvedValue({
-        ok: true,
-        blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })),
-      }) as unknown as typeof fetch;
-
-      const textarea = document.body.querySelector('textarea[aria-label]') as HTMLTextAreaElement;
-      act(() => {
-        fireEvent.change(textarea, { target: { value: 'Hello' } });
-      });
-      act(() => {
-        fireEvent.keyDown(textarea, { code: 'Enter', shiftKey: false });
-      });
-
-      const [, options] = mockFetchEventSource.mock.calls[0];
-      act(() => {
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Hi there' }) });
-      });
-      await act(async () => {
-        options.onclose();
-        await flushMicrotasks();
-      });
-
-      expect(global.fetch).toHaveBeenCalled();
-      expect(mockAudioInstances[0].play).toHaveBeenCalled();
-    });
-
-    it('does not narrate typed or microphone replies after voice reading is disabled', async () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      (window as any).Audio = MockAudio;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      global.fetch = jest.fn();
-
-      const toggle = testComponent.getByRole('button', {
-        name: texts['en']['a11yDisableVoiceReading'],
-        hidden: true,
-      });
-      act(() => {
-        fireEvent.click(toggle);
-      });
-      expect(testComponent.getByRole('button', {
-        name: texts['en']['a11yEnableVoiceReading'],
-        hidden: true,
-      }).getAttribute('aria-pressed')).toBe('false');
-
-      await speakAndRelease('red dress');
-      const [, options] = mockFetchEventSource.mock.calls[0];
-      act(() => {
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'No narration.' }) });
-        options.onclose();
-      });
-      await revealAll();
-
-      expect(global.fetch).not.toHaveBeenCalled();
-    });
-
-    it('stays idle and sends nothing when speech recognition reports an error', () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      const micButton = testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true });
-      act(() => {
-        fireEvent.mouseDown(micButton);
-      });
-      act(() => {
-        mockRecognitionInstances[0].onerror?.({ error: 'not-allowed' });
-      });
-
-      expect(mockFetchEventSource).not.toHaveBeenCalled();
-      expect(testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true })).toBeTruthy();
-      consoleErrorSpy.mockRestore();
-    });
-
-    it('stops any playing reply when a new recording starts (barge-in)', async () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-      (window as any).Audio = MockAudio;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      global.fetch = jest.fn()
-        .mockResolvedValueOnce({ ok: true, blob: jest.fn().mockResolvedValue(new Blob(['audio'], { type: 'audio/mpeg' })) }) as unknown as typeof fetch;
-
-      await speakAndRelease('red dress');
-      const [, options] = mockFetchEventSource.mock.calls[0];
-      act(() => {
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Nice choice!' }) });
-      });
-      await act(async () => {
-        options.onclose();
-        await flushMicrotasks();
-      });
-
-      expect(mockAudioInstances[0].play).toHaveBeenCalled();
-
-      const micButtonAgain = testComponent.getByRole('button', { name: texts['en']['a11yStartVoiceInput'], hidden: true });
-      act(() => {
-        fireEvent.mouseDown(micButtonAgain);
-      });
-
-      expect(mockAudioInstances[0].pause).toHaveBeenCalled();
-    });
-
-    it('skips narration and still reveals the reply as typed text when the voice proxy call fails', async () => {
-      (window as any).SpeechRecognition = MockSpeechRecognition;
-
-      renderVoiceAssistant();
-      openDialogAndWait();
-
-      global.fetch = jest.fn().mockRejectedValue(new Error('voice proxy unavailable'));
-
-      await speakAndRelease('red dress');
-      const [, options] = mockFetchEventSource.mock.calls[0];
-      act(() => {
-        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Great choice!' }) });
-      });
-      await act(async () => {
-        options.onclose();
-        await flushMicrotasks();
-      });
-
-      // The voice proxy call rejected — narration is skipped entirely (no browser-voice
-      // fallback, see use-voice.ts) rather than jarringly switching voices mid-conversation, but
-      // the reply still reaches the user as typed text.
-      await revealAll();
-      expect(getTextInBody('Great choice!')).toBeTruthy();
+      const afterToggle = testComponent.getByRole('button', { name: texts['en']['a11yEnableVoiceReading'], hidden: true });
+      expect(afterToggle).toBe(muteButton);
+      expect(muteButton.getAttribute('aria-pressed')).toBe('false');
     });
   });
 });

@@ -43,18 +43,15 @@ const EmbeddedShoppingAssistantChat: FC<EmbeddedShoppingAssistantProps> = ({ que
   const seeResultsButtonColor = (darkMode ? customizations.buttons?.secondary?.fontColorDark : customizations.buttons?.secondary?.fontColor) || undefined;
 
   // Mounted here — now ESA's real send path (Step 4) and the source for ChatComposer (Step 5)
-  // below. suppressActionTokenCallbacks keeps AI-embedded <<ADD_TO_CART>>/<<ADD_TO_WISHLIST>>
-  // tokens from firing a host's product-card callbacks for ESA specifically (this hook's own
-  // internal behavior, unconditional for every useChat() caller otherwise) — isolated at the
-  // hook level rather than by neutering widgetConfig.callbacks in a nested context Provider
-  // (EmbeddedShoppingAssistant.tsx used to do exactly that, which also broke real ProductCard
-  // interactions — onProductClick/onAddToWishlistToggle/onAddToCartToggle — for every product
-  // card this component renders, since ProductCard reads those off the very same context).
+  // below. suppressActionTokenCallbacks is intentionally left unset (falsy) so AI-embedded
+  // <<ADD_TO_CART>>/<<ADD_TO_WISHLIST>> tokens in the streamed reply also fire the host's
+  // onAddToCartToggle/onAddToWishlistToggle callbacks, same as every other useChat() caller —
+  // not just a direct click on a rendered ProductCard.
   // sessionScopeKey: query — scopes persistChatEnabled's stored session to this exact product
   // query, so a returning visitor on the SAME product resumes their conversation, while a
   // different product's query (never stored under this scope) starts fresh instead. See
   // sessionScopeKey's own doc comment on UseChatOptions.
-  const chat = useChat({ suppressActionTokenCallbacks: true, sessionScopeKey: query });
+  const chat = useChat({ sessionScopeKey: query });
 
   // Tracks whether this mount resumed a persisted session, so the query-auto-send effect below
   // knows to skip re-sending `query` — a resumed conversation's restored history already covers
