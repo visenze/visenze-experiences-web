@@ -30,6 +30,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.35](https://github.com/visenze/visenze-experiences-web/compare/1.0.34...1.0.35)
+
+<!-- BEGIN visenze-experiences-web 1.0.35 -->
+
+### Fixed
+
+- embedded-shopping-assistant: AI-embedded `<<ADD_TO_CART>>`/`<<ADD_TO_WISHLIST>>` tokens in a streamed reply now also trigger the host's `onAddToCartToggle`/`onAddToWishlistToggle` callbacks, consistent with every other widget using the shared chat hook (previously suppressed for this widget specifically).
+- shopping-assistant, ai-search-launcher, embedded-shopping-assistant: Voice narration of a long, multi-sentence reply no longer fires every sentence's synthesis request in parallel, which could trip the voice provider's rate limit (HTTP 429). Concurrent synthesis requests are now capped, and a 429 response is retried automatically (honoring a `Retry-After` header when given) instead of silently dropping that sentence's narration.
+
+### Changed
+
+- shopping-assistant: Now uses the same shared chat window/row components as ai-search-launcher and embedded-shopping-assistant instead of its own duplicated chat implementation. Product images still fill their card at full size as before.
+
+<!-- END visenze-experiences-web 1.0.35 -->
+
 ## [1.0.34](https://github.com/visenze/visenze-experiences-web/compare/1.0.33...1.0.34)
 
 <!-- BEGIN visenze-experiences-web 1.0.34 -->

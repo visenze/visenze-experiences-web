@@ -1,7 +1,6 @@
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, memo } from 'react';
 import { useIntl } from 'react-intl';
-import { PRODUCT_IMAGE_MAX_HEIGHT_CLASS } from './constants';
 import { processMessageForDisplay } from './message-formatting';
 import ProductGrid from './ProductGrid';
 import type { Chat } from './use-chat';
@@ -22,6 +21,7 @@ interface ChatRowProps {
   onSelectTurn?: (requestId: string) => void;
   productGridClasses: string;
   productGridCssConfig: CSSProperties;
+  imageClasses?: string;
 }
 
 const getFile = (image: SearchImageOrPid | undefined): string => {
@@ -45,6 +45,7 @@ const getFile = (image: SearchImageOrPid | undefined): string => {
 const ChatRow: FC<ChatRowProps> = ({
   chat, focusedProductId, streamingRequestId, wishlistPids, setIsInWishlist, pwPrefix,
   productDisplayMode, activeRequestId, onSelectTurn, productGridClasses, productGridCssConfig,
+  imageClasses,
 }) => {
   const intl = useIntl();
 
@@ -124,8 +125,8 @@ const ChatRow: FC<ChatRowProps> = ({
             wishlistPids={wishlistPids}
             setIsInWishlist={setIsInWishlist}
             pwPrefix={pwPrefix}
-            imageClasses={PRODUCT_IMAGE_MAX_HEIGHT_CLASS}
-            className={cn('grid pl-9', productGridClasses)}
+            imageClasses={imageClasses}
+            className={cn('grid', productGridClasses)}
             style={productGridCssConfig}
           />
         )

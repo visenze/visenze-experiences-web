@@ -81,6 +81,15 @@ const FINALIZE_GRACE_MS = 300;
 // Small pause between queued speech segments, so back-to-back sentences don't run together.
 const SPEECH_GAP_MS = 200;
 
+// Caps how many voice-synthesis requests are in flight at once. A long reply can complete many
+// sentences in the same streamed burst (see the `speak` calls this feeds into use-chat.ts's
+// chat_token handler), and firing every one of them as a synthesis request the moment it's
+// detected used to send that whole burst to the voice proxy in parallel — enough, for a long
+// reply, to trip the provider's rate limit (HTTP 429). Capping concurrency spreads the requests
+// out over the synthesis time of the ones ahead of them instead. Playback is unaffected: it was
+// already serialized (see `playNext`) and stays that way.
+const MAX_CONCURRENT_SYNTHESIS = 2;
+
 const getSpeechRecognitionCtor = (): (new () => SpeechRecognitionLike) | undefined => {
   const w = window as unknown as SpeechRecognitionWindow;
   return w.SpeechRecognition || w.webkitSpeechRecognition;
@@ -119,6 +128,8 @@ const useVoice = ({
   const audioUrlRef = useRef<string | null>(null);
   const speechQueueRef = useRef<QueuedSpeech[]>([]);
   const pendingSynthesisRef = useRef<Set<AbortController>>(new Set());
+  const activeSynthesisCountRef = useRef(0);
+  const queuedSynthesisStartersRef = useRef<Array<() => void>>([]);
   const isPlayingRef = useRef(false);
   const playSessionRef = useRef(0);
   const gapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -143,9 +154,29 @@ const useVoice = ({
     setStatus(next);
   };
 
+  // Runs `task` immediately if a synthesis slot is free, otherwise defers it until an
+  // earlier-queued task settles — see MAX_CONCURRENT_SYNTHESIS.
+  const runSynthesisTask = (task: () => Promise<Blob>): Promise<Blob> => new Promise((resolve, reject) => {
+    const start = (): void => {
+      activeSynthesisCountRef.current += 1;
+      task()
+        .then(resolve, reject)
+        .finally(() => {
+          activeSynthesisCountRef.current -= 1;
+          queuedSynthesisStartersRef.current.shift()?.();
+        });
+    };
+    if (activeSynthesisCountRef.current < MAX_CONCURRENT_SYNTHESIS) {
+      start();
+    } else {
+      queuedSynthesisStartersRef.current.push(start);
+    }
+  });
+
   const stopAudio = (): void => {
     playSessionRef.current += 1;
     speechQueueRef.current = [];
+    queuedSynthesisStartersRef.current = [];
     isPlayingRef.current = false;
     pendingSynthesisRef.current.forEach((controller) => controller.abort());
     pendingSynthesisRef.current.clear();
@@ -359,7 +390,7 @@ const useVoice = ({
     const session = playSessionRef.current;
     const controller = new AbortController();
     pendingSynthesisRef.current.add(controller);
-    const promise = synthesizeSpeech(
+    const promise = runSynthesisTask(() => synthesizeSpeech(
       baseUrl,
       appKey,
       placementId,
@@ -367,7 +398,7 @@ const useVoice = ({
       voiceId || DEFAULT_VOICE_ID,
       { voiceModelId, stability: voiceStability, similarityBoost: voiceSimilarityBoost },
       controller.signal,
-    );
+    ));
     promise
       .catch(() => {})
       .finally(() => {

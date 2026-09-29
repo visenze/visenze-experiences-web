@@ -79,3 +79,46 @@ describe('useVoice - speech output failure', () => {
     expect(result.current.hasSpeechOutputError).toBe(false);
   });
 });
+
+describe('useVoice - synthesis concurrency', () => {
+  const originalFetch = global.fetch;
+
+  const baseProps = {
+    enabled: true,
+    appKey: 'test-app-key',
+    placementId: '1234',
+    baseUrl: 'https://api.example.com',
+    onTranscript: jest.fn(),
+  };
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('caps how many synthesis requests are in flight at once for a long, multi-sentence reply', async () => {
+    const pendingRejects: Array<(err: Error) => void> = [];
+    global.fetch = jest.fn().mockImplementation(() => new Promise((_resolve, reject) => {
+      pendingRejects.push(reject);
+    })) as unknown as typeof fetch;
+
+    const { result } = renderHook(() => useVoice(baseProps));
+
+    await act(async () => {
+      result.current.speak('First sentence.', 10, null);
+      result.current.speak('Second sentence.', 20, null);
+      result.current.speak('Third sentence.', 30, null);
+    });
+
+    // Third sentence's synthesis call must not start until a slot frees up.
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+
+    await act(async () => {
+      pendingRejects[0](new Error('voice proxy unavailable'));
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(global.fetch).toHaveBeenCalledTimes(3);
+  });
+});
