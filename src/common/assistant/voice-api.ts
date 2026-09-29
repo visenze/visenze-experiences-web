@@ -5,11 +5,37 @@ export const DEFAULT_VOICE_SIMILARITY_BOOST = 0.75;
 
 const OUTPUT_FORMAT = 'mp3_44100_128';
 
+const RATE_LIMIT_STATUS = 429;
+// A long reply can complete many sentences in the same streamed burst (see use-voice.ts's
+// per-sentence synthesis), which is enough to trip the voice provider's rate limit even with
+// concurrency capped. Retrying a 429 a couple of times, honoring its Retry-After when given,
+// resolves the transient overload instead of silently dropping that sentence's narration.
+const MAX_RATE_LIMIT_RETRIES = 2;
+const DEFAULT_RATE_LIMIT_RETRY_DELAY_MS = 1000;
+
 export interface VoiceSynthesisOptions {
   voiceModelId?: string;
   stability?: number;
   similarityBoost?: number;
 }
+
+const wait = (ms: number, signal?: AbortSignal): Promise<void> => new Promise((resolve, reject) => {
+  if (signal?.aborted) {
+    reject(new DOMException('Aborted', 'AbortError'));
+    return;
+  }
+  const timer = setTimeout(resolve, ms);
+  signal?.addEventListener('abort', (): void => {
+    clearTimeout(timer);
+    reject(new DOMException('Aborted', 'AbortError'));
+  }, { once: true });
+});
+
+const getRetryAfterMs = (response: Response): number | null => {
+  const header = response.headers.get('Retry-After');
+  const seconds = header ? Number(header) : NaN;
+  return Number.isFinite(seconds) ? seconds * 1000 : null;
+};
 
 // Calls the Product Search voice proxy (see shopping-assistant-voice-proxy.md) instead of the
 // voice provider directly, so no voice provider key is ever present in browser code.
@@ -28,7 +54,8 @@ export const synthesizeSpeech = async (
     output_format: OUTPUT_FORMAT,
   });
 
-  const response = await fetch(`${baseUrl}/v1/voice/synthesize/${encodeURIComponent(voiceId)}?${params.toString()}`, {
+  const url = `${baseUrl}/v1/voice/synthesize/${encodeURIComponent(voiceId)}?${params.toString()}`;
+  const requestInit: RequestInit = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -43,7 +70,16 @@ export const synthesizeSpeech = async (
       },
     }),
     signal,
-  });
+  };
+
+  let response = await fetch(url, requestInit);
+  let attempt = 0;
+  while (!response.ok && response.status === RATE_LIMIT_STATUS && attempt < MAX_RATE_LIMIT_RETRIES) {
+    const delayMs = getRetryAfterMs(response) ?? DEFAULT_RATE_LIMIT_RETRY_DELAY_MS * 2 ** attempt;
+    await wait(delayMs, signal);
+    attempt += 1;
+    response = await fetch(url, requestInit);
+  }
 
   if (!response.ok) {
     let message = `Voice synthesis failed with HTTP ${response.status}`;

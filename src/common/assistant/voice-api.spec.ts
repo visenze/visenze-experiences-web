@@ -82,6 +82,81 @@ describe('voice-api', () => {
       await expect(synthesizeSpeech('https://api.example.com', 'app-key', 'placement-1', 'text', DEFAULT_VOICE_ID))
         .rejects.toThrow('Voice synthesis failed with HTTP 500');
     });
+
+    it('retries after a 429 and returns the blob once the retry succeeds', async () => {
+      jest.useFakeTimers();
+      const mockBlob = new Blob(['audio-bytes'], { type: 'audio/mpeg' });
+      const rateLimitedResponse = {
+        ok: false,
+        status: 429,
+        headers: { get: jest.fn().mockReturnValue(null) },
+      };
+      const okResponse = {
+        ok: true,
+        blob: jest.fn().mockResolvedValue(mockBlob),
+      };
+      global.fetch = jest.fn()
+        .mockResolvedValueOnce(rateLimitedResponse)
+        .mockResolvedValueOnce(okResponse) as unknown as typeof fetch;
+
+      const resultPromise = synthesizeSpeech('https://api.example.com', 'app-key', 'placement-1', 'text', DEFAULT_VOICE_ID);
+      await jest.runAllTimersAsync();
+      const result = await resultPromise;
+
+      expect(result).toBe(mockBlob);
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+      jest.useRealTimers();
+    });
+
+    it('waits for the duration given in a Retry-After header before retrying', async () => {
+      jest.useFakeTimers();
+      const mockBlob = new Blob(['audio-bytes'], { type: 'audio/mpeg' });
+      const rateLimitedResponse = {
+        ok: false,
+        status: 429,
+        headers: { get: jest.fn().mockReturnValue('5') },
+      };
+      const okResponse = {
+        ok: true,
+        blob: jest.fn().mockResolvedValue(mockBlob),
+      };
+      global.fetch = jest.fn()
+        .mockResolvedValueOnce(rateLimitedResponse)
+        .mockResolvedValueOnce(okResponse) as unknown as typeof fetch;
+
+      const resultPromise = synthesizeSpeech('https://api.example.com', 'app-key', 'placement-1', 'text', DEFAULT_VOICE_ID);
+
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+
+      jest.advanceTimersByTime(5000);
+      const result = await resultPromise;
+
+      expect(result).toBe(mockBlob);
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+      jest.useRealTimers();
+    });
+
+    it('gives up after exhausting retries on repeated 429s', async () => {
+      jest.useFakeTimers();
+      const rateLimitedResponse = {
+        ok: false,
+        status: 429,
+        headers: { get: jest.fn().mockReturnValue(null) },
+        json: jest.fn().mockResolvedValue({ error: { message: 'Rate limit exceeded' } }),
+      };
+      global.fetch = jest.fn().mockResolvedValue(rateLimitedResponse) as unknown as typeof fetch;
+
+      const resultPromise = synthesizeSpeech('https://api.example.com', 'app-key', 'placement-1', 'text', DEFAULT_VOICE_ID);
+      const assertion = expect(resultPromise).rejects.toThrow('Rate limit exceeded');
+
+      await jest.runAllTimersAsync();
+      await assertion;
+
+      expect(global.fetch).toHaveBeenCalledTimes(3);
+      jest.useRealTimers();
+    });
   });
 
   describe('sanitizeTextForSpeech', () => {
