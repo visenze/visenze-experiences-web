@@ -1623,6 +1623,15 @@ export interface WidgetConfig {
        */
       title?: string;
       /**
+       * Icon shown beside each chat answer (the assistant's avatar). Set `url` to a brand logo to
+       * replace the default sparkle icon; `color`/`colorDark` tint the logo (as a mask), or leave
+       * them unset to render the image as-is. Falls back to the default sparkle icon when `url`
+       * is unset.
+       *
+       * @since 1.0.36
+       */
+      botIcon?: Partial<Icon>;
+      /**
        * Master toggle for greeting audio. When unset or false, greetings are
        * shown as text only (if at all) and never spoken.
        *

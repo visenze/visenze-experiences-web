@@ -1,7 +1,9 @@
 import { cn } from '@heroui/theme';
-import type { FC, ReactNode, RefObject } from 'react';
+import { type FC, type ReactNode, type RefObject, useContext } from 'react';
 import { useIntl } from 'react-intl';
+import BotIcon from '../../../common/components/chat/BotIcon';
 import SparklesIcon from '../../../common/icons/SparklesIcon';
+import { WidgetDataContext } from '../../../common/types/contexts';
 import type { ConversationTurn } from '../embedded-shopping-assistant';
 
 const parseBold = (text: string): ReactNode => {
@@ -90,6 +92,8 @@ const TurnSection: FC<TurnSectionProps> = ({
   turn, onShowProducts, loadingDotColor, iconColor, backgroundColor = '#FFFFFF', seeResultsButtonRef, seeResultsButtonColor,
 }) => {
   const intl = useIntl();
+  const { widgetConfig } = useContext(WidgetDataContext);
+  const hasCustomBotIcon = !!widgetConfig.customizations.chatbot?.botIcon?.url;
 
   return (
   <div>
@@ -98,7 +102,8 @@ const TurnSection: FC<TurnSectionProps> = ({
         all, so this inline header fills that gap for the initial turn. */}
     {turn.isInitial && !turn.productsExpanded && (
       <div className='flex items-center gap-2 mb-3'>
-        <SparklesIcon className='size-4' color={iconColor} />
+        {/* Same configured logo avatar as the chat answers; the default sparkle otherwise. */}
+        {hasCustomBotIcon ? <BotIcon /> : <SparklesIcon className='size-4' color={iconColor} />}
         <span className='text-sm font-semibold' style={{ color: iconColor }}>
           {intl.formatMessage({ id: 'aiOverviewLabel' })}
         </span>

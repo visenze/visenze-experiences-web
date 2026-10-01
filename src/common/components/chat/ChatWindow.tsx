@@ -1,6 +1,7 @@
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, Fragment, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import BotIcon from './BotIcon';
 import ChatRow from './ChatRow';
 import { PRODUCT_IMAGE_MAX_HEIGHT_CLASS, USER_SCROLL_IDLE_MS } from './constants';
 import { processMessageForDisplay } from './message-formatting';
@@ -8,7 +9,6 @@ import ProductGrid from './ProductGrid';
 import type { Chat } from './use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../constants';
 import DownArrowIcon from '../../icons/DownArrowIcon';
-import SparklesIcon from '../../icons/SparklesIcon';
 import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 import { getProductGridCssClasses, getProductGridCssConfig } from '../../utils';
@@ -331,10 +331,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
               <>
                 <div className='chat-row flex gap-2'>
                   {(isWaiting || latestMessage) && (
-                    <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-                      bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-                      <SparklesIcon className='size-5' />
-                    </div>
+                    <BotIcon />
                   )}
                   {isWaiting && (
                     <div className='flex items-center w-fit gap-2 p-2 rounded-lg dark:border-neutral-800

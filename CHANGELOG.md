@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.36](https://github.com/visenze/visenze-experiences-web/compare/1.0.35...1.0.36)
+
+<!-- BEGIN visenze-experiences-web 1.0.36 -->
+
+### Added
+
+- shopping-assistant, ai-search-launcher, embedded-shopping-assistant: New `customizations.chatbot.botIcon` option to replace the default sparkle icon shown beside each chat answer with a configurable brand logo, the same way other configurable icons work (`url`, plus optional `color`/`colorDark` to tint it; left unset, the logo renders in its original colors). In embedded-shopping-assistant, the logo also replaces the sparkle beside the "AI Overview" label. Without `botIcon.url`, the default sparkle icon is shown as before.
+
+<!-- END visenze-experiences-web 1.0.36 -->
+
 ## [1.0.35](https://github.com/visenze/visenze-experiences-web/compare/1.0.34...1.0.35)
 
 <!-- BEGIN visenze-experiences-web 1.0.35 -->

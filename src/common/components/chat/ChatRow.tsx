@@ -1,11 +1,11 @@
 import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, memo } from 'react';
 import { useIntl } from 'react-intl';
+import BotIcon from './BotIcon';
 import { processMessageForDisplay } from './message-formatting';
 import ProductGrid from './ProductGrid';
 import type { Chat } from './use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../constants';
-import SparklesIcon from '../../icons/SparklesIcon';
 import UserIcon from '../../icons/UserIcon';
 import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../types/image';
 
@@ -90,10 +90,7 @@ const ChatRow: FC<ChatRowProps> = ({
         <div
           className='flex min-w-0 gap-1 max-w-9/10'
           key={`chat-bot-message-${cidx}`}>
-          <div className='size-8 rounded-full flex items-center justify-center flex-shrink-0
-            bg-gray-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'>
-            <SparklesIcon className='size-5' />
-          </div>
+          <BotIcon />
           <div
             className='mb-2 min-w-0 break-words bg-gray-100 dark:bg-neutral-800 p-2 text-sm
               text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800'
