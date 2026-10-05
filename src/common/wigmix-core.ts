@@ -1800,6 +1800,40 @@ export interface WidgetConfig {
        */
       askAiEntryEnabled?: boolean;
       /**
+       * (optional) Brand logo for the top entry-bar's "Ask AI" button. Set `url` to show the logo
+       * (at its natural aspect ratio) in place of — or alongside — the button's `triggerAskAi`
+       * text; `color`/`colorDark` tint the logo (as a mask), or leave them unset to render the image
+       * as-is. Without `url`, the button shows its text only, as before.
+       *
+       * `layout` arranges logo and text, the same way `popup.triggerIcon.layout` does, and defaults
+       * to `ICON` (logo only) when `url` is set:
+       * - ICON: logo only
+       * - TEXT: text only
+       * - ICON_TEXT: logo, followed by text
+       * - TEXT_ICON: text, followed by logo
+       *
+       * `height` and `width` size the logo in pixels; the image is fitted inside without stretching.
+       * With `ICON` the button keeps the camera button's border and 38px height, with a 32px-tall
+       * logo and an even 2px inset on all sides. Beside text the logo defaults to 22px tall, with
+       * its width following the image's aspect ratio (up to 240px), and the button keeps its normal
+       * padding. `padding.x` (left/right) and `padding.y` (top/bottom) override that default space
+       * between the button's border and its contents, in pixels; they apply only when a logo is
+       * shown, so a text-only button always matches the camera/mic buttons.
+       *
+       * The button's accessible name is always the `a11yOpenAskAi` text, whatever the layout.
+       *
+       * @since 1.0.37
+       */
+      askAiEntryIcon?: Partial<Icon> & {
+        layout?: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
+        height?: number;
+        width?: number;
+        padding?: {
+          x?: number;
+          y?: number;
+        };
+      };
+      /**
        * (optional) Whether the in-chat footer's inline "open camera" button is
        * shown once a conversation is active. Defaults to `true` (enabled) when
        * unset. Image upload (drag/drop or file picker) is unaffected by this
