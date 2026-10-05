@@ -248,6 +248,85 @@ describe('ai-search-launcher', () => {
       expect(getTextInBody('Custom Dialog Title')).toBeTruthy();
     });
 
+    describe('Ask AI entry logo', () => {
+      const LOGO_URL = 'https://example.com/ask-brand.svg';
+
+      const renderWithEntryIcon = (
+        askAiEntryIcon: NonNullable<WidgetConfig['customizations']['launcher']>['askAiEntryIcon'],
+        darkMode = false,
+      ): HTMLElement => {
+        renderLauncher({}, 'en', {}, { launcher: { askAiEntryIcon } }, darkMode);
+        return testComponent.getByRole('button', { name: texts['en']['a11yOpenAskAi'] });
+      };
+
+      it('replaces the text with the configured logo by default, keeping the accessible name', () => {
+        const aiTrigger = renderWithEntryIcon({ url: LOGO_URL });
+        expect(aiTrigger.querySelector('img')?.getAttribute('src')).toBe(LOGO_URL);
+        expect(aiTrigger.textContent).toBe('');
+      });
+
+      it('places the text before or after the logo per layout', () => {
+        const textIcon = renderWithEntryIcon({ url: LOGO_URL, layout: 'TEXT_ICON' });
+        expect(textIcon.firstChild?.textContent).toBe(texts['en']['triggerAskAi']);
+        expect(textIcon.lastElementChild?.tagName).toBe('IMG');
+        testComponent.unmount();
+
+        const iconText = renderWithEntryIcon({ url: LOGO_URL, layout: 'ICON_TEXT' });
+        expect(iconText.firstElementChild?.tagName).toBe('IMG');
+        expect(iconText.lastChild?.textContent).toBe(texts['en']['triggerAskAi']);
+      });
+
+      it('shows text only for the TEXT layout or when no logo url is set', () => {
+        const textLayout = renderWithEntryIcon({ url: LOGO_URL, layout: 'TEXT' });
+        expect(textLayout.querySelector('img')).toBeNull();
+        expect(textLayout.textContent).toBe(texts['en']['triggerAskAi']);
+        testComponent.unmount();
+
+        const noUrl = renderWithEntryIcon({ layout: 'ICON' });
+        expect(noUrl.querySelector('img')).toBeNull();
+        expect(noUrl.textContent).toBe(texts['en']['triggerAskAi']);
+      });
+
+      it('fills a logo-only button by default, and sizes the logo by height', () => {
+        const logoOnly = renderWithEntryIcon({ url: LOGO_URL });
+        expect(logoOnly.querySelector('img')?.style.height).toBe('32px');
+        expect(logoOnly.querySelector('img')?.style.width).toBe('');
+        expect(logoOnly.className).not.toContain('px-3');
+        expect(logoOnly.className).toContain('border-gray');
+        testComponent.unmount();
+        const beside = renderWithEntryIcon({ url: LOGO_URL, layout: 'ICON_TEXT' });
+        expect(beside.querySelector('img')?.style.height).toBe('22px');
+        expect(beside.querySelector('img')?.style.width).toBe('');
+        expect(beside.className).toContain('px-3 py-2');
+        testComponent.unmount();
+        const sized = renderWithEntryIcon({ url: LOGO_URL, height: 32, width: 113 }).querySelector('img');
+        expect(sized?.style.height).toBe('32px');
+        expect(sized?.style.width).toBe('113px');
+      });
+
+      it('applies the configured padding only when a logo is shown', () => {
+        const padded = renderWithEntryIcon({ url: LOGO_URL, padding: { x: 8, y: 4 } });
+        expect(padded.style.paddingLeft).toBe('8px');
+        expect(padded.style.paddingRight).toBe('8px');
+        expect(padded.style.paddingTop).toBe('4px');
+        expect(padded.style.paddingBottom).toBe('4px');
+        testComponent.unmount();
+
+        const textOnly = renderWithEntryIcon({ url: LOGO_URL, layout: 'TEXT', padding: { x: 8, y: 4 } });
+        expect(textOnly.style.paddingLeft).toBe('');
+        expect(textOnly.style.paddingTop).toBe('');
+      });
+
+      it('tints the logo with color, or colorDark in dark mode', () => {
+        const icon = { url: LOGO_URL, color: 'rgb(255, 0, 0)', colorDark: 'rgb(0, 0, 255)' };
+        const tintOf = (trigger: HTMLElement): string | undefined => trigger.querySelector<HTMLElement>('.wigmix-entry-logo > span')?.style.backgroundColor;
+
+        expect(tintOf(renderWithEntryIcon(icon))).toBe('rgb(255, 0, 0)');
+        testComponent.unmount();
+        expect(tintOf(renderWithEntryIcon(icon, true))).toBe('rgb(0, 0, 255)');
+      });
+    });
+
     it('should render the three entry-bar buttons with correct a11y labels', () => {
       renderLauncher();
       expect(testComponent.getByRole('button', { name: texts['en']['a11yOpenImageSearch'] })).toBeTruthy();
