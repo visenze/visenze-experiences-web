@@ -1214,14 +1214,14 @@ export interface WidgetConfig {
          * neighbouring cards and prev/next arrows) instead of a wrapping grid. `productsPerRow` cards are fully
          * visible at once and `marginHorizontal` is the space between cards. Defaults to `false`.
          *
-         * @since 1.0.38
+         * @since 1.0.37
          */
         horizontalScroll?: boolean;
         /**
          * Chat widgets only: number of product cards the prev/next arrows move per click when `horizontalScroll`
          * is enabled. Defaults to 2.
          *
-         * @since 1.0.38
+         * @since 1.0.37
          */
         cardsPerScroll?: number;
       };
