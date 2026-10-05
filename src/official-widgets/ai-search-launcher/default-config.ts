@@ -14,6 +14,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yCloseFullScreen: 'Close full screen',
     chatBoxPlaceholder: 'Type your message',
     a11ySendMessage: 'Send message',
+    a11yScrollProductsPrev: 'Previous products',
+    a11yScrollProductsNext: 'Next products',
     a11yScrollToLatestMessage: 'Scroll to latest message',
     a11yChatInput: 'Type your message to the AI search assistant',
     a11yUploadedImage: 'Uploaded image',

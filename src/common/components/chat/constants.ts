@@ -20,3 +20,7 @@ export const FOCUSED_SCALE = 0.9;
 // aspect-ratio customization: no single product image may exceed a fraction of the viewport's
 // height.
 export const PRODUCT_IMAGE_MAX_HEIGHT_CLASS = 'max-h-[45vh]';
+
+// Width of the sliver of the neighbouring product cards shown at each edge of the horizontally
+// scrollable product row.
+export const PRODUCT_SCROLLER_PEEK_PX = 24;

@@ -8,6 +8,7 @@ import type { Chat } from './use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../constants';
 import UserIcon from '../../icons/UserIcon';
 import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../types/image';
+import type { ProductScrollerConfig } from '../../utils';
 
 interface ChatRowProps {
   chat: Chat;
@@ -22,6 +23,7 @@ interface ChatRowProps {
   productGridClasses: string;
   productGridCssConfig: CSSProperties;
   imageClasses?: string;
+  productScroller?: ProductScrollerConfig;
 }
 
 const getFile = (image: SearchImageOrPid | undefined): string => {
@@ -45,7 +47,7 @@ const getFile = (image: SearchImageOrPid | undefined): string => {
 const ChatRow: FC<ChatRowProps> = ({
   chat, focusedProductId, streamingRequestId, wishlistPids, setIsInWishlist, pwPrefix,
   productDisplayMode, activeRequestId, onSelectTurn, productGridClasses, productGridCssConfig,
-  imageClasses,
+  imageClasses, productScroller,
 }) => {
   const intl = useIntl();
 
@@ -123,7 +125,8 @@ const ChatRow: FC<ChatRowProps> = ({
             setIsInWishlist={setIsInWishlist}
             pwPrefix={pwPrefix}
             imageClasses={imageClasses}
-            className={cn('grid', productGridClasses)}
+            className={productScroller ? 'w-full' : cn('grid', productGridClasses)}
+            scroller={productScroller}
             style={productGridCssConfig}
           />
         )

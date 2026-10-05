@@ -11,7 +11,7 @@ import { FOCUS_VISIBLE_CLASSES } from '../../constants';
 import DownArrowIcon from '../../icons/DownArrowIcon';
 import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
-import { getProductGridCssClasses, getProductGridCssConfig } from '../../utils';
+import { getProductGridCssClasses, getProductGridCssConfig, getProductScrollerConfig } from '../../utils';
 import useBreakpoint from '../hooks/use-breakpoint';
 
 // i18n contract: this component calls `intl.formatMessage` for the following ids, so any widget
@@ -266,6 +266,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
     [customizations.productGrid, breakpoint],
   );
 
+  const productScroller = useMemo(
+    () => getProductScrollerConfig(customizations, breakpoint, 2, 16),
+    [customizations.productGrid, breakpoint],
+  );
+
   const productImageClasses = capProductImageHeight ? PRODUCT_IMAGE_MAX_HEIGHT_CLASS : undefined;
 
   const getAccessibleStatus = (): string => {
@@ -324,6 +329,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 productGridClasses={productGridClasses}
                 productGridCssConfig={productGridCssConfig}
                 imageClasses={productImageClasses}
+                productScroller={productScroller}
               />
             );
           })}
@@ -368,7 +374,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
                       pwPrefix={pwPrefix}
                       streaming
                       imageClasses={productImageClasses}
-                      className={cn('w-full grid pl-9', productGridClasses)}
+                      className={productScroller ? 'w-full pl-9' : cn('w-full grid pl-9', productGridClasses)}
+                      scroller={productScroller}
                       style={productGridCssConfig}
                     />
                 )}

@@ -34,6 +34,7 @@ import {
   getFilterQueries,
   getProductGridCssClasses,
   getProductGridCssConfig,
+  getProductScrollerConfig,
 } from './utils';
 
 describe('Utils - Common Utility Functions', () => {
@@ -752,5 +753,25 @@ describe('Utils - Common Utility Functions', () => {
         });
       });
     });
+  });
+});
+
+describe('getProductScrollerConfig', () => {
+  const build = (productGrid: unknown): Parameters<typeof getProductScrollerConfig>[0] => ({ productGrid } as never);
+
+  it('is undefined unless horizontalScroll is enabled', () => {
+    expect(getProductScrollerConfig(build({ desktop: { productsPerRow: 3, marginHorizontal: 8 } }), WidgetBreakpoint.DESKTOP, 2, 16)).toBeUndefined();
+    expect(getProductScrollerConfig(build(undefined), WidgetBreakpoint.DESKTOP, 2, 16)).toBeUndefined();
+  });
+
+  it('defaults cardsPerScroll to 2 and falls back to default gap/columns', () => {
+    expect(getProductScrollerConfig(build({ desktop: { horizontalScroll: true } }), WidgetBreakpoint.DESKTOP, 2, 16))
+      .toEqual({ productsPerView: 2, gap: 16, cardsPerScroll: 2 });
+  });
+
+  it('honours configured values, including a zero gap', () => {
+    expect(getProductScrollerConfig(
+      build({ mobile: { horizontalScroll: true, productsPerRow: 3, marginHorizontal: 0, cardsPerScroll: 3 } }), WidgetBreakpoint.MOBILE, 2, 16,
+    )).toEqual({ productsPerView: 3, gap: 0, cardsPerScroll: 3 });
   });
 });
