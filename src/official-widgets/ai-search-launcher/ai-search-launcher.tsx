@@ -1,6 +1,7 @@
 import { cn } from '@heroui/theme';
 import { type FC, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import EntryLogo from './components/EntryLogo';
 import ImageEntryScreen from './components/ImageEntryScreen';
 import MicEntryScreen from './components/MicEntryScreen';
 import SplitLayout from './components/SplitLayout';
@@ -185,6 +186,27 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
     }
   };
 
+  // The "Ask AI" button shows its text unless a logo is configured; with a logo, `layout`
+  // (default ICON) decides whether the text is dropped or placed before/after it. A logo-only
+  // button keeps the camera button's 38px height (a 32px-tall logo, a 2px inset and the 1px
+  // border); its width follows the logo's aspect ratio, so the inset is even on all sides.
+  const askAiEntryIcon = customizations.launcher?.askAiEntryIcon;
+  const askAiLayout = askAiEntryIcon?.url ? (askAiEntryIcon.layout || 'ICON') : 'TEXT';
+  const isAskAiLogoOnly = askAiLayout === 'ICON';
+  const askAiText = intl.formatMessage({ id: 'triggerAskAi' });
+  // Configured padding overrides the button's default inset, only when a logo is shown, so the
+  // text-only button always keeps the camera/mic buttons' styling.
+  const askAiPadding = askAiEntryIcon?.url && askAiLayout !== 'TEXT' ? askAiEntryIcon.padding : undefined;
+  const askAiLogo = askAiEntryIcon?.url && askAiLayout !== 'TEXT' && (
+    <EntryLogo
+      url={askAiEntryIcon.url}
+      color={darkMode ? askAiEntryIcon.colorDark : askAiEntryIcon.color}
+      height={askAiEntryIcon.height || (isAskAiLogoOnly ? 32 : 22)}
+      width={askAiEntryIcon.width}
+      className={cn('object-contain', !askAiEntryIcon.width && 'w-auto max-w-[240px]')}
+    />
+  );
+
   if (!root) {
     return <></>;
   }
@@ -225,14 +247,27 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
             ref={aiButtonRef}
             type='button'
             aria-label={intl.formatMessage({ id: 'a11yOpenAskAi' })}
-            style={{ color: fontColor }}
+            style={{
+              color: fontColor,
+              paddingLeft: askAiPadding?.x,
+              paddingRight: askAiPadding?.x,
+              paddingTop: askAiPadding?.y,
+              paddingBottom: askAiPadding?.y,
+            }}
             className={cn(
-              'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-buttonSecondary px-3 py-2 shadow-sm',
+              // Same border, background and height as the camera/mic buttons; a logo-only button only
+              // swaps the padding for a thin inset so the logo can fill it.
+              isAskAiLogoOnly
+                ? 'flex min-h-[38px] min-w-[38px] items-center justify-center overflow-hidden rounded-lg border border-gray bg-buttonSecondary p-0.5 shadow-sm'
+                : 'flex min-h-[38px] min-w-[38px] items-center justify-center rounded-lg border border-gray bg-buttonSecondary px-3 py-2 shadow-sm',
+              askAiLayout === 'ICON_TEXT' || askAiLayout === 'TEXT_ICON' ? 'gap-2' : '',
               FOCUS_VISIBLE_CLASSES,
             )}
             onClick={() => openEntryPoint('ai')}
           >
-            {intl.formatMessage({ id: 'triggerAskAi' })}
+            {askAiLayout === 'TEXT_ICON' && askAiText}
+            {askAiLogo}
+            {(askAiLayout === 'TEXT' || askAiLayout === 'ICON_TEXT') && askAiText}
           </button>
         )}
       </div>

@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.37](https://github.com/visenze/visenze-experiences-web/compare/1.0.36...1.0.37)
+
+<!-- BEGIN visenze-experiences-web 1.0.37 -->
+
+### Added
+
+- ai-search-launcher: New `customizations.launcher.askAiEntryIcon` option to brand the "AI Mode" entry-point button with a configurable logo, the same way the popup trigger button works (`url`, plus optional `color`/`colorDark` to tint it; left unset, the logo renders in its original colors at its natural aspect ratio). `layout` (`ICON` — the default when `url` is set — `TEXT`, `ICON_TEXT` or `TEXT_ICON`) chooses whether the logo replaces the button text or sits beside it, and `height`/`width` size the logo in pixels without stretching it (by default a logo-only button keeps the camera button's border and height, with a 32px-tall logo and an even inset on all sides; beside text the logo is 22px); the text itself remains configurable via the `triggerAskAi` locale string. Without `askAiEntryIcon.url`, the button shows "AI Mode" text as before.
+
+<!-- END visenze-experiences-web 1.0.37 -->
+
 ## [1.0.36](https://github.com/visenze/visenze-experiences-web/compare/1.0.35...1.0.36)
 
 <!-- BEGIN visenze-experiences-web 1.0.36 -->
