@@ -102,6 +102,28 @@ describe('ProductGrid', () => {
       expect(scrollBy).toHaveBeenCalledWith({ left: 216, behavior: 'smooth' });
     });
 
+    it('re-evaluates the arrows when the scroller is resized, and stops observing on unmount', () => {
+      let trigger: () => void = () => {};
+      const disconnect = jest.fn();
+      const originalResizeObserver = window.ResizeObserver;
+      window.ResizeObserver = jest.fn((cb: () => void) => {
+        trigger = cb;
+        return { observe: jest.fn(), unobserve: jest.fn(), disconnect };
+      }) as unknown as typeof ResizeObserver;
+      try {
+        const { unmount } = renderGrid({ scroller });
+        const list = screen.getByRole('list');
+        expect(screen.queryByLabelText('Next products')).toBeNull();
+        setScrollMetrics(list, { scrollLeft: 0, clientWidth: 300, scrollWidth: 600 });
+        act(() => trigger());
+        expect(screen.getByLabelText('Next products')).toBeTruthy();
+        unmount();
+        expect(disconnect).toHaveBeenCalled();
+      } finally {
+        window.ResizeObserver = originalResizeObserver;
+      }
+    });
+
     it('hides the next arrow at the end of the row', () => {
       renderGrid({ scroller });
       const list = screen.getByRole('list');

@@ -87,12 +87,20 @@ const ProductGrid: FC<ProductGridProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!scroller) {
+    const el = scrollerRef.current;
+    if (!scroller || !el) {
       return undefined;
     }
     updateScrollState();
-    window.addEventListener('resize', updateScrollState);
-    return (): void => window.removeEventListener('resize', updateScrollState);
+    // Observes the scroller itself rather than `window`: the chat panel/drawer can resize without
+    // any window resize, and card widths follow the container, so this also covers every case that
+    // changes how much content overflows. Newly revealed cards re-run this effect via `revealedCount`.
+    if (typeof ResizeObserver === 'undefined') {
+      return undefined;
+    }
+    const observer = new ResizeObserver(updateScrollState);
+    observer.observe(el);
+    return (): void => observer.disconnect();
   }, [scroller, revealedCount, updateScrollState]);
 
   const scrollByCards = (direction: 1 | -1): void => {
