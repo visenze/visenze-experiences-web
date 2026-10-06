@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { IntlProvider } from 'react-intl';
 import ProductGrid from './ProductGrid';
@@ -7,7 +7,7 @@ import { createMockWidgetClient, createWidgetConfig } from '../../test-utils';
 import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 
-const messages = { nowDescribing: 'Now Describing' };
+const messages = { nowDescribing: 'Now Describing', a11yScrollProductsPrev: 'Previous products', a11yScrollProductsNext: 'Next products' };
 
 const buildProduct = (id: string): ProcessedProduct => ({
   product_id: id,
@@ -74,5 +74,63 @@ describe('ProductGrid', () => {
     });
     expect(document.body.querySelectorAll('.wigmix-product-card')).toHaveLength(2);
     jest.useRealTimers();
+  });
+
+  describe('horizontal scroller', () => {
+    const scroller = { productsPerView: 2, gap: 8, cardsPerScroll: 2 };
+    const setScrollMetrics = (el: HTMLElement, metrics: { scrollLeft: number; clientWidth: number; scrollWidth: number }): void => {
+      Object.entries(metrics).forEach(([key, value]) => Object.defineProperty(el, key, { value, configurable: true }));
+    };
+
+    it('renders cards in a flex row sized for productsPerView with the configured gap, without a grid', () => {
+      renderGrid({ scroller });
+      const list = screen.getByRole('list');
+      expect(list.style.columnGap).toBe('8px');
+      expect((list.firstElementChild as HTMLElement).style.flexBasis).toBe('calc(50% - 4px)');
+    });
+
+    it('shows only the next arrow at the start and scrolls by cardsPerScroll cards', () => {
+      renderGrid({ scroller });
+      const list = screen.getByRole('list');
+      const scrollBy = jest.fn();
+      list.scrollBy = scrollBy;
+      Object.defineProperty(list.firstElementChild, 'offsetWidth', { value: 100, configurable: true });
+      setScrollMetrics(list, { scrollLeft: 0, clientWidth: 300, scrollWidth: 600 });
+      fireEvent.scroll(list);
+      expect(screen.queryByLabelText('Previous products')).toBeNull();
+      fireEvent.click(screen.getByLabelText('Next products'));
+      expect(scrollBy).toHaveBeenCalledWith({ left: 216, behavior: 'smooth' });
+    });
+
+    it('re-evaluates the arrows when the scroller is resized, and stops observing on unmount', () => {
+      let trigger: () => void = () => {};
+      const disconnect = jest.fn();
+      const originalResizeObserver = window.ResizeObserver;
+      window.ResizeObserver = jest.fn((cb: () => void) => {
+        trigger = cb;
+        return { observe: jest.fn(), unobserve: jest.fn(), disconnect };
+      }) as unknown as typeof ResizeObserver;
+      try {
+        const { unmount } = renderGrid({ scroller });
+        const list = screen.getByRole('list');
+        expect(screen.queryByLabelText('Next products')).toBeNull();
+        setScrollMetrics(list, { scrollLeft: 0, clientWidth: 300, scrollWidth: 600 });
+        act(() => trigger());
+        expect(screen.getByLabelText('Next products')).toBeTruthy();
+        unmount();
+        expect(disconnect).toHaveBeenCalled();
+      } finally {
+        window.ResizeObserver = originalResizeObserver;
+      }
+    });
+
+    it('hides the next arrow at the end of the row', () => {
+      renderGrid({ scroller });
+      const list = screen.getByRole('list');
+      setScrollMetrics(list, { scrollLeft: 300, clientWidth: 300, scrollWidth: 600 });
+      fireEvent.scroll(list);
+      expect(screen.getByLabelText('Previous products')).toBeTruthy();
+      expect(screen.queryByLabelText('Next products')).toBeNull();
+    });
   });
 });

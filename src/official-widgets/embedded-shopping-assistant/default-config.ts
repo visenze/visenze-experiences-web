@@ -43,6 +43,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Listening',
     a11yHoldMicInstructions: 'Press and hold, or press and hold Space or Enter, to record. Release to send.',
     a11ySendMessage: 'Send message',
+    a11yScrollProductsPrev: 'Previous products',
+    a11yScrollProductsNext: 'Next products',
   },
   es: {
     seeResults: 'Ver resultados',
@@ -85,6 +87,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Escuchando',
     a11yHoldMicInstructions: 'Mantén presionado, o mantén presionada la barra espaciadora o Enter, para grabar. Suelta para enviar.',
     a11ySendMessage: 'Enviar mensaje',
+    a11yScrollProductsPrev: 'Productos anteriores',
+    a11yScrollProductsNext: 'Productos siguientes',
   },
   fr: {
     seeResults: 'Voir les résultats',
@@ -127,6 +131,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Écoute en cours',
     a11yHoldMicInstructions: 'Appuyez et maintenez, ou appuyez et maintenez Espace ou Entrée, pour enregistrer. Relâchez pour envoyer.',
     a11ySendMessage: 'Envoyer le message',
+    a11yScrollProductsPrev: 'Produits précédents',
+    a11yScrollProductsNext: 'Produits suivants',
   },
   pt: {
     seeResults: 'Ver resultados',
@@ -169,6 +175,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Ouvindo',
     a11yHoldMicInstructions: 'Pressione e segure, ou pressione e segure Espaço ou Enter, para gravar. Solte para enviar.',
     a11ySendMessage: 'Enviar mensagem',
+    a11yScrollProductsPrev: 'Produtos anteriores',
+    a11yScrollProductsNext: 'Próximos produtos',
   },
   de: {
     seeResults: 'Ergebnisse anzeigen',
@@ -211,6 +219,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Hört zu',
     a11yHoldMicInstructions: 'Halten Sie gedrückt, oder halten Sie Leertaste oder Eingabetaste gedrückt, um aufzunehmen. Loslassen zum Senden.',
     a11ySendMessage: 'Nachricht senden',
+    a11yScrollProductsPrev: 'Vorherige Produkte',
+    a11yScrollProductsNext: 'Nächste Produkte',
   },
   it: {
     seeResults: 'Vedi risultati',
@@ -253,6 +263,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Ascolto in corso',
     a11yHoldMicInstructions: 'Tieni premuto, oppure tieni premuto Spazio o Invio, per registrare. Rilascia per inviare.',
     a11ySendMessage: 'Invia messaggio',
+    a11yScrollProductsPrev: 'Prodotti precedenti',
+    a11yScrollProductsNext: 'Prodotti successivi',
   },
   pl: {
     seeResults: 'Zobacz wyniki',
@@ -295,6 +307,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'Słucham',
     a11yHoldMicInstructions: 'Przytrzymaj lub przytrzymaj spację albo Enter, aby nagrywać. Zwolnij, aby wysłać.',
     a11ySendMessage: 'Wyślij wiadomość',
+    a11yScrollProductsPrev: 'Poprzednie produkty',
+    a11yScrollProductsNext: 'Następne produkty',
   },
   ko: {
     seeResults: '결과 보기',
@@ -337,6 +351,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: '듣는 중',
     a11yHoldMicInstructions: '녹음하려면 길게 누르거나 스페이스바 또는 엔터 키를 길게 누르세요. 놓으면 전송됩니다.',
     a11ySendMessage: '메시지 보내기',
+    a11yScrollProductsPrev: '이전 상품',
+    a11yScrollProductsNext: '다음 상품',
   },
   ja: {
     seeResults: '結果を見る',
@@ -379,6 +395,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: '聞いています',
     a11yHoldMicInstructions: '録音するには長押しするか、スペースキーまたはEnterキーを長押ししてください。離すと送信されます。',
     a11ySendMessage: 'メッセージを送信',
+    a11yScrollProductsPrev: '前の商品',
+    a11yScrollProductsNext: '次の商品',
   },
   th: {
     seeResults: 'ดูผลลัพธ์',
@@ -421,6 +439,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: 'กำลังฟัง',
     a11yHoldMicInstructions: 'กดค้างไว้ หรือกดค้างที่ Space หรือ Enter เพื่อบันทึกเสียง ปล่อยเพื่อส่ง',
     a11ySendMessage: 'ส่งข้อความ',
+    a11yScrollProductsPrev: 'สินค้าก่อนหน้า',
+    a11yScrollProductsNext: 'สินค้าถัดไป',
   },
   zh: {
     seeResults: '查看结果',
@@ -463,6 +483,8 @@ export const DEFAULT_TEXTS: LanguagePack = {
     a11yListening: '正在聆听',
     a11yHoldMicInstructions: '按住，或按住空格键或回车键进行录音。松开即可发送。',
     a11ySendMessage: '发送消息',
+    a11yScrollProductsPrev: '上一组商品',
+    a11yScrollProductsNext: '下一组商品',
   },
 };
 

@@ -239,3 +239,29 @@ export const getProductGridCssConfig = (
   }
   return cssConfig;
 };
+
+export const DEFAULT_CARDS_PER_SCROLL = 2;
+
+export interface ProductScrollerConfig {
+  productsPerView: number;
+  gap: number;
+  cardsPerScroll: number;
+}
+
+// Returns undefined unless the experience manager enabled `productGrid.<viewport>.horizontalScroll`.
+export const getProductScrollerConfig = (
+  customizations: WidgetConfig['customizations'],
+  breakpoint: WidgetBreakpoint,
+  defaultProductsPerView: number,
+  defaultGap: number,
+): ProductScrollerConfig | undefined => {
+  const src = customizations.productGrid?.[breakpoint];
+  if (!src?.horizontalScroll) {
+    return undefined;
+  }
+  return {
+    productsPerView: src.productsPerRow || defaultProductsPerView,
+    gap: src.marginHorizontal ?? defaultGap,
+    cardsPerScroll: Math.max(1, Math.floor(src.cardsPerScroll || DEFAULT_CARDS_PER_SCROLL)),
+  };
+};

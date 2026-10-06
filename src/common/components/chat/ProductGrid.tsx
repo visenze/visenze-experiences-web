@@ -1,7 +1,12 @@
-import { type CSSProperties, type FC, memo, useEffect, useRef, useState } from 'react';
+import { cn } from '@heroui/theme';
+import { type CSSProperties, type FC, memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS } from './constants';
+import { FOCUSED_SCALE, PRODUCT_REVEAL_DELAY_MS, PRODUCT_SCROLLER_PEEK_PX } from './constants';
+import { FOCUS_VISIBLE_CLASSES } from '../../constants';
+import ChevronLeftIcon from '../../icons/ChevronLeftIcon';
+import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
+import type { ProductScrollerConfig } from '../../utils';
 import ProductCard from '../product-card/ProductCard';
 
 interface ProductGridProps {
@@ -23,13 +28,30 @@ interface ProductGridProps {
   // narration surfaces where a tall portrait aspect ratio combined with few grid columns would
   // otherwise push a card taller than the viewport, hiding the "Now Describing" badge).
   imageClasses?: string;
+  // When set, cards render in one horizontally scrollable row (with a peek of the neighbouring
+  // cards and prev/next arrows) instead of a CSS grid; `className`/`style` then only apply to the
+  // outer wrapper, so the caller must not pass grid classes.
+  scroller?: ProductScrollerConfig;
 }
 
 const ProductGrid: FC<ProductGridProps> = ({
   products, requestId, focusedProductId = null, focusedRequestId = null, wishlistPids, setIsInWishlist, pwPrefix, streaming = false, className, style,
-  imageClasses,
+  imageClasses, scroller,
 }) => {
   const intl = useIntl();
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
+  const { customizations } = widgetConfig;
+  const arrowColor = darkMode
+    ? (customizations.buttons?.icon?.fontColorDark || customizations.generalLayout?.fontColorDark || '')
+    : (customizations.buttons?.icon?.fontColor || customizations.generalLayout?.fontColor || '');
+  // `buttons.icon` isn't defined by every widget, which would leave the arrows transparent over the
+  // product images — fall back to a solid surface instead.
+  const arrowBackground = darkMode
+    ? (customizations.buttons?.icon?.backgroundColorDark || '#FFFFFF')
+    : (customizations.buttons?.icon?.backgroundColor || '#FFFFFF');
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
   const [revealedCount, setRevealedCount] = useState(streaming ? 0 : products.length);
   const viewedProductIdsRef = useRef<Set<string>>(new Set());
   const focusedCardRef = useRef<HTMLDivElement>(null);
@@ -54,6 +76,42 @@ const ProductGrid: FC<ProductGridProps> = ({
     }, PRODUCT_REVEAL_DELAY_MS);
     return (): void => clearInterval(interval);
   }, [streaming, products.length]);
+
+  const updateScrollState = useCallback((): void => {
+    const el = scrollerRef.current;
+    if (!el) {
+      return;
+    }
+    setCanScrollPrev(el.scrollLeft > 1);
+    setCanScrollNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!scroller || !el) {
+      return undefined;
+    }
+    updateScrollState();
+    // Observes the scroller itself rather than `window`: the chat panel/drawer can resize without
+    // any window resize, and card widths follow the container, so this also covers every case that
+    // changes how much content overflows. Newly revealed cards re-run this effect via `revealedCount`.
+    if (typeof ResizeObserver === 'undefined') {
+      return undefined;
+    }
+    const observer = new ResizeObserver(updateScrollState);
+    observer.observe(el);
+    return (): void => observer.disconnect();
+  }, [scroller, revealedCount, updateScrollState]);
+
+  const scrollByCards = (direction: 1 | -1): void => {
+    const el = scrollerRef.current;
+    const firstCard = el?.firstElementChild as HTMLElement | null;
+    if (!el || !scroller || !firstCard) {
+      return;
+    }
+    const step = (firstCard.offsetWidth + scroller.gap) * scroller.cardsPerScroll;
+    el.scrollBy({ left: direction * step, behavior: 'smooth' });
+  };
 
   const isFocusedTurn = !!focusedRequestId && requestId === focusedRequestId;
 
@@ -82,8 +140,14 @@ const ProductGrid: FC<ProductGridProps> = ({
           key={`${product.product_id}-${pidx}`}
           role='listitem'
           ref={isFocused ? focusedCardRef : undefined}
-          className='relative'
-          style={getCardWrapperStyle(isFocused)}
+          className={cn('relative', scroller && 'snap-start')}
+          style={scroller ? {
+            ...getCardWrapperStyle(isFocused),
+            flexBasis: `calc(${100 / scroller.productsPerView}% - ${(scroller.gap * (scroller.productsPerView - 1)) / scroller.productsPerView}px)`,
+            flexShrink: 0,
+            flexGrow: 0,
+            minWidth: 0,
+          } : getCardWrapperStyle(isFocused)}
       >
         {isFocused && (
           <span
@@ -111,9 +175,59 @@ const ProductGrid: FC<ProductGridProps> = ({
     );
   };
 
+  const cards = products.slice(0, revealedCount).map((product, pidx) => renderCard(product, pidx));
+
+  if (!scroller) {
+    return (
+      <div role='list' className={className} style={style}>
+        {cards}
+      </div>
+    );
+  }
+
+  const arrowClasses = cn(
+    'absolute top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border-0',
+    'p-1 shadow-md cursor-pointer',
+    FOCUS_VISIBLE_CLASSES,
+  );
+
   return (
-    <div role='list' className={className} style={style}>
-      {products.slice(0, revealedCount).map((product, pidx) => renderCard(product, pidx))}
+    <div className={cn('relative min-w-0', className)} style={style}>
+      <div
+        ref={scrollerRef}
+        role='list'
+        className='flex snap-x snap-mandatory overflow-x-auto scroll-smooth py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+        style={{
+          columnGap: `${scroller.gap}px`,
+          paddingInline: `${PRODUCT_SCROLLER_PEEK_PX}px`,
+          scrollPaddingInline: `${PRODUCT_SCROLLER_PEEK_PX}px`,
+        }}
+        onScroll={updateScrollState}
+      >
+        {cards}
+      </div>
+      {canScrollPrev && (
+        <button
+          type='button'
+          aria-label={intl.formatMessage({ id: 'a11yScrollProductsPrev' })}
+          className={cn(arrowClasses, 'left-1')}
+          style={{ backgroundColor: arrowBackground }}
+          onClick={() => scrollByCards(-1)}
+        >
+          <ChevronLeftIcon className='size-5' color={arrowColor} />
+        </button>
+      )}
+      {canScrollNext && (
+        <button
+          type='button'
+          aria-label={intl.formatMessage({ id: 'a11yScrollProductsNext' })}
+          className={cn(arrowClasses, 'right-1')}
+          style={{ backgroundColor: arrowBackground }}
+          onClick={() => scrollByCards(1)}
+        >
+          <ChevronLeftIcon className='size-5 rotate-180' color={arrowColor} />
+        </button>
+      )}
     </div>
   );
 };
@@ -134,6 +248,7 @@ const arePropsEqual = (prev: ProductGridProps, next: ProductGridProps): boolean 
     || prev.className !== next.className
     || prev.style !== next.style
     || prev.imageClasses !== next.imageClasses
+    || prev.scroller !== next.scroller
   ) {
     return false;
   }
