@@ -376,6 +376,15 @@ export interface WidgetClient {
    * @since 1.0.14
    */
   sendChatMessage: (message: string, image?: SearchImageOrPid) => void;
+  /**
+   * Opens the chat with a message from the assistant (not the user) and, optionally, a list of
+   * clickable next-step replies; applicable only for widget types that have chatbox-like
+   * interface. By default the message is appended to the existing conversation — pass
+   * `{ newChat: true }` to start a completely new chat instead.
+   *
+   * @since 1.0.37
+   */
+  openWithMessage: (message: string, nextSteps?: string[], options?: { newChat?: boolean }) => void;
 }
 
 type ViewportType = 'mobile' | 'tablet' | 'desktop';

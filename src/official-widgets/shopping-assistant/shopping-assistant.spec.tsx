@@ -714,6 +714,81 @@ describe('shopping-assistant', () => {
       const body = options.body as FormData;
       expect(body.get('image')).toBeTruthy();
     });
+
+    describe('openWithMessage', () => {
+      const MSG = 'Seems you are lost. How can I help you?';
+
+      it('opens the dialog with the assistant message and next-step buttons, without the scripted opening greeting, when there is no existing session', () => {
+        const { widgetClient, mockVisearchClient } = renderAssistant();
+
+        act(() => {
+          widgetClient.openWithMessage(MSG, ['Looking for my order', 'Looking for an item']);
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(getTextInBody(MSG)).toBeTruthy();
+        expect(getTextInBody('Looking for my order')).toBeTruthy();
+        expect(getTextInBody('Looking for an item')).toBeTruthy();
+        expect(getTextInBody(texts['en']['openingMessage1'])).toBeNull();
+        expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      });
+
+      it('appends to the existing conversation by default, without resetting it', () => {
+        const { widgetClient, mockVisearchClient } = renderAssistant();
+        openDialogAndWait();
+        expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+        (mockVisearchClient.generateUuid as jest.Mock).mockClear();
+
+        act(() => {
+          widgetClient.openWithMessage(MSG, ['Looking for my order']);
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+        expect(getTextInBody(MSG)).toBeTruthy();
+        expect(mockVisearchClient.generateUuid).not.toHaveBeenCalled();
+      });
+
+      it('starts a completely new chat when options.newChat is true, discarding the previous conversation', () => {
+        const { widgetClient, mockVisearchClient } = renderAssistant();
+        openDialogAndWait();
+        expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+        (mockVisearchClient.generateUuid as jest.Mock).mockClear();
+
+        act(() => {
+          widgetClient.openWithMessage(MSG, ['Looking for my order'], { newChat: true });
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(getTextInBody(texts['en']['openingMessage1'])).toBeNull();
+        expect(getTextInBody(MSG)).toBeTruthy();
+        expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      });
+
+      it('sends a clicked next-step button as a normal chat message', () => {
+        const { widgetClient } = renderAssistant();
+
+        act(() => {
+          widgetClient.openWithMessage(MSG, ['Looking for my order']);
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+        act(() => {
+          fireEvent.click(getTextInBody('Looking for my order') as HTMLElement);
+        });
+
+        expect(mockFetchEventSource).toHaveBeenCalled();
+        const url = mockFetchEventSource.mock.calls[0][0] as string;
+        expect(decodeURIComponent(url.replace(/\+/g, ' '))).toContain('Looking for my order');
+      });
+    });
   });
 
   // ============================================================

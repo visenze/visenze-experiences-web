@@ -276,6 +276,41 @@ describe('use-chat', () => {
     expect(hook.result.current.chats).toHaveLength(0);
   });
 
+  it('pushAssistantMessage should push a visible bot chat bubble and set the given suggestions as next-step chips', () => {
+    const { hook } = renderChat();
+    act(() => {
+      hook.result.current.open();
+    });
+    act(() => {
+      hook.result.current.pushAssistantMessage(
+        'Seems you are lost. How can I help you?',
+        ['Looking for my order', 'Looking for an item'],
+      );
+    });
+
+    expect(hook.result.current.chats).toHaveLength(1);
+    expect(hook.result.current.chats[0]).toMatchObject({
+      author: 'bot',
+      messages: ['Seems you are lost. How can I help you?'],
+    });
+    expect(hook.result.current.suggestions).toEqual(['Looking for my order', 'Looking for an item']);
+  });
+
+  it('pushAssistantMessage should clear any existing suggestions when none are given', () => {
+    const { hook } = renderChat();
+    act(() => {
+      hook.result.current.open();
+    });
+    act(() => {
+      hook.result.current.pushAssistantMessage('Old message', ['Old suggestion']);
+    });
+    act(() => {
+      hook.result.current.pushAssistantMessage('New message');
+    });
+
+    expect(hook.result.current.suggestions).toEqual([]);
+  });
+
   it('sendMessage should push a user chat bubble immediately and clear the message field', () => {
     const { hook } = renderChat();
     act(() => {
