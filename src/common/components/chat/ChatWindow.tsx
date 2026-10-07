@@ -7,6 +7,7 @@ import { PRODUCT_IMAGE_MAX_HEIGHT_CLASS, USER_SCROLL_IDLE_MS } from './constants
 import { processMessageForDisplay } from './message-formatting';
 import ProductGrid from './ProductGrid';
 import type { Chat } from './use-chat';
+import WelcomeBlock, { isWelcomeEnabled } from './WelcomeBlock';
 import { FOCUS_VISIBLE_CLASSES } from '../../constants';
 import DownArrowIcon from '../../icons/DownArrowIcon';
 import { WidgetDataContext } from '../../types/contexts';
@@ -233,6 +234,11 @@ const ChatWindow: FC<ChatWindowProps> = ({
     }
   };
 
+  // Structured welcome (customizations.chatbot.welcomeScreen): shown only until the user's first message
+  // — chips go through sendMessage like any typed message, so the block disappears right after.
+  const welcome = customizations.chatbot?.welcomeScreen;
+  const showWelcome = isWelcomeEnabled(welcome) && !isWaiting && !latestMessage && !chats.some((c) => c.author === 'user');
+
   // While a product is being narrated AND this ChatWindow renders the product grid inline
   // (productDisplayMode === 'grid'), ProductGrid's own scroll-into-view effect owns scrolling
   // instead — otherwise this would snap to the bottom of the stream on every token/typewriter tick
@@ -247,7 +253,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
   // guard above only has to be reasoned about in one place. scrollAnchor === 'top' opts out
   // entirely — see its own doc comment.
   useEffect(() => {
-    if (scrollAnchor === 'bottom' && !focusedProductOwnsScroll) {
+    // The welcome block stays pinned to the top so its heading isn't scrolled out of view.
+    if (scrollAnchor === 'bottom' && !focusedProductOwnsScroll && !showWelcome) {
       autoScrollToBottom();
     }
   }, [chats.length, latestMessage, streamingProducts.length, focusedProductOwnsScroll, scrollAnchor]);
@@ -308,6 +315,13 @@ const ChatWindow: FC<ChatWindowProps> = ({
              onWheel={markUserScrolling}
              onTouchStart={markUserScrolling}
              onTouchMove={markUserScrolling}>
+          {showWelcome && welcome && (
+            <WelcomeBlock
+              welcome={welcome}
+              fontColor={darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor}
+              onSelect={sendMessage}
+            />
+          )}
           {chats.map((chat, idx) => {
             // Scoped to exactly the initial query bubble, per hideInitialUserMessage's contract
             // above — every other row always renders.

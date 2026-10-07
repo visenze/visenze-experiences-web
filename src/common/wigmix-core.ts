@@ -1603,6 +1603,72 @@ export interface WidgetConfig {
        */
       chatAgent?: string;
       /**
+       * (optional) Structured welcome screen shown at the top of an empty conversation, in place
+       * of the plain chat-bubble greeting: a main message (`title`), an introduction (`intro`)
+       * and a labelled list of starter suggestion chips. Supported by every widget using the
+       * common chat window (ai-search-launcher, shopping-assistant).
+       *
+       * The block is not part of the chat history. It disappears once the user sends their first
+       * message (typed, or by clicking a chip — a chip is sent as a normal message) and is not
+       * shown again when an existing conversation is resumed. While `enabled` is true it replaces
+       * the widget's own opening greeting (`launcher.greetings.ai` for ai-search-launcher, the
+       * `openingMessage1`/`openingMessage2` texts for shopping-assistant); use `spokenGreeting` to still
+       * narrate a custom welcome.
+       *
+       * @since 1.0.37
+       */
+      welcomeScreen?: {
+        /**
+         * Turns the structured welcome on. Defaults to `false`, keeping the widget's existing
+         * greeting.
+         *
+         * @since 1.0.37
+         */
+        enabled?: boolean;
+        /**
+         * Main welcome message, rendered as the heading (e.g. `Hi, I'm Fitzy 👋`). Emoji can be
+         * included directly in the text.
+         *
+         * @since 1.0.37
+         */
+        title?: string;
+        /**
+         * Introduction paragraph rendered under the title.
+         *
+         * @since 1.0.37
+         */
+        intro?: string;
+        /**
+         * Small label rendered above the suggestion chips (e.g. `Not sure where to start? Ask
+         * Fitzy`). Hidden when `suggestions` is empty.
+         *
+         * @since 1.0.37
+         */
+        suggestionsLabel?: string;
+        /**
+         * Starter suggestion chips. Clicking one sends its text as the user's message. Arrays
+         * replace (not merge) when overridden.
+         *
+         * @since 1.0.37
+         */
+        suggestions?: string[];
+        /**
+         * Optional spoken welcome greeting. Narration only — it is never shown as a chat bubble or
+         * added to chat history. Spoken when the chat opens (or a new chat starts) with the welcome
+         * block visible, if `voiceGreetingEnabled` is on and voice isn't muted. Not spoken when
+         * resuming an existing conversation. Leave unset or empty for no narration.
+         *
+         * @since 1.0.37
+         */
+        spokenGreeting?: string;
+        /**
+         * Set to `false` to silence `spokenGreeting` without removing its text. Defaults to `true`.
+         *
+         * @since 1.0.37
+         */
+        spokenGreetingEnabled?: boolean;
+      };
+      /**
        * (optional) Master toggle for voice capability throughout this widget's chat surface:
        * recording, spoken replies/greetings, the in-chat microphone button, and the mute/unmute
        * toggle. When unset (or false), all voice UI is hidden and no voice requests are made.

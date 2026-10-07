@@ -5,6 +5,7 @@ import NewChatIcon from './icons/NewChatIcon';
 import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import useChat, { type UseChatResult } from '../../common/components/chat/use-chat';
+import { getWelcomeSpokenGreeting, isWelcomeEnabled } from '../../common/components/chat/WelcomeBlock';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
@@ -45,6 +46,13 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   // concept of their own — only a single-string playGreeting.
   const [isOpening, setIsOpening] = useState(false);
   const playOpeningSequence = (): void => {
+    // The structured welcome (customizations.chatbot.welcomeScreen) replaces this scripted opening;
+    // only its own optional message is narrated (never added to chat history; speakText ignores '').
+    const welcome = customizations.chatbot?.welcomeScreen;
+    if (isWelcomeEnabled(welcome)) {
+      chat.speakText(getWelcomeSpokenGreeting(welcome));
+      return;
+    }
     setIsOpening(true);
     window.setTimeout(() => {
       chat.playGreeting(openingMessages[0]);
