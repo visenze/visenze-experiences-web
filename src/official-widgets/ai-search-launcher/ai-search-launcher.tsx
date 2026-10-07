@@ -9,6 +9,7 @@ import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
 import useChat, { type Chat } from '../../common/components/chat/use-chat';
+import { getWelcomeSpokenGreeting, isWelcomeEnabled } from '../../common/components/chat/WelcomeBlock';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { FOCUS_VISIBLE_CLASSES } from '../../common/constants';
@@ -90,6 +91,18 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
   // applies, so there's no risk of the shown and narrated copy ever disagreeing.
   const getGreetingText = (entryPoint: EntryPointKey): string => customizations.launcher?.greetings?.[entryPoint] || '';
 
+  // With the structured welcome (customizations.chatbot.welcomeScreen) on, ChatWindow renders it instead
+  // of the canned 'ai' greeting; the welcome's own optional message is narration only (speakText
+  // never touches chat history), spoken when voice greetings are on while the welcome is visible.
+  const playAiGreeting = (): void => {
+    const welcome = customizations.chatbot?.welcomeScreen;
+    if (isWelcomeEnabled(welcome)) {
+      chat.speakText(getWelcomeSpokenGreeting(welcome));
+    } else {
+      chat.playGreeting(getGreetingText('ai'));
+    }
+  };
+
   useEffect(() => {
     if (!activeEntryPoint) {
       return;
@@ -99,7 +112,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
       // bot bubble (and speaks it) exactly once, skipped on resume so a real, already-restored
       // conversation doesn't get a duplicate/non-sequitur greeting appended to it.
       if (!isResumedActivation) {
-        chat.playGreeting(getGreetingText('ai'));
+        playAiGreeting();
       }
       return;
     }
@@ -122,7 +135,7 @@ const AiSearchLauncher: FC<AiSearchLauncherProps> = ({ renderWithoutPortal }) =>
       return;
     }
     if (activeEntryPoint === 'ai') {
-      chat.playGreeting(getGreetingText('ai'));
+      playAiGreeting();
       return;
     }
     chat.speakText(getGreetingText(activeEntryPoint));

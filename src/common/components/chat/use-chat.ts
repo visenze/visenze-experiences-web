@@ -850,7 +850,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     ]);
     if (customizations.chatbot?.voiceGreetingEnabled && shouldSpeakReply()) {
       resetReplyState();
-      speak(text, text.length, null);
+      speak(text, text.length, null, true);
     }
   };
 
@@ -865,7 +865,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     }
     if (customizations.chatbot?.voiceGreetingEnabled && shouldSpeakReply()) {
       resetReplyState();
-      speak(text, text.length, null);
+      speak(text, text.length, null, true);
     }
   };
 

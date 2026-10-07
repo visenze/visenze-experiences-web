@@ -15,7 +15,8 @@ export interface UseVoiceOptions {
   onTranscript: (text: string) => void;
   onSpeechStart?: (revealTarget: number, productId: string | null, durationMs?: number) => void;
   onSpeechEnd?: (revealTarget: number, productId: string | null) => void;
-  onSpeechQueueEnd?: () => void;
+  // `narrationOnly` is true when the queue drained after only narration (a greeting), never a reply.
+  onSpeechQueueEnd?: (narrationOnly: boolean) => void;
 }
 
 export interface UseVoiceResult {
@@ -27,7 +28,9 @@ export interface UseVoiceResult {
   hasSpeechOutputError: boolean;
   startRecording: () => void;
   stopRecording: () => void;
-  speak: (text: string, revealTarget: number, productId: string | null) => boolean;
+  // `narration` marks speech that isn't a chat reply (a greeting): it plays in the same queue but never
+  // fires onSpeechStart/onSpeechEnd, so it can't disturb the state of a reply sent while it plays.
+  speak: (text: string, revealTarget: number, productId: string | null, narration?: boolean) => boolean;
   hasPendingSpeech: () => boolean;
   stopAudio: () => void;
 }
@@ -72,6 +75,7 @@ interface QueuedSpeech {
   revealTarget: number;
   productId: string | null;
   text: string;
+  narration?: boolean;
 }
 
 // Waited before actually stopping recognition on release, so trailing words aren't clipped.
@@ -131,6 +135,7 @@ const useVoice = ({
   const activeSynthesisCountRef = useRef(0);
   const queuedSynthesisStartersRef = useRef<Array<() => void>>([]);
   const isPlayingRef = useRef(false);
+  const lastPlayedNarrationRef = useRef(false);
   const playSessionRef = useRef(0);
   const gapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const speechOutputErrorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -313,9 +318,10 @@ const useVoice = ({
     }
     const item = speechQueueRef.current.shift();
     if (!item) {
-      onSpeechQueueEndRef.current?.();
+      onSpeechQueueEndRef.current?.(lastPlayedNarrationRef.current);
       return;
     }
+    lastPlayedNarrationRef.current = !!item.narration;
     isPlayingRef.current = true;
     item.promise
       .then((blob) => {
@@ -340,7 +346,9 @@ const useVoice = ({
             return;
           }
           isPlayingRef.current = false;
-          onSpeechEndRef.current?.(item.revealTarget, item.productId);
+          if (!item.narration) {
+            onSpeechEndRef.current?.(item.revealTarget, item.productId);
+          }
           gapTimerRef.current = setTimeout((): void => {
             gapTimerRef.current = null;
             playNext();
@@ -356,7 +364,9 @@ const useVoice = ({
             const durationMs = Number.isFinite(audio.duration) && audio.duration > 0
               ? audio.duration * 1000
               : undefined;
-            onSpeechStartRef.current?.(item.revealTarget, item.productId, durationMs);
+            if (!item.narration) {
+              onSpeechStartRef.current?.(item.revealTarget, item.productId, durationMs);
+            }
           })
           .catch((err) => {
             console.error(err);
@@ -374,12 +384,14 @@ const useVoice = ({
         // error surfaced to the user via `hasSpeechOutputError`) rather than narrated differently.
         reportSpeechOutputError();
         isPlayingRef.current = false;
-        onSpeechEndRef.current?.(item.revealTarget, item.productId);
+        if (!item.narration) {
+          onSpeechEndRef.current?.(item.revealTarget, item.productId);
+        }
         playNext();
       });
   };
 
-  const speak = (text: string, revealTarget: number, productId: string | null): boolean => {
+  const speak = (text: string, revealTarget: number, productId: string | null, narration = false): boolean => {
     if (!enabled) {
       return false;
     }
@@ -404,7 +416,7 @@ const useVoice = ({
       .finally(() => {
         pendingSynthesisRef.current.delete(controller);
       });
-    speechQueueRef.current.push({ promise, session, revealTarget, productId, text: sanitized });
+    speechQueueRef.current.push({ promise, session, revealTarget, productId, text: sanitized, narration });
     playNext();
     return true;
   };
