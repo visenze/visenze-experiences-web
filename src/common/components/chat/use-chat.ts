@@ -141,6 +141,7 @@ export interface UseChatResult {
   hasPendingSpeech: () => boolean;
   playGreeting: (text: string) => void;
   speakText: (text: string) => void;
+  pushAssistantMessage: (text: string, nextSteps?: string[]) => void;
   breadcrumbs: BreadcrumbTurn[];
   activeBreadcrumbId: string | null;
   setActiveBreadcrumb: (requestId: string) => void;
@@ -869,6 +870,25 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     }
   };
 
+  // Injects a bot-authored message the caller supplies directly (e.g. openWithMessage), rather
+  // than one streamed from the backend — same Chat shape playGreeting pushes, plus attaching the
+  // given nextSteps as this turn's suggestion chips (clicking one goes through the normal
+  // sendMessage flow, same as any other suggestion chip). This message is never sent to the
+  // backend, so unlike a real reply it won't be part of chat history restored after a reload.
+  const pushAssistantMessage = (text: string, nextSteps: string[] = []): void => {
+    setChats((prevChats) => [
+      ...prevChats,
+      {
+        chatId: '',
+        requestId: '',
+        author: 'bot',
+        messages: [text],
+        products: [],
+      },
+    ]);
+    setSuggestions(nextSteps);
+  };
+
   return {
     chats,
     isWaiting,
@@ -907,6 +927,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     hasPendingSpeech,
     playGreeting,
     speakText,
+    pushAssistantMessage,
     breadcrumbs,
     activeBreadcrumbId,
     setActiveBreadcrumb,

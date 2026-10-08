@@ -29,6 +29,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const breakpoint = useBreakpoint();
   const [widgetOpenTrigger, setWidgetOpenTrigger] = useState(0);
   const [sendChatTrigger, setSendChatTrigger] = useState<[string, SearchImageOrPid | undefined]>();
+  const [openWithMessageTrigger, setOpenWithMessageTrigger] = useState<[string, string[] | undefined, { newChat?: boolean } | undefined]>();
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
@@ -210,6 +211,24 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   }, [sendChatTrigger]);
 
   useEffect(() => {
+    if (!openWithMessageTrigger) {
+      return;
+    }
+    const [message, nextSteps, options] = openWithMessageTrigger;
+    if (options?.newChat) {
+      chat.newChat();
+    } else if (!chat.chatId) {
+      // No session yet: mint one via open() directly (skipping openDialog()'s
+      // playOpeningSequence) so only the caller's own message shows, per the client's requirement.
+      chat.open();
+    } else {
+      chat.reopen();
+    }
+    setDialogVisible(true);
+    chat.pushAssistantMessage(message, nextSteps);
+  }, [openWithMessageTrigger]);
+
+  useEffect(() => {
     widgetClient.registerWidgetOpener(() => {
       setWidgetOpenTrigger(Math.random());
     });
@@ -219,6 +238,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     widgetClient.sendChatMessage = ((msg, img): void => {
       setSendChatTrigger([msg, img]);
     });
+    widgetClient.openWithMessage = (message, nextSteps, options): void => {
+      setOpenWithMessageTrigger([message, nextSteps, options]);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
