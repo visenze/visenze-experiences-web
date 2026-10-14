@@ -12,7 +12,7 @@ import {
 } from '../../assistant';
 import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../client/endpoint';
 import { WidgetDataContext } from '../../types/contexts';
-import { isImageFile, isImageUrl, type SearchImageOrPid } from '../../types/image';
+import { isImageFile, isImageUrl, isPid, type SearchImageOrPid } from '../../types/image';
 import type { ProcessedProduct } from '../../types/product';
 import { Actions, Category } from '../../types/tracking-constants';
 import { getBestImageSysAttrsToGet, getFlattenProduct } from '../../utils';
@@ -164,6 +164,14 @@ export interface UseChatOptions {
   // Ignored when unset (the placement id alone is the scope, as for shopping-assistant/
   // ai-search-launcher, where there's exactly one conversation per placement).
   sessionScopeKey?: string;
+  // Current product's id, sent to the chat endpoint as the `pid` query param so the agent knows
+  // which product the shopper is asking about (e.g. ai-prompt-box). Omitted from the request
+  // entirely when unset, so every other widget's requests are unchanged. Callers that want one
+  // conversation per product should also pass it as `sessionScopeKey`.
+  pid?: string;
+  // Set to false to opt this instance out of saving/restoring the conversation even when
+  // `customizations.chatbot.persistChatEnabled` is on. It cannot turn persistence on by itself.
+  persistChatEnabled?: boolean;
 }
 
 // Orchestrates a widget's full-screen chat surface: the SSE call to the backend chat endpoint,
@@ -183,13 +191,17 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
   const manualEndpoint = getManualEndpoint(appSettings.placementId);
   const apiBase = resolveBaseEndpoint(appSettings, manualEndpoint);
   // Defaults to disabled — only a widget's own default-config.ts turning this on opts in.
-  const persistChatEnabled = customizations.chatbot?.persistChatEnabled === true;
+  // A caller can turn it off (never true when the customization is off); unset follows the customization.
+  const persistChatEnabled = customizations.chatbot?.persistChatEnabled === true && options.persistChatEnabled !== false;
   const persistChatTtlMs = (customizations.chatbot?.persistChatTtlMinutes ?? DEFAULT_CHAT_ID_TTL_MINUTES) * 60 * 1000;
   // See sessionScopeKey's own doc comment: appended so a caller can scope the stored session to
   // more than just the placement id.
   const chatIdStorageKey = `${CHAT_ID_STORAGE_PREFIX}${appSettings.placementId}${options.sessionScopeKey ? `__${options.sessionScopeKey}` : ''}`;
 
   const [chats, setChats] = useState<Chat[]>([]);
+  // Latest chats, readable from async callbacks that would otherwise close over a stale value.
+  const chatsRef = useRef<Chat[]>([]);
+  chatsRef.current = chats;
   // The session/conversation chatId sendMessage sends as `chat_id`. A ref, not state: it was
   // state until a deferred caller (e.g. a setTimeout(0) queued right after open()/newChat())
   // turned out to always close over the render's chatId *value* at the time that particular
@@ -380,7 +392,12 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     setSuggestions(newSuggestions);
   };
 
-  const sendMessage = async (messageToSend?: string, imageToSend?: SearchImageOrPid): Promise<void> => {
+  const sendMessage = async (messageToSend?: string, secondArg?: SearchImageOrPid): Promise<void> => {
+    // A product id passed with a message is that request's `pid` (overriding the `pid` option, e.g.
+    // the page's product changed, or another widget hands over a message about it); it is not an
+    // image, so it is never drawn in the chat or uploaded.
+    const messagePid = secondArg && isPid(secondArg) ? secondArg.pid : undefined;
+    const imageToSend = messagePid ? undefined : secondArg;
     if (!messageToSend && !imageToSend) {
       return;
     }
@@ -467,6 +484,10 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
       sys_attrs_to_get: getBestImageSysAttrsToGet(customizations),
       chat_agent: customizations.chatbot?.chatAgent || 'shopping_closer_voice_v2',
     });
+    const pidToSend = messagePid || options.pid;
+    if (pidToSend) {
+      params.append('pid', pidToSend);
+    }
     // A gallery/preset image only ever reaches here as a URL (see ImageEntryScreen's gallery
     // tiles), never as bytes the browser already has — sending it as `im_url` lets the backend
     // fetch it itself, the same mechanism the multisearch endpoints use (see
@@ -719,10 +740,16 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     fetchChatHistory(chatIdToRestore)
       .then((restored) => {
         if (restored) {
-          setChats(restored.chats);
-          setBreadcrumbs(restored.breadcrumbs);
-          setActiveBreadcrumb(restored.activeBreadcrumbId);
-          setSuggestions(restored.suggestions);
+          // The restore is asynchronous, so a message may already have been sent meanwhile (e.g.
+          // handed over by another widget right after a reload). Put the earlier conversation in front
+          // of it instead of replacing it, which would drop that message.
+          const sentMeanwhile = chatsRef.current.length > 0;
+          setChats((current) => [...restored.chats, ...current]);
+          setBreadcrumbs((current) => [...restored.breadcrumbs, ...current]);
+          if (!sentMeanwhile) {
+            setActiveBreadcrumb(restored.activeBreadcrumbId);
+            setSuggestions(restored.suggestions);
+          }
           setHasStartedChat(true);
           return;
         }

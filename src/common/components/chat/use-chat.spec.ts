@@ -348,6 +348,98 @@ describe('use-chat', () => {
     expect(hook.result.current.chatId).toBe('lazily-minted-id');
   });
 
+  it('adds pid to the chat request when the pid option is set', () => {
+    const { hook } = renderChat({}, {}, {}, { pid: 'prod-42' });
+    mockFetchEventSource.mockImplementation(async () => {});
+
+    act(() => {
+      hook.result.current.sendMessage('how cushioned is it?');
+    });
+
+    const [calledUrl] = mockFetchEventSource.mock.calls[0];
+    const params = new URLSearchParams((calledUrl as string).split('?')[1]);
+    expect(params.get('pid')).toBe('prod-42');
+    expect(params.get('q')).toBe('how cushioned is it?');
+  });
+
+  describe('a product id passed with a single message', () => {
+    const paramsOfCall = (n: number): URLSearchParams => {
+      const [calledUrl] = mockFetchEventSource.mock.calls[n];
+      return new URLSearchParams((calledUrl as string).split('?')[1]);
+    };
+
+    it('is sent as that request\'s pid, and is not treated as an image', () => {
+      const { hook } = renderChat();
+      mockFetchEventSource.mockImplementation(async () => {});
+
+      act(() => {
+        hook.result.current.sendMessage('find similar products', { pid: 'prod-7' });
+      });
+
+      expect(paramsOfCall(0).get('pid')).toBe('prod-7');
+      expect(paramsOfCall(0).get('q')).toBe('find similar products');
+      expect(paramsOfCall(0).has('im_url')).toBe(false);
+      // no image bubble: a pid has nothing to draw
+      const userChat = hook.result.current.chats.find((chat) => chat.author === 'user');
+      expect(userChat?.image).toBeUndefined();
+      expect(userChat?.messages).toEqual(['find similar products']);
+    });
+
+    it('overrides the pid option for that message only', async () => {
+      const { hook } = renderChat({}, {}, {}, { pid: 'option-pid' });
+      mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
+        options.onclose();
+      });
+
+      act(() => {
+        hook.result.current.sendMessage('first', { pid: 'message-pid' });
+      });
+      await revealAll();
+      act(() => {
+        hook.result.current.sendMessage('second');
+      });
+
+      expect(paramsOfCall(0).get('pid')).toBe('message-pid');
+      expect(paramsOfCall(1).get('pid')).toBe('option-pid');
+    });
+
+    it('does not send anything when there is a pid but no message text', () => {
+      const { hook } = renderChat();
+      mockFetchEventSource.mockImplementation(async () => {});
+
+      act(() => {
+        hook.result.current.sendMessage(undefined, { pid: 'prod-7' });
+      });
+
+      expect(mockFetchEventSource).not.toHaveBeenCalled();
+    });
+
+    it('still sends a real image url alongside the text, with the option pid', () => {
+      const { hook } = renderChat({}, {}, {}, { pid: 'option-pid' });
+      mockFetchEventSource.mockImplementation(async () => {});
+
+      act(() => {
+        hook.result.current.sendMessage('like this', { imgUrl: 'https://img.example.com/a.jpg' });
+      });
+
+      expect(paramsOfCall(0).get('im_url')).toBe('https://img.example.com/a.jpg');
+      expect(paramsOfCall(0).get('pid')).toBe('option-pid');
+    });
+  });
+
+  it('does not add a pid param when the pid option is unset', () => {
+    const { hook } = renderChat();
+    mockFetchEventSource.mockImplementation(async () => {});
+
+    act(() => {
+      hook.result.current.sendMessage('hello');
+    });
+
+    const [calledUrl] = mockFetchEventSource.mock.calls[0];
+    const params = new URLSearchParams((calledUrl as string).split('?')[1]);
+    expect(params.has('pid')).toBe(false);
+  });
+
   it('sendMessage persists the lazily minted chat id when persistChatEnabled, so the conversation it just started is resumable', () => {
     const { hook } = renderChat(
       { generateUuid: jest.fn((cb: (uuid: string) => void) => cb('lazily-minted-id')) },
@@ -768,6 +860,23 @@ describe('use-chat', () => {
         json: (): Promise<unknown> => Promise.resolve({ result: { messages } }),
       } as unknown as Response);
     };
+
+    it('does not resume or save a conversation when the persistChatEnabled option is false, even if the customization is on', async () => {
+      localStorage.setItem('visenze_shopping_assistant_chat_id_1234', JSON.stringify({ chatId: 'old-chat', timestamp: Date.now() }));
+      const fetchMock = jest.fn();
+      global.fetch = fetchMock;
+      const { hook } = renderPersistentChat({}, {}, { persistChatEnabled: false });
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(hook.result.current.chatId).toBe('');
+      act(() => {
+        hook.result.current.open();
+      });
+      // the stored session is left alone rather than overwritten
+      expect(JSON.parse(localStorage.getItem('visenze_shopping_assistant_chat_id_1234') || '{}').chatId).toBe('old-chat');
+    });
 
     it('resumes a conversation left open within the TTL window as soon as the widget mounts, refetching its history instead of generating a new chat id', async () => {
       const { hook } = renderPersistentChat();

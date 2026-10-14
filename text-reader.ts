@@ -21,6 +21,7 @@ import { DEFAULT_TEXTS as DEFAULT_TEXTS_23 } from './src/official-widgets/buy-th
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_24 } from './src/official-widgets/in-page-carousel-v3/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_25 } from './src/official-widgets/ai-search-launcher/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_26 } from './src/official-widgets/embedded-shopping-assistant/default-config';
+import { DEFAULT_TEXTS as DEFAULT_TEXTS_27 } from './src/official-widgets/ai-prompt-box/default-config';
 
 const configs: Record<string, LanguagePack> = {
   7: DEFAULT_TEXTS_7,
@@ -42,6 +43,7 @@ const configs: Record<string, LanguagePack> = {
   24: DEFAULT_TEXTS_24,
   25: DEFAULT_TEXTS_25,
   26: DEFAULT_TEXTS_26,
+  27: DEFAULT_TEXTS_27,
 };
 
 const args = process.argv.slice(2);

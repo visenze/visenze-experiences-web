@@ -31,6 +31,7 @@ export enum WidgetType {
   IN_PAGE_CAROUSEL_V3 = 'in_page_carousel_v3',
   EMBEDDED_SHOPPING_ASSISTANT = 'embedded_shopping_assistant',
   AI_SEARCH_LAUNCHER = 'ai_search_launcher',
+  AI_PROMPT_BOX = 'ai_prompt_box',
 }
 
 export enum WidgetErrorState {
@@ -1722,6 +1723,20 @@ export interface WidgetConfig {
        */
       botIcon?: Partial<Icon>;
       /**
+       * (optional) Image shown in the chat header, right before the title. Set `url` to any image,
+       * including an animated GIF; nothing is shown when it is unset or blank. `height` sizes it in
+       * pixels (default 24) and `width` fixes its width (otherwise it follows the image's aspect
+       * ratio, up to 240px). `color`/`colorDark` are optional and tint the image as a mask, which
+       * flattens it to one color (and would stop an animated GIF), so leave them unset to show the
+       * image as it is. Supported by shopping-assistant.
+       *
+       * @since 1.0.37
+       */
+      headerIcon?: Partial<Icon> & {
+        height?: number;
+        width?: number;
+      };
+      /**
        * Master toggle for greeting audio. When unset or false, greetings are
        * shown as text only (if at all) and never spoken.
        *
@@ -1818,6 +1833,143 @@ export interface WidgetConfig {
        * @since 1.0.34
        */
       persistChatTtlMinutes?: number;
+    };
+    /**
+     * (optional) Settings specific to the ai-prompt-box widget: the compact inline "Ask AI" panel
+     * with suggested questions that opens the chat drawer when the shopper sends a message.
+     *
+     * @since 1.0.37
+     */
+    aiPromptBox?: {
+      /**
+       * (optional) Title text shown in the panel's title row and in the chat drawer's header (e.g.
+       * "Ask Fitzy"). When unset or blank, the localized `aiPromptBoxTitle` text is used instead; but if a
+       * `titleIcon` logo is configured and no title is set, the title row shows just the logo (the text
+       * stays available to screen readers). Set a title to show it next to the logo.
+       *
+       * @since 1.0.37
+       */
+      title?: string;
+      /**
+       * (optional) Text for the chat drawer's header (the side-mounted chat opened with the maximize
+       * icon), used when `title` is empty, for example when the panel shows only a logo. A set `title`
+       * is shown in the drawer instead; when both are empty, the localized `aiPromptBoxTitle` text is
+       * used.
+       *
+       * @since 1.0.37
+       */
+      chatTitle?: string;
+      /**
+       * (optional) A short line of text shown under the title row and above the suggestion chips,
+       * e.g. "Need a hand?".
+       * Omit or leave blank to show nothing.
+       *
+       * @since 1.0.37
+       */
+      message?: string;
+      /**
+       * (optional) Colors of the send button (inside the text input) and the Find Similar button,
+       * which always share the same colors. Any color left unset falls back to the widget's accent:
+       * `generalLayout.fontColor` for the background and `generalLayout.backgroundColor` for the
+       * text and arrow (and their dark-mode counterparts).
+       *
+       * @since 1.0.37
+       */
+      buttonColors?: {
+        backgroundColor?: string;
+        backgroundColorDark?: string;
+        fontColor?: string;
+        fontColorDark?: string;
+      };
+      /**
+       * (optional) Icon shown at the start of the text input, inside it. `url` is required for it to
+       * appear; `height` and `width` size it in pixels (the image is fitted without stretching, height
+       * defaults to 20); `color`/`colorDark` tint it as a mask. Omit to show no icon.
+       *
+       * @since 1.0.37
+       */
+      inputIcon?: Partial<Icon> & {
+        height?: number;
+        width?: number;
+      };
+      /**
+       * Questions shown as tappable chips above the input while the panel is collapsed. The chips
+       * sit side by side and wrap onto the next row when the panel is too narrow.
+       * Tapping one sends it. The chips disappear once the conversation starts. Omit or leave
+       * empty to show no chips.
+       *
+       * @since 1.0.37
+       */
+      suggestedQuestions?: string[];
+      /**
+       * Maximum number of suggested-question chips shown, taken from the start of
+       * `suggestedQuestions`. Lower this to save vertical space when the chips wrap onto several rows. Defaults to 5.
+       *
+       * @since 1.0.37
+       */
+      maxSuggestedQuestions?: number;
+      /**
+       * "Find Similar" button shown beside the text input. Clicking it sends a fixed message to
+       * the assistant (as if the shopper had typed it), so the assistant looks for products
+       * similar to the one the widget is placed on.
+       *
+       * @since 1.0.37
+       */
+      findSimilar?: {
+        /**
+         * Shows the button. Defaults to `false`.
+         *
+         * @since 1.0.37
+         */
+        enabled?: boolean;
+        /**
+         * Button label. When unset or blank, the localized `aiPromptBoxFindSimilar` text is used.
+         *
+         * @since 1.0.37
+         */
+        label?: string;
+        /**
+         * Message sent to the assistant when the button is clicked. Defaults to
+         * `find similar products`.
+         *
+         * @since 1.0.37
+         */
+        message?: string;
+      };
+      /**
+       * Side of the screen the chat drawer slides in from when the shopper asks something or clicks the maximize
+       * icon (the same side-mounted panel the shopping-assistant widget uses). Defaults to `right`.
+       * On tablet and mobile the drawer fills the screen regardless of this setting.
+       *
+       * @since 1.0.37
+       */
+      chatPosition?: 'left' | 'right';
+      /**
+       * Whether an earlier conversation is restored after a page reload. When `true` (default; it also
+       * needs `chatbot.persistChatEnabled`, which is on by default for this widget), the saved chat is
+       * brought back and is behind the maximize icon. When `false`, nothing is
+       * restored and every page load starts a fresh conversation.
+       *
+       * @since 1.0.37
+       */
+      restoreChat?: boolean;
+      /**
+       * Brand logo shown in the panel's title row, in place of the default sparkle icon.
+       *
+       * `layout` picks what the title row shows: `ICON_TEXT` (default when a `title` is set) shows the
+       * logo then the title text, `ICON` (default when no `title` is set) only the logo, `TEXT` only the title text, `TEXT_ICON` the text then the
+       * logo. The title text stays available to screen readers whatever the layout.
+       * `height` and `width` size the logo in pixels; the image is fitted inside without
+       * stretching, and the height defaults to 24. `color`/`colorDark` tint the logo as a mask.
+       * Without a `url`, the default sparkle icon and the title text are shown.
+       *
+       * @since 1.0.37
+       */
+      titleIcon?: Partial<Icon> & {
+        layout?: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
+        height?: number;
+        width?: number;
+      };
     };
     /**
      * Configuration specific to the AI Search Launcher widget's entry points:

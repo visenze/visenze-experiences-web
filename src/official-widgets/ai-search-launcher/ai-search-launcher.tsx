@@ -1,7 +1,6 @@
 import { cn } from '@heroui/theme';
 import { type FC, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import EntryLogo from './components/EntryLogo';
 import ImageEntryScreen from './components/ImageEntryScreen';
 import MicEntryScreen from './components/MicEntryScreen';
 import SplitLayout from './components/SplitLayout';
@@ -10,6 +9,7 @@ import ChatWindow from '../../common/components/chat/ChatWindow';
 import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
 import useChat, { type Chat } from '../../common/components/chat/use-chat';
 import { getWelcomeSpokenGreeting, isWelcomeEnabled } from '../../common/components/chat/WelcomeBlock';
+import EntryLogo from '../../common/components/EntryLogo';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import { RootContext } from '../../common/components/shadow-wrapper';
 import { FOCUS_VISIBLE_CLASSES } from '../../common/constants';

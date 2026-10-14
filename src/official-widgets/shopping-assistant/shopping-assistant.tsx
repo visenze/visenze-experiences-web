@@ -6,6 +6,7 @@ import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import useChat, { type UseChatResult } from '../../common/components/chat/use-chat';
 import { getWelcomeSpokenGreeting, isWelcomeEnabled } from '../../common/components/chat/WelcomeBlock';
+import EntryLogo from '../../common/components/EntryLogo';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
@@ -20,6 +21,8 @@ import type { SearchImageOrPid } from '../../common/types/image';
 interface ShoppingAssistantProps {
   renderModalWithoutPortal?: boolean;
 }
+
+const DEFAULT_HEADER_ICON_HEIGHT = 24;
 
 const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
@@ -101,6 +104,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     setWidgetOpenTrigger(Math.random());
   }, []);
 
+  const headerIcon = customizations.chatbot?.headerIcon;
+
   const getScreen = (): ReactElement => (
       <div aria-label={intl.formatMessage({ id: 'widgetTitle' })} className='flex h-full flex-col bg-white dark:bg-neutral-700 border-x border-neutral-300 dark:border-neutral-800'>
         <div className='flex w-full py-4 justify-between shadow'>
@@ -108,6 +113,15 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
             className='wigmix-widget-title flex items-center gap-2 px-4 m-0'
             style={{ color: darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor }}
           >
+            {headerIcon?.url?.trim() && (
+              <EntryLogo
+                url={headerIcon.url.trim()}
+                color={darkMode ? headerIcon.colorDark : headerIcon.color}
+                height={headerIcon.height || DEFAULT_HEADER_ICON_HEIGHT}
+                width={headerIcon.width}
+                className={cn('object-contain', !headerIcon.width && 'w-auto max-w-[240px]')}
+              />
+            )}
             {intl.formatMessage({ id: 'widgetTitle' })}
           </h2>
 

@@ -18,10 +18,13 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
   customizations: {
     customCss,
     chatbot: {
+            persistChatEnabled: true, /* persistChatTtlMinutes: 30 */
+
       voiceEnabled: false, // enable to test voice input/output locally (backend resolves the voice provider credential)
       // voiceId: '', // voice-provider voice ID; leave unset to use the widget's built-in voice
       // voiceModelId: '', // voice-provider model ID; leave unset to use the widget's built-in model
       // voiceSettings: { stability: 0.5, similarityBoost: 0.75 }, // leave unset to use the widget's built-in settings
+      // headerIcon: { url: 'https://example.com/logo.gif', height: 24 }, // image or GIF shown before the chat header title (optional)
     },
   },
   callbacks: {

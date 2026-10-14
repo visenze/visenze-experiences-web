@@ -334,7 +334,11 @@ export const devInitWidget = async (
     const widgetConfigResponse = await fetch(`${base}${configPath}?app_key=${devAppSettings.appKey}`
         + `&placement_id=${devAppSettings.placementId}&return_fields_mappings=true`);
     const widgetConfigObject = await widgetConfigResponse.json();
-    fieldsMapping = widgetConfigObject.fields_mappings;
+    if (widgetConfigObject?.fields_mappings) {
+      fieldsMapping = widgetConfigObject.fields_mappings;
+    } else {
+      console.warn('[dev] No fields_mappings in the widget-configs response, using devFieldMappings instead:', widgetConfigObject);
+    }
   }
 
   const result = init(devConfigs as WidgetConfig, fieldsMapping, widgetType, widgetVersion, customizations);

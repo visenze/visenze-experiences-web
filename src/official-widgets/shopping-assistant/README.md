@@ -15,4 +15,21 @@
   ```sh
   npm run build:shopping-assistant
   ```
-  The bundled file will be available in `dist/shopping-assistant` directory. 
+  The bundled file will be available in `dist/shopping-assistant` directory.
+
+## Header icon
+
+`customizations.chatbot.headerIcon` shows an image, including an animated GIF, in the chat header right before
+the title. It is optional: nothing is shown when `url` is unset or blank.
+
+```js
+customizations: {
+  chatbot: {
+    headerIcon: { url: 'https://example.com/logo.gif', height: 24 }, // width optional
+  },
+},
+```
+
+`height` defaults to 24 (pixels); without a `width` it follows the image's aspect ratio (up to 240px wide).
+`color` / `colorDark` tint the image as a mask, which flattens it to a single color and stops a GIF, so leave
+them unset to show the image as it is.

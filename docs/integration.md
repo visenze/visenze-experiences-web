@@ -178,6 +178,45 @@ Supported values:
 </script>
 ```
 
+## AI Prompt Box (`ai-prompt-box`)
+
+A compact inline "Ask AI" panel for product pages. The product id is passed via `data-pid` and
+sent to the chat agent as product context. `data-pid` is optional: leave it empty (or missing) and the
+widget works as a general assistant, without product context and without the "Find Similar" button.
+Values such as `undefined`, `null`, or an unfilled template placeholder (`{{ product.id }}`) are
+treated as empty:
+
+```html
+<div class="ps-widget-<PLACEMENT_ID>" data-pid="<PRODUCT_ID>"></div>
+```
+
+Suggested questions, the chat drawer position and the panel texts are configurable:
+
+```js
+window.visenzeConfigs[5000] = {
+  customizations: {
+    aiPromptBox: {
+      title: 'Ask Fitzy', // optional; overrides the aiPromptBoxTitle text (with a titleIcon logo and no title, only the logo shows)
+      chatTitle: 'Fitzy Assistant', // optional; chat drawer header text when `title` is empty
+      message: 'Need a hand?', // optional line between the title row and the chips
+      inputIcon: { url: 'https://example.com/face.png' }, // optional icon inside the text input
+      suggestedQuestions: ['How cushioned are these?', 'Compare similar shoes'], // chips shown side by side (wrapping when narrow) before the first message
+      maxSuggestedQuestions: 5, // show at most this many chips
+      buttonColors: { backgroundColor: '#1f2a8a', fontColor: '#ffffff' }, // colors of the send and Find Similar buttons (optional; add ...Dark for dark mode)
+      findSimilar: { enabled: true, message: 'find similar products' }, // "Find Similar" button beside the input
+      restoreChat: true, // restore the earlier conversation after a reload (behind the maximize icon)
+      chatPosition: 'right', // side the maximized chat drawer slides in from ('left' | 'right')
+      titleIcon: { url: 'https://example.com/logo.png', layout: 'ICON_TEXT' }, // brand logo in the title row (ICON_TEXT | ICON | TEXT | TEXT_ICON)
+    },
+    localization: {
+      text: {
+        en: { aiPromptBoxTitle: 'Ask Fitzy', aiPromptBoxPlaceholder: 'Ask a question' },
+      },
+    },
+  },
+};
+```
+
 ## Callbacks
 
 ViSenze widgets provide some pre-defined callback events such as after tracking (`trackingCallback`), after product search (`onSearchCallback`), and after product click (`onProductClick`).
@@ -319,6 +358,13 @@ with the `sendChatMessage` method, optionally together with an image (URL or pro
 
 ```ts
 visenzeWidget.sendChatMessage('red sneakers');
+```
+
+To say which product the message is about, pass its product ID as the second argument; it is sent as that
+message's `pid`, so the assistant refers to that product, even if the conversation began on another one:
+
+```ts
+visenzeWidget.sendChatMessage('find similar products', { pid: 'PRODUCT_ID' });
 ```
 
 To open the chat with a message from the **assistant** instead (e.g. a proactive greeting or a follow-up prompt from your page),

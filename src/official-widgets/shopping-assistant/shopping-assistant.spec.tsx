@@ -336,6 +336,87 @@ describe('shopping-assistant', () => {
   });
 
   // ============================================================
+  // Persisted conversation restored after a reload
+  // ============================================================
+
+  describe('restoring a persisted conversation', () => {
+    const KEY = 'visenze_shopping_assistant_chat_id_1234';
+    const originalFetch = global.fetch;
+    let resolveHistory: (() => void) | undefined;
+
+    const HISTORY = [
+      { reqid: 'req-1', type: 'human', message: 'earlier question' },
+      { reqid: 'req-1', type: 'ai', message: 'earlier answer' },
+    ];
+
+    const renderPersisted = (holdHistory = false): ReturnType<typeof createTestClient> => {
+      localStorage.setItem(KEY, JSON.stringify({ chatId: 'old-chat', timestamp: Date.now() }));
+      const response = { ok: true, json: (): Promise<unknown> => Promise.resolve({ result: { messages: HISTORY } }) } as unknown as Response;
+      global.fetch = jest.fn(() => (holdHistory
+        ? new Promise<Response>((resolve) => {
+          resolveHistory = (): void => resolve(response);
+        })
+        : Promise.resolve(response)));
+      const { widgetConfig, widgetClient, mockVisearchClient } = createTestClient();
+      widgetConfig.customizations = {
+        ...DEFAULT_CUSTOMIZATIONS,
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, persistChatEnabled: true },
+      };
+      testComponent = renderWidget(<ShoppingAssistant renderModalWithoutPortal />, {
+        widgetConfig, widgetClient, locale: 'en', messages: texts['en'], rootElement: modalRoot,
+      });
+      return { widgetConfig, widgetClient, mockVisearchClient };
+    };
+
+    const flush = async (): Promise<void> => {
+      await act(async () => {
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+    };
+
+    afterEach(() => {
+      global.fetch = originalFetch;
+      resolveHistory = undefined;
+    });
+
+    it('shows the earlier conversation when the widget is opened after a reload', async () => {
+      const { widgetClient } = renderPersisted();
+      await flush();
+      act(() => {
+        widgetClient.openWidget('');
+      });
+      expect(getTextInBody('earlier question')).toBeTruthy();
+      expect(getTextInBody('earlier answer')).toBeTruthy();
+    });
+
+    it('shows the earlier conversation together with a message handed over by sendChatMessage after the history loaded', async () => {
+      const { widgetClient } = renderPersisted();
+      await flush();
+      await act(async () => {
+        widgetClient.sendChatMessage('handed over');
+      });
+      expect(getTextInBody('earlier question')).toBeTruthy();
+      expect(getTextInBody('handed over')).toBeTruthy();
+      const url = mockFetchEventSource.mock.calls[0][0] as string;
+      expect(new URLSearchParams(url.split('?')[1]).get('chat_id')).toBe('old-chat');
+    });
+
+    it('keeps the handed-over message, and still restores the earlier conversation, when the message arrives before the history finished loading', async () => {
+      const { widgetClient } = renderPersisted(true);
+      await act(async () => {
+        widgetClient.sendChatMessage('handed over early');
+      });
+      await act(async () => {
+        resolveHistory?.();
+      });
+      await flush();
+      expect(getTextInBody('handed over early')).toBeTruthy();
+      expect(getTextInBody('earlier question')).toBeTruthy();
+    });
+  });
+
+  // ============================================================
   // Accessibility
   // ============================================================
 
@@ -389,6 +470,63 @@ describe('shopping-assistant', () => {
       openDialogAndWait();
 
       expect(testComponent.getByRole('heading', { name: texts['en']['widgetTitle'], hidden: true })).toBeTruthy();
+    });
+
+    describe('header icon (customizations.chatbot.headerIcon)', () => {
+      const GIF = 'https://example.com/fitzy.gif';
+      const withIcon = (headerIcon: Record<string, unknown>): Partial<WidgetConfig['customizations']> => ({
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, headerIcon } as WidgetConfig['customizations']['chatbot'],
+      });
+      const heading = (): HTMLElement => testComponent.getByRole('heading', { name: texts['en']['widgetTitle'], hidden: true });
+
+      it('is not shown unless configured', () => {
+        renderAssistant();
+        openDialogAndWait();
+        expect(heading().querySelector('img')).toBeNull();
+      });
+
+      it('shows the configured image (or gif) before the title text', () => {
+        renderAssistant({}, 'en', {}, withIcon({ url: GIF }));
+        openDialogAndWait();
+        const img = heading().querySelector('img') as HTMLImageElement;
+        expect(img.getAttribute('src')).toBe(GIF);
+        expect(heading().firstElementChild).toBe(img);
+        expect(heading().textContent).toBe(texts['en']['widgetTitle']);
+      });
+
+      it('is decorative, so the heading keeps the title as its name', () => {
+        renderAssistant({}, 'en', {}, withIcon({ url: GIF }));
+        openDialogAndWait();
+        const img = heading().querySelector('img') as HTMLImageElement;
+        expect(img.getAttribute('aria-hidden')).toBe('true');
+        expect(img.getAttribute('alt')).toBe('');
+      });
+
+      it('is 24px tall by default and takes a configured height and width', () => {
+        renderAssistant({}, 'en', {}, withIcon({ url: GIF }));
+        openDialogAndWait();
+        expect((heading().querySelector('img') as HTMLImageElement).style.height).toBe('24px');
+        testComponent.unmount();
+
+        renderAssistant({}, 'en', {}, withIcon({ url: GIF, height: 40, width: 60 }));
+        openDialogAndWait();
+        const sized = heading().querySelector('img') as HTMLImageElement;
+        expect(sized.style.height).toBe('40px');
+        expect(sized.style.width).toBe('60px');
+      });
+
+      it('is shown as-is, not tinted, so an animated gif keeps animating', () => {
+        renderAssistant({}, 'en', {}, withIcon({ url: GIF }));
+        openDialogAndWait();
+        const img = heading().querySelector('img') as HTMLImageElement;
+        expect(img.parentElement).toBe(heading());
+      });
+
+      it.each(['', '   '])('is not shown when the url is blank (%j)', (url) => {
+        renderAssistant({}, 'en', {}, withIcon({ url }));
+        openDialogAndWait();
+        expect(heading().querySelector('img')).toBeNull();
+      });
     });
 
     it('should localize accessible names for non-English locales', () => {
@@ -696,6 +834,25 @@ describe('shopping-assistant', () => {
       expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
       const url = mockFetchEventSource.mock.calls[0][0] as string;
       expect(url).toContain('q=API+message');
+    });
+
+    it('should send a product id passed to widgetClient.sendChatMessage() as the request pid, without treating it as an image', async () => {
+      const { widgetClient } = renderAssistant();
+
+      await act(async () => {
+        widgetClient.sendChatMessage('find similar products', { pid: 'prod-77' });
+      });
+      await act(async () => {
+        jest.runAllTimers();
+      });
+
+      expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
+      const [url, options] = mockFetchEventSource.mock.calls[0];
+      const params = new URLSearchParams((url as string).split('?')[1]);
+      expect(params.get('pid')).toBe('prod-77');
+      expect(params.get('q')).toBe('find similar products');
+      expect(params.has('im_url')).toBe(false);
+      expect((options.body as FormData).get('image')).toBeNull();
     });
 
     it('should include the image in the request FormData when widgetClient.sendChatMessage() is called with an image', async () => {

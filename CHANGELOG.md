@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- ai-prompt-box: New widget — a compact inline "Ask AI" panel for product pages (title, configurable suggested questions via `customizations.aiPromptBox.suggestedQuestions`, text input) that opens the side chat drawer (the shopping-assistant-style view) when the shopper taps a suggested question, sends a message or clicks Find Similar. Reads the optional product id from `data-pid` (an empty, missing, `undefined`/`null`, or unfilled-placeholder value means no product: the widget works without product context and hides "Find Similar"). The title row can show a brand logo via `customizations.aiPromptBox.titleIcon`.
+- ai-prompt-box: Optional "Find Similar" button beside the input (`customizations.aiPromptBox.findSimilar`) that sends a configurable message (default `find similar products`); a "new chat" button beside the maximize icon once a conversation has started.
+- shopping-assistant: New optional `customizations.chatbot.headerIcon` (`url`, `height`, `width`, optional `color`/`colorDark`): an image or animated GIF shown in the chat header right before the title. Nothing is shown when `url` is unset or blank.
+- (internal) `EntryLogo` moved from ai-search-launcher to `src/common/components/EntryLogo.tsx`, now shared by ai-search-launcher, ai-prompt-box and shopping-assistant.
+- ai-prompt-box: New `customizations.aiPromptBox.restoreChat` (default `true`) controls whether an earlier conversation is restored after a reload. A restored chat is behind the maximize icon.
+- (internal) `useChat` accepts `persistChatEnabled: false` to opt an instance out of saving/restoring even when the customization is on.
+- ai-prompt-box: The conversation is now saved by default (`customizations.chatbot.persistChatEnabled` defaults to `true` for this widget) and restored after a page reload, behind the chat drawer's maximize icon. The prompt box also follows later changes to `data-pid`.
+- (internal) `useChat`'s `sendMessage(message, { pid })` now sends that product id as the request's `pid` (overriding the hook's `pid` option for that message) instead of treating it as an image; this also makes `sendChatMessage(message, { pid })` work on shopping-assistant. A restored conversation is now merged in front of a message sent before the history finished loading, instead of replacing it.
+- ai-prompt-box: New optional `customizations.aiPromptBox.chatTitle`: the chat drawer's header text when `title` is empty (e.g. a logo-only panel); a set `title` is still shown in the drawer, and with neither the default text is used.
+- ai-prompt-box: New optional `customizations.aiPromptBox.message` (a short line such as "Need a hand?" between the title row and the suggestion chips) and `customizations.aiPromptBox.inputIcon` (an icon inside the text input). The title is optional: with a `titleIcon` logo and no `title`, the title row shows just the logo.
+- ai-prompt-box: The send button now sits inside the text input and is styled like the Find Similar button (rounded square); both are colored by the new optional `customizations.aiPromptBox.buttonColors`. The message line is small, gray and medium weight.
+- ai-prompt-box: The maximize icon (shown only once there is a conversation, like "new chat") reopens the chat drawer, a side-mounted panel like shopping-assistant, on the side set by `customizations.aiPromptBox.chatPosition` (default `right`).
+- (internal) `useChat` accepts an optional `pid` option that is sent to the chat endpoint as the `pid` query param; unset leaves requests unchanged.
+
 
 ### Fixed
 
