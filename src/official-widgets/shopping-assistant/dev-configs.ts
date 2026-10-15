@@ -6,10 +6,10 @@ const customCss = `
 
 export const devConfigs: RecursivePartial<WidgetConfig> = {
   appSettings: {
-    appKey: '',
-    placementId: '',
-    endpoint: '',
-    cloud: 'aws', // remove this if you are testing in staging environment
+   appKey: 'fe494a80881d401bbfa23e1581d17a2c',
+    placementId: '6889',
+    endpoint: 'https://search-dev.visenze.com', // staging search API (app created in the staging console)
+    // cloud: 'aws', // only for production apps; leave unset for staging
   },
   displaySettings: {
     cssSelector: '.shopping-assistant-widget',
@@ -23,10 +23,30 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
       // voiceModelId: '', // voice-provider model ID; leave unset to use the widget's built-in model
       // voiceSettings: { stability: 0.5, similarityBoost: 0.75 }, // leave unset to use the widget's built-in settings
     },
+    productCard: {
+      addToCart: {
+        enable: true,
+        layout: 'ICON_TEXT',
+        // Add-to-cart options (MC-3037). `field` is a productDetails key or a raw catalog field whose value is an array.
+        // Fields with no values for a product are skipped, so unknown fields are harmless while testing.
+        options: {
+          enable: true,
+          fields: [
+            { field: 'sizes', label: 'Size', layout: 'CAROUSEL', callbackKey: 'size' },
+            { field: 'attributes', label: 'Width', layout: 'RADIO', callbackKey: 'width' }, // catalog maps width → attributes
+            { field: 'colors', label: 'Colour', layout: 'DROPDOWN', callbackKey: 'color' },
+          ],
+        },
+      },
+    },
   },
   callbacks: {
     trackingCallback: (action: string, params: Record<string, any>) => {
       console.log(`Successfully send event: ${action}`, params);
+    },
+    onAddToCartToggle: (_: boolean, pid: string, productDetails?: Record<string, any>, selectedOptions?: Record<string, string>) => {
+      console.log('onAddToCartToggle', pid, selectedOptions, productDetails);
+      return true;
     },
   },
   disableAnalytics: true,

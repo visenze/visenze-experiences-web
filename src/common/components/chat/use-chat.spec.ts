@@ -462,6 +462,149 @@ describe('use-chat', () => {
     expect(botChat?.messages[0]).toBe('Adding it now');
   });
 
+  describe('with add-to-cart options enabled', () => {
+    const optionsCustomizations = (): Partial<WidgetConfig['customizations']> => ({
+      productCard: {
+        ...DEFAULT_CUSTOMIZATIONS.productCard,
+        addToCart: {
+          enable: true,
+          layout: 'TEXT',
+          options: { enable: true, fields: [{ field: 'sizes', layout: 'CAROUSEL' }] },
+        },
+      } as WidgetConfig['customizations']['productCard'],
+    });
+    const emitProduct = (stream: ReturnType<typeof sendMessageAndGetStreamController>, sizes?: string[]): void => {
+      stream.emitEvent('product', {
+        product_id: 'pid-1',
+        main_image_url: 'https://example.com/shoe.jpg',
+        data: { title: 'Cool Shoes', ...(sizes ? { sizes } : {}) },
+      });
+    };
+
+    it('holds back the <<ADD_TO_CART>> callback and adds an options entry for the product', async () => {
+      const onAddToCartToggle = jest.fn();
+      const { hook } = renderChat({}, optionsCustomizations(), { onAddToCartToggle });
+      act(() => {
+        hook.result.current.open();
+      });
+
+      const stream = sendMessageAndGetStreamController(hook, 'Add the shoes');
+      stream.emitEvent('reqid', { value: 'req-1' });
+      stream.emitEvent('chat_token', { value: 'Adding it now [[pid-1]] <<ADD_TO_CART:pid-1>>' });
+      emitProduct(stream, ['8', '9']);
+      stream.closeStream();
+      await revealAll();
+
+      expect(onAddToCartToggle).not.toHaveBeenCalled();
+      const optionsChat = hook.result.current.chats.find((chat) => chat.author === 'options');
+      expect(optionsChat?.products?.map((product) => product.product_id)).toEqual(['pid-1']);
+      expect(optionsChat?.requestId).toBe('req-1');
+    });
+
+    it('finds a product shown in an earlier turn when the AI adds it to cart later', async () => {
+      const onAddToCartToggle = jest.fn();
+      const { hook } = renderChat({}, optionsCustomizations(), { onAddToCartToggle });
+      act(() => {
+        hook.result.current.open();
+      });
+
+      const firstTurn = sendMessageAndGetStreamController(hook, 'Show me shoes');
+      firstTurn.emitEvent('chat_token', { value: 'Here you go: [[pid-1]]' });
+      emitProduct(firstTurn, ['8', '9']);
+      firstTurn.closeStream();
+      await revealAll();
+
+      const secondTurn = sendMessageAndGetStreamController(hook, 'Add the first one to my cart');
+      secondTurn.emitEvent('reqid', { value: 'req-2' });
+      secondTurn.emitEvent('chat_token', { value: 'Done! <<ADD_TO_CART:pid-1>>' });
+      secondTurn.closeStream();
+      await revealAll();
+
+      expect(onAddToCartToggle).not.toHaveBeenCalled();
+      const optionsChat = hook.result.current.chats.find((chat) => chat.author === 'options');
+      expect(optionsChat?.products?.map((product) => product.product_id)).toEqual(['pid-1']);
+      expect(optionsChat?.requestId).toBe('req-2');
+    });
+
+    it('adds to cart directly when the product has no option values', async () => {
+      const onAddToCartToggle = jest.fn();
+      const { hook } = renderChat({}, optionsCustomizations(), { onAddToCartToggle });
+      act(() => {
+        hook.result.current.open();
+      });
+
+      const stream = sendMessageAndGetStreamController(hook, 'Add the shoes');
+      stream.emitEvent('chat_token', { value: 'Adding it now [[pid-1]] <<ADD_TO_CART:pid-1>>' });
+      emitProduct(stream);
+      stream.closeStream();
+      await revealAll();
+
+      expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'pid-1', expect.objectContaining({ product_id: 'pid-1' }));
+      expect(hook.result.current.chats.find((chat) => chat.author === 'options')).toBeUndefined();
+    });
+
+    it('adds to cart directly and warns when the product never streamed in', async () => {
+      const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const onAddToCartToggle = jest.fn();
+      const { hook } = renderChat({}, optionsCustomizations(), { onAddToCartToggle });
+      act(() => {
+        hook.result.current.open();
+      });
+
+      const stream = sendMessageAndGetStreamController(hook, 'Add the shoes');
+      stream.emitEvent('chat_token', { value: 'Adding it now <<ADD_TO_CART:pid-404>>' });
+      stream.closeStream();
+      await revealAll();
+
+      expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'pid-404', undefined);
+      expect(warnSpy).toHaveBeenCalled();
+      warnSpy.mockRestore();
+    });
+
+    it('still shows the options entry when the stream errors after the <<ADD_TO_CART>> token', async () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+      const onAddToCartToggle = jest.fn();
+      const { hook } = renderChat({}, optionsCustomizations(), { onAddToCartToggle });
+      act(() => {
+        hook.result.current.open();
+      });
+      mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
+        options.onmessage({
+          event: 'product',
+          data: JSON.stringify({ product_id: 'pid-1', main_image_url: 'img', data: { title: 'Cool Shoes', sizes: ['8', '9'] } }),
+        });
+        options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Adding it now [[pid-1]] <<ADD_TO_CART:pid-1>>' }) });
+        options.onerror(new Error('network drop'));
+      });
+
+      await act(async () => {
+        await hook.result.current.sendMessage('Add the shoes');
+      });
+
+      expect(onAddToCartToggle).not.toHaveBeenCalled();
+      const optionsChat = hook.result.current.chats.find((chat) => chat.author === 'options');
+      expect(optionsChat?.products?.map((product) => product.product_id)).toEqual(['pid-1']);
+      jest.restoreAllMocks();
+    });
+
+    it('does nothing for <<ADD_TO_CART>> when suppressActionTokenCallbacks is set', async () => {
+      const onAddToCartToggle = jest.fn();
+      const { hook } = renderChat({}, optionsCustomizations(), { onAddToCartToggle }, { suppressActionTokenCallbacks: true });
+      act(() => {
+        hook.result.current.open();
+      });
+
+      const stream = sendMessageAndGetStreamController(hook, 'Add the shoes');
+      stream.emitEvent('chat_token', { value: 'Adding it now [[pid-1]] <<ADD_TO_CART:pid-1>>' });
+      emitProduct(stream, ['8', '9']);
+      stream.closeStream();
+      await revealAll();
+
+      expect(onAddToCartToggle).not.toHaveBeenCalled();
+      expect(hook.result.current.chats.find((chat) => chat.author === 'options')).toBeUndefined();
+    });
+  });
+
   it('should expose only the latest response\'s suggestions, replacing any earlier turn\'s', async () => {
     const { hook } = renderChat();
     act(() => {

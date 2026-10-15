@@ -6,6 +6,7 @@ export enum Actions {
 
   PRODUCT_VIEW = 'product_view',
   PRODUCT_CLICK = 'product_click',
+  ADD_TO_CART = 'add_to_cart',
 
   RESULT_LOAD = 'result_load',
   SESSION_INIT = 'session_init',

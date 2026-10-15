@@ -1,8 +1,8 @@
 import type { RenderResult } from '@testing-library/react';
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, within } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import ProductCard from './ProductCard';
-import type { LanguagePack } from '../../locales/locale';
+import { COMMON_TEXTS, type LanguagePack } from '../../locales/locale';
 import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
 import type { WidgetClient, WidgetConfig } from '../../wigmix-core';
@@ -403,5 +403,184 @@ describe('ProductCard', () => {
     // Tracking events should not be sent
     expect(localStorageSetItemSpy).not.toHaveBeenCalled();
     expect(sendEventSpy).not.toHaveBeenCalled();
+  });
+
+  describe('add to cart', () => {
+    // Opens the option drop-down with the given label and picks a value, as a shopper would.
+    const chooseOption = (container: HTMLElement, label: string, value: string): void => {
+      fireEvent.click(within(container).getByRole('combobox', { name: label }));
+      fireEvent.click(within(container).getByRole('option', { name: value }));
+    };
+
+    const renderCard = (product: ProcessedProduct = testProduct): void => {
+      testComponent = render(
+          <WidgetDataContext.Provider value={{
+            widgetClient,
+            widgetConfig,
+            darkMode: false,
+            locale: 'en',
+          }}>
+            <IntlProvider messages={{ ...texts['en'], ...COMMON_TEXTS['en'], addToCart: 'Add to cart' }} locale='en' defaultLocale='en'>
+              <ProductCard result={product}
+                           metadata={{ queryId: 'test-query-id' }}
+                           isInWishlist={false}
+                           setIsInWishlist={() => {}}
+                           index={0}
+                           isRecommendation={false}
+                           hasFindSimilar={false}
+                           pwPrefix='ut' />
+            </IntlProvider>
+          </WidgetDataContext.Provider>,
+      );
+    };
+
+    beforeEach(() => {
+      widgetConfig.customizations.productCard!.addToCart = { enable: true, layout: 'TEXT', color: '', colorDark: '' };
+      widgetConfig.displaySettings.productDetails['sizes'] = 'size_field';
+    });
+
+    it('calls onAddToCartToggle directly and tracks add_to_cart when options are disabled', async () => {
+      const onAddToCartToggle = jest.fn(() => Promise.resolve(true));
+      widgetConfig.callbacks.onAddToCartToggle = onAddToCartToggle;
+      renderCard({ ...testProduct, size_field: ['8', '9'] });
+
+      await act(async () => {
+        fireEvent.click(testComponent.getByTestId('wigmix-add-to-cart-button'));
+      });
+
+      expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'test_pid', expect.objectContaining({ product_id: 'test_pid' }));
+      expect(testComponent.queryByTestId('wigmix-add-to-cart-options')).toBeNull();
+      expect(sendEventSpy).toHaveBeenCalledWith('add_to_cart', expect.objectContaining({ pid: 'test_pid', queryId: 'test-query-id' }));
+    });
+
+    it('resets the loading state when onAddToCartToggle throws', async () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+      widgetConfig.callbacks.onAddToCartToggle = jest.fn(() => Promise.reject(new Error('cart down')));
+      renderCard();
+
+      await act(async () => {
+        fireEvent.click(testComponent.getByTestId('wigmix-add-to-cart-button'));
+      });
+
+      expect(testComponent.getByTestId('wigmix-add-to-cart-button').textContent).toBe('Add to cart');
+    });
+
+    it('opens the options panel and passes the selected options when options are enabled', async () => {
+      const onAddToCartToggle = jest.fn(() => Promise.resolve(true));
+      widgetConfig.callbacks.onAddToCartToggle = onAddToCartToggle;
+      widgetConfig.customizations.productCard!.addToCart!.options = {
+        enable: true,
+        fields: [{ field: 'sizes', label: 'Size', layout: 'CAROUSEL', callbackKey: 'size' }],
+      };
+      renderCard({ ...testProduct, size_field: ['9', '8'] });
+
+      fireEvent.click(testComponent.getByTestId('wigmix-add-to-cart-button'));
+      expect(onAddToCartToggle).not.toHaveBeenCalled();
+      expect(testComponent.getByTestId('wigmix-add-to-cart-options')).toBeTruthy();
+
+      fireEvent.click(testComponent.getByRole('radio', { name: '8' }));
+      await act(async () => {
+        fireEvent.click(testComponent.getByTestId('wigmix-add-to-cart-options-confirm'));
+      });
+
+      expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'test_pid', expect.objectContaining({ product_id: 'test_pid' }), { size: '8' });
+      expect(sendEventSpy).toHaveBeenCalledWith('add_to_cart', expect.objectContaining({ pid: 'test_pid', size: '8' }));
+      expect(testComponent.queryByTestId('wigmix-add-to-cart-options')).toBeNull();
+    });
+
+    it('shows the options in a modal that closes on a backdrop click', () => {
+      widgetConfig.callbacks.onAddToCartToggle = jest.fn(() => Promise.resolve(true));
+      widgetConfig.customizations.productCard!.addToCart!.options = {
+        enable: true,
+        fields: [{ field: 'sizes', layout: 'CAROUSEL' }],
+      };
+      renderCard({ ...testProduct, size_field: ['8', '9'] });
+
+      fireEvent.click(testComponent.getByTestId('wigmix-add-to-cart-button'));
+      expect(testComponent.getByRole('dialog')).toBeTruthy();
+
+      fireEvent.mouseDown(testComponent.getByTestId('wigmix-add-to-cart-options-modal'));
+      expect(testComponent.queryByTestId('wigmix-add-to-cart-options-modal')).toBeNull();
+      expect(widgetConfig.callbacks.onAddToCartToggle).not.toHaveBeenCalled();
+    });
+
+    it('never lets an option key overwrite tracking params', async () => {
+      widgetConfig.callbacks.onAddToCartToggle = jest.fn(() => Promise.resolve(true));
+      widgetConfig.customizations.productCard!.addToCart!.options = {
+        enable: true,
+        fields: [{ field: 'sizes', layout: 'CAROUSEL', callbackKey: 'pid' }],
+      };
+      renderCard({ ...testProduct, size_field: ['8', '9'] });
+
+      fireEvent.click(testComponent.getByTestId('wigmix-add-to-cart-button'));
+      fireEvent.click(testComponent.getByRole('radio', { name: '8' }));
+      await act(async () => {
+        fireEvent.click(testComponent.getByTestId('wigmix-add-to-cart-options-confirm'));
+      });
+
+      expect(widgetConfig.callbacks.onAddToCartToggle).toHaveBeenCalledWith(true, 'test_pid', expect.anything(), { pid: '8' });
+      expect(sendEventSpy).toHaveBeenCalledWith('add_to_cart', expect.objectContaining({ pid: 'test_pid' }));
+    });
+
+    it('does not open the options modal when there is no onAddToCartToggle callback', () => {
+      widgetConfig.customizations.productCard!.addToCart!.options = {
+        enable: true,
+        fields: [{ field: 'sizes', layout: 'CAROUSEL' }],
+      };
+      renderCard({ ...testProduct, size_field: ['8', '9'] });
+
+      fireEvent.click(testComponent.getByTestId('wigmix-add-to-cart-button'));
+      expect(testComponent.queryByTestId('wigmix-add-to-cart-options-modal')).toBeNull();
+      expect(sendEventSpy).not.toHaveBeenCalledWith('add_to_cart', expect.anything());
+    });
+
+    it('shows no option fields on the card; Add to Cart opens the pop-up with only the fields the product has', async () => {
+      const onAddToCartToggle = jest.fn(() => Promise.resolve(true));
+      widgetConfig.callbacks.onAddToCartToggle = onAddToCartToggle;
+      widgetConfig.displaySettings.productDetails['colors'] = 'color_field';
+      widgetConfig.customizations.productCard!.addToCart!.options = {
+        enable: true,
+        fields: [
+          { field: 'sizes', label: 'Size', layout: 'CAROUSEL', callbackKey: 'size' },
+          { field: 'width_field', label: 'Width', layout: 'RADIO' },
+          { field: 'colors', label: 'Colour', layout: 'DROPDOWN', callbackKey: 'color' },
+        ],
+      };
+      renderCard({ ...testProduct, size_field: ['8', '9'], color_field: ['Black', 'White'] });
+
+      // Nothing on the card itself.
+      expect(testComponent.queryByRole('combobox')).toBeNull();
+      expect(testComponent.queryByRole('radiogroup')).toBeNull();
+
+      fireEvent.click(testComponent.getByTestId('wigmix-add-to-cart-button'));
+      const dialog = testComponent.getByRole('dialog');
+      expect(within(dialog).getByRole('radiogroup', { name: 'Size' })).toBeTruthy();
+      expect(within(dialog).queryByText('Width')).toBeNull();
+      chooseOption(dialog, 'Colour', 'White');
+      fireEvent.click(within(dialog).getByRole('radio', { name: '9' }));
+      await act(async () => {
+        fireEvent.click(within(dialog).getByTestId('wigmix-add-to-cart-options-confirm'));
+      });
+
+      expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'test_pid', expect.anything(), { size: '9', color: 'White' });
+      expect(testComponent.queryByRole('dialog')).toBeNull();
+    });
+
+    it('adds to cart directly when the product has no values for any option field', async () => {
+      const onAddToCartToggle = jest.fn(() => Promise.resolve(true));
+      widgetConfig.callbacks.onAddToCartToggle = onAddToCartToggle;
+      widgetConfig.customizations.productCard!.addToCart!.options = {
+        enable: true,
+        fields: [{ field: 'sizes', layout: 'CAROUSEL' }],
+      };
+      renderCard();
+
+      await act(async () => {
+        fireEvent.click(testComponent.getByTestId('wigmix-add-to-cart-button'));
+      });
+
+      expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'test_pid', expect.objectContaining({ product_id: 'test_pid' }));
+      expect(testComponent.queryByTestId('wigmix-add-to-cart-options')).toBeNull();
+    });
   });
 });

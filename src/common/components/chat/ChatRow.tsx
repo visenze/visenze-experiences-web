@@ -9,6 +9,7 @@ import { FOCUS_VISIBLE_CLASSES } from '../../constants';
 import UserIcon from '../../icons/UserIcon';
 import { isImageDataUrl, isImageUrl, type SearchImageOrPid } from '../../types/image';
 import type { ProductScrollerConfig } from '../../utils';
+import ChatAddToCartOptions from '../add-to-cart-options/ChatAddToCartOptions';
 
 interface ChatRowProps {
   chat: Chat;
@@ -130,6 +131,9 @@ const ChatRow: FC<ChatRowProps> = ({
             style={productGridCssConfig}
           />
         )
+      )}
+      {chat.author === 'options' && (
+        <ChatAddToCartOptions products={chat.products || []} requestId={chat.requestId} />
       )}
     </div>
   );
