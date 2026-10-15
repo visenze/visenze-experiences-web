@@ -184,6 +184,75 @@ describe('shopping-assistant', () => {
   });
 
   // ============================================================
+  // Trigger button brand logo
+  // ============================================================
+
+  describe('trigger button brand logo', () => {
+    const LOGO_URL = 'https://example.com/brand.svg';
+    type Popup = NonNullable<WidgetConfig['customizations']['popup']>;
+
+    const renderWithTriggerIcon = (triggerIcon: Partial<Popup['triggerIcon']>): HTMLElement => {
+      const popup = DEFAULT_CUSTOMIZATIONS.popup as Popup;
+      renderAssistant({}, 'en', {}, { popup: { ...popup, triggerIcon: { ...popup.triggerIcon, ...triggerIcon } } });
+      return testComponent.getByRole('button', { name: texts['en']['triggerCTA'] });
+    };
+
+    it('replaces the default icon with the configured logo, keeping the accessible name', () => {
+      const button = renderWithTriggerIcon({ url: LOGO_URL });
+      expect(button.querySelector('.wigmix-entry-logo')).toBeTruthy();
+      expect(button.querySelector('.wigmix-popup-trigger-icon.default')).toBeNull();
+      expect(button.textContent).not.toContain(texts['en']['triggerCTA']);
+    });
+
+    it('places the text before or after the logo per layout', () => {
+      const button = renderWithTriggerIcon({ url: LOGO_URL, layout: 'TEXT_ICON' });
+      expect(button.firstElementChild?.className).toContain('wigmix-popup-trigger-text');
+      expect(button.lastElementChild?.className).toContain('wigmix-entry-logo');
+    });
+
+    it('shows text only for the TEXT layout', () => {
+      const button = renderWithTriggerIcon({ url: LOGO_URL, layout: 'TEXT' });
+      expect(button.querySelector('.wigmix-entry-logo')).toBeNull();
+      expect(button.textContent).toBe(texts['en']['triggerCTA']);
+    });
+
+    it('sizes the logo by height (24px by default) and width, keeping its aspect ratio otherwise', () => {
+      const defaultButton = renderWithTriggerIcon({ url: LOGO_URL, color: 'DEFAULT_ICON_COLOR' });
+      const defaultLogo = defaultButton.querySelector('img') as HTMLImageElement;
+      expect(defaultLogo.style.height).toBe('24px');
+      expect(defaultLogo.className).toContain('max-w-[240px]');
+      testComponent.unmount();
+
+      const sizedButton = renderWithTriggerIcon({ url: LOGO_URL, color: 'DEFAULT_ICON_COLOR', height: 40, width: 113 });
+      const sizedLogo = sizedButton.querySelector('img') as HTMLImageElement;
+      expect(sizedLogo.style.height).toBe('40px');
+      expect(sizedLogo.style.width).toBe('113px');
+      expect(sizedLogo.className).not.toContain('max-w-[240px]');
+    });
+
+    it('renders the image as-is with DEFAULT_ICON_COLOR, or tints it with color', () => {
+      const plainButton = renderWithTriggerIcon({ url: LOGO_URL, color: 'DEFAULT_ICON_COLOR' });
+      expect(plainButton.querySelector('img.wigmix-entry-logo')).toBeTruthy();
+      testComponent.unmount();
+
+      const tintedButton = renderWithTriggerIcon({ url: LOGO_URL, color: '#ff0000' });
+      const mask = tintedButton.querySelector('.wigmix-entry-logo > span') as HTMLElement;
+      expect(mask.style.backgroundColor).toBe('rgb(255, 0, 0)');
+    });
+
+    it('applies the configured padding only when a logo is shown', () => {
+      const logoButton = renderWithTriggerIcon({ url: LOGO_URL, padding: { x: 10, y: 4 } });
+      expect(logoButton.style.paddingLeft).toBe('10px');
+      expect(logoButton.style.paddingTop).toBe('4px');
+      testComponent.unmount();
+
+      const iconButton = renderWithTriggerIcon({ padding: { x: 10, y: 4 } });
+      expect(iconButton.style.paddingLeft).toBe('');
+      expect(iconButton.style.paddingTop).toBe('');
+    });
+  });
+
+  // ============================================================
   // Core rendering
   // ============================================================
 
