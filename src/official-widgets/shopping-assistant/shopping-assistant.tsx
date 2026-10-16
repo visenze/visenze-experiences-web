@@ -255,6 +255,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                             text={intl.formatMessage({ id: 'triggerCTA' })}
                             darkMode={darkMode}
                             onClick={onChatButtonClick}
+                            brandLogo
                             defaultIcon={
                               <NewChatIcon
                                   color={darkMode

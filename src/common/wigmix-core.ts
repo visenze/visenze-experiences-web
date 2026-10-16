@@ -1089,6 +1089,28 @@ export interface WidgetConfig {
          * @since 1.0.4
          */
         layout: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
+        /**
+         * (optional) Logo sizing, for widgets whose trigger button shows `url` as a brand logo
+         * (currently the shopping assistant) rather than a fixed 24x24 icon. The logo keeps its
+         * natural aspect ratio: it defaults to 24px tall with its width following the image (up
+         * to 240px). `height` and `width` size it in pixels. `color`/`colorDark` tint the logo
+         * (as a mask); set them to `DEFAULT_ICON_COLOR` to render the image as-is.
+         *
+         * `padding.x` (left/right) and `padding.y` (top/bottom) override the space between the
+         * button's edge and its contents, in pixels; they apply only when a logo is shown.
+         *
+         * The button's accessible name is always the trigger text, whatever the layout.
+         *
+         * Ignored by widgets that render `url` as a fixed-size icon.
+         *
+         * @since 1.0.38
+         */
+        height?: number;
+        width?: number;
+        padding?: {
+          x?: number;
+          y?: number;
+        };
       };
     };
     /**
