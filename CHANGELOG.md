@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.39](https://github.com/visenze/visenze-experiences-web/compare/1.0.38...1.0.39)
+
+<!-- BEGIN visenze-experiences-web 1.0.39 -->
+
+### Added
+
+- shopping-assistant, embedded-shopping-assistant, ai-search-launcher: New `customizations.chatbot.attrsToUse` option (e.g. `['description', 'tags']`) to choose which product fields the chat agent's LLM can read, sent as the comma-separated `attrs_to_use` parameter of the shopping-assistant API. Unset or empty, the parameter is not sent and the backend's default fields are used, as before.
+
+<!-- END visenze-experiences-web 1.0.39 -->
+
 ## [1.0.38](https://github.com/visenze/visenze-experiences-web/compare/1.0.37...1.0.38)
 
 <!-- BEGIN visenze-experiences-web 1.0.38 -->

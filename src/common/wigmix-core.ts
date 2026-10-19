@@ -1634,6 +1634,21 @@ export interface WidgetConfig {
        */
       chatAgent?: string;
       /**
+       * (optional) Product metadata fields the chat agent's LLM may read when answering, sent
+       * as the comma-separated `attrs_to_use` parameter of the shopping-assistant API (e.g.
+       * `['description', 'tags']`). Values are catalog field names. Unlike
+       * `searchSettings.attrs_to_get`, which only controls the fields returned to the widget for
+       * display, this controls what the bot can see and reason about.
+       *
+       * When unset or empty, the parameter is not sent and the backend's default fields are used
+       * (title, price, gender, category, brand, sizes and colors). Supported by every widget using
+       * the common chat module (shopping-assistant, embedded-shopping-assistant,
+       * ai-search-launcher).
+       *
+       * @since 1.0.39
+       */
+      attrsToUse?: string[];
+      /**
        * (optional) Structured welcome screen shown at the top of an empty conversation, in place
        * of the plain chat-bubble greeting: a main message (`title`), an introduction (`intro`)
        * and a labelled list of starter suggestion chips. Supported by every widget using the
