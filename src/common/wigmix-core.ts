@@ -1645,7 +1645,7 @@ export interface WidgetConfig {
        * the common chat module (shopping-assistant, embedded-shopping-assistant,
        * ai-search-launcher).
        *
-       * @since 1.0.39
+       * @since 1.0.38
        */
       attrsToUse?: string[];
       /**
