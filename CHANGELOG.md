@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - shopping-assistant: The popup trigger button can now show a configurable brand logo, the same way the ai-search-launcher's "AI Mode" entry-point button does. Set `customizations.popup.triggerIcon.url` to a logo image; it renders at its natural aspect ratio (24px tall by default, width following the image up to 240px) instead of being squeezed into a fixed 24x24 icon. New optional `triggerIcon.height`/`width` size the logo in pixels, and `triggerIcon.padding.x`/`padding.y` adjust the space around it (applied only when a logo is shown). `layout` still chooses between `ICON`, `TEXT`, `ICON_TEXT` and `TEXT_ICON`, and `color`/`colorDark` tint the logo — set them to `DEFAULT_ICON_COLOR` to render the logo in its original colors. Without `triggerIcon.url`, the default chat icon is shown as before. Other popup widgets keep their fixed-size trigger icon. New `wigmix-entry-logo` class name on the logo element.
+- shopping-assistant, embedded-shopping-assistant, ai-search-launcher: New `customizations.chatbot.attrsToUse` option (e.g. `['description', 'tags']`) to choose which product fields the chat agent's LLM can read, sent as the comma-separated `attrs_to_use` parameter of the shopping-assistant API. Unset or empty, the parameter is not sent and the backend's default fields are used, as before.
 
 <!-- END visenze-experiences-web 1.0.38 -->
 

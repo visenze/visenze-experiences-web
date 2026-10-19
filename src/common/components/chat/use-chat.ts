@@ -455,6 +455,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
       sid = sidResp;
     });
     setAllowUserInput(false);
+    const attrsToUse = (customizations.chatbot?.attrsToUse || []).map((attr) => attr.trim()).filter(Boolean);
     const params = new URLSearchParams({
       ...widgetConfig.searchSettings,
       app_key: appSettings.appKey,
@@ -466,6 +467,8 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
       attrs_to_get: widgetConfig.searchSettings['attrs_to_get'].join(','),
       sys_attrs_to_get: getBestImageSysAttrsToGet(customizations),
       chat_agent: customizations.chatbot?.chatAgent || 'shopping_closer_voice_v2',
+      // Unset/empty sends nothing, so the backend keeps its default LLM fields.
+      ...(attrsToUse.length > 0 ? { attrs_to_use: attrsToUse.join(',') } : {}),
     });
     // A gallery/preset image only ever reaches here as a URL (see ImageEntryScreen's gallery
     // tiles), never as bytes the browser already has — sending it as `im_url` lets the backend

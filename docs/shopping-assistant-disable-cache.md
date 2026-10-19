@@ -39,6 +39,8 @@ Configuration is keyed by placement ID, so `window.visenzeConfigs[6643]` applies
 
 The optional `customizations.chatbot.chatAgent` setting controls the `chat_agent` parameter sent to the shopping-assistant API. Setting it to `shopping_assistant_v2` explicitly pins the widget to that agent. Unset, it defaults to `shopping_closer_voice_v2`.
 
+The optional `customizations.chatbot.attrsToUse` setting controls which product fields the chat agent's LLM can read, sent as the comma-separated `attrs_to_use` parameter. For example, `attrsToUse: ['description', 'tags']` sends `attrs_to_use=description,tags`. Unset or empty, the parameter is not sent and the backend's defaults are used (title, price, gender, category, brand, sizes and colors). This differs from `searchSettings.attrs_to_get`, which only controls the fields returned to the widget for display.
+
 `customizations.chatbot` also gates and configures voice input/output for the widget:
 
 | Field | Required | Description |

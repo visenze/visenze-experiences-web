@@ -362,6 +362,34 @@ describe('use-chat', () => {
     expect(localStorage.getItem('visenze_shopping_assistant_chat_id_1234')).toBeTruthy();
   });
 
+  it('sendMessage should send customizations.chatbot.attrsToUse as a comma-separated attrs_to_use query param', () => {
+    const { hook } = renderChat({}, { chatbot: { attrsToUse: ['description', 'tags'] } });
+
+    mockFetchEventSource.mockImplementation(async () => {});
+    act(() => {
+      hook.result.current.sendMessage('find me a jacket');
+    });
+
+    const [calledUrl] = mockFetchEventSource.mock.calls[0];
+    const params = new URLSearchParams((calledUrl as string).split('?')[1]);
+    expect(params.get('attrs_to_use')).toBe('description,tags');
+  });
+
+  it('sendMessage should omit attrs_to_use when customizations.chatbot.attrsToUse is unset or empty, leaving the backend defaults', () => {
+    [undefined, [], ['', ' ']].forEach((attrsToUse) => {
+      mockFetchEventSource.mockReset();
+      mockFetchEventSource.mockImplementation(async () => {});
+      const { hook } = renderChat({}, { chatbot: { attrsToUse } });
+      act(() => {
+        hook.result.current.sendMessage('find me a jacket');
+      });
+
+      const [calledUrl] = mockFetchEventSource.mock.calls[0];
+      const params = new URLSearchParams((calledUrl as string).split('?')[1]);
+      expect(params.has('attrs_to_use')).toBe(false);
+    });
+  });
+
   it('sendMessage should forward an { imgUrl } image as an im_url query param, without fetching it', () => {
     const { hook } = renderChat();
     act(() => {
