@@ -189,6 +189,12 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     // nothing is focused yet). A same-tick focus call here loses that race. Deferring to a
     // macrotask runs after react-modal's own focus handling has settled, so this call wins.
     const timeoutId = window.setTimeout(() => {
+      // Only auto-focus where the primary pointer is a mouse/trackpad. On touch devices a
+      // script-driven focus() fired while the dialog is still animating in left iOS Safari
+      // unable to scroll the conversation until the input was focused and blurred again by hand.
+      if (!window.matchMedia?.('(pointer: fine)').matches) {
+        return;
+      }
       chatInputRef.current?.focus();
     }, 0);
     return (): void => window.clearTimeout(timeoutId);
