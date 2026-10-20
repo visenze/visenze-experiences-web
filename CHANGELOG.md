@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.39](https://github.com/visenze/visenze-experiences-web/compare/1.0.38...1.0.39)
+
+<!-- BEGIN visenze-experiences-web 1.0.39 -->
+
+### Fixed
+
+- shopping-assistant: On touch devices (e.g. iOS Safari), the chat input is no longer focused automatically when the dialog opens. The script-driven focus fired while the dialog was still animating in could leave the conversation impossible to scroll after closing and reopening the widget, or after a page refresh with a saved chat, until the user focused and dismissed the keyboard by hand. The input is still auto-focused where the primary pointer is a mouse or trackpad.
+
+<!-- END visenze-experiences-web 1.0.39 -->
+
 ## [1.0.38](https://github.com/visenze/visenze-experiences-web/compare/1.0.37...1.0.38)
 
 <!-- BEGIN visenze-experiences-web 1.0.38 -->

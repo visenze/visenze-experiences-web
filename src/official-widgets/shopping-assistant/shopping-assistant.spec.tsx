@@ -253,6 +253,49 @@ describe('shopping-assistant', () => {
   });
 
   // ============================================================
+  // Chat input auto-focus on open
+  // ============================================================
+
+  describe('chat input auto-focus on open', () => {
+    const originalMatchMedia = window.matchMedia;
+
+    const mockPointer = (pointerFine: boolean): void => {
+      window.matchMedia = jest.fn().mockImplementation((query: string) => ({
+        matches: pointerFine && query === '(pointer: fine)',
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+      }));
+    };
+
+    const chatInput = (): HTMLElement => testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true });
+
+    afterEach(() => {
+      window.matchMedia = originalMatchMedia;
+    });
+
+    it('focuses the chat input when the primary pointer is a mouse or trackpad', () => {
+      mockPointer(true);
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(document.activeElement).toBe(chatInput());
+    });
+
+    // Regression: on iOS a script-driven focus() while the dialog animates in left the
+    // conversation unscrollable until the user focused and blurred the input by hand.
+    it('does not focus the chat input on touch devices', () => {
+      mockPointer(false);
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(chatInput()).toBeTruthy();
+      expect(document.activeElement).not.toBe(chatInput());
+    });
+  });
+
+  // ============================================================
   // Core rendering
   // ============================================================
 
