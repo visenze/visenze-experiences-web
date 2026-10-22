@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.40](https://github.com/visenze/visenze-experiences-web/compare/1.0.39...1.0.40)
+
+<!-- BEGIN visenze-experiences-web 1.0.40 -->
+
+### Fixed
+
+- shopping-assistant, embedded-shopping-assistant, ai-search-launcher: With `customizations.chatbot.persistChatEnabled` on, bot messages injected by the frontend itself (the opening/greeting messages and messages passed to `openWithMessage`) are no longer lost when the page is refreshed. The backend chat history never contains them, so each is now saved in `localStorage` alongside the chat id, together with its suggestion chips and the request ID of the backend turn it followed. On restore it is merged back into the history right after that turn (or at the top if it opened the conversation), and its chips are restored as suggestions when it is the last message. Stored messages follow the chat id's lifecycle: they are cleared when a new chat starts or the session expires. A refresh before the user's first message still starts a fresh chat, as before.
+
+<!-- END visenze-experiences-web 1.0.40 -->
+
 ## [1.0.39](https://github.com/visenze/visenze-experiences-web/compare/1.0.38...1.0.39)
 
 <!-- BEGIN visenze-experiences-web 1.0.39 -->

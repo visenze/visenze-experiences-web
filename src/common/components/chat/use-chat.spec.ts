@@ -933,6 +933,91 @@ describe('use-chat', () => {
       expect(remount.hook.result.current.chatId).toBe('fresh-chat-id');
     });
 
+    it('restores frontend-injected bot messages (greeting, openWithMessage) beside the backend history, using the preceding request id as the marker', async () => {
+      const { hook } = renderPersistentChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      act(() => {
+        hook.result.current.playGreeting('Welcome!');
+      });
+      // Injected after the backend's req-1 turn.
+      act(() => {
+        hook.result.current.pushAssistantMessage('Need help?', ['Yes', 'No']);
+      });
+      hook.unmount();
+
+      mockHistoryResponse([
+        { reqid: 'req-1', type: 'human', message: 'hello' },
+        { reqid: 'req-1', type: 'ai', message: 'Hi there!' },
+        { reqid: 'req-2', type: 'human', message: 'shoes' },
+        { reqid: 'req-2', type: 'ai', message: 'Here you go' },
+      ]);
+      const remount = renderPersistentChat();
+      await act(async () => {
+        await Promise.resolve();
+      });
+      const texts = remount.hook.result.current.chats.map((c) => c.messages[0]);
+      // Both were injected before any backend reply existed, so they open the conversation, in order.
+      expect(texts).toEqual(['Welcome!', 'Need help?', 'hello', 'Hi there!', 'shoes', 'Here you go']);
+    });
+
+    it('splices an injected message in after the backend turn it followed, and restores its nextSteps as suggestions when it is last', async () => {
+      localStorage.setItem('visenze_shopping_assistant_chat_id_1234', JSON.stringify({ chatId: 'test-chat-id', timestamp: Date.now() }));
+      localStorage.setItem('visenze_shopping_assistant_chat_id_1234__injected', JSON.stringify({
+        chatId: 'test-chat-id',
+        messages: [
+          { text: 'Mid note', afterRequestId: 'req-1' },
+          { text: 'Last note', nextSteps: ['Chip'], afterRequestId: 'req-2' },
+        ],
+      }));
+      mockHistoryResponse([
+        { reqid: 'req-1', type: 'human', message: 'hello' },
+        { reqid: 'req-1', type: 'ai', message: 'Hi there!' },
+        { reqid: 'req-2', type: 'human', message: 'shoes' },
+        { reqid: 'req-2', type: 'ai', message: 'Here you go' },
+      ]);
+      const remount = renderPersistentChat();
+      await act(async () => {
+        await Promise.resolve();
+      });
+      const texts = remount.hook.result.current.chats.map((c) => c.messages[0]);
+      expect(texts).toEqual(['hello', 'Hi there!', 'Mid note', 'shoes', 'Here you go', 'Last note']);
+      expect(remount.hook.result.current.suggestions).toEqual(['Chip']);
+    });
+
+    it('ignores injected messages stored under a different chat id', async () => {
+      localStorage.setItem('visenze_shopping_assistant_chat_id_1234', JSON.stringify({ chatId: 'test-chat-id', timestamp: Date.now() }));
+      localStorage.setItem('visenze_shopping_assistant_chat_id_1234__injected', JSON.stringify({
+        chatId: 'some-old-chat',
+        messages: [{ text: 'Stale', afterRequestId: '' }],
+      }));
+      mockHistoryResponse([
+        { reqid: 'req-1', type: 'human', message: 'hello' },
+        { reqid: 'req-1', type: 'ai', message: 'Hi there!' },
+      ]);
+      const remount = renderPersistentChat();
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(remount.hook.result.current.chats.map((c) => c.messages[0])).toEqual(['hello', 'Hi there!']);
+    });
+
+    it('newChat clears the previous conversation\'s stored injected messages', () => {
+      const { hook } = renderPersistentChat();
+      act(() => {
+        hook.result.current.open();
+      });
+      act(() => {
+        hook.result.current.playGreeting('Welcome!');
+      });
+      expect(localStorage.getItem('visenze_shopping_assistant_chat_id_1234__injected')).toContain('Welcome!');
+      act(() => {
+        hook.result.current.newChat();
+      });
+      expect(localStorage.getItem('visenze_shopping_assistant_chat_id_1234__injected')).toBeNull();
+    });
+
     it('newChat mints a fresh chat id and overwrites the stored one, so a later mount never resumes the old conversation', async () => {
       let counter = 0;
       const { hook } = renderPersistentChat({
