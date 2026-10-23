@@ -86,6 +86,68 @@ const persistChatId = (key: string, chatId: string): void => {
   localStorage.setItem(key, JSON.stringify(snapshot));
 };
 
+// A bot message the frontend injected itself (greeting/opening message/openWithMessage) — the
+// backend never sees these, so they're absent from the history endpoint and must be stored here.
+// `afterRequestId` is the marker: the requestId of the last backend message that preceded it
+// ('' = none, i.e. it opened the conversation), so restore can splice it back in at the same spot.
+interface InjectedMessage {
+  text: string;
+  nextSteps?: string[];
+  afterRequestId: string;
+}
+
+interface StoredInjectedMessages {
+  chatId: string;
+  messages: InjectedMessage[];
+}
+
+const loadInjectedMessages = (key: string, chatId: string): InjectedMessage[] => {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) {
+      return [];
+    }
+    const stored = JSON.parse(raw) as StoredInjectedMessages;
+    return stored.chatId === chatId && Array.isArray(stored.messages) ? stored.messages : [];
+  } catch {
+    // Ignore a malformed value: the conversation just restores without its injected messages.
+    return [];
+  }
+};
+
+const persistInjectedMessages = (key: string, chatId: string, messages: InjectedMessage[]): void => {
+  const snapshot: StoredInjectedMessages = { chatId, messages };
+  localStorage.setItem(key, JSON.stringify(snapshot));
+};
+
+// Splices injected messages into the history-derived chats right after the backend message their
+// marker names (or at the very start for ''). A marker that no longer matches anything (e.g.
+// trimmed history) falls back to the end. Returns the chats plus the nextSteps of an injected
+// message that ended up last, since only then are its chips the live suggestions.
+const mergeInjectedMessages = (
+  historyChats: Chat[],
+  injected: InjectedMessage[],
+  chatId: string,
+): { chats: Chat[]; trailingNextSteps: string[] | null } => {
+  const merged = [...historyChats];
+  const insertedAfter = new Map<string, number>();
+  let lastInjected: InjectedMessage | null = null;
+  injected.forEach((entry) => {
+    const alreadyInserted = insertedAfter.get(entry.afterRequestId) ?? 0;
+    insertedAfter.set(entry.afterRequestId, alreadyInserted + 1);
+    let anchor = -1;
+    if (entry.afterRequestId) {
+      anchor = merged.map((c) => c.requestId).lastIndexOf(entry.afterRequestId);
+    }
+    const index = entry.afterRequestId && anchor === -1 ? merged.length : anchor + 1 + alreadyInserted;
+    merged.splice(index, 0, {
+      chatId, requestId: '', author: 'bot', messages: [entry.text], products: [],
+    });
+    lastInjected = index === merged.length - 1 ? entry : null;
+  });
+  return { chats: merged, trailingNextSteps: (lastInjected as InjectedMessage | null)?.nextSteps ?? null };
+};
+
 interface ChatHistoryMessage {
   reqid: string;
   type: string;
@@ -197,6 +259,12 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
   // later render, which the already-created closure has no way to observe, so the deferred send
   // fired with the stale pre-open/pre-newChat id forever, no matter how long it waited.
   const chatIdRef = useRef('');
+  // Injected-message storage lives beside the chat id so both share one lifecycle (see below).
+  const injectedStorageKey = `${chatIdStorageKey}__injected`;
+  // Mirrors the stored list so consecutive injections (state updates are async) append correctly.
+  const injectedMessagesRef = useRef<InjectedMessage[]>([]);
+  // requestId of the last backend message in the live conversation — the marker for injections.
+  const lastRequestIdRef = useRef('');
   // Bumped whenever chatIdRef changes, purely to force a re-render so the exposed `chatId`
   // (which reads off chatIdRef.current) reflects it — never read back out itself.
   const [, setChatIdVersion] = useState(0);
@@ -316,6 +384,9 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
       };
       widgetClient.sendEvent(Actions.RESULT_LOAD, requestMetadata);
       widgetClient.setLastTrackingMeta(requestMetadata);
+    }
+    if (requestId) {
+      lastRequestIdRef.current = requestId;
     }
     setChats((prevChats) => {
       const newChats = [...prevChats];
@@ -708,11 +779,17 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
       restoredSuggestions = extractSuggestions(normalizedText);
     });
 
+    const lastHistoryRequestId = messages[messages.length - 1]?.reqid ?? '';
+    const injected = loadInjectedMessages(injectedStorageKey, chatIdToRestore);
+    const merged = mergeInjectedMessages(restoredChats, injected, chatIdToRestore);
+    injectedMessagesRef.current = injected;
+    lastRequestIdRef.current = lastHistoryRequestId;
+
     return {
-      chats: restoredChats,
+      chats: merged.chats,
       breadcrumbs: restoredBreadcrumbs,
       activeBreadcrumbId: restoredActiveBreadcrumbId,
-      suggestions: restoredSuggestions,
+      suggestions: merged.trailingNextSteps ?? restoredSuggestions,
     };
   };
 
@@ -734,12 +811,14 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
         chatIdRef.current = '';
         setChatIdVersion((v) => v + 1);
         localStorage.removeItem(chatIdStorageKey);
+        localStorage.removeItem(injectedStorageKey);
       })
       .catch((err: unknown) => {
         console.error(err);
         chatIdRef.current = '';
         setChatIdVersion((v) => v + 1);
         localStorage.removeItem(chatIdStorageKey);
+        localStorage.removeItem(injectedStorageKey);
       })
       .finally(() => {
         setIsWaiting(false);
@@ -773,6 +852,12 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     resetReplyState();
     pendingBreadcrumbIdRef.current = null;
     preBreadcrumbActiveIdRef.current = null;
+    // A fresh conversation starts with no injected messages of its own.
+    injectedMessagesRef.current = [];
+    lastRequestIdRef.current = '';
+    if (persistChatEnabled) {
+      localStorage.removeItem(injectedStorageKey);
+    }
     setChats([]);
     setBreadcrumbs([]);
     setActiveBreadcrumb(null);
@@ -835,10 +920,24 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     });
   };
 
+  // Remembers a frontend-injected bot message against the current chat id so a refresh can
+  // restore it alongside the backend history (which never contains it).
+  const recordInjectedMessage = (text: string, nextSteps?: string[]): void => {
+    if (!persistChatEnabled || !chatIdRef.current) {
+      return;
+    }
+    injectedMessagesRef.current = [
+      ...injectedMessagesRef.current,
+      { text, nextSteps, afterRequestId: lastRequestIdRef.current },
+    ];
+    persistInjectedMessages(injectedStorageKey, chatIdRef.current, injectedMessagesRef.current);
+  };
+
   const playGreeting = (text: string): void => {
     if (!text) {
       return;
     }
+    recordInjectedMessage(text);
     // Always show the greeting as a visible chat bubble first (mirrors shopping-assistant's
     // openDialog/newChat opening messages) — speech below is additional narration on top, never a
     // replacement for the text.
@@ -877,8 +976,9 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
   // than one streamed from the backend — same Chat shape playGreeting pushes, plus attaching the
   // given nextSteps as this turn's suggestion chips (clicking one goes through the normal
   // sendMessage flow, same as any other suggestion chip). This message is never sent to the
-  // backend, so unlike a real reply it won't be part of chat history restored after a reload.
+  // backend, so it's stored client-side (recordInjectedMessage) and merged back on restore.
   const pushAssistantMessage = (text: string, nextSteps: string[] = []): void => {
+    recordInjectedMessage(text, nextSteps);
     setChats((prevChats) => [
       ...prevChats,
       {
