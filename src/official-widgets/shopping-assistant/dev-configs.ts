@@ -25,18 +25,8 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     },
     productCard: {
       addToCart: {
-        enable: true,
+        enable: false,
         layout: 'ICON_TEXT',
-        // Add-to-cart options (MC-3037). `field` is a productDetails key or a raw catalog field whose value is an array.
-        // Fields with no values for a product are skipped, so unknown fields are harmless while testing.
-        options: {
-          enable: true,
-          fields: [
-            { field: 'sizes', label: 'Size', layout: 'CAROUSEL', callbackKey: 'size' },
-            { field: 'attributes', label: 'Width', layout: 'RADIO', callbackKey: 'width' }, // catalog maps width → attributes
-            { field: 'colors', label: 'Colour', layout: 'DROPDOWN', callbackKey: 'color' },
-          ],
-        },
       },
     },
   },
