@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- All widgets using the common product card: New `customizations.productCard.addToCart.options` setting (`enable`, plus a list of `fields`) for options the shopper must choose before a product can be added to cart, such as size, width or colour. Each field names a catalog field (or a `displaySettings.productDetails` key) and a `layout`:
+  - `CAROUSEL`: a scrollable row of values, sorted numerically when all the values are numbers.
+  - `RADIO`: radio buttons. A field with more than 3 values falls back to `DROPDOWN`.
+  - `DROPDOWN`: a drop-down list.
+  - `NONE`: the field is ignored.
+
+  Each field can also set a `label` and a `callbackKey`. Clicking Add to Cart opens a pop-up where every shown field must be chosen. Fields with only one value are pre-selected, and fields the product has no values for are skipped; if no fields are left, the product is added directly, as before. The chosen values are passed to `callbacks.onAddToCartToggle` as a new fourth `selectedOptions` argument, keyed by each field's `callbackKey` (or `field` when unset). The option fields are added to `attrs_to_get` automatically. Without `options`, or with `enable: false`, Add to Cart works as before.
+- shopping-assistant, embedded-shopping-assistant, ai-search-launcher: When the chat agent adds a product to cart and that product has add-to-cart options, the same pop-up asks the shopper for the options first, one product at a time. Products without options are added directly, as before.
+- New locale strings `addToCartOptionsPrompt`, `addToCartOptionsSelect`, `addToCartOptionsClose`, `a11yAddToCartOptionsPrev` and `a11yAddToCartOptionsNext`.
 
 ### Fixed
 
@@ -30,6 +39,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.40](https://github.com/visenze/visenze-experiences-web/compare/1.0.39...1.0.40)
+
+<!-- BEGIN visenze-experiences-web 1.0.40 -->
+
+### Fixed
+
+- shopping-assistant, embedded-shopping-assistant, ai-search-launcher: With `customizations.chatbot.persistChatEnabled` on, bot messages injected by the frontend itself (the opening/greeting messages and messages passed to `openWithMessage`) are no longer lost when the page is refreshed. The backend chat history never contains them, so each is now saved in `localStorage` alongside the chat id, together with its suggestion chips and the request ID of the backend turn it followed. On restore it is merged back into the history right after that turn (or at the top if it opened the conversation), and its chips are restored as suggestions when it is the last message. Stored messages follow the chat id's lifecycle: they are cleared when a new chat starts or the session expires. A refresh before the user's first message still starts a fresh chat, as before.
+
+<!-- END visenze-experiences-web 1.0.40 -->
+
+## [1.0.39](https://github.com/visenze/visenze-experiences-web/compare/1.0.38...1.0.39)
+
+<!-- BEGIN visenze-experiences-web 1.0.39 -->
+
+### Fixed
+
+- shopping-assistant: On touch devices (e.g. iOS Safari), the chat input is no longer focused automatically when the dialog opens. The script-driven focus fired while the dialog was still animating in could leave the conversation impossible to scroll after closing and reopening the widget, or after a page refresh with a saved chat, until the user focused and dismissed the keyboard by hand. The input is still auto-focused where the primary pointer is a mouse or trackpad.
+
+<!-- END visenze-experiences-web 1.0.39 -->
+
+## [1.0.38](https://github.com/visenze/visenze-experiences-web/compare/1.0.37...1.0.38)
+
+<!-- BEGIN visenze-experiences-web 1.0.38 -->
+
+### Added
+
+- shopping-assistant, embedded-shopping-assistant, ai-search-launcher: New `customizations.chatbot.attrsToUse` option (e.g. `['description', 'tags']`) to choose which product fields the chat agent's LLM can read, sent as the comma-separated `attrs_to_use` parameter of the shopping-assistant API. Unset or empty, the parameter is not sent and the backend's default fields are used, as before.
+
+- shopping-assistant: The popup trigger button can now show a configurable brand logo, the same way the ai-search-launcher's "AI Mode" entry-point button does. Set `customizations.popup.triggerIcon.url` to a logo image; it renders at its natural aspect ratio (24px tall by default, width following the image up to 240px) instead of being squeezed into a fixed 24x24 icon. New optional `triggerIcon.height`/`width` size the logo in pixels, and `triggerIcon.padding.x`/`padding.y` adjust the space around it (applied only when a logo is shown). `layout` still chooses between `ICON`, `TEXT`, `ICON_TEXT` and `TEXT_ICON`, and `color`/`colorDark` tint the logo — set them to `DEFAULT_ICON_COLOR` to render the logo in its original colors. Without `triggerIcon.url`, the default chat icon is shown as before. Other popup widgets keep their fixed-size trigger icon. New `wigmix-entry-logo` class name on the logo element.
+
+<!-- END visenze-experiences-web 1.0.38 -->
+
 ## [1.0.37](https://github.com/visenze/visenze-experiences-web/compare/1.0.36...1.0.37)
 
 <!-- BEGIN visenze-experiences-web 1.0.37 -->
@@ -38,6 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ai-search-launcher: New `customizations.launcher.askAiEntryIcon` option to brand the "AI Mode" entry-point button with a configurable logo, the same way the popup trigger button works (`url`, plus optional `color`/`colorDark` to tint it; left unset, the logo renders in its original colors at its natural aspect ratio). `layout` (`ICON` — the default when `url` is set — `TEXT`, `ICON_TEXT` or `TEXT_ICON`) chooses whether the logo replaces the button text or sits beside it, and `height`/`width` size the logo in pixels without stretching it (by default a logo-only button keeps the camera button's border and height, with a 32px-tall logo and an even inset on all sides; beside text the logo is 22px); the text itself remains configurable via the `triggerAskAi` locale string. Without `askAiEntryIcon.url`, the button shows "AI Mode" text as before.
 - shopping-assistant, ai-search-launcher, embedded-shopping-assistant: New per-viewport `customizations.productGrid.<mobile|tablet|desktop>.horizontalScroll` option to show chat product results as one horizontally scrollable row instead of a wrapping grid (off by default). `productsPerRow` cards are fully visible at once with a small peek of the neighbouring cards at each edge, `marginHorizontal` sets the space between cards, and round previous/next arrows (hidden at the start/end of the row) move `cardsPerScroll` cards per click (default 2); swipe/trackpad scrolling snaps to cards. The arrows use `customizations.buttons.icon` colors when set, falling back to a white background. New `a11yScrollProductsPrev`/`a11yScrollProductsNext` locale strings label the arrows.
+- Structured, configurable welcome block (`customizations.chatbot.welcomeScreen`: `enabled`, `title`, `intro`, `suggestionsLabel`, `suggestions`, `spokenGreeting`, `spokenGreetingEnabled`) for ai-search-launcher and shopping-assistant, replacing the chat-bubble greeting when enabled; `spokenGreeting` is narrated (not shown) when voice greetings are on.
+- shopping-assistant: New `openWithMessage(message, nextSteps?, options?)` method on the widget client to open the chat with a message from the assistant (not the user) and, optionally, a list of clickable next-step replies. By default the message is appended to the existing conversation; pass `{ newChat: true }` to start a completely new chat instead.
 
 <!-- END visenze-experiences-web 1.0.37 -->
 

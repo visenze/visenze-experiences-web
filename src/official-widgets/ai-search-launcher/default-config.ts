@@ -233,11 +233,14 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
       backgroundColor: '#FFFFFF',
       backgroundColorDark: '#FFFFFF',
     },
+    // Light: white circle, dark icon. Dark: neutral-800 circle, white icon. Also backs the product-scroll
+    // arrows, which sit over product images, so the circle must stay opaque to remain visible there
+    // (and the composer's icon buttons).
     icon: {
       fontColor: '#000000',
       fontColorDark: '#FFFFFF',
-      backgroundColor: 'transparent',
-      backgroundColorDark: 'transparent',
+      backgroundColor: '#FFFFFF',
+      backgroundColorDark: '#262626',
     },
   },
   breadcrumbTrail: {

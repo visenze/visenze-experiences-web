@@ -41,14 +41,12 @@ const ProductGrid: FC<ProductGridProps> = ({
   const intl = useIntl();
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
-  const arrowColor = darkMode
-    ? (customizations.buttons?.icon?.fontColorDark || customizations.generalLayout?.fontColorDark || '')
-    : (customizations.buttons?.icon?.fontColor || customizations.generalLayout?.fontColor || '');
-  // `buttons.icon` isn't defined by every widget, which would leave the arrows transparent over the
-  // product images — fall back to a solid surface instead.
-  const arrowBackground = darkMode
-    ? (customizations.buttons?.icon?.backgroundColorDark || '#FFFFFF')
-    : (customizations.buttons?.icon?.backgroundColor || '#FFFFFF');
+  // Configurable through `buttons.icon`. Widgets that don't define it (shopping-assistant, ESA) fall
+  // back to a white circle with a dark chevron, so the arrows stay visible over product images in
+  // both themes (generalLayout's dark-mode font color is white, which would vanish on white).
+  const buttonIcon = customizations.buttons?.icon;
+  const arrowColor = (darkMode ? buttonIcon?.fontColorDark : buttonIcon?.fontColor) || '#000000';
+  const arrowBackground = (darkMode ? buttonIcon?.backgroundColorDark : buttonIcon?.backgroundColor) || '#FFFFFF';
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);

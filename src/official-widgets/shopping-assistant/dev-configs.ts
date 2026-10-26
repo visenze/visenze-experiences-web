@@ -6,10 +6,10 @@ const customCss = `
 
 export const devConfigs: RecursivePartial<WidgetConfig> = {
   appSettings: {
-   appKey: 'fe494a80881d401bbfa23e1581d17a2c',
-    placementId: '6889',
-    endpoint: 'https://search-dev.visenze.com', // staging search API (app created in the staging console)
-    // cloud: 'aws', // only for production apps; leave unset for staging
+    appKey: '',
+    placementId: '',
+    endpoint: '',
+    //cloud: 'aws', // remove this if you are testing in staging environment
   },
   displaySettings: {
     cssSelector: '.shopping-assistant-widget',

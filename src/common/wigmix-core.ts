@@ -376,6 +376,15 @@ export interface WidgetClient {
    * @since 1.0.14
    */
   sendChatMessage: (message: string, image?: SearchImageOrPid) => void;
+  /**
+   * Opens the chat with a message from the assistant (not the user) and, optionally, a list of
+   * clickable next-step replies; applicable only for widget types that have chatbox-like
+   * interface. By default the message is appended to the existing conversation — pass
+   * `{ newChat: true }` to start a completely new chat instead.
+   *
+   * @since 1.0.37
+   */
+  openWithMessage: (message: string, nextSteps?: string[], options?: { newChat?: boolean }) => void;
 }
 
 type ViewportType = 'mobile' | 'tablet' | 'desktop';
@@ -650,40 +659,40 @@ export interface TrendingProduct {
  * - RADIO: radio buttons (suited to short lists; more than 3 values fall back to DROPDOWN)
  * - DROPDOWN: drop-down list
  *
- * @since 1.0.38
+ * @since 1.0.41
  */
 export type AddToCartOptionLayout = 'NONE' | 'CAROUSEL' | 'RADIO' | 'DROPDOWN';
 
 /**
  * One add-to-cart option field.
  *
- * @since 1.0.38
+ * @since 1.0.41
  */
 export interface AddToCartOptionField {
   /**
    * Key in `displaySettings.productDetails` (e.g. `sizes`, `colors`) or a raw catalog field name.
    * Resolved as `productDetails[field] || field`. The product's value for it is an array of values, or a single value (used as is, never split).
    *
-   * @since 1.0.38
+   * @since 1.0.41
    */
   field: string;
   /**
    * How the field is rendered. `NONE` means the field is ignored (not shown, not mandatory, not sent).
    *
-   * @since 1.0.38
+   * @since 1.0.41
    */
   layout: AddToCartOptionLayout;
   /**
    * Label shown above the field. Falls back to `field`.
    *
-   * @since 1.0.38
+   * @since 1.0.41
    */
   label?: string;
   /**
    * Key used for this field's value in the `selectedOptions` callback argument. Falls back to `field`.
    * Use it when the cart / vendor hook expects a different name than the catalog field.
    *
-   * @since 1.0.38
+   * @since 1.0.41
    */
   callbackKey?: string;
 }
@@ -691,19 +700,19 @@ export interface AddToCartOptionField {
 /**
  * Configuration for the add-to-cart options.
  *
- * @since 1.0.38
+ * @since 1.0.41
  */
 export interface AddToCartOptions {
   /**
    * Whether the add-to-cart options are enabled.
    *
-   * @since 1.0.38
+   * @since 1.0.41
    */
   enable: boolean;
   /**
    * The option fields, in display order. Every field whose layout is not `NONE` is mandatory.
    *
-   * @since 1.0.38
+   * @since 1.0.41
    */
   fields: AddToCartOptionField[];
 }
@@ -980,7 +989,7 @@ export interface WidgetConfig {
      * @param productDetails (optional) Additional details of the product
      * @param selectedOptions (optional) Values the shopper chose in the add-to-cart options panel, keyed by each
      * field's `callbackKey` (or `field` when unset). Only passed when `customizations.productCard.addToCart.options`
-     * is enabled and at least one option was shown. Available since 1.0.38.
+     * is enabled and at least one option was shown. Available since 1.0.41.
      *
      * @since 1.0.18
      */
@@ -1148,6 +1157,28 @@ export interface WidgetConfig {
          * @since 1.0.4
          */
         layout: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
+        /**
+         * (optional) Logo sizing, for widgets whose trigger button shows `url` as a brand logo
+         * (currently the shopping assistant) rather than a fixed 24x24 icon. The logo keeps its
+         * natural aspect ratio: it defaults to 24px tall with its width following the image (up
+         * to 240px). `height` and `width` size it in pixels. `color`/`colorDark` tint the logo
+         * (as a mask); set them to `DEFAULT_ICON_COLOR` to render the image as-is.
+         *
+         * `padding.x` (left/right) and `padding.y` (top/bottom) override the space between the
+         * button's edge and its contents, in pixels; they apply only when a logo is shown.
+         *
+         * The button's accessible name is always the trigger text, whatever the layout.
+         *
+         * Ignored by widgets that render `url` as a fixed-size icon.
+         *
+         * @since 1.0.38
+         */
+        height?: number;
+        width?: number;
+        padding?: {
+          x?: number;
+          y?: number;
+        };
       };
     };
     /**
@@ -1515,7 +1546,7 @@ export interface WidgetConfig {
          *
          * Treated as disabled when missing or when `enable` is false.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         options?: AddToCartOptions;
       };
@@ -1679,6 +1710,87 @@ export interface WidgetConfig {
        * @since 1.0.14
        */
       chatAgent?: string;
+      /**
+       * (optional) Product metadata fields the chat agent's LLM may read when answering, sent
+       * as the comma-separated `attrs_to_use` parameter of the shopping-assistant API (e.g.
+       * `['description', 'tags']`). Values are catalog field names. Unlike
+       * `searchSettings.attrs_to_get`, which only controls the fields returned to the widget for
+       * display, this controls what the bot can see and reason about.
+       *
+       * When unset or empty, the parameter is not sent and the backend's default fields are used
+       * (title, price, gender, category, brand, sizes and colors). Supported by every widget using
+       * the common chat module (shopping-assistant, embedded-shopping-assistant,
+       * ai-search-launcher).
+       *
+       * @since 1.0.38
+       */
+      attrsToUse?: string[];
+      /**
+       * (optional) Structured welcome screen shown at the top of an empty conversation, in place
+       * of the plain chat-bubble greeting: a main message (`title`), an introduction (`intro`)
+       * and a labelled list of starter suggestion chips. Supported by every widget using the
+       * common chat window (ai-search-launcher, shopping-assistant).
+       *
+       * The block is not part of the chat history. It disappears once the user sends their first
+       * message (typed, or by clicking a chip — a chip is sent as a normal message) and is not
+       * shown again when an existing conversation is resumed. While `enabled` is true it replaces
+       * the widget's own opening greeting (`launcher.greetings.ai` for ai-search-launcher, the
+       * `openingMessage1`/`openingMessage2` texts for shopping-assistant); use `spokenGreeting` to still
+       * narrate a custom welcome.
+       *
+       * @since 1.0.37
+       */
+      welcomeScreen?: {
+        /**
+         * Turns the structured welcome on. Defaults to `false`, keeping the widget's existing
+         * greeting.
+         *
+         * @since 1.0.37
+         */
+        enabled?: boolean;
+        /**
+         * Main welcome message, rendered as the heading (e.g. `Hi, I'm Fitzy 👋`). Emoji can be
+         * included directly in the text.
+         *
+         * @since 1.0.37
+         */
+        title?: string;
+        /**
+         * Introduction paragraph rendered under the title.
+         *
+         * @since 1.0.37
+         */
+        intro?: string;
+        /**
+         * Small label rendered above the suggestion chips (e.g. `Not sure where to start? Ask
+         * Fitzy`). Hidden when `suggestions` is empty.
+         *
+         * @since 1.0.37
+         */
+        suggestionsLabel?: string;
+        /**
+         * Starter suggestion chips. Clicking one sends its text as the user's message. Arrays
+         * replace (not merge) when overridden.
+         *
+         * @since 1.0.37
+         */
+        suggestions?: string[];
+        /**
+         * Optional spoken welcome greeting. Narration only — it is never shown as a chat bubble or
+         * added to chat history. Spoken when the chat opens (or a new chat starts) with the welcome
+         * block visible, if `voiceGreetingEnabled` is on and voice isn't muted. Not spoken when
+         * resuming an existing conversation. Leave unset or empty for no narration.
+         *
+         * @since 1.0.37
+         */
+        spokenGreeting?: string;
+        /**
+         * Set to `false` to silence `spokenGreeting` without removing its text. Defaults to `true`.
+         *
+         * @since 1.0.37
+         */
+        spokenGreetingEnabled?: boolean;
+      };
       /**
        * (optional) Master toggle for voice capability throughout this widget's chat surface:
        * recording, spoken replies/greetings, the in-chat microphone button, and the mute/unmute

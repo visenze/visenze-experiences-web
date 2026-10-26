@@ -5,6 +5,7 @@ import NewChatIcon from './icons/NewChatIcon';
 import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import useChat, { type UseChatResult } from '../../common/components/chat/use-chat';
+import { getWelcomeSpokenGreeting, isWelcomeEnabled } from '../../common/components/chat/WelcomeBlock';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
@@ -28,6 +29,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const breakpoint = useBreakpoint();
   const [widgetOpenTrigger, setWidgetOpenTrigger] = useState(0);
   const [sendChatTrigger, setSendChatTrigger] = useState<[string, SearchImageOrPid | undefined]>();
+  const [openWithMessageTrigger, setOpenWithMessageTrigger] = useState<[string, string[] | undefined, { newChat?: boolean } | undefined]>();
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
   const chatInputRef = useRef<HTMLInputElement>(null);
   const intl = useIntl();
@@ -45,6 +47,13 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   // concept of their own — only a single-string playGreeting.
   const [isOpening, setIsOpening] = useState(false);
   const playOpeningSequence = (): void => {
+    // The structured welcome (customizations.chatbot.welcomeScreen) replaces this scripted opening;
+    // only its own optional message is narrated (never added to chat history; speakText ignores '').
+    const welcome = customizations.chatbot?.welcomeScreen;
+    if (isWelcomeEnabled(welcome)) {
+      chat.speakText(getWelcomeSpokenGreeting(welcome));
+      return;
+    }
     setIsOpening(true);
     window.setTimeout(() => {
       chat.playGreeting(openingMessages[0]);
@@ -180,6 +189,12 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     // nothing is focused yet). A same-tick focus call here loses that race. Deferring to a
     // macrotask runs after react-modal's own focus handling has settled, so this call wins.
     const timeoutId = window.setTimeout(() => {
+      // Only auto-focus where the primary pointer is a mouse/trackpad. On touch devices a
+      // script-driven focus() fired while the dialog is still animating in left iOS Safari
+      // unable to scroll the conversation until the input was focused and blurred again by hand.
+      if (!window.matchMedia?.('(pointer: fine)').matches) {
+        return;
+      }
       chatInputRef.current?.focus();
     }, 0);
     return (): void => window.clearTimeout(timeoutId);
@@ -202,6 +217,24 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   }, [sendChatTrigger]);
 
   useEffect(() => {
+    if (!openWithMessageTrigger) {
+      return;
+    }
+    const [message, nextSteps, options] = openWithMessageTrigger;
+    if (options?.newChat) {
+      chat.newChat();
+    } else if (!chat.chatId) {
+      // No session yet: mint one via open() directly (skipping openDialog()'s
+      // playOpeningSequence) so only the caller's own message shows, per the client's requirement.
+      chat.open();
+    } else {
+      chat.reopen();
+    }
+    setDialogVisible(true);
+    chat.pushAssistantMessage(message, nextSteps);
+  }, [openWithMessageTrigger]);
+
+  useEffect(() => {
     widgetClient.registerWidgetOpener(() => {
       setWidgetOpenTrigger(Math.random());
     });
@@ -211,6 +244,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     widgetClient.sendChatMessage = ((msg, img): void => {
       setSendChatTrigger([msg, img]);
     });
+    widgetClient.openWithMessage = (message, nextSteps, options): void => {
+      setOpenWithMessageTrigger([message, nextSteps, options]);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -225,6 +261,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                             text={intl.formatMessage({ id: 'triggerCTA' })}
                             darkMode={darkMode}
                             onClick={onChatButtonClick}
+                            brandLogo
                             defaultIcon={
                               <NewChatIcon
                                   color={darkMode

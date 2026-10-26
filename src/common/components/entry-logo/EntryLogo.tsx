@@ -9,7 +9,7 @@ interface EntryLogoProps {
   className?: string;
 }
 
-// A configured brand logo for an entry-bar button. Unlike CustomizableIcon (a fixed-size box), it
+// A configured brand logo for an entry-point button. Unlike CustomizableIcon (a fixed-size box), it
 // keeps the image's natural aspect ratio, since entry logos are often wide wordmarks. A tint is
 // applied as a mask over an invisible copy of the image that still provides the sizing.
 const EntryLogo: FC<EntryLogoProps> = ({ url, color, height, width, className }): ReactElement => {

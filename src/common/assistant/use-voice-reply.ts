@@ -34,7 +34,7 @@ export interface UseVoiceReplyResult {
   isVoiceReadingEnabledNow: () => boolean;
   beginReply: () => boolean;
   updateLatestMessage: (text: string) => void;
-  speak: (text: string, revealTarget: number, productId: string | null) => boolean;
+  speak: (text: string, revealTarget: number, productId: string | null, narration?: boolean) => boolean;
   hasPendingSpeech: () => boolean;
   deferCommit: (commit: () => void) => void;
   forceRevealTypewriter: (text: string) => void;
@@ -156,6 +156,14 @@ const useVoiceReply = ({
         : 30;
       setVoiceRevealDelayMs(delay);
       setVoiceRevealTarget(revealTarget);
+      // Reveal the first character in the same batch that clears the loading dots; left to the
+      // reveal interval (see the effect above) the text would only appear one interval tick
+      // (up to 80ms) later, leaving a visible gap with neither dots nor text.
+      if (typewriterTextRef.current.length === 0 && latestMessageRef.current) {
+        const initial = latestMessageRef.current.slice(0, Math.min(1, revealTarget));
+        typewriterTextRef.current = initial;
+        setTypewriterText(initial);
+      }
       setIsWaiting(false);
       setIsSpeechPlaying(true);
       setFocusedProductId(productId);
@@ -166,7 +174,20 @@ const useVoiceReply = ({
       setTypewriterText(revealed);
       setIsSpeechPlaying(false);
     },
-    onSpeechQueueEnd: (): void => {
+    onSpeechQueueEnd: (narrationOnly): void => {
+      if (narrationOnly) {
+        // A greeting finished (possibly while a reply is already streaming in behind it). Only a
+        // reply commit that was waiting on the audio to drain may be released; the rest of the
+        // reply state (loading dots, reveal) belongs to the reply's own speech and must not be
+        // touched here, or the typing indicator disappears before the reply has started.
+        const waitingCommit = pendingResponseCommitRef.current;
+        if (waitingCommit) {
+          pendingResponseCommitRef.current = null;
+          setIsWaiting(false);
+          waitingCommit();
+        }
+        return;
+      }
       setIsSpeechPlaying(false);
       setIsWaiting(false);
       setFocusedProductId(null);
@@ -281,7 +302,11 @@ const useVoiceReply = ({
     hasVoiceError,
     hasSpeechOutputError,
     isVoiceReadingEnabled,
-    typewriterText,
+    // A typed reply has no reveal animation: the effect above only copies latestMessage into
+    // typewriterText one render late, which left a frame with the loading dots gone (isWaiting
+    // false) but no text yet. Returning latestMessage directly closes that gap; only a voice reply
+    // needs the audio-paced typewriterText.
+    typewriterText: isVoiceReply ? typewriterText : latestMessage,
     isSpeechPlaying,
     focusedProductId,
     startVoiceRecording,

@@ -184,6 +184,118 @@ describe('shopping-assistant', () => {
   });
 
   // ============================================================
+  // Trigger button brand logo
+  // ============================================================
+
+  describe('trigger button brand logo', () => {
+    const LOGO_URL = 'https://example.com/brand.svg';
+    type Popup = NonNullable<WidgetConfig['customizations']['popup']>;
+
+    const renderWithTriggerIcon = (triggerIcon: Partial<Popup['triggerIcon']>): HTMLElement => {
+      const popup = DEFAULT_CUSTOMIZATIONS.popup as Popup;
+      renderAssistant({}, 'en', {}, { popup: { ...popup, triggerIcon: { ...popup.triggerIcon, ...triggerIcon } } });
+      return testComponent.getByRole('button', { name: texts['en']['triggerCTA'] });
+    };
+
+    it('replaces the default icon with the configured logo, keeping the accessible name', () => {
+      const button = renderWithTriggerIcon({ url: LOGO_URL });
+      expect(button.querySelector('.wigmix-entry-logo')).toBeTruthy();
+      expect(button.querySelector('.wigmix-popup-trigger-icon.default')).toBeNull();
+      expect(button.textContent).not.toContain(texts['en']['triggerCTA']);
+    });
+
+    it('places the text before or after the logo per layout', () => {
+      const button = renderWithTriggerIcon({ url: LOGO_URL, layout: 'TEXT_ICON' });
+      expect(button.firstElementChild?.className).toContain('wigmix-popup-trigger-text');
+      expect(button.lastElementChild?.className).toContain('wigmix-entry-logo');
+    });
+
+    it('shows text only for the TEXT layout', () => {
+      const button = renderWithTriggerIcon({ url: LOGO_URL, layout: 'TEXT' });
+      expect(button.querySelector('.wigmix-entry-logo')).toBeNull();
+      expect(button.textContent).toBe(texts['en']['triggerCTA']);
+    });
+
+    it('sizes the logo by height (24px by default) and width, keeping its aspect ratio otherwise', () => {
+      const defaultButton = renderWithTriggerIcon({ url: LOGO_URL, color: 'DEFAULT_ICON_COLOR' });
+      const defaultLogo = defaultButton.querySelector('img') as HTMLImageElement;
+      expect(defaultLogo.style.height).toBe('24px');
+      expect(defaultLogo.className).toContain('max-w-[240px]');
+      testComponent.unmount();
+
+      const sizedButton = renderWithTriggerIcon({ url: LOGO_URL, color: 'DEFAULT_ICON_COLOR', height: 40, width: 113 });
+      const sizedLogo = sizedButton.querySelector('img') as HTMLImageElement;
+      expect(sizedLogo.style.height).toBe('40px');
+      expect(sizedLogo.style.width).toBe('113px');
+      expect(sizedLogo.className).not.toContain('max-w-[240px]');
+    });
+
+    it('renders the image as-is with DEFAULT_ICON_COLOR, or tints it with color', () => {
+      const plainButton = renderWithTriggerIcon({ url: LOGO_URL, color: 'DEFAULT_ICON_COLOR' });
+      expect(plainButton.querySelector('img.wigmix-entry-logo')).toBeTruthy();
+      testComponent.unmount();
+
+      const tintedButton = renderWithTriggerIcon({ url: LOGO_URL, color: '#ff0000' });
+      const mask = tintedButton.querySelector('.wigmix-entry-logo > span') as HTMLElement;
+      expect(mask.style.backgroundColor).toBe('rgb(255, 0, 0)');
+    });
+
+    it('applies the configured padding only when a logo is shown', () => {
+      const logoButton = renderWithTriggerIcon({ url: LOGO_URL, padding: { x: 10, y: 4 } });
+      expect(logoButton.style.paddingLeft).toBe('10px');
+      expect(logoButton.style.paddingTop).toBe('4px');
+      testComponent.unmount();
+
+      const iconButton = renderWithTriggerIcon({ padding: { x: 10, y: 4 } });
+      expect(iconButton.style.paddingLeft).toBe('');
+      expect(iconButton.style.paddingTop).toBe('');
+    });
+  });
+
+  // ============================================================
+  // Chat input auto-focus on open
+  // ============================================================
+
+  describe('chat input auto-focus on open', () => {
+    const originalMatchMedia = window.matchMedia;
+
+    const mockPointer = (pointerFine: boolean): void => {
+      window.matchMedia = jest.fn().mockImplementation((query: string) => ({
+        matches: pointerFine && query === '(pointer: fine)',
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+      }));
+    };
+
+    const chatInput = (): HTMLElement => testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true });
+
+    afterEach(() => {
+      window.matchMedia = originalMatchMedia;
+    });
+
+    it('focuses the chat input when the primary pointer is a mouse or trackpad', () => {
+      mockPointer(true);
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(document.activeElement).toBe(chatInput());
+    });
+
+    // Regression: on iOS a script-driven focus() while the dialog animates in left the
+    // conversation unscrollable until the user focused and blurred the input by hand.
+    it('does not focus the chat input on touch devices', () => {
+      mockPointer(false);
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(chatInput()).toBeTruthy();
+      expect(document.activeElement).not.toBe(chatInput());
+    });
+  });
+
+  // ============================================================
   // Core rendering
   // ============================================================
 
@@ -713,6 +825,81 @@ describe('shopping-assistant', () => {
       const options = mockFetchEventSource.mock.calls[0][1];
       const body = options.body as FormData;
       expect(body.get('image')).toBeTruthy();
+    });
+
+    describe('openWithMessage', () => {
+      const MSG = 'Seems you are lost. How can I help you?';
+
+      it('opens the dialog with the assistant message and next-step buttons, without the scripted opening greeting, when there is no existing session', () => {
+        const { widgetClient, mockVisearchClient } = renderAssistant();
+
+        act(() => {
+          widgetClient.openWithMessage(MSG, ['Looking for my order', 'Looking for an item']);
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(getTextInBody(MSG)).toBeTruthy();
+        expect(getTextInBody('Looking for my order')).toBeTruthy();
+        expect(getTextInBody('Looking for an item')).toBeTruthy();
+        expect(getTextInBody(texts['en']['openingMessage1'])).toBeNull();
+        expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      });
+
+      it('appends to the existing conversation by default, without resetting it', () => {
+        const { widgetClient, mockVisearchClient } = renderAssistant();
+        openDialogAndWait();
+        expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+        (mockVisearchClient.generateUuid as jest.Mock).mockClear();
+
+        act(() => {
+          widgetClient.openWithMessage(MSG, ['Looking for my order']);
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+        expect(getTextInBody(MSG)).toBeTruthy();
+        expect(mockVisearchClient.generateUuid).not.toHaveBeenCalled();
+      });
+
+      it('starts a completely new chat when options.newChat is true, discarding the previous conversation', () => {
+        const { widgetClient, mockVisearchClient } = renderAssistant();
+        openDialogAndWait();
+        expect(getTextInBody(texts['en']['openingMessage1'])).toBeTruthy();
+        (mockVisearchClient.generateUuid as jest.Mock).mockClear();
+
+        act(() => {
+          widgetClient.openWithMessage(MSG, ['Looking for my order'], { newChat: true });
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(getTextInBody(texts['en']['openingMessage1'])).toBeNull();
+        expect(getTextInBody(MSG)).toBeTruthy();
+        expect(mockVisearchClient.generateUuid).toHaveBeenCalledTimes(1);
+      });
+
+      it('sends a clicked next-step button as a normal chat message', () => {
+        const { widgetClient } = renderAssistant();
+
+        act(() => {
+          widgetClient.openWithMessage(MSG, ['Looking for my order']);
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
+        act(() => {
+          fireEvent.click(getTextInBody('Looking for my order') as HTMLElement);
+        });
+
+        expect(mockFetchEventSource).toHaveBeenCalled();
+        const url = mockFetchEventSource.mock.calls[0][0] as string;
+        expect(decodeURIComponent(url.replace(/\+/g, ' '))).toContain('Looking for my order');
+      });
     });
   });
 

@@ -312,6 +312,35 @@ Similarly, a programmatic way to close widgets that have popup behavior is avail
 visenzeWidget.closeWidget();
 ```
 
+### Sending chat messages and opening the chat with a message
+
+For widgets with a chatbox-like interface (e.g. `shopping-assistant`), you can send a message on behalf of the user
+with the `sendChatMessage` method, optionally together with an image (URL or product ID):
+
+```ts
+visenzeWidget.sendChatMessage('red sneakers');
+```
+
+To open the chat with a message from the **assistant** instead (e.g. a proactive greeting or a follow-up prompt from your page),
+use the `openWithMessage` method (available since 1.0.37, `shopping-assistant` only; it is a no-op in other widgets):
+
+```ts
+// message only
+visenzeWidget.openWithMessage('Hi! I can help you find the perfect outfit.');
+
+// message with clickable next-step replies; clicking one sends it as a user message
+visenzeWidget.openWithMessage('What are you shopping for today?', ['Summer dresses', 'Running shoes', 'Gift ideas']);
+
+// start a completely new chat instead of appending to the existing conversation
+visenzeWidget.openWithMessage('Starting fresh! How can I help?', ['Browse new arrivals'], { newChat: true });
+```
+
+| Parameter           | Explanation                                                                                       |
+|---------------------|---------------------------------------------------------------------------------------------------|
+| `message`           | The text shown as an assistant message.                                                           |
+| `nextSteps`         | Optional list of suggested replies shown as clickable chips below the message.                    |
+| `options.newChat`   | Optional. When `true`, discards the current conversation first; by default the message is appended. |
+
 ### Sending custom events
 
 ViSenze widgets by default send pre-defined events such as result load, product view, and product click in relevant situations.

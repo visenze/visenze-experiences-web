@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import ChatWindow from './ChatWindow';
 import type { Chat } from './use-chat';
@@ -128,5 +128,48 @@ describe('ChatWindow scrollAnchor', () => {
     rerender(buildChatWindowTree(grownChats, false, 'top'));
 
     expect(log.scrollTop).toBe(0);
+  });
+});
+
+describe('ChatWindow structured welcome', () => {
+  const welcomeConfig = createWidgetConfig({
+    ...DEFAULT_CUSTOMIZATIONS,
+    chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, welcomeScreen: { enabled: true, title: 'Hi, I\'m Fitzy', intro: 'Intro', suggestions: ['Chip A'] } },
+  });
+  const renderWelcome = (chats: Chat[], sendMessage = jest.fn()): ReturnType<typeof render> => render(
+    <WidgetDataContext.Provider value={{ widgetConfig: welcomeConfig, widgetClient, darkMode: false, locale: 'en' }}>
+      <IntlProvider messages={messages} locale='en' defaultLocale='en'>
+        <ChatWindow
+          isWaiting={false}
+          chats={chats}
+          latestMessage=''
+          suggestions={[]}
+          showAllSuggestions={false}
+          setShowAllSuggestions={jest.fn()}
+          sendMessage={sendMessage}
+          wishlistPids={[]}
+          setIsInWishlist={jest.fn()}
+          pwPrefix='test'
+        />
+      </IntlProvider>
+    </WidgetDataContext.Provider>,
+  );
+
+  it('shows the welcome in an empty conversation and sends a clicked chip as a message', () => {
+    const sendMessage = jest.fn();
+    renderWelcome([], sendMessage);
+    expect(screen.getByText('Hi, I\'m Fitzy')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Chip A' }));
+    expect(sendMessage).toHaveBeenCalledWith('Chip A');
+  });
+
+  it('hides the welcome once the user has sent a message', () => {
+    renderWelcome([createChat({ author: 'user', messages: ['hello'] })]);
+    expect(screen.queryByText('Hi, I\'m Fitzy')).toBeNull();
+  });
+
+  it('does not show the welcome when it is not configured', () => {
+    renderChatWindow([]);
+    expect(screen.queryByText('Hi, I\'m Fitzy')).toBeNull();
   });
 });

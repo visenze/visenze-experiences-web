@@ -61,6 +61,7 @@ const createMockChat = (overrides: Partial<UseChatResult> = {}): UseChatResult =
   hasPendingSpeech: jest.fn(() => false),
   playGreeting: jest.fn(),
   speakText: jest.fn(),
+  pushAssistantMessage: jest.fn(),
   breadcrumbs: [],
   activeBreadcrumbId: null,
   setActiveBreadcrumb: jest.fn(),
