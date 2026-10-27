@@ -3,7 +3,6 @@ import {
   getInitialSelection,
   isSelectionComplete,
   resolveOptionFields,
-  stripTrailingProductCode,
 } from './add-to-cart-options';
 import type { ProcessedProduct } from '../../types/product';
 import { getOptionValues } from '../../utils';
@@ -99,36 +98,6 @@ describe('add-to-cart-options', () => {
         fields: [{ field: 'missing_field', layout: 'DROPDOWN' }, { field: 'colors', layout: 'DROPDOWN' }],
       };
       expect(resolveOptionFields(product, productDetails, options).map((field) => field.key)).toEqual(['colors']);
-    });
-  });
-
-  describe('stripTrailingProductCode', () => {
-    const shirt: ProcessedProduct = { product_id: 'CA091919BW', im_url: 'img', sku: 'AB-1234' };
-
-    it('drops a trailing word that is the product id or one of its field values', () => {
-      expect(stripTrailingProductCode('Premium Light Mature Casual Solid Color Shirt CA091919BW', shirt))
-        .toBe('Premium Light Mature Casual Solid Color Shirt');
-      expect(stripTrailingProductCode('Casual Sneakers ab-1234', shirt)).toBe('Casual Sneakers');
-    });
-
-    it('drops a trailing word that looks like a code, even when it is not in the product data', () => {
-      expect(stripTrailingProductCode('Premium Light Mature Casual Solid Color Shirt CA091919BW'))
-        .toBe('Premium Light Mature Casual Solid Color Shirt');
-      expect(stripTrailingProductCode('Slim Fit Chinos XY-2024-77')).toBe('Slim Fit Chinos');
-      expect(stripTrailingProductCode('Sony Headphones WH1000XM5')).toBe('Sony Headphones');
-    });
-
-    it('keeps short or lowercase model names', () => {
-      expect(stripTrailingProductCode('Nike Air Max 90')).toBe('Nike Air Max 90');
-      expect(stripTrailingProductCode('Samsung Galaxy S24')).toBe('Samsung Galaxy S24');
-      expect(stripTrailingProductCode('Oversized Tee XL')).toBe('Oversized Tee XL');
-      expect(stripTrailingProductCode('Casual Shirt ca091919bw')).toBe('Casual Shirt ca091919bw');
-      expect(stripTrailingProductCode('Blue Flower Pattern Casual Shirts S/S.')).toBe('Blue Flower Pattern Casual Shirts S/S.');
-    });
-
-    it('never cuts the title down to fewer than two words', () => {
-      expect(stripTrailingProductCode('Shirt CA091919BW', shirt)).toBe('Shirt CA091919BW');
-      expect(stripTrailingProductCode('CA091919BW', shirt)).toBe('CA091919BW');
     });
   });
 

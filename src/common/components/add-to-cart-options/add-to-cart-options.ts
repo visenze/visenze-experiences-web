@@ -81,29 +81,3 @@ export const getOptionsProductTitle = (product: ProcessedProduct, productDetails
   const title = product[productDetails['title'] || 'title'];
   return typeof title === 'string' ? title : '';
 };
-
-const MIN_CODE_LENGTH = 6;
-
-// Looks like a catalog code: only uppercase letters, digits, '-' or '_', with both letters and
-// digits, at least MIN_CODE_LENGTH characters (e.g. "CA091919BW"). Short model names such as "90",
-// "S24" or "XL" don't qualify.
-const looksLikeProductCode = (word: string): boolean => (
-  word.length >= MIN_CODE_LENGTH && /^[A-Z0-9_-]+$/.test(word) && /[A-Z]/.test(word) && /\d/.test(word)
-);
-
-// Catalog titles often end with the product code (e.g. "Casual Shirt CA091919BW"), which reads
-// badly in the prompt. The trailing word is dropped when it looks like a code, or when it equals
-// the product id or another of the product's own field values (e.g. a SKU field). At least two
-// words of the name must remain, so a title is never cut down to a single word.
-export const stripTrailingProductCode = (title: string, product?: ProcessedProduct): string => {
-  const trimmed = title.trim();
-  const match = trimmed.match(/^(.*\S)\s+(\S+)$/);
-  if (!match || match[1].split(/\s+/).length < 2) {
-    return trimmed;
-  }
-  const word = match[2];
-  const isProductFieldValue = !!product && Object.values(product).some((value) => (
-    (typeof value === 'string' || typeof value === 'number') && String(value).trim().toLowerCase() === word.toLowerCase()
-  ));
-  return looksLikeProductCode(word) || isProductFieldValue ? match[1] : trimmed;
-};

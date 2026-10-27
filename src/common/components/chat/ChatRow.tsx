@@ -133,7 +133,7 @@ const ChatRow: FC<ChatRowProps> = ({
         )
       )}
       {chat.author === 'options' && (
-        <ChatAddToCartOptions products={chat.products || []} requestId={chat.requestId} />
+        <ChatAddToCartOptions entry={chat} />
       )}
     </div>
   );

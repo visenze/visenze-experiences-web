@@ -2,7 +2,7 @@ import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, useContext, useEffect, useId, useState } from 'react';
 import { useIntl } from 'react-intl';
 import {
-  getInitialSelection, isSelectionComplete, type ResolvedOptionField, stripTrailingProductCode,
+  getInitialSelection, isSelectionComplete, type ResolvedOptionField,
 } from './add-to-cart-options';
 import OptionCarousel from './OptionCarousel';
 import OptionDropdown from './OptionDropdown';
@@ -11,21 +11,18 @@ import { FOCUS_VISIBLE_CLASSES } from '../../constants';
 import CartIcon from '../../icons/CartIcon';
 import CloseIcon from '../../icons/CloseIcon';
 import { WidgetDataContext } from '../../types/contexts';
-import type { ProcessedProduct } from '../../types/product';
 import type { WidgetConfig } from '../../wigmix-core';
 import AddToCartButton from '../product-card/AddToCartButton';
 
 interface AddToCartOptionsPanelProps {
   productTitle: string;
-  // Used to recognise a product code at the end of the title (see stripTrailingProductCode).
-  product?: ProcessedProduct;
   fields: ResolvedOptionField[];
   onConfirm: (selectedOptions: Record<string, string>) => Promise<void>;
   // Close button and Escape.
   onClose: () => void;
 }
 
-const AddToCartOptionsPanel: FC<AddToCartOptionsPanelProps> = ({ productTitle, product, fields, onConfirm, onClose }) => {
+const AddToCartOptionsPanel: FC<AddToCartOptionsPanelProps> = ({ productTitle, fields, onConfirm, onClose }) => {
   const intl = useIntl();
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
@@ -91,7 +88,7 @@ const AddToCartOptionsPanel: FC<AddToCartOptionsPanelProps> = ({ productTitle, p
     >
       <div className='flex items-start gap-2'>
         <p id={promptId} className='wigmix-add-to-cart-options-prompt m-0 flex-1'>
-          {intl.formatMessage({ id: 'addToCartOptionsPrompt' }, { product: stripTrailingProductCode(productTitle, product) })}
+          {intl.formatMessage({ id: 'addToCartOptionsPrompt' }, { product: productTitle })}
         </p>
         <button
           type='button'

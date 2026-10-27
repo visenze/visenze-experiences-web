@@ -439,7 +439,7 @@ describe('ProductCard', () => {
       widgetConfig.displaySettings.productDetails['sizes'] = 'size_field';
     });
 
-    it('calls onAddToCartToggle directly and tracks add_to_cart when options are disabled', async () => {
+    it('calls onAddToCartToggle directly and does not send add_to_cart when options are disabled', async () => {
       const onAddToCartToggle = jest.fn(() => Promise.resolve(true));
       widgetConfig.callbacks.onAddToCartToggle = onAddToCartToggle;
       renderCard({ ...testProduct, size_field: ['8', '9'] });
@@ -450,7 +450,7 @@ describe('ProductCard', () => {
 
       expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'test_pid', expect.objectContaining({ product_id: 'test_pid' }));
       expect(testComponent.queryByTestId('wigmix-add-to-cart-options')).toBeNull();
-      expect(sendEventSpy).toHaveBeenCalledWith('add_to_cart', expect.objectContaining({ pid: 'test_pid', queryId: 'test-query-id' }));
+      expect(sendEventSpy).not.toHaveBeenCalledWith('add_to_cart', expect.anything());
     });
 
     it('resets the loading state when onAddToCartToggle throws', async () => {
@@ -484,7 +484,7 @@ describe('ProductCard', () => {
       });
 
       expect(onAddToCartToggle).toHaveBeenCalledWith(true, 'test_pid', expect.objectContaining({ product_id: 'test_pid' }), { size: '8' });
-      expect(sendEventSpy).toHaveBeenCalledWith('add_to_cart', expect.objectContaining({ pid: 'test_pid', size: '8' }));
+      expect(sendEventSpy).not.toHaveBeenCalledWith('add_to_cart', expect.anything());
       expect(testComponent.queryByTestId('wigmix-add-to-cart-options')).toBeNull();
     });
 
@@ -504,7 +504,7 @@ describe('ProductCard', () => {
       expect(widgetConfig.callbacks.onAddToCartToggle).not.toHaveBeenCalled();
     });
 
-    it('never lets an option key overwrite tracking params', async () => {
+    it('passes an option callbackKey of pid through to the callback as-is', async () => {
       widgetConfig.callbacks.onAddToCartToggle = jest.fn(() => Promise.resolve(true));
       widgetConfig.customizations.productCard!.addToCart!.options = {
         enable: true,
@@ -519,7 +519,6 @@ describe('ProductCard', () => {
       });
 
       expect(widgetConfig.callbacks.onAddToCartToggle).toHaveBeenCalledWith(true, 'test_pid', expect.anything(), { pid: '8' });
-      expect(sendEventSpy).toHaveBeenCalledWith('add_to_cart', expect.objectContaining({ pid: 'test_pid' }));
     });
 
     it('does not open the options modal when there is no onAddToCartToggle callback', () => {

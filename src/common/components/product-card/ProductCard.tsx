@@ -578,7 +578,7 @@ const ProductCard: FC<ProductCardProps> = ({
                              }
                              setIsAddingToCart(true);
                              try {
-                               await addToCart(result, productTrackingMeta);
+                               await addToCart(result);
                              } finally {
                                setIsAddingToCart(false);
                              }
@@ -596,12 +596,11 @@ const ProductCard: FC<ProductCardProps> = ({
       {isAddToCartOptionsOpen && (
         <AddToCartOptionsModal anchor={targetRef} onClose={() => setIsAddToCartOptionsOpen(false)}>
           <AddToCartOptionsPanel
-            product={result}
             productTitle={productTitle || getOptionsProductTitle(result, productDetails)}
             fields={addToCartOptionFields}
             onClose={() => setIsAddToCartOptionsOpen(false)}
             onConfirm={async (selectedOptions) => {
-              await addToCart(result, productTrackingMeta, selectedOptions);
+              await addToCart(result, selectedOptions);
               setIsAddToCartOptionsOpen(false);
             }}
           />

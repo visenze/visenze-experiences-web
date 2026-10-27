@@ -4,7 +4,6 @@ import type { ResolvedOptionField } from './add-to-cart-options';
 import AddToCartOptionsPanel from './AddToCartOptionsPanel';
 import { COMMON_TEXTS } from '../../locales/locale';
 import { WidgetDataContext } from '../../types/contexts';
-import type { ProcessedProduct } from '../../types/product';
 import type { WidgetClient, WidgetConfig } from '../../wigmix-core';
 
 describe('AddToCartOptionsPanel', () => {
@@ -24,12 +23,11 @@ describe('AddToCartOptionsPanel', () => {
     onClose = jest.fn(),
     panelFields: ResolvedOptionField[] = fields,
     productTitle = 'H-Street',
-    product?: ProcessedProduct,
   ): void => {
     render(
       <WidgetDataContext.Provider value={{ widgetConfig, widgetClient: {} as WidgetClient, darkMode: false, locale: 'en' }}>
         <IntlProvider messages={{ ...COMMON_TEXTS['en'], addToCart: 'Add to cart' }} locale='en' defaultLocale='en'>
-          <AddToCartOptionsPanel productTitle={productTitle} product={product} fields={panelFields} onConfirm={onConfirm} onClose={onClose} />
+          <AddToCartOptionsPanel productTitle={productTitle} fields={panelFields} onConfirm={onConfirm} onClose={onClose} />
         </IntlProvider>
       </WidgetDataContext.Provider>,
     );
@@ -44,9 +42,9 @@ describe('AddToCartOptionsPanel', () => {
     expect(screen.getByText('Select Colour')).toBeTruthy();
   });
 
-  it('shows a label on every field and drops the trailing product code', () => {
-    renderPanel(undefined, undefined, fields, 'Casual Solid Color Shirt CA091919BW', { product_id: 'CA091919BW', im_url: 'img' });
-    expect(screen.getByText('We\'re here to help! Please choose from the available options for Casual Solid Color Shirt.')).toBeTruthy();
+  it('shows a label on every field and the title as is', () => {
+    renderPanel(undefined, undefined, fields, 'Nike Air Max Black');
+    expect(screen.getByText('We\'re here to help! Please choose from the available options for Nike Air Max Black.')).toBeTruthy();
     ['Size', 'Width', 'Colour'].forEach((label) => expect(screen.getByText(label)).toBeTruthy());
   });
 

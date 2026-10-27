@@ -5,21 +5,34 @@ import AddToCartOptionsPanel from './AddToCartOptionsPanel';
 import useAddToCart from './use-add-to-cart';
 import { WidgetDataContext } from '../../types/contexts';
 import type { ProcessedProduct } from '../../types/product';
+import type { Chat } from '../chat/use-chat';
 
 interface ChatAddToCartOptionsProps {
-  products: ProcessedProduct[];
-  requestId: string;
+  // The 'options' chat entry whose products need add-to-cart options chosen.
+  entry: Chat;
 }
 
-// Products whose pop-up was already confirmed or closed. Module-level (keyed by the product
-// objects of the chat entry) so a pop-up isn't shown again when the chat row re-mounts, e.g. when
-// the chat window is closed and reopened.
-const handledProducts = new WeakSet<ProcessedProduct>();
+// Product ids whose pop-up was already confirmed or closed, per options entry. Keyed by the entry
+// rather than the product object, because the same product object is reused when the shopper asks
+// to add a product from an earlier turn again, and that new request must still open a pop-up.
+// Module-level so a pop-up isn't shown again when the chat row re-mounts, e.g. when the chat
+// window is closed and reopened.
+const handledPidsByEntry = new WeakMap<Chat, Set<string>>();
+
+const getHandledPids = (entry: Chat): Set<string> => {
+  let handledPids = handledPidsByEntry.get(entry);
+  if (!handledPids) {
+    handledPids = new Set();
+    handledPidsByEntry.set(entry, handledPids);
+  }
+  return handledPids;
+};
 
 // When the AI asks to add products to cart and they have add-to-cart options, the options are
 // asked for in the same pop-up the product card uses, one product at a time. The pop-up's own
-// Add to Cart button carries the onAddToCartToggle callback and the add_to_cart tracking event.
-const ChatAddToCartOptions: FC<ChatAddToCartOptionsProps> = ({ products, requestId }) => {
+// Add to Cart button carries the onAddToCartToggle callback.
+const ChatAddToCartOptions: FC<ChatAddToCartOptionsProps> = ({ entry }) => {
+  const products = useMemo(() => entry.products || [], [entry]);
   const { widgetConfig } = useContext(WidgetDataContext);
   const { productDetails } = widgetConfig.displaySettings;
   const addToCartOptions = widgetConfig.customizations.productCard?.addToCart?.options;
@@ -33,12 +46,12 @@ const ChatAddToCartOptions: FC<ChatAddToCartOptionsProps> = ({ products, request
   ))), [products, productDetails, addToCartOptions]);
 
   const currentIndex = products.findIndex((product) => (
-    !handledProducts.has(product) && (fieldsByPid.get(product.product_id) || []).length > 0
+    !getHandledPids(entry).has(product.product_id) && (fieldsByPid.get(product.product_id) || []).length > 0
   ));
   const current = currentIndex >= 0 ? products[currentIndex] : undefined;
 
   const markHandled = (product: ProcessedProduct): void => {
-    handledProducts.add(product);
+    getHandledPids(entry).add(product.product_id);
     setHandledCount((count) => count + 1);
   };
 
@@ -49,12 +62,11 @@ const ChatAddToCartOptions: FC<ChatAddToCartOptionsProps> = ({ products, request
       {current && anchor && (
         <AddToCartOptionsModal key={current.product_id} anchor={anchor} onClose={() => markHandled(current)}>
           <AddToCartOptionsPanel
-            product={current}
             productTitle={getOptionsProductTitle(current, productDetails)}
             fields={fieldsByPid.get(current.product_id) || []}
             onClose={() => markHandled(current)}
             onConfirm={async (selectedOptions) => {
-              await addToCart(current, { queryId: requestId, pos: currentIndex + 1 }, selectedOptions);
+              await addToCart(current, selectedOptions);
               markHandled(current);
             }}
           />
