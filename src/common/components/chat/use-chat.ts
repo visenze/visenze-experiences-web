@@ -16,11 +16,13 @@ import { isImageFile, isImageUrl, type SearchImageOrPid } from '../../types/imag
 import type { ProcessedProduct } from '../../types/product';
 import { Actions, Category } from '../../types/tracking-constants';
 import { getBestImageSysAttrsToGet, getFlattenProduct } from '../../utils';
+import { getActiveOptionFields, resolveOptionFields } from '../add-to-cart-options/add-to-cart-options';
 
 export interface Chat {
   chatId: string;
   requestId: string;
-  author: 'user' | 'bot' | 'products';
+  // 'options': add-to-cart options to choose for each of `products` before they are added to cart.
+  author: 'user' | 'bot' | 'products' | 'options';
   messages: string[];
   products?: ProcessedProduct[];
   image?: SearchImageOrPid;
@@ -33,6 +35,8 @@ interface CompletedResponse {
   products: ProcessedProduct[];
   userMessage: string;
   suggestions: string[];
+  // Products the AI asked to add to cart that still need add-to-cart options chosen.
+  addToCartOptionsProducts: ProcessedProduct[];
 }
 
 export interface BreadcrumbTurn {
@@ -252,6 +256,10 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
   const chatIdStorageKey = `${CHAT_ID_STORAGE_PREFIX}${appSettings.placementId}${options.sessionScopeKey ? `__${options.sessionScopeKey}` : ''}`;
 
   const [chats, setChats] = useState<Chat[]>([]);
+  // Live view of `chats` for callbacks that outlive the render they were created in (e.g. the SSE
+  // handlers of an in-flight sendMessage), which would otherwise see a stale snapshot.
+  const chatsRef = useRef<Chat[]>(chats);
+  chatsRef.current = chats;
   // The session/conversation chatId sendMessage sends as `chat_id`. A ref, not state: it was
   // state until a deferred caller (e.g. a setTimeout(0) queued right after open()/newChat())
   // turned out to always close over the render's chatId *value* at the time that particular
@@ -374,8 +382,55 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     });
   }, []);
 
+  // The AI often refers back to a product shown in an earlier turn (e.g. "add the first one to my
+  // cart") without streaming it again, so fall back to the products of earlier turns, newest first.
+  const findProductForAddToCart = (pid: string, streamedProducts: ProcessedProduct[]): ProcessedProduct | undefined => {
+    const streamed = streamedProducts.find((p) => p.product_id === pid);
+    if (streamed) {
+      return streamed;
+    }
+    for (let i = chatsRef.current.length - 1; i >= 0; i -= 1) {
+      const earlier = chatsRef.current[i].products?.find((p) => p.product_id === pid);
+      if (earlier) {
+        return earlier;
+      }
+    }
+    return undefined;
+  };
+
+  // Splits held-back <<ADD_TO_CART>> product ids into products that need add-to-cart options chosen
+  // (returned, to be shown as an options bubble) and products that can be added directly, the same
+  // way as without options (no option values for the product, or the product isn't known at all).
+  const resolvePendingAddToCarts = (pids: string[], streamedProducts: ProcessedProduct[]): ProcessedProduct[] => {
+    const { productDetails } = widgetConfig.displaySettings;
+    const addToCartOptions = customizations.productCard?.addToCart?.options;
+    const optionsProducts: ProcessedProduct[] = [];
+    pids.forEach((pid) => {
+      const product = findProductForAddToCart(pid, streamedProducts);
+      if (product && resolveOptionFields(product, productDetails, addToCartOptions).length > 0) {
+        if (!optionsProducts.includes(product)) {
+          optionsProducts.push(product);
+        }
+        return;
+      }
+      if (!product) {
+        console.warn(`Product ${pid} to add to cart was not found in this conversation; adding it to cart without options.`);
+      }
+      const callback = widgetConfig.callbacks.onAddToCartToggle;
+      if (!callback) {
+        return;
+      }
+      try {
+        Promise.resolve(callback(true, pid, product)).catch((err: unknown) => console.error(err));
+      } catch (err) {
+        console.error(err);
+      }
+    });
+    return optionsProducts;
+  };
+
   const commitResponse = ({
-    chatId: responseChatId, requestId, text, products, userMessage, suggestions: newSuggestions,
+    chatId: responseChatId, requestId, text, products, userMessage, suggestions: newSuggestions, addToCartOptionsProducts,
   }: CompletedResponse): void => {
     if (products.length) {
       const requestMetadata = {
@@ -406,6 +461,15 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
           messages: [],
           author: 'products',
           products,
+        });
+      }
+      if (addToCartOptionsProducts.length) {
+        newChats.push({
+          chatId: responseChatId,
+          requestId,
+          messages: [],
+          author: 'options',
+          products: addToCartOptionsProducts,
         });
       }
       return newChats;
@@ -516,6 +580,11 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
     const tokens: string[] = [];
     const handledActionTokens = new Set<string>();
     const products: ProcessedProduct[] = [];
+    // <<ADD_TO_CART>> product ids held back until the stream closes, because the shopper must first
+    // choose the add-to-cart options (the product itself may also not have streamed in yet).
+    const pendingAddToCartPids: string[] = [];
+    const addToCartOptions = customizations.productCard?.addToCart?.options;
+    const hasAddToCartOptions = getActiveOptionFields(addToCartOptions).length > 0;
     // Retrieve user id and session id from ViSearch client
     let uid = '';
     let sid = '';
@@ -585,6 +654,12 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
                 return;
               }
               handledActionTokens.add(key);
+              if (action === 'ADD_TO_CART' && hasAddToCartOptions) {
+                if (!options.suppressActionTokenCallbacks) {
+                  pendingAddToCartPids.push(productId);
+                }
+                return;
+              }
               const callback = action === 'ADD_TO_CART'
                 ? widgetConfig.callbacks.onAddToCartToggle
                 : widgetConfig.callbacks.onAddToWishlistToggle;
@@ -625,6 +700,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
             products: finalProducts,
             userMessage: messageToSend || '',
             suggestions: extractSuggestions(currentText),
+            addToCartOptionsProducts: resolvePendingAddToCarts(pendingAddToCartPids.splice(0), products),
           };
           if (willSpeakReply && isVoiceReadingEnabledNow()) {
             const { sentences } = extractSpeakableSentences(currentText, spokenLength, { includeTrailing: true });
@@ -674,6 +750,18 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
       setBreadcrumbs((prevBreadcrumbs) => prevBreadcrumbs.filter((crumb) => crumb.requestId !== pendingBreadcrumbId));
       if (!controller.signal.aborted) {
         console.error(err);
+        // The AI may already have asked to add products to cart before the stream failed; don't
+        // silently drop those — show their options bubble (or add them directly) as on success.
+        const optionsProducts = resolvePendingAddToCarts(pendingAddToCartPids.splice(0), products);
+        if (optionsProducts.length) {
+          setChats((prevChats) => [...prevChats, {
+            chatId: chatIdFromResp,
+            requestId: reqIdFromResp,
+            messages: [],
+            author: 'options',
+            products: optionsProducts,
+          }]);
+        }
         setIsWaiting(false);
         setStreamingProducts([]);
         setStreamingRequestId('');

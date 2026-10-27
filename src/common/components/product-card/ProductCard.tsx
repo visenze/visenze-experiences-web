@@ -1,6 +1,6 @@
 import { Skeleton } from '@heroui/skeleton';
 import { cn } from '@heroui/theme';
-import { type CSSProperties, type FC, useContext, useEffect, useState } from 'react';
+import { type CSSProperties, type FC, useContext, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import AddToCartButton from './AddToCartButton';
 import ResultLogicImpl from '../../client/result-logic';
@@ -17,6 +17,12 @@ import type { SearchImageOrPid } from '../../types/image';
 import type { ProcessedProduct } from '../../types/product';
 import { Actions } from '../../types/tracking-constants';
 import type { WidgetConfig } from '../../wigmix-core';
+import {
+  getOptionsProductTitle, resolveOptionFields,
+} from '../add-to-cart-options/add-to-cart-options';
+import AddToCartOptionsModal from '../add-to-cart-options/AddToCartOptionsModal';
+import AddToCartOptionsPanel from '../add-to-cart-options/AddToCartOptionsPanel';
+import useAddToCart from '../add-to-cart-options/use-add-to-cart';
 
 interface ProductCardProps {
   result: ProcessedProduct;
@@ -173,6 +179,13 @@ const ProductCard: FC<ProductCardProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isAddToCartOptionsOpen, setIsAddToCartOptionsOpen] = useState(false);
+  const addToCart = useAddToCart();
+  const addToCartOptions = customizations.productCard?.addToCart?.options;
+  const addToCartOptionFields = useMemo(
+    () => resolveOptionFields(result, productDetails, addToCartOptions),
+    [result, productDetails, addToCartOptions],
+  );
   const openLinksInNewTab = customizations.productCard?.openLinksInNewTab || false;
   const [targetRef, setTargetRef] = useState<HTMLAnchorElement | null>(null);
   const intl = useIntl();
@@ -555,9 +568,18 @@ const ProductCard: FC<ProductCardProps> = ({
                            text={intl.formatMessage({ id: 'addToCart' })}
                            darkMode={darkMode}
                            onClick={async () => {
-                             if (onAddToCartToggle) {
-                               setIsAddingToCart(true);
-                               await onAddToCartToggle(true, result.product_id, result);
+                             if (!onAddToCartToggle) {
+                               return;
+                             }
+                             // The product has add-to-cart options: choose them in the pop-up.
+                             if (addToCartOptionFields.length > 0) {
+                               setIsAddToCartOptionsOpen(true);
+                               return;
+                             }
+                             setIsAddingToCart(true);
+                             try {
+                               await addToCart(result);
+                             } finally {
                                setIsAddingToCart(false);
                              }
                            }}
@@ -570,6 +592,19 @@ const ProductCard: FC<ProductCardProps> = ({
                                  className='wigmix-add-to-cart-icon default size-6'
                              />
                            } />
+      )}
+      {isAddToCartOptionsOpen && (
+        <AddToCartOptionsModal anchor={targetRef} onClose={() => setIsAddToCartOptionsOpen(false)}>
+          <AddToCartOptionsPanel
+            productTitle={productTitle || getOptionsProductTitle(result, productDetails)}
+            fields={addToCartOptionFields}
+            onClose={() => setIsAddToCartOptionsOpen(false)}
+            onConfirm={async (selectedOptions) => {
+              await addToCart(result, selectedOptions);
+              setIsAddToCartOptionsOpen(false);
+            }}
+          />
+        </AddToCartOptionsModal>
       )}
     </div>
   );

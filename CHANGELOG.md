@@ -30,6 +30,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.41](https://github.com/visenze/visenze-experiences-web/compare/1.0.40...1.0.41)
+
+<!-- BEGIN visenze-experiences-web 1.0.41 -->
+
+### Added
+
+- All widgets using the common product card: New `customizations.productCard.addToCart.options` setting (`enable`, plus a list of `fields`) for options the shopper must choose before a product can be added to cart, such as size, width or colour. Each field names a catalog field (or a `displaySettings.productDetails` key) and a `layout`:
+  - `CAROUSEL`: a scrollable row of values, sorted numerically when all the values are numbers.
+  - `RADIO`: radio buttons. A field with more than 3 values falls back to `DROPDOWN`.
+  - `DROPDOWN`: a drop-down list.
+  - `NONE`: the field is ignored.
+
+  Each field can also set a `label` and a `callbackKey`. Clicking Add to Cart opens a pop-up where every shown field must be chosen. Fields with only one value are pre-selected, and fields the product has no values for are skipped; if no fields are left, the product is added directly, as before. The chosen values are passed to `callbacks.onAddToCartToggle` as a new fourth `selectedOptions` argument, keyed by each field's `callbackKey` (or `field` when unset). The option fields are added to `attrs_to_get` automatically. Without `options`, or with `enable: false`, Add to Cart works as before.
+- shopping-assistant, embedded-shopping-assistant, ai-search-launcher: When the chat agent adds a product to cart and that product has add-to-cart options, the same pop-up asks the shopper for the options first, one product at a time. Products without options are added directly, as before.
+- New locale strings `addToCartOptionsPrompt`, `addToCartOptionsSelect`, `addToCartOptionsClose`, `a11yAddToCartOptionsPrev` and `a11yAddToCartOptionsNext`.
+
+<!-- END visenze-experiences-web 1.0.41 -->
+
 ## [1.0.40](https://github.com/visenze/visenze-experiences-web/compare/1.0.39...1.0.40)
 
 <!-- BEGIN visenze-experiences-web 1.0.40 -->

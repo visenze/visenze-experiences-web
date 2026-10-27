@@ -1,6 +1,6 @@
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { WidgetType, type WidgetConfig } from '../wigmix-core';
-import { initWidgetFactory, setCssVariables } from './initialization';
+import { initWidgetFactory, populateProductDetailsAndAttrsToGet, setCssVariables } from './initialization';
 import ViSearch from 'visearch-javascript-sdk';
 
 const mockViSearchClient = {
@@ -130,6 +130,48 @@ describe('initialization', () => {
       const keys = (mockViSearchClient.setKeys as jest.Mock).mock.calls[0][0];
       expect(keys.endpoint).toBe('https://multimodal.search.rezolve.com');
       expect(keys.cloud).toBeUndefined();
+    });
+  });
+
+  describe('populateProductDetailsAndAttrsToGet — add-to-cart options', () => {
+    const withOptions = (): WidgetConfig => {
+      widgetConfig.customizations.productCard = {
+        ...widgetConfig.customizations.productCard,
+        addToCart: {
+          enable: true,
+          layout: 'TEXT',
+          color: '',
+          colorDark: '',
+          options: {
+            enable: true,
+            fields: [
+              { field: 'sizes', layout: 'CAROUSEL' },
+              { field: 'width_field', layout: 'RADIO' },
+              { field: 'colors', layout: 'NONE' },
+            ],
+          },
+        },
+      } as WidgetConfig['customizations']['productCard'];
+      return widgetConfig;
+    };
+
+    it('appends active option fields to auto-derived attrs_to_get', () => {
+      const config = populateProductDetailsAndAttrsToGet(withOptions(), { sizes: 'size_field', colors: 'color_field' });
+      expect(config.searchSettings['attrs_to_get']).toEqual(expect.arrayContaining(['size_field', 'width_field']));
+      expect(config.searchSettings['attrs_to_get'].filter((attr: string) => attr === 'size_field')).toHaveLength(1);
+    });
+
+    it('appends active option fields to host-provided attrs_to_get', () => {
+      const config = withOptions();
+      config.searchSettings['attrs_to_get'] = ['title_field'];
+      populateProductDetailsAndAttrsToGet(config, { sizes: 'size_field' });
+      expect(config.searchSettings['attrs_to_get']).toEqual(['title_field', 'size_field', 'width_field']);
+    });
+
+    it('leaves host-provided attrs_to_get untouched when options are disabled', () => {
+      widgetConfig.searchSettings['attrs_to_get'] = ['title_field'];
+      populateProductDetailsAndAttrsToGet(widgetConfig, { sizes: 'size_field' });
+      expect(widgetConfig.searchSettings['attrs_to_get']).toEqual(['title_field']);
     });
   });
 
