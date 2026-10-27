@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- shopping-assistant: `customizations.chatbot.startMuted` is now applied. With it on, voice reading starts muted when the widget loads, so replies aren't spoken until the shopper turns voice on with the header speaker button. ai-search-launcher and embedded-shopping-assistant already did this.
 
 ### Changed
 
