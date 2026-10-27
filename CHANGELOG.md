@@ -46,6 +46,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - shopping-assistant, embedded-shopping-assistant, ai-search-launcher: When the chat agent adds a product to cart and that product has add-to-cart options, the same pop-up asks the shopper for the options first, one product at a time. Products without options are added directly, as before.
 - New locale strings `addToCartOptionsPrompt`, `addToCartOptionsSelect`, `addToCartOptionsClose`, `a11yAddToCartOptionsPrev` and `a11yAddToCartOptionsNext`.
 
+### Fixed
+
+- shopping-assistant: `customizations.chatbot.startMuted` is now applied. With it on, voice reading starts muted when the widget loads, so replies aren't spoken until the shopper turns voice on with the header speaker button. ai-search-launcher and embedded-shopping-assistant already did this.
+
 <!-- END visenze-experiences-web 1.0.41 -->
 
 ## [1.0.40](https://github.com/visenze/visenze-experiences-web/compare/1.0.39...1.0.40)
