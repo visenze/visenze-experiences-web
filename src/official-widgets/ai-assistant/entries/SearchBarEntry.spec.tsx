@@ -444,6 +444,21 @@ describe('ai-assistant search-bar entry', () => {
       expect(store.getSnapshot().activation).toEqual({ entryPoint: 'image', isResumed: true, userMessageBaseline: 1 });
     });
 
+    it('mic on a fresh session enables input, so its text fallback can start the conversation', () => {
+      const { store } = renderLauncher();
+      openEntryPointAndWait('a11yOpenVoiceSearch');
+      expect(store.getSnapshot().allowUserInput).toBe(true);
+      const input = testComponent.getByRole('textbox', { name: texts['a11yChatInput'] });
+      act(() => {
+        fireEvent.change(input, { target: { value: 'find me a red dress' } });
+      });
+      act(() => {
+        fireEvent.keyDown(input, { code: 'Enter', shiftKey: false });
+      });
+      expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
+      expect(store.getChatId()).toBe('test-chat-id');
+    });
+
     it.each([
       ['camera', 'a11yOpenImageSearch', 'image'],
       ['mic', 'a11yOpenVoiceSearch', 'mic'],

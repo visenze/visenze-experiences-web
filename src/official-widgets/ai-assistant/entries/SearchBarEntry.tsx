@@ -51,6 +51,11 @@ const SearchBarEntry: FC<EntryProps> = ({ productId }) => {
     // fresh session (open()) enables, so there camera/mic start one too.
     if (resuming || (entryPoint !== 'ai' && !isDrawer)) {
       store.reopen();
+      // reopen() only flips isOpen, and a fresh session has input disabled until open() runs: enable it so
+      // the mic's text fallback (and the image screen's composer) can send, which mints the chat id lazily.
+      if (!resuming) {
+        store.setState({ allowUserInput: true });
+      }
     } else {
       store.open();
     }

@@ -52,8 +52,8 @@ const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) =>
   const fullscreenTitleId = `wigmix-ai-assistant-fullscreen-title-${appSettings.placementId}`;
   // Both containers are modal: the host page is hidden from assistive technology while one is open, and focus
   // goes back to what opened it (a launcher or search-bar button) when it closes.
-  useHidePageBehindModal(isDrawerOpen, titleId);
-  useHidePageBehindModal(isFullscreenOpen, fullscreenTitleId);
+  useHidePageBehindModal(isDrawerOpen, titleId, root);
+  useHidePageBehindModal(isFullscreenOpen, fullscreenTitleId, root);
   useReturnFocusOnClose(chat.isOpen);
 
   useEffect(() => {

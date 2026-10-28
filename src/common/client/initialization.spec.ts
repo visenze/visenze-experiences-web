@@ -1,5 +1,6 @@
 import { act } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
+import * as ReactDOMClient from 'react-dom/client';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { WidgetType, type WidgetClient, type WidgetConfig } from '../wigmix-core';
 import { initWidgetFactory, populateProductDetailsAndAttrsToGet, setCssVariables, type WidgetInitOptions } from './initialization';
@@ -320,6 +321,34 @@ describe('initialization', () => {
       expect(surfaceHosts()[0]).toBe(before);
       expect(client.getRenderRoots()).toHaveLength(3);
       expect(added.querySelector('[data-testid=\'entry\']')).not.toBeNull();
+    });
+
+    it('one client\'s rerender() does not make another client\'s renderMissing() mount a second root on its element', () => {
+      addElement();
+      const other = document.createElement('div');
+      other.className = 'other-widget';
+      document.body.appendChild(other);
+      const first = track(buildSurfaceClient({ surface }));
+      let second: WidgetClient | undefined;
+      act(() => {
+        second = initWidgetFactory(
+          WidgetType.AI_ASSISTANT,
+          '1.0.0',
+          entryRenderer,
+          true,
+          defaultCustomizations(),
+          { surface },
+        )({ ...widgetConfig, appSettings: { ...widgetConfig.appSettings, placementId: '5678' }, displaySettings: { ...widgetConfig.displaySettings, cssSelector: '.other-widget' } }, {}, false);
+      });
+      if (!second) throw new Error('no client');
+      track(second);
+      const createRootSpy = jest.spyOn(ReactDOMClient, 'createRoot');
+      act(() => first.rerender());
+      createRootSpy.mockClear();
+      act(() => second?.renderMissing());
+      // `second` already rendered into `other`: it is not mounted again.
+      expect(createRootSpy.mock.calls.filter(([container]) => container === other)).toHaveLength(0);
+      createRootSpy.mockRestore();
     });
 
     it('markAsRendered ignores the surface root once the elements are gone', () => {

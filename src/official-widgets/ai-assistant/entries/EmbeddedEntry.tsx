@@ -95,12 +95,11 @@ const EmbeddedEntry: FC<EmbeddedEntryProps> = ({ query, productId, sessionKey, s
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Voice narration starts muted by default (customizations.chatbot?.startMuted, defaulting to
-  // true in ESA's own default-config.ts) — mirrors ai-search-launcher.tsx's own startMuted mount
-  // effect exactly. From here, the mute button (chat.toggleVoiceReading, already wired below) is
-  // a normal toggle — no special first-read behavior.
+  // Voice narration always starts muted here, whatever customizations.chatbot.startMuted says: a page can
+  // hold several embedded elements, each with its own voice, and they must not narrate over each other.
+  // From here, the mute button (chat.toggleVoiceReading, already wired below) is a normal toggle.
   useEffect(() => {
-    if (customizations.chatbot?.startMuted) {
+    if (chat.isVoiceReadingEnabled) {
       chat.toggleVoiceReading();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

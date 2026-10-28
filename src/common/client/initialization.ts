@@ -252,7 +252,10 @@ export interface WidgetInitOptions {
 }
 
 const SURFACE_HOST_ID_PREFIX = 'vi_surface__';
-const surfaceHosts = new WeakMap<WidgetClient, HTMLElement>();
+const surfaceHosts = new WeakMap<WidgetClient, { host: HTMLElement; root: Root }>();
+// Elements each client has rendered into, per client so one placement's rerender() can't make another's
+// renderMissing() mount a second root on an element that is still mounted.
+const rootElementsByClient = new WeakMap<WidgetClient, HTMLElement[]>();
 
 const mountSurface = (client: WidgetClient, config: WidgetConfig, surface: SurfaceRenderer): Root => {
   const host = document.createElement('div');
@@ -260,9 +263,8 @@ const mountSurface = (client: WidgetClient, config: WidgetConfig, surface: Surfa
   document.body.appendChild(host);
   const root = createRoot(host);
   root.render(surface({ config, client }));
-  surfaceHosts.set(client, host);
   // The client unmounts its roots on rerender()/disposeWidget(): take the host div down with the root.
-  return {
+  const surfaceRoot: Root = {
     render: (children: ReactNode): void => root.render(children),
     unmount: (): void => {
       root.unmount();
@@ -270,6 +272,8 @@ const mountSurface = (client: WidgetClient, config: WidgetConfig, surface: Surfa
       surfaceHosts.delete(client);
     },
   };
+  surfaceHosts.set(client, { host, root: surfaceRoot });
+  return surfaceRoot;
 };
 
 const getRenderElements = (config: WidgetConfig): NodeListOf<HTMLElement> => {
@@ -282,8 +286,6 @@ const getRenderElement = (config: WidgetConfig): HTMLElement | null => {
   return document.body.querySelector(cssSelector || `.ps-widget-${config.appSettings.placementId}`);
 };
 
-let rootElements: HTMLElement[] = [];
-
 const render = (
     client: WidgetClient,
     config: WidgetConfig,
@@ -295,13 +297,15 @@ const render = (
   if (!onlyMissing) {
     // Clear all existing render roots
     client.getRenderRoots().forEach((r) => r.unmount());
-    rootElements = [];
+    rootElementsByClient.set(client, []);
     // Only now that the mounted components are gone: dropping the chat session earlier would leave them
     // pinned to disposed stores (and let a late render recreate one nobody disposes). The remount then
     // starts a fresh session (and re-restores from storage).
     resetChatSessionStore(client);
   }
 
+  const rootElements = rootElementsByClient.get(client) ?? [];
+  rootElementsByClient.set(client, rootElements);
   const roots: Root[] = onlyMissing ? [...client.getRenderRoots()] : [];
 
   if (isMultiRender) {
@@ -325,7 +329,8 @@ const render = (
   }
 
   // Elements the widget actually rendered; the surface is not an element, it only exists to serve them.
-  const hasElementRoots = roots.length - (surfaceHosts.has(client) ? 1 : 0) > 0;
+  const surfaceRoot = surfaceHosts.get(client)?.root;
+  const hasElementRoots = roots.filter((r) => r !== surfaceRoot).length > 0;
   if (surface && hasElementRoots && !surfaceHosts.has(client)) {
     roots.push(mountSurface(client, config, surface));
   }

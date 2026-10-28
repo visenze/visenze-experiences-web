@@ -32,6 +32,8 @@ const EmbeddedHost: FC<EmbeddedHostProps> = ({ query, productId, renderWithoutPo
   useEffect(() => (): void => resetChatSessionStore(widgetClient, key), [widgetClient, key]);
   // The stored session is scoped to this element's query and product, in a key of its own: it never touches the
   // shared conversation's, and a different query or product starts a different (fresh) conversation.
+  // Known limit: two elements on one placement with the same query and product share this key, so after a
+  // reload both resume the same backend conversation (each still shows only its own messages).
   const scopeKey = `embedded-${hashScope(`${query}\n${productId ?? ''}`)}`;
   return <EmbeddedEntry query={query} productId={productId} sessionKey={key} scopeKey={scopeKey} renderWithoutPortal={renderWithoutPortal} />;
 };

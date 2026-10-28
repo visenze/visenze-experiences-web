@@ -246,6 +246,47 @@ describe('ChatSessionStore actions', () => {
     expect(() => resetChatSessionStore(fakeClient())).not.toThrow();
   });
 
+  describe('after dispose()', () => {
+    it('ignores sendMessage, open, newChat and the programmatic openers, and notifies no one', () => {
+      const { store } = makeStore({ persistChatEnabled: true }, { persistChatEnabled: true });
+      store.open();
+      const listener = jest.fn();
+      store.subscribe(listener);
+      mockFetchEventSource.mockClear();
+      store.dispose();
+      const before = store.getSnapshot();
+
+      store.sendMessage('late');
+      store.open();
+      store.newChat();
+      store.openWithMessage('late');
+      store.sendChatMessage('late');
+      store.pushAssistantMessage('late');
+      store.playGreeting('late');
+
+      expect(mockFetchEventSource).not.toHaveBeenCalled();
+      expect(store.getSnapshot()).toBe(before);
+      expect(listener).not.toHaveBeenCalled();
+    });
+
+    it('does not persist an injected message for the stale chat', () => {
+      const { store } = makeStore({ persistChatEnabled: true }, { persistChatEnabled: true });
+      store.open();
+      store.dispose();
+      store.pushAssistantMessage('late');
+      expect(localStorage.getItem('visenze_shopping_assistant_chat_id_1234__injected')).toBeNull();
+    });
+
+    it('does not start a history restore', () => {
+      localStorage.setItem('visenze_shopping_assistant_chat_id_1234', JSON.stringify({ chatId: 'old-chat', timestamp: Date.now() }));
+      global.fetch = jest.fn();
+      const { store } = makeStore({ persistChatEnabled: true }, { persistChatEnabled: true });
+      store.dispose();
+      store.restoreIfStored();
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+  });
+
   it('close() aborts the in-flight stream and keeps chats', () => {
     let signal: AbortSignal | undefined;
     mockFetchEventSource.mockImplementation((_url: string, options: { signal: AbortSignal }) => {
@@ -361,6 +402,25 @@ describe('ChatSessionStore actions', () => {
       store.restoreIfStored();
       return { store, settle: (value) => resolveFetch(value), fail: () => rejectFetch(new Error('boom')) };
     };
+
+    it('a restore superseded by newChat() does not leak its last request id into the new chat\'s injected messages', async () => {
+      const { store, settle } = setup();
+      store.newChat();
+      settle(historyResponse(history));
+      await flush();
+      store.pushAssistantMessage('Hello again');
+      const stored = JSON.parse(localStorage.getItem('visenze_shopping_assistant_chat_id_1234__injected') ?? 'null');
+      expect(stored?.messages?.[0]?.afterRequestId ?? '').toBe('');
+    });
+
+    it('anchors a message injected after a completed restore to the last restored request id', async () => {
+      const { store, settle } = setup();
+      settle(historyResponse(history));
+      await flush();
+      store.pushAssistantMessage('After restore');
+      const stored = JSON.parse(localStorage.getItem('visenze_shopping_assistant_chat_id_1234__injected') ?? 'null');
+      expect(stored?.messages?.[0]?.afterRequestId).toBe('req-1');
+    });
 
     it('newChat openWithMessage discards the stale history when the fetch resolves with history', async () => {
       const { store, settle } = setup();

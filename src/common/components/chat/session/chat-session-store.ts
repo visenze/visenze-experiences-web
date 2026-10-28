@@ -52,6 +52,8 @@ export interface RestoredChatSession {
   breadcrumbs: BreadcrumbTurn[];
   activeBreadcrumbId: string | null;
   suggestions: string[];
+  // Request id of the last history message: the anchor for messages injected from now on.
+  lastRequestId: string;
 }
 
 const MAX_BREADCRUMB_LABEL_LENGTH = 40;
@@ -457,6 +459,9 @@ export class ChatSessionStore {
   // The original also cleared the composer text here (`setMessage('')`); that text is hook-local
   // state, so clearing it stays with the hook that calls this.
   async sendMessage(messageToSend?: string, secondArg?: SearchImageOrPid): Promise<void> {
+    if (this.disposed) {
+      return;
+    }
     const { widgetClient, widgetConfig, manualEndpoint, apiBase } = this;
     const { appSettings, customizations } = widgetConfig;
     // A product id passed with a message is that request's `pid` (overriding the `pid` option, e.g.
@@ -815,9 +820,9 @@ export class ChatSessionStore {
     });
 
     const merged = mergeInjectedMessages(restoredChats, injected, chatIdToRestore);
-    this.lastRequestId = messages[messages.length - 1]?.reqid ?? '';
 
     return {
+      lastRequestId: messages[messages.length - 1]?.reqid ?? '',
       chats: merged.chats,
       breadcrumbs: restoredBreadcrumbs,
       activeBreadcrumbId: restoredActiveBreadcrumbId,
@@ -866,6 +871,9 @@ export class ChatSessionStore {
           if (!sentMeanwhile) {
             this.setState({ activeBreadcrumbId: restored.activeBreadcrumbId });
             this.setState({ suggestions: restored.suggestions });
+            // Assigned here, not while fetching: a superseded restore must not leak its anchor into the new
+            // session, and a message sent meanwhile already set a newer one.
+            this.lastRequestId = restored.lastRequestId;
           }
           this.setState({ hasStartedChat: true });
           return;
@@ -900,7 +908,7 @@ export class ChatSessionStore {
   // store is configured with persistence on, so an earlier caller that opted out (or ran before
   // configure()) never blocks a later persistent caller's restore.
   restoreIfStored(): void {
-    if (this.restoreStarted || !this.configuredDeps || !this.persistChatEnabled) {
+    if (this.disposed || this.restoreStarted || !this.configuredDeps || !this.persistChatEnabled) {
       return;
     }
     this.restoreStarted = true;
@@ -942,6 +950,9 @@ export class ChatSessionStore {
   }
 
   open(): void {
+    if (this.disposed) {
+      return;
+    }
     this.setState({ isOpen: true });
     this.resetChatState();
     this.widgetClient.visearch.generateUuid((uuid) => {
@@ -1055,15 +1066,21 @@ export class ChatSessionStore {
 
   // Tears the session down before its store is dropped from the registry (see
   // resetChatSessionStore): aborts the in-flight SSE call, so a late reply can't land in a
-  // conversation nobody shows any more, and interrupts any narration still playing.
+  // conversation nobody shows any more, and interrupts any narration still playing. A disposed store
+  // ignores sendMessage/open/newChat (a caller holding a stale reference, e.g. a host page's old
+  // sendChatMessage, can't start work nobody shows) and drops its listeners.
   dispose(): void {
     this.disposed = true;
+    this.listeners.clear();
     this.activeStreamController?.abort();
     this.activeStreamController = null;
     this.voice.interruptSpeech();
   }
 
   newChat(): void {
+    if (this.disposed) {
+      return;
+    }
     this.resetChatState();
     this.widgetClient.visearch.generateUuid((uuid) => {
       this.setChatId(uuid);
@@ -1076,7 +1093,7 @@ export class ChatSessionStore {
   // Remembers a frontend-injected bot message against the current chat id so a refresh can
   // restore it alongside the backend history (which never contains it).
   private recordInjectedMessage(text: string, nextSteps?: string[]): void {
-    if (!this.persistChatEnabled || !this.liveChatId) {
+    if (this.disposed || !this.persistChatEnabled || !this.liveChatId) {
       return;
     }
     this.injectedMessages = [...this.injectedMessages, { text, nextSteps, afterRequestId: this.lastRequestId }];
@@ -1084,7 +1101,7 @@ export class ChatSessionStore {
   }
 
   playGreeting(text: string): void {
-    if (!text) {
+    if (!text || this.disposed) {
       return;
     }
     this.recordInjectedMessage(text);
@@ -1115,6 +1132,9 @@ export class ChatSessionStore {
   // sendMessage flow, same as any other suggestion chip). This message is never sent to the
   // backend, so it's stored client-side (recordInjectedMessage) and merged back on restore.
   pushAssistantMessage(text: string, nextSteps: string[] = []): void {
+    if (this.disposed) {
+      return;
+    }
     this.recordInjectedMessage(text, nextSteps);
     this.setState((s) => ({
       chats: [
@@ -1135,6 +1155,9 @@ export class ChatSessionStore {
   // with no session yet it mints one via open() (no opening greeting, so only the caller's own
   // message shows); otherwise it resumes the existing conversation. Then the message is appended.
   openWithMessage(message: string, nextSteps?: string[], options?: { newChat?: boolean }): void {
+    if (this.disposed) {
+      return;
+    }
     if (options?.newChat) {
       this.newChat();
       // newChat() does not call open(), hence the reopen(): it resets the conversation but not isOpen.
@@ -1150,6 +1173,9 @@ export class ChatSessionStore {
   // Mirrors shopping-assistant's sendChatMessage trigger, plus minting a session when none exists
   // yet. liveChatId is assigned synchronously by open(), so no deferral is needed before sending.
   sendChatMessage(message: string, image?: SearchImageOrPid): void {
+    if (this.disposed) {
+      return;
+    }
     if (this.liveChatId) {
       this.reopen();
     } else {

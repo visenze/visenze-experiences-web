@@ -41,15 +41,20 @@ const bodyChildOf = (node: Node): HTMLElement | null => {
  * widget's dialogs live inside shadow roots under <body>, so hiding <body> would hide the dialog too.
  *
  * `dialogLabelId` is the id the dialog is labelled by (its `aria-labelledby`), which finds the dialog
- * through the shadow roots. Only elements this hook hid are restored, and an element that was already
- * aria-hidden is left alone.
+ * through the shadow roots. `searchFrom` is a node inside the widget's own shadow root (its RootContext
+ * node): the dialog is looked up in that root only, instead of scanning the whole host page. Only elements
+ * this hook hid are restored (to their previous aria-hidden value, e.g. an explicit "false"); an element that
+ * was already aria-hidden="true" is left alone.
  */
-export const useHidePageBehindModal = (open: boolean, dialogLabelId: string): void => {
+export const useHidePageBehindModal = (open: boolean, dialogLabelId: string, searchFrom?: Node | null): void => {
   useEffect(() => {
     if (!open) {
       return undefined;
     }
-    const hidden: HTMLElement[] = [];
+    const scanRoot = searchFrom?.getRootNode();
+    const searchRoot: Document | ShadowRoot = scanRoot instanceof ShadowRoot ? scanRoot : document;
+    // Element -> its aria-hidden value before this hook set it (null: no attribute).
+    const hidden = new Map<HTMLElement, string | null>();
     let frame = 0;
     let attempts = 0;
     let keep: HTMLElement | null = null;
@@ -58,22 +63,21 @@ export const useHidePageBehindModal = (open: boolean, dialogLabelId: string): vo
         return;
       }
       Array.from(document.body.children).forEach((child) => {
-        if (child === keep || !(child instanceof HTMLElement) || NON_CONTENT_TAGS.has(child.tagName) || child.hasAttribute('aria-hidden')) {
+        if (child === keep || !(child instanceof HTMLElement) || NON_CONTENT_TAGS.has(child.tagName) || child.getAttribute('aria-hidden') === 'true') {
           return;
         }
+        hidden.set(child, child.getAttribute('aria-hidden'));
         child.setAttribute('aria-hidden', 'true');
-        hidden.push(child);
       });
     };
     const findDialog = (): void => {
-      const dialog = deepFind(document, (el) => isModalDialog(el) && el.getAttribute('aria-labelledby') === dialogLabelId);
+      const dialog = deepFind(searchRoot, (el) => isModalDialog(el) && el.getAttribute('aria-labelledby') === dialogLabelId);
       keep = dialog && bodyChildOf(dialog);
       if (keep) {
         hideOthers();
         return;
       }
-      // The dialog is portaled in a render after `open` flips: look again for a few frames (a full-document
-      // scan each time, so only briefly). A host added to <body> later retries through the observer below.
+      // The dialog is portaled in a render after `open` flips: look again for a few frames. A host added to <body> later retries through the observer below.
       attempts += 1;
       if (attempts < 60) {
         frame = requestAnimationFrame(findDialog);
@@ -87,9 +91,15 @@ export const useHidePageBehindModal = (open: boolean, dialogLabelId: string): vo
     return (): void => {
       cancelAnimationFrame(frame);
       observer.disconnect();
-      hidden.forEach((el) => el.removeAttribute('aria-hidden'));
+      hidden.forEach((previous, el) => {
+        if (previous === null) {
+          el.removeAttribute('aria-hidden');
+        } else {
+          el.setAttribute('aria-hidden', previous);
+        }
+      });
     };
-  }, [open, dialogLabelId]);
+  }, [open, dialogLabelId, searchFrom]);
 };
 
 /**

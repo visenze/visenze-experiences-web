@@ -44,6 +44,16 @@ describe('useHidePageBehindModal', () => {
     closeAll();
   });
 
+  it('hides a root marked aria-hidden="false" and restores that value on close', () => {
+    const { pageContent, closeAll } = mountPage();
+    pageContent.setAttribute('aria-hidden', 'false');
+    const view = render(<Harness open labelId='title-id' />);
+    expect(pageContent.getAttribute('aria-hidden')).toBe('true');
+    view.rerender(<Harness open={false} labelId='title-id' />);
+    expect(pageContent.getAttribute('aria-hidden')).toBe('false');
+    closeAll();
+  });
+
   it('hides nothing while closed', () => {
     const { pageContent, closeAll } = mountPage();
     render(<Harness open={false} labelId='title-id' />);
