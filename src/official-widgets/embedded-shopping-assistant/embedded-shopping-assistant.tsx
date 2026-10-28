@@ -1,19 +1,8 @@
 import type { FC } from 'react';
 import EmbeddedShoppingAssistantChat from './embedded-shopping-assistant-chat';
-import type { ProcessedProduct } from '../../common/types/product';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-export interface ConversationTurn {
-  id: string;
-  title: string;
-  queryImageUrl?: string;
-  aiText: string;
-  products: ProcessedProduct[];
-  reqId?: string;
-  isLoading: boolean;
-  isInitial: boolean;
-  productsExpanded: boolean;
-}
+export type { ConversationTurn } from '../../common/components/chat/overview/conversation-turn';
 
 export interface EmbeddedShoppingAssistantProps {
   query: string;

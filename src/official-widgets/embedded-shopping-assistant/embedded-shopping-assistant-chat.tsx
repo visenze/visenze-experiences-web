@@ -1,11 +1,11 @@
 import { type FC, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import TurnSection from './components/TurnSection';
-import { deriveTurns } from './derive-turns';
 import type { EmbeddedShoppingAssistantProps } from './embedded-shopping-assistant';
 import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
+import { deriveTurns } from '../../common/components/chat/overview/derive-turns';
+import TurnSection from '../../common/components/chat/overview/TurnSection';
 import useChat from '../../common/components/chat/use-chat';
 import Footer from '../../common/components/Footer';
 import { RootContext } from '../../common/components/shadow-wrapper';

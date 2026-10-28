@@ -1,12 +1,12 @@
 import { cn } from '@heroui/theme';
 import { type FC, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import ImageEntryScreen from './components/ImageEntryScreen';
-import MicEntryScreen from './components/MicEntryScreen';
-import SplitLayout from './components/SplitLayout';
 import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatWindow from '../../common/components/chat/ChatWindow';
+import ImageEntryScreen from '../../common/components/chat/entry-screens/ImageEntryScreen';
+import MicEntryScreen from '../../common/components/chat/entry-screens/MicEntryScreen';
 import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
+import SplitLayout from '../../common/components/chat/SplitLayout';
 import useChat, { type Chat } from '../../common/components/chat/use-chat';
 import { getWelcomeSpokenGreeting, isWelcomeEnabled } from '../../common/components/chat/WelcomeBlock';
 import EntryLogo from '../../common/components/entry-logo/EntryLogo';
