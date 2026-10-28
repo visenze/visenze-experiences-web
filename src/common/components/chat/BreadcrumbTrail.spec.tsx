@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import BreadcrumbTrail from './BreadcrumbTrail';
-import type { BreadcrumbTurn } from '../../../common/components/chat/use-chat';
+import type { BreadcrumbTurn } from './use-chat';
 
 const messages = {
   a11yBreadcrumbTrail: 'Search refinement steps',

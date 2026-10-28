@@ -1,6 +1,6 @@
 import { deriveTurns, type LiveChatState } from './derive-turns';
-import type { Chat } from '../../common/components/chat/use-chat';
-import type { ProcessedProduct } from '../../common/types/product';
+import type { Chat } from '../use-chat';
+import type { ProcessedProduct } from '../../../types/product';
 
 const product = (id: string): ProcessedProduct => ({
   product_id: id,

@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { IntlProvider } from 'react-intl';
+import type { ConversationTurn } from './conversation-turn';
 import TurnSection from './TurnSection';
-import type { ConversationTurn } from '../embedded-shopping-assistant';
 
 const messages = {
   aiOverviewLabel: 'AI Overview',

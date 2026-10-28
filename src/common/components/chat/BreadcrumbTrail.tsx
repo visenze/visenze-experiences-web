@@ -1,9 +1,9 @@
 import { cn } from '@heroui/theme';
 import { type FC, type ReactElement, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import type { BreadcrumbTurn } from '../../../common/components/chat/use-chat';
-import { FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
-import MagnifyingGlassIcon from '../../../common/icons/MagnifyingGlassIcon';
+import type { BreadcrumbTurn } from './use-chat';
+import { FOCUS_VISIBLE_CLASSES } from '../../constants';
+import MagnifyingGlassIcon from '../../icons/MagnifyingGlassIcon';
 
 interface BreadcrumbTrailProps {
   breadcrumbs: BreadcrumbTurn[];
@@ -259,7 +259,7 @@ const BreadcrumbTrail: FC<BreadcrumbTrailProps> = ({ breadcrumbs, activeBreadcru
             className='pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-white to-transparent dark:from-neutral-900'
           />
         )}
-        <div ref={scrollRef} onScroll={updateFades} className='flex items-center gap-2 overflow-x-auto scroll-smooth'>
+        <div ref={scrollRef} onScroll={updateFades} className='flex items-center gap-2 overflow-x-auto motion-safe:scroll-smooth'>
           {items.map((item) => (
             <span key={item.key} className='flex shrink-0 items-center'>
               {item.node}

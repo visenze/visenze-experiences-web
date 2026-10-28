@@ -1,10 +1,10 @@
 import { cn } from '@heroui/theme';
 import { type FC, type ReactNode, type RefObject, useContext } from 'react';
 import { useIntl } from 'react-intl';
-import BotIcon from '../../../common/components/chat/BotIcon';
-import SparklesIcon from '../../../common/icons/SparklesIcon';
-import { WidgetDataContext } from '../../../common/types/contexts';
-import type { ConversationTurn } from '../embedded-shopping-assistant';
+import type { ConversationTurn } from './conversation-turn';
+import SparklesIcon from '../../../icons/SparklesIcon';
+import { WidgetDataContext } from '../../../types/contexts';
+import BotIcon from '../BotIcon';
 
 const parseBold = (text: string): ReactNode => {
   const parts = text.split(/\*\*([^*]+)\*\*/);
@@ -121,7 +121,7 @@ const TurnSection: FC<TurnSectionProps> = ({
             style={{ animationDelay: `${i * 0.2}s`, backgroundColor: loadingDotColor }}
           />
         ))}
-        <span className='text-sm text-gray-500 dark:text-neutral-400 ml-1'>
+        <span className='text-sm text-gray-600 dark:text-neutral-400 ml-1'>
           {intl.formatMessage({ id: turn.isInitial ? 'gettingOverview' : 'findingProducts' })}
         </span>
       </div>

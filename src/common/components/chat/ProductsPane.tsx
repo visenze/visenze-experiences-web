@@ -2,13 +2,13 @@ import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import BreadcrumbTrail from './BreadcrumbTrail';
+import ProductGrid from './ProductGrid';
 import ProductGridSkeleton from './ProductGridSkeleton';
-import ProductGrid from '../../../common/components/chat/ProductGrid';
-import type { BreadcrumbTurn } from '../../../common/components/chat/use-chat';
-import useBreakpoint from '../../../common/components/hooks/use-breakpoint';
-import { WidgetDataContext } from '../../../common/types/contexts';
-import type { ProcessedProduct } from '../../../common/types/product';
-import { getProductGridCssClasses, getProductGridCssConfig } from '../../../common/utils';
+import type { BreadcrumbTurn } from './use-chat';
+import { WidgetDataContext } from '../../types/contexts';
+import type { ProcessedProduct } from '../../types/product';
+import { getProductGridCssClasses, getProductGridCssConfig } from '../../utils';
+import useBreakpoint from '../hooks/use-breakpoint';
 
 // Falls back to these whenever customizations.productGrid doesn't configure a given breakpoint —
 // same defaults ChatWindow.tsx uses for the regular (non-split) chat surface's product grid, so
