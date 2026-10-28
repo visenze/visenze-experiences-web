@@ -31,6 +31,7 @@ export enum WidgetType {
   IN_PAGE_CAROUSEL_V3 = 'in_page_carousel_v3',
   EMBEDDED_SHOPPING_ASSISTANT = 'embedded_shopping_assistant',
   AI_SEARCH_LAUNCHER = 'ai_search_launcher',
+  AI_ASSISTANT = 'ai_assistant',
 }
 
 export enum WidgetErrorState {
@@ -722,6 +723,15 @@ export interface WidgetConfig {
      */
     msApiId?: string | number;
     /**
+     * (optional) Default entry point rendered for elements without a `data-entry` attribute:
+     * `launcher` | `prompt-box` | `search-bar` | `embedded`. Only used by the `ai_assistant` widget. Precedence:
+     * `data-entry` attribute > `window.visenzeConfigs[placementId].appSettings.entry` > this value >
+     * `launcher`.
+     *
+     * @since 1.0.38
+     */
+    entry?: string;
+    /**
      * Dimensions of the image to be considered for the algorithm.
      *
      * The ViSearch SDK by default resize image uploaded to 512x512;
@@ -1091,7 +1101,7 @@ export interface WidgetConfig {
         layout: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
         /**
          * (optional) Logo sizing, for widgets whose trigger button shows `url` as a brand logo
-         * (currently the shopping assistant) rather than a fixed 24x24 icon. The logo keeps its
+         * (currently the shopping assistant and the ai-assistant launcher entry) rather than a fixed 24x24 icon. The logo keeps its
          * natural aspect ratio: it defaults to 24px tall with its width following the image (up
          * to 240px). `height` and `width` size it in pixels. `color`/`colorDark` tint the logo
          * (as a mask); set them to `DEFAULT_ICON_COLOR` to render the image as-is.
@@ -1855,6 +1865,288 @@ export interface WidgetConfig {
        * @since 1.0.34
        */
       persistChatTtlMinutes?: number;
+    };
+    /**
+     * (optional) Settings specific to the ai_assistant widget. The fields directly under
+     * `aiAssistant` configure the chat drawer that every entry point shares; `promptBox` configures
+     * the `prompt-box` entry point: the compact inline "Ask AI" panel with suggested questions that
+     * opens the chat drawer when the shopper sends a message.
+     *
+     * @since 1.0.38
+     */
+    aiAssistant?: {
+      /**
+       * Side of the screen the chat drawer slides in from when the shopper asks something (the same side-mounted panel the shopping-assistant widget uses). Defaults to `right`
+       * (set in the widget's default config); `popup.position` is used only if this is explicitly unset. On tablet and mobile the drawer fills the screen regardless of this setting.
+       *
+       * @since 1.0.38
+       */
+      chatPosition?: 'left' | 'right';
+      /**
+       * (optional) Title of the chat: the header of both the side drawer (opened by the launcher and
+       * prompt-box entries) and the full-screen chat (opened by the search-bar entry). When unset or
+       * blank, falls back to `chatbot.title`, then the widget's default `widgetTitle` text
+       * ("Shopping Assistant" in English).
+       *
+       * @since 1.0.38
+       */
+      chatTitle?: string;
+      /**
+       * (optional) A logo shown next to the chat title in the header of both the side drawer and the
+       * full-screen chat.
+       *
+       * `layout` picks what the header shows: `ICON_TEXT` (default) the logo then the title text,
+       * `ICON` only the logo, `TEXT` only the title text, `TEXT_ICON` the text then the logo. The title text
+       * stays available to screen readers whatever the layout. `height` and `width` size the logo in pixels;
+       * the image is fitted inside without stretching and the height defaults to 24. `color`/`colorDark`
+       * tint the logo as a mask; leave them unset (or `DEFAULT_ICON_COLOR`) to show the image as-is, which
+       * is what a full-color logo or a GIF needs. Without a `url` only the title text is shown.
+       *
+       * @since 1.0.41
+       */
+      chatTitleIcon?: Partial<Icon> & {
+        layout?: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
+        height?: number;
+        width?: number;
+      };
+      /**
+       * (optional) Font size of the chat title, in pixels, in both the side drawer and the full-screen
+       * chat. When unset the containers keep their own title size.
+       *
+       * @since 1.0.41
+       */
+      chatTitleFontSize?: number;
+      /**
+       * (optional) Settings of the `prompt-box` entry point.
+       *
+       * @since 1.0.38
+       */
+      promptBox?: {
+        /**
+         * (optional) Title text shown in the panel's title row (e.g. "Ask Fitzy"). When unset or blank,
+         * the localized `promptBoxTitle` text is used instead; but if a `titleIcon` logo is configured
+         * and no title is set, the title row shows just the logo (the text stays available to screen
+         * readers). Set a title to show it next to the logo.
+         *
+         * @since 1.0.38
+         */
+        title?: string;
+        /**
+         * (optional) A short line of text shown under the title row and above the suggestion chips,
+         * e.g. "Need a hand?".
+         * Omit or leave blank to show nothing.
+         *
+         * @since 1.0.38
+         */
+        message?: string;
+        /**
+         * (optional) Colors of the send button (inside the text input) and the Find Similar button,
+         * which always share the same colors. Any color left unset falls back to the widget's accent:
+         * `generalLayout.fontColor` for the background and `generalLayout.backgroundColor` for the
+         * text and arrow (and their dark-mode counterparts).
+         *
+         * @since 1.0.38
+         */
+        buttonColors?: {
+          backgroundColor?: string;
+          backgroundColorDark?: string;
+          fontColor?: string;
+          fontColorDark?: string;
+        };
+        /**
+         * (optional) Icon shown at the start of the text input, inside it. `url` is required for it to
+         * appear; `height` and `width` size it in pixels (the image is fitted without stretching, height
+         * defaults to 20); `color`/`colorDark` tint it as a mask. Omit to show no icon.
+         *
+         * @since 1.0.38
+         */
+        inputIcon?: Partial<Icon> & {
+          height?: number;
+          width?: number;
+        };
+        /**
+         * Questions shown as tappable chips above the input while the panel is collapsed. The chips
+         * sit side by side and wrap onto the next row when the panel is too narrow.
+         * Tapping one sends it. The chips disappear once the conversation starts. Omit or leave
+         * empty to show no chips.
+         *
+         * @since 1.0.38
+         */
+        suggestedQuestions?: string[];
+        /**
+         * Maximum number of suggested-question chips shown, taken from the start of
+         * `suggestedQuestions`. Lower this to save vertical space when the chips wrap onto several rows. Defaults to 5.
+         *
+         * @since 1.0.38
+         */
+        maxSuggestedQuestions?: number;
+        /**
+         * "Find Similar" button shown beside the text input. Clicking it sends a fixed message to
+         * the assistant (as if the shopper had typed it), so the assistant looks for products
+         * similar to the one the widget is placed on.
+         *
+         * @since 1.0.38
+         */
+        findSimilar?: {
+          /**
+           * Shows the button. Defaults to `false`.
+           *
+           * @since 1.0.38
+           */
+          enabled?: boolean;
+          /**
+           * Button label. When unset or blank, the localized `promptBoxFindSimilar` text is used.
+           *
+           * @since 1.0.38
+           */
+          label?: string;
+          /**
+           * Message sent to the assistant when the button is clicked. Defaults to
+           * `find similar products`.
+           *
+           * @since 1.0.38
+           */
+          message?: string;
+        };
+        /**
+         * Brand logo shown in the panel's title row, in place of the default sparkle icon.
+         *
+         * `layout` picks what the title row shows: `ICON_TEXT` (default when a `title` is set) shows the
+         * logo then the title text, `ICON` (default when no `title` is set) only the logo, `TEXT` only the title text, `TEXT_ICON` the text then the
+         * logo. The title text stays available to screen readers whatever the layout.
+         * `height` and `width` size the logo in pixels; the image is fitted inside without
+         * stretching, and the height defaults to 24. `color`/`colorDark` tint the logo as a mask.
+         * Without a `url`, the default sparkle icon and the title text are shown.
+         *
+         * @since 1.0.38
+         */
+        titleIcon?: Partial<Icon> & {
+          layout?: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
+          height?: number;
+          width?: number;
+        };
+      };
+      /**
+       * (optional) Settings of the `search-bar` entry point: its three entry-bar buttons (image, mic,
+       * Ask AI), the mic entry point's recording duration and per-entry-point greeting text. The
+       * search-bar entry opens the shared conversation in a full-screen chat.
+       *
+       * @since 1.0.38
+       */
+      searchBar?: {
+        /**
+         * Maximum duration, in seconds, that the mic entry point's full-screen
+         * recording state stays open before it is automatically stopped (as if
+         * the user had clicked to stop). Defaults to 5.
+         *
+         * @since 1.0.38
+         */
+        voiceRecordingMaxDurationSeconds?: number;
+        /**
+         * Per-entry-point greeting text, spoken (if `chat.voiceGreetingEnabled`)
+         * and/or shown when that entry point is opened. `image`/`mic` and `ai`
+         * behave differently: see each field's own doc comment.
+         *
+         * @since 1.0.38
+         */
+        greetings?: {
+          /**
+           * Shown as the image entry point's own prompt caption and spoken via voice narration (if
+           * `chat.voiceGreetingEnabled`) every time it opens — including every time an existing
+           * conversation is resumed into it, not just the first. Unlike `ai`'s greeting, this is
+           * label/narration copy only: it never becomes part of the conversation's chat history, so
+           * opening this entry point and never submitting a photo leaves no trace of a conversation
+           * ever having started.
+           *
+           * @since 1.0.38
+           */
+          image?: string;
+          /** Same behavior as `image`, but for the microphone entry point. @since 1.0.38 */
+          mic?: string;
+          /**
+           * Shown and spoken as the conversation's actual opening message the first time a new "Ask
+           * AI" conversation starts — added to real, persisted chat history (via `chat.playGreeting`),
+           * unlike `image`/`mic`'s greetings. Not replayed when resuming an existing conversation.
+           *
+           * @since 1.0.38
+           */
+          ai?: string;
+        };
+        /**
+         * (optional) Whether the search bar's image-search button is shown.
+         * Defaults to `true` (enabled) when unset — set to `false` to remove
+         * this entry point entirely.
+         *
+         * @since 1.0.38
+         */
+        cameraEntryEnabled?: boolean;
+        /**
+         * (optional) Whether the search bar's mic-search button is shown.
+         * Defaults to `true` (enabled) when unset — set to `false` to remove
+         * this entry point entirely. Independent of `chat.voiceEnabled`.
+         *
+         * @since 1.0.38
+         */
+        micEntryEnabled?: boolean;
+        /**
+         * (optional) Whether the search bar's "Ask AI" button is shown.
+         * Defaults to `true` (enabled) when unset — set to `false` to remove
+         * this entry point entirely.
+         *
+         * @since 1.0.38
+         */
+        askAiEntryEnabled?: boolean;
+        /**
+         * (optional) Brand logo for the search bar's "Ask AI" button. Set `url` to show the logo
+         * (at its natural aspect ratio) in place of — or alongside — the button's `triggerAskAi`
+         * text; `color`/`colorDark` tint the logo (as a mask), or leave them unset to render the image
+         * as-is. Without `url`, the button shows its text only.
+         *
+         * `layout` arranges logo and text, the same way `popup.triggerIcon.layout` does, and defaults
+         * to `ICON` (logo only) when `url` is set:
+         * - ICON: logo only
+         * - TEXT: text only
+         * - ICON_TEXT: logo, followed by text
+         * - TEXT_ICON: text, followed by logo
+         *
+         * `height` and `width` size the logo in pixels; the image is fitted inside without stretching.
+         * With `ICON` the button keeps the camera button's border and 38px height, with a 32px-tall
+         * logo and an even 2px inset on all sides. Beside text the logo defaults to 22px tall, with
+         * its width following the image's aspect ratio (up to 240px), and the button keeps its normal
+         * padding. `padding.x` (left/right) and `padding.y` (top/bottom) override that default space
+         * between the button's border and its contents, in pixels; they apply only when a logo is
+         * shown, so a text-only button always matches the camera/mic buttons.
+         *
+         * The button's accessible name is always the `a11yOpenAskAi` text, whatever the layout.
+         *
+         * @since 1.0.38
+         */
+        askAiEntryIcon?: Partial<Icon> & {
+          layout?: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
+          height?: number;
+          width?: number;
+          padding?: {
+            x?: number;
+            y?: number;
+          };
+        };
+        /**
+         * (optional) Whether the full-screen chat footer's inline "open camera" button is
+         * shown once a conversation is active. Defaults to `true` (enabled) when
+         * unset. Image upload (drag/drop or file picker) is unaffected by this
+         * flag.
+         *
+         * @since 1.0.38
+         */
+        chatCameraEnabled?: boolean;
+        /**
+         * (optional) How the search-bar entry opens the conversation: `'fullscreen'` (default)
+         * opens the full-screen chat; `'drawer'` opens the side drawer shared with the launcher
+         * and prompt-box entries. In drawer mode the camera and mic buttons open the drawer
+         * directly (the image / mic entry screens exist only in the full-screen chat).
+         */
+        chatMode?: 'fullscreen' | 'drawer';
+      };
     };
     /**
      * Configuration specific to the AI Search Launcher widget's entry points:

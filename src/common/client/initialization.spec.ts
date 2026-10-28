@@ -1,7 +1,10 @@
+import { act } from '@testing-library/react';
+import { createElement, type ReactNode } from 'react';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
-import { WidgetType, type WidgetConfig } from '../wigmix-core';
-import { initWidgetFactory, setCssVariables } from './initialization';
+import { WidgetType, type WidgetClient, type WidgetConfig } from '../wigmix-core';
+import { initWidgetFactory, setCssVariables, type WidgetInitOptions } from './initialization';
 import ViSearch from 'visearch-javascript-sdk';
+import { getChatSessionStore } from '../components/chat/session/chat-session-registry';
 
 const mockViSearchClient = {
   setKeys: jest.fn(),
@@ -153,6 +156,149 @@ describe('initialization', () => {
       undefined,
       undefined,
     );
+  });
+
+  describe('chat session lifecycle', () => {
+    const buildChatClient = (): ReturnType<ReturnType<typeof initWidgetFactory>> => initWidgetFactory(
+      WidgetType.CAMERA_SEARCH,
+      '1.0.0',
+      jest.fn(),
+      false,
+      defaultCustomizations(),
+    )(widgetConfig, {}, true);
+
+    it('rerender() drops the client\'s chat session, so the remounted widget starts a fresh one', () => {
+      const widgetClient = buildChatClient();
+      if (!widgetClient) throw new Error('no client');
+      const store = getChatSessionStore(widgetClient);
+      const dispose = jest.spyOn(store, 'dispose');
+      widgetClient.rerender();
+      expect(dispose).toHaveBeenCalledTimes(1);
+      expect(getChatSessionStore(widgetClient)).not.toBe(store);
+    });
+
+    it('renderMissing() and hideWidget() keep the live chat session', () => {
+      const widgetClient = buildChatClient();
+      if (!widgetClient) throw new Error('no client');
+      const store = getChatSessionStore(widgetClient);
+      widgetClient.renderMissing();
+      widgetClient.hideWidget();
+      expect(getChatSessionStore(widgetClient)).toBe(store);
+    });
+
+    it('disposeWidget() drops the client\'s chat session', () => {
+      const widgetClient = buildChatClient();
+      if (!widgetClient) throw new Error('no client');
+      const store = getChatSessionStore(widgetClient);
+      widgetClient.disposeWidget();
+      expect(getChatSessionStore(widgetClient)).not.toBe(store);
+    });
+  });
+
+  describe('surface root', () => {
+    const surfaceHosts = (): NodeListOf<Element> => document.querySelectorAll('[id^=\'vi_surface__\']');
+    const addElement = (): HTMLElement => {
+      const element = document.createElement('div');
+      element.className = 'ps-widget-1234';
+      document.body.appendChild(element);
+      return element;
+    };
+    const entryRenderer = (): ReactNode => createElement('div', { 'data-testid': 'entry' });
+    const surface = (): ReactNode => createElement('div', { 'data-testid': 'surface' });
+    const buildSurfaceClient = (options?: WidgetInitOptions): WidgetClient => {
+      widgetConfig.displaySettings.cssSelector = '';
+      let client: WidgetClient | undefined;
+      act(() => {
+        client = initWidgetFactory(
+          WidgetType.AI_ASSISTANT,
+          '1.0.0',
+          entryRenderer,
+          true,
+          defaultCustomizations(),
+          options,
+        )(widgetConfig, {}, false);
+      });
+      if (!client) throw new Error('no client');
+      return client;
+    };
+    let clients: WidgetClient[] = [];
+    const track = (client: WidgetClient): WidgetClient => {
+      clients.push(client);
+      return client;
+    };
+
+    afterEach(() => {
+      act(() => clients.forEach((client) => client.disposeWidget()));
+      clients = [];
+      document.body.innerHTML = '';
+    });
+
+    it('mounts exactly one surface host on document.body next to the element roots', () => {
+      addElement();
+      addElement();
+      const client = track(buildSurfaceClient({ surface }));
+      expect(surfaceHosts()).toHaveLength(1);
+      expect(surfaceHosts()[0]?.parentElement).toBe(document.body);
+      expect(client.getRenderRoots()).toHaveLength(3);
+      expect(client.getRenderStatus()).toBe('RENDERED');
+    });
+
+    it('creates no surface host when there are no elements to serve', () => {
+      const client = track(buildSurfaceClient({ surface }));
+      expect(surfaceHosts()).toHaveLength(0);
+      expect(client.getRenderRoots()).toHaveLength(0);
+      expect(client.getRenderStatus()).toBe('UNRENDERED');
+    });
+
+    it('rerender() replaces the surface host, never leaving two', () => {
+      addElement();
+      const client = track(buildSurfaceClient({ surface }));
+      const before = surfaceHosts()[0];
+      act(() => client.rerender());
+      expect(surfaceHosts()).toHaveLength(1);
+      expect(surfaceHosts()[0]).not.toBe(before);
+      expect(client.getRenderRoots()).toHaveLength(2);
+    });
+
+    it('disposeWidget() removes the surface host', () => {
+      addElement();
+      const client = buildSurfaceClient({ surface });
+      expect(surfaceHosts()).toHaveLength(1);
+      act(() => client.disposeWidget());
+      expect(surfaceHosts()).toHaveLength(0);
+    });
+
+    it('renderMissing() keeps the existing surface host and renders the new element', () => {
+      addElement();
+      const client = track(buildSurfaceClient({ surface }));
+      const before = surfaceHosts()[0];
+      const added = addElement();
+      act(() => client.renderMissing());
+      expect(surfaceHosts()).toHaveLength(1);
+      expect(surfaceHosts()[0]).toBe(before);
+      expect(client.getRenderRoots()).toHaveLength(3);
+      expect(added.querySelector('[data-testid=\'entry\']')).not.toBeNull();
+    });
+
+    it('markAsRendered ignores the surface root once the elements are gone', () => {
+      const element = addElement();
+      const client = track(buildSurfaceClient({ surface }));
+      expect(surfaceHosts()).toHaveLength(1);
+      element.remove();
+      act(() => client.rerender());
+      expect(surfaceHosts()).toHaveLength(0);
+      expect(client.getRenderStatus()).toBe('UNRENDERED');
+      act(() => client.renderMissing());
+      expect(client.getRenderStatus()).toBe('UNRENDERED');
+    });
+
+    it('creates no surface host for a widget initialised without options', () => {
+      addElement();
+      const client = track(buildSurfaceClient());
+      expect(surfaceHosts()).toHaveLength(0);
+      expect(client.getRenderRoots()).toHaveLength(1);
+      expect(client.getRenderStatus()).toBe('RENDERED');
+    });
   });
 
   describe('setCssVariables — breadcrumbTrail.inactive', () => {

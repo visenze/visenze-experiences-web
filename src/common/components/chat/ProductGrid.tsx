@@ -34,6 +34,12 @@ interface ProductGridProps {
   scroller?: ProductScrollerConfig;
 }
 
+// Programmatic scrolling is instant for visitors who asked the system for reduced motion.
+const scrollBehavior = (): ScrollBehavior => (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+
+// Each card's share of the gaps between the `productsPerView` cards of one view.
+const gapShare = (scroller: ProductScrollerConfig): number => (scroller.gap * (scroller.productsPerView - 1)) / scroller.productsPerView;
+
 const ProductGrid: FC<ProductGridProps> = ({
   products, requestId, focusedProductId = null, focusedRequestId = null, wishlistPids, setIsInWishlist, pwPrefix, streaming = false, className, style,
   imageClasses, scroller,
@@ -108,7 +114,7 @@ const ProductGrid: FC<ProductGridProps> = ({
       return;
     }
     const step = (firstCard.offsetWidth + scroller.gap) * scroller.cardsPerScroll;
-    el.scrollBy({ left: direction * step, behavior: 'smooth' });
+    el.scrollBy({ left: direction * step, behavior: scrollBehavior() });
   };
 
   const isFocusedTurn = !!focusedRequestId && requestId === focusedRequestId;
@@ -117,7 +123,7 @@ const ProductGrid: FC<ProductGridProps> = ({
     if (!isFocusedTurn || !focusedProductId || !focusedCardRef.current) {
       return;
     }
-    focusedCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+    focusedCardRef.current.scrollIntoView({ behavior: scrollBehavior(), block: 'center', inline: 'nearest' });
   }, [isFocusedTurn, focusedProductId]);
 
   const getCardWrapperStyle = (isFocused: boolean): CSSProperties => ({
@@ -141,7 +147,8 @@ const ProductGrid: FC<ProductGridProps> = ({
           className={cn('relative', scroller && 'snap-start')}
           style={scroller ? {
             ...getCardWrapperStyle(isFocused),
-            flexBasis: `calc(${100 / scroller.productsPerView}% - ${(scroller.gap * (scroller.productsPerView - 1)) / scroller.productsPerView}px)`,
+            // Sized so `productsPerView` cards fit between a peek of the neighbouring card on each side.
+            flexBasis: `calc(${100 / scroller.productsPerView}% - ${(2 * PRODUCT_SCROLLER_PEEK_PX) / scroller.productsPerView + gapShare(scroller)}px)`,
             flexShrink: 0,
             flexGrow: 0,
             minWidth: 0,
@@ -194,11 +201,12 @@ const ProductGrid: FC<ProductGridProps> = ({
       <div
         ref={scrollerRef}
         role='list'
-        className='flex snap-x snap-mandatory overflow-x-auto scroll-smooth py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+        className='flex snap-x snap-mandatory overflow-x-auto motion-safe:scroll-smooth py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
         style={{
           columnGap: `${scroller.gap}px`,
-          paddingInline: `${PRODUCT_SCROLLER_PEEK_PX}px`,
-          scrollPaddingInline: `${PRODUCT_SCROLLER_PEEK_PX}px`,
+          // No padding at either end: the first card sits flush left and the last flush right. In between, the
+          // start scroll padding snaps a card PEEK in from the left edge, which shows a sliver of the previous one.
+          scrollPaddingInlineStart: `${PRODUCT_SCROLLER_PEEK_PX}px`,
         }}
         onScroll={updateScrollState}
       >

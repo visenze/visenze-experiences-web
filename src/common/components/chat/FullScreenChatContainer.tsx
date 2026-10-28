@@ -1,11 +1,12 @@
 import { cn } from '@heroui/theme';
-import { type FC, type KeyboardEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { type FC, type KeyboardEvent, type ReactNode, useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { FOCUS_VISIBLE_CLASSES } from '../../constants';
 import CloseIcon from '../../icons/CloseIcon';
 import PlusCircleIcon from '../../icons/PlusCircleIcon';
 import SpeakerIcon from '../../icons/SpeakerIcon';
 import { WidgetBreakpoint } from '../../types/constants';
+import { lockBodyScroll } from '../hooks/body-scroll-lock';
 import useBreakpoint from '../hooks/use-breakpoint';
 import Portal from '../portal';
 import ShadowWrapper from '../shadow-wrapper';
@@ -17,7 +18,7 @@ import ShadowWrapper from '../shadow-wrapper';
 interface FullScreenChatContainerProps {
   open: boolean;
   onClose: () => void;
-  title: string;
+  title: ReactNode;
   isMuted: boolean;
   onToggleMute: () => void;
   // Hides the mute/unmute toggle entirely when voice is disabled widget-wide (customizations
@@ -85,7 +86,6 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
   const intl = useIntl();
   const breakpoint = useBreakpoint();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [overflow, setOverflow] = useState<string>('');
 
   // Initial focus when the full-screen container opens. Note this FC's own instance is mounted
   // once and persists for the widget's whole lifetime (it's unconditionally present in the parent
@@ -101,16 +101,14 @@ const FullScreenChatContainer: FC<FullScreenChatContainerProps> = ({
     }
   }, [open]);
 
-  // Scroll lock — mirrors Modal's implementation in src/common/components/modal/visenze-modal.tsx.
+  // Scroll lock: while open, the body does not scroll; the page's previous inline overflow comes back
+  // when `open` goes false AND when the container unmounts while open (e.g. a parent swaps it for
+  // another surface in the same render), so the lock can never be left behind.
   useEffect(() => {
-    if (open) {
-      setOverflow(document.body.style.overflow);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = overflow;
-      setOverflow('');
+    if (!open) {
+      return undefined;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return lockBodyScroll();
   }, [open]);
 
   const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>): void => {
