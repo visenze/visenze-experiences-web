@@ -8,6 +8,7 @@ import type {
   MultiViewportFont,
   ColoredInterface,
 } from '../wigmix-core';
+import { resetChatSessionStore } from '../components/chat/session/chat-session-map';
 import { DEFAULT_CONFIGS } from '../default-configs';
 import getWidgetClient from './widget-client';
 import { resolveBaseEndpoint, usesCloudPaths } from './endpoint';
@@ -238,6 +239,43 @@ interface WidgetRendererParam {
 }
 type WidgetRenderer = (param: WidgetRendererParam) => ReactNode;
 
+export interface SurfaceRendererParam {
+  config: WidgetConfig;
+  client: WidgetClient;
+}
+export type SurfaceRenderer = (param: SurfaceRendererParam) => ReactNode;
+export interface WidgetInitOptions {
+  // Optional extra root, appended to document.body and mounted once per client, for widgets whose
+  // several element roots share one chat surface (ai_assistant). It is tracked with the other render
+  // roots, so rerender()/hideWidget()/disposeWidget() mount and unmount it like any of them.
+  surface?: SurfaceRenderer;
+}
+
+const SURFACE_HOST_ID_PREFIX = 'vi_surface__';
+const surfaceHosts = new WeakMap<WidgetClient, { host: HTMLElement; root: Root }>();
+// Elements each client has rendered into, per client so one placement's rerender() can't make another's
+// renderMissing() mount a second root on an element that is still mounted.
+const rootElementsByClient = new WeakMap<WidgetClient, HTMLElement[]>();
+
+const mountSurface = (client: WidgetClient, config: WidgetConfig, surface: SurfaceRenderer): Root => {
+  const host = document.createElement('div');
+  host.id = `${SURFACE_HOST_ID_PREFIX}${config.appSettings.placementId}`;
+  document.body.appendChild(host);
+  const root = createRoot(host);
+  root.render(surface({ config, client }));
+  // The client unmounts its roots on rerender()/disposeWidget(): take the host div down with the root.
+  const surfaceRoot: Root = {
+    render: (children: ReactNode): void => root.render(children),
+    unmount: (): void => {
+      root.unmount();
+      host.remove();
+      surfaceHosts.delete(client);
+    },
+  };
+  surfaceHosts.set(client, { host, root: surfaceRoot });
+  return surfaceRoot;
+};
+
 const getRenderElements = (config: WidgetConfig): NodeListOf<HTMLElement> => {
   const { cssSelector } = config.displaySettings;
   return document.body.querySelectorAll(cssSelector || `.ps-widget-${config.appSettings.placementId}`);
@@ -248,21 +286,26 @@ const getRenderElement = (config: WidgetConfig): HTMLElement | null => {
   return document.body.querySelector(cssSelector || `.ps-widget-${config.appSettings.placementId}`);
 };
 
-let rootElements: HTMLElement[] = [];
-
 const render = (
     client: WidgetClient,
     config: WidgetConfig,
     renderer: WidgetRenderer,
     isMultiRender: boolean,
     onlyMissing = false,
+    surface?: SurfaceRenderer,
 ): void => {
   if (!onlyMissing) {
     // Clear all existing render roots
     client.getRenderRoots().forEach((r) => r.unmount());
-    rootElements = [];
+    rootElementsByClient.set(client, []);
+    // Only now that the mounted components are gone: dropping the chat session earlier would leave them
+    // pinned to disposed stores (and let a late render recreate one nobody disposes). The remount then
+    // starts a fresh session (and re-restores from storage).
+    resetChatSessionStore(client);
   }
 
+  const rootElements = rootElementsByClient.get(client) ?? [];
+  rootElementsByClient.set(client, rootElements);
   const roots: Root[] = onlyMissing ? [...client.getRenderRoots()] : [];
 
   if (isMultiRender) {
@@ -285,8 +328,19 @@ const render = (
     }
   }
 
+  // Elements the widget actually rendered; the surface is not an element, it only exists to serve them.
+  const surfaceRoot = surfaceHosts.get(client)?.root;
+  const hasElementRoots = roots.filter((r) => r !== surfaceRoot).length > 0;
+  if (surface && hasElementRoots && !surfaceHosts.has(client)) {
+    roots.push(mountSurface(client, config, surface));
+  }
+  if (!hasElementRoots && surfaceHosts.has(client)) {
+    // Nothing is left for the surface to serve: take it down so an open drawer can't outlive its page.
+    roots.splice(0).forEach((r) => r.unmount());
+  }
+
   client.setRenderRoots(roots);
-  client.markAsRendered(roots.length > 0);
+  client.markAsRendered(hasElementRoots);
 };
 
 export const initWidgetFactory = (
@@ -295,6 +349,7 @@ export const initWidgetFactory = (
     renderer: WidgetRenderer,
     isMultiRender: boolean,
     customizations: WidgetConfig['customizations'],
+    options: WidgetInitOptions = {},
 ): WidgetInitializer => {
   return (initConfig, fieldMappings, skipRender) => {
     const result = init(initConfig, fieldMappings, widgetType, widgetVersion, customizations);
@@ -304,18 +359,20 @@ export const initWidgetFactory = (
 
     const { widgetClient, widgetConfig } = result;
     widgetClient.rerender = (selector?: string): void => {
+      // render() drops the client's shared chat session once its roots are unmounted, so the remount
+      // starts fresh. Not done by renderMissing(), which keeps the existing roots.
       widgetClient.hideWidget();
       if (selector) {
         widgetConfig.displaySettings.cssSelector = selector;
       }
-      render(widgetClient, widgetConfig, renderer, isMultiRender);
+      render(widgetClient, widgetConfig, renderer, isMultiRender, false, options.surface);
     };
     widgetClient.renderMissing = (): void => {
-      render(widgetClient, widgetConfig, renderer, isMultiRender, true);
+      render(widgetClient, widgetConfig, renderer, isMultiRender, true, options.surface);
     };
 
     if (!skipRender) {
-      render(widgetClient, widgetConfig, renderer, isMultiRender);
+      render(widgetClient, widgetConfig, renderer, isMultiRender, false, options.surface);
     }
 
     return widgetClient;
@@ -332,6 +389,7 @@ export const devInitWidget = async (
     shouldRetrieveFieldsMapping: boolean,
     window: Window,
     customizations: WidgetConfig['customizations'],
+    options: WidgetInitOptions = {},
 ): Promise<void> => {
   let fieldsMapping = fieldsMappingParam;
   if (shouldRetrieveFieldsMapping) {
@@ -343,7 +401,11 @@ export const devInitWidget = async (
     const widgetConfigResponse = await fetch(`${base}${configPath}?app_key=${devAppSettings.appKey}`
         + `&placement_id=${devAppSettings.placementId}&return_fields_mappings=true`);
     const widgetConfigObject = await widgetConfigResponse.json();
-    fieldsMapping = widgetConfigObject.fields_mappings;
+    if (widgetConfigObject?.fields_mappings) {
+      fieldsMapping = widgetConfigObject.fields_mappings;
+    } else {
+      console.warn('[dev] No fields_mappings in the widget-configs response, using devFieldMappings instead:', widgetConfigObject);
+    }
   }
 
   const result = init(devConfigs as WidgetConfig, fieldsMapping, widgetType, widgetVersion, customizations);
@@ -352,16 +414,17 @@ export const devInitWidget = async (
   }
 
   const { widgetClient, widgetConfig } = result;
-  render(widgetClient, widgetConfig, renderer, isMultiRender);
+  render(widgetClient, widgetConfig, renderer, isMultiRender, false, options.surface);
   widgetClient.rerender = (selector?: string): void => {
+    // See initWidgetFactory's rerender: render() resets the chat session after unmounting.
     widgetClient.hideWidget();
     if (selector) {
       widgetConfig.displaySettings.cssSelector = selector;
     }
-    render(widgetClient, widgetConfig, renderer, isMultiRender);
+    render(widgetClient, widgetConfig, renderer, isMultiRender, false, options.surface);
   };
   widgetClient.renderMissing = (): void => {
-    render(widgetClient, widgetConfig, renderer, isMultiRender, true);
+    render(widgetClient, widgetConfig, renderer, isMultiRender, true, options.surface);
   };
   window['widget'] = widgetClient;
 };

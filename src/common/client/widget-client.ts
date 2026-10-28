@@ -1,6 +1,7 @@
 import type { Root } from 'react-dom/client';
 import ViSearch, { type ProductSearchResponse, type ViSearchClient } from 'visearch-javascript-sdk';
 import type { Primitive, WidgetClient, WidgetConfig, WidgetRenderStatus } from '../wigmix-core';
+import { resetChatSessionStore } from '../components/chat/session/chat-session-map';
 import type { ErrorHandler, SuccessHandler } from '../types/function';
 import { BEST_PRODUCT_IMAGE_SYS_ATTR, LEGACY_ENDPOINT } from '../constants';
 import { getManualEndpoint } from './endpoint';
@@ -295,6 +296,9 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     hideWidget();
     // Clear all existing render roots on top of just null-rendering
     roots.forEach((root) => root.unmount());
+    // Then drop this client's shared chat session (aborting any in-flight reply): after the roots, so no
+    // mounted component is left holding a disposed store.
+    resetChatSessionStore(client);
     if (window.visenzeWidgets?.[placementId]) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete window.visenzeWidgets[placementId];
@@ -363,7 +367,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     localeUpdaters.forEach((fn) => fn(locale));
   };
 
-  return {
+  const client: WidgetClient = {
     visearch,
     widgetType,
     widgetVersion,
@@ -404,6 +408,7 @@ const getWidgetClient = (config: WidgetConfig, widgetType: string, widgetVersion
     sendChatMessage: (): void => {}, // implemented in individual widgets
     openWithMessage: (): void => {}, // implemented in individual widgets
   };
+  return client;
 };
 
 export default getWidgetClient;

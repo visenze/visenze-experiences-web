@@ -2,25 +2,29 @@ import { Textarea } from '@heroui/input';
 import { cn } from '@heroui/theme';
 import { type FC, type ReactElement, useContext, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import type { UseChatResult } from '../../../common/components/chat/use-chat';
-import { AUTO_FOCUS_CLASSES, FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
-import MicrophoneIcon from '../../../common/icons/MicrophoneIcon';
-import StopIcon from '../../../common/icons/StopIcon';
-import SubmitChatIcon from '../../../common/icons/SubmitChatIcon';
-import { WidgetDataContext } from '../../../common/types/contexts';
+import { AUTO_FOCUS_CLASSES, FOCUS_VISIBLE_CLASSES } from '../../../constants';
+import MicrophoneIcon from '../../../icons/MicrophoneIcon';
+import StopIcon from '../../../icons/StopIcon';
+import SubmitChatIcon from '../../../icons/SubmitChatIcon';
+import { WidgetDataContext } from '../../../types/contexts';
+import type { UseChatResult } from '../use-chat';
 
 interface MicEntryScreenProps {
   chat: UseChatResult;
-  // The mic entry point's configured greeting (customizations.launcher.greetings.mic), resolved by
-  // the caller — shown here regardless of whether this is a brand-new conversation or a resumed
+  // The mic entry point's configured greeting (ai-search-launcher: customizations.launcher.greetings.mic;
+  // ai_assistant: customizations.aiAssistant.searchBar.greetings.mic), resolved by the caller — shown here regardless of whether this is a brand-new conversation or a resumed
   // one. Passed explicitly rather than read back out of chat.chats: for a resumed conversation the
   // first bot message in chat.chats is whatever the assistant actually said much earlier, not a
   // greeting, and chat.playGreeting is deliberately not called again in that case (see
   // ai-search-launcher.tsx) so it never lands in chat.chats at all.
   greetingText: string;
+  // Auto-stop duration in seconds, resolved by the caller from its own config (ai_assistant:
+  // `customizations.aiAssistant.searchBar.voiceRecordingMaxDurationSeconds`). Takes precedence over
+  // `customizations.launcher.voiceRecordingMaxDurationSeconds`, which ai-search-launcher relies on.
+  maxDurationSeconds?: number;
 }
 
-// Fallback when `customizations.launcher.voiceRecordingMaxDurationSeconds` is unset.
+// Fallback when neither `maxDurationSeconds` nor `customizations.launcher.voiceRecordingMaxDurationSeconds` is set.
 const DEFAULT_VOICE_RECORDING_MAX_DURATION_SECONDS = 5;
 
 // Fallback when `customizations.chatbot.inputBar.voiceRecordingColor(Dark)` is unset — mirrors
@@ -35,7 +39,7 @@ const DEFAULT_VOICE_RECORDING_COLOR = '#EF4444';
 // Siri/Google Assistant rather than auto-starting on the user's behalf. `useVoice`'s
 // `startRecording()` calls `stopAudio()` internally as its first step, so a click while a greeting
 // is still playing/queued cuts it off immediately, which is expected here.
-const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat, greetingText }) => {
+const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat, greetingText, maxDurationSeconds: maxDurationSecondsProp }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const intl = useIntl();
@@ -75,18 +79,19 @@ const MicEntryScreen: FC<MicEntryScreenProps> = ({ chat, greetingText }) => {
 
   // Auto-stop (F1): the full-screen recording state isn't press-and-hold like the chat footer's
   // mic button, so without a cap the user could leave it recording indefinitely. Configurable via
-  // `customizations.launcher.voiceRecordingMaxDurationSeconds` (default 5s).
+  // the `maxDurationSeconds` prop, else `customizations.launcher.voiceRecordingMaxDurationSeconds` (default 5s).
+  const maxDurationSeconds = maxDurationSecondsProp
+    ?? customizations.launcher?.voiceRecordingMaxDurationSeconds
+    ?? DEFAULT_VOICE_RECORDING_MAX_DURATION_SECONDS;
   useEffect(() => {
     if (chat.voiceStatus !== 'recording') {
       return undefined;
     }
-    const maxDurationSeconds = customizations.launcher?.voiceRecordingMaxDurationSeconds
-      ?? DEFAULT_VOICE_RECORDING_MAX_DURATION_SECONDS;
     const timeoutId = window.setTimeout(() => {
       chatRef.current.stopRecording();
     }, maxDurationSeconds * 1000);
     return (): void => window.clearTimeout(timeoutId);
-  }, [chat.voiceStatus, customizations.launcher?.voiceRecordingMaxDurationSeconds]);
+  }, [chat.voiceStatus, maxDurationSeconds]);
 
   const renderMicIcon = (): ReactElement => {
     if (chat.voiceStatus === 'transcribing') {

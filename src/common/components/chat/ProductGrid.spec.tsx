@@ -86,7 +86,11 @@ describe('ProductGrid', () => {
       renderGrid({ scroller });
       const list = screen.getByRole('list');
       expect(list.style.columnGap).toBe('8px');
-      expect((list.firstElementChild as HTMLElement).style.flexBasis).toBe('calc(50% - 4px)');
+      expect((list.firstElementChild as HTMLElement).style.flexBasis).toBe('calc(50% - 28px)');
+      // Flush with both ends of the row; only the scroll offset leaves room for the previous card's peek.
+      expect(list.style.paddingInlineStart).toBe('');
+      expect(list.style.paddingInlineEnd).toBe('');
+      expect(list.style.scrollPaddingInlineStart).toBe('24px');
     });
 
     it('shows only the next arrow at the start and scrolls by cardsPerScroll cards', () => {

@@ -1,9 +1,9 @@
 import { type FC, type RefObject, useContext } from 'react';
+import ChatComposer from './ChatComposer';
+import ChatWindow from './ChatWindow';
 import ProductsPane from './ProductsPane';
-import ChatComposer from '../../../common/components/chat/ChatComposer';
-import ChatWindow from '../../../common/components/chat/ChatWindow';
-import type { UseChatResult } from '../../../common/components/chat/use-chat';
-import { WidgetDataContext } from '../../../common/types/contexts';
+import type { UseChatResult } from './use-chat';
+import { WidgetDataContext } from '../../types/contexts';
 
 interface SplitLayoutProps {
   chat: UseChatResult;

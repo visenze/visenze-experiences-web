@@ -45,10 +45,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Each field can also set a `label` and a `callbackKey`. Clicking Add to Cart opens a pop-up where every shown field must be chosen. Fields with only one value are pre-selected, and fields the product has no values for are skipped; if no fields are left, the product is added directly, as before. The chosen values are passed to `callbacks.onAddToCartToggle` as a new fourth `selectedOptions` argument, keyed by each field's `callbackKey` (or `field` when unset). The option fields are added to `attrs_to_get` automatically. Without `options`, or with `enable: false`, Add to Cart works as before.
 - shopping-assistant, embedded-shopping-assistant, ai-search-launcher: When the chat agent adds a product to cart and that product has add-to-cart options, the same pop-up asks the shopper for the options first, one product at a time. Products without options are added directly, as before.
 - New locale strings `addToCartOptionsPrompt`, `addToCartOptionsSelect`, `addToCartOptionsClose`, `a11yAddToCartOptionsPrev` and `a11yAddToCartOptionsNext`.
+- ai_assistant: New widget bundle with per-element entry points, `launcher` (trigger button) and `prompt-box` (an inline "Ask AI" panel with a title/logo, optional message line, suggested-question chips, text input and optional "Find Similar" button), selected by `data-entry`. All elements of a placement share one conversation and one chat drawer; the conversation is restored after a reload and continues when `data-pid` changes. Configured under `customizations.aiAssistant` (drawer-level `chatPosition`, `chatTitle`; the prompt box under `customizations.aiAssistant.promptBox`). Start it locally with `npm run start:ai-assistant`.
+- New optional `appSettings.entry` (`launcher` | `prompt-box` | `search-bar` | `embedded`, the same values `data-entry` accepts): the default entry for `ai_assistant` elements without `data-entry`. API-provided `search-bar`/`embedded` values depend on backend support. Precedence: `data-entry` > `window.visenzeConfigs[placementId].appSettings.entry` > API-provided `appSettings.entry` > `launcher`. `RESULT_LOAD` carries `entry` when one is set.
+- (internal) `ChatSessionStore` (one per `WidgetClient`, outside React) now holds the chat session; `useChat` is a thin adapter over it, with a new `attachVoice` option (default `true`).
+- (internal) `rerender()` and `disposeWidget()` reset the client's chat session store via `resetChatSessionStore`.
+- (internal) `ChatDrawerScreen` (new, the side chat drawer layout) and `EntryLogo` (moved from ai-search-launcher) live in `src/common/components`.
+- (internal) `openWithMessage` and `sendChatMessage` are implemented on the session store (used by `ai_assistant`).
+- (internal) Restoring a stored chat no longer applies to a conversation that was replaced (new chat or a new session) while the history was loading.
+- (internal) `useChat`'s `sendMessage(message, { pid })` sends that product id as the request's `pid`, and a restored conversation is merged in front of a message sent before the history finished loading; both now live in the session store.
+- (internal, changed) `sendChatMessage('', { pid })` / `sendMessage` with a bare `{ pid }` and no message text no longer sends the default "find me products like this image" query; no request is sent (`sendChatMessage` still opens the chat).
+- ai_assistant: Two new entries, `search-bar` and `embedded`. `search-bar` shows camera, mic and "Ask AI" buttons that open the shared conversation in a full-screen chat (with an optional split view when `customizations.chatbot.layout` is `splitlayout`). `embedded` (with `data-query`) shows an inline AI overview with its own separate conversation per element; it keeps and restores its own stored chat under its own key (never the shared conversation's), and "See Results" opens its own full-screen chat.
+- New `customizations.aiAssistant.searchBar.*` options (`cameraEntryEnabled`, `micEntryEnabled`, `askAiEntryEnabled`, `askAiEntryIcon`, `greetings.image`/`mic`/`ai`, `voiceRecordingMaxDurationSeconds`, `chatCameraEnabled`), with the same defaults as `ai-search-launcher`'s `launcher`.
+- (internal) New optional `WidgetInitOptions.surface` (`initWidgetFactory`/`devInitWidget`): mounts one extra root on `document.body` (`div#vi_surface__<placementId>`), tracked with the client's render roots.
+- (internal) The chat session registry is keyed per `WidgetClient`: `getChatSessionStore(client, wishlistPids, key = 'shared')`, `peekChatSessionStore`, `resetChatSessionStore(client, key?)` (no key resets all of the client's stores), and `useChat({ storeKey })`.
+- (internal) `SplitLayout`, `ProductsPane`, `BreadcrumbTrail`, `ProductGridSkeleton`, `entry-screens/{ImageEntryScreen,MicEntryScreen}` and `overview/{TurnSection,derive-turns,conversation-turn}` moved to `src/common/components/chat`; ai-search-launcher and embedded-shopping-assistant import them from there.
+- (internal) `MicEntryScreen` takes an optional `maxDurationSeconds` prop.
+- (internal) New `useHidePageBehindModal` and `useReturnFocusOnClose` hooks (`hooks/use-modal-a11y.ts`) hide the host page from assistive technology while the ai_assistant chat dialogs are open and return focus to the opener on close; new reference-counted `lockBodyScroll` (`hooks/body-scroll-lock.ts`) so overlapping surfaces cannot leave the page unscrollable.
 
 ### Fixed
 
 - shopping-assistant: `customizations.chatbot.startMuted` is now applied. With it on, voice reading starts muted when the widget loads, so replies aren't spoken until the shopper turns voice on with the header speaker button. ai-search-launcher and embedded-shopping-assistant already did this.
+- Chat widgets: closing the chat while a reply is still streaming no longer leaves the input disabled when the conversation is shown again.
+- Chat widgets: a blocked or full `localStorage` (e.g. Safari private mode) no longer throws while restoring or saving a conversation; the chat just is not resumable.
+- Chat widgets: a history restore still in flight when the widget is re-rendered or disposed no longer clears the stored chat id.
+- ai_assistant: Using the `search-bar` camera or mic button with `chatMode: 'drawer'` opens a drawer whose input works, and reopening the drawer with Ask AI plays the greeting again.
+- ai_assistant: The `embedded` entry's content is inside a labelled region landmark (accessibility: all page content contained by landmarks).
+- (internal) The add-to-cart options flow (held-back `<<ADD_TO_CART>>` tokens, the `options` chat bubble) is implemented in `ChatSessionStore`, so it works with the session store `useChat` now wraps.
+
+### Changed
+
+- ai_assistant: The chat drawer is no longer hosted inside the first element; the widget mounts its own root on `document.body`, so a hidden or removed element cannot take the chat with it.
+- ai_assistant: The chat starts muted by default (`chatbot.startMuted` defaults to `true` for this widget), applied by the surface on mount; this is only noticeable (and the mute toggle only shown) when speech output is on (`chatbot.voiceEnabled`, default `false`).
+- ai_assistant: `customizations.aiAssistant.chatTitle` now titles both the side drawer and the full-screen chat (falling back to `chatbot.title`, then, for both, the widget's default `widgetTitle` text, "Shopping Assistant" in English).
+- ai_assistant: Non-English locales fall back to English key by key for texts the locale lacks, and embedded-shopping-assistant's translations are used for the ids this widget lacks.
+- `FullScreenChatContainer` restores the page's previous inline `overflow` on close and on unmount (affects ai-search-launcher and embedded-shopping-assistant as well).
+- Chat widgets with `productGrid.*.horizontalScroll`: the product row has no side padding (the first card is flush left, a sliver of the next card shows on the right) and scrolls instantly for visitors who prefer reduced motion.
+- Secondary text in the image entry screen, breadcrumb trail and AI Overview uses a darker gray (`gray-600`) for contrast.
 
 <!-- END visenze-experiences-web 1.0.41 -->
 

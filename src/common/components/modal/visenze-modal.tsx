@@ -16,9 +16,11 @@ interface ModalProps {
   portalRef?: MutableRefObject<HTMLDivElement | null>;
   ariaLabel?: string;
   ariaLabelledBy?: string;
+  // react-modal's own return of focus (default true) only knows the shadow host here; a consumer that handles it itself opts out.
+  shouldReturnFocusAfterClose?: boolean;
 }
 
-const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position, portalRef, ariaLabel, ariaLabelledBy }) => {
+const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, position, portalRef, ariaLabel, ariaLabelledBy, shouldReturnFocusAfterClose }) => {
   const root = useContext(RootContext);
   let timeout;
   switch (layout) {
@@ -56,6 +58,7 @@ const Modal: FC<ModalProps> = ({ open, layout, children, onClose, className, pos
       overlayClassName={`wigmix-modal-overlay wigmix-modal-position-${position}`}
       testId='wigmix-modal'
       onRequestClose={onClose}
+      shouldReturnFocusAfterClose={shouldReturnFocusAfterClose ?? true}
       contentLabel={ariaLabel}
       aria={ariaLabelledBy ? { labelledby: ariaLabelledBy } : undefined}
       appElement={portalRef?.current || document.body}>
@@ -78,6 +81,7 @@ interface VisenzeModalProps {
   renderWithoutPortal: boolean;
   ariaLabel?: string;
   ariaLabelledBy?: string;
+  shouldReturnFocusAfterClose?: boolean;
 }
 
 const ViSenzeModal: FC<VisenzeModalProps> = (props) => {

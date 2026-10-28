@@ -1,20 +1,20 @@
 import { cn } from '@heroui/theme';
 import { type FC, type ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import type { UseChatResult } from '../../../common/components/chat/use-chat';
-import WebcamCapture from '../../../common/components/chat/WebcamCapture';
-import FileDropzone from '../../../common/components/FileDropzone';
-import Footer from '../../../common/components/Footer';
-import { AUTO_FOCUS_CLASSES, FOCUS_VISIBLE_CLASSES } from '../../../common/constants';
-import CustomizableIcon from '../../../common/icons/CustomizableIcon';
-import UploadIcon from '../../../common/icons/UploadIcon';
-import { WidgetDataContext } from '../../../common/types/contexts';
-import type { SearchImage } from '../../../common/types/image';
+import FileDropzone from '../../../components/FileDropzone';
+import Footer from '../../../components/Footer';
+import { AUTO_FOCUS_CLASSES, FOCUS_VISIBLE_CLASSES } from '../../../constants';
+import CustomizableIcon from '../../../icons/CustomizableIcon';
+import UploadIcon from '../../../icons/UploadIcon';
+import { WidgetDataContext } from '../../../types/contexts';
+import type { SearchImage } from '../../../types/image';
+import type { UseChatResult } from '../use-chat';
+import WebcamCapture from '../WebcamCapture';
 
 interface ImageEntryScreenProps {
   chat: UseChatResult;
-  // The image entry point's configured greeting (customizations.launcher.greetings.image),
-  // resolved by the caller — shown here regardless of whether this is a brand-new conversation or
+  // The image entry point's configured greeting (ai-search-launcher: customizations.launcher.greetings.image;
+  // ai_assistant: customizations.aiAssistant.searchBar.greetings.image), resolved by the caller — shown here regardless of whether this is a brand-new conversation or
   // a resumed one. Passed explicitly rather than read back out of chat.chats: for a resumed
   // conversation the first bot message in chat.chats is whatever the assistant actually said much
   // earlier, not a greeting, and chat.playGreeting is deliberately not called again in that case
@@ -29,7 +29,7 @@ interface ImageEntryScreenProps {
 // generic `customizations.imageUpload` config. Every path feeds the picked/captured/selected image
 // straight into the chat as the initial query — no intermediate results screen (confirmed
 // decision, spec §5.1; results stay in the chat surface, unlike camera-search's own ResultScreen).
-// Once `chat.sendMessage` flips `hasStartedChat`, the caller (`ai-search-launcher.tsx`) swaps this
+// Once `chat.sendMessage` flips `hasStartedChat`, the caller (`ai-search-launcher.tsx` / ai_assistant's `AssistantSurface.tsx`) swaps this
 // screen out for the normal chat surface on its own; this component doesn't need to know that.
 const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat, greetingText }) => {
   const { widgetConfig, darkMode } = useContext(WidgetDataContext);
@@ -182,7 +182,7 @@ const ImageEntryScreen: FC<ImageEntryScreenProps> = ({ chat, greetingText }) => 
 
       {galleryImages.length > 0 && (
         <div className='flex flex-col gap-2 overflow-hidden'>
-          <p className='m-0 text-left text-sm text-gray-500 dark:text-gray-400'>
+          <p className='m-0 text-left text-sm text-gray-600 dark:text-gray-400'>
             {intl.formatMessage({ id: 'tapProductGallery' })}
           </p>
           {/* Fixed (not flex-grown) height: h-full tiles inside a CSS grid need a definite row

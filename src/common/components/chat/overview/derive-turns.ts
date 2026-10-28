@@ -1,7 +1,7 @@
-import type { Chat } from '../../common/components/chat/use-chat';
-import { isImageDataUrl, isImageUrl } from '../../common/types/image';
-import type { ProcessedProduct } from '../../common/types/product';
-import type { ConversationTurn } from './embedded-shopping-assistant';
+import type { Chat } from '../use-chat';
+import { isImageDataUrl, isImageUrl } from '../../../types/image';
+import type { ProcessedProduct } from '../../../types/product';
+import type { ConversationTurn } from './conversation-turn';
 
 // The subset of UseChatResult this derivation actually reads — kept narrow and explicit (rather
 // than taking `chat: UseChatResult` directly) so tests can construct exactly what's needed

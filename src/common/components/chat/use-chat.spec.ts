@@ -1,6 +1,9 @@
 import { act, renderHook, type RenderHookResult } from '@testing-library/react';
-import { createElement } from 'react';
+import { createElement, type ReactElement, type ReactNode } from 'react';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
+import { getChatSessionStore, peekChatSessionStore, resetChatSessionStore } from './session/chat-session-registry';
+import type { VoiceBridge } from './session/voice-bridge';
+import { NULL_VOICE_BRIDGE } from './session/voice-bridge';
 import useChat, { type UseChatOptions, type UseChatResult } from './use-chat';
 import { DEFAULT_CUSTOMIZATIONS } from '../../../official-widgets/ai-search-launcher/default-config';
 import { createMockWidgetClient, createWidgetConfig } from '../../test-utils';
@@ -91,6 +94,35 @@ const renderChat = (
     ),
   });
   return { hook, widgetClient, mockVisearchClient };
+};
+
+// Two useChat hooks under ONE widgetClient (same wrapper as renderChat), so they share a session.
+const renderTwoChats = (
+  customizationOverrides: Partial<WidgetConfig['customizations']> = {},
+  firstOptions: UseChatOptions = {},
+  secondOptions: UseChatOptions = {},
+): {
+  first: RenderHookResult<UseChatResult, unknown>;
+  second: RenderHookResult<UseChatResult, unknown>;
+  widgetClient: ReturnType<typeof createMockWidgetClient>['widgetClient'];
+} => {
+  const widgetConfig = createWidgetConfig(
+    { ...DEFAULT_CUSTOMIZATIONS, ...customizationOverrides },
+    { searchSettings: { attrs_to_get: ['product_url', 'title', 'brand', 'price', 'original_price'] } },
+  );
+  const { widgetClient } = createMockWidgetClient(widgetConfig, 'wigmix_ai_search_launcher', {
+    getUid: jest.fn((cb: (uid: string) => void) => cb('test-uid')),
+    getSid: jest.fn((cb: (sid: string) => void) => cb('test-sid')),
+    generateUuid: jest.fn((cb: (uuid: string) => void) => cb('test-chat-id')),
+  });
+  const wrapper = ({ children }: { children: ReactNode }): ReactElement => createElement(
+    WidgetDataContext.Provider,
+    { value: { widgetConfig, widgetClient, darkMode: false, locale: 'en' } },
+    children,
+  );
+  const first = renderHook(() => useChat(firstOptions), { wrapper });
+  const second = renderHook(() => useChat(secondOptions), { wrapper });
+  return { first, second, widgetClient };
 };
 
 const revealAll = async (): Promise<void> => {
@@ -346,6 +378,98 @@ describe('use-chat', () => {
     const params = new URLSearchParams((calledUrl as string).split('?')[1]);
     expect(params.get('chat_id')).toBe('lazily-minted-id');
     expect(hook.result.current.chatId).toBe('lazily-minted-id');
+  });
+
+  it('adds pid to the chat request when the pid option is set', () => {
+    const { hook } = renderChat({}, {}, {}, { pid: 'prod-42' });
+    mockFetchEventSource.mockImplementation(async () => {});
+
+    act(() => {
+      hook.result.current.sendMessage('how cushioned is it?');
+    });
+
+    const [calledUrl] = mockFetchEventSource.mock.calls[0];
+    const params = new URLSearchParams((calledUrl as string).split('?')[1]);
+    expect(params.get('pid')).toBe('prod-42');
+    expect(params.get('q')).toBe('how cushioned is it?');
+  });
+
+  describe('a product id passed with a single message', () => {
+    const paramsOfCall = (n: number): URLSearchParams => {
+      const [calledUrl] = mockFetchEventSource.mock.calls[n];
+      return new URLSearchParams((calledUrl as string).split('?')[1]);
+    };
+
+    it('is sent as that request\'s pid, and is not treated as an image', () => {
+      const { hook } = renderChat();
+      mockFetchEventSource.mockImplementation(async () => {});
+
+      act(() => {
+        hook.result.current.sendMessage('find similar products', { pid: 'prod-7' });
+      });
+
+      expect(paramsOfCall(0).get('pid')).toBe('prod-7');
+      expect(paramsOfCall(0).get('q')).toBe('find similar products');
+      expect(paramsOfCall(0).has('im_url')).toBe(false);
+      // no image bubble: a pid has nothing to draw
+      const userChat = hook.result.current.chats.find((chat) => chat.author === 'user');
+      expect(userChat?.image).toBeUndefined();
+      expect(userChat?.messages).toEqual(['find similar products']);
+    });
+
+    it('overrides the pid option for that message only', async () => {
+      const { hook } = renderChat({}, {}, {}, { pid: 'option-pid' });
+      mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
+        options.onclose();
+      });
+
+      act(() => {
+        hook.result.current.sendMessage('first', { pid: 'message-pid' });
+      });
+      await revealAll();
+      act(() => {
+        hook.result.current.sendMessage('second');
+      });
+
+      expect(paramsOfCall(0).get('pid')).toBe('message-pid');
+      expect(paramsOfCall(1).get('pid')).toBe('option-pid');
+    });
+
+    it('does not send anything when there is a pid but no message text', () => {
+      const { hook } = renderChat();
+      mockFetchEventSource.mockImplementation(async () => {});
+
+      act(() => {
+        hook.result.current.sendMessage(undefined, { pid: 'prod-7' });
+      });
+
+      expect(mockFetchEventSource).not.toHaveBeenCalled();
+    });
+
+    it('still sends a real image url alongside the text, with the option pid', () => {
+      const { hook } = renderChat({}, {}, {}, { pid: 'option-pid' });
+      mockFetchEventSource.mockImplementation(async () => {});
+
+      act(() => {
+        hook.result.current.sendMessage('like this', { imgUrl: 'https://img.example.com/a.jpg' });
+      });
+
+      expect(paramsOfCall(0).get('im_url')).toBe('https://img.example.com/a.jpg');
+      expect(paramsOfCall(0).get('pid')).toBe('option-pid');
+    });
+  });
+
+  it('does not add a pid param when the pid option is unset', () => {
+    const { hook } = renderChat();
+    mockFetchEventSource.mockImplementation(async () => {});
+
+    act(() => {
+      hook.result.current.sendMessage('hello');
+    });
+
+    const [calledUrl] = mockFetchEventSource.mock.calls[0];
+    const params = new URLSearchParams((calledUrl as string).split('?')[1]);
+    expect(params.has('pid')).toBe(false);
   });
 
   it('sendMessage persists the lazily minted chat id when persistChatEnabled, so the conversation it just started is resumable', () => {
@@ -940,6 +1064,23 @@ describe('use-chat', () => {
       } as unknown as Response);
     };
 
+    it('does not resume or save a conversation when the persistChatEnabled option is false, even if the customization is on', async () => {
+      localStorage.setItem('visenze_shopping_assistant_chat_id_1234', JSON.stringify({ chatId: 'old-chat', timestamp: Date.now() }));
+      const fetchMock = jest.fn();
+      global.fetch = fetchMock;
+      const { hook } = renderPersistentChat({}, {}, { persistChatEnabled: false });
+      await act(async () => {
+        await Promise.resolve();
+      });
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(hook.result.current.chatId).toBe('');
+      act(() => {
+        hook.result.current.open();
+      });
+      // the stored session is left alone rather than overwritten
+      expect(JSON.parse(localStorage.getItem('visenze_shopping_assistant_chat_id_1234') || '{}').chatId).toBe('old-chat');
+    });
+
     it('resumes a conversation left open within the TTL window as soon as the widget mounts, refetching its history instead of generating a new chat id', async () => {
       const { hook } = renderPersistentChat();
       act(() => {
@@ -1335,6 +1476,303 @@ describe('use-chat', () => {
       const remount = renderPersistentChat();
       expect(remount.hook.result.current.getChatId()).toBe(chatIdBeforeRefresh);
       expect(remount.hook.result.current.getChatId()).toBe(remount.hook.result.current.chatId);
+    });
+  });
+});
+
+describe('shared session', () => {
+  const originalFetch = global.fetch;
+  const storedChatKey = 'visenze_shopping_assistant_chat_id_1234';
+  const seedStoredChat = (): void => {
+    localStorage.setItem(storedChatKey, JSON.stringify({ chatId: 'old-chat', timestamp: Date.now() }));
+  };
+  const historyFetchMock = (): jest.Mock => jest.fn().mockResolvedValue({
+    ok: true,
+    json: (): Promise<unknown> => Promise.resolve({
+      result: {
+        messages: [
+          { reqid: 'req-1', type: 'human', message: 'find me a dress' },
+          { reqid: 'req-1', type: 'ai', message: 'Sure, here you go!' },
+        ],
+      },
+    }),
+  } as unknown as Response);
+
+  beforeEach(() => {
+    mockFetchEventSource.mockReset();
+    mockFetchEventSource.mockResolvedValue(undefined);
+    mockVoiceState.status = 'idle';
+    mockVoiceState.liveTranscript = '';
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('two hooks on one client see the same messages, chatId and streaming state', async () => {
+    const { first, second } = renderTwoChats();
+    act(() => first.result.current.open());
+    expect(second.result.current.isOpen).toBe(true);
+    await act(async () => {
+      await first.result.current.sendMessage('hello');
+    });
+    expect(second.result.current.chats.some((c) => c.author === 'user' && c.messages[0] === 'hello')).toBe(true);
+    expect(second.result.current.getChatId()).toBe(first.result.current.getChatId());
+    expect(second.result.current.chatId).toBe('test-chat-id');
+    expect(second.result.current.streamingRequestId).toBe(first.result.current.streamingRequestId);
+  });
+
+  it('keeps the composer text local to each hook', () => {
+    const { first, second } = renderTwoChats();
+    act(() => first.result.current.setMessage('draft'));
+    expect(first.result.current.message).toBe('draft');
+    expect(second.result.current.message).toBe('');
+  });
+
+  it('only clears the composer when a send actually proceeds', async () => {
+    const { first } = renderTwoChats();
+    act(() => first.result.current.setMessage('draft'));
+    await act(async () => {
+      await first.result.current.sendMessage('', { pid: 'p1' });
+    });
+    expect(first.result.current.message).toBe('draft');
+    expect(mockFetchEventSource).not.toHaveBeenCalled();
+    await act(async () => {
+      await first.result.current.sendMessage('draft');
+    });
+    expect(first.result.current.message).toBe('');
+  });
+
+  it('hooks on different clients do not share state', () => {
+    const a = renderChat().hook;
+    const b = renderChat().hook;
+    act(() => a.result.current.open());
+    expect(b.result.current.isOpen).toBe(false);
+  });
+
+  it('a second mount does not re-run the stored-session restore', async () => {
+    seedStoredChat();
+    const fetchMock = historyFetchMock();
+    global.fetch = fetchMock;
+    const { first, second } = renderTwoChats({ chatbot: { persistChatEnabled: true } });
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(first.result.current.chatId).toBe('old-chat');
+    expect(second.result.current.chats).toEqual([
+      expect.objectContaining({ author: 'user', messages: ['find me a dress'] }),
+      expect.objectContaining({ author: 'bot', messages: ['Sure, here you go!'] }),
+    ]);
+  });
+
+  it('a first hook that opts out of persistence does not stop a later persistent hook from restoring', async () => {
+    seedStoredChat();
+    const fetchMock = historyFetchMock();
+    global.fetch = fetchMock;
+    const { second } = renderTwoChats({ chatbot: { persistChatEnabled: true } }, { persistChatEnabled: false });
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(second.result.current.getChatId()).toBe('old-chat');
+  });
+
+  // One hook on a caller-supplied client, so a test can touch that client's store before mounting.
+  const renderOnClient = (initialProps: UseChatOptions): {
+    hook: RenderHookResult<UseChatResult, UseChatOptions>;
+    widgetClient: ReturnType<typeof createMockWidgetClient>['widgetClient'];
+  } => {
+    const widgetConfig = createWidgetConfig(DEFAULT_CUSTOMIZATIONS, { searchSettings: { attrs_to_get: ['title'] } });
+    const { widgetClient } = createMockWidgetClient(widgetConfig, 'wigmix_ai_search_launcher', {
+      getUid: jest.fn((cb: (uid: string) => void) => cb('test-uid')),
+      getSid: jest.fn((cb: (sid: string) => void) => cb('test-sid')),
+      generateUuid: jest.fn((cb: (uuid: string) => void) => cb('test-chat-id')),
+    });
+    const wrapper = ({ children }: { children: ReactNode }): ReactElement => createElement(
+      WidgetDataContext.Provider,
+      { value: { widgetConfig, widgetClient, darkMode: false, locale: 'en' } },
+      children,
+    );
+    const hook = renderHook((props: UseChatOptions) => useChat(props), { initialProps, wrapper });
+    return { hook, widgetClient };
+  };
+
+  it('a changing sessionScopeKey/pid does not reset the live conversation', async () => {
+    const { hook } = renderOnClient({ pid: 'p1', sessionScopeKey: 'p1' });
+    act(() => hook.result.current.open());
+    await act(async () => {
+      await hook.result.current.sendMessage('hello');
+    });
+    hook.rerender({ pid: 'p2', sessionScopeKey: 'p2' });
+    expect(hook.result.current.chats).toEqual([expect.objectContaining({ author: 'user', messages: ['hello'] })]);
+    expect(hook.result.current.chatId).toBe('test-chat-id');
+    await act(async () => {
+      await hook.result.current.sendMessage('again');
+    });
+    const calledUrl = mockFetchEventSource.mock.calls[mockFetchEventSource.mock.calls.length - 1][0] as string;
+    expect(new URLSearchParams(calledUrl.split('?')[1]).get('pid')).toBe('p2');
+  });
+
+  it('a hook with attachVoice: false leaves the previously attached voice bridge in place', () => {
+    const ownerBridge: VoiceBridge = { ...NULL_VOICE_BRIDGE };
+    const { hook, widgetClient } = renderOnClient({ attachVoice: false });
+    const store = getChatSessionStore(widgetClient);
+    const readVoice = (): VoiceBridge => (store as unknown as { voice: VoiceBridge }).voice;
+    // useVoiceReply still runs for a non-owner hook (hook rules), so its voice fields are present...
+    expect(hook.result.current.voiceEnabled).toBe(true);
+    expect(hook.result.current.voiceStatus).toBe('idle');
+    expect(typeof hook.result.current.toggleVoiceReading).toBe('function');
+    // ...but it never attaches a bridge of its own...
+    act(() => {
+      store.attachVoice(ownerBridge);
+    });
+    // ...and neither re-rendering nor unmounting it disturbs the owner's bridge.
+    hook.rerender({ attachVoice: false });
+    expect(readVoice()).toBe(ownerBridge);
+    hook.unmount();
+    expect(readVoice()).toBe(ownerBridge);
+  });
+
+  it('a remount after resetChatSessionStore (as widgetClient.rerender() does) starts a fresh session', async () => {
+    const { hook, widgetClient } = renderOnClient({});
+    act(() => hook.result.current.open());
+    await act(async () => {
+      await hook.result.current.sendMessage('hello');
+    });
+    expect(hook.result.current.chats).toHaveLength(1);
+    act(() => {
+      resetChatSessionStore(widgetClient);
+    });
+    hook.unmount();
+    const remount = renderHook(() => useChat(), {
+      wrapper: ({ children }: { children: ReactNode }): ReactElement => createElement(
+        WidgetDataContext.Provider,
+        {
+          value: {
+            widgetConfig: createWidgetConfig(DEFAULT_CUSTOMIZATIONS, { searchSettings: { attrs_to_get: ['title'] } }),
+            widgetClient,
+            darkMode: false,
+            locale: 'en',
+          },
+        },
+        children,
+      ),
+    });
+    expect(remount.result.current.chats).toEqual([]);
+    expect(remount.result.current.isOpen).toBe(false);
+    expect(remount.result.current.getChatId()).toBe('');
+    expect(remount.result.current.chatId).toBe('');
+  });
+
+  it('a hook with the default attachVoice attaches its own voice bridge', () => {
+    const { widgetClient } = renderOnClient({});
+    const store = getChatSessionStore(widgetClient);
+    expect((store as unknown as { voice: VoiceBridge }).voice).not.toBe(NULL_VOICE_BRIDGE);
+  });
+
+  describe('storeKey', () => {
+    it('a storeKey hook has a session separate from the shared one', () => {
+      const { first, second } = renderTwoChats({}, { storeKey: 'el-1' }, {});
+      act(() => {
+        first.result.current.open();
+      });
+      expect(first.result.current.isOpen).toBe(true);
+      expect(second.result.current.isOpen).toBe(false);
+    });
+
+    const clientAndWrapper = (): {
+      widgetClient: ReturnType<typeof createMockWidgetClient>['widgetClient'];
+      wrapper: ({ children }: { children: ReactNode }) => ReactElement;
+    } => {
+      const widgetConfig = createWidgetConfig(DEFAULT_CUSTOMIZATIONS, { searchSettings: { attrs_to_get: ['title'] } });
+      const { widgetClient } = createMockWidgetClient(widgetConfig, 'wigmix_ai_search_launcher', {
+        getUid: jest.fn((cb: (uid: string) => void) => cb('test-uid')),
+        getSid: jest.fn((cb: (sid: string) => void) => cb('test-sid')),
+        generateUuid: jest.fn((cb: (uuid: string) => void) => cb('test-chat-id')),
+      });
+      const wrapper = ({ children }: { children: ReactNode }): ReactElement => createElement(
+        WidgetDataContext.Provider,
+        { value: { widgetConfig, widgetClient, darkMode: false, locale: 'en' } },
+        children,
+      );
+      return { widgetClient, wrapper };
+    };
+
+    it('hooks with the same storeKey share state, an unkeyed hook does not', () => {
+      const { widgetClient, wrapper } = clientAndWrapper();
+      const keyedA = renderHook(() => useChat({ storeKey: 'el-1' }), { wrapper });
+      const keyedB = renderHook(() => useChat({ storeKey: 'el-1' }), { wrapper });
+      const unkeyed = renderHook(() => useChat(), { wrapper });
+      act(() => {
+        keyedA.result.current.open();
+      });
+      expect(keyedB.result.current.isOpen).toBe(true);
+      expect(unkeyed.result.current.isOpen).toBe(false);
+      expect(peekChatSessionStore(widgetClient, 'el-1')).toBeDefined();
+      expect(peekChatSessionStore(widgetClient)).toBeDefined();
+      expect(peekChatSessionStore(widgetClient, 'el-1')).not.toBe(peekChatSessionStore(widgetClient));
+    });
+
+    it('keeps its store while storeKey is unchanged and switches to a separate store when it changes', () => {
+      const { widgetClient, wrapper } = clientAndWrapper();
+      mockFetchEventSource.mockImplementation(async () => {});
+      const hook = renderHook(({ storeKey }: { storeKey: string }) => useChat({ storeKey }), {
+        wrapper,
+        initialProps: { storeKey: 'el-1' },
+      });
+      act(() => {
+        hook.result.current.open();
+      });
+      act(() => {
+        hook.result.current.sendMessage('hello');
+      });
+      const chatsBefore = hook.result.current.chats;
+      expect(chatsBefore.length).toBeGreaterThan(0);
+
+      hook.rerender({ storeKey: 'el-1' });
+      expect(hook.result.current.isOpen).toBe(true);
+      expect(hook.result.current.chats).toEqual(chatsBefore);
+
+      hook.rerender({ storeKey: 'el-2' });
+      expect(hook.result.current.isOpen).toBe(false);
+      expect(hook.result.current.chats).toEqual([]);
+      const el1 = peekChatSessionStore(widgetClient, 'el-1')?.getSnapshot();
+      expect(el1?.isOpen).toBe(true);
+      expect(el1?.chats).toEqual(chatsBefore);
+    });
+
+    it('resetChatSessionStore(client) clears keyed and shared stores, so the next storeKey mount starts empty', () => {
+      const { widgetClient, wrapper } = clientAndWrapper();
+      const keyed = renderHook(() => useChat({ storeKey: 'el-1' }), { wrapper });
+      const shared = renderHook(() => useChat(), { wrapper });
+      act(() => {
+        keyed.result.current.open();
+        shared.result.current.open();
+      });
+      expect(keyed.result.current.isOpen).toBe(true);
+      expect(shared.result.current.isOpen).toBe(true);
+      const sharedStore = peekChatSessionStore(widgetClient);
+      act(() => {
+        resetChatSessionStore(widgetClient);
+      });
+      expect(peekChatSessionStore(widgetClient, 'el-1')).toBeUndefined();
+      expect(peekChatSessionStore(widgetClient)).toBeUndefined();
+      expect(sharedStore).toBeDefined();
+      keyed.unmount();
+      shared.unmount();
+      const remount = renderHook(() => useChat({ storeKey: 'el-1' }), { wrapper });
+      expect(remount.result.current.isOpen).toBe(false);
+      expect(remount.result.current.chats).toEqual([]);
+    });
+
+    it('sessionScopeKey and pid never select the store', () => {
+      const { first, second } = renderTwoChats({}, { pid: 'a', sessionScopeKey: 'x' }, { pid: 'b', sessionScopeKey: 'y' });
+      act(() => {
+        first.result.current.open();
+      });
+      expect(second.result.current.isOpen).toBe(true);
     });
   });
 });
