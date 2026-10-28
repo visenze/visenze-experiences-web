@@ -422,6 +422,16 @@ describe('ChatSessionStore actions', () => {
       expect(stored?.messages?.[0]?.afterRequestId).toBe('req-1');
     });
 
+    it('anchors later injected messages to the restored history even when one was injected while the fetch was pending', async () => {
+      const { store, settle } = setup();
+      store.pushAssistantMessage('During fetch');
+      settle(historyResponse(history));
+      await flush();
+      store.pushAssistantMessage('After restore');
+      const stored = JSON.parse(localStorage.getItem('visenze_shopping_assistant_chat_id_1234__injected') ?? 'null');
+      expect(stored.messages.map((m: { afterRequestId: string }) => m.afterRequestId)).toEqual(['', 'req-1']);
+    });
+
     it('newChat openWithMessage discards the stale history when the fetch resolves with history', async () => {
       const { store, settle } = setup();
       store.openWithMessage('Fresh', ['Go'], { newChat: true });

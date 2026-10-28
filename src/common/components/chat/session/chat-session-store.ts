@@ -871,8 +871,11 @@ export class ChatSessionStore {
           if (!sentMeanwhile) {
             this.setState({ activeBreadcrumbId: restored.activeBreadcrumbId });
             this.setState({ suggestions: restored.suggestions });
-            // Assigned here, not while fetching: a superseded restore must not leak its anchor into the new
-            // session, and a message sent meanwhile already set a newer one.
+          }
+          // Assigned here, not while fetching, so a superseded restore can't leak its anchor into the new
+          // session (isStale() above). Only a streamed backend reply makes it out of date, and that sets a
+          // non-empty lastRequestId; a message merely injected while the fetch was pending must not block it.
+          if (!this.lastRequestId) {
             this.lastRequestId = restored.lastRequestId;
           }
           this.setState({ hasStartedChat: true });
