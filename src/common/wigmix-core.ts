@@ -793,7 +793,7 @@ export interface WidgetConfig {
      * `data-entry` attribute > `window.visenzeConfigs[placementId].appSettings.entry` > this value >
      * `launcher`.
      *
-     * @since 1.0.38
+     * @since 1.0.41
      */
     entry?: string;
     /**
@@ -1949,14 +1949,14 @@ export interface WidgetConfig {
      * the `prompt-box` entry point: the compact inline "Ask AI" panel with suggested questions that
      * opens the chat drawer when the shopper sends a message.
      *
-     * @since 1.0.38
+     * @since 1.0.41
      */
     aiAssistant?: {
       /**
        * Side of the screen the chat drawer slides in from when the shopper asks something (the same side-mounted panel the shopping-assistant widget uses). Defaults to `right`
        * (set in the widget's default config); `popup.position` is used only if this is explicitly unset. On tablet and mobile the drawer fills the screen regardless of this setting.
        *
-       * @since 1.0.38
+       * @since 1.0.41
        */
       chatPosition?: 'left' | 'right';
       /**
@@ -1965,7 +1965,7 @@ export interface WidgetConfig {
        * blank, falls back to `chatbot.title`, then the widget's default `widgetTitle` text
        * ("Shopping Assistant" in English).
        *
-       * @since 1.0.38
+       * @since 1.0.41
        */
       chatTitle?: string;
       /**
@@ -1996,7 +1996,7 @@ export interface WidgetConfig {
       /**
        * (optional) Settings of the `prompt-box` entry point.
        *
-       * @since 1.0.38
+       * @since 1.0.41
        */
       promptBox?: {
         /**
@@ -2005,7 +2005,7 @@ export interface WidgetConfig {
          * and no title is set, the title row shows just the logo (the text stays available to screen
          * readers). Set a title to show it next to the logo.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         title?: string;
         /**
@@ -2013,7 +2013,7 @@ export interface WidgetConfig {
          * e.g. "Need a hand?".
          * Omit or leave blank to show nothing.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         message?: string;
         /**
@@ -2022,7 +2022,7 @@ export interface WidgetConfig {
          * `generalLayout.fontColor` for the background and `generalLayout.backgroundColor` for the
          * text and arrow (and their dark-mode counterparts).
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         buttonColors?: {
           backgroundColor?: string;
@@ -2035,7 +2035,7 @@ export interface WidgetConfig {
          * appear; `height` and `width` size it in pixels (the image is fitted without stretching, height
          * defaults to 20); `color`/`colorDark` tint it as a mask. Omit to show no icon.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         inputIcon?: Partial<Icon> & {
           height?: number;
@@ -2047,14 +2047,14 @@ export interface WidgetConfig {
          * Tapping one sends it. The chips disappear once the conversation starts. Omit or leave
          * empty to show no chips.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         suggestedQuestions?: string[];
         /**
          * Maximum number of suggested-question chips shown, taken from the start of
          * `suggestedQuestions`. Lower this to save vertical space when the chips wrap onto several rows. Defaults to 5.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         maxSuggestedQuestions?: number;
         /**
@@ -2062,26 +2062,26 @@ export interface WidgetConfig {
          * the assistant (as if the shopper had typed it), so the assistant looks for products
          * similar to the one the widget is placed on.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         findSimilar?: {
           /**
            * Shows the button. Defaults to `false`.
            *
-           * @since 1.0.38
+           * @since 1.0.41
            */
           enabled?: boolean;
           /**
            * Button label. When unset or blank, the localized `promptBoxFindSimilar` text is used.
            *
-           * @since 1.0.38
+           * @since 1.0.41
            */
           label?: string;
           /**
            * Message sent to the assistant when the button is clicked. Defaults to
            * `find similar products`.
            *
-           * @since 1.0.38
+           * @since 1.0.41
            */
           message?: string;
         };
@@ -2095,7 +2095,7 @@ export interface WidgetConfig {
          * stretching, and the height defaults to 24. `color`/`colorDark` tint the logo as a mask.
          * Without a `url`, the default sparkle icon and the title text are shown.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         titleIcon?: Partial<Icon> & {
           layout?: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
@@ -2108,7 +2108,7 @@ export interface WidgetConfig {
        * Ask AI), the mic entry point's recording duration and per-entry-point greeting text. The
        * search-bar entry opens the shared conversation in a full-screen chat.
        *
-       * @since 1.0.38
+       * @since 1.0.41
        */
       searchBar?: {
         /**
@@ -2116,7 +2116,7 @@ export interface WidgetConfig {
          * recording state stays open before it is automatically stopped (as if
          * the user had clicked to stop). Defaults to 5.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         voiceRecordingMaxDurationSeconds?: number;
         /**
@@ -2124,7 +2124,7 @@ export interface WidgetConfig {
          * and/or shown when that entry point is opened. `image`/`mic` and `ai`
          * behave differently: see each field's own doc comment.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         greetings?: {
           /**
@@ -2135,17 +2135,17 @@ export interface WidgetConfig {
            * opening this entry point and never submitting a photo leaves no trace of a conversation
            * ever having started.
            *
-           * @since 1.0.38
+           * @since 1.0.41
            */
           image?: string;
-          /** Same behavior as `image`, but for the microphone entry point. @since 1.0.38 */
+          /** Same behavior as `image`, but for the microphone entry point. @since 1.0.41 */
           mic?: string;
           /**
            * Shown and spoken as the conversation's actual opening message the first time a new "Ask
            * AI" conversation starts — added to real, persisted chat history (via `chat.playGreeting`),
            * unlike `image`/`mic`'s greetings. Not replayed when resuming an existing conversation.
            *
-           * @since 1.0.38
+           * @since 1.0.41
            */
           ai?: string;
         };
@@ -2154,7 +2154,7 @@ export interface WidgetConfig {
          * Defaults to `true` (enabled) when unset — set to `false` to remove
          * this entry point entirely.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         cameraEntryEnabled?: boolean;
         /**
@@ -2162,7 +2162,7 @@ export interface WidgetConfig {
          * Defaults to `true` (enabled) when unset — set to `false` to remove
          * this entry point entirely. Independent of `chat.voiceEnabled`.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         micEntryEnabled?: boolean;
         /**
@@ -2170,7 +2170,7 @@ export interface WidgetConfig {
          * Defaults to `true` (enabled) when unset — set to `false` to remove
          * this entry point entirely.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         askAiEntryEnabled?: boolean;
         /**
@@ -2196,7 +2196,7 @@ export interface WidgetConfig {
          *
          * The button's accessible name is always the `a11yOpenAskAi` text, whatever the layout.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         askAiEntryIcon?: Partial<Icon> & {
           layout?: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
@@ -2213,7 +2213,7 @@ export interface WidgetConfig {
          * unset. Image upload (drag/drop or file picker) is unaffected by this
          * flag.
          *
-         * @since 1.0.38
+         * @since 1.0.41
          */
         chatCameraEnabled?: boolean;
         /**
