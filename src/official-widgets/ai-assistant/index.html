@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AI Assistant Widget Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: sans-serif; }
+    .container { max-width: 720px; margin: 0 auto; padding: 24px; }
+    section { margin-bottom: 32px; }
+    h2 { margin: 0 0 4px; font-size: 16px; }
+    p { margin: 0 0 12px; color: #555; font-size: 13px; }
+    /* The embedded entry fills its page element, so give that element a height (otherwise it grows with its content). */
+    /* .embedded-demo { height: 600px; } */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Assistant Widget Demo</h1>
+    <p>
+      Every element below uses the same class (the selector in dev-configs.ts) and picks its entry point with
+      <code>data-entry</code>. The launcher, prompt box and search bar share one conversation and one chat window;
+      the embedded overview has its own conversation.
+    </p>
+
+    <section>
+      <h2>launcher</h2>
+      <p>A button that opens the chat drawer. This is the entry used when <code>data-entry</code> is omitted.</p>
+      <div class="ai-assistant-widget" data-entry="launcher"></div>
+    </section>
+
+    <section>
+      <h2>prompt-box</h2>
+      <p>An "Ask AI" panel for product pages. <code>data-pid</code> is optional: leave it empty for no product context.</p>
+      <div class="ai-assistant-widget" data-entry="prompt-box" data-pid="10625003"></div>
+    </section>
+
+    <section>
+      <h2>search-bar</h2>
+      <p>Camera, microphone and Ask AI buttons that open the same conversation in a full-screen chat.</p>
+      <div class="ai-assistant-widget" data-entry="search-bar"></div>
+    </section>
+
+    <section>
+      <h2>embedded</h2>
+      <p>An AI overview of <code>data-query</code> with its own separate conversation. "See Results" opens its own full-screen chat.</p>
+      <div class="ai-assistant-widget embedded-demo" data-entry="embedded" data-query="red running shoes"></div>
+    </section>
+  </div>
+</body>
+</html>
