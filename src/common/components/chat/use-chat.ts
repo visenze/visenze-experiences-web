@@ -18,7 +18,8 @@ import { getChatSessionStore } from './session/chat-session-registry';
 export interface Chat {
   chatId: string;
   requestId: string;
-  author: 'user' | 'bot' | 'products';
+  // 'options': add-to-cart options to choose for each of `products` before they are added to cart.
+  author: 'user' | 'bot' | 'products' | 'options';
   messages: string[];
   products?: ProcessedProduct[];
   image?: SearchImageOrPid;

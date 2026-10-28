@@ -250,6 +250,18 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Voice narration starts muted when customizations.chatbot.startMuted is set — mirrors
+  // ai-search-launcher.tsx's own startMuted mount effect. From here, the header speaker button
+  // (chat.toggleVoiceReading) is a normal toggle.
+  useEffect(() => {
+    if (customizations.chatbot?.startMuted) {
+      chat.toggleVoiceReading();
+    }
+    // Mount-only: a one-time initial-mute preference, not something to re-apply whenever
+    // chat.toggleVoiceReading is recreated (it isn't memoized upstream).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (!root) {
     return <></>;
   }

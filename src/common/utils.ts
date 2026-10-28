@@ -265,3 +265,22 @@ export const getProductScrollerConfig = (
     cardsPerScroll: Math.max(1, Math.floor(src.cardsPerScroll || DEFAULT_CARDS_PER_SCROLL)),
   };
 };
+
+// Normalises a product's value for an add-to-cart option field. Catalog option values are usually
+// arrays; a single string/number is taken as one value, exactly as given (it is never split, so
+// e.g. "Black/Pelé Yellow" or "Black, White" stays one value). Anything else yields no values, so
+// the field is skipped for that product.
+export const getOptionValues = (raw: unknown): string[] => {
+  if (typeof raw === 'string' || typeof raw === 'number') {
+    const value = String(raw).trim();
+    return value ? [value] : [];
+  }
+  if (!Array.isArray(raw)) {
+    return [];
+  }
+  const values = raw
+    .filter((value) => value !== null && value !== undefined)
+    .map((value) => String(value).trim())
+    .filter((value) => value.length > 0);
+  return Array.from(new Set(values));
+};

@@ -1102,7 +1102,7 @@ describe('shopping-assistant', () => {
       }
     }
 
-    const renderWithVoice = (chatbotExtra: { voiceEnabled?: boolean } = { voiceEnabled: true }): void => {
+    const renderWithVoice = (chatbotExtra: { voiceEnabled?: boolean; startMuted?: boolean } = { voiceEnabled: true }): void => {
       renderAssistant({}, 'en', {}, { chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, ...chatbotExtra } });
     };
 
@@ -1164,6 +1164,29 @@ describe('shopping-assistant', () => {
       const afterToggle = testComponent.getByRole('button', { name: texts['en']['a11yEnableVoiceReading'], hidden: true });
       expect(afterToggle).toBe(muteButton);
       expect(muteButton.getAttribute('aria-pressed')).toBe('false');
+    });
+
+    it('starts with voice reading muted when chatbot.startMuted is on, and the header toggle can unmute it', () => {
+      renderWithVoice({ voiceEnabled: true, startMuted: true });
+      openDialogAndWait();
+
+      const unmuteButton = testComponent.getByRole('button', { name: texts['en']['a11yEnableVoiceReading'], hidden: true });
+      expect(unmuteButton.getAttribute('aria-pressed')).toBe('false');
+
+      act(() => {
+        fireEvent.click(unmuteButton);
+      });
+
+      expect(unmuteButton.getAttribute('aria-label')).toBe(texts['en']['a11yDisableVoiceReading']);
+      expect(unmuteButton.getAttribute('aria-pressed')).toBe('true');
+    });
+
+    it('starts with voice reading on when chatbot.startMuted is off', () => {
+      renderWithVoice({ voiceEnabled: true, startMuted: false });
+      openDialogAndWait();
+
+      const muteButton = testComponent.getByRole('button', { name: texts['en']['a11yDisableVoiceReading'], hidden: true });
+      expect(muteButton.getAttribute('aria-pressed')).toBe('true');
     });
   });
 });

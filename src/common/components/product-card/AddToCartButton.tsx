@@ -10,9 +10,15 @@ interface AddToCartButtonProps {
   onClick: (event: any) => void;
   defaultIcon: ReactElement;
   isAddingToCart: boolean;
+  // Optional: used by the add-to-cart options pop-up, which reuses this button.
+  disabled?: boolean;
+  className?: string;
+  testId?: string;
 }
 
-const AddToCartButton: FC<AddToCartButtonProps> = ({ config, text, darkMode, onClick, defaultIcon, isAddingToCart }) => {
+const AddToCartButton: FC<AddToCartButtonProps> = ({
+  config, text, darkMode, onClick, defaultIcon, isAddingToCart, disabled = false, className, testId = 'wigmix-add-to-cart-button',
+}) => {
   let fontColor = config?.addToCart?.color;
   if (!fontColor || fontColor === 'DEFAULT_ICON_COLOR') {
     fontColor = config?.addToCart?.fontColor || 'inherit';
@@ -24,15 +30,19 @@ const AddToCartButton: FC<AddToCartButtonProps> = ({ config, text, darkMode, onC
   return (<>
     {config?.addToCart?.enable && (
       <button
+        type='button'
         className={cn(
             'wigmix-add-to-cart-button flex w-full justify-center items-center cursor-pointer gap-2 mt-2 p-1 min-h-8',
+            disabled && 'cursor-not-allowed opacity-50',
+            className,
         )}
+        disabled={disabled}
         style={{
           backgroundColor: darkMode
               ? config?.addToCart?.backgroundColorDark || 'transparent'
               : config?.addToCart?.backgroundColor || 'transparent',
         }}
-        data-testid='wigmix-add-to-cart-button'
+        data-testid={testId}
         onClick={onClick}
       >
         {isAddingToCart ? (

@@ -23,10 +23,20 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
       // voiceModelId: '', // voice-provider model ID; leave unset to use the widget's built-in model
       // voiceSettings: { stability: 0.5, similarityBoost: 0.75 }, // leave unset to use the widget's built-in settings
     },
+    productCard: {
+      addToCart: {
+        enable: false,
+        layout: 'ICON_TEXT',
+      },
+    },
   },
   callbacks: {
     trackingCallback: (action: string, params: Record<string, any>) => {
       console.log(`Successfully send event: ${action}`, params);
+    },
+    onAddToCartToggle: (_: boolean, pid: string, productDetails?: Record<string, any>, selectedOptions?: Record<string, string>) => {
+      console.log('onAddToCartToggle', pid, selectedOptions, productDetails);
+      return true;
     },
   },
   disableAnalytics: true,

@@ -722,6 +722,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     // Off by default, same as ai-search-launcher's and embedded-shopping-assistant's own
     // defaults — voice is opt-in per deployment.
     voiceEnabled: false,
+    startMuted: false,
     inputBar: {
       menuPanel: {
         fontColor: '#000000',

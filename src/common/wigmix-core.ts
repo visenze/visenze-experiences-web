@@ -653,6 +653,71 @@ export interface TrendingProduct {
 /**
  * Configuration for Rezolve widgets.
  */
+/**
+ * How an add-to-cart option field is rendered. `NONE` disables the field.
+ *
+ * - CAROUSEL: horizontally scrollable row of values (suited to numeric values such as shoe sizes)
+ * - RADIO: radio buttons (suited to short lists; more than 3 values fall back to DROPDOWN)
+ * - DROPDOWN: drop-down list
+ *
+ * @since 1.0.41
+ */
+export type AddToCartOptionLayout = 'NONE' | 'CAROUSEL' | 'RADIO' | 'DROPDOWN';
+
+/**
+ * One add-to-cart option field.
+ *
+ * @since 1.0.41
+ */
+export interface AddToCartOptionField {
+  /**
+   * Key in `displaySettings.productDetails` (e.g. `sizes`, `colors`) or a raw catalog field name.
+   * Resolved as `productDetails[field] || field`. The product's value for it is an array of values, or a single value (used as is, never split).
+   *
+   * @since 1.0.41
+   */
+  field: string;
+  /**
+   * How the field is rendered. `NONE` means the field is ignored (not shown, not mandatory, not sent).
+   *
+   * @since 1.0.41
+   */
+  layout: AddToCartOptionLayout;
+  /**
+   * Label shown above the field. Falls back to `field`.
+   *
+   * @since 1.0.41
+   */
+  label?: string;
+  /**
+   * Key used for this field's value in the `selectedOptions` callback argument. Falls back to `field`.
+   * Use it when the cart / vendor hook expects a different name than the catalog field.
+   *
+   * @since 1.0.41
+   */
+  callbackKey?: string;
+}
+
+/**
+ * Configuration for the add-to-cart options.
+ *
+ * @since 1.0.41
+ */
+export interface AddToCartOptions {
+  /**
+   * Whether the add-to-cart options are enabled.
+   *
+   * @since 1.0.41
+   */
+  enable: boolean;
+  /**
+   * The option fields, in display order. Every field whose layout is not `NONE` is mandatory.
+   *
+   * @since 1.0.41
+   */
+  fields: AddToCartOptionField[];
+}
+
 export interface WidgetConfig {
   /**
    * Search/Recommendation API- and tracking-related settings.
@@ -932,10 +997,13 @@ export interface WidgetConfig {
      *
      * @param pid The product ID
      * @param productDetails (optional) Additional details of the product
+     * @param selectedOptions (optional) Values the shopper chose in the add-to-cart options panel, keyed by each
+     * field's `callbackKey` (or `field` when unset). Only passed when `customizations.productCard.addToCart.options`
+     * is enabled and at least one option was shown. Available since 1.0.41.
      *
      * @since 1.0.18
      */
-    onAddToCartToggle?: (_: boolean, pid: string, productDetails?: Record<string, any>) => boolean | Promise<boolean>;
+    onAddToCartToggle?: (_: boolean, pid: string, productDetails?: Record<string, any>, selectedOptions?: Record<string, string>) => boolean | Promise<boolean>;
     /**
      * Fires an event that indicates that a "find similar" request is sent to the widget.
      *
@@ -1482,6 +1550,15 @@ export interface WidgetConfig {
          * @since 1.0.18
          */
         layout: 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
+        /**
+         * Extra inputs (e.g. size, width, colour) the shopper must choose before a product can be added to cart.
+         * The chosen values are passed to `callbacks.onAddToCartToggle` as its `selectedOptions` argument.
+         *
+         * Treated as disabled when missing or when `enable` is false.
+         *
+         * @since 1.0.41
+         */
+        options?: AddToCartOptions;
       };
       /**
        * Configuration for the image shown on product card.

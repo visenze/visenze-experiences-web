@@ -13,6 +13,7 @@ import { DEFAULT_CONFIGS } from '../default-configs';
 import getWidgetClient from './widget-client';
 import { resolveBaseEndpoint, usesCloudPaths } from './endpoint';
 import { Actions } from '../types/tracking-constants';
+import { getActiveOptionFields, getOptionCatalogField } from '../components/add-to-cart-options/add-to-cart-options';
 
 interface WidgetInitResult {
   widgetClient: WidgetClient;
@@ -169,7 +170,7 @@ export const setCssVariables = (config: WidgetConfig, darkMode: boolean): void =
  * Populates product details with alias names in field mappings and
  * assigns the alias names to attrs_to_get in searchSettings
  */
-const populateProductDetailsAndAttrsToGet = (config: WidgetConfig, fieldMappings: Record<string, string>): WidgetConfig => {
+export const populateProductDetailsAndAttrsToGet = (config: WidgetConfig, fieldMappings: Record<string, string>): WidgetConfig => {
   const productDetailsToOverride: Record<string, string> = {};
   Object.keys(config.displaySettings.productDetails || {}).forEach((key) => {
     if (config.displaySettings.productDetails[key]) {
@@ -192,6 +193,14 @@ const populateProductDetailsAndAttrsToGet = (config: WidgetConfig, fieldMappings
   };
   if (!config.searchSettings['attrs_to_get'] || config.searchSettings['attrs_to_get'].length === 0) {
     config.searchSettings['attrs_to_get'] = Object.values(config.displaySettings.productDetails).filter(value => Boolean(value));
+  }
+  // Add-to-cart option fields must be fetched even when they aren't otherwise displayed.
+  const optionCatalogFields = getActiveOptionFields(config.customizations?.productCard?.addToCart?.options)
+    .map((field) => getOptionCatalogField(field, config.displaySettings.productDetails));
+  const attrsToGet: string[] = config.searchSettings['attrs_to_get'] || [];
+  const missingOptionFields = optionCatalogFields.filter((field, index) => !attrsToGet.includes(field) && optionCatalogFields.indexOf(field) === index);
+  if (missingOptionFields.length > 0) {
+    config.searchSettings['attrs_to_get'] = [...attrsToGet, ...missingOptionFields];
   }
 
   return config;
