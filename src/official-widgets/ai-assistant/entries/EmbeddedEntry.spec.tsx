@@ -193,6 +193,15 @@ describe('ai-assistant EmbeddedEntry', () => {
       expect(testComponent.queryByRole('dialog')).toBeNull();
     });
 
+    it('keeps the overview inside a labelled region landmark', () => {
+      renderEmbedded('running shoes');
+      act(() => {
+        jest.advanceTimersByTime(0);
+      });
+
+      expect(testComponent.getByRole('region', { name: texts['aiOverviewLabel'] })).toBeTruthy();
+    });
+
     it('clicking "See Results" switches rendering to its own FullScreenChatContainer/ChatWindow/ChatComposer', async () => {
       renderEmbedded('running shoes');
 

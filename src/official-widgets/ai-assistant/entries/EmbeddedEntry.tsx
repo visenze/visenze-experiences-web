@@ -237,18 +237,25 @@ const EmbeddedEntry: FC<EmbeddedEntryProps> = ({ query, productId, sessionKey, s
   // runtime (app.tsx falls back to '' when the placement element has no data-query attribute) —
   // this is the explicit, visible fallback for that case rather than an empty/dead screen (no
   // turns ever get created, so nothing below would ever render either).
+  // The element's content sits in a labelled region landmark, so none of it is outside a landmark
+  // (accessibility rule "all page content should be contained by landmarks").
+  const regionLabel = customizations.chatbot?.title || intl.formatMessage({ id: 'aiOverviewLabel' });
   if (!query) {
     return (
-      <div className='wigmix-embedded-host size-full flex items-center justify-center px-4' style={{ backgroundColor }}>
+      <section
+        aria-label={regionLabel}
+        className='wigmix-embedded-host size-full flex items-center justify-center px-4'
+        style={{ backgroundColor }}
+      >
         <p className='text-sm text-gray-600 dark:text-neutral-400'>
           {intl.formatMessage({ id: 'noQueryProvided' })}
         </p>
-      </div>
+      </section>
     );
   }
 
   return (
-    <div className='wigmix-embedded-host size-full flex flex-col' style={{ backgroundColor }}>
+    <section aria-label={regionLabel} className='wigmix-embedded-host size-full flex flex-col' style={{ backgroundColor }}>
 
       {/* ── Pre-expansion: TurnSection's own Google-AI-Overview rendering, untouched. Gated on
           !isExpanded so it actually unmounts once the full-screen surface opens — without this,
@@ -341,7 +348,7 @@ const EmbeddedEntry: FC<EmbeddedEntryProps> = ({ query, productId, sessionKey, s
         />
       </FullScreenChatContainer>
 
-    </div>
+    </section>
   );
 };
 
