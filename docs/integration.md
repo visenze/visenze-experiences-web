@@ -26,6 +26,26 @@ to the page(s) in which you would like for the widgets to appear.
    While you're welcome to copy the above code and populate the fields accordingly,
    the above code snippet is available in the Discovery Suite console and is pre-filled with the relevant information.
 
+### Recommended: load the snippet early
+
+The widget loads in two steps, one after the other: the snippet requests `widget-init`, and its response then
+loads the widget bundle from a CDN. On slow mobile networks, or far from the server, each new connection costs
+several round trips. Two changes on the host page shorten this:
+
+1. **Put the snippet inline in the page's `<head>`**, not inside the site's own JavaScript bundle. Otherwise
+   `widget-init` can't start until the site's bundle has downloaded and run.
+2. **Preconnect to the widget's hosts** so their DNS/TLS setup overlaps with page loading:
+   ```html
+   <!-- the host in the snippet's widget-init URL -->
+   <link rel="preconnect" href="https://multimodal.search.rezolve.com">
+   <!-- the CDN the widget bundle is served from -->
+   <link rel="preconnect" href="https://cdn.visenze.com">
+   ```
+   Use the hosts your snippet and widget actually load from. Placements with a custom script load the bundle from
+   `https://wigmix-custom.visenze.com` instead of `https://cdn.visenze.com`, and older snippets call
+   `https://search.visenze.com`. Add `<link rel="dns-prefetch" href="…">` for the same hosts as a fallback for
+   browsers that ignore `preconnect`. Only preconnect to hosts the page will use: each one opens a connection.
+
 <details>
   <summary>What if there are multiple elements whose selector match the code snippet?</summary>
 

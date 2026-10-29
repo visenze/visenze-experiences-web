@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Changed
-
+- Build: Tailwind only scans `src/common` and the widget being built, so each bundle no longer
+  carries other widgets' utility classes (shopping-assistant: −28 KB minified, −4 KB brotli).
 
 ### Removed
 
