@@ -24,6 +24,12 @@ const herouiPackagesForWidget = herouiPackagesForOfficialWidgets[widgetType]
   // If not found, bundle all available packages as fallback.
   || 'accordion|checkbox|input|listbox|skeleton|slider|spinner';
 
+// Only scan the widget being built (plus shared code) so other widgets' classes are not bundled.
+// Without a widget_dir (e.g. editor tooling), scan everything.
+const sourceContent = widgetType
+  ? ['./src/common/**/*.{html,js,ts,jsx,tsx}', `./src/${widgetType}/**/*.{html,js,ts,jsx,tsx}`]
+  : ['./src/**/*.{html,js,ts,jsx,tsx}'];
+
 const getFontObj = (configName) => {
   const deviceTypes = ['mobile', 'tablet', 'desktop'];
   const targetElements = ['heading', 'body', 'productCardTitle', 'productCardSecondaryTitle', 'productCardPrice', 'productCardOriginalPrice', 'productCardDiscount'];
@@ -82,7 +88,7 @@ function remToPx(input, fontSize = 16) {
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './src/**/*.{html,js,ts,jsx,tsx}',
+    ...sourceContent,
     `./node_modules/@heroui/theme/dist/components/(${herouiPackagesForWidget}).js`,
   ],
   theme: {
