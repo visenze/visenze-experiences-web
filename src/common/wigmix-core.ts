@@ -1357,7 +1357,7 @@ export interface WidgetConfig {
       /**
        * Optional card layout tweaks. When unset the card keeps its default stacked layout.
        *
-       * @since 1.0.43
+       * @since 1.0.42
        */
       layout?: {
         /**
