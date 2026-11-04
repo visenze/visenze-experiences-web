@@ -65,12 +65,30 @@ describe('useRecommendationMultiSearch with useOutfitReference', () => {
     expect(renderOutfitHook(getOutfitResponse(), { boi_only: true }).outfit.mock.calls[0][0]).toMatchObject({ boi_only: true });
   });
 
-  it('uses the best outfit image, then the query temporary url, then the query main image as reference', () => {
+  it('uses the best outfit image, then the permanent main image as reference for a product query', () => {
     expect(renderOutfitHook(getOutfitResponse()).result.current.referenceImageUrl).toBe('https://best-outfit-image');
     const noBest = getOutfitResponse({ qinfo: { product_id: 'q', main_image_url: 'https://query-main-image', best_images: [] } });
-    expect(renderOutfitHook(noBest).result.current.referenceImageUrl).toBe('https://query-tmp-url');
-    const noTmp = getOutfitResponse({ query_tmp_url: undefined, qinfo: { product_id: 'q', main_image_url: 'https://query-main-image', best_images: [] } });
-    expect(renderOutfitHook(noTmp).result.current.referenceImageUrl).toBe('https://query-main-image');
+    // the signed query_tmp_url expires, so a product query prefers the permanent main image
+    expect(renderOutfitHook(noBest).result.current.referenceImageUrl).toBe('https://query-main-image');
+    const noMain = getOutfitResponse({ qinfo: { product_id: 'q', best_images: [] } });
+    expect(renderOutfitHook(noMain).result.current.referenceImageUrl).toBe('https://query-tmp-url');
+  });
+
+  it('falls through empty strings to the next reference image candidate', () => {
+    const empty = getOutfitResponse({
+      query_tmp_url: '',
+      qinfo: { product_id: 'q', main_image_url: 'https://query-main-image', best_images: [], sys: { best_outfit_img_url: '' } },
+    });
+    expect(renderOutfitHook(empty).result.current.referenceImageUrl).toBe('https://query-main-image');
+    expect(renderOutfitHook(empty, {}, '', 'https://img/query.jpg').result.current.referenceImageUrl).toBe('https://query-main-image');
+  });
+
+  it('shows every object of an outfit response and does not crash without results', () => {
+    const [first, second, third] = getStandardRecommendationSuccessResponse().result ?? [];
+    const grouped = getOutfitResponse({ result: undefined, objects: [{ result: [first, second] }, { result: [third] }] });
+    expect(renderOutfitHook(grouped).result.current.productResults).toHaveLength(3);
+    expect(renderOutfitHook(getOutfitResponse({ result: undefined, objects: [] })).result.current.productResults).toEqual([]);
+    expect(renderOutfitHook(getOutfitResponse({ result: undefined, objects: undefined })).result.current.productResults).toEqual([]);
   });
 
   it('exposes the query product (qinfo) as productInfo', () => {
@@ -123,6 +141,20 @@ describe('useRecommendationMultiSearch with useOutfitReference', () => {
     expect(params).toMatchObject({ im_url: 'https://img/query.jpg', qinfo: true, return_query_temp_url: true });
     expect(params).not.toHaveProperty('pid');
     expect(result.current.referenceImageUrl).toBe('https://query-tmp-url');
+  });
+
+  it('does not search again when only the image url changes while a product id is set', () => {
+    const widgetConfig = createWidgetConfig({} as WidgetConfig['customizations']);
+    const outfit = jest.fn();
+    const { widgetClient } = createMockWidgetClient(widgetConfig, 'wigmix_test', { productMultisearchOutfitRecommendations: outfit });
+    const wrapper: FC<{ children: ReactNode }> = ({ children }) => (
+      <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>{children}</WidgetDataContext.Provider>
+    );
+    const { rerender } = renderHook(({ im }) => useRecommendationMultiSearch({ productId: 'a', imageUrl: im, useOutfitReference: true }), {
+      wrapper, initialProps: { im: 'https://img/1.jpg' },
+    });
+    rerender({ im: 'https://img/2.jpg' });
+    expect(outfit).toHaveBeenCalledTimes(1);
   });
 
   it('prefers the product id over the image url', () => {

@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New `shop-the-look-v2` widget ("Complete the look"): shows a reference outfit image beside recommended products from the Multisearch Outfit Recommendations API. Queries by product (`data-pid`, shows the best outfit image) or by image (`data-im-url`, shows the temporary query image). Optional `searchSettings.boi_only`. The legacy `shop-the-look` widget is unchanged.
+- New `shop-the-look-v2` widget ("Shop the look"): shows a reference outfit image beside recommended products from the Multisearch Outfit Recommendations API. Queries by product (`data-pid`, shows the best outfit image) or by image (`data-im-url`, shows the temporary query image). Optional `searchSettings.boi_only`. The legacy `shop-the-look` widget is unchanged.
 - All widgets using the common product card: New optional `customizations.productCard.layout` setting (`details`: `stacked` or `inline`, `uppercase`). Cards without it render as before.
 
 <!-- END visenze-experiences-web 1.0.42 -->

@@ -10,7 +10,7 @@ import { createMockWidgetClient, createWidgetConfig, renderWidget } from '../../
 import { WidgetDataContext } from '../../common/types/contexts';
 
 const messages = {
-  widgetTitle: 'Complete the look',
+  widgetTitle: 'Shop the look',
   price: '{price}',
   originalPrice: '{originalPrice}',
   discount: '{discount} off',
@@ -91,7 +91,7 @@ describe('shop-the-look-v2', () => {
     const { container } = renderStl(getOutfitResponse());
     expect(container.querySelector('img.wigmix-reference-image')?.getAttribute('src')).toBe('https://best-outfit-image');
     expect(container.textContent).toContain('Query Outfit Title');
-    expect(container.querySelector('.wigmix-widget-title')?.textContent).toBe('Complete the look');
+    expect(container.querySelector('.wigmix-widget-title')?.textContent).toBe('Shop the look');
     expect(container.querySelectorAll('a img')).toHaveLength(2);
   });
 
@@ -241,11 +241,11 @@ describe('shop-the-look-v2', () => {
     expect(renderWithProductCard({}, {}, { showWidgetTitle: false }).querySelector('.wigmix-widget-title')).toBeNull();
   });
 
-  it('falls back to the query temporary image when there is no best outfit image', () => {
+  it('falls back to the permanent main image, not the expiring temporary url, when there is no best outfit image', () => {
     const response = getOutfitResponse();
     response.qinfo = { ...response.qinfo, best_images: [] } as any;
     const { container } = renderStl(response);
-    expect(container.querySelector('img.wigmix-reference-image')?.getAttribute('src')).toBe('https://query-tmp-url');
+    expect(container.querySelector('img.wigmix-reference-image')?.getAttribute('src')).toBe('https://query-main-image');
   });
 
   describe('responsive layout', () => {

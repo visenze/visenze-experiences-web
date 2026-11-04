@@ -6,8 +6,7 @@ import Slider from 'react-slick';
 import type { Settings } from 'react-slick';
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
-import NextArrow from './components/NextArrow';
-import PrevArrow from './components/PrevArrow';
+import CarouselArrow from '../../common/components/CarouselArrow';
 import Footer from '../../common/components/Footer';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
 import useRecommendationMultiSearch from '../../common/components/hooks/use-recommendation-multisearch';
@@ -50,7 +49,6 @@ const ShopTheLookV2: FC<ShopTheLookV2Props> = ({ productId, imageUrl }) => {
   // Every card has the same width regardless of how many products came back: `productsPerRow` slides, the rest scroll.
   const slidesToShow = customizations.productGrid?.[breakpoint]?.productsPerRow || 2;
   const isDesktop = breakpoint === WidgetBreakpoint.DESKTOP;
-  const arrowColor = (darkMode ? customizations.generalLayout?.fontColorDark : customizations.generalLayout?.fontColor) ?? '#000000';
   // Space between cards: productGrid.<breakpoint>.marginHorizontal (px), split over both sides of each card.
   const cardGap = customizations.productGrid?.[breakpoint]?.marginHorizontal ?? 2;
   const cardSpacing: CSSProperties = { paddingLeft: cardGap / 2, paddingRight: cardGap / 2 };
@@ -62,8 +60,8 @@ const ShopTheLookV2: FC<ShopTheLookV2Props> = ({ productId, imageUrl }) => {
     slidesToScroll: Math.max(1, Math.floor(slidesToShow)),
     // Arrows: beside the carousel on desktop, over its edges on tablet and phones (swiping works too).
     arrows: true,
-    prevArrow: <PrevArrow iconColor={arrowColor} inside={!isDesktop} />,
-    nextArrow: <NextArrow iconColor={arrowColor} inside={!isDesktop} />,
+    prevArrow: <CarouselArrow direction='prev' inside={!isDesktop} pwPrefix='stl2' />,
+    nextArrow: <CarouselArrow direction='next' inside={!isDesktop} pwPrefix='stl2' />,
     swipeToSlide: true,
     variableWidth: false,
   };
