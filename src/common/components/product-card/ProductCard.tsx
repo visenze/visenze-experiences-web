@@ -36,6 +36,8 @@ interface ProductCardProps {
   isInWishlist: boolean;
   setIsInWishlist: (pid: string, isInWishlist: boolean) => void;
   skipViewTracking?: boolean;
+  /** Set to `lazy` to defer loading of the product image until it is near the viewport. */
+  imageLoading?: 'lazy';
   onProductViewed?: (productId: string) => void;
 }
 
@@ -170,6 +172,7 @@ const ProductCard: FC<ProductCardProps> = ({
   isInWishlist,
   setIsInWishlist,
   skipViewTracking = false,
+  imageLoading,
   onProductViewed = (): void => {},
 }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
@@ -361,9 +364,67 @@ const ProductCard: FC<ProductCardProps> = ({
   const productUrl = getProductUrlWithTrackingParams(result[productDetails['product_url']], productTrackingMeta, isRecommendation);
   const mainImageUrl = getMainImageToDisplay();
   const hoverImageUrl = getHoverImageToDisplay(mainImageUrl);
+  const cardLayout = customizations.productCard?.layout;
+  const isInlineDetails = cardLayout?.details === 'inline';
+  // Cards that configure a layout don't render an empty secondary title line; the default card keeps its markup.
+  const showSecondaryTitle = !cardLayout || !!productSecondaryTitle;
   const wishlistIconConfig = isInWishlist
       ? customizations.productCard?.addToWishlist?.iconActive
       : customizations.productCard?.addToWishlist?.iconInactive;
+
+  const titleNode = (
+    <span className={isInlineDetails ? 'wigmix-product-card-title line-clamp-2' : 'wigmix-product-card-title line-clamp-1'}>
+      {productTitle}
+    </span>
+  );
+  const secondaryTitleNode = (
+    <span className='wigmix-product-card-secondary-title line-clamp-1'>
+      {productSecondaryTitle}
+    </span>
+  );
+  const priceRowNode = (
+  <div className={cn('wigmix-product-card-price-row flex flex-wrap items-center gap-1', isInlineDetails && 'md:shrink-0 md:justify-end')}>
+            {
+              originalPrice && originalPrice !== price
+                ? (
+                  <>
+                    {showPrice && customizations.productCard?.originalPrice?.position === 'AFTER' && (
+                      <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
+                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                      </span>
+                    )}
+                    {showOriginalPrice && (
+                      <span className={cn(
+                          'wigmix-product-card-original-price',
+                          customizations.productCard?.originalPrice?.strikethrough ? 'line-through' : '',
+                      )}
+                            style={getProductOriginalPriceColorStyle()}>
+                        {intl.formatMessage({ id: 'originalPrice' }).replace('{originalPrice}', originalPrice)}
+                      </span>
+                    )}
+                    {showPrice && customizations.productCard?.originalPrice?.position === 'BEFORE' && (
+                      <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
+                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                      </span>
+                    )}
+                    {showDiscount && (
+                      <span className='wigmix-product-card-discount' style={getProductDiscountColorStyle()}>
+                        {intl.formatMessage({ id: 'discount' }).replace('{discount}', discount)}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {showPrice && (
+                      <span className='wigmix-product-card-price'>
+                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
+                      </span>
+                    )}
+                  </>
+                )
+            }
+          </div>
+  );
 
   return (
     <div className='wigmix-product-card'>
@@ -394,6 +455,7 @@ const ProductCard: FC<ProductCardProps> = ({
                    customizations.productCard?.imageAspectRatio ? '' : 'aspect-square',
                  )}
                  src={mainImageUrl} alt={productImageAlt}
+                 loading={imageLoading}
                  style={{ aspectRatio: customizations.productCard?.imageAspectRatio || '' }}
                  onLoad={() => {
                    setIsLoading(false);
@@ -513,54 +575,26 @@ const ProductCard: FC<ProductCardProps> = ({
             )}
           </div>
         </div>
-        <div className='wigmix-product-card-details pt-2'>
-          <span className='wigmix-product-card-title line-clamp-1'>
-            {productTitle}
-          </span>
-          <span className='wigmix-product-card-secondary-title line-clamp-1'>
-            {productSecondaryTitle}
-          </span>
-          <div className='wigmix-product-card-price-row flex flex-wrap items-center gap-1'>
-            {
-              originalPrice && originalPrice !== price
-                ? (
-                  <>
-                    {showPrice && customizations.productCard?.originalPrice?.position === 'AFTER' && (
-                      <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
-                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
-                      </span>
-                    )}
-                    {showOriginalPrice && (
-                      <span className={cn(
-                          'wigmix-product-card-original-price',
-                          customizations.productCard?.originalPrice?.strikethrough ? 'line-through' : '',
-                      )}
-                            style={getProductOriginalPriceColorStyle()}>
-                        {intl.formatMessage({ id: 'originalPrice' }).replace('{originalPrice}', originalPrice)}
-                      </span>
-                    )}
-                    {showPrice && customizations.productCard?.originalPrice?.position === 'BEFORE' && (
-                      <span className='wigmix-product-card-price' style={getProductPriceColorStyle()}>
-                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
-                      </span>
-                    )}
-                    {showDiscount && (
-                      <span className='wigmix-product-card-discount' style={getProductDiscountColorStyle()}>
-                        {intl.formatMessage({ id: 'discount' }).replace('{discount}', discount)}
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    {showPrice && (
-                      <span className='wigmix-product-card-price'>
-                        {intl.formatMessage({ id: 'price' }).replace('{price}', price)}
-                      </span>
-                    )}
-                  </>
-                )
-            }
-          </div>
+        <div className={cn(
+          'wigmix-product-card-details pt-2',
+          isInlineDetails && 'flex flex-col gap-1 pt-3 md:flex-row md:items-start md:justify-between md:gap-2',
+          cardLayout?.uppercase && 'uppercase',
+        )}>
+          {isInlineDetails ? (
+            <>
+              <div className='min-w-0'>
+                {titleNode}
+                {showSecondaryTitle && secondaryTitleNode}
+              </div>
+              {priceRowNode}
+            </>
+          ) : (
+            <>
+              {titleNode}
+              {showSecondaryTitle && secondaryTitleNode}
+              {priceRowNode}
+            </>
+          )}
         </div>
       </a>
       {customizations.productCard?.addToCart?.enable && (

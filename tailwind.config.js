@@ -12,6 +12,7 @@ const herouiPackagesForOfficialWidgets = {
   'official-widgets/recommend-me': 'input|skeleton',
   'official-widgets/more-like-this': 'skeleton',
   'official-widgets/shop-the-look': 'skeleton',
+  'official-widgets/shop-the-look-v2': 'skeleton',
   'official-widgets/embedded-grid': 'skeleton',
   'official-widgets/shoppable-lookbook': 'skeleton',
   'official-widgets/shoppable-gallery': 'skeleton|spinner',
