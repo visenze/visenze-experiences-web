@@ -18,6 +18,7 @@ export enum WidgetType {
   RECOMMEND_ME = 'recommend_me',
   MORE_LIKE_THIS = 'more_like_this',
   SHOP_THE_LOOK = 'shop_the_look',
+  SHOP_THE_LOOK_V2 = 'shop_the_look_v2',
   EMBEDDED_GRID = 'embedded_grid',
   SHOPPABLE_LOOKBOOK = 'shoppable_lookbook',
   SHOPPABLE_GALLERY = 'shoppable_gallery',
@@ -1353,6 +1354,20 @@ export interface WidgetConfig {
        * @since 1.0.0
        */
       imageAspectRatio?: string;
+      /**
+       * Optional card layout tweaks. When unset the card keeps its default stacked layout.
+       *
+       * @since 1.0.42
+       */
+      layout?: {
+        /**
+         * `stacked` shows the title, secondary title and price rows one under the other (default). `inline` puts the
+         * title (and secondary title) on the left and the price row on the right from the tablet breakpoint up, and stacks them on phones.
+         */
+        details?: 'stacked' | 'inline';
+        /** Render the card texts in upper case. */
+        uppercase?: boolean;
+      };
       /**
        * Border settings for the product card.
        *

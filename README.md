@@ -15,6 +15,7 @@ Note: for staging testing, please remove the `cloud` under `appSettings` config.
 | in-page-carousel | `src/official-widgets/in-page-carousel` | Legacy Recommendations |
 | embedded-grid | `src/official-widgets/embedded-grid` | Legacy Recommendations |
 | shop-the-look | `src/official-widgets/shop-the-look` | Legacy Recommendations |
+| shop-the-look-v2 | `src/official-widgets/shop-the-look-v2` | Multisearch Outfit Recommendations |
 | search-bar | `src/official-widgets/search-bar` | Multisearch Autocomplete, Multisearch |
 | in-page-carousel-v3 | `src/official-widgets/in-page-carousel-v3` | Multisearch |
 | similar-search | `src/official-widgets/similar-search` | Multisearch |

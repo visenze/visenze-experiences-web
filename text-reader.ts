@@ -22,6 +22,7 @@ import { DEFAULT_TEXTS as DEFAULT_TEXTS_24 } from './src/official-widgets/in-pag
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_25 } from './src/official-widgets/ai-search-launcher/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_26 } from './src/official-widgets/embedded-shopping-assistant/default-config';
 import { DEFAULT_TEXTS as DEFAULT_TEXTS_27 } from './src/official-widgets/ai-assistant/default-config';
+import { DEFAULT_TEXTS as DEFAULT_TEXTS_28 } from './src/official-widgets/shop-the-look-v2/default-config';
 
 const configs: Record<string, LanguagePack> = {
   7: DEFAULT_TEXTS_7,
@@ -44,6 +45,7 @@ const configs: Record<string, LanguagePack> = {
   25: DEFAULT_TEXTS_25,
   26: DEFAULT_TEXTS_26,
   27: DEFAULT_TEXTS_27,
+  28: DEFAULT_TEXTS_28,
 };
 
 const args = process.argv.slice(2);

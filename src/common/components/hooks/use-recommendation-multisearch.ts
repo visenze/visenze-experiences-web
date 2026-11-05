@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import type {
   Facet,
   ObjectProductResponse,
@@ -10,6 +10,7 @@ import { WidgetDataContext } from '../../types/contexts';
 import { type FacetType, SortType } from '../../types/constants';
 import { Actions, Category } from '../../types/tracking-constants';
 import type { ProcessedProduct } from '../../types/product';
+import { BEST_OUTFIT_IMAGE_SYS_ATTR } from '../../constants';
 import {
   getBestImageSysAttrsToGet, getBestImageUrl, getFacets, getFilterQueries, getFlattenProduct, getFlattenProducts,
   parseToProductTypes,
@@ -17,9 +18,17 @@ import {
 
 interface RecommendationMultiSearchProps {
   productId: string;
+  /** Query by image when there is no productId. A productId takes precedence. */
+  imageUrl?: string;
   sortType?: SortType;
   filters?: Record<FacetType, any>;
   shouldDisplayAlternatives?: boolean;
+  /**
+   * Shop-the-look mode: also request the query metadata and a temporary public query image, and prefer the
+   * best outfit image of the query product as the reference image, and always call the outfit recommendations
+   * API. Set `searchSettings.boi_only` to restrict results to objects found in best outfit images.
+   */
+  useOutfitReference?: boolean;
 }
 
 export interface RecommendationMultiSearch {
@@ -34,17 +43,23 @@ export interface RecommendationMultiSearch {
   setObjectIndex: (objectIndex: number) => void;
   objects: ObjectProductResponse[];
   facets: Facet[];
+  /** Reliable only with `useOutfitReference`, which clears the previous results when the query changes. Other modes keep showing them until the new response arrives. */
+  isLoading: boolean;
 }
 
 const useRecommendationMultiSearch = ({
   productId,
+  imageUrl,
   sortType,
   filters,
   shouldDisplayAlternatives,
+  useOutfitReference,
 }: RecommendationMultiSearchProps): RecommendationMultiSearch => {
   const { widgetClient, widgetConfig } = useContext(WidgetDataContext);
   const { customizations } = widgetConfig;
   const [response, setResponse] = useState<ProductSearchResponseSuccess | undefined>();
+  const latestRequestId = useRef(0);
+  const [processedResponse, setProcessedResponse] = useState<ProductSearchResponseSuccess | undefined>();
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [productResults, setProductResults] = useState<ProcessedProduct[]>([]);
   const [facets, setFacets] = useState<Facet[]>([]);
@@ -55,6 +70,10 @@ const useRecommendationMultiSearch = ({
   const [objectIndex, setObjectIndex] = useState<number>(0);
   const [error, setError] = useState<string>('');
   const productDetails = widgetConfig.displaySettings.productDetails;
+
+  // A productId takes precedence, so imageUrl is not part of the query when there is one.
+  const queryImageUrl = productId ? undefined : imageUrl;
+  const hasQuery = !!productId || !!queryImageUrl;
 
   const handleSuccess = (res: ProductSearchResponse): void => {
     if (widgetConfig.callbacks?.preprocessResponse && typeof widgetConfig.callbacks.preprocessResponse === 'function') {
@@ -78,6 +97,12 @@ const useRecommendationMultiSearch = ({
     setResponse(undefined);
     setProductResults([]);
     setProductTypes([]);
+    if (useOutfitReference) {
+      setProcessedResponse(undefined);
+      setReferenceImageUrl('');
+      setProductInfo(undefined);
+      setObjects([]);
+    }
   };
 
   const multisearchById = (): void => {
@@ -86,7 +111,11 @@ const useRecommendationMultiSearch = ({
     params['facets'] = getFacets(productDetails);
     params['facets_show_count'] = true;
     params['limit'] = customizations.results?.limit || 20;
-    params['pid'] = productId;
+    if (productId) {
+      params['pid'] = productId;
+    } else if (queryImageUrl) {
+      params['im_url'] = queryImageUrl;
+    }
     params['sys_attrs_to_get'] = getBestImageSysAttrsToGet(customizations);
 
     if (sortType === SortType.PRICE_HTL) {
@@ -99,7 +128,26 @@ const useRecommendationMultiSearch = ({
       params['filters'] = getFilterQueries(productDetails, filters);
     }
 
-    widgetClient.multisearchRouter({ ...params, ...widgetConfig.searchSettings }, handleSuccess, handleError);
+    const searchParams = { ...params, ...widgetConfig.searchSettings };
+    if (useOutfitReference) {
+      // The reference image needs these regardless of what searchSettings says; extra sys attrs requested by the integrator are kept.
+      searchParams['qinfo'] = true;
+      searchParams['return_query_temp_url'] = true;
+      const sysAttrs = [params['sys_attrs_to_get'], widgetConfig.searchSettings?.['sys_attrs_to_get'], BEST_OUTFIT_IMAGE_SYS_ATTR];
+      searchParams['sys_attrs_to_get'] = [...new Set(sysAttrs.flatMap((attrs) => String(attrs ?? '').split(',')).filter(Boolean))].join(',');
+      // A new query shows the loading state instead of the previous product's outfit.
+      resetSearch();
+      // Ignore the answer of a request that a newer query has superseded.
+      latestRequestId.current += 1;
+      const requestId = latestRequestId.current;
+      widgetClient.multisearchOutfitRecommendations(
+        searchParams,
+        (res) => requestId === latestRequestId.current && handleSuccess(res),
+        (err) => requestId === latestRequestId.current && handleError(err),
+      );
+    } else {
+      widgetClient.multisearchRouter(searchParams, handleSuccess, handleError);
+    }
   };
 
   const getMetadata = (): Record<string, any> => {
@@ -118,10 +166,25 @@ const useRecommendationMultiSearch = ({
     if (res.result) {
       return getFlattenProducts(res.result, shouldDisplayAlternatives);
     }
-    if (res.objects?.[objectIndex].result) {
+    if (useOutfitReference && res.objects?.length) {
+      // An outfit has several items, one object each: show all of them instead of one category.
+      return getFlattenProducts(res.objects.flatMap((object) => object.result ?? []), shouldDisplayAlternatives);
+    }
+    if (res.objects?.[objectIndex]?.result) {
       return getFlattenProducts(res.objects[objectIndex].result, shouldDisplayAlternatives);
     }
     return [];
+  };
+
+  // Best outfit image of the query product > permanent main image of the query product > (image queries only) the
+  // temporary query image. query_tmp_url is a signed link that expires, so a product query never prefers it.
+  // `||` rather than `??`: an empty string from the API must fall through to the next candidate.
+  const getOutfitReferenceImageUrl = (res: ProductSearchResponseSuccess): string => {
+    const bestOutfitImageUrl = getBestImageUrl(res.product_info, 'outfit') || getBestImageUrl(res.qinfo, 'outfit');
+    const mainImageUrl = res.qinfo?.main_image_url || res.product_info?.main_image_url;
+    return (productId
+      ? bestOutfitImageUrl || mainImageUrl || res.query_tmp_url
+      : bestOutfitImageUrl || res.query_tmp_url || mainImageUrl) || '';
   };
 
   const setModelOutfitAsReference = (): void => {
@@ -134,17 +197,28 @@ const useRecommendationMultiSearch = ({
   };
 
   useEffect(() => {
+    if (response && response.status !== 'OK') {
+      setProcessedResponse(response);
+    }
     if (response?.status === 'OK') {
       const metadata = getMetadata();
       const results = parseResults(response);
-      if (response.product_info) {
-        const productInfo = getFlattenProduct(response.product_info);
+      const queryProduct = response.product_info ?? (useOutfitReference ? response.qinfo : undefined);
+      if (queryProduct) {
+        const productInfo = getFlattenProduct(queryProduct);
         setProductInfo(productInfo);
+      } else if (useOutfitReference) {
+        setProductInfo(undefined);
       }
-      setReferenceImageUrl(response.product_info?.main_image_url  || '');
+      if (useOutfitReference) {
+        setReferenceImageUrl(getOutfitReferenceImageUrl(response));
+      } else {
+        setReferenceImageUrl(response.product_info?.main_image_url  || '');
+      }
       setProductResults(results);
       setMetadata(metadata);
       setObjects(response.objects || []);
+      setProcessedResponse(response);
 
       // Set facets only once
       if (facets.length === 0 && response.facets) {
@@ -172,12 +246,12 @@ const useRecommendationMultiSearch = ({
 
   // Trigger search when product id / sort type / filter  changes
   useEffect(() => {
-    if (productId) {
+    if (hasQuery) {
       multisearchById();
     } else {
       resetSearch();
     }
-  }, [productId, sortType, filters]);
+  }, [productId, queryImageUrl, sortType, filters]);
 
   // Update product results when objectIndex changes
   useEffect(() => {
@@ -198,6 +272,7 @@ const useRecommendationMultiSearch = ({
     setObjectIndex,
     objects,
     facets,
+    isLoading: hasQuery && !error && (!response || processedResponse !== response),
   };
 };
 
