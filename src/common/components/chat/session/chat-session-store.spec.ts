@@ -5,6 +5,7 @@ import { NULL_VOICE_BRIDGE } from './voice-bridge';
 import { DEFAULT_CUSTOMIZATIONS } from '../../../../official-widgets/ai-search-launcher/default-config';
 import { createMockWidgetClient, createWidgetConfig } from '../../../test-utils';
 import type { WidgetConfig } from '../../../wigmix-core';
+import type { Chat } from '../use-chat';
 
 // Same technique as use-chat.spec.ts: control the SSE call directly.
 const mockFetchEventSource = jest.fn();
@@ -582,6 +583,153 @@ describe('ChatSessionStore analytics entry', () => {
     await store.sendMessage('shoes');
     expect(widgetClient.sendEvent).toHaveBeenCalledWith('result_load', { queryId: 'req-1', cat: 'Result' });
     expect((widgetClient.sendEvent as jest.Mock).mock.calls[0][1]).not.toHaveProperty('entry');
+  });
+});
+
+describe('ChatSessionStore failed replies', () => {
+  type StreamOptions = {
+    onopen: (response: unknown) => Promise<void>;
+    onmessage: (ev: { event: string; data: string }) => void;
+    onclose: () => void;
+  };
+  type ErrorMessageConfig = NonNullable<NonNullable<WidgetConfig['customizations']['chatbot']>['errorMessage']>;
+
+  const makeStore = (
+    errorMessage?: ErrorMessageConfig,
+    { locale, text }: { locale?: string; text?: Record<string, Record<string, string>> } = {},
+  ): ChatSessionStore => {
+    const widgetConfig = createWidgetConfig(
+      {
+        ...DEFAULT_CUSTOMIZATIONS,
+        chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, errorMessage },
+        ...(text ? { localization: { defaultLocale: 'en', defaultCurrency: 'USD', text } } : {}),
+      },
+      { searchSettings: { attrs_to_get: ['product_url', 'title'] } },
+    );
+    const { widgetClient } = createMockWidgetClient(widgetConfig, 'wigmix_shopping_assistant', {
+      getUid: jest.fn((cb: (uid: string) => void) => cb('test-uid')),
+      getSid: jest.fn((cb: (sid: string) => void) => cb('test-sid')),
+      generateUuid: jest.fn((cb: (uuid: string) => void) => cb('test-chat-id')),
+    });
+    const store = new ChatSessionStore();
+    store.configure({ widgetClient, widgetConfig, persistChatEnabled: false, locale });
+    return store;
+  };
+
+  const response = (status: number, contentType: string): unknown => ({
+    ok: status >= 200 && status < 300,
+    status,
+    headers: { get: (name: string): string | null => (name.toLowerCase() === 'content-type' ? contentType : null) },
+  });
+
+  // Each mimics fetchEventSource: whatever a callback throws rejects the call.
+  const streamErrorEvent = (): void => {
+    mockFetchEventSource.mockImplementation(async (_url: string, options: StreamOptions) => {
+      await options.onopen(response(200, 'text/event-stream'));
+      options.onmessage({ event: 'reqid', data: JSON.stringify({ value: 'req-1' }) });
+      options.onmessage({ event: 'chat_token', data: JSON.stringify({ value: 'Partial reply' }) });
+      options.onmessage({ event: 'error', data: '{}' });
+    });
+  };
+  const respondWith = (status: number, contentType: string): void => {
+    mockFetchEventSource.mockImplementation(async (_url: string, options: StreamOptions) => {
+      await options.onopen(response(status, contentType));
+    });
+  };
+  const failConnection = (): void => {
+    mockFetchEventSource.mockRejectedValue(new TypeError('Failed to fetch'));
+  };
+
+  const lastChat = (store: ChatSessionStore): Chat | undefined => store.getSnapshot().chats.at(-1);
+
+  beforeEach(() => {
+    mockFetchEventSource.mockReset();
+    localStorage.clear();
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it.each([
+    ['an error event', streamErrorEvent, 'temporary', 'The system encountered a temporary error.'],
+    ['a 500 response', (): void => respondWith(500, 'application/json'), 'temporary', 'The system encountered a temporary error.'],
+    ['a 400 response', (): void => respondWith(400, 'application/json'), 'invalidMessage', 'It appears that an invalid message has been sent.'],
+    ['a connection failure', failConnection, 'network', 'We couldn\'t connect right now.'],
+  ])('shows the matching message after %s and re-enables input', async (_label, arrange, kind, textStart) => {
+    arrange();
+    const store = makeStore();
+    store.open();
+    await store.sendMessage('hi');
+    expect(lastChat(store)).toEqual(expect.objectContaining({ author: 'bot', error: kind }));
+    expect(lastChat(store)?.messages[0]).toMatch(new RegExp(`^${textStart.replace(/[.']/g, '\\$&')}`));
+    const state = store.getSnapshot();
+    expect(state.isWaiting).toBe(false);
+    expect(state.allowUserInput).toBe(true);
+    expect(state.chats.filter((chat) => chat.author === 'bot')).toHaveLength(1);
+  });
+
+  it('shows nothing when errorMessage is disabled', async () => {
+    streamErrorEvent();
+    const store = makeStore({ enabled: false });
+    store.open();
+    await store.sendMessage('hi');
+    expect(lastChat(store)?.author).toBe('user');
+    expect(store.getSnapshot().allowUserInput).toBe(true);
+  });
+
+  it('skips only the connection-failure message when showOnNetworkError is off', async () => {
+    failConnection();
+    const networkStore = makeStore({ showOnNetworkError: false });
+    networkStore.open();
+    await networkStore.sendMessage('hi');
+    expect(lastChat(networkStore)?.author).toBe('user');
+
+    respondWith(400, 'application/json');
+    const rejectedStore = makeStore({ showOnNetworkError: false });
+    rejectedStore.open();
+    await rejectedStore.sendMessage('hi');
+    expect(lastChat(rejectedStore)?.error).toBe('invalidMessage');
+  });
+
+  it('uses the widget locale and any localization.text override', async () => {
+    respondWith(400, 'application/json');
+    const spanish = makeStore(undefined, { locale: 'es' });
+    spanish.open();
+    await spanish.sendMessage('hola');
+    expect(lastChat(spanish)?.messages[0]).toMatch(/^Parece que se envió un mensaje no válido/);
+
+    failConnection();
+    const custom = makeStore(undefined, { text: { en: { chatNetworkError: 'Offline, try again.' } } });
+    custom.open();
+    await custom.sendMessage('hi');
+    expect(lastChat(custom)?.messages[0]).toBe('Offline, try again.');
+  });
+
+  it('shows no bubble for a case whose text is overridden to empty', async () => {
+    failConnection();
+    const store = makeStore(undefined, { text: { en: { chatNetworkError: '' } } });
+    store.open();
+    await store.sendMessage('hi');
+    expect(lastChat(store)?.author).toBe('user');
+    expect(store.getSnapshot().allowUserInput).toBe(true);
+  });
+
+  it('shows nothing when the request is superseded by a newer message', async () => {
+    let rejectFirst: ((err: unknown) => void) | undefined;
+    mockFetchEventSource.mockImplementationOnce((_url: string, options: { signal: AbortSignal }) => new Promise((_resolve, reject) => {
+      rejectFirst = reject;
+      options.signal.addEventListener('abort', () => reject(new Error('aborted')));
+    }));
+    mockFetchEventSource.mockImplementationOnce(() => new Promise(() => {}));
+    const store = makeStore();
+    store.open();
+    const first = store.sendMessage('first');
+    store.sendMessage('second');
+    rejectFirst?.(new Error('late failure'));
+    await first;
+    expect(store.getSnapshot().chats.some((chat) => chat.error)).toBe(false);
   });
 });
 
