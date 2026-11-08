@@ -237,7 +237,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     },
     images: {
       mainImage: 'main',
-      hoverImage: 'none',
+      hoverImage: 'additional',
       showAlternatives: false,
     },
   },
@@ -276,6 +276,7 @@ export const DEFAULT_CUSTOMIZATIONS: WidgetConfig['customizations'] = {
     backgroundColor: '#FFFFFF',
     backgroundColorDark: '#000000',
     showWidgetTitle: true,
+    widgetTitlePosition: 'above-row',
     showViSenzeLogo: false,
     darkModeDefault: false,
   },

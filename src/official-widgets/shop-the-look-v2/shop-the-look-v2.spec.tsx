@@ -87,10 +87,10 @@ describe('shop-the-look-v2', () => {
     expect(renderStl(getOutfitResponse(), { boi_only: true }).outfit.mock.calls[0][0]).toMatchObject({ boi_only: true });
   });
 
-  it('shows the best outfit image as reference with caption, title and one card per result', () => {
+  it('shows the best outfit image as reference (no caption), title and one card per result', () => {
     const { container } = renderStl(getOutfitResponse());
     expect(container.querySelector('img.wigmix-reference-image')?.getAttribute('src')).toBe('https://best-outfit-image');
-    expect(container.textContent).toContain('Query Outfit Title');
+    expect(container.textContent).not.toContain('Query Outfit Title');
     expect(container.querySelector('.wigmix-widget-title')?.textContent).toBe('Shop the look');
     expect(container.querySelectorAll('a img')).toHaveLength(2);
   });
@@ -239,6 +239,25 @@ describe('shop-the-look-v2', () => {
     const custom = renderWidget(<ShopTheLookV2 productId='query-pid' />, { widgetConfig, widgetClient, messages: { ...messages, widgetTitle: 'Get the look' } });
     expect(custom.container.querySelector('.wigmix-widget-title')?.textContent).toBe('Get the look');
     expect(renderWithProductCard({}, {}, { showWidgetTitle: false }).querySelector('.wigmix-widget-title')).toBeNull();
+  });
+
+  it('places the heading above the whole row by default and above the suggested items when configured', () => {
+    const rowOf = (el: HTMLElement): Element | null => el.querySelector('.max-w-full');
+    const defaultContainer = renderWithProductCard({});
+    const defaultTitle = defaultContainer.querySelector('.wigmix-widget-title');
+    expect(defaultTitle).not.toBeNull();
+    expect(rowOf(defaultContainer)?.contains(defaultTitle)).toBe(false);
+
+    const aboveItems = renderWithProductCard({}, {}, { widgetTitlePosition: 'above-items' });
+    const itemsTitle = aboveItems.querySelector('.wigmix-widget-title');
+    expect(itemsTitle).not.toBeNull();
+    expect(rowOf(aboveItems)?.contains(itemsTitle)).toBe(true);
+    expect(aboveItems.querySelector('img.wigmix-reference-image')?.parentElement?.contains(itemsTitle)).toBe(false);
+    expect(aboveItems.querySelectorAll('.wigmix-widget-title')).toHaveLength(1);
+
+    const unknown = renderWithProductCard({}, {}, { widgetTitlePosition: 'nonsense' });
+    expect(rowOf(unknown)?.contains(unknown.querySelector('.wigmix-widget-title'))).toBe(false);
+    expect(renderWithProductCard({}, {}, { showWidgetTitle: false, widgetTitlePosition: 'above-items' }).querySelector('.wigmix-widget-title')).toBeNull();
   });
 
   it('falls back to the permanent main image, not the expiring temporary url, when there is no best outfit image', () => {

@@ -17,9 +17,11 @@ Each card shows the product name, price and discount (no secondary title). The c
 | Setting | Default | Description |
 |---|---|---|
 | `details` | `stacked` | `stacked`: the name with the price under it, as in the shopping assistant card. `inline`: name left, price right (stacks on phones). |
-| `uppercase` | `true` | Upper-case card texts, the caption and the heading. |
+| `uppercase` | `true` | Upper-case card texts and the heading. |
 
 The heading text is `localization.text.<locale>.widgetTitle`, and `generalLayout.showWidgetTitle: false` hides it.
+
+`generalLayout.widgetTitlePosition` places it: `above-row` (default) puts it above the whole row, starting at the look image, like the shop-the-look widget; `above-items` puts it above the suggested items only, lined up with the first card. On phones the layout is stacked, so `above-items` shows it between the look image and the carousel.
 
 ## Responsive layout
 

@@ -135,6 +135,11 @@ const useRecommendationMultiSearch = ({
       searchParams['return_query_temp_url'] = true;
       const sysAttrs = [params['sys_attrs_to_get'], widgetConfig.searchSettings?.['sys_attrs_to_get'], BEST_OUTFIT_IMAGE_SYS_ATTR];
       searchParams['sys_attrs_to_get'] = [...new Set(sysAttrs.flatMap((attrs) => String(attrs ?? '').split(',')).filter(Boolean))].join(',');
+      // The hover image needs the catalog's additional image; MS only returns attrs it is asked for.
+      if (customizations.productCard?.images?.hoverImage === 'additional') {
+        const attrsToGet: string[] = searchParams['attrs_to_get'] || [];
+        searchParams['attrs_to_get'] = [...new Set([...attrsToGet, 'additional_image_url'])];
+      }
       // A new query shows the loading state instead of the previous product's outfit.
       resetSearch();
       // Ignore the answer of a request that a newer query has superseded.
@@ -232,7 +237,7 @@ const useRecommendationMultiSearch = ({
 
       // Model Outfit should be the reference image if strategy is STL
       const strategy: any = response['strategy'];
-      if (strategy?.algorithm === 'STL') {
+      if (!useOutfitReference && strategy?.algorithm === 'STL') {
         setModelOutfitAsReference();
       }
 
