@@ -14,6 +14,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: 'Close',
     a11yAddToCartOptionsPrev: 'Previous options',
     a11yAddToCartOptionsNext: 'Next options',
+    chatTemporaryError: 'The system encountered a temporary error. Repeat your last message to continue the conversation.',
+    chatInvalidMessageError: 'It appears that an invalid message has been sent. Please try again with a different message.',
+    chatNetworkError: 'We couldn\'t connect right now. Please check your connection and send your message again.',
   },
   es: {
     a11yAddToWishlist: 'Agregar a la lista de deseos',
@@ -24,6 +27,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: 'Cerrar',
     a11yAddToCartOptionsPrev: 'Opciones anteriores',
     a11yAddToCartOptionsNext: 'Opciones siguientes',
+    chatTemporaryError: 'El sistema encontró un error temporal. Repite tu último mensaje para continuar la conversación.',
+    chatInvalidMessageError: 'Parece que se envió un mensaje no válido. Inténtalo de nuevo con un mensaje diferente.',
+    chatNetworkError: 'No pudimos conectarnos en este momento. Revisa tu conexión y vuelve a enviar tu mensaje.',
   },
   fr: {
     a11yAddToWishlist: 'Ajouter à la liste de souhaits',
@@ -34,6 +40,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: 'Fermer',
     a11yAddToCartOptionsPrev: 'Options précédentes',
     a11yAddToCartOptionsNext: 'Options suivantes',
+    chatTemporaryError: 'Le système a rencontré une erreur temporaire. Répétez votre dernier message pour poursuivre la conversation.',
+    chatInvalidMessageError: 'Il semble qu\'un message non valide ait été envoyé. Veuillez réessayer avec un autre message.',
+    chatNetworkError: 'Connexion impossible pour le moment. Vérifiez votre connexion et renvoyez votre message.',
   },
   pt: {
     a11yAddToWishlist: 'Adicionar à lista de desejos',
@@ -44,6 +53,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: 'Fechar',
     a11yAddToCartOptionsPrev: 'Opções anteriores',
     a11yAddToCartOptionsNext: 'Próximas opções',
+    chatTemporaryError: 'O sistema encontrou um erro temporário. Repita sua última mensagem para continuar a conversa.',
+    chatInvalidMessageError: 'Parece que uma mensagem inválida foi enviada. Tente novamente com uma mensagem diferente.',
+    chatNetworkError: 'Não foi possível conectar agora. Verifique sua conexão e envie sua mensagem novamente.',
   },
   de: {
     a11yAddToWishlist: 'Zur Wunschliste hinzufügen',
@@ -54,6 +66,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: 'Schließen',
     a11yAddToCartOptionsPrev: 'Vorherige Optionen',
     a11yAddToCartOptionsNext: 'Nächste Optionen',
+    chatTemporaryError: 'Das System hat einen vorübergehenden Fehler festgestellt. Wiederholen Sie Ihre letzte Nachricht, um das Gespräch fortzusetzen.',
+    chatInvalidMessageError: 'Anscheinend wurde eine ungültige Nachricht gesendet. Bitte versuchen Sie es mit einer anderen Nachricht erneut.',
+    chatNetworkError: 'Wir konnten gerade keine Verbindung herstellen. Bitte prüfen Sie Ihre Verbindung und senden Sie Ihre Nachricht erneut.',
   },
   it: {
     a11yAddToWishlist: 'Aggiungi alla lista dei desideri',
@@ -64,6 +79,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: 'Chiudi',
     a11yAddToCartOptionsPrev: 'Opzioni precedenti',
     a11yAddToCartOptionsNext: 'Opzioni successive',
+    chatTemporaryError: 'Il sistema ha riscontrato un errore temporaneo. Ripeti il tuo ultimo messaggio per continuare la conversazione.',
+    chatInvalidMessageError: 'Sembra che sia stato inviato un messaggio non valido. Riprova con un messaggio diverso.',
+    chatNetworkError: 'Al momento non è possibile connettersi. Controlla la connessione e invia di nuovo il messaggio.',
   },
   pl: {
     a11yAddToWishlist: 'Dodaj do listy życzeń',
@@ -74,6 +92,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: 'Zamknij',
     a11yAddToCartOptionsPrev: 'Poprzednie opcje',
     a11yAddToCartOptionsNext: 'Następne opcje',
+    chatTemporaryError: 'System napotkał tymczasowy błąd. Powtórz ostatnią wiadomość, aby kontynuować rozmowę.',
+    chatInvalidMessageError: 'Wygląda na to, że wysłano nieprawidłową wiadomość. Spróbuj ponownie z inną wiadomością.',
+    chatNetworkError: 'Nie udało się teraz połączyć. Sprawdź połączenie i wyślij wiadomość ponownie.',
   },
   ko: {
     a11yAddToWishlist: '위시리스트에 추가',
@@ -84,6 +105,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: '닫기',
     a11yAddToCartOptionsPrev: '이전 옵션',
     a11yAddToCartOptionsNext: '다음 옵션',
+    chatTemporaryError: '시스템에 일시적인 오류가 발생했습니다. 대화를 계속하려면 마지막 메시지를 다시 보내 주세요.',
+    chatInvalidMessageError: '잘못된 메시지가 전송된 것 같습니다. 다른 메시지로 다시 시도해 주세요.',
+    chatNetworkError: '지금은 연결할 수 없습니다. 연결 상태를 확인한 후 메시지를 다시 보내 주세요.',
   },
   ja: {
     a11yAddToWishlist: 'ほしい物リストに追加',
@@ -94,6 +118,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: '閉じる',
     a11yAddToCartOptionsPrev: '前のオプション',
     a11yAddToCartOptionsNext: '次のオプション',
+    chatTemporaryError: 'システムで一時的なエラーが発生しました。会話を続けるには、最後のメッセージをもう一度送信してください。',
+    chatInvalidMessageError: '無効なメッセージが送信されたようです。別のメッセージでもう一度お試しください。',
+    chatNetworkError: '現在接続できません。接続を確認して、もう一度メッセージを送信してください。',
   },
   th: {
     a11yAddToWishlist: 'เพิ่มในรายการโปรด',
@@ -104,6 +131,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: 'ปิด',
     a11yAddToCartOptionsPrev: 'ตัวเลือกก่อนหน้า',
     a11yAddToCartOptionsNext: 'ตัวเลือกถัดไป',
+    chatTemporaryError: 'ระบบพบข้อผิดพลาดชั่วคราว โปรดส่งข้อความล่าสุดของคุณอีกครั้งเพื่อสนทนาต่อ',
+    chatInvalidMessageError: 'ดูเหมือนว่ามีการส่งข้อความที่ไม่ถูกต้อง โปรดลองอีกครั้งด้วยข้อความอื่น',
+    chatNetworkError: 'ไม่สามารถเชื่อมต่อได้ในขณะนี้ โปรดตรวจสอบการเชื่อมต่อแล้วส่งข้อความอีกครั้ง',
   },
   zh: {
     a11yAddToWishlist: '加入心愿单',
@@ -114,6 +144,9 @@ export const COMMON_TEXTS: LanguagePack = {
     addToCartOptionsClose: '关闭',
     a11yAddToCartOptionsPrev: '上一组选项',
     a11yAddToCartOptionsNext: '下一组选项',
+    chatTemporaryError: '系统遇到临时错误。请重新发送您的上一条消息以继续对话。',
+    chatInvalidMessageError: '您发送的消息似乎无效。请换一条消息再试一次。',
+    chatNetworkError: '暂时无法连接。请检查您的网络连接，然后重新发送消息。',
   },
 };
 

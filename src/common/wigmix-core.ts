@@ -1957,6 +1957,93 @@ export interface WidgetConfig {
        * @since 1.0.34
        */
       persistChatTtlMinutes?: number;
+      /**
+       * How markdown links written by the assistant (e.g. `[Track order](https://…)`) are shown
+       * in chat messages. Allowed links become clickable; any other link stays as plain text.
+       * Supported by every widget using the common chat window (shopping-assistant,
+       * embedded-shopping-assistant, ai-search-launcher, ai_assistant).
+       *
+       * @since 1.0.42
+       */
+      links?: {
+        /**
+         * Set to `false` to show links as plain text. Defaults to `true`.
+         *
+         * @since 1.0.42
+         */
+        enabled?: boolean;
+        /**
+         * Whether a clicked link opens in a new tab. Defaults to `true`.
+         *
+         * @since 1.0.42
+         */
+        openInNewTab?: boolean;
+        /**
+         * URL schemes allowed to become clickable, e.g. `['https', 'tel']`. Arrays replace (not
+         * merge) when overridden. Defaults to `['http', 'https', 'mailto']`. `javascript`, `data`
+         * and `vbscript` links are never made clickable, even if listed.
+         *
+         * @since 1.0.42
+         */
+        allowedProtocols?: string[];
+        /**
+         * Whether site-relative links (starting with `/`, e.g. `/cart`) are clickable. Defaults
+         * to `true`.
+         *
+         * @since 1.0.42
+         */
+        allowRelative?: boolean;
+        /**
+         * Whether links are underlined. Defaults to `true`.
+         *
+         * @since 1.0.42
+         */
+        underline?: boolean;
+        /**
+         * Link text color. Defaults to the message text color when unset.
+         *
+         * @since 1.0.42
+         */
+        fontColor?: string;
+        /**
+         * Link text color in dark mode. Defaults to the message text color when unset.
+         *
+         * @since 1.0.42
+         */
+        fontColorDark?: string;
+      };
+      /**
+       * Message shown in the chat when a reply fails, so the shopper isn't left looking at a chat
+       * that seems frozen. Three cases, each with its own text (set through
+       * `localization.text`): `chatTemporaryError` when the server reports an error,
+       * `chatInvalidMessageError` when the server rejects the message (HTTP 400), and
+       * `chatNetworkError` when the connection fails. Supported by every widget using the common
+       * chat module (shopping-assistant, embedded-shopping-assistant, ai-search-launcher,
+       * ai_assistant).
+       *
+       * @since 1.0.42
+       */
+      errorMessage?: Partial<ColoredInterface> & {
+        /**
+         * Set to `false` to show nothing when a reply fails. Defaults to `true`.
+         *
+         * @since 1.0.42
+         */
+        enabled?: boolean;
+        /**
+         * Set to `false` to show nothing when the connection fails (the server-reported and
+         * rejected-message cases still show). Defaults to `true`.
+         *
+         * @since 1.0.42
+         */
+        showOnNetworkError?: boolean;
+        /**
+         * Border around the error message bubble. Defaults to the normal message bubble border.
+         *
+         * @since 1.0.42
+         */
+        border?: Border;
+      };
     };
     /**
      * (optional) Settings specific to the ai_assistant widget. The fields directly under

@@ -2,7 +2,7 @@ import { cn } from '@heroui/theme';
 import { type CSSProperties, type FC, memo } from 'react';
 import { useIntl } from 'react-intl';
 import BotIcon from './BotIcon';
-import { processMessageForDisplay } from './message-formatting';
+import { type LinkOptions, processMessageForDisplay } from './message-formatting';
 import ProductGrid from './ProductGrid';
 import type { Chat } from './use-chat';
 import { FOCUS_VISIBLE_CLASSES } from '../../constants';
@@ -25,6 +25,9 @@ interface ChatRowProps {
   productGridCssConfig: CSSProperties;
   imageClasses?: string;
   productScroller?: ProductScrollerConfig;
+  linkOptions: LinkOptions;
+  // Applied to a failed-reply message's bubble (chat.error), on top of the normal bubble style.
+  errorBubbleStyle?: CSSProperties;
 }
 
 const getFile = (image: SearchImageOrPid | undefined): string => {
@@ -48,7 +51,7 @@ const getFile = (image: SearchImageOrPid | undefined): string => {
 const ChatRow: FC<ChatRowProps> = ({
   chat, focusedProductId, streamingRequestId, wishlistPids, setIsInWishlist, pwPrefix,
   productDisplayMode, activeRequestId, onSelectTurn, productGridClasses, productGridCssConfig,
-  imageClasses, productScroller,
+  imageClasses, productScroller, linkOptions, errorBubbleStyle,
 }) => {
   const intl = useIntl();
 
@@ -97,8 +100,9 @@ const ChatRow: FC<ChatRowProps> = ({
           <div
             className='mb-2 min-w-0 break-words bg-gray-100 dark:bg-neutral-800 p-2 text-sm
               text-neutral-900 dark:text-neutral-100 rounded-lg border border-neutral-100 dark:border-neutral-800'
+            style={chat.error ? errorBubbleStyle : undefined}
             dangerouslySetInnerHTML={{
-              __html: processMessageForDisplay(message),
+              __html: processMessageForDisplay(message, linkOptions),
             }}
           />
         </div>
