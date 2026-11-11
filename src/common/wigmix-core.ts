@@ -1963,19 +1963,19 @@ export interface WidgetConfig {
        * Supported by every widget using the common chat window (shopping-assistant,
        * embedded-shopping-assistant, ai-search-launcher, ai_assistant).
        *
-       * @since 1.0.43
+       * @since 1.0.42
        */
       links?: {
         /**
          * Set to `false` to show links as plain text. Defaults to `true`.
          *
-         * @since 1.0.43
+         * @since 1.0.42
          */
         enabled?: boolean;
         /**
          * Whether a clicked link opens in a new tab. Defaults to `true`.
          *
-         * @since 1.0.43
+         * @since 1.0.42
          */
         openInNewTab?: boolean;
         /**
@@ -1983,32 +1983,32 @@ export interface WidgetConfig {
          * merge) when overridden. Defaults to `['http', 'https', 'mailto']`. `javascript`, `data`
          * and `vbscript` links are never made clickable, even if listed.
          *
-         * @since 1.0.43
+         * @since 1.0.42
          */
         allowedProtocols?: string[];
         /**
          * Whether site-relative links (starting with `/`, e.g. `/cart`) are clickable. Defaults
          * to `true`.
          *
-         * @since 1.0.43
+         * @since 1.0.42
          */
         allowRelative?: boolean;
         /**
          * Whether links are underlined. Defaults to `true`.
          *
-         * @since 1.0.43
+         * @since 1.0.42
          */
         underline?: boolean;
         /**
          * Link text color. Defaults to the message text color when unset.
          *
-         * @since 1.0.43
+         * @since 1.0.42
          */
         fontColor?: string;
         /**
          * Link text color in dark mode. Defaults to the message text color when unset.
          *
-         * @since 1.0.43
+         * @since 1.0.42
          */
         fontColorDark?: string;
       };
@@ -2021,26 +2021,26 @@ export interface WidgetConfig {
        * chat module (shopping-assistant, embedded-shopping-assistant, ai-search-launcher,
        * ai_assistant).
        *
-       * @since 1.0.43
+       * @since 1.0.42
        */
       errorMessage?: Partial<ColoredInterface> & {
         /**
          * Set to `false` to show nothing when a reply fails. Defaults to `true`.
          *
-         * @since 1.0.43
+         * @since 1.0.42
          */
         enabled?: boolean;
         /**
          * Set to `false` to show nothing when the connection fails (the server-reported and
          * rejected-message cases still show). Defaults to `true`.
          *
-         * @since 1.0.43
+         * @since 1.0.42
          */
         showOnNetworkError?: boolean;
         /**
          * Border around the error message bubble. Defaults to the normal message bubble border.
          *
-         * @since 1.0.43
+         * @since 1.0.42
          */
         border?: Border;
       };
