@@ -338,6 +338,104 @@ describe('shopping-assistant', () => {
   });
 
   // ============================================================
+  // onWidgetOpen callback (multiple chatbot placements)
+  // ============================================================
+
+  describe('onWidgetOpen callback', () => {
+    // Leaving the modal open would leave react-modal's aria-hidden on <body> for later tests.
+    const closeAndFlush = (widgetClient: ReturnType<typeof createTestClient>['widgetClient']): void => {
+      act(() => {
+        widgetClient.closeWidget();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+    };
+
+    it('fires once with the placement ID each time the popup opens via the trigger button', () => {
+      const onWidgetOpen = jest.fn();
+      const { widgetClient } = renderAssistant({}, 'en', { onWidgetOpen });
+      expect(onWidgetOpen).not.toHaveBeenCalled();
+
+      openDialogAndWait();
+      expect(onWidgetOpen).toHaveBeenCalledTimes(1);
+      expect(onWidgetOpen).toHaveBeenCalledWith('1234');
+
+      // Clicking the trigger again while already open must not fire it again.
+      openDialogAndWait();
+      expect(onWidgetOpen).toHaveBeenCalledTimes(1);
+
+      const closeButton = testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true });
+      act(() => {
+        fireEvent.click(closeButton);
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      openDialogAndWait();
+      expect(onWidgetOpen).toHaveBeenCalledTimes(2);
+      closeAndFlush(widgetClient);
+    });
+
+    it('fires when opened programmatically via openWidget / openWithMessage', () => {
+      const onWidgetOpen = jest.fn();
+      const { widgetClient } = renderAssistant({}, 'en', { onWidgetOpen });
+
+      act(() => {
+        widgetClient.openWidget('');
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(onWidgetOpen).toHaveBeenCalledTimes(1);
+
+      closeAndFlush(widgetClient);
+      act(() => {
+        widgetClient.openWithMessage('Hello');
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(onWidgetOpen).toHaveBeenCalledTimes(2);
+      closeAndFlush(widgetClient);
+    });
+
+    it('fires when opened via sendChatMessage', async () => {
+      const onWidgetOpen = jest.fn();
+      const { widgetClient } = renderAssistant({}, 'en', { onWidgetOpen });
+
+      await act(async () => {
+        widgetClient.sendChatMessage('red sneakers');
+      });
+      await act(async () => {
+        jest.runAllTimers();
+      });
+
+      expect(onWidgetOpen).toHaveBeenCalledTimes(1);
+      expect(onWidgetOpen).toHaveBeenCalledWith('1234');
+      closeAndFlush(widgetClient);
+    });
+
+    it('does not throw when no onWidgetOpen callback is configured', () => {
+      const { widgetClient } = renderAssistant();
+      expect(() => openDialogAndWait()).not.toThrow();
+      closeAndFlush(widgetClient);
+    });
+
+    it('does not move focus to the trigger button when closeWidget() is called on an already-closed popup', () => {
+      const { widgetClient } = renderAssistant();
+      const outside = document.createElement('button');
+      document.body.appendChild(outside);
+      outside.focus();
+
+      closeAndFlush(widgetClient);
+
+      expect(document.activeElement).toBe(outside);
+      document.body.removeChild(outside);
+    });
+  });
+
+  // ============================================================
   // Session persistence
   // ============================================================
 

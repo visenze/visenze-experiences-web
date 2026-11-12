@@ -69,10 +69,19 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   // true as soon as open()/newChat() resets state, well before the opening messages finish.
   const composerChat: UseChatResult = { ...chat, allowUserInput: chat.allowUserInput && !isOpening };
 
+  // Mirrors dialogVisible for closeDialog, which is memoized once and so can't read the state directly.
+  const dialogVisibleRef = useRef(false);
+  dialogVisibleRef.current = dialogVisible;
+
   const closeDialog = useCallback((): void => {
+    const wasOpen = dialogVisibleRef.current;
     setDialogVisible(false);
     chat.close();
-    triggerButtonRef.current?.focus();
+    // Only hand focus back when this popup was actually open: a host page calling closeWidget() on every
+    // other chatbot placement (e.g. from onWidgetOpen) must not pull focus/scroll to their trigger buttons.
+    if (wasOpen) {
+      triggerButtonRef.current?.focus();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -198,6 +207,15 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       chatInputRef.current?.focus();
     }, 0);
     return (): void => window.clearTimeout(timeoutId);
+  }, [dialogVisible]);
+
+  // Notify the host page each time the popup goes from closed to open (any path: trigger button,
+  // openWidget, sendChatMessage, openWithMessage), e.g. so it can close other chatbot placements.
+  useEffect(() => {
+    if (dialogVisible) {
+      widgetConfig.callbacks?.onWidgetOpen?.(appSettings.placementId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogVisible]);
 
   useEffect(() => {

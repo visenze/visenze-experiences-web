@@ -1026,6 +1026,27 @@ export interface WidgetConfig {
      * @since 1.0.15
      */
     onFindSimilar?: (image: SearchImageOrPid) => boolean | Promise<boolean>;
+    /**
+     * Fires whenever the widget popup opens, whether from its own trigger button or programmatically
+     * (`openWidget`, `sendChatMessage`, `openWithMessage`). Does not fire again while the popup is already open.
+     *
+     * Useful for the page's own analytics, or when several popup widgets are on the same page,
+     * to close the others so only one is open at a time:
+     * ```ts
+     * onWidgetOpen: (placementId) => {
+     *   Object.entries(window.visenzeWidgets || {}).forEach(([id, widget]) => {
+     *     if (id !== String(placementId)) widget.closeWidget();
+     *   });
+     * },
+     * ```
+     *
+     * Currently supported by `shopping-assistant` only.
+     *
+     * @param placementId The placement ID of the widget that opened
+     *
+     * @since 1.0.42
+     */
+    onWidgetOpen?: (placementId: string | number) => void;
   };
   /**
    * Initial state of the widget.
