@@ -22,7 +22,7 @@ interface ShopTheLookV2Props {
 
 const ShopTheLookV2: FC<ShopTheLookV2Props> = ({ productId, imageUrl }) => {
   const { widgetClient, widgetConfig, darkMode } = useContext(WidgetDataContext);
-  const { customizations } = widgetConfig;
+  const { customizations, displaySettings } = widgetConfig;
   const root = useContext(RootContext);
   const intl = useIntl();
   const breakpoint = useBreakpoint();
@@ -34,7 +34,7 @@ const ShopTheLookV2: FC<ShopTheLookV2Props> = ({ productId, imageUrl }) => {
     setForcedError('Sample error message here');
   };
 
-  const { productResults, metadata, referenceImageUrl, isLoading, error: errorFromApi } = useRecommendationMultiSearch({
+  const { productResults, productInfo, metadata, referenceImageUrl, isLoading, error: errorFromApi } = useRecommendationMultiSearch({
     productId,
     imageUrl,
     useOutfitReference: true,
@@ -66,6 +66,8 @@ const ShopTheLookV2: FC<ShopTheLookV2Props> = ({ productId, imageUrl }) => {
     variableWidth: false,
   };
 
+  // Not shown on screen, but describes the reference image for screen readers.
+  const referenceImageAlt: string = productInfo?.[displaySettings.productDetails['title']] ?? '';
   const showTitle = !!customizations.generalLayout?.showWidgetTitle;
   const titleAboveRow = customizations.generalLayout?.widgetTitlePosition !== 'above-items';
   const upperCase = customizations.productCard?.layout?.uppercase ? 'uppercase' : '';
@@ -87,7 +89,7 @@ const ShopTheLookV2: FC<ShopTheLookV2Props> = ({ productId, imageUrl }) => {
               <img
                 className='wigmix-reference-image size-full aspect-auto'
                 src={referenceImageUrl}
-                alt=''
+                alt={referenceImageAlt}
                 data-testid='wigmix-reference-image'
                 data-pw='stl2-reference-image'
               />

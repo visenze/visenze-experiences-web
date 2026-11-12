@@ -1092,7 +1092,7 @@ export interface WidgetConfig {
        * Any other value is treated as `above-row`.
        *
        * @default 'above-row'
-       * @since 1.0.43
+       * @since 1.0.42
        */
       widgetTitlePosition?: 'above-row' | 'above-items';
       /**
