@@ -226,6 +226,7 @@ window.visenzeConfigs[5000] = {
   | `onAddToWishlistToggle` | 1.0.18          | Fires whenever a wishlist icon is clicked on.                                                                                                                              |
   | `onAddToCartToggle`     | 1.0.18          | Fires whenever an add-to-cart icon is clicked on.                                                                                                                          |
   | `onSearchBarInput`      | 1.0.0           | Fires when there is an input change within the search bar (when exists), such as clicking enter in search bar, selecting an autocomplete option, or uploading a new image. |
+  | `onWidgetOpen`          | 1.0.42          | `shopping-assistant` only. Fires each time the chat popup opens, with the widget's placement ID. See [Multiple chatbot placements](multiple-chatbot-placements.md).      |
 </details>
 
 The full list of available callbacks and the parameters for each available callback
@@ -331,6 +332,9 @@ Similarly, a programmatic way to close widgets that have popup behavior is avail
 ```ts
 visenzeWidget.closeWidget();
 ```
+
+If the page has more than one chatbot placement, see [Multiple chatbot placements](multiple-chatbot-placements.md)
+for keeping only one chat popup open at a time.
 
 ### Sending chat messages and opening the chat with a message
 
