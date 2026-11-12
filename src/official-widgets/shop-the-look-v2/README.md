@@ -10,7 +10,7 @@ Shows a reference image (the best outfit image of the query product) with its ca
 
 ## Card options
 
-Each card shows the product name, price and discount (no secondary title). The cards use the shared product card, so the card settings work as in shop-the-look (v1), configured through `customizations.productCard`: `price`, `discount` (on by default), `originalPrice` (off by default), `title`, `images` (main and hover image), `addToWishlist` and `addToCart` (both off by default; they need the `onAddToWishlistToggle` / `onAddToCartToggle` callbacks). The cards per row come from `customizations.productGrid.<breakpoint>.productsPerRow` and the gap between cards (in px) from `marginHorizontal` (default 2) and extra products scroll in a carousel.
+Each card shows the product name, price and discount. A secondary title (e.g. the brand, shown under the name) is available but off by default. The cards use the shared product card, so the card settings work as in shop-the-look (v1), configured through `customizations.productCard`: `price`, `discount` (on by default), `originalPrice` (off by default), `title`, `secondaryTitle` (off by default; `show: true`, `fieldSource` defaults to `brand`, which needs a `brand` field mapping), `images` (main and hover image), `addToWishlist` and `addToCart` (both off by default; they need the `onAddToWishlistToggle` / `onAddToCartToggle` callbacks). The cards per row come from `customizations.productGrid.<breakpoint>.productsPerRow` and the gap between cards (in px) from `marginHorizontal` (default 2) and extra products scroll in a carousel.
 
 `productCard.layout` adjusts the card layout:
 

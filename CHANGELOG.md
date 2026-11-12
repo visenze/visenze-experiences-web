@@ -40,6 +40,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All widgets using the common product card: New optional `customizations.productCard.layout` setting (`details`: `stacked` or `inline`, `uppercase`). Cards without it render as before.
 - All widgets using the common chat window: links written by the assistant (`[label](url)`) are now clickable. Only `http`, `https`, `mailto` and site-relative (`/…`) links are clickable by default; `javascript:`/`data:`/`vbscript:` links never are. Configurable through the new `customizations.chatbot.links` setting (`enabled`, `openInNewTab`, `allowedProtocols`, `allowRelative`, `underline`, `fontColor`, `fontColorDark`).
 - All widgets using the common chat module: a failed reply now shows a message in the chat instead of nothing — one text when the server reports an error, one when it rejects the message (HTTP 400), and one when the connection fails. The texts (`chatTemporaryError`, `chatInvalidMessageError`, `chatNetworkError`) are included in all supported languages and can be changed through `localization.text`. The new `customizations.chatbot.errorMessage` setting turns it off (`enabled`), skips the connection-failure case (`showOnNetworkError`), and sets the bubble's colors and border (`fontColor`, `fontColorDark`, `backgroundColor`, `backgroundColorDark`, `border`).
+- shop-the-look-v2: New optional `customizations.generalLayout.widgetTitlePosition` setting (`above-row` or `above-items`). `above-row` (default) puts the heading above the whole row, starting at the reference image, like shop-the-look. `above-items` puts it above the suggested items only, lined up with the first card (on phones it sits between the reference image and the carousel).
+- shop-the-look-v2: The product card's `secondaryTitle` (e.g. the brand under the name, `show: true`, `fieldSource` defaults to `brand`) is documented; it is off by default.
+
+### Fixed
+
+- shop-the-look-v2: The hover image now works. The catalog's `additional_image_url` is requested from the API when `productCard.images.hoverImage` is `additional`, so the card swaps to it on hover.
+- shop-the-look-v2: The shop-the-look strategy's model-outfit image no longer replaces the reference image chosen by the widget.
+
+### Changed
+
+- shop-the-look-v2: `productCard.images.hoverImage` now defaults to `additional` (was `none`). Set it to `none` to keep the previous behaviour.
+- shop-the-look-v2: The product name caption under the reference image is removed; the image is shown on its own. `productCard.layout.uppercase` now applies to the card texts and the heading only.
 
 <!-- END visenze-experiences-web 1.0.42 -->
 

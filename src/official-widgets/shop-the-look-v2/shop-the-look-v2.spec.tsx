@@ -191,6 +191,15 @@ describe('shop-the-look-v2', () => {
     expect(container.querySelector('.wigmix-product-card-discount')?.textContent).toContain('off');
   });
 
+  it('shows the secondary title (brand) under the name of every card when enabled', () => {
+    const container = renderWithProductCard({
+      secondaryTitle: withOverrides(baseCard.secondaryTitle, { show: true, fieldSource: 'brand' }),
+    });
+    const secondaryTitles = container.querySelectorAll('.wigmix-product-card-secondary-title');
+    expect(secondaryTitles.length).toBe(container.querySelectorAll('.wigmix-product-card-title').length);
+    expect(secondaryTitles[0]?.textContent).toBe('Brand X');
+  });
+
   it('shows the wishlist button when enabled and reports the toggle to the host callback', async () => {
     const onAddToWishlistToggle = jest.fn().mockResolvedValue(true);
     const container = renderWithProductCard(
