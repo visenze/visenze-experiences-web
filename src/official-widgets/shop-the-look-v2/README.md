@@ -10,16 +10,18 @@ Shows a reference image (the best outfit image of the query product) with its ca
 
 ## Card options
 
-Each card shows the product name, price and discount (no secondary title). The cards use the shared product card, so the card settings work as in shop-the-look (v1), configured through `customizations.productCard`: `price`, `discount` (on by default), `originalPrice` (off by default), `title`, `images` (main and hover image), `addToWishlist` and `addToCart` (both off by default; they need the `onAddToWishlistToggle` / `onAddToCartToggle` callbacks). The cards per row come from `customizations.productGrid.<breakpoint>.productsPerRow` and the gap between cards (in px) from `marginHorizontal` (default 2) and extra products scroll in a carousel.
+Each card shows the product name, price and discount. A secondary title (e.g. the brand, shown under the name) is available but off by default. The cards use the shared product card, so the card settings work as in shop-the-look (v1), configured through `customizations.productCard`: `price`, `discount` (on by default), `originalPrice` (off by default), `title`, `secondaryTitle` (off by default; `show: true`, `fieldSource` defaults to `brand`, which needs a `brand` field mapping), `images` (main and hover image), `addToWishlist` and `addToCart` (both off by default; they need the `onAddToWishlistToggle` / `onAddToCartToggle` callbacks). The cards per row come from `customizations.productGrid.<breakpoint>.productsPerRow` and the gap between cards (in px) from `marginHorizontal` (default 2) and extra products scroll in a carousel.
 
 `productCard.layout` adjusts the card layout:
 
 | Setting | Default | Description |
 |---|---|---|
 | `details` | `stacked` | `stacked`: the name with the price under it, as in the shopping assistant card. `inline`: name left, price right (stacks on phones). |
-| `uppercase` | `true` | Upper-case card texts, the caption and the heading. |
+| `uppercase` | `true` | Upper-case card texts and the heading. |
 
 The heading text is `localization.text.<locale>.widgetTitle`, and `generalLayout.showWidgetTitle: false` hides it.
+
+`generalLayout.widgetTitlePosition` places it: `above-row` (default) puts it above the whole row, starting at the look image, like the shop-the-look widget; `above-items` puts it above the suggested items only, lined up with the first card. On phones the layout is stacked, so `above-items` shows it between the look image and the carousel.
 
 ## Responsive layout
 

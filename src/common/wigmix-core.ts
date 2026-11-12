@@ -1108,6 +1108,15 @@ export interface WidgetConfig {
        */
       showWidgetTitle: boolean;
       /**
+       * Where the widget title is placed (shop-the-look-v2 only). `above-row`: above the whole row, starting at the
+       * reference image. `above-items`: above the suggested items only, aligned with the first card.
+       * Any other value is treated as `above-row`.
+       *
+       * @default 'above-row'
+       * @since 1.0.42
+       */
+      widgetTitlePosition?: 'above-row' | 'above-items';
+      /**
        * Whether to show "Powered by Rezolve" footer in appropriate places.
        *
        * @since 1.0.0

@@ -66,13 +66,22 @@ const ShopTheLookV2: FC<ShopTheLookV2Props> = ({ productId, imageUrl }) => {
     variableWidth: false,
   };
 
+  // Not shown on screen, but describes the reference image for screen readers.
+  const referenceImageAlt: string = productInfo?.[displaySettings.productDetails['title']] ?? '';
+  const showTitle = !!customizations.generalLayout?.showWidgetTitle;
+  const titleAboveRow = customizations.generalLayout?.widgetTitlePosition !== 'above-items';
   const upperCase = customizations.productCard?.layout?.uppercase ? 'uppercase' : '';
-  const caption: string = productInfo?.[displaySettings.productDetails['title']] ?? '';
 
   return (
     <>
-      <div className='max-w-full items-start overflow-hidden px-4 text-primary md:flex md:flex-row md:gap-6 md:px-0 lg:gap-10' data-pw='stl2-container'>
-        {/* Reference image + caption */}
+      {showTitle && titleAboveRow && (
+        // Above the whole row, starting where the reference image starts (same side padding as the row below)
+        <div className={`wigmix-widget-title px-4 pb-4 text-primary md:px-0 md:pb-6 ${upperCase}`} data-pw='stl2-widget-title'>
+          {intl.formatMessage({ id: 'widgetTitle' })}
+        </div>
+      )}
+      <div className='max-w-full items-center overflow-hidden px-4 text-primary md:flex md:flex-row md:gap-6 md:px-0 lg:gap-10' data-pw='stl2-container'>
+        {/* Reference image */}
         {(isLoading || referenceImageUrl) && (
           <div className='mb-4 md:mb-0 md:w-[38%] lg:w-1/3 xl:w-1/4' data-pw='stl2-reference'>
             {isLoading && <Skeleton className='aspect-[2/3]' />}
@@ -80,22 +89,22 @@ const ShopTheLookV2: FC<ShopTheLookV2Props> = ({ productId, imageUrl }) => {
               <img
                 className='wigmix-reference-image size-full aspect-auto'
                 src={referenceImageUrl}
-                alt={caption}
+                alt={referenceImageAlt}
                 data-testid='wigmix-reference-image'
                 data-pw='stl2-reference-image'
               />
             )}
-            {caption && (
-              <p className={`wigmix-product-card-title mt-4 text-center ${upperCase}`} data-pw='stl2-reference-caption'>{caption}</p>
-            )}
           </div>
         )}
 
-        {/* Title + outfit items */}
+        {/* Outfit items */}
         <div className='min-w-0 flex-1'>
-          {customizations.generalLayout?.showWidgetTitle && (
-            <div className={`wigmix-widget-title pb-4 text-primary md:pb-6 ${upperCase}`} data-pw='stl2-widget-title'>
-              {intl.formatMessage({ id: 'widgetTitle' })}
+          {showTitle && !titleAboveRow && (
+            // Same side padding as the carousel (arrow room + half the card gap), so the heading lines up with the first card's image
+            <div className='lg:px-10' data-pw='stl2-widget-title-wrapper'>
+              <div className={`wigmix-widget-title pb-4 text-primary md:pb-6 ${upperCase}`} style={{ paddingLeft: cardGap / 2 }} data-pw='stl2-widget-title'>
+                {intl.formatMessage({ id: 'widgetTitle' })}
+              </div>
             </div>
           )}
           {isLoading && (
