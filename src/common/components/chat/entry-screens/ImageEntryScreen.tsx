@@ -14,7 +14,7 @@ import WebcamCapture from '../WebcamCapture';
 interface ImageEntryScreenProps {
   chat: UseChatResult;
   // The image entry point's configured greeting (ai-search-launcher: customizations.launcher.greetings.image;
-  // ai_assistant: customizations.aiAssistant.searchBar.greetings.image), resolved by the caller — shown here regardless of whether this is a brand-new conversation or
+  // ai_assistant: customizations.aiAssistant.launcher.greetings.image), resolved by the caller — shown here regardless of whether this is a brand-new conversation or
   // a resumed one. Passed explicitly rather than read back out of chat.chats: for a resumed
   // conversation the first bot message in chat.chats is whatever the assistant actually said much
   // earlier, not a greeting, and chat.playGreeting is deliberately not called again in that case

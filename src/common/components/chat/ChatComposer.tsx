@@ -28,7 +28,7 @@ interface ChatComposerProps {
   chatInputRef: RefObject<HTMLInputElement>;
   // Sourced from a widget-specific config key today (e.g. ai-search-launcher's
   // `customizations.launcher.chatCameraEnabled`, ai_assistant's
-  // `customizations.aiAssistant.searchBar.chatCameraEnabled`) rather than read internally, since that
+  // `customizations.aiAssistant.launcher.chatCameraEnabled`) rather than read internally, since that
   // namespace is specific to widgets with dedicated camera entry points, not a universal concept.
   chatCameraEnabled: boolean;
   // Defaults to `chat.sendMessage(chat.message)` (gated on `chat.allowUserInput`). Override only

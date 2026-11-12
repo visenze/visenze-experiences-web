@@ -12,14 +12,14 @@ import type { UseChatResult } from '../use-chat';
 interface MicEntryScreenProps {
   chat: UseChatResult;
   // The mic entry point's configured greeting (ai-search-launcher: customizations.launcher.greetings.mic;
-  // ai_assistant: customizations.aiAssistant.searchBar.greetings.mic), resolved by the caller — shown here regardless of whether this is a brand-new conversation or a resumed
+  // ai_assistant: customizations.aiAssistant.launcher.greetings.mic), resolved by the caller — shown here regardless of whether this is a brand-new conversation or a resumed
   // one. Passed explicitly rather than read back out of chat.chats: for a resumed conversation the
   // first bot message in chat.chats is whatever the assistant actually said much earlier, not a
   // greeting, and chat.playGreeting is deliberately not called again in that case (see
   // ai-search-launcher.tsx) so it never lands in chat.chats at all.
   greetingText: string;
   // Auto-stop duration in seconds, resolved by the caller from its own config (ai_assistant:
-  // `customizations.aiAssistant.searchBar.voiceRecordingMaxDurationSeconds`). Takes precedence over
+  // `customizations.aiAssistant.launcher.voiceRecordingMaxDurationSeconds`). Takes precedence over
   // `customizations.launcher.voiceRecordingMaxDurationSeconds`, which ai-search-launcher relies on.
   maxDurationSeconds?: number;
 }

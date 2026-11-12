@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Chore
 
+## [1.0.43](https://github.com/visenze/visenze-experiences-web/compare/1.0.42...1.0.43)
+
+<!-- BEGIN visenze-experiences-web 1.0.43 -->
+
+### Changed
+
+- ai_assistant: Entry points renamed to match the existing widgets. The chat-button entry (opens the side drawer, like shopping-assistant) is now `basic` (was `launcher`), and the camera / mic / Ask AI bar (like ai-search-launcher) is now `launcher` (was `search-bar`). Its settings move from `customizations.aiAssistant.searchBar` to `customizations.aiAssistant.launcher`. The default entry is `basic`, and the `entry` value sent with analytics events uses the new names. **Breaking:** an element with `data-entry="launcher"` now shows the camera / mic / Ask AI bar instead of the chat button; use `data-entry="basic"` for the chat button. `search-bar` is no longer recognized (it falls back to `basic` with a console warning). `prompt-box` and `embedded` are unchanged.
+
+<!-- END visenze-experiences-web 1.0.43 -->
+
 ## [1.0.42](https://github.com/visenze/visenze-experiences-web/compare/1.0.41...1.0.42)
 
 <!-- BEGIN visenze-experiences-web 1.0.42 -->

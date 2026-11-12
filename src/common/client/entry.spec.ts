@@ -3,11 +3,19 @@ import { DEFAULT_ENTRY, getManualEntry, resolveElementEntry, resolveEntry } from
 describe('resolveEntry', () => {
   it('accepts known entries', () => {
     expect(resolveEntry('prompt-box')).toBe('prompt-box');
-    expect(resolveEntry('launcher')).toBe('launcher');
+    expect(resolveEntry('basic')).toBe('basic');
   });
 
   it('is case- and whitespace-insensitive', () => {
     expect(resolveEntry('  Prompt-Box ')).toBe('prompt-box');
+  });
+
+  it('defaults to the basic entry, and no longer accepts the old search-bar name', () => {
+    expect(DEFAULT_ENTRY).toBe('basic');
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(resolveEntry('search-bar')).toBe('basic');
+    expect(warn).toHaveBeenCalledTimes(1);
+    warn.mockRestore();
   });
 
   it('falls back silently for blank/unset', () => {
@@ -64,9 +72,9 @@ describe('resolveElementEntry precedence', () => {
   };
 
   it('data-entry beats manual config beats API beats default', () => {
-    window.visenzeConfigs = { 7: { appSettings: { entry: 'launcher' } } } as any;
-    expect(resolveElementEntry(el('prompt-box'), 7, 'launcher')).toBe('prompt-box');
-    expect(resolveElementEntry(el(), 7, 'prompt-box')).toBe('launcher');
+    window.visenzeConfigs = { 7: { appSettings: { entry: 'basic' } } } as any;
+    expect(resolveElementEntry(el('prompt-box'), 7, 'basic')).toBe('prompt-box');
+    expect(resolveElementEntry(el(), 7, 'prompt-box')).toBe('basic');
     delete window.visenzeConfigs;
     expect(resolveElementEntry(el(), 7, 'prompt-box')).toBe('prompt-box');
     expect(resolveElementEntry(el(), 7, undefined)).toBe(DEFAULT_ENTRY);
@@ -80,7 +88,7 @@ describe('resolveElementEntry precedence', () => {
   });
 });
 
-describe('the search-bar entry', () => {
+describe('the launcher entry', () => {
   afterEach(() => {
     delete window.visenzeConfigs;
   });
@@ -92,24 +100,24 @@ describe('the search-bar entry', () => {
   };
 
   it('resolves, case- and whitespace-insensitively', () => {
-    expect(resolveEntry('search-bar')).toBe('search-bar');
-    expect(resolveEntry('  Search-BAR ')).toBe('search-bar');
+    expect(resolveEntry('launcher')).toBe('launcher');
+    expect(resolveEntry('  LaunCHER ')).toBe('launcher');
   });
 
   it('keeps the precedence: data-entry > manual config > API > default', () => {
     window.visenzeConfigs = { 7: { appSettings: { entry: 'prompt-box' } } } as any;
-    expect(resolveElementEntry(el(' SEARCH-bar'), 7, 'launcher')).toBe('search-bar');
-    expect(resolveElementEntry(el(), 7, 'search-bar')).toBe('prompt-box');
-    window.visenzeConfigs = { 7: { appSettings: { entry: 'search-bar' } } } as any;
-    expect(resolveElementEntry(el(), 7, 'launcher')).toBe('search-bar');
+    expect(resolveElementEntry(el(' LAUNCHER'), 7, 'basic')).toBe('launcher');
+    expect(resolveElementEntry(el(), 7, 'launcher')).toBe('prompt-box');
+    window.visenzeConfigs = { 7: { appSettings: { entry: 'launcher' } } } as any;
+    expect(resolveElementEntry(el(), 7, 'basic')).toBe('launcher');
     delete window.visenzeConfigs;
-    expect(resolveElementEntry(el(), 7, 'search-bar')).toBe('search-bar');
+    expect(resolveElementEntry(el(), 7, 'launcher')).toBe('launcher');
   });
 
   it('an unknown value still warns and falls back', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    expect(resolveEntry('search_bar')).toBe(DEFAULT_ENTRY);
-    expect(resolveElementEntry(el('banner'), 7, 'search-bar')).toBe('search-bar');
+    expect(resolveEntry('launchers')).toBe(DEFAULT_ENTRY);
+    expect(resolveElementEntry(el('banner'), 7, 'launcher')).toBe('launcher');
     expect(warn).toHaveBeenCalledTimes(2);
     warn.mockRestore();
   });
@@ -133,10 +141,10 @@ describe('the embedded entry', () => {
 
   it('keeps the precedence: data-entry > manual config > API > default', () => {
     window.visenzeConfigs = { 7: { appSettings: { entry: 'prompt-box' } } } as any;
-    expect(resolveElementEntry(el(' EMBEDDED'), 7, 'launcher')).toBe('embedded');
+    expect(resolveElementEntry(el(' EMBEDDED'), 7, 'basic')).toBe('embedded');
     expect(resolveElementEntry(el(), 7, 'embedded')).toBe('prompt-box');
     window.visenzeConfigs = { 7: { appSettings: { entry: 'embedded' } } } as any;
-    expect(resolveElementEntry(el(), 7, 'launcher')).toBe('embedded');
+    expect(resolveElementEntry(el(), 7, 'basic')).toBe('embedded');
     delete window.visenzeConfigs;
     expect(resolveElementEntry(el(), 7, 'embedded')).toBe('embedded');
   });

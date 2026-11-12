@@ -117,13 +117,13 @@ describe('ai-assistant App', () => {
     expect(result.queryByTestId('wigmix-popup-trigger-button')).toBeNull();
   });
 
-  it('renders the launcher trigger when there is no data-entry', () => {
+  it('renders the basic entry trigger when there is no data-entry', () => {
     const { result } = renderApp();
     expect(result.getByTestId('wigmix-popup-trigger-button').getAttribute('aria-label')).toBe(texts['triggerCTA']);
     expect(result.queryByLabelText(texts['a11yChatInput'])).toBeNull();
   });
 
-  it('renders the launcher and warns for an unknown data-entry', () => {
+  it('renders the basic entry and warns for an unknown data-entry', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     const { result } = renderApp({ entry: 'sidebar' });
     expect(result.getByTestId('wigmix-popup-trigger-button')).toBeTruthy();

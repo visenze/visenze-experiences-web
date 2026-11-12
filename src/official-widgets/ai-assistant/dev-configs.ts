@@ -10,7 +10,7 @@ export const devConfigs: RecursivePartial<WidgetConfig> = {
     placementId: '',
     endpoint: '',
     //cloud: 'aws', // remove this if you are testing in staging environment
-    // entry: 'launcher', // default entry for elements without data-entry: launcher | prompt-box | search-bar | embedded
+    // entry: 'basic', // default entry for elements without data-entry: basic | prompt-box | launcher | embedded
   },
   displaySettings: {
     cssSelector: '.ai-assistant-widget',

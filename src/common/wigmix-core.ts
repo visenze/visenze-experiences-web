@@ -790,9 +790,9 @@ export interface WidgetConfig {
     msApiId?: string | number;
     /**
      * (optional) Default entry point rendered for elements without a `data-entry` attribute:
-     * `launcher` | `prompt-box` | `search-bar` | `embedded`. Only used by the `ai_assistant` widget. Precedence:
+     * `basic` | `prompt-box` | `launcher` | `embedded`. Only used by the `ai_assistant` widget. Precedence:
      * `data-entry` attribute > `window.visenzeConfigs[placementId].appSettings.entry` > this value >
-     * `launcher`.
+     * `basic`.
      *
      * @since 1.0.41
      */
@@ -1200,7 +1200,7 @@ export interface WidgetConfig {
         layout: 'ICON' | 'TEXT' | 'ICON_TEXT' | 'TEXT_ICON';
         /**
          * (optional) Logo sizing, for widgets whose trigger button shows `url` as a brand logo
-         * (currently the shopping assistant and the ai-assistant launcher entry) rather than a fixed 24x24 icon. The logo keeps its
+         * (currently the shopping assistant and the ai-assistant basic entry) rather than a fixed 24x24 icon. The logo keeps its
          * natural aspect ratio: it defaults to 24px tall with its width following the image (up
          * to 240px). `height` and `width` size it in pixels. `color`/`colorDark` tint the logo
          * (as a mask); set them to `DEFAULT_ICON_COLOR` to render the image as-is.
@@ -2092,8 +2092,8 @@ export interface WidgetConfig {
        */
       chatPosition?: 'left' | 'right';
       /**
-       * (optional) Title of the chat: the header of both the side drawer (opened by the launcher and
-       * prompt-box entries) and the full-screen chat (opened by the search-bar entry). When unset or
+       * (optional) Title of the chat: the header of both the side drawer (opened by the basic and
+       * prompt-box entries) and the full-screen chat (opened by the launcher entry). When unset or
        * blank, falls back to `chatbot.title`, then the widget's default `widgetTitle` text
        * ("Shopping Assistant" in English).
        *
@@ -2236,13 +2236,13 @@ export interface WidgetConfig {
         };
       };
       /**
-       * (optional) Settings of the `search-bar` entry point: its three entry-bar buttons (image, mic,
+       * (optional) Settings of the `launcher` entry point: its three entry-bar buttons (image, mic,
        * Ask AI), the mic entry point's recording duration and per-entry-point greeting text. The
-       * search-bar entry opens the shared conversation in a full-screen chat.
+       * launcher entry opens the shared conversation in a full-screen chat.
        *
        * @since 1.0.41
        */
-      searchBar?: {
+      launcher?: {
         /**
          * Maximum duration, in seconds, that the mic entry point's full-screen
          * recording state stays open before it is automatically stopped (as if
@@ -2349,8 +2349,8 @@ export interface WidgetConfig {
          */
         chatCameraEnabled?: boolean;
         /**
-         * (optional) How the search-bar entry opens the conversation: `'fullscreen'` (default)
-         * opens the full-screen chat; `'drawer'` opens the side drawer shared with the launcher
+         * (optional) How the launcher entry opens the conversation: `'fullscreen'` (default)
+         * opens the full-screen chat; `'drawer'` opens the side drawer shared with the basic
          * and prompt-box entries. In drawer mode the camera and mic buttons open the drawer
          * directly (the image / mic entry screens exist only in the full-screen chat).
          */
