@@ -38,6 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - New `shop-the-look-v2` widget ("Shop the look"): shows a reference outfit image beside recommended products from the Multisearch Outfit Recommendations API. Queries by product (`data-pid`, shows the best outfit image) or by image (`data-im-url`, shows the temporary query image). Optional `searchSettings.boi_only`. The legacy `shop-the-look` widget is unchanged.
 - All widgets using the common product card: New optional `customizations.productCard.layout` setting (`details`: `stacked` or `inline`, `uppercase`). Cards without it render as before.
+- All widgets using the common chat window: links written by the assistant (`[label](url)`) are now clickable. Only `http`, `https`, `mailto` and site-relative (`/…`) links are clickable by default; `javascript:`/`data:`/`vbscript:` links never are. Configurable through the new `customizations.chatbot.links` setting (`enabled`, `openInNewTab`, `allowedProtocols`, `allowRelative`, `underline`, `fontColor`, `fontColorDark`).
+- All widgets using the common chat module: a failed reply now shows a message in the chat instead of nothing — one text when the server reports an error, one when it rejects the message (HTTP 400), and one when the connection fails. The texts (`chatTemporaryError`, `chatInvalidMessageError`, `chatNetworkError`) are included in all supported languages and can be changed through `localization.text`. The new `customizations.chatbot.errorMessage` setting turns it off (`enabled`), skips the connection-failure case (`showOnNetworkError`), and sets the bubble's colors and border (`fontColor`, `fontColorDark`, `backgroundColor`, `backgroundColorDark`, `border`).
 
 <!-- END visenze-experiences-web 1.0.42 -->
 

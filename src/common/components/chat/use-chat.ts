@@ -15,6 +15,10 @@ import { isPid, type SearchImageOrPid } from '../../types/image';
 import type { ProcessedProduct } from '../../types/product';
 import { getChatSessionStore } from './session/chat-session-registry';
 
+// Why a reply failed: the server reported an error, rejected the message (HTTP 400), or the
+// connection failed.
+export type ChatErrorKind = 'temporary' | 'invalidMessage' | 'network';
+
 export interface Chat {
   chatId: string;
   requestId: string;
@@ -23,6 +27,8 @@ export interface Chat {
   messages: string[];
   products?: ProcessedProduct[];
   image?: SearchImageOrPid;
+  // Set on the 'bot' message shown in place of a failed reply (styled by chatbot.errorMessage).
+  error?: ChatErrorKind;
 }
 
 export interface BreadcrumbTurn {
@@ -127,7 +133,7 @@ export interface UseChatOptions {
 // widget can layer its own trigger/entry-point state on top. Greetings are a single string played
 // by callers via `playGreeting`.
 const useChat = (options: UseChatOptions = {}): UseChatResult => {
-  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { widgetConfig, widgetClient, locale } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   // Resolve the API base, honouring manual endpoint > cloud > API endpoint > default; used by the
   // voice proxy call in useVoice (the store resolves its own for the chat/history calls).
@@ -160,6 +166,7 @@ const useChat = (options: UseChatOptions = {}): UseChatResult => {
       storageScopeKey: options.sessionScopeKey,
       pid: options.pid,
       suppressActionTokenCallbacks: options.suppressActionTokenCallbacks,
+      locale,
     });
   });
   const state = useSyncExternalStore(store.subscribe, store.getSnapshot);

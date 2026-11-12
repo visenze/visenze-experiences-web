@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 import BotIcon from './BotIcon';
 import ChatRow from './ChatRow';
 import { PRODUCT_IMAGE_MAX_HEIGHT_CLASS, USER_SCROLL_IDLE_MS } from './constants';
-import { processMessageForDisplay } from './message-formatting';
+import { processMessageForDisplay, resolveLinkOptions } from './message-formatting';
 import ProductGrid from './ProductGrid';
 import type { Chat } from './use-chat';
 import WelcomeBlock, { isWelcomeEnabled } from './WelcomeBlock';
@@ -280,6 +280,29 @@ const ChatWindow: FC<ChatWindowProps> = ({
 
   const productImageClasses = capProductImageHeight ? PRODUCT_IMAGE_MAX_HEIGHT_CLASS : undefined;
 
+  // Memoized for the same reason as productGridClasses above: ChatRow is memoized too.
+  const linkOptions = useMemo(
+    () => resolveLinkOptions(customizations, darkMode),
+    [customizations.chatbot?.links, darkMode],
+  );
+
+  const errorBubbleStyle = useMemo((): CSSProperties => {
+    const errorMessage = customizations.chatbot?.errorMessage;
+    const backgroundColor = darkMode ? errorMessage?.backgroundColorDark : errorMessage?.backgroundColor;
+    const color = darkMode ? errorMessage?.fontColorDark : errorMessage?.fontColor;
+    const border = errorMessage?.border;
+    return {
+      ...(backgroundColor ? { backgroundColor } : {}),
+      ...(color ? { color } : {}),
+      ...(border ? {
+        borderWidth: `${border.width}px`,
+        borderStyle: 'solid',
+        borderColor: darkMode ? border.colorDark : border.color,
+        ...(border.radius !== undefined ? { borderRadius: `${border.radius}px` } : {}),
+      } : {}),
+    };
+  }, [customizations.chatbot?.errorMessage, darkMode]);
+
   const getAccessibleStatus = (): string => {
     if (isWaiting) {
       return intl.formatMessage({ id: 'a11yAssistantThinking' });
@@ -344,6 +367,8 @@ const ChatWindow: FC<ChatWindowProps> = ({
                 productGridCssConfig={productGridCssConfig}
                 imageClasses={productImageClasses}
                 productScroller={productScroller}
+                linkOptions={linkOptions}
+                errorBubbleStyle={errorBubbleStyle}
               />
             );
           })}
@@ -372,7 +397,7 @@ const ChatWindow: FC<ChatWindowProps> = ({
                           mb-2 min-w-0 max-w-7/10 break-words bg-gray-100 dark:bg-neutral-800 p-2 text-sm text-neutral-900 dark:text-neutral-100
                           rounded-lg border border-neutral-100 dark:border-neutral-800`}
                         dangerouslySetInnerHTML={{
-                          __html: processMessageForDisplay(latestMessage),
+                          __html: processMessageForDisplay(latestMessage, linkOptions),
                         }}
                       />
                   )}

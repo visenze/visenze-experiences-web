@@ -1,4 +1,4 @@
-import { fetchEventSource } from '@microsoft/fetch-event-source';
+import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source';
 import type { Product } from 'visearch-javascript-sdk';
 import {
   extractActionTokens,
@@ -8,13 +8,15 @@ import {
   stripTokensForDisplay,
 } from '../../../assistant';
 import { getManualEndpoint, resolveBaseEndpoint, usesCloudPaths } from '../../../client/endpoint';
+import { DEFAULT_LOCALE } from '../../../default-configs';
+import { getLocaleTexts } from '../../../locales/locale';
 import { isImageFile, isImageUrl, isPid, type SearchImageOrPid } from '../../../types/image';
 import type { ProcessedProduct } from '../../../types/product';
 import { Actions, Category } from '../../../types/tracking-constants';
 import { getBestImageSysAttrsToGet, getFlattenProduct } from '../../../utils';
 import type { WidgetClient, WidgetConfig } from '../../../wigmix-core';
 import { getActiveOptionFields, resolveOptionFields } from '../../add-to-cart-options/add-to-cart-options';
-import type { BreadcrumbTurn, Chat } from '../use-chat';
+import type { BreadcrumbTurn, Chat, ChatErrorKind } from '../use-chat';
 import {
   buildChatIdStorageKey,
   buildInjectedStorageKey,
@@ -67,6 +69,25 @@ export const truncateLabel = (text: string): string => (
 export const normalizeHistoryProductTokens = (text: string): string => (
   text.replace(/\[\[([^\]]+)]]/g, (_match, tokenContent: string) => `[[${tokenContent.trim().split(/\s/)[0]}]]`)
 );
+
+// Text id of each failed-reply message; the texts live in COMMON_TEXTS and can be overridden
+// through `localization.text`.
+const CHAT_ERROR_TEXT_IDS: Record<ChatErrorKind, string> = {
+  temporary: 'chatTemporaryError',
+  invalidMessage: 'chatInvalidMessageError',
+  network: 'chatNetworkError',
+};
+
+// A failure the server reported (an `error` event, or a non-stream response), thrown from the
+// stream callbacks so sendMessage's catch can tell it apart from a connection failure.
+class ChatReplyError extends Error {
+  kind: ChatErrorKind;
+
+  constructor(kind: ChatErrorKind) {
+    super(`Chat reply failed: ${kind}`);
+    this.kind = kind;
+  }
+}
 
 // Which container the shared session is shown in: the side drawer (launcher / prompt-box entries) or
 // the full-screen chat (search-bar entry). The entry that opens the chat decides; the conversation is
@@ -137,6 +158,8 @@ export interface ChatSessionDeps {
   // UseChatOptions.pid — sent as `pid` unless a message carries its own.
   pid?: string;
   suppressActionTokenCallbacks?: boolean;
+  // The widget's current locale (WidgetDataContext), used for the failed-reply message text.
+  locale?: string;
 }
 
 type Listener = () => void;
@@ -598,6 +621,14 @@ export class ChatSessionStore {
         body: formData,
         openWhenHidden: true,
         signal: controller.signal,
+        // Same check fetchEventSource does by default, but a failed response is thrown as a
+        // ChatReplyError so the catch below can tell a rejected message (400) apart.
+        onopen: async (response) => {
+          if (response.ok && response.headers.get('content-type')?.startsWith(EventStreamContentType)) {
+            return;
+          }
+          throw new ChatReplyError(response.status === 400 ? 'invalidMessage' : 'temporary');
+        },
         onmessage: (ev) => {
           if (ev.event === 'chat_id') {
             chatIdFromResp = JSON.parse(ev.data).value;
@@ -646,6 +677,10 @@ export class ChatSessionStore {
           } else if (ev.event === 'product') {
             products.push(getFlattenProduct(JSON.parse(ev.data)));
             this.setState({ streamingProducts: resolveProducts(tokens.join(''), products) });
+          } else if (ev.event === 'error') {
+            // The server gave up on this reply; thrown into onerror → the catch below, which
+            // drops the partial reply and shows the error message instead.
+            throw new ChatReplyError('temporary');
           }
         },
         onclose: () => {
@@ -731,8 +766,29 @@ export class ChatSessionStore {
         this.voice.resetReplyState();
         this.setState({ allowUserInput: true });
         this.setState({ activeBreadcrumbId: this.preBreadcrumbActiveId });
+        this.pushReplyError(err instanceof ChatReplyError ? err.kind : 'network', chatIdFromResp, reqIdFromResp);
       }
     }
+  }
+
+  // Adds the `chatbot.errorMessage` bubble for a failed reply, unless that case is turned off.
+  // The text is resolved here (not at render) so every consumer of `chats` — e.g. the
+  // ai_assistant overview and the screen-reader status — sees the real message.
+  private pushReplyError(kind: ChatErrorKind, chatId: string, requestId: string): void {
+    const { customizations } = this.widgetConfig;
+    const config = customizations.chatbot?.errorMessage;
+    if (config?.enabled === false || (kind === 'network' && config?.showOnNetworkError === false)) {
+      return;
+    }
+    const texts = getLocaleTexts(this.deps.locale || DEFAULT_LOCALE, { [DEFAULT_LOCALE]: {} }, customizations.localization?.text);
+    const message = texts[CHAT_ERROR_TEXT_IDS[kind]];
+    // An empty text (e.g. overridden to '' in localization.text) would only render an empty bubble.
+    if (!message) {
+      return;
+    }
+    this.setState((s) => ({
+      chats: [...s.chats, { chatId, requestId, author: 'bot', messages: [message], products: [], error: kind }],
+    }));
   }
 
   // Re-fetches a previous conversation from the backend, given a chat id recovered from

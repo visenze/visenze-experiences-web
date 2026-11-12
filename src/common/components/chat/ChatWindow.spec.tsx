@@ -173,3 +173,68 @@ describe('ChatWindow structured welcome', () => {
     expect(screen.queryByText('Hi, I\'m Fitzy')).toBeNull();
   });
 });
+
+describe('ChatWindow links and error messages', () => {
+  const styledConfig = createWidgetConfig({
+    ...DEFAULT_CUSTOMIZATIONS,
+    chatbot: {
+      ...DEFAULT_CUSTOMIZATIONS.chatbot,
+      links: { fontColor: '#123456', fontColorDark: '#ABCDEF' },
+      errorMessage: {
+        fontColor: '#7F1D1D',
+        fontColorDark: '#FECACA',
+        backgroundColor: '#FEE2E2',
+        backgroundColorDark: '#450A0A',
+        border: { width: 2, color: '#DC2626', colorDark: '#F87171' },
+      },
+    },
+  });
+  const renderStyled = (chats: Chat[], darkMode = false): ReturnType<typeof render> => render(
+    <WidgetDataContext.Provider value={{ widgetConfig: styledConfig, widgetClient, darkMode, locale: 'en' }}>
+      <IntlProvider messages={messages} locale='en' defaultLocale='en'>
+        <ChatWindow
+          isWaiting={false}
+          chats={chats}
+          latestMessage=''
+          suggestions={[]}
+          showAllSuggestions={false}
+          setShowAllSuggestions={jest.fn()}
+          sendMessage={jest.fn()}
+          wishlistPids={[]}
+          setIsInWishlist={jest.fn()}
+          pwPrefix='test'
+        />
+      </IntlProvider>
+    </WidgetDataContext.Provider>,
+  );
+
+  it('renders a link in a bot message as a clickable anchor in the configured color', () => {
+    renderStyled([createChat({ author: 'bot', messages: ['See [your orders](https://example.com/orders)'] })]);
+    const link = screen.getByRole('link', { name: 'your orders' });
+    expect(link.getAttribute('href')).toBe('https://example.com/orders');
+    expect(link.getAttribute('target')).toBe('_blank');
+    expect(link.style.color).toBe('rgb(18, 52, 86)');
+  });
+
+  it('applies the errorMessage colors and border to a failed-reply bubble only', () => {
+    renderStyled([
+      createChat({ author: 'bot', messages: ['Normal reply'] }),
+      createChat({ author: 'bot', messages: ['Something went wrong'], error: 'temporary' }),
+    ]);
+    // The screen-reader status also announces the message, so look inside the chat log only.
+    const log = within(screen.getByRole('log'));
+    const errorBubble = log.getByText('Something went wrong');
+    expect(errorBubble.style.backgroundColor).toBe('rgb(254, 226, 226)');
+    expect(errorBubble.style.color).toBe('rgb(127, 29, 29)');
+    expect(errorBubble.style.borderWidth).toBe('2px');
+    expect(errorBubble.style.borderColor).toBe('#dc2626');
+    expect(log.getByText('Normal reply').getAttribute('style')).toBeNull();
+  });
+
+  it('uses the dark-mode error colors in dark mode', () => {
+    renderStyled([createChat({ author: 'bot', messages: ['Something went wrong'], error: 'network' })], true);
+    const errorBubble = within(screen.getByRole('log')).getByText('Something went wrong');
+    expect(errorBubble.style.backgroundColor).toBe('rgb(69, 10, 10)');
+    expect(errorBubble.style.borderColor).toBe('#f87171');
+  });
+});
