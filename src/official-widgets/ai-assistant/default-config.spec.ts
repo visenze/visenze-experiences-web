@@ -86,7 +86,7 @@ describe('ai-assistant DEFAULT_TEXTS: the embedded entry\'s texts', () => {
   });
 });
 
-describe('ai-assistant DEFAULT_CUSTOMIZATIONS: the search-bar buttons', () => {
+describe('ai-assistant DEFAULT_CUSTOMIZATIONS: the launcher entry buttons', () => {
   // The entry bar's buttons and the image-entry screen's buttons paint `bg-buttonSecondary` and draw their icons
   // in generalLayout.fontColor, so a secondary background equal to that icon color makes the buttons look solid.
   it('gives buttons.secondary the standalone search launcher\'s background, not embedded\'s black one', () => {

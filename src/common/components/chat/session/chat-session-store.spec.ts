@@ -769,7 +769,7 @@ describe('ChatSessionStore active product id', () => {
   it('an entry set without a product id clears the previous one', () => {
     const store = makeStore();
     store.setActiveEntry('prompt-box', 'p1');
-    store.setActiveEntry('launcher');
+    store.setActiveEntry('basic');
     store.sendMessage('hi');
     expect(lastPids()).toEqual([]);
   });

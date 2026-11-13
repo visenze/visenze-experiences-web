@@ -4,7 +4,7 @@
 
 /* The embedded entry fills its host element's height, as embedded-shopping-assistant does (shadow host ->
    .wigmix-shadow-root -> HeroUI wrapper -> entry). EmbeddedEntry marks its own shadow host with
-   data-wigmix-entry='embedded', so no :has() is needed and the launcher / prompt-box / search-bar hosts and
+   data-wigmix-entry='embedded', so no :has() is needed and the basic / prompt-box / launcher hosts and
    the body-hosted surface keep their natural height. */
 :host([data-wigmix-entry='embedded']) {
   display: block !important;
@@ -70,7 +70,7 @@
     @apply text-mobile-heading md:text-tablet-heading lg:text-desktop-heading font-mobile-heading md:font-tablet-heading lg:font-desktop-heading;
   }
   /* The product card's configurable border (customizations.productCard.border; 0px when unset), as in
-     ai-search-launcher: the search-bar's full screen shows product cards in the chat and the products pane. */
+     ai-search-launcher: the launcher entry's full screen shows product cards in the chat and the products pane. */
   .wigmix-product-card {
     @apply border-width-productCard border-color-productCard rounded-radius-productCard;
   }

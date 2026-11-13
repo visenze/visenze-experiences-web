@@ -187,7 +187,7 @@ describe('AssistantSurface', () => {
     // Each host and the surface get their own React root, as in production.
     const renderAll = (ctx: { widgetConfig: WidgetConfig; widgetClient: WidgetClient }): { hosts: RenderResult[]; surface: RenderResult } => {
       const hosts = [
-        renderWidget(<EntryHost entry='launcher' />, { ...ctx, messages: texts }),
+        renderWidget(<EntryHost entry='basic' />, { ...ctx, messages: texts }),
         renderWidget(<EntryHost entry='prompt-box' productId='p1' />, { ...ctx, messages: texts }),
       ];
       const surface = renderWidget(<AssistantSurface renderWithoutPortal />, { ...ctx, messages: texts });
@@ -232,7 +232,7 @@ describe('AssistantSurface', () => {
 });
 
 describe('AssistantSurface fullscreen', () => {
-  // The search-bar texts land in the ai-assistant pack in a later task; until then take them from ai-search-launcher.
+  // The launcher entry texts land in the ai-assistant pack in a later task; until then take them from ai-search-launcher.
   const fsTexts = { ...LAUNCHER_TEXTS['en'], ...texts };
   const { chatbot } = DEFAULT_CUSTOMIZATIONS;
 
@@ -358,7 +358,7 @@ describe('AssistantSurface fullscreen', () => {
 
   describe('entry point welcome screens', () => {
     const greetings = { image: 'Snap a photo', mic: 'Say something', ai: 'Hello from AI' };
-    const aiAssistant = { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, searchBar: { greetings } };
+    const aiAssistant = { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, launcher: { greetings } };
 
     it.each([
       ['image', 'Snap a photo'],
@@ -430,7 +430,7 @@ describe('AssistantSurface fullscreen', () => {
     const stream = streamForever();
     const onClosed = jest.fn();
     // No ai greeting (the widget's defaults now have one), so the chats are just the user's message.
-    const { store } = setupFs({ aiAssistant: { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, searchBar: {} } });
+    const { store } = setupFs({ aiAssistant: { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, launcher: {} } });
     openFullscreen(store, 'ai', onClosed);
     send(store, 'hello');
     expect(stream.signal()?.aborted).toBe(false);

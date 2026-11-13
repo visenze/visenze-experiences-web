@@ -115,7 +115,7 @@ type Ctx = ReturnType<typeof makeClient>;
 
 const renderEmbedded = (ctx: Ctx, query: string): RenderResult => renderWidget(<EmbeddedHost query={query} renderWithoutPortal />, { ...ctx, messages: texts });
 const renderSurface = (ctx: Ctx): RenderResult => renderWidget(<AssistantSurface renderWithoutPortal />, { ...ctx, messages: texts });
-const renderEntry = (ctx: Ctx, entry: 'launcher' | 'prompt-box'): RenderResult => renderWidget(<EntryHost entry={entry} />, { ...ctx, messages: texts });
+const renderEntry = (ctx: Ctx, entry: 'basic' | 'prompt-box'): RenderResult => renderWidget(<EntryHost entry={entry} />, { ...ctx, messages: texts });
 
 const flushSends = (): void => {
   act(() => {
@@ -301,7 +301,7 @@ describe('ai-assistant EmbeddedHost', () => {
   it('"See Results" opens its own full screen; the shared drawer stays closed', async () => {
     const ctx = makeClient();
     renderSurface(ctx);
-    renderEntry(ctx, 'launcher');
+    renderEntry(ctx, 'basic');
     const embedded = renderEmbedded(ctx, 'red shoes');
     const shared = getChatSessionStore(ctx.widgetClient);
     flushSends();
@@ -378,7 +378,7 @@ describe('ai-assistant EmbeddedHost', () => {
       const dispose = jest.spyOn(ChatSessionStore.prototype, 'dispose');
       addElement({ entry: 'embedded', query: 'red shoes' });
       addElement({ entry: 'embedded', query: 'blue boots' });
-      addElement({ entry: 'launcher' });
+      addElement({ entry: 'basic' });
       const widgetConfig = createWidgetConfig(DEFAULT_CUSTOMIZATIONS, { displaySettings: { cssSelector: '' } as WidgetConfig['displaySettings'] });
       let client: WidgetClient | undefined;
       act(() => {

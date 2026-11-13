@@ -14,7 +14,7 @@ import AssistantSurface from '../AssistantSurface';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from '../default-config';
 import EntryHost from '../entry-host';
 
-// Ported from ai-search-launcher.spec.tsx: the search-bar entry (EntryHost) and the shared chat surface
+// Ported from ai-search-launcher.spec.tsx: the launcher entry (EntryHost) and the shared chat surface
 // (AssistantSurface) are rendered in their own React roots, as in production, on one widgetClient.
 // Voice is NOT mocked here (unlike the other ai-assistant specs): the mic cases drive the real useVoice
 // through a stubbed window.SpeechRecognition, exactly as the standalone spec does.
@@ -69,15 +69,15 @@ jest.mock('@heroui/input', () => ({
 }));
 
 type Customizations = WidgetConfig['customizations'];
-type SearchBarConfig = NonNullable<NonNullable<Customizations['aiAssistant']>['searchBar']>;
+type LauncherConfig = NonNullable<NonNullable<Customizations['aiAssistant']>['launcher']>;
 
 // The widget's OWN texts: every label below must resolve from them (no raw ids).
 const texts = DEFAULT_TEXTS['en'];
-const searchBarDefaults = DEFAULT_CUSTOMIZATIONS.aiAssistant?.searchBar;
-const aiGreeting = searchBarDefaults?.greetings?.ai || '';
+const launcherDefaults = DEFAULT_CUSTOMIZATIONS.aiAssistant?.launcher;
+const aiGreeting = launcherDefaults?.greetings?.ai || '';
 
-const withSearchBar = (searchBar: SearchBarConfig): Partial<Customizations> => ({
-  aiAssistant: { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, searchBar: { ...searchBarDefaults, ...searchBar } },
+const withLauncher = (launcher: LauncherConfig): Partial<Customizations> => ({
+  aiAssistant: { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, launcher: { ...launcherDefaults, ...launcher } },
 });
 const withChatbot = (chatbot: NonNullable<Customizations['chatbot']>): Partial<Customizations> => ({
   chatbot: { ...DEFAULT_CUSTOMIZATIONS.chatbot, ...chatbot },
@@ -104,7 +104,7 @@ const createTestClient = (visearchOverrides: Partial<ViSearchClient> = {}, overr
   return { widgetConfig, widgetClient, mockVisearchClient };
 };
 
-describe('ai-assistant search-bar entry', () => {
+describe('ai-assistant launcher entry', () => {
   let testComponent: RenderResult;
 
   interface RenderOptions {
@@ -118,8 +118,8 @@ describe('ai-assistant search-bar entry', () => {
     locale?: string;
   }
 
-  // Mounts the other entries, the search-bar entry and the client's one chat surface, each in its own root.
-  const renderSearchBar = ({
+  // Mounts the other entries, the launcher entry and the client's one chat surface, each in its own root.
+  const renderLauncherEntry = ({
     visearchOverrides, overrides, darkMode = false, width, otherEntries = [], locale = 'en',
   }: RenderOptions = {}): TestClient & { store: ReturnType<typeof getChatSessionStore> } => {
     const client = createTestClient(visearchOverrides, overrides);
@@ -127,13 +127,13 @@ describe('ai-assistant search-bar entry', () => {
     const messages = locale === 'en' ? texts : getLocaleTexts(locale, DEFAULT_TEXTS);
     const options = { widgetConfig: client.widgetConfig, widgetClient: client.widgetClient, messages, darkMode, locale };
     otherEntries.forEach((entry) => renderWidget(<EntryHost entry={entry} />, options));
-    testComponent = renderWidget(wrap(<EntryHost entry='search-bar' />), options);
+    testComponent = renderWidget(wrap(<EntryHost entry='launcher' />), options);
     renderWidget(wrap(<AssistantSurface renderWithoutPortal />), options);
     return { ...client, store: getChatSessionStore(client.widgetClient) };
   };
 
   // The standalone spec's renderLauncher(visearchOverrides, locale, callbacks, customizationOverrides, darkMode).
-  const renderLauncher = (overrides: Partial<Customizations> = {}, darkMode = false): ReturnType<typeof renderSearchBar> => renderSearchBar({ overrides, darkMode });
+  const renderLauncher = (overrides: Partial<Customizations> = {}, darkMode = false): ReturnType<typeof renderLauncherEntry> => renderLauncherEntry({ overrides, darkMode });
 
   const getTextInBody = (text: string): HTMLElement | null => {
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -272,7 +272,7 @@ describe('ai-assistant search-bar entry', () => {
       ['micEntryEnabled', 'a11yOpenVoiceSearch'],
       ['askAiEntryEnabled', 'a11yOpenAskAi'],
     ])('does not render a button whose %s is false, and keeps the others', (flag, labelId) => {
-      renderLauncher(withSearchBar({ [flag]: false }));
+      renderLauncher(withLauncher({ [flag]: false }));
       expect(testComponent.queryByRole('button', { name: texts[labelId] })).toBeNull();
       expect(testComponent.getAllByRole('button')).toHaveLength(2);
     });
@@ -311,7 +311,7 @@ describe('ai-assistant search-bar entry', () => {
           <NullThenFilledRootWrapper>
             <WidgetDataContext.Provider value={{ widgetConfig, widgetClient, darkMode: false, locale: 'en' }}>
               <IntlProvider messages={texts} locale='en' defaultLocale='en'>
-                <EntryHost entry='search-bar' />
+                <EntryHost entry='launcher' />
               </IntlProvider>
             </WidgetDataContext.Provider>
           </NullThenFilledRootWrapper>,
@@ -322,8 +322,8 @@ describe('ai-assistant search-bar entry', () => {
     describe('Ask AI entry logo', () => {
       const LOGO_URL = 'https://example.com/ask-brand.svg';
 
-      const renderWithEntryIcon = (askAiEntryIcon: SearchBarConfig['askAiEntryIcon'], darkMode = false): HTMLElement => {
-        renderLauncher(withSearchBar({ askAiEntryIcon }), darkMode);
+      const renderWithEntryIcon = (askAiEntryIcon: LauncherConfig['askAiEntryIcon'], darkMode = false): HTMLElement => {
+        renderLauncher(withLauncher({ askAiEntryIcon }), darkMode);
         return testComponent.getByRole('button', { name: texts['a11yOpenAskAi'] });
       };
 
@@ -411,7 +411,7 @@ describe('ai-assistant search-bar entry', () => {
       expect(open).toHaveBeenCalledTimes(1);
       expect(reopen).not.toHaveBeenCalled();
       expect(store.getChatId()).toBe('test-chat-id');
-      expect(store.getActiveEntry()).toBe('search-bar');
+      expect(store.getActiveEntry()).toBe('launcher');
       expect(store.getSnapshot()).toEqual(expect.objectContaining({
         isOpen: true,
         surfaceMode: 'fullscreen',
@@ -476,7 +476,7 @@ describe('ai-assistant search-bar entry', () => {
       }));
     });
 
-    it('tags RESULT_LOAD with entry: search-bar after a search-bar interaction', async () => {
+    it('tags RESULT_LOAD with entry: launcher after a launcher interaction', async () => {
       const { widgetClient } = renderLauncher();
       widgetClient.sendEvent = jest.fn();
       widgetClient.setLastTrackingMeta = jest.fn();
@@ -487,7 +487,7 @@ describe('ai-assistant search-bar entry', () => {
       stream.emitEvent('chat_token', { value: 'Try this [[p1]]' });
       stream.closeStream();
       await revealAll();
-      const expected = { queryId: 'req-1', cat: 'Result', entry: 'search-bar' };
+      const expected = { queryId: 'req-1', cat: 'Result', entry: 'launcher' };
       expect(widgetClient.sendEvent).toHaveBeenCalledWith('result_load', expected);
       expect(widgetClient.setLastTrackingMeta).toHaveBeenCalledWith(expected);
     });
@@ -512,7 +512,7 @@ describe('ai-assistant search-bar entry', () => {
       ['a11yOpenVoiceSearch'],
       ['a11yOpenAskAi'],
     ])('returns focus to the %s button that opened it, with two entry hosts mounted', (labelId) => {
-      renderSearchBar({ otherEntries: ['launcher'] });
+      renderLauncherEntry({ otherEntries: ['basic'] });
       const button = testComponent.getByRole('button', { name: texts[labelId] });
       act(() => {
         fireEvent.click(button);
@@ -529,8 +529,8 @@ describe('ai-assistant search-bar entry', () => {
       expect(document.activeElement).toBe(button);
     });
 
-    it('after the full screen closes, the launcher entry opens the drawer on the same conversation', async () => {
-      const { store } = renderSearchBar({ otherEntries: ['launcher'] });
+    it('after the full screen closes, the basic entry opens the drawer on the same conversation', async () => {
+      const { store } = renderLauncherEntry({ otherEntries: ['basic'] });
       openEntryPointAndWait('a11yOpenAskAi');
       // The reply stays in flight (the stream is never closed).
       sendMessageAndGetStreamController('red shoes');
@@ -553,8 +553,8 @@ describe('ai-assistant search-bar entry', () => {
       expect(testComponent.queryByRole('button', { name: texts['a11yCloseFullScreen'] })).toBeNull();
     });
 
-    it('from an open drawer, a search-bar button switches to the full screen; closing restores focus and the host\'s overflow', () => {
-      const { store } = renderSearchBar({ otherEntries: ['launcher'] });
+    it('from an open drawer, a launcher button switches to the full screen; closing restores focus and the host\'s overflow', () => {
+      const { store } = renderLauncherEntry({ otherEntries: ['basic'] });
       document.body.style.overflow = 'auto';
       act(() => {
         fireEvent.click(testComponent.getByTestId('wigmix-popup-trigger-button'));
@@ -586,7 +586,7 @@ describe('ai-assistant search-bar entry', () => {
     });
 
     it('closeWidget() closes an open full screen like its close button: back to drawer mode, reply aborted, focus returned', async () => {
-      const { store, widgetClient } = renderSearchBar();
+      const { store, widgetClient } = renderLauncherEntry();
       const askAiButton = testComponent.getByRole('button', { name: texts['a11yOpenAskAi'] });
       act(() => {
         fireEvent.click(askAiButton);
@@ -618,7 +618,7 @@ describe('ai-assistant search-bar entry', () => {
     });
 
     it('closeWidget() then openWithMessage() after the camera entry shows the message in the drawer, not the image welcome screen', async () => {
-      const { store, widgetClient } = renderSearchBar();
+      const { store, widgetClient } = renderLauncherEntry();
       const cameraButton = testComponent.getByRole('button', { name: texts['a11yOpenImageSearch'] });
       act(() => {
         fireEvent.click(cameraButton);
@@ -648,7 +648,7 @@ describe('ai-assistant search-bar entry', () => {
     });
 
     it('closeWidget() with only the drawer open still just hides it, keeping the conversation', async () => {
-      const { store, widgetClient } = renderSearchBar({ otherEntries: ['launcher'] });
+      const { store, widgetClient } = renderLauncherEntry({ otherEntries: ['basic'] });
       act(() => {
         fireEvent.click(testComponent.getByTestId('wigmix-popup-trigger-button'));
       });
@@ -737,7 +737,7 @@ describe('ai-assistant search-bar entry', () => {
     });
 
     it('shows the image entry point\'s own capture UI, not the full chat surface, when opened during a resumed session', async () => {
-      const imageGreeting = searchBarDefaults?.greetings?.image || '';
+      const imageGreeting = launcherDefaults?.greetings?.image || '';
       const { mockVisearchClient } = renderLauncher();
       openEntryPointAndWait('a11yOpenAskAi');
       const stream = sendMessageAndGetStreamController('Hello');
@@ -789,7 +789,7 @@ describe('ai-assistant search-bar entry', () => {
         openEntryPointAndWait('a11yOpenAskAi');
         closeFullScreen();
         openEntryPointAndWait('a11yOpenVoiceSearch');
-        const micGreeting = searchBarDefaults?.greetings?.mic || '';
+        const micGreeting = launcherDefaults?.greetings?.mic || '';
         expect(micGreeting).toBeTruthy();
         expect(getTextInBody(micGreeting)).toBeTruthy();
         act(() => {
@@ -831,7 +831,7 @@ describe('ai-assistant search-bar entry', () => {
     });
 
     it('leaves no trace in chat history when the camera entry point is opened and abandoned', () => {
-      const imageGreeting = searchBarDefaults?.greetings?.image || '';
+      const imageGreeting = launcherDefaults?.greetings?.image || '';
       const { mockVisearchClient } = renderLauncher();
       openEntryPointAndWait('a11yOpenImageSearch');
       expect(getTextInBody(imageGreeting)).toBeTruthy();
@@ -978,8 +978,8 @@ describe('ai-assistant search-bar entry', () => {
       expect(mockRecognitionInstances[0].stop).toHaveBeenCalled();
     });
 
-    it('honours aiAssistant.searchBar.voiceRecordingMaxDurationSeconds instead of the default', () => {
-      renderLauncher({ ...voiceOn, ...withSearchBar({ voiceRecordingMaxDurationSeconds: 2 }) });
+    it('honours aiAssistant.launcher.voiceRecordingMaxDurationSeconds instead of the default', () => {
+      renderLauncher({ ...voiceOn, ...withLauncher({ voiceRecordingMaxDurationSeconds: 2 }) });
       openEntryPointAndWait('a11yOpenVoiceSearch');
       act(() => {
         fireEvent.click(getMicButton());
@@ -994,8 +994,8 @@ describe('ai-assistant search-bar entry', () => {
       expect(mockRecognitionInstances[0].stop).toHaveBeenCalled();
     });
 
-    it('a set searchBar duration wins over any customizations.launcher duration', () => {
-      renderLauncher({ ...voiceOn, ...withSearchBar({ voiceRecordingMaxDurationSeconds: 8 }), launcher: { voiceRecordingMaxDurationSeconds: 2 } });
+    it('a set aiAssistant.launcher duration wins over the ai-search-launcher customizations.launcher duration', () => {
+      renderLauncher({ ...voiceOn, ...withLauncher({ voiceRecordingMaxDurationSeconds: 8 }), launcher: { voiceRecordingMaxDurationSeconds: 2 } });
       openEntryPointAndWait('a11yOpenVoiceSearch');
       act(() => {
         fireEvent.click(getMicButton());
@@ -1271,7 +1271,7 @@ describe('ai-assistant search-bar entry', () => {
 
   describe('configurable voice and camera controls', () => {
     it('hides the in-chat footer camera button (but keeps upload) when chatCameraEnabled is disabled', () => {
-      renderLauncher(withSearchBar({ chatCameraEnabled: false }));
+      renderLauncher(withLauncher({ chatCameraEnabled: false }));
       openEntryPointAndWait('a11yOpenAskAi');
       expect(testComponent.queryByRole('button', { name: texts['a11yOpenCamera'] })).toBeNull();
       expect(testComponent.getByLabelText(texts['a11yUploadImage'], { selector: 'input' })).toBeTruthy();
@@ -1338,7 +1338,7 @@ describe('ai-assistant search-bar entry', () => {
     };
 
     it('renders SplitLayout mid-stream once products arrive at desktop width', () => {
-      renderSearchBar({ overrides: splitOn, width: 1200 });
+      renderLauncherEntry({ overrides: splitOn, width: 1200 });
       openEntryPointAndWait('a11yOpenAskAi');
       expect(testComponent.queryByTestId('asl-split-layout')).toBeNull();
       emitProductsTurn('Show me shoes', 'req-1', false);
@@ -1346,14 +1346,14 @@ describe('ai-assistant search-bar entry', () => {
     });
 
     it('applies chatbot.splitLayout.paneWidth to the chat pane width', () => {
-      renderSearchBar({ overrides: withChatbot({ layout: 'splitlayout', splitLayout: { paneWidth: 500 } }), width: 1200 });
+      renderLauncherEntry({ overrides: withChatbot({ layout: 'splitlayout', splitLayout: { paneWidth: 500 } }), width: 1200 });
       openEntryPointAndWait('a11yOpenAskAi');
       emitProductsTurn('Show me shoes', 'req-1', false);
       expect(testComponent.getByTestId('asl-split-chat-pane').style.width).toBe('500px');
     });
 
     it('applies chatbot.splitLayout.divider to the border between the chat and products panes', () => {
-      renderSearchBar({
+      renderLauncherEntry({
         overrides: withChatbot({ layout: 'splitlayout', splitLayout: { divider: { width: 4, color: '#123456', colorDark: '#654321' } } }),
         width: 1200,
       });
@@ -1365,7 +1365,7 @@ describe('ai-assistant search-bar entry', () => {
     });
 
     it('clicking an earlier breadcrumb makes it the active crumb without removing later ones', async () => {
-      renderSearchBar({ overrides: splitOn, width: 1200 });
+      renderLauncherEntry({ overrides: splitOn, width: 1200 });
       openEntryPointAndWait('a11yOpenAskAi');
       emitProductsTurn('blue jeans', 'req-1');
       await revealAll();
@@ -1381,7 +1381,7 @@ describe('ai-assistant search-bar entry', () => {
     });
 
     it('clicking an in-chat hint line activates the matching crumb', async () => {
-      renderSearchBar({ overrides: splitOn, width: 1200 });
+      renderLauncherEntry({ overrides: splitOn, width: 1200 });
       openEntryPointAndWait('a11yOpenAskAi');
       emitProductsTurn('blue jeans', 'req-1');
       await revealAll();
@@ -1398,7 +1398,7 @@ describe('ai-assistant search-bar entry', () => {
     });
 
     it('shows skeleton placeholders while a query is in flight, and swaps them for real products once results stream in', async () => {
-      renderSearchBar({ overrides: splitOn, width: 1200 });
+      renderLauncherEntry({ overrides: splitOn, width: 1200 });
       openEntryPointAndWait('a11yOpenAskAi');
       let onmessage: (ev: { event: string; data: string }) => void = () => {};
       mockFetchEventSource.mockImplementation(async (_url: string, options: any) => {
@@ -1443,8 +1443,8 @@ describe('ai-assistant search-bar entry', () => {
   // ============================================================
 
   describe('non-English locales', () => {
-    it.each(['de', 'fr', 'ja', 'de-DE'])('%s: search-bar texts the locale lacks fall back to English, never raw ids', (locale) => {
-      renderSearchBar({ locale });
+    it.each(['de', 'fr', 'ja', 'de-DE'])('%s: launcher texts the locale lacks fall back to English, never raw ids', (locale) => {
+      renderLauncherEntry({ locale });
       const aiButton = testComponent.getByRole('button', { name: texts['a11yOpenAskAi'] });
       expect(aiButton.textContent).toBe(texts['triggerAskAi']);
       expect(testComponent.getByRole('button', { name: texts['a11yOpenImageSearch'] })).toBeTruthy();
@@ -1469,7 +1469,7 @@ describe('ai-assistant search-bar entry', () => {
       const deTitle = DEFAULT_TEXTS['de']?.['widgetTitle'];
       expect(deTitle).toBeTruthy();
       expect(deTitle).not.toBe(texts['widgetTitle']);
-      renderSearchBar({ locale: 'de' });
+      renderLauncherEntry({ locale: 'de' });
       openEntryPointAndWait('a11yOpenAskAi');
       expect(testComponent.getByRole('heading').textContent).toBe(deTitle);
     });
@@ -1477,13 +1477,13 @@ describe('ai-assistant search-bar entry', () => {
 
   describe('full-screen title', () => {
     const openTitle = (overrides: Partial<Customizations>): string => {
-      renderSearchBar({ overrides });
+      renderLauncherEntry({ overrides });
       openEntryPointAndWait('a11yOpenAskAi');
       return testComponent.getByRole('heading').textContent || '';
     };
 
     it('uses aiAssistant.chatTitle first (as the drawer does)', () => {
-      expect(openTitle({ ...withSearchBar({}), aiAssistant: { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, chatTitle: ' Ask us ' }, ...withChatbot({ title: 'Bot' }) })).toBe('Ask us');
+      expect(openTitle({ ...withLauncher({}), aiAssistant: { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, chatTitle: ' Ask us ' }, ...withChatbot({ title: 'Bot' }) })).toBe('Ask us');
     });
 
     it('falls back to chatbot.title without a chatTitle', () => {
@@ -1501,7 +1501,7 @@ describe('ai-assistant search-bar entry', () => {
   it('the widget\'s own default config renders the single-column chat (default chatbot.layout)', () => {
     mockFetchEventSource.mockImplementation(() => new Promise(() => {}));
     expect(DEFAULT_CUSTOMIZATIONS.chatbot?.layout).toBe('chatlayout');
-    const { store } = renderSearchBar({ width: 1200 });
+    const { store } = renderLauncherEntry({ width: 1200 });
     openEntryPointAndWait('a11yOpenAskAi');
     act(() => store.setState({ breadcrumbs: [{ requestId: 'r1', label: 'shoes', products: [] }] }));
     expect(testComponent.queryByTestId('asl-split-layout')).toBeNull();

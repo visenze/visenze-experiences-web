@@ -1,8 +1,8 @@
-export type AssistantEntry = 'launcher' | 'prompt-box' | 'search-bar' | 'embedded';
+export type AssistantEntry = 'basic' | 'prompt-box' | 'launcher' | 'embedded';
 
-const ENTRIES: readonly AssistantEntry[] = ['launcher', 'prompt-box', 'search-bar', 'embedded'];
+const ENTRIES: readonly AssistantEntry[] = ['basic', 'prompt-box', 'launcher', 'embedded'];
 
-export const DEFAULT_ENTRY: AssistantEntry = 'launcher';
+export const DEFAULT_ENTRY: AssistantEntry = 'basic';
 
 const normalize = (raw: unknown): string => (typeof raw === 'string' ? raw.trim().toLowerCase() : '');
 

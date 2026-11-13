@@ -89,12 +89,12 @@ class ChatReplyError extends Error {
   }
 }
 
-// Which container the shared session is shown in: the side drawer (launcher / prompt-box entries) or
-// the full-screen chat (search-bar entry). The entry that opens the chat decides; the conversation is
+// Which container the shared session is shown in: the side drawer (basic / prompt-box entries) or
+// the full-screen chat (launcher entry). The entry that opens the chat decides; the conversation is
 // the same either way.
 export type SurfaceMode = 'drawer' | 'fullscreen';
 
-// The search-bar entry's three entry points.
+// The launcher entry's three entry points (also ai-search-launcher's).
 export type EntryPointKey = 'image' | 'mic' | 'ai';
 
 // One opening of the full-screen chat from an entry point.
@@ -210,7 +210,7 @@ export class ChatSessionStore {
   // get a breadcrumb).
   private preBreadcrumbActiveId: string | null = null;
 
-  // The entry trigger (e.g. ai_assistant's 'launcher' / 'prompt-box') the shopper last used; sent
+  // The entry trigger (e.g. ai_assistant's 'basic' / 'prompt-box') the shopper last used; sent
   // as `entry` with RESULT_LOAD. Empty (and then omitted) for widgets that have no entries.
   private activeEntry = '';
 

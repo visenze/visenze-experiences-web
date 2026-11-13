@@ -28,8 +28,8 @@ const countUserMessages = (chats: Chat[]): number => chats.filter((c) => c.autho
 
 // The one chat surface shared by every entry trigger of the ai_assistant widget, mounted by the init
 // flow in its own root on document.body (once per client), independent of the entry roots. The store's
-// surfaceMode picks the container: the side drawer (launcher / prompt-box entries) or the full-screen
-// chat with its split view (search-bar entry). Entry points open it through the shared ChatSessionStore.
+// surfaceMode picks the container: the side drawer (basic / prompt-box entries) or the full-screen
+// chat with its split view (launcher entry). Entry points open it through the shared ChatSessionStore.
 const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) => {
   const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
@@ -51,7 +51,7 @@ const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) =>
   const titleId = `wigmix-ai-assistant-title-${appSettings.placementId}`;
   const fullscreenTitleId = `wigmix-ai-assistant-fullscreen-title-${appSettings.placementId}`;
   // Both containers are modal: the host page is hidden from assistive technology while one is open, and focus
-  // goes back to what opened it (a launcher or search-bar button) when it closes.
+  // goes back to what opened it (a basic-entry or launcher-entry button) when it closes.
   useHidePageBehindModal(isDrawerOpen, titleId, root);
   useHidePageBehindModal(isFullscreenOpen, fullscreenTitleId, root);
   useReturnFocusOnClose(chat.isOpen);
@@ -66,10 +66,10 @@ const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Shared greeting resolver — the same customizations.aiAssistant.searchBar.greetings[entryPoint]
+  // Shared greeting resolver — the same customizations.aiAssistant.launcher.greetings[entryPoint]
   // string is both narrated (see the effect below) and shown by the entry screens themselves, so the
   // shown and narrated copy never disagree.
-  const getGreetingText = (entryPoint: EntryPointKey): string => customizations.aiAssistant?.searchBar?.greetings?.[entryPoint] || '';
+  const getGreetingText = (entryPoint: EntryPointKey): string => customizations.aiAssistant?.launcher?.greetings?.[entryPoint] || '';
 
   // With the structured welcome (customizations.chatbot.welcomeScreen) on, ChatWindow renders it instead
   // of the canned 'ai' greeting; the welcome's own optional message is narration only (speakText
@@ -148,7 +148,7 @@ const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) =>
 
   if (!root) return <></>;
 
-  const chatCameraEnabled = customizations.aiAssistant?.searchBar?.chatCameraEnabled !== false;
+  const chatCameraEnabled = customizations.aiAssistant?.launcher?.chatCameraEnabled !== false;
   // One title for both containers (drawer and full screen): aiAssistant.chatTitle, then chatbot.title,
   // then the widget's default widgetTitle text.
   const titleText = customizations.aiAssistant?.chatTitle?.trim() || customizations.chatbot?.title || intl.formatMessage({ id: 'widgetTitle' });
@@ -196,7 +196,7 @@ const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) =>
         <MicEntryScreen
           chat={chat}
           greetingText={getGreetingText('mic')}
-          maxDurationSeconds={customizations.aiAssistant?.searchBar?.voiceRecordingMaxDurationSeconds}
+          maxDurationSeconds={customizations.aiAssistant?.launcher?.voiceRecordingMaxDurationSeconds}
         />
       )}
       {!showImageWelcome && !showMicWelcome && showSplit && (

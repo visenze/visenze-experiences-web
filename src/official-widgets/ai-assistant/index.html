@@ -20,14 +20,14 @@
     <h1>AI Assistant Widget Demo</h1>
     <p>
       Every element below uses the same class (the selector in dev-configs.ts) and picks its entry point with
-      <code>data-entry</code>. The launcher, prompt box and search bar share one conversation and one chat window;
+      <code>data-entry</code>. The basic, prompt-box and launcher entries share one conversation and one chat window;
       the embedded overview has its own conversation.
     </p>
 
     <section>
-      <h2>launcher</h2>
+      <h2>basic</h2>
       <p>A button that opens the chat drawer. This is the entry used when <code>data-entry</code> is omitted.</p>
-      <div class="ai-assistant-widget" data-entry="launcher"></div>
+      <div class="ai-assistant-widget" data-entry="basic"></div>
     </section>
 
     <section>
@@ -37,9 +37,9 @@
     </section>
 
     <section>
-      <h2>search-bar</h2>
+      <h2>launcher</h2>
       <p>Camera, microphone and Ask AI buttons that open the same conversation in a full-screen chat.</p>
-      <div class="ai-assistant-widget" data-entry="search-bar"></div>
+      <div class="ai-assistant-widget" data-entry="launcher"></div>
     </section>
 
     <section>

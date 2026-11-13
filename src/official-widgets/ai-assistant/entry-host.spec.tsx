@@ -72,7 +72,7 @@ const clientsWithSurface = new WeakSet<WidgetClient>();
 // surface gets a root of its own too, mounted once, after the first host (as the init flow does).
 const renderHost = (
   ctx: { widgetConfig: WidgetConfig; widgetClient: WidgetClient },
-  entry: 'launcher' | 'prompt-box',
+  entry: 'basic' | 'prompt-box',
   productId?: string,
 ): RenderResult => {
   const host = renderWidget(<EntryHost entry={entry} productId={productId} />, { ...ctx, messages: texts });
@@ -132,9 +132,9 @@ afterEach(() => {
 });
 
 describe('ai-assistant EntryHost: several entries, one conversation', () => {
-  it('a prompt-box send shows the user message in the single shared drawer, and the launcher re-shows the same conversation', async () => {
+  it('a prompt-box send shows the user message in the single shared drawer, and the basic entry re-shows the same conversation', async () => {
     const ctx = makeClient();
-    renderHost(ctx, 'launcher');
+    renderHost(ctx, 'basic');
     renderHost(ctx, 'prompt-box', 'p1');
     expect(dialogs()).toHaveLength(0);
 
@@ -158,9 +158,9 @@ describe('ai-assistant EntryHost: several entries, one conversation', () => {
     expect(store.getSnapshot().chats).toHaveLength(1);
   });
 
-  it('the launcher opens a fresh session when there is none yet', async () => {
+  it('the basic entry opens a fresh session when there is none yet', async () => {
     const ctx = makeClient();
-    renderHost(ctx, 'launcher');
+    renderHost(ctx, 'basic');
     await act(async () => {
       fireEvent.click(screen.getByTestId('wigmix-popup-trigger-button'));
     });
@@ -197,7 +197,7 @@ describe('ai-assistant EntryHost: several entries, one conversation', () => {
 
   it('tags the session with the entry the shopper used', async () => {
     const ctx = makeClient();
-    renderHost(ctx, 'launcher');
+    renderHost(ctx, 'basic');
     renderHost(ctx, 'prompt-box');
     const store = getChatSessionStore(ctx.widgetClient);
     const setActiveEntry = jest.spyOn(store, 'setActiveEntry');
@@ -207,14 +207,14 @@ describe('ai-assistant EntryHost: several entries, one conversation', () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId('wigmix-popup-trigger-button'));
     });
-    expect(setActiveEntry).toHaveBeenLastCalledWith('launcher', undefined);
+    expect(setActiveEntry).toHaveBeenLastCalledWith('basic', undefined);
   });
 });
 
 describe('ai-assistant EntryHost: widgetClient triggers', () => {
   it('sendChatMessage sends into the shared drawer', async () => {
     const ctx = makeClient();
-    renderHost(ctx, 'launcher');
+    renderHost(ctx, 'basic');
     renderHost(ctx, 'prompt-box');
     await act(async () => {
       ctx.widgetClient.sendChatMessage('hello there');
@@ -226,7 +226,7 @@ describe('ai-assistant EntryHost: widgetClient triggers', () => {
 
   it('openWithMessage opens the shared drawer with the given message and next steps', async () => {
     const ctx = makeClient();
-    renderHost(ctx, 'launcher');
+    renderHost(ctx, 'basic');
     renderHost(ctx, 'prompt-box');
     await act(async () => {
       ctx.widgetClient.openWithMessage('Welcome back', ['Show deals']);
@@ -239,7 +239,7 @@ describe('ai-assistant EntryHost: widgetClient triggers', () => {
 
   it('closeWidget hides the drawer without ending the session, and openWidget re-shows it', async () => {
     const ctx = makeClient();
-    renderHost(ctx, 'launcher');
+    renderHost(ctx, 'basic');
     renderHost(ctx, 'prompt-box');
     await clickChip();
     const store = getChatSessionStore(ctx.widgetClient);
@@ -263,7 +263,7 @@ describe('ai-assistant EntryHost: widgetClient triggers', () => {
 describe('ai-assistant EntryHost: product context for follow-ups', () => {
   it('a drawer follow-up after a prompt-box ask carries that prompt box\'s product id', async () => {
     const ctx = makeClient();
-    renderHost(ctx, 'launcher');
+    renderHost(ctx, 'basic');
     renderHost(ctx, 'prompt-box', 'p1');
     await clickChip();
     await sendFromDrawer('and in blue?');
@@ -273,7 +273,7 @@ describe('ai-assistant EntryHost: product context for follow-ups', () => {
 
   it('a changed product id goes with the next drawer follow-up', async () => {
     const ctx = makeClient();
-    renderHost(ctx, 'launcher');
+    renderHost(ctx, 'basic');
     const box = renderHost(ctx, 'prompt-box', 'p1');
     await clickChip();
     box.rerender(<EntryHost entry='prompt-box' productId='p2' />);
@@ -281,9 +281,9 @@ describe('ai-assistant EntryHost: product context for follow-ups', () => {
     expect(lastRequestParams().get('pid')).toBe('p2');
   });
 
-  it('using the launcher afterwards drops the product context', async () => {
+  it('using the basic entry afterwards drops the product context', async () => {
     const ctx = makeClient();
-    renderHost(ctx, 'launcher');
+    renderHost(ctx, 'basic');
     renderHost(ctx, 'prompt-box', 'p1');
     await clickChip();
     await hideDrawer();
@@ -295,23 +295,23 @@ describe('ai-assistant EntryHost: product context for follow-ups', () => {
   });
 });
 
-describe('ai-assistant EntryHost: data-pid on the launcher', () => {
-  const clickLauncher = async (): Promise<void> => {
+describe('ai-assistant EntryHost: data-pid on the basic entry', () => {
+  const clickBasic = async (): Promise<void> => {
     await act(async () => {
       fireEvent.click(screen.getByTestId('wigmix-popup-trigger-button'));
     });
   };
 
   it('only opens the drawer: nothing is sent on click', async () => {
-    renderHost(makeClient(), 'launcher', 'p1');
-    await clickLauncher();
+    renderHost(makeClient(), 'basic', 'p1');
+    await clickBasic();
     expect(dialogs()).toHaveLength(1);
     expect(mockFetchEventSource).not.toHaveBeenCalled();
   });
 
   it('carries data-pid into drawer follow-ups', async () => {
-    renderHost(makeClient(), 'launcher', 'p1');
-    await clickLauncher();
+    renderHost(makeClient(), 'basic', 'p1');
+    await clickBasic();
     await sendFromDrawer('does it come in blue?');
     expect(lastRequestParams().get('pid')).toBe('p1');
   });
@@ -337,7 +337,7 @@ describe('ai-assistant EntryHost: restoring a stored conversation', () => {
     storeChatId();
     const ctx = makeClient();
     ctx.widgetConfig.customizations.chatbot = { ...ctx.widgetConfig.customizations.chatbot, persistChatEnabled: false };
-    renderHost(ctx, 'launcher');
+    renderHost(ctx, 'basic');
     renderHost(ctx, 'prompt-box');
     await act(async () => {});
     expect(global.fetch).not.toHaveBeenCalled();
@@ -424,7 +424,7 @@ describe('ai-assistant EntryHost: the prompt-box entry', () => {
     expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
   });
 
-  it('has no maximize icon: asking is what opens the shared drawer, and the launcher re-shows the same conversation', async () => {
+  it('has no maximize icon: asking is what opens the shared drawer, and the basic entry re-shows the same conversation', async () => {
     renderHost(makeClient(), 'prompt-box', 'p1');
     expect(within(panel()).queryByLabelText('Open chat panel')).toBeNull();
     await clickChip();
@@ -476,9 +476,9 @@ describe('ai-assistant EntryHost: the prompt-box entry', () => {
       global.fetch = jest.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(history) });
     });
 
-    it('keeps the panel as it is, with the old chat one click away in the drawer through the launcher', async () => {
+    it('keeps the panel as it is, with the old chat one click away in the drawer through the basic entry', async () => {
       const ctx = makeClient();
-      renderHost(ctx, 'launcher');
+      renderHost(ctx, 'basic');
       renderHost(ctx, 'prompt-box', 'p1');
       await waitFor(() => expect(getChatSessionStore(ctx.widgetClient).getSnapshot().chats.length).toBeGreaterThan(0));
       expect(dialogs()).toHaveLength(0);
