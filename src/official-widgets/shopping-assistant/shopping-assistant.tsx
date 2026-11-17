@@ -76,7 +76,9 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   }, [isDocked, dialogVisible]);
   // The docked panel (a portal plus a copy of the styles) is only created the first time it is needed.
   const [dockedOpened, setDockedOpened] = useState(false);
-  const showDockedPanel = dockedConfigured && (dockedOpened || (dialogVisible && isDocked));
+  // Kept mounted while closing, so it can slide out. Dropped at once when the modal takes over from it while open:
+  // two copies of the screen would share the chat input ref and the dialog title id.
+  const showDockedPanel = dockedConfigured && dockedOpened && (isDocked || !dialogVisible);
   useEffect(() => {
     if (dialogVisible && isDocked) {
       setDockedOpened(true);

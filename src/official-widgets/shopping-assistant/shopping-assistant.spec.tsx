@@ -754,6 +754,21 @@ describe('shopping-assistant', () => {
       expect(queryModal('.wigmix-modal')).not.toBeNull();
     });
 
+    it('removes the docked panel at once when the modal takes over while it is open', () => {
+      renderDocked({ dockedMinWindowWidth: 800 });
+      setViewportWidth(1200);
+      openDialogAndWait();
+      expect(panel()).not.toBeNull();
+
+      setViewportWidth(700);
+
+      // No slide-out here: while it played, the screen would be mounted twice, sharing the chat input ref and the
+      // dialog title id with the modal copy.
+      expect(panel()).toBeNull();
+      expect(queryModal('.wigmix-modal')).not.toBeNull();
+      expect(testComponent.getAllByRole('dialog', { hidden: true }).length).toBe(1);
+    });
+
     it('keeps the configured width and gives the page the rest of the window, however narrow the window', () => {
       setViewportWidth(760);
       renderDocked({ dockedPanelWidth: 240 });

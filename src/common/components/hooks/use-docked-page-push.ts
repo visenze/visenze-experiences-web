@@ -166,19 +166,35 @@ const restore = (tracked: Tracked, onlyOffsets = false): void => {
 // Elements whose close animation is still running, with the timer that finishes the restore. Kept at module level
 // because the effect that started it is already gone (closed or unmounted). A new push finishes them first, so it
 // measures and saves the page's real original state, never a mid-animation one.
-const closing = new Map<HTMLElement, { tracked: Tracked; timer: number }>();
+const closing = new Map<HTMLElement, { tracked: Tracked; timer: number; finisher: () => void }>();
+
+// Each bundle restores its own elements (only it knows what it saved), but a new push must be able to finish the ones
+// another bundle is still animating back. They share the callbacks, not the data: `window` is the only common ground.
+const FINISHERS_KEY = '__wigmixDockFinishers';
+type FinisherSlot = Record<string, Set<() => void> | undefined>;
+const closingFinishers = (): Set<() => void> => {
+  const slot = window as unknown as FinisherSlot;
+  const existing = slot[FINISHERS_KEY];
+  if (existing) {
+    return existing;
+  }
+  const created = new Set<() => void>();
+  slot[FINISHERS_KEY] = created;
+  return created;
+};
 
 const finishClosing = (el: HTMLElement): void => {
   const entry = closing.get(el);
   if (entry) {
     window.clearTimeout(entry.timer);
     closing.delete(el);
+    closingFinishers().delete(entry.finisher);
     restore(entry.tracked);
   }
 };
 
 const finishAllClosing = (): void => {
-  Array.from(closing.keys()).forEach(finishClosing);
+  Array.from(closingFinishers()).forEach((finish) => finish());
 };
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -398,7 +414,9 @@ const isHealthy = (target: HTMLElement, side: DockSide, width: number, baselineO
   let blocked = 0;
   points.forEach(([x, y]) => {
     const top = document.elementsFromPoint(x, y).find((el) => !isOwnUi(el));
-    if (top && top !== target && top !== document.body && top !== document.documentElement) {
+    // An element that contains the pushed one is the element itself or an ancestor of it (<body> and <html> among
+    // them): the strip is clear of page content, we are only seeing the box the content was pushed inside of.
+    if (top && !top.contains(target)) {
       blocked += 1;
     }
   });
@@ -485,20 +503,20 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       // Another panel owns the page: this one is an overlay, announced like any other, and tries again once the owner closes.
       const waiter = (): void => setRetry((count) => count + 1);
       ownerWaiters.add(waiter);
-      const onForeignClose = (event: Event): void => {
-        // Only a free slot is worth a retry: other waiting overlays announce open: false too when they re-run, and
-        // reacting to those would have two waiting panels re-trigger each other forever.
-        if (!(event as CustomEvent<DockEventDetail>).detail?.open && !getPageOwner()) {
+      // A panel in another bundle closing (or giving up) frees the page. Only a free page is a reason to retry:
+      // waiting overlays announce themselves too, and reacting to those would have them wake each other forever.
+      const onForeignDockEvent = (event: Event): void => {
+        if ((event as CustomEvent<DockEventDetail>).detail && !getPageOwner()) {
           waiter();
         }
       };
-      window.addEventListener(DOCK_EVENT, onForeignClose);
+      window.addEventListener(DOCK_EVENT, onForeignDockEvent);
       setLayout('overlay');
       const overlayDetail: DockEventDetail = { open: true, side, width: widthRef.current, layout: 'overlay', placementId };
       window.dispatchEvent(new CustomEvent<DockEventDetail>(DOCK_EVENT, { detail: overlayDetail }));
       return (): void => {
         ownerWaiters.delete(waiter);
-        window.removeEventListener(DOCK_EVENT, onForeignClose);
+        window.removeEventListener(DOCK_EVENT, onForeignDockEvent);
         setLayout('pushed');
         window.dispatchEvent(new CustomEvent<DockEventDetail>(DOCK_EVENT, { detail: { ...overlayDetail, open: false } }));
       };
@@ -539,6 +557,14 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       announced = isOpen ? current : null;
       const detail: DockEventDetail = { open: isOpen, side, width, layout: current, placementId };
       window.dispatchEvent(new CustomEvent<DockEventDetail>(DOCK_EVENT, { detail }));
+    };
+
+    // Frees the page for the next panel (this bundle's waiters directly, other bundles through the event below).
+    const releaseOwnership = (): void => {
+      if (getPageOwner() === token) {
+        setPageOwner(null);
+        Array.from(ownerWaiters).forEach((waiter) => waiter());
+      }
     };
 
     const clearPageMark = (): void => {
@@ -630,6 +656,8 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       styleObserver.disconnect();
       restoreNow();
       clearPageMark();
+      // The page is untouched again: hand it to whoever is waiting instead of holding it for the rest of this open.
+      releaseOwnership();
       setLayout('overlay');
       announce(true, 'overlay');
       if (applied) {
@@ -759,10 +787,7 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
     }
 
     return (): void => {
-      if (getPageOwner() === token) {
-        setPageOwner(null);
-        Array.from(ownerWaiters).forEach((waiter) => waiter());
-      }
+      releaseOwnership();
       retarget.current = null;
       setLayout('pushed');
       window.removeEventListener('resize', onResize);
@@ -784,7 +809,9 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       // they also run after an unmount.
       tracked.forEach((entry, el) => {
         restore(entry, true);
-        closing.set(el, { tracked: entry, timer: window.setTimeout(() => finishClosing(el), duration + 20) });
+        const finisher = (): void => finishClosing(el);
+        closingFinishers().add(finisher);
+        closing.set(el, { tracked: entry, timer: window.setTimeout(finisher, duration + 20), finisher });
       });
       tracked.clear();
       if (touched) {

@@ -453,6 +453,23 @@ describe('useDockedPagePush', () => {
       first.unmount();
     });
 
+    it('frees the page for another panel when it gives up pushing', () => {
+      const blocker = document.createElement('div');
+      document.body.appendChild(blocker);
+      mockHitTest(() => [blocker, document.body]);
+      const first = push();
+      settle();
+      settle();
+      expect(first.result.current).toBe('overlay');
+
+      // The page is untouched again, so the next panel may push it even though the first one is still open.
+      mockHitTest(() => [document.body, document.documentElement]);
+      const second = push({ width: 300 });
+      settle();
+      expect(second.result.current).toBe('pushed');
+      expect(document.body.style.marginLeft).toBe('300px');
+    });
+
     it('publishes its own ownership on window while docked and frees it on close', () => {
       const { rerender } = push();
       expect((window as unknown as Record<string, unknown>)['__wigmixDockOwner']).toEqual(expect.anything());
@@ -497,6 +514,23 @@ describe('useDockedPagePush', () => {
       expect(result.current).toBe('pushed');
       expect(root.style.marginLeft).toBe('360px');
       expect(document.body.getAttribute('style') || '').toBe('');
+    });
+
+    it("stays pushed when the only thing left under the panel is the pushed element's own wrapper", () => {
+      const shell = document.createElement('div');
+      document.body.appendChild(shell);
+      const main = document.createElement('main');
+      main.id = 'site-main';
+      shell.appendChild(main);
+      setRect(main, { left: 0, top: 0, width: 1024, height: 2000 });
+      // The wrapper still spans the window after the push: only the content inside it moved.
+      mockHitTest(() => [shell, document.body, document.documentElement]);
+
+      const { result } = push({ selector: '#site-main' });
+      settle();
+
+      expect(result.current).toBe('pushed');
+      expect(main.style.marginLeft).toBe('360px');
     });
 
     it('falls back to overlay, restoring the page, when nothing it can push makes room', () => {
