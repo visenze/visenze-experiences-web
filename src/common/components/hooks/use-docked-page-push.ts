@@ -549,6 +549,8 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
     let resizeTimer = 0;
     let pageMark: PageMark | null = null;
     let announced: DockLayout | null = null;
+    // A width change the host has not been told about yet (announced together with the full re-scan, see retarget).
+    let announcePending = false;
 
     const announce = (isOpen: boolean, current: DockLayout): void => {
       if (isOpen && announced === current) {
@@ -595,7 +597,8 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
 
     // Idempotent: originals are saved once per element; later passes re-apply the same offsets and pick up
     // fixed elements that appeared since.
-    const apply = (): void => {
+    // `known` skips the scan for new fixed elements and only re-plans those already tracked (see retarget).
+    const apply = (known?: HTMLElement[]): void => {
       if (!target) {
         return;
       }
@@ -609,7 +612,7 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       setOffset(main, margin, targetMargin);
       setTransition(main, [margin]);
 
-      findIntruders(target, side, width, new Set<Element>(tracked.keys())).forEach((el) => {
+      (known ?? findIntruders(target, side, width, new Set<Element>(tracked.keys()))).forEach((el) => {
         const plan = planMoveAside(el, side, width);
         if (!plan) {
           return;
@@ -700,6 +703,12 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
 
     const reapplyAndVerify = (): void => {
       if (!gaveUp) {
+        if (announcePending) {
+          // The width changed since the last event: tell the host once the resizing has settled, not on every step.
+          announcePending = false;
+          announced = null;
+          announce(true, 'pushed');
+        }
         apply();
         scheduleVerify();
       }
@@ -727,8 +736,11 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       resizeTimer = window.setTimeout(reapplyAndVerify, RESIZE_SETTLE_MS);
     };
 
-    // The panel width changed while open: re-offset the page in place (originals are restored and the offsets
-    // re-applied in the same task, so the browser transitions straight from the old margin to the new one).
+    // The panel width changed while open. The cheap part runs right away: the page margin, the width variable and the
+    // offsets of the elements already moved aside (their planned values depend on the width). Originals are restored
+    // and the offsets re-applied in the same task, so the browser transitions straight from the old margin to the new
+    // one. The expensive part (scan for new fixed elements, the check of the result, the `wigmix:dock` event) waits
+    // on the same timer as a window resize: a percentage or per-device width changes on every step of a drag.
     retarget.current = (): void => {
       if (widthRef.current === width) {
         return;
@@ -738,15 +750,18 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       if (gaveUp) {
         return;
       }
+      const known = Array.from(tracked.keys()).filter((el) => el !== target);
       tracked.forEach((entry) => restore(entry));
       tracked.clear();
       if (pageMark) {
         document.documentElement.style.setProperty(DOCKED_WIDTH_VAR, offset);
       }
-      announced = null;
-      announce(true, 'pushed');
-      apply();
-      scheduleVerify();
+      apply(known);
+      // A check scheduled for the old width would run mid-drag, so it is re-scheduled with the settle below.
+      window.clearTimeout(settleTimer);
+      announcePending = true;
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(reapplyAndVerify, RESIZE_SETTLE_MS);
     };
 
     // Late-loading headers, banners and chat bubbles, wherever in the page they are added. Only an added element that is

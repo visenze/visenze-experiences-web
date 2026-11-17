@@ -688,7 +688,44 @@ describe('useDockedPagePush', () => {
       expect(document.body.style.marginLeft).toBe('320px');
       expect(document.body.style.transition).toContain('margin-left');
       expect(document.documentElement.style.getPropertyValue(DOCKED_WIDTH_VAR)).toBe('320px');
+      // The event (like the full re-scan) waits for the settle delay.
+      expect(events).toEqual([]);
+      settle();
       expect(events).toEqual([expect.objectContaining({ open: true, width: 320, layout: 'pushed' })]);
+
+      window.removeEventListener(DOCK_EVENT, listener);
+    });
+
+    it('keeps a changing width (e.g. a percentage during a window drag) cheap: scan, check and event only once it settles', () => {
+      const floating = addFixed('div', { left: 0, top: 100, width: 60, height: 60 });
+      mockHitTest(() => []);
+      const { rerender } = push({ width: 360 });
+      settle();
+      expect(floating.style.transform).toBe('translateX(360px)');
+      const hitTest = document.elementsFromPoint as jest.Mock;
+      const before = hitTest.mock.calls.length;
+      const events: DockEventDetail[] = [];
+      const listener = (e: Event): void => {
+        events.push((e as CustomEvent<DockEventDetail>).detail);
+      };
+      window.addEventListener(DOCK_EVENT, listener);
+
+      [340, 320, 300, 280, 260].forEach((width) => {
+        act(() => {
+          rerender({ open: true, side: 'left', width });
+          jest.advanceTimersByTime(20);
+        });
+        // The cheap part follows every step: margin, width variable and the offsets already moved aside.
+        expect(document.body.style.marginLeft).toBe(`${width}px`);
+        expect(document.documentElement.style.getPropertyValue(DOCKED_WIDTH_VAR)).toBe(`${width}px`);
+        expect(floating.style.transform).toBe(`translateX(${width}px)`);
+      });
+      expect(hitTest.mock.calls.length).toBe(before);
+      expect(events).toEqual([]);
+
+      settle();
+      expect(hitTest.mock.calls.length).toBeGreaterThan(before);
+      expect(events).toEqual([expect.objectContaining({ open: true, width: 260, layout: 'pushed' })]);
 
       window.removeEventListener(DOCK_EVENT, listener);
     });
