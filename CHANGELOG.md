@@ -34,6 +34,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- BEGIN visenze-experiences-web 1.0.43 -->
 
+### Added
+
+- shopping-assistant: Docked display mode. Set `customizations.popup.displayMode: 'docked'` to pin the assistant to the `popup.position` side of the window and resize the host page beside it instead of covering it; options `dockedPanelWidth` (px, `'20%'`, or per device such as `{ desktop: 320, tablet: 220 }`), `dockedMinWindowWidth` (default 700; narrower windows get the modal), `pushSelector` and `dockedZIndex`, and a `wigmix:dock` event plus `wigmix-docked` classes on `<html>` so the site can adapt. Falls back to the regular modal drawer when the window is narrower than `dockedMinWindowWidth`, and when the page can't be made to give way on a tablet-sized window; on a desktop-sized window it falls back to an overlay instead. See `docs/customization.md`.
+- shopping-assistant: Docked mode keeps a centred page (`max-width` + `margin: auto` on the pushed element) centred in the room beside the panel; opt out with `data-wigmix-dock-centering="off"`.
+
 ### Changed
 
 - ai_assistant: Entry points renamed to match the existing widgets. The chat-button entry (opens the side drawer, like shopping-assistant) is now `basic` (was `launcher`), and the camera / mic / Ask AI bar (like ai-search-launcher) is now `launcher` (was `search-bar`). Its settings move from `customizations.aiAssistant.searchBar` to `customizations.aiAssistant.launcher`. The default entry is `basic`, and the `entry` value sent with analytics events uses the new names. **Breaking:** an element with `data-entry="launcher"` now shows the camera / mic / Ask AI bar instead of the chat button; use `data-entry="basic"` for the chat button. `search-bar` is no longer recognized (it falls back to `basic` with a console warning). `prompt-box` and `embedded` are unchanged.

@@ -1170,6 +1170,68 @@ export interface WidgetConfig {
        */
       position: 'left' | 'center' | 'right';
       /**
+       * How the popup is presented. Currently honoured only by the shopping assistant widget.
+       *
+       * - `modal` (default): a dimmed full-viewport overlay; the page is locked behind it.
+       * - `docked`: the assistant takes a column on the `position` side (`center` is treated as `right`) and the
+       *   host page stays visible, scrollable and interactive next to it. The page is resized to make room by
+       *   offsetting `pushSelector` (or `<body>`) with a margin the width of the panel, so it is not covered.
+       *   There is no backdrop, scroll lock or focus trap, and clicking the page does not close the panel;
+       *   Escape (with focus inside the panel) and the panel's close button do.
+       *
+       * Fixed elements in the panel's way (headers, app shells, chat bubbles, banners) are moved aside too. After
+       * opening, the widget checks that the page really made room; if not, it tries a common app wrapper, and failing
+       * that leaves the page untouched and shows the panel over the page's edge (an overlay). When the window is narrower
+       * than `dockedMinWindowWidth`, the modal is used instead.
+       *
+       * Known limit of `docked`: the page's media queries, `vw` units and `window.innerWidth` keep seeing the full
+       * window width (only the browser can change that), which is why docking is kept to windows of a minimum width.
+       *
+       * @since 1.0.43
+       */
+      displayMode?: 'modal' | 'docked';
+      /**
+       * Width of the docked panel. Applies to `displayMode: 'docked'` only. Defaults to 380 (px).
+       *
+       * A number is pixels (`320`); a string is a share of the window width (`'20%'`) or pixels (`'320px'`), worked out
+       * from the current window width as it changes. To set it per device, give an object keyed by `desktop`, `tablet`
+       * and `mobile` (the widget's `breakpoints`); a device left out uses the `desktop` value, then the default.
+       * Example: `{ desktop: 380, tablet: '30%' }`. The panel always keeps this width; see `dockedMinWindowWidth` for
+       * when it is used at all.
+       *
+       * @since 1.0.43
+       */
+      dockedPanelWidth?: number | string | Partial<Record<'mobile' | 'tablet' | 'desktop', number | string>>;
+      /**
+       * CSS selector of the page container to offset so the docked panel does not cover it, e.g. `#page` or
+       * `main.site-wrapper`. Applies to `displayMode: 'docked'` only. Optional: when unset, `<body>` is offset, and if
+       * that does not make clean room a common app wrapper (`#__next`, `#root`, `#app`, `main`, ...) is tried. Set it
+       * only when the site's layout hangs off a wrapper those don't cover. If it matches nothing, the page is left
+       * untouched and the panel sits over its edge.
+       *
+       * @since 1.0.43
+       */
+      pushSelector?: string;
+      /**
+       * Smallest window width, in pixels, in which the docked panel is used; in narrower windows the modal is used
+       * instead. Applies to `displayMode: 'docked'` only. Defaults to 700. The panel keeps the width set by
+       * `dockedPanelWidth` and the page gets the rest of the window, so it is worth checking the result at the narrowest
+       * window you allow (for example 700 minus a 220px panel leaves the page 480px). The page's own media queries
+       * keep seeing the full window width, which is why a very small value can squeeze pages that expect more room.
+       * A panel that would leave the page under 320px is never docked.
+       *
+       * @since 1.0.43
+       */
+      dockedMinWindowWidth?: number;
+      /**
+       * Stacking order (`z-index`) of the docked panel. Applies to `displayMode: 'docked'` only. Defaults to 13000,
+       * the same as the modal. Raise it if the site's own header or menus draw over the panel; keep it below the
+       * site's cookie-consent dialogs so those stay clickable.
+       *
+       * @since 1.0.43
+       */
+      dockedZIndex?: number;
+      /**
        * Configurations for the icon that triggers the popup.
        *
        * Since v1.0.4, this behaves more like a full-fledged button rather than just an icon,
