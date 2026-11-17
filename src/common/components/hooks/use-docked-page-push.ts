@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import viewportWidth from './viewport-width';
 
 export type DockSide = 'left' | 'right';
 
@@ -74,8 +75,16 @@ const unmarkPage = ({ hadClass, hadStyle }: PageMark): void => {
 
 // Only one docked panel at a time may push the page: a second one would save the first one's offsets as the page's "original"
 // styles and restore them wrongly. The first to open owns the page; others sit over it as an overlay.
-let pageOwner: symbol | null = null;
-// Panels waiting (as overlays) for the current page owner to close.
+// The owner lives on `window`, not in this module: every widget bundle (and every version of one) has its own copy of this
+// code, and they must still see each other.
+const OWNER_KEY = '__wigmixDockOwner';
+type OwnerSlot = Record<string, symbol | null | undefined>;
+const getPageOwner = (): symbol | null => (window as unknown as OwnerSlot)[OWNER_KEY] ?? null;
+const setPageOwner = (owner: symbol | null): void => {
+  (window as unknown as OwnerSlot)[OWNER_KEY] = owner;
+};
+// Panels of this bundle waiting (as overlays) for the current page owner to close. Panels of other bundles are told
+// through the `wigmix:dock` event (open: false) instead.
 const ownerWaiters = new Set<() => void>();
 
 const DOCK_TRANSITION_MS = 250;
@@ -180,7 +189,6 @@ const finishAllClosing = (): void => {
 const OWN_UI_SELECTOR = '[id^="visenze-widget-"], [data-wigmix-dock-ignore]';
 const isOwnUi = (el: Element): boolean => !!el.closest(OWN_UI_SELECTOR);
 
-const viewportWidth = (): number => document.documentElement.clientWidth || window.innerWidth;
 const viewportHeight = (): number => document.documentElement.clientHeight || window.innerHeight;
 
 // How far the page already scrolls sideways, in px (0 when it doesn't).
@@ -421,8 +429,12 @@ const resolveSelector = (selector: string): HTMLElement | null => {
   }
 };
 
-// A host page re-setting the pushed element's style more than this many times is fighting us: we step back.
+// A host page re-setting the pushed element's style more than this many times within the window is fighting us: we step
+// back. Resets spread over a long session (a site opening its own drawer, route changes) are not a fight.
 const MAX_HOST_RESETS = 3;
+const HOST_RESET_WINDOW_MS = 2000;
+// How long the window must stay unchanged before the full re-scan and check run after a resize.
+const RESIZE_SETTLE_MS = 150;
 
 /**
  * While a docked panel is open, makes room for it by pushing the host page aside, so the page is resized rather
@@ -469,20 +481,29 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       return undefined;
     }
     const token = Symbol('dock');
-    if (pageOwner) {
+    if (getPageOwner()) {
       // Another panel owns the page: this one is an overlay, announced like any other, and tries again once the owner closes.
       const waiter = (): void => setRetry((count) => count + 1);
       ownerWaiters.add(waiter);
+      const onForeignClose = (event: Event): void => {
+        // Only a free slot is worth a retry: other waiting overlays announce open: false too when they re-run, and
+        // reacting to those would have two waiting panels re-trigger each other forever.
+        if (!(event as CustomEvent<DockEventDetail>).detail?.open && !getPageOwner()) {
+          waiter();
+        }
+      };
+      window.addEventListener(DOCK_EVENT, onForeignClose);
       setLayout('overlay');
       const overlayDetail: DockEventDetail = { open: true, side, width: widthRef.current, layout: 'overlay', placementId };
       window.dispatchEvent(new CustomEvent<DockEventDetail>(DOCK_EVENT, { detail: overlayDetail }));
       return (): void => {
         ownerWaiters.delete(waiter);
+        window.removeEventListener(DOCK_EVENT, onForeignClose);
         setLayout('pushed');
         window.dispatchEvent(new CustomEvent<DockEventDetail>(DOCK_EVENT, { detail: { ...overlayDetail, open: false } }));
       };
     }
-    pageOwner = token;
+    setPageOwner(token);
     setLayout('pushed');
     // Measure and save the real page, never one still animating back from a previous close.
     finishAllClosing();
@@ -499,7 +520,7 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
     // Whether the page was ever offset during this open, so giving up knows to tell the host it changed back.
     let applied = false;
     let settled = false;
-    let hostResets = 0;
+    let hostResetTimes: number[] = [];
     // Width of the pushed element when it is centred by auto margins; undefined until measured (once per pushed element).
     let centeredWidth: number | null | undefined;
     let targetMargin = offset;
@@ -507,6 +528,7 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
     let frame = 0;
     let settleTimer = 0;
     let mutationTimer = 0;
+    let resizeTimer = 0;
     let pageMark: PageMark | null = null;
     let announced: DockLayout | null = null;
 
@@ -584,8 +606,11 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       if (gaveUp || !target || target.style.getPropertyValue(margin) === targetMargin) {
         return;
       }
-      hostResets += 1;
-      if (hostResets > MAX_HOST_RESETS) {
+      // Monotonic: unlike Date.now() it is not thrown off by a system clock change.
+      const now = performance.now();
+      hostResetTimes = hostResetTimes.filter((time) => now - time <= HOST_RESET_WINDOW_MS);
+      hostResetTimes.push(now);
+      if (hostResetTimes.length > MAX_HOST_RESETS) {
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         giveUp();
         return;
@@ -652,12 +677,26 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       }
     };
 
+    // Per animation frame while the window is dragged: only the cheap part (the page margin and the offsets already
+    // tracked). The scan for new fixed elements and the check of the result are expensive (hundreds of hit tests), so
+    // they wait until the resizing has stopped.
+    const refreshOffsets = (): void => {
+      if (gaveUp || !target) {
+        return;
+      }
+      targetMargin = dockedMargin(width, centeredWidth ?? null);
+      setOffset(track(target), margin, targetMargin);
+      tracked.forEach(reapplyOffsets);
+    };
+
     const onResize = (): void => {
       if (dispatching) {
         return;
       }
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(reapplyAndVerify);
+      frame = requestAnimationFrame(refreshOffsets);
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(reapplyAndVerify, RESIZE_SETTLE_MS);
     };
 
     // The panel width changed while open: re-offset the page in place (originals are restored and the offsets
@@ -720,8 +759,8 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
     }
 
     return (): void => {
-      if (pageOwner === token) {
-        pageOwner = null;
+      if (getPageOwner() === token) {
+        setPageOwner(null);
         Array.from(ownerWaiters).forEach((waiter) => waiter());
       }
       retarget.current = null;
@@ -732,6 +771,7 @@ const useDockedPagePush = ({ open, side, width, selector, placementId }: DockedP
       cancelAnimationFrame(frame);
       window.clearTimeout(settleTimer);
       window.clearTimeout(mutationTimer);
+      window.clearTimeout(resizeTimer);
       // Removed at once so host overrides animate back together with the page.
       clearPageMark();
       if (announced) {

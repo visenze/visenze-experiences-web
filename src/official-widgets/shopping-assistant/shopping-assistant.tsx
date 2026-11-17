@@ -70,9 +70,18 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const [modalFallback, setModalFallback] = useState(false);
   const isDocked = dockedWidth !== null && !modalFallback;
   // Updated after commit, not during render, so a render that never commits cannot skew the hysteresis.
+  // Only while the popup is open: the hysteresis is for a panel that is already docked, not for the decision to open one.
   useEffect(() => {
-    wasDocked.current = isDocked;
-  }, [isDocked]);
+    wasDocked.current = isDocked && dialogVisible;
+  }, [isDocked, dialogVisible]);
+  // The docked panel (a portal plus a copy of the styles) is only created the first time it is needed.
+  const [dockedOpened, setDockedOpened] = useState(false);
+  const showDockedPanel = dockedConfigured && (dockedOpened || (dialogVisible && isDocked));
+  useEffect(() => {
+    if (dialogVisible && isDocked) {
+      setDockedOpened(true);
+    }
+  }, [dialogVisible, isDocked]);
   // The modal's own default side is 'left'; docked treats 'center' and 'bottom' as 'right'.
   const dockedSide = (popup?.position || 'left') === 'left' ? 'left' : 'right';
   // `overlay` when the page could not be pushed aside cleanly: the panel then sits over the page's edge.
@@ -239,6 +248,15 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
       </div>
   );
 
+  // Only where the primary pointer is a mouse/trackpad. On touch devices a script-driven focus() fired while the
+  // dialog is still animating in left iOS Safari unable to scroll the conversation until the input was focused and
+  // blurred again by hand.
+  const focusChatInput = useCallback((): void => {
+    if (window.matchMedia?.('(pointer: fine)').matches) {
+      chatInputRef.current?.focus();
+    }
+  }, []);
+
   useEffect(() => {
     if (!dialogVisible) {
       return undefined;
@@ -247,27 +265,8 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     // document.activeElement, which can't see into the widget's Shadow DOM so it always thinks
     // nothing is focused yet). A same-tick focus call here loses that race. Deferring to a
     // macrotask runs after react-modal's own focus handling has settled, so this call wins.
-    let focused = false;
-    const focusInput = (): void => {
-      // Only auto-focus where the primary pointer is a mouse/trackpad. On touch devices a
-      // script-driven focus() fired while the dialog is still animating in left iOS Safari
-      // unable to scroll the conversation until the input was focused and blurred again by hand.
-      if (focused || !window.matchMedia?.('(pointer: fine)').matches) {
-        return;
-      }
-      const input = chatInputRef.current;
-      if (input) {
-        input.focus();
-        focused = true;
-      }
-    };
-    const timeoutId = window.setTimeout(focusInput, 0);
-    // A docked panel mounts its content one render after it opens, so the input may not exist yet at the first try.
-    const retryId = window.setTimeout(focusInput, 60);
-    return (): void => {
-      window.clearTimeout(timeoutId);
-      window.clearTimeout(retryId);
-    };
+    const timeoutId = window.setTimeout(focusChatInput, 0);
+    return (): void => window.clearTimeout(timeoutId);
   }, [dialogVisible]);
 
   // Notify the host page each time the popup goes from closed to open (any path: trigger button,
@@ -361,7 +360,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                                   className='wigmix-popup-trigger-icon default size-6'
                               />
                             } />
-        {dockedConfigured && (
+        {showDockedPanel && (
           <DockedPanel
               open={dialogVisible && isDocked}
               onClose={closeDialog}
@@ -373,6 +372,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
               fontFamily={customizations.generalLayout?.fontFamily}
               placementId={`${appSettings.placementId}`}
               ariaLabelledBy={dialogTitleId}
+              onContentMounted={focusChatInput}
               renderWithoutPortal={!!renderModalWithoutPortal}>
             {getScreen()}
           </DockedPanel>

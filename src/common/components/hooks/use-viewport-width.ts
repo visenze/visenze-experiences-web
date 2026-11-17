@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
+import viewportWidth from './viewport-width';
 
-/** The current `window.innerWidth`, kept up to date on resize (at most once per animation frame). */
+/** The width the page gets (excluding the vertical scrollbar, as the docked page push measures it), kept up to date on resize (at most once per animation frame). */
 const useViewportWidth = (): number => {
-  const [width, setWidth] = useState(() => window.innerWidth);
+  const [width, setWidth] = useState(viewportWidth);
 
   useEffect(() => {
     let frame = 0;
-    const update = (): void => setWidth(window.innerWidth);
+    const update = (): void => setWidth(viewportWidth());
     const onResize = (): void => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(update);

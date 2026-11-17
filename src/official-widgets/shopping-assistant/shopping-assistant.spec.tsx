@@ -598,6 +598,42 @@ describe('shopping-assistant', () => {
       expect(panel()).not.toBeNull();
     });
 
+    it('still closes on Escape when a plain disclosure (aria-expanded without a popup) is open inside the panel', () => {
+      renderDocked();
+      openDialogAndWait();
+      const disclosure = document.createElement('button');
+      disclosure.setAttribute('aria-expanded', 'true');
+      panel()?.appendChild(disclosure);
+
+      act(() => {
+        fireEvent.keyDown(testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true }), { key: 'Escape', code: 'Escape' });
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(panel()).toBeNull();
+    });
+
+    it('uses the modal when opened under the minimum window width, even after docking earlier in a wider window', () => {
+      renderDocked();
+      openDialogAndWait();
+      expect(panel()).not.toBeNull();
+      act(() => {
+        fireEvent.keyDown(testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true }), { key: 'Escape', code: 'Escape' });
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(panel()).toBeNull();
+
+      // 680 is inside the 40px grace for a panel that is docked, but not for deciding to open one.
+      setViewportWidth(680);
+      openDialogAndWait();
+      expect(panel()).toBeNull();
+      expect(queryModal('.wigmix-modal')).not.toBeNull();
+    });
+
     it('closes only the camera drawer when Escape is pressed inside it, not the panel', () => {
       renderDocked();
       openDialogAndWait();

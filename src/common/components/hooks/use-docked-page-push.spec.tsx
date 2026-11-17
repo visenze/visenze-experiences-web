@@ -411,6 +411,56 @@ describe('useDockedPagePush', () => {
     });
   });
 
+  describe('page ownership shared across bundles', () => {
+    afterEach(() => {
+      delete (window as unknown as Record<string, unknown>)['__wigmixDockOwner'];
+    });
+
+    it('treats a panel from another bundle (owner kept on window) as the owner, and pushes once it closes', () => {
+      (window as unknown as Record<string, unknown>)['__wigmixDockOwner'] = Symbol('other-bundle');
+      const { result } = push();
+      expect(result.current).toBe('overlay');
+      expect(document.body.style.marginLeft).toBe('');
+
+      // The other bundle closes: it frees the slot and announces it through the event.
+      act(() => {
+        (window as unknown as Record<string, unknown>)['__wigmixDockOwner'] = null;
+        window.dispatchEvent(new CustomEvent<DockEventDetail>(DOCK_EVENT, { detail: { open: false, side: 'left', width: 380, layout: 'pushed', placementId: 'x' } }));
+      });
+      expect(result.current).toBe('pushed');
+      expect(document.body.style.marginLeft).toBe('360px');
+    });
+
+    it('does not loop when several overlays wait on an owner that stays open', () => {
+      const first = push();
+      const second = push({ width: 300 });
+      const third = push({ width: 280 });
+      const fourth = push({ width: 260 });
+      const events: boolean[] = [];
+      const listener = (e: Event): void => {
+        events.push((e as CustomEvent<DockEventDetail>).detail.open);
+      };
+      window.addEventListener(DOCK_EVENT, listener);
+
+      // One of them leaves; the owner is still open, so the other must stay put and no event storm may follow.
+      second.unmount();
+      settle();
+      expect(third.result.current).toBe('overlay');
+      expect(fourth.result.current).toBe('overlay');
+      expect(events.length).toBeLessThan(10);
+
+      window.removeEventListener(DOCK_EVENT, listener);
+      first.unmount();
+    });
+
+    it('publishes its own ownership on window while docked and frees it on close', () => {
+      const { rerender } = push();
+      expect((window as unknown as Record<string, unknown>)['__wigmixDockOwner']).toEqual(expect.anything());
+      rerender({ open: false, side: 'left', width: 360 });
+      expect((window as unknown as Record<string, unknown>)['__wigmixDockOwner']).toBeNull();
+    });
+  });
+
   describe('checking the result and falling back', () => {
     it('stays pushed when the strip is clear after pushing', () => {
       mockHitTest(() => [document.body, document.documentElement]);
@@ -524,6 +574,23 @@ describe('useDockedPagePush', () => {
       expect(document.body.style.boxSizing).toBe('');
     });
 
+    it('does not give up when the host resets the style now and then, minutes apart', async () => {
+      const { result } = push();
+      for (let i = 0; i < 6; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        await act(async () => {
+          document.body.style.marginLeft = '0px';
+        });
+        expect(document.body.style.marginLeft).toBe('360px');
+        // Not `settle`: that is 500ms, and the point is a gap longer than the reset window.
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
+        act(() => {
+          jest.advanceTimersByTime(5000);
+        });
+      }
+      expect(result.current).toBe('pushed');
+    });
+
     it('reports pushed again on the next open after an overlay', () => {
       mockScrollWidth(() => (document.body.style.marginLeft ? 1384 : 1024));
       const { result, rerender } = push();
@@ -549,6 +616,28 @@ describe('useDockedPagePush', () => {
 
       expect(document.body.style.marginLeft).toBe('360px');
       expect(document.body.style.transition).toBe(initialTransition);
+    });
+
+    it('keeps the margin current on every frame of a resize but scans the page only once it stops', () => {
+      mockHitTest(() => []);
+      push();
+      settle();
+      const hitTest = document.elementsFromPoint as jest.Mock;
+      const before = hitTest.mock.calls.length;
+
+      for (let i = 0; i < 5; i += 1) {
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
+        act(() => {
+          document.body.style.marginLeft = '0px';
+          window.dispatchEvent(new Event('resize'));
+          jest.advanceTimersByTime(20);
+        });
+        expect(document.body.style.marginLeft).toBe('360px');
+      }
+      expect(hitTest.mock.calls.length).toBe(before);
+
+      settle();
+      expect(hitTest.mock.calls.length).toBeGreaterThan(before);
     });
 
     it('re-offsets in place when only the width changes, without tearing the page down', () => {

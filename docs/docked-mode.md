@@ -103,7 +103,7 @@ Escape while focus is inside it. Clicking your page does not close it.
 | The page can't make room (check fails), desktop-sized window | The panel shown **over** the edge of your page (an overlay). Your page is left untouched. |
 | The page can't make room, tablet-sized window | The regular modal, because an overlay would cover most of the page |
 | `pushSelector` matches nothing | Treated as "can't make room" |
-| Your own scripts keep resetting the pushed element's inline style (more than 3 times) | Treated as "can't make room" |
+| Your own scripts keep resetting the pushed element's inline style (more than 3 times within 2 seconds) | Treated as "can't make room" |
 
 "Desktop-sized" and "tablet-sized" follow the widget's `breakpoints` (by default, 1024px and up, and under 1024px). The
 worst case is always a panel over part of your page or the usual modal, never a broken layout.
@@ -215,7 +215,7 @@ All options live under `customizations.popup` and apply only when `displayMode` 
   back once the panel has closed.
 - **Escape needs focus in the panel.** Escape pressed while your page has focus belongs to your page and does not close the
   panel. When the input is focused on open, that happens on devices with a mouse or trackpad only, not on touch devices.
-- **One docked panel at a time.** If two docked widgets are open at once, the second is shown as an overlay.
+- **One docked panel at a time.** If two docked widgets are open at once (even from different widget bundles or versions on the same page), the second is shown as an overlay, and docks by itself once the first closes.
 
 ## Checking it on your site
 

@@ -24,11 +24,16 @@ interface DockedPanelProps {
   overlay?: boolean;
   /** Stacking order of the panel. Defaults to 13000, the same as the modal. */
   zIndex?: number;
+  /** Called once the panel's content is in the DOM after opening (e.g. to focus an input in it). */
+  onContentMounted?: () => void;
 }
 
-interface PanelProps extends Pick<DockedPanelProps, 'open' | 'onClose' | 'side' | 'width' | 'children' | 'ariaLabelledBy' | 'className' | 'overlay' | 'zIndex'> {}
+interface PanelProps extends Pick<
+  DockedPanelProps,
+  'open' | 'onClose' | 'side' | 'width' | 'children' | 'ariaLabelledBy' | 'className' | 'overlay' | 'zIndex' | 'onContentMounted'
+> {}
 
-const Panel: FC<PanelProps> = ({ open, onClose, side, width, children, ariaLabelledBy, className, overlay, zIndex }) => {
+const Panel: FC<PanelProps> = ({ open, onClose, side, width, children, ariaLabelledBy, className, overlay, zIndex, onContentMounted }) => {
   const panelRef = useRef<HTMLDivElement>(null);
   // `mounted` outlives `open` by the animation length so the panel can slide out; `shown` is the slid-in state.
   const [mounted, setMounted] = useState(open);
@@ -44,12 +49,16 @@ const Panel: FC<PanelProps> = ({ open, onClose, side, width, children, ariaLabel
     return (): void => window.clearTimeout(timer);
   }, [open]);
 
+  const contentMountedRef = useRef(onContentMounted);
+  contentMountedRef.current = onContentMounted;
+
   useEffect(() => {
     if (open && mounted) {
       // Flush the off-screen starting position before switching to the final one, or the browser would skip
       // the transition and show the panel already in place.
       panelRef.current?.getBoundingClientRect();
       setShown(true);
+      contentMountedRef.current?.();
     }
   }, [open, mounted]);
 
@@ -59,11 +68,12 @@ const Panel: FC<PanelProps> = ({ open, onClose, side, width, children, ariaLabel
     if (event.key !== 'Escape') {
       return;
     }
-    // Nested layers keep their own Escape: a dialog inside the panel (the camera drawer) or the composer's
-    // "Add image" menu (aria-expanded) closes first; only an Escape nothing inside is using closes the panel.
+    // Nested layers keep their own Escape: a dialog inside the panel (the camera drawer) or an open menu or list (a
+    // trigger with aria-haspopup and aria-expanded, like the composer's "Add image" menu) closes first; only an Escape
+    // nothing inside is using closes the panel. A plain disclosure that stays open (aria-expanded alone) does not count.
     const panel = event.currentTarget;
     const insideNestedDialog = event.nativeEvent.composedPath().some((node) => node !== panel && node instanceof HTMLElement && node.getAttribute('role') === 'dialog');
-    if (insideNestedDialog || panel.querySelector('[aria-expanded="true"]')) {
+    if (insideNestedDialog || panel.querySelector('[aria-haspopup][aria-expanded="true"], [role="combobox"][aria-expanded="true"]')) {
       return;
     }
     onClose();
