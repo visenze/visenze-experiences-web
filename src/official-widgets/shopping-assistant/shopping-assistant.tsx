@@ -6,7 +6,11 @@ import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import useChat, { type UseChatResult } from '../../common/components/chat/use-chat';
 import { getWelcomeSpokenGreeting, isWelcomeEnabled } from '../../common/components/chat/WelcomeBlock';
+import DockedPanel from '../../common/components/docked-panel/docked-panel';
+import { DEFAULT_DOCKED_MIN_WINDOW_WIDTH, resolveDockedWidth, resolvePreferredDockedWidth } from '../../common/components/docked-panel/docked-sizing';
 import useBreakpoint from '../../common/components/hooks/use-breakpoint';
+import useDockedPagePush from '../../common/components/hooks/use-docked-page-push';
+import useViewportWidth from '../../common/components/hooks/use-viewport-width';
 import ViSenzeModal from '../../common/components/modal/visenze-modal';
 import PopupTriggerButton from '../../common/components/popup-trigger-button/PopupTriggerButton';
 import { RootContext } from '../../common/components/shadow-wrapper';
@@ -14,8 +18,13 @@ import { FOCUS_VISIBLE_CLASSES } from '../../common/constants';
 import CloseIcon from '../../common/icons/CloseIcon';
 import PlusCircleIcon from '../../common/icons/PlusCircleIcon';
 import SpeakerIcon from '../../common/icons/SpeakerIcon';
+import { WidgetBreakpoint } from '../../common/types/constants';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { SearchImageOrPid } from '../../common/types/image';
+
+const DEFAULT_DOCKED_WIDTH = 380;
+
+const positiveNumberOr = (value: unknown, fallback: number): number => (typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : fallback);
 
 interface ShoppingAssistantProps {
   renderModalWithoutPortal?: boolean;
@@ -27,6 +36,7 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   const [dialogVisible, setDialogVisible] = useState(false);
   const root = useContext(RootContext);
   const breakpoint = useBreakpoint();
+  const viewportWidth = useViewportWidth();
   const [widgetOpenTrigger, setWidgetOpenTrigger] = useState(0);
   const [sendChatTrigger, setSendChatTrigger] = useState<[string, SearchImageOrPid | undefined]>();
   const [openWithMessageTrigger, setOpenWithMessageTrigger] = useState<[string, string[] | undefined, { newChat?: boolean } | undefined]>();
@@ -40,6 +50,46 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
   ];
 
   const chat = useChat();
+
+  // Docked mode (opt-in, customizations.popup.displayMode): a side column with the page resized beside it instead of a
+  // modal. The one rule for when it applies is the window width (dockedMinWindowWidth); the panel keeps its configured
+  // width and the page gets the rest. Narrower than that, the regular modal below is used, driven by the same open/close state.
+  const { popup } = customizations;
+  const dockedConfigured = popup?.displayMode === 'docked';
+  const wasDocked = useRef(false);
+  const dockedWidth = dockedConfigured
+    ? resolveDockedWidth(
+      viewportWidth,
+      resolvePreferredDockedWidth(popup?.dockedPanelWidth, breakpoint, viewportWidth, DEFAULT_DOCKED_WIDTH),
+      positiveNumberOr(popup?.dockedMinWindowWidth, DEFAULT_DOCKED_MIN_WINDOW_WIDTH),
+      wasDocked.current,
+    )
+    : null;
+  // A push that fails on a tablet-sized window falls back to the modal rather than the overlay: over a narrow page an
+  // overlay would cover most of it. Kept until the popup closes, so it does not flip back while the page is restored.
+  const [modalFallback, setModalFallback] = useState(false);
+  const isDocked = dockedWidth !== null && !modalFallback;
+  // Updated after commit, not during render, so a render that never commits cannot skew the hysteresis.
+  useEffect(() => {
+    wasDocked.current = isDocked;
+  }, [isDocked]);
+  // The modal's own default side is 'left'; docked treats 'center' and 'bottom' as 'right'.
+  const dockedSide = (popup?.position || 'left') === 'left' ? 'left' : 'right';
+  // `overlay` when the page could not be pushed aside cleanly: the panel then sits over the page's edge.
+  const dockLayout = useDockedPagePush({
+    open: dialogVisible && isDocked,
+    side: dockedSide,
+    width: dockedWidth ?? 0,
+    selector: popup?.pushSelector,
+    placementId: `${appSettings.placementId}`,
+  });
+  useEffect(() => {
+    if (!dialogVisible) {
+      setModalFallback(false);
+    } else if (isDocked && dockLayout === 'overlay' && breakpoint !== WidgetBreakpoint.DESKTOP) {
+      setModalFallback(true);
+    }
+  }, [dialogVisible, isDocked, dockLayout, breakpoint]);
 
   // Preserves this widget's scripted two-part opening (openingMessage1 shown at ~2s,
   // openingMessage2 at ~4s, input disabled throughout) on top of useChat's open()/newChat(),
@@ -197,16 +247,27 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
     // document.activeElement, which can't see into the widget's Shadow DOM so it always thinks
     // nothing is focused yet). A same-tick focus call here loses that race. Deferring to a
     // macrotask runs after react-modal's own focus handling has settled, so this call wins.
-    const timeoutId = window.setTimeout(() => {
+    let focused = false;
+    const focusInput = (): void => {
       // Only auto-focus where the primary pointer is a mouse/trackpad. On touch devices a
       // script-driven focus() fired while the dialog is still animating in left iOS Safari
       // unable to scroll the conversation until the input was focused and blurred again by hand.
-      if (!window.matchMedia?.('(pointer: fine)').matches) {
+      if (focused || !window.matchMedia?.('(pointer: fine)').matches) {
         return;
       }
-      chatInputRef.current?.focus();
-    }, 0);
-    return (): void => window.clearTimeout(timeoutId);
+      const input = chatInputRef.current;
+      if (input) {
+        input.focus();
+        focused = true;
+      }
+    };
+    const timeoutId = window.setTimeout(focusInput, 0);
+    // A docked panel mounts its content one render after it opens, so the input may not exist yet at the first try.
+    const retryId = window.setTimeout(focusInput, 60);
+    return (): void => {
+      window.clearTimeout(timeoutId);
+      window.clearTimeout(retryId);
+    };
   }, [dialogVisible]);
 
   // Notify the host page each time the popup goes from closed to open (any path: trigger button,
@@ -300,8 +361,24 @@ const ShoppingAssistant: FC<ShoppingAssistantProps> = ({ renderModalWithoutPorta
                                   className='wigmix-popup-trigger-icon default size-6'
                               />
                             } />
+        {dockedConfigured && (
+          <DockedPanel
+              open={dialogVisible && isDocked}
+              onClose={closeDialog}
+              side={dockedSide}
+              width={dockedWidth ?? 0}
+              overlay={dockLayout === 'overlay'}
+              zIndex={positiveNumberOr(popup?.dockedZIndex, 13000)}
+              darkMode={darkMode}
+              fontFamily={customizations.generalLayout?.fontFamily}
+              placementId={`${appSettings.placementId}`}
+              ariaLabelledBy={dialogTitleId}
+              renderWithoutPortal={!!renderModalWithoutPortal}>
+            {getScreen()}
+          </DockedPanel>
+        )}
         <ViSenzeModal
-            open={dialogVisible}
+            open={dialogVisible && !isDocked}
             layout={breakpoint}
             onClose={closeDialog}
             position={customizations.popup?.position || 'left'}

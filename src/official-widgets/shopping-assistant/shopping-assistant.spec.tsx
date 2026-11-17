@@ -1,4 +1,5 @@
 import { act, fireEvent, type RenderResult } from '@testing-library/react';
+import { Context as ResponsiveContext } from 'react-responsive';
 import type { ViSearchClient } from 'visearch-javascript-sdk';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
 import ShoppingAssistant from './shopping-assistant';
@@ -432,6 +433,370 @@ describe('shopping-assistant', () => {
 
       expect(document.activeElement).toBe(outside);
       document.body.removeChild(outside);
+    });
+  });
+
+  // ============================================================
+  // Docked display mode
+  // ============================================================
+
+  describe('docked display mode', () => {
+    type Popup = NonNullable<WidgetConfig['customizations']['popup']>;
+    const originalInnerWidth = window.innerWidth;
+
+    const renderDocked = (popupOverrides: Partial<Popup> = {}): ReturnType<typeof createTestClient> => {
+      const popup = DEFAULT_CUSTOMIZATIONS.popup as Popup;
+      return renderAssistant({}, 'en', {}, { popup: { ...popup, displayMode: 'docked', ...popupOverrides } });
+    };
+
+    const setViewportWidth = (width: number): void => {
+      act(() => {
+        Object.defineProperty(window, 'innerWidth', { configurable: true, writable: true, value: width });
+        window.dispatchEvent(new Event('resize'));
+        // The viewport width is read at most once per animation frame.
+        jest.advanceTimersByTime(20);
+      });
+    };
+
+    const panel = (): HTMLElement | null => document.body.querySelector('.wigmix-docked-panel');
+
+    beforeEach(() => {
+      document.body.removeAttribute('style');
+      document.body.removeAttribute('aria-hidden');
+      // Docking needs a window of at least dockedMinWindowWidth (700 by default).
+      setViewportWidth(1440);
+    });
+
+    afterEach(() => {
+      setViewportWidth(originalInnerWidth);
+      document.body.removeAttribute('style');
+    });
+
+    it('renders a non-modal panel with no backdrop and no react-modal, and the page is not locked or hidden', () => {
+      renderDocked();
+      openDialogAndWait();
+
+      const dialog = testComponent.getByRole('dialog', { name: texts['en']['widgetTitle'], hidden: true });
+      expect(dialog).toBe(panel());
+      expect(dialog.getAttribute('aria-modal')).toBeNull();
+      expect(queryModal('.wigmix-modal-overlay')).toBeNull();
+      expect(queryModal('.wigmix-modal')).toBeNull();
+      expect(document.body.style.overflow).not.toBe('hidden');
+      expect(document.body.getAttribute('aria-hidden')).toBeNull();
+      expect(modalRoot.getAttribute('aria-hidden')).toBeNull();
+      expect(testComponent.container.getAttribute('aria-hidden')).toBeNull();
+    });
+
+    it('pins the panel to the configured side at the configured width', () => {
+      renderDocked({ position: 'right', dockedPanelWidth: 420 });
+      openDialogAndWait();
+
+      expect(panel()?.style.right).toBe('0px');
+      expect(panel()?.style.width).toBe('420px');
+    });
+
+    it('treats a centered popup position as the right side, with a default width of 380px', () => {
+      renderDocked({ position: 'center' });
+      openDialogAndWait();
+
+      expect(panel()?.style.right).toBe('0px');
+      expect(panel()?.style.width).toBe('380px');
+      expect(document.body.style.marginRight).toBe('380px');
+    });
+
+    it('offsets <body> (or pushSelector) while open and restores the page when closed', () => {
+      renderDocked({ position: 'left', dockedPanelWidth: 360 });
+      expect(document.body.style.marginLeft).toBe('');
+      openDialogAndWait();
+      expect(document.body.style.marginLeft).toBe('360px');
+
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true }));
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.body.getAttribute('style') || '').toBe('');
+    });
+
+    it('offsets the pushSelector element instead of <body>', () => {
+      const pageWrapper = document.createElement('div');
+      pageWrapper.id = 'site-wrapper';
+      document.body.appendChild(pageWrapper);
+      renderDocked({ pushSelector: '#site-wrapper', dockedPanelWidth: 300 });
+      openDialogAndWait();
+
+      expect(pageWrapper.style.marginLeft).toBe('300px');
+      expect(document.body.style.marginLeft).toBe('');
+      pageWrapper.remove();
+    });
+
+    it('closes on Escape inside the panel, restoring focus to the trigger button', () => {
+      renderDocked();
+      const triggerButton = testComponent.container.querySelector('.wigmix-popup-trigger-button') as HTMLButtonElement;
+      openDialogAndWait();
+
+      act(() => {
+        fireEvent.keyDown(testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true }), { key: 'Escape', code: 'Escape' });
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(panel()).toBeNull();
+      expect(document.body.style.marginLeft).toBe('');
+      expect(document.activeElement).toBe(triggerButton);
+    });
+
+    it('closes via its own close button, and not on an outside click', () => {
+      renderDocked();
+      openDialogAndWait();
+
+      act(() => {
+        fireEvent.mouseDown(document.body);
+        fireEvent.click(document.body);
+      });
+      expect(panel()).not.toBeNull();
+
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true }));
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(panel()).toBeNull();
+    });
+
+    it('slides in on open and stays mounted, sliding out, until the close animation has finished', () => {
+      renderDocked({ position: 'left' });
+      openDialogAndWait();
+      expect(panel()?.style.transform).toBe('translateX(0)');
+
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yCloseShoppingAssistant'], hidden: true }));
+      });
+      // Mid-close: still in the DOM, heading off screen to the left, and not catching clicks.
+      expect(panel()?.style.transform).toBe('translateX(-100%)');
+      expect(panel()?.style.pointerEvents).toBe('none');
+
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(panel()).toBeNull();
+    });
+
+    it('lets an open "Add image" menu take Escape first, without closing the panel', () => {
+      renderDocked();
+      openDialogAndWait();
+      openImageMenu();
+
+      act(() => {
+        fireEvent.keyDown(testComponent.getByRole('button', { name: texts['en']['a11yAddImage'], hidden: true }), { key: 'Escape' });
+      });
+
+      expect(panel()).not.toBeNull();
+    });
+
+    it('closes only the camera drawer when Escape is pressed inside it, not the panel', () => {
+      renderDocked();
+      openDialogAndWait();
+      openImageMenu();
+      act(() => {
+        fireEvent.click(testComponent.getByRole('button', { name: texts['en']['a11yOpenCamera'], hidden: true }));
+      });
+      const cameraDialog = testComponent.getByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true });
+
+      act(() => {
+        fireEvent.keyDown(cameraDialog, { key: 'Escape', code: 'Escape' });
+      });
+
+      expect(testComponent.queryByRole('dialog', { name: texts['en']['a11yCameraDrawer'], hidden: true })).toBeNull();
+      expect(panel()).not.toBeNull();
+    });
+
+    it('does not trap Tab focus', () => {
+      renderDocked();
+      openDialogAndWait();
+
+      const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+      const input = testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true });
+      act(() => {
+        input.dispatchEvent(event);
+      });
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('keeps the chat session working the same as in the modal (sends messages)', () => {
+      renderDocked();
+      openDialogAndWait();
+
+      const stream = sendMessageAndGetStreamController('Hello docked');
+      expect(getTextInBody('Hello docked')).toBeTruthy();
+      stream.closeStream();
+      expect(mockFetchEventSource).toHaveBeenCalledTimes(1);
+    });
+
+    it('opens and closes through widgetClient like the modal does', () => {
+      const { widgetClient } = renderDocked();
+
+      act(() => {
+        widgetClient.openWidget('');
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(panel()).not.toBeNull();
+
+      act(() => {
+        widgetClient.closeWidget();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(panel()).toBeNull();
+    });
+
+    it('falls back to the modal when too little width would be left for the page, and docks again once wide enough', () => {
+      setViewportWidth(600);
+      renderDocked();
+      openDialogAndWait();
+
+      expect(panel()).toBeNull();
+      expect(queryModal('.wigmix-modal')).not.toBeNull();
+      expect(document.body.style.overflow).toBe('hidden');
+      expect(document.body.style.marginLeft).toBe('');
+
+      setViewportWidth(1440);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(panel()).not.toBeNull();
+      expect(queryModal('.wigmix-modal')).toBeNull();
+      expect(document.body.style.marginLeft).toBe('380px');
+      expect(document.body.style.overflow).not.toBe('hidden');
+    });
+
+    it('keeps unsent composer text when the layout switches between docked and modal', () => {
+      renderDocked();
+      openDialogAndWait();
+      const input = (): HTMLInputElement => testComponent.getByRole('textbox', { name: texts['en']['a11yChatInput'], hidden: true }) as HTMLInputElement;
+      act(() => {
+        fireEvent.change(input(), { target: { value: 'half-typed question' } });
+      });
+
+      setViewportWidth(600);
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(queryModal('.wigmix-modal')).not.toBeNull();
+      expect(input().value).toBe('half-typed question');
+
+      setViewportWidth(1280);
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(panel()).not.toBeNull();
+      expect(input().value).toBe('half-typed question');
+    });
+
+    it('cleans the page up when the viewport shrinks below the threshold while open', () => {
+      renderDocked({ dockedMinWindowWidth: 800 });
+      setViewportWidth(1200);
+      openDialogAndWait();
+      expect(document.body.style.marginLeft).toBe('380px');
+
+      // 700 is under the 800 minimum, and under the 40px grace below it.
+      setViewportWidth(700);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(document.body.style.marginLeft).toBe('');
+      expect(panel()).toBeNull();
+      expect(queryModal('.wigmix-modal')).not.toBeNull();
+    });
+
+    it('keeps the configured width and gives the page the rest of the window, however narrow the window', () => {
+      setViewportWidth(760);
+      renderDocked({ dockedPanelWidth: 240 });
+      openDialogAndWait();
+
+      expect(panel()?.style.width).toBe('240px');
+      expect(document.body.style.marginLeft).toBe('240px');
+    });
+
+    it('takes the panel width as a share of the window, worked out again when the window changes', () => {
+      renderDocked({ dockedPanelWidth: '25%' });
+      openDialogAndWait();
+      expect(panel()?.style.width).toBe('360px');
+
+      setViewportWidth(1000);
+      expect(panel()?.style.width).toBe('250px');
+      expect(document.body.style.marginLeft).toBe('250px');
+    });
+
+    it('docks at the minimum window width, and uses the modal one pixel under it', () => {
+      setViewportWidth(700);
+      renderDocked({ dockedPanelWidth: 220 });
+      openDialogAndWait();
+      expect(panel()?.style.width).toBe('220px');
+
+      setViewportWidth(699);
+      // Already docked: stays docked a little under the minimum so it does not flicker.
+      expect(panel()).not.toBeNull();
+      setViewportWidth(600);
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(panel()).toBeNull();
+      expect(queryModal('.wigmix-modal')).not.toBeNull();
+    });
+
+    it('shows the panel over the page, leaving the page untouched, when it cannot be pushed aside', () => {
+      renderDocked({ pushSelector: '#not-on-this-page' });
+      openDialogAndWait();
+
+      expect(panel()?.className).toContain('wigmix-docked-panel-overlay');
+      expect(document.body.getAttribute('style') || '').toBe('');
+    });
+
+    it('uses the modal, not an overlay, when the page cannot be pushed aside on a tablet-sized window', () => {
+      const { widgetConfig, widgetClient } = createTestClient({}, {}, {
+        popup: { ...(DEFAULT_CUSTOMIZATIONS.popup as NonNullable<WidgetConfig['customizations']['popup']>), displayMode: 'docked', pushSelector: '#not-on-this-page' },
+      });
+      testComponent = renderWidget(
+        <ResponsiveContext.Provider value={{ width: 900 }}>
+          <ShoppingAssistant renderModalWithoutPortal />
+        </ResponsiveContext.Provider>,
+        { widgetConfig, widgetClient, locale: 'en', messages: texts['en'], rootElement: modalRoot },
+      );
+      openDialogAndWait();
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(panel()).toBeNull();
+      expect(queryModal('.wigmix-modal')).not.toBeNull();
+      expect(document.body.getAttribute('style') || '').not.toContain('margin');
+    });
+
+    it('uses the configured dockedZIndex', () => {
+      renderDocked({ dockedZIndex: 99 });
+      openDialogAndWait();
+
+      expect(panel()?.style.zIndex).toBe('99');
+    });
+
+    it('does not touch the page or render a docked panel in the default (modal) mode', () => {
+      renderAssistant();
+      openDialogAndWait();
+
+      expect(panel()).toBeNull();
+      expect(queryModal('.wigmix-modal')).not.toBeNull();
+      expect(document.body.style.marginLeft).toBe('');
+      expect(document.body.style.overflow).toBe('hidden');
     });
   });
 

@@ -27,8 +27,16 @@ const Style: FC = () => {
   const { widgetClient } = useContext(WidgetDataContext);
   const onRefChange = useCallback((ref: HTMLElement | null) => {
     if (ref) {
-      const template = document.head.querySelector(`#vi_template__${widgetClient.widgetType}`) as HTMLTemplateElement;
-      const styleTag = template.shadowRoot?.getElementById(`vi_style__${widgetClient.widgetType}__${widgetClient.widgetVersion}`) as HTMLStyleElement;
+      // Every loaded bundle adds its own `vi_template__<type>` holder (see webpack.util.js), so when two versions of the same
+      // widget run on one page there are several holders with the same id. Search all of them for this version's styles.
+      const styleId = `vi_style__${widgetClient.widgetType}__${widgetClient.widgetVersion}`;
+      const styleTag = Array.from(document.head.querySelectorAll(`#vi_template__${widgetClient.widgetType}`))
+        .map((template) => template.shadowRoot?.getElementById(styleId))
+        .find((tag): tag is HTMLElement => !!tag);
+      if (!styleTag) {
+        console.warn(`Rezolve widget: styles ${styleId} not found`);
+        return;
+      }
       // Convert HeroUI CSS variable values from rem to px
       ref.innerHTML = styleTag.innerHTML.replace(/(\d*\.?\d+)rem/g, (_, val) => `${parseFloat(val) * 16}px`);
     }
