@@ -4,6 +4,7 @@ import AssistantSurface from './AssistantSurface';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
 import { ensureOpen } from './entries/assistant-session';
 import EntryHost from './entry-host';
+import { chatTexts, userTexts } from './test-utils/chat-assertions';
 import { getChatSessionStore } from '../../common/components/chat/session/chat-session-registry';
 import type { EntryPointKey } from '../../common/components/chat/session/chat-session-store';
 import { createMockWidgetClient, createWidgetConfig, renderWidget } from '../../common/test-utils';
@@ -180,7 +181,7 @@ describe('AssistantSurface', () => {
       fireEvent.click(within(ctx.result.getByRole('dialog', { hidden: true })).getByLabelText(texts['a11yCloseChat']));
     });
     expect(ctx.store.getSnapshot().isOpen).toBe(false);
-    expect(ctx.store.getSnapshot().chats).toHaveLength(1);
+    expect(userTexts(ctx.store)).toEqual(['hello']);
   });
 
   describe('beside several entry hosts', () => {
@@ -597,10 +598,10 @@ describe('AssistantSurface fullscreen', () => {
       const aiAssistant = { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, launcher: { greetings: { ai: 'Hello from AI' } } };
       const { store } = setupFs({ aiAssistant, chatbot: { welcomeScreen: undefined } });
       act(() => ensureOpen(store));
-      expect(store.getSnapshot().chats).toEqual([expect.objectContaining({ author: 'bot', messages: ['Hello from AI'] })]);
+      expect(chatTexts(store)).toEqual(['Hello from AI']);
       act(() => store.hide());
       act(() => ensureOpen(store));
-      expect(store.getSnapshot().chats).toHaveLength(1);
+      expect(chatTexts(store)).toEqual(['Hello from AI']);
     });
 
     it('new chat in the drawer clears the conversation and greets again', () => {
@@ -609,11 +610,11 @@ describe('AssistantSurface fullscreen', () => {
       const { store } = setupFs({ aiAssistant, chatbot: { welcomeScreen: undefined } });
       act(() => ensureOpen(store));
       send(store, 'hello');
-      expect(store.getSnapshot().chats.map((c) => c.messages[0])).toEqual(['Hello from AI', 'hello']);
+      expect(chatTexts(store)).toEqual(['Hello from AI', 'hello']);
       act(() => {
         fireEvent.click(screen.getByLabelText(fsTexts['a11yStartNewChat']));
       });
-      expect(store.getSnapshot().chats).toEqual([expect.objectContaining({ author: 'bot', messages: ['Hello from AI'] })]);
+      expect(chatTexts(store)).toEqual(['Hello from AI']);
     });
 
     it('leaves an open fullscreen chat as it is (it covers the page)', () => {

@@ -1,13 +1,13 @@
-import { type FC, useContext, useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
+import { type FC, useContext, useEffect, useRef, useSyncExternalStore } from 'react';
 import { useIntl } from 'react-intl';
 import ChatTitle from './components/ChatTitle';
+import { useSharedChatStore } from './entries/assistant-session';
 import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatDrawerScreen from '../../common/components/chat/ChatDrawerScreen';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import ImageEntryScreen from '../../common/components/chat/entry-screens/ImageEntryScreen';
 import MicEntryScreen from '../../common/components/chat/entry-screens/MicEntryScreen';
 import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
-import { getChatSessionStore } from '../../common/components/chat/session/chat-session-registry';
 import type { EntryPointKey } from '../../common/components/chat/session/chat-session-store';
 import SplitLayout from '../../common/components/chat/SplitLayout';
 import useChat, { type Chat } from '../../common/components/chat/use-chat';
@@ -31,7 +31,7 @@ const countUserMessages = (chats: Chat[]): number => chats.filter((c) => c.autho
 // surfaceMode picks the container: the side drawer (basic / prompt-box entries) or the full-screen
 // chat with its split view (launcher entry). Entry points open it through the shared ChatSessionStore.
 const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) => {
-  const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const root = useContext(RootContext);
   const intl = useIntl();
@@ -39,11 +39,7 @@ const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) =>
   // Persistence follows customizations.chatbot.persistChatEnabled, like EntryHost's useChat on the same shared store.
   const chat = useChat();
   // useChat does not expose hide()/closeSurface() or the surface mode, hence the direct registry lookup.
-  const store = useMemo(
-    () => getChatSessionStore(widgetClient, widgetConfig.initState?.wishlistProductIds || []),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [widgetClient],
-  );
+  const store = useSharedChatStore();
   const { surfaceMode, activation } = useSyncExternalStore(store.subscribe, store.getSnapshot);
   const chatInputRef = useRef<HTMLInputElement>(null);
   const isFullscreenOpen = surfaceMode === 'fullscreen' && chat.isOpen;

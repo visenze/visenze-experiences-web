@@ -1,6 +1,8 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
+import { getChatSessionStore } from '../../../common/components/chat/session/chat-session-registry';
 import type { ChatSessionStore, EntryPointKey, SurfaceMode } from '../../../common/components/chat/session/chat-session-store';
 import type { UseChatResult } from '../../../common/components/chat/use-chat';
+import { WidgetDataContext } from '../../../common/types/contexts';
 
 // What EntryHost hands its entry component: its own useChat (composer text, actions) and the
 // widgetClient's shared session store.
@@ -17,6 +19,18 @@ export const useAssistantSession = (): AssistantSession => {
     throw new Error('useAssistantSession must be used inside EntryHost');
   }
   return session;
+};
+
+// The widgetClient's shared session store (the one conversation every entry and the surface use). Looked up once
+// per client: the wishlist ids only seed a store that does not exist yet, so a later config update must not
+// rebuild it.
+export const useSharedChatStore = (): ChatSessionStore => {
+  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  return useMemo(
+    () => getChatSessionStore(widgetClient, widgetConfig.initState?.wishlistProductIds || []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [widgetClient],
+  );
 };
 
 export interface OpenAssistantOptions {

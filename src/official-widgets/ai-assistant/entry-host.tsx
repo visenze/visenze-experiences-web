@@ -1,9 +1,9 @@
-import { type FC, useContext, useEffect, useMemo } from 'react';
-import { AssistantSessionContext, ensureOpen } from './entries/assistant-session';
+import { type FC, useContext, useEffect } from 'react';
+import { AssistantSessionContext, ensureOpen, useSharedChatStore } from './entries/assistant-session';
 import { ENTRY_COMPONENTS } from './entries/entry-registry';
 import type { AssistantEntry } from '../../common/client/entry';
 import { peekChatSessionStore } from '../../common/components/chat/session/chat-session-map';
-import { getChatSessionStore } from '../../common/components/chat/session/chat-session-registry';
+import type { getChatSessionStore } from '../../common/components/chat/session/chat-session-registry';
 import useChat from '../../common/components/chat/use-chat';
 import { WidgetDataContext } from '../../common/types/contexts';
 import type { WidgetClient } from '../../common/wigmix-core';
@@ -51,15 +51,11 @@ const registerClientTriggers = (widgetClient: WidgetClient): void => {
 // One per host element (React root): renders that element's entry trigger. The shared chat drawer is not
 // rendered here but by AssistantSurface, in its own body-hosted root. Every host on a widgetClient shares one conversation.
 const EntryHost: FC<EntryHostProps> = ({ entry, productId }) => {
-  const { widgetConfig, widgetClient } = useContext(WidgetDataContext);
+  const { widgetClient } = useContext(WidgetDataContext);
   // Only the drawer (AssistantSurface) attaches voice; entries never take the voice bridge from it.
   // Persistence follows customizations.chatbot.persistChatEnabled, the same for every hook on the shared store.
   const chat = useChat({ attachVoice: false });
-  const store = useMemo(
-    () => getChatSessionStore(widgetClient, widgetConfig.initState?.wishlistProductIds || []),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [widgetClient],
-  );
+  const store = useSharedChatStore();
 
   useEffect(() => {
     registerClientTriggers(widgetClient);
