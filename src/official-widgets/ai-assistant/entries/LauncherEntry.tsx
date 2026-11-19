@@ -1,7 +1,7 @@
 import { cn } from '@heroui/theme';
 import { type FC, type RefObject, useContext, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import { useAssistantSession } from './assistant-session';
+import { openAssistant, useAssistantSession } from './assistant-session';
 import type { EntryProps } from './entry-props';
 import type { EntryPointKey } from '../../../common/components/chat/session/chat-session-store';
 import EntryLogo from '../../../common/components/entry-logo/EntryLogo';
@@ -29,36 +29,19 @@ const LauncherEntry: FC<EntryProps> = ({ productId }) => {
 
   const openEntryPoint = (entryPoint: EntryPointKey): void => {
     store.setActiveEntry('launcher', productId);
-    // A chat id means there is a conversation to resume (from any entry, or restored after a reload):
-    // the three entry points and the other entries share one conversation.
-    const resuming = Boolean(store.getChatId());
-    // The image / mic entry screens exist only in the full-screen chat, so in drawer mode only
-    // Ask AI carries an activation (its greeting); camera and mic just open the drawer.
+    // The image / mic entry screens exist only in the full-screen chat, so in drawer mode only Ask AI
+    // carries an activation (its greeting); camera and mic just open the drawer, minting a session if none
+    // exists (the drawer's composer needs one). In the full screen camera/mic never mint a chat id just for
+    // opening (the first send does); Ask AI resumes an existing session or starts a fresh one.
     const isDrawer = launcher?.chatMode === 'drawer';
-    store.openSurface({
+    openAssistant(store, {
       mode: isDrawer ? 'drawer' : 'fullscreen',
-      activation: isDrawer && entryPoint !== 'ai' ? undefined : {
-        entryPoint,
-        isResumed: resuming,
-        userMessageBaseline: store.getSnapshot().chats.filter((c) => c.author === 'user').length,
-      },
+      entryPoint,
+      withActivation: !isDrawer || entryPoint === 'ai',
+      mintSession: isDrawer || entryPoint === 'ai',
       // Focus returns to the button that opened the chat, even though another root hosts the surface.
       onClosed: () => buttonRefs[entryPoint].current?.focus(),
     });
-    // Same handshake as ai-search-launcher: in the full screen camera/mic never mint a chat id just for
-    // opening (reopen only flips isOpen; sendMessage mints it lazily); Ask AI resumes an existing session
-    // or starts a fresh one. The drawer has no entry screens to send from, only its composer, which a
-    // fresh session (open()) enables, so there camera/mic start one too.
-    if (resuming || (entryPoint !== 'ai' && !isDrawer)) {
-      store.reopen();
-      // reopen() only flips isOpen, and a fresh session has input disabled until open() runs: enable it so
-      // the mic's text fallback (and the image screen's composer) can send, which mints the chat id lazily.
-      if (!resuming) {
-        store.setState({ allowUserInput: true });
-      }
-    } else {
-      store.open();
-    }
   };
 
   // The "Ask AI" button shows its text unless a logo is configured; with a logo, `layout`

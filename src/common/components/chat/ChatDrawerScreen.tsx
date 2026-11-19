@@ -15,6 +15,8 @@ interface ChatDrawerScreenProps {
   title: ReactNode;
   titleId: string;
   onClose: () => void;
+  // Replaces the header's plain new-chat action (chat.newChat), e.g. to also replay the opening greeting.
+  onNewChat?: () => void;
   iconColor?: string;
   backgroundColor?: string;
 }
@@ -23,7 +25,7 @@ const HEADER_BUTTON_CLASSES = 'p-0 bg-transparent border-0';
 
 // The body of the side-mounted chat drawer (header + conversation + composer), laid out like
 // shopping-assistant's own drawer screen. It reads from the same `chat` session as the panel.
-const ChatDrawerScreen: FC<ChatDrawerScreenProps> = ({ chat, chatInputRef, title, titleId, onClose, iconColor, backgroundColor }) => {
+const ChatDrawerScreen: FC<ChatDrawerScreenProps> = ({ chat, chatInputRef, title, titleId, onClose, onNewChat, iconColor, backgroundColor }) => {
   const intl = useIntl();
   const hasStarted = chat.chats.length > 0;
 
@@ -51,7 +53,7 @@ const ChatDrawerScreen: FC<ChatDrawerScreenProps> = ({ chat, chatInputRef, title
               aria-label={intl.formatMessage({ id: 'a11yStartNewChat' })}
               title={intl.formatMessage({ id: 'a11yStartNewChat' })}
               className={cn(HEADER_BUTTON_CLASSES, FOCUS_VISIBLE_CLASSES)}
-              onClick={chat.newChat}
+              onClick={onNewChat ?? chat.newChat}
             >
               <PlusCircleIcon className='size-6 cursor-pointer' color={iconColor} />
             </button>

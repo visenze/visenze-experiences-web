@@ -662,7 +662,8 @@ describe('ai-assistant launcher entry', () => {
       expect(hide).toHaveBeenCalled();
       expect(closeSurface).not.toHaveBeenCalled();
       expect(store.getSnapshot()).toEqual(expect.objectContaining({ surfaceMode: 'drawer', isOpen: false }));
-      expect(store.getSnapshot().chats).toHaveLength(1);
+      // The opening greeting (a fresh drawer conversation) plus the pushed message, both kept.
+      expect(store.getSnapshot().chats.map((c) => c.messages[0])).toEqual([expect.any(String), 'kept']);
     });
 
     it('titles the full screen from the widget\'s own default texts when chatbot.title is unset', () => {
