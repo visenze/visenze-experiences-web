@@ -2,6 +2,7 @@ import { act, fireEvent, render, type RenderResult, waitFor } from '@testing-lib
 import type { ReactElement, ReactNode } from 'react';
 import App from './app';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
+import { userTexts } from './test-utils/chat-assertions';
 import { getChatSessionStore } from '../../common/components/chat/session/chat-session-registry';
 import { createMockWidgetClient, createWidgetConfig } from '../../common/test-utils';
 import type { WidgetClient, WidgetConfig } from '../../common/wigmix-core';
@@ -147,7 +148,7 @@ describe('ai-assistant App', () => {
     await clickChip(result);
     expect(lastRequestParams().get('pid')).toBe('p2');
     expect(lastRequestParams().get('chat_id')).toBe(chatId);
-    expect(store.getSnapshot().chats).toHaveLength(2);
+    expect(userTexts(store)).toEqual([QUESTION, QUESTION]);
     expect(Object.keys(localStorage)).toEqual(['visenze_shopping_assistant_chat_id_1234']);
   });
 

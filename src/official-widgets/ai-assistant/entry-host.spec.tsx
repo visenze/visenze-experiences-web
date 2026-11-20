@@ -2,6 +2,7 @@ import { act, fireEvent, type RenderResult, screen, waitFor, within } from '@tes
 import AssistantSurface from './AssistantSurface';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
 import EntryHost from './entry-host';
+import { userTexts } from './test-utils/chat-assertions';
 import { getChatSessionStore } from '../../common/components/chat/session/chat-session-registry';
 import { createMockWidgetClient, createWidgetConfig, renderWidget } from '../../common/test-utils';
 import type { WidgetClient, WidgetConfig } from '../../common/wigmix-core';
@@ -155,7 +156,7 @@ describe('ai-assistant EntryHost: several entries, one conversation', () => {
     expect(dialogs()).toHaveLength(1);
     expect(within(drawer()).getByText(QUESTION)).toBeTruthy();
     expect(store.getChatId()).toBe(chatId);
-    expect(store.getSnapshot().chats).toHaveLength(1);
+    expect(userTexts(store)).toEqual([QUESTION]);
   });
 
   it('the basic entry opens a fresh session when there is none yet', async () => {
@@ -249,7 +250,7 @@ describe('ai-assistant EntryHost: widgetClient triggers', () => {
       ctx.widgetClient.closeWidget();
     });
     await waitFor(() => expect(dialogs()).toHaveLength(0));
-    expect(store.getSnapshot().chats).toHaveLength(1);
+    expect(userTexts(store)).toEqual([QUESTION]);
 
     await act(async () => {
       ctx.widgetClient.openWidget('');

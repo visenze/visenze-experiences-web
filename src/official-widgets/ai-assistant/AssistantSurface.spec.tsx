@@ -4,6 +4,7 @@ import AssistantSurface from './AssistantSurface';
 import { DEFAULT_CUSTOMIZATIONS, DEFAULT_TEXTS } from './default-config';
 import { ensureOpen } from './entries/assistant-session';
 import EntryHost from './entry-host';
+import { chatTexts, userTexts } from './test-utils/chat-assertions';
 import { getChatSessionStore } from '../../common/components/chat/session/chat-session-registry';
 import type { EntryPointKey } from '../../common/components/chat/session/chat-session-store';
 import { createMockWidgetClient, createWidgetConfig, renderWidget } from '../../common/test-utils';
@@ -180,7 +181,7 @@ describe('AssistantSurface', () => {
       fireEvent.click(within(ctx.result.getByRole('dialog', { hidden: true })).getByLabelText(texts['a11yCloseChat']));
     });
     expect(ctx.store.getSnapshot().isOpen).toBe(false);
-    expect(ctx.store.getSnapshot().chats).toHaveLength(1);
+    expect(userTexts(ctx.store)).toEqual(['hello']);
   });
 
   describe('beside several entry hosts', () => {
@@ -590,7 +591,30 @@ describe('AssistantSurface fullscreen', () => {
       const { store } = setupFs();
       act(() => store.openSurface({ mode: 'fullscreen', activation: { entryPoint: 'ai', isResumed: false, userMessageBaseline: 0 } }));
       act(() => ensureOpen(store));
-      expect(store.getSnapshot()).toEqual(expect.objectContaining({ surfaceMode: 'drawer', activation: null, isOpen: true }));
+      expect(store.getSnapshot()).toEqual(expect.objectContaining({ surfaceMode: 'drawer', isOpen: true }));
+    });
+
+    it('injects the welcome greeting when a fresh drawer conversation opens, but not when it is reopened', () => {
+      const aiAssistant = { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, launcher: { greetings: { ai: 'Hello from AI' } } };
+      const { store } = setupFs({ aiAssistant, chatbot: { welcomeScreen: undefined } });
+      act(() => ensureOpen(store));
+      expect(chatTexts(store)).toEqual(['Hello from AI']);
+      act(() => store.hide());
+      act(() => ensureOpen(store));
+      expect(chatTexts(store)).toEqual(['Hello from AI']);
+    });
+
+    it('new chat in the drawer clears the conversation and greets again', () => {
+      mockFetchEventSource.mockImplementation(() => new Promise(() => {}));
+      const aiAssistant = { ...DEFAULT_CUSTOMIZATIONS.aiAssistant, launcher: { greetings: { ai: 'Hello from AI' } } };
+      const { store } = setupFs({ aiAssistant, chatbot: { welcomeScreen: undefined } });
+      act(() => ensureOpen(store));
+      send(store, 'hello');
+      expect(chatTexts(store)).toEqual(['Hello from AI', 'hello']);
+      act(() => {
+        fireEvent.click(screen.getByLabelText(fsTexts['a11yStartNewChat']));
+      });
+      expect(chatTexts(store)).toEqual(['Hello from AI']);
     });
 
     it('leaves an open fullscreen chat as it is (it covers the page)', () => {

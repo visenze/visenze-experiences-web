@@ -1,13 +1,13 @@
-import { type FC, useContext, useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
+import { type FC, useContext, useEffect, useRef, useSyncExternalStore } from 'react';
 import { useIntl } from 'react-intl';
 import ChatTitle from './components/ChatTitle';
+import { useSharedChatStore } from './entries/assistant-session';
 import ChatComposer from '../../common/components/chat/ChatComposer';
 import ChatDrawerScreen from '../../common/components/chat/ChatDrawerScreen';
 import ChatWindow from '../../common/components/chat/ChatWindow';
 import ImageEntryScreen from '../../common/components/chat/entry-screens/ImageEntryScreen';
 import MicEntryScreen from '../../common/components/chat/entry-screens/MicEntryScreen';
 import FullScreenChatContainer from '../../common/components/chat/FullScreenChatContainer';
-import { getChatSessionStore } from '../../common/components/chat/session/chat-session-registry';
 import type { EntryPointKey } from '../../common/components/chat/session/chat-session-store';
 import SplitLayout from '../../common/components/chat/SplitLayout';
 import useChat, { type Chat } from '../../common/components/chat/use-chat';
@@ -31,7 +31,7 @@ const countUserMessages = (chats: Chat[]): number => chats.filter((c) => c.autho
 // surfaceMode picks the container: the side drawer (basic / prompt-box entries) or the full-screen
 // chat with its split view (launcher entry). Entry points open it through the shared ChatSessionStore.
 const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) => {
-  const { widgetConfig, widgetClient, darkMode } = useContext(WidgetDataContext);
+  const { widgetConfig, darkMode } = useContext(WidgetDataContext);
   const { appSettings, customizations } = widgetConfig;
   const root = useContext(RootContext);
   const intl = useIntl();
@@ -39,11 +39,7 @@ const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) =>
   // Persistence follows customizations.chatbot.persistChatEnabled, like EntryHost's useChat on the same shared store.
   const chat = useChat();
   // useChat does not expose hide()/closeSurface() or the surface mode, hence the direct registry lookup.
-  const store = useMemo(
-    () => getChatSessionStore(widgetClient, widgetConfig.initState?.wishlistProductIds || []),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [widgetClient],
-  );
+  const store = useSharedChatStore();
   const { surfaceMode, activation } = useSyncExternalStore(store.subscribe, store.getSnapshot);
   const chatInputRef = useRef<HTMLInputElement>(null);
   const isFullscreenOpen = surfaceMode === 'fullscreen' && chat.isOpen;
@@ -56,25 +52,20 @@ const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) =>
   useHidePageBehindModal(isFullscreenOpen, fullscreenTitleId, root);
   useReturnFocusOnClose(chat.isOpen);
 
-  useEffect(() => {
-    if (customizations.chatbot?.startMuted) {
-      chat.toggleVoiceReading();
-    }
-    // Mount-only: a one-time initial-mute preference. Applied here, by the voice-owning surface, and
-    // nowhere else — the voice-reading state belongs to this surface's useChat (the one whose voice
-    // bridge the store uses); toggling it from an entry root would not mute the drawer's narration.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Shared greeting resolver — the same customizations.aiAssistant.launcher.greetings[entryPoint]
-  // string is both narrated (see the effect below) and shown by the entry screens themselves, so the
+  // string is both narrated (see greet below) and shown by the entry screens themselves, so the
   // shown and narrated copy never disagree.
   const getGreetingText = (entryPoint: EntryPointKey): string => customizations.aiAssistant?.launcher?.greetings?.[entryPoint] || '';
 
-  // With the structured welcome (customizations.chatbot.welcomeScreen) on, ChatWindow renders it instead
-  // of the canned 'ai' greeting; the welcome's own optional message is narration only (speakText
-  // never touches chat history).
-  const playAiGreeting = (): void => {
+  // Greets an entry point's opening, or a "New chat" inside it. Ask AI's greeting genuinely opens the
+  // conversation: a real bot bubble, or — with the structured welcome (customizations.chatbot.welcomeScreen)
+  // on, which ChatWindow renders instead — narration of its optional spoken greeting only (speakText never
+  // touches chat history). Camera/mic's prompt is narration only too: it never enters chat.chats.
+  const greet = (entryPoint: EntryPointKey): void => {
+    if (entryPoint !== 'ai') {
+      chat.speakText(getGreetingText(entryPoint));
+      return;
+    }
     const welcome = customizations.chatbot?.welcomeScreen;
     if (isWelcomeEnabled(welcome)) {
       chat.speakText(getWelcomeSpokenGreeting(welcome));
@@ -83,48 +74,70 @@ const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) =>
     }
   };
 
+  // The latest render's values, read by the effects below that are deliberately keyed on something narrower
+  // (mount only / the entry point): chat's speak/playGreeting functions are not memoized upstream, so they
+  // cannot be effect dependencies, and a stale closure must not speak an outdated greeting.
+  const latest = useRef({
+    chat,
+    customizations,
+    greet,
+    activation,
+    skipAiGreeting: false,
+  });
+
+  useEffect(() => {
+    // A one-time initial-mute preference, applied here by the voice-owning surface and nowhere else: the
+    // voice-reading state belongs to this surface's useChat (the one whose voice bridge the store uses);
+    // toggling it from an entry root would not mute the drawer's narration.
+    if (latest.current.customizations.chatbot?.startMuted) {
+      latest.current.chat.toggleVoiceReading();
+    }
+  }, []);
+
+  // Whether a real user message was sent during THIS activation (compared against the user-turn count
+  // captured when it opened, so a resumed conversation counts only new messages).
+  const hasSentInThisActivation = countUserMessages(chat.chats) > (activation?.userMessageBaseline ?? 0);
+  latest.current = {
+    chat,
+    customizations,
+    greet,
+    activation,
+    // Ask AI's greeting is skipped on resume (a restored conversation doesn't get a duplicate appended) and
+    // when the shopper's own message already opened it (a prompt-box ask: it would land after the message).
+    // Camera/mic's prompt is spoken on every opening, new session or resumed.
+    skipAiGreeting: Boolean(activation?.isResumed) || hasSentInThisActivation,
+  };
+
   // The activation already in the store when this surface mounted (e.g. the surface moved to a fresh
   // root while a full-screen chat was open) was greeted by the previous mount; it is not replayed.
   const mountActivationRef = useRef(activation);
+  const entryPoint = activation?.entryPoint;
 
+  // Once per entry point opening — keyed on the entry point, not the activation object, which "New chat"
+  // replaces (handleNewChat greets that itself).
   useEffect(() => {
-    if (!activation || activation === mountActivationRef.current) {
+    if (!entryPoint || latest.current.activation === mountActivationRef.current) {
       return;
     }
-    if (activation.entryPoint === 'ai') {
-      // Ask AI's greeting genuinely opens the conversation (a real bot bubble), skipped on resume so a
-      // restored conversation doesn't get a duplicate greeting appended to it.
-      if (!activation.isResumed) {
-        playAiGreeting();
-      }
+    if (entryPoint === 'ai' && latest.current.skipAiGreeting) {
       return;
     }
-    // Camera/mic's prompt is narration only: it never enters chat.chats, and is spoken on every
-    // opening (new session or resumed).
-    chat.speakText(getGreetingText(activation.entryPoint));
-    // Keyed only on the entry point: it must fire once per entry point opening, not on every render
-    // (chat.playGreeting/chat.speakText are not memoized upstream).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activation?.entryPoint]);
+    latest.current.greet(entryPoint);
+  }, [entryPoint]);
 
+  // "New chat" from either container: a fresh conversation that is greeted again. Without an activation
+  // (a drawer opened by a camera/mic button) there is no greeting to replay.
   const handleNewChat = (): void => {
     chat.newChat();
     store.resetActivation(0);
-    const entryPoint = activation?.entryPoint;
-    if (!entryPoint) {
-      return;
+    if (entryPoint) {
+      greet(entryPoint);
     }
-    if (entryPoint === 'ai') {
-      playAiGreeting();
-      return;
-    }
-    chat.speakText(getGreetingText(entryPoint));
   };
 
   // Image/mic show their welcome screen (camera capture / voice recording) until a real message is
   // sent during THIS activation — compared against the user-turn count captured when it opened, so a
   // resumed conversation shows it again. Ask AI has no welcome screen.
-  const hasSentInThisActivation = countUserMessages(chat.chats) > (activation?.userMessageBaseline ?? 0);
   const showImageWelcome = activation?.entryPoint === 'image' && !hasSentInThisActivation;
   const showMicWelcome = activation?.entryPoint === 'mic' && !hasSentInThisActivation;
 
@@ -267,6 +280,7 @@ const AssistantSurface: FC<AssistantSurfaceProps> = ({ renderWithoutPortal }) =>
           title={title}
           titleId={titleId}
           onClose={hide}
+          onNewChat={handleNewChat}
           iconColor={iconColor}
           backgroundColor={backgroundColor}
         />
