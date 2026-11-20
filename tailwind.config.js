@@ -19,6 +19,9 @@ const herouiPackagesForOfficialWidgets = {
   'official-widgets/icon-triggered-grid': 'skeleton',
   'official-widgets/search-bar': 'input|listbox|skeleton',
   'official-widgets/embedded-search-results': 'accordion|checkbox|input|skeleton|slider|spinner',
+  'official-widgets/ai-assistant': 'input|skeleton',
+  'official-widgets/embedded-shopping-assistant': 'input|skeleton',
+  'official-widgets/ai-search-launcher': 'input|skeleton',
 };
 
 const herouiPackagesForWidget = herouiPackagesForOfficialWidgets[widgetType]

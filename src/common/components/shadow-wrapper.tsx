@@ -1,7 +1,7 @@
 import { HeroUIProvider } from '@heroui/system';
-import type { CSSProperties, FC, HTMLProps, ReactNode } from 'react';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import root from 'react-shadow';
+import type { CSSProperties, FC, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import useStyles from './hooks/use-styles';
 import { WidgetDataContext } from '../types/contexts';
 
@@ -17,6 +17,37 @@ const rootContainerStyle: CSSProperties = {
 };
 
 export const RootContext = createContext<HTMLElement | null>(null);
+
+/**
+ * Renders a host `<div>` with an open shadow root and portals `children` into it.
+ * Replaces `react-shadow`, which also bundled `react-dom/server` for an SSR mode the widgets never use.
+ *
+ * An existing shadow root is reused (StrictMode / re-mount double-invocation). If `attachShadow` fails, nothing is rendered,
+ * on purpose and as with `react-shadow`: rendering into the light DOM instead would inject the widget's full Tailwind CSS
+ * (including its preflight reset) into the host page and restyle the merchant's site.
+ */
+export const ShadowRootHost: FC<{ style: CSSProperties; children: ReactNode }> = ({ style, children }) => {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [shadowRoot, setShadowRoot] = useState<ShadowRoot | null>(null);
+
+  useLayoutEffect(() => {
+    const host = hostRef.current;
+    if (!host) {
+      return;
+    }
+    try {
+      setShadowRoot(host.shadowRoot ?? host.attachShadow({ mode: 'open' }));
+    } catch (error) {
+      console.error('Rezolve widget: unable to attach shadow root', error);
+    }
+  }, []);
+
+  return (
+    <div ref={hostRef} style={style}>
+      {shadowRoot && createPortal(children, shadowRoot)}
+    </div>
+  );
+};
 
 const StyleLoader: FC<{ rootNode: HTMLElement | null; children: ReactNode }> = ({ rootNode, children }) => {
   useStyles(rootNode);
@@ -66,8 +97,6 @@ const ShadowWrapper: FC<ShadowWrapperProps> = ({ darkMode, fontFamily, children 
       }
     }
   }, []);
-
-  const ShadowRootHost = root['div'] as FC<HTMLProps<HTMLDivElement>>;
 
   useEffect(() => {
     if (rootNode) {
