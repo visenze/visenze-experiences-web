@@ -42,6 +42,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - ai_assistant: Entry points renamed to match the existing widgets. The chat-button entry (opens the side drawer, like shopping-assistant) is now `basic` (was `launcher`), and the camera / mic / Ask AI bar (like ai-search-launcher) is now `launcher` (was `search-bar`). Its settings move from `customizations.aiAssistant.searchBar` to `customizations.aiAssistant.launcher`. The default entry is `basic`, and the `entry` value sent with analytics events uses the new names. **Breaking:** an element with `data-entry="launcher"` now shows the camera / mic / Ask AI bar instead of the chat button; use `data-entry="basic"` for the chat button. `search-bar` is no longer recognized (it falls back to `basic` with a console warning). `prompt-box` and `embedded` are unchanged.
+- All widgets: Smaller bundles. The Shadow DOM wrapper no longer uses `react-shadow`, which also bundled React's server renderer (`react-dom/server`) for a server-side rendering mode the widgets never use. Saves about 73 KB raw / 23 KB gzip per widget. Rendering and style isolation are unchanged.
+- ai_assistant, embedded_shopping_assistant, ai_search_launcher: Only the HeroUI styles they use (`input`, `skeleton`) are bundled, instead of all HeroUI component styles. Saves about 31 KB raw / 3 KB gzip per widget.
+- All widgets: Smaller bundles. HeroUI's `tailwind-variants` now uses the same `tailwind-merge` copy as `@heroui/theme` (through a small build-time adapter, `src/common/build-shims/tailwind-merge-v1-compat.ts`, wired in `webpack.util.js`) instead of bundling a second, older copy. Saves about 21 KB raw / 6.5 KB gzip per widget. Class merging is unchanged (checked against every HeroUI `input` and `skeleton` variant).
 
 <!-- END visenze-experiences-web 1.0.43 -->
 

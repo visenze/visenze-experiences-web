@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = (widget, version, useTailwindStyleLoader = true) => {
   const widgetName = widget.toLowerCase();
   const tailwindStyleLoader = {
@@ -19,6 +21,17 @@ module.exports = (widget, version, useTailwindStyleLoader = true) => {
 
   return {
     rules: [
+      {
+        // HeroUI's tailwind-variants depends on tailwind-merge@1 while @heroui/theme uses tailwind-merge@2, so both copies
+        // were bundled. Point tailwind-variants at the v2 copy through a small v1-API adapter to bundle only one.
+        // `resolve` on a rule applies to the requests made BY the matched module, i.e. tailwind-variants' own imports.
+        test: /node_modules[\\/]tailwind-variants[\\/]dist[\\/]/,
+        resolve: {
+          alias: {
+            'tailwind-merge$': path.resolve(__dirname, 'src/common/build-shims/tailwind-merge-v1-compat.ts'),
+          },
+        },
+      },
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
