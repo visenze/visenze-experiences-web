@@ -21,8 +21,12 @@ export const RootContext = createContext<HTMLElement | null>(null);
 /**
  * Renders a host `<div>` with an open shadow root and portals `children` into it.
  * Replaces `react-shadow`, which also bundled `react-dom/server` for an SSR mode the widgets never use.
+ *
+ * An existing shadow root is reused (StrictMode / re-mount double-invocation). If `attachShadow` fails, nothing is rendered,
+ * on purpose and as with `react-shadow`: rendering into the light DOM instead would inject the widget's full Tailwind CSS
+ * (including its preflight reset) into the host page and restyle the merchant's site.
  */
-const ShadowRootHost: FC<{ style: CSSProperties; children: ReactNode }> = ({ style, children }) => {
+export const ShadowRootHost: FC<{ style: CSSProperties; children: ReactNode }> = ({ style, children }) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const [shadowRoot, setShadowRoot] = useState<ShadowRoot | null>(null);
 
